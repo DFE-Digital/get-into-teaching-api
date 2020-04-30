@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetIntoTeachingApi", "GetIntoTeachingApi\GetIntoTeachingApi.csproj", "{C878757F-E660-40B5-B706-0140A2DEA2BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetIntoTeachingApiTests", "GetIntoTeachingApiTests\GetIntoTeachingApiTests.csproj", "{CAC77B5B-9DBF-41DB-9BC2-EFD5A8C4CB69}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C878757F-E660-40B5-B706-0140A2DEA2BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C878757F-E660-40B5-B706-0140A2DEA2BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C878757F-E660-40B5-B706-0140A2DEA2BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C878757F-E660-40B5-B706-0140A2DEA2BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAC77B5B-9DBF-41DB-9BC2-EFD5A8C4CB69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAC77B5B-9DBF-41DB-9BC2-EFD5A8C4CB69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAC77B5B-9DBF-41DB-9BC2-EFD5A8C4CB69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAC77B5B-9DBF-41DB-9BC2-EFD5A8C4CB69}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {43EAF4B1-372B-43A2-9034-6668B9E4A14A}
+	EndGlobalSection
+EndGlobal
