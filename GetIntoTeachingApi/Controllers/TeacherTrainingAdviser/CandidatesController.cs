@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
+using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Models;
 
 namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
 {
@@ -11,10 +13,12 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
     public class CandidatesController : ControllerBase
     {
         private readonly ILogger<CandidatesController> _logger;
+        private readonly ICandidateAccessTokenService _tokenService;
 
-        public CandidatesController(ILogger<CandidatesController> logger)
+        public CandidatesController(ILogger<CandidatesController> logger, ICandidateAccessTokenService tokenService)
         {
             _logger = logger;
+            _tokenService = tokenService;
         }
 
         [HttpPost]
@@ -40,11 +44,18 @@ Retrieves an existing candidate for the Teacher Training Adviser service. The `a
             OperationId = "GetExistingTeacherTrainingAdviserCandidate",
             Tags = new[] { "Teacher Training Adviser" }
         )]
+        [ProducesResponseType(401)]
         public IActionResult Get(
-            [FromRoute, SwaggerParameter("Access token (PIN code).", Required = true)] string accessToken, 
-            [FromHeader(Name = "Authorization"), SwaggerParameter("Bearer <sharedSecret>.", Required = true)] string sharedSecret
+            [FromRoute, SwaggerParameter("Access token (PIN code).", Required = true)] string accessToken,
+            [FromHeader(Name = "Candidate-Email"), SwaggerParameter("Candidate email address.", Required = true)] string email
         )
         {
+            var challenge = new CandidateAccessTokenChallenge { Token = accessToken, Email = email };
+            if (!_tokenService.IsValid(challenge))
+            {
+                return Unauthorized();
+            }
+
             // TODO:
             return Ok(new Object());
         }
