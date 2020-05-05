@@ -1,0 +1,103 @@
+﻿using System;
+using System.Collections.Generic;
+using GetIntoTeachingApi.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
+
+namespace GetIntoTeachingApi.Controllers
+{
+    [Route("api/teaching_events")]
+    [ApiController]
+    public class TeachingEventsController : ControllerBase
+    {
+        private readonly ILogger<TeachingEventsController> _logger;
+
+        public TeachingEventsController(ILogger<TeachingEventsController> logger)
+        {
+            _logger = logger;
+        }
+
+        [HttpGet]
+        [Route("upcoming")]
+        [SwaggerOperation(
+            Summary = "Retrieves the upcoming teaching events.",
+            Description = @"
+Retrieves the upcoming teaching events; limited to 10 by default, but this can be increased to a 
+maximum of 50 using the `limit` query parameter.",
+            OperationId = "GetUpcomingTeachingEvents",
+            Tags = new[] { "Teaching Events" }
+        )]
+        public IActionResult GetUpcoming([FromQuery, SwaggerParameter("Number of results to return (maximum of 50).")] int limit)
+        {
+            // TODO:
+            return Ok(new[] { new Object() });
+        }
+
+        [HttpGet]
+        [Route("search")]
+        [SwaggerOperation(
+            Summary = "Searches for teaching events.",
+            Description = @"Searches for teaching events by postcode. Optionally limit the results by distance (in miles) and the type of event.",
+            OperationId = "SearchTeachingEvents",
+            Tags = new[] { "Teaching Events" }
+        )]
+        public IActionResult Search(
+            [FromQuery, SwaggerParameter("Postcode to center search around.", Required = true)] string postcode,
+            [FromQuery, SwaggerParameter("Search radius in miles (omit to search nationally).")] string radius,
+            [FromQuery, SwaggerParameter("Type of teaching events to search for (omit to search for all types). Must match an `eventType` of the `TeachingEvent` schema.")] int type
+            )
+        {
+            // TODO:
+            return Ok(new[] { new Object() });
+        }
+
+        [HttpGet]
+        [Route("{readableEventId}")]
+        [SwaggerOperation(
+            Summary = "Retrieves an event.",
+            OperationId = "GetTeachingEvent",
+            Tags = new[] { "Teaching Events" }
+        )]
+        public IActionResult Get([FromRoute, SwaggerParameter("The `readableEventId` of the `TeachingEvent`.", Required = true)] string readableEventId)
+        {
+            // TODO:
+            return Ok(new Object());
+        }
+
+        [HttpPost]
+        [SwaggerOperation(
+            Summary = "Creates a new teaching event.",
+            OperationId = "CreateTeachingEvent",
+            Tags = new[] { "Teaching Events" }
+        )]
+        [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
+        public IActionResult Create([FromBody, SwaggerRequestBody("Teaching event to create.", Required = true)] Object teachingEvent) // TODO:
+        {
+            // TODO:
+            return Ok(new Object());
+        }
+
+        [HttpPost]
+        [Route("{readableEventId}/attendees")]
+        [SwaggerOperation(
+            Summary = "Adds an attendee to a teaching event.",
+            OperationId = "AddTeachingEventAttendee",
+            Tags = new[] { "Teaching Events" }
+        )]
+        [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
+        public IActionResult AddAttendee(
+            [FromRoute, SwaggerParameter("The `readableEventId` of the `TeachingEvent`.", Required = true)] string readableEventId,
+            [FromBody, SwaggerRequestBody("Attendee to add to the teaching event.", Required = true)] CandidateIdentification attendee
+        )
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(this.ModelState);
+            }
+
+            // TODO:
+            return Ok(new Object());
+        }
+    }
+}
