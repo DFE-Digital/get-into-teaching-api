@@ -12,8 +12,33 @@ The GIT API aims to provide:
 
 ## Getting Started
 
-Clone the repository and run the application in Visual Studio or Visual Studio Code. You can then access the example endpoint at [https://localhost:5001/example](https://localhost:5001/example).
+The API is an ASP.NET Core web application; to get up and running clone the repository and open `GetIntoTeachingApi.sln` in Visual Studio.
 
-## Documentation
+When the application runs in development it will open the Swagger documentation by default.
 
-The Swagger documentation for the API can be found in [docs/swagger.yml](docs/swagger.yml).
+### Documentation
+
+[Swashbuckle](https://github.com/domaindrivendev/Swashbuckle.AspNetCore) is used for generating Swagger documentation. We use the swagger-ui middleware to expose interactive documentation when the application runs.
+
+We also use the [MicroElements.Swashbuckle.FluentValidation](https://github.com/micro-elements/MicroElements.Swashbuckle.FluentValidation) package to make Swashbuckle aware of the FluentValidation classes, so that additional validation meta data gets displayed alongside model attributes.
+
+### Validation
+
+[FluentValidation](https://fluentvalidation.net/) is used for validating the various models. The validators are registered at startup, so validating incoming payloads that have a corresponding validator is as simple as calling `ModelState.IsValid`.
+
+### Testing
+
+[XUnit](https://xunit.net/) is used for testing; all tests can be found in the `GetIntoTeachingTests` project. We also use [Moq](https://github.com/Moq/moq4/wiki/Quickstart) for mocking any dependencies and [FluentAssertions](https://fluentassertions.com) for assertions.
+
+The unit tests take the convention:
+
+```
+public void UnitOfWork_StateUnderTest_ExpectedBehavior()
+{
+    // arrange
+
+    // act
+
+    // assert
+}
+```
