@@ -7,6 +7,9 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
+using GetIntoTeachingApi.Auth;
+using GetIntoTeachingApi.Requirements;
 
 namespace GetIntoTeachingApi
 {
@@ -22,6 +25,15 @@ namespace GetIntoTeachingApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IAuthorizationHandler, SharedSecretHandler>();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("SharedSecret", policy => 
+                    policy.Requirements.Add(
+                        new SharedSecretRequirement(Environment.GetEnvironmentVariable("SHARED_SECRET"))
+                    )
+                );
+            });
             services.AddControllers().AddFluentValidation(c =>
             {
                 c.RegisterValidatorsFromAssemblyContaining<Startup>();
