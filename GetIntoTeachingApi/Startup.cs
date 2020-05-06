@@ -12,6 +12,8 @@ using GetIntoTeachingApi.Auth;
 using GetIntoTeachingApi.Requirements;
 using System.Collections.Generic;
 using GetIntoTeachingApi.OperationFilters;
+using GetIntoTeachingApi.Adapters;
+using GetIntoTeachingApi.Services;
 
 namespace GetIntoTeachingApi
 {
@@ -28,6 +30,10 @@ namespace GetIntoTeachingApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IAuthorizationHandler, SharedSecretHandler>();
+            services.AddSingleton<INotificationClientAdapter, NotificationClientAdapter>();
+            services.AddSingleton<ICandidateAccessTokenService, CandidateAccessTokenService>();
+            services.AddSingleton<INotifyService, NotifyService>();
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("SharedSecret", policy => 
@@ -36,10 +42,12 @@ namespace GetIntoTeachingApi
                     )
                 );
             });
+
             services.AddControllers().AddFluentValidation(c =>
             {
                 c.RegisterValidatorsFromAssemblyContaining<Startup>();
             });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1",
@@ -65,12 +73,14 @@ The GIT API aims to provide:
                         }
                     }
                 );
+
                 c.AddSecurityDefinition("apiKey", new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.ApiKey,
                     Name = "Authorization",
                     In = ParameterLocation.Header
                 });
+                
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     {
@@ -81,6 +91,7 @@ The GIT API aims to provide:
                         new List<string>()
                     }
                 });
+
                 c.OperationFilter<AuthResponsesOperationFilter>();
                 c.EnableAnnotations();
                 c.AddFluentValidationRules();

@@ -42,3 +42,7 @@ public void UnitOfWork_StateUnderTest_ExpectedBehavior()
     // assert
 }
 ```
+
+### Emails
+
+We send emails using the [GOV.UK Notify](https://www.notifications.service.gov.uk/) service; leveraging the [.Net Client](https://github.com/alphagov/notifications-net-client).
