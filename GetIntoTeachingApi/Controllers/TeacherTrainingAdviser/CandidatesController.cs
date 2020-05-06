@@ -5,11 +5,13 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
 {
     [Route("api/teacher_training_adviser/candidates")]
     [ApiController]
+    [Authorize(Policy = "SharedSecret")]
     public class CandidatesController : ControllerBase
     {
         private readonly ILogger<CandidatesController> _logger;
@@ -44,7 +46,6 @@ Retrieves an existing candidate for the Teacher Training Adviser service. The `a
             OperationId = "GetExistingTeacherTrainingAdviserCandidate",
             Tags = new[] { "Teacher Training Adviser" }
         )]
-        [ProducesResponseType(401)]
         public IActionResult Get(
             [FromRoute, SwaggerParameter("Access token (PIN code).", Required = true)] string accessToken,
             [FromHeader(Name = "Candidate-Email"), SwaggerParameter("Candidate email address.", Required = true)] string email

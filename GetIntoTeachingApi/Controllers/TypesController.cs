@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -7,6 +8,7 @@ namespace GetIntoTeachingApi.Controllers
 {
     [Route("api/types")]
     [ApiController]
+    [Authorize(Policy = "SharedSecret")]
     public class TypesController : ControllerBase
     {
         private readonly ILogger<TypesController> _logger;

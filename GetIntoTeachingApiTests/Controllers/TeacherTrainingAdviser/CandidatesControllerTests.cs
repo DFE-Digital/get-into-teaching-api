@@ -6,11 +6,18 @@ using GetIntoTeachingApi.Controllers.TeacherTrainingAdviser;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApiTests.Utils;
 
 namespace GetIntoTeachingApiTests.TeacherTrainingAdvisor.Controllers
 {
     public class CandidatesControllerTests
     {
+        [Fact]
+        public void Authorize_HasSharedSecretPolicy()
+        {
+            PolicyTestHelpers.VerifyTypeIsAuthorizeWithSharedSecret(typeof(CandidatesController));
+        }
+
         [Fact]
         public void Get_InvalidAccessToken_RespondsWithUnauthorized()
         {

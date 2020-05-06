@@ -7,6 +7,11 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
+using GetIntoTeachingApi.Auth;
+using GetIntoTeachingApi.Requirements;
+using System.Collections.Generic;
+using GetIntoTeachingApi.OperationFilters;
 
 namespace GetIntoTeachingApi
 {
@@ -22,6 +27,15 @@ namespace GetIntoTeachingApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IAuthorizationHandler, SharedSecretHandler>();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("SharedSecret", policy => 
+                    policy.Requirements.Add(
+                        new SharedSecretRequirement(Environment.GetEnvironmentVariable("SHARED_SECRET"))
+                    )
+                );
+            });
             services.AddControllers().AddFluentValidation(c =>
             {
                 c.RegisterValidatorsFromAssemblyContaining<Startup>();
@@ -51,6 +65,23 @@ The GIT API aims to provide:
                         }
                     }
                 );
+                c.AddSecurityDefinition("apiKey", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.ApiKey,
+                    Name = "Authorization",
+                    In = ParameterLocation.Header
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "apiKey" }
+                        },
+                        new List<string>()
+                    }
+                });
+                c.OperationFilter<AuthResponsesOperationFilter>();
                 c.EnableAnnotations();
                 c.AddFluentValidationRules();
             });
