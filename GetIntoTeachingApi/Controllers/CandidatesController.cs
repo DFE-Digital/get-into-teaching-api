@@ -1,9 +1,11 @@
 ﻿using GetIntoTeachingApi.Models;
 using Microsoft.AspNetCore.Authorization;
+using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GetIntoTeachingApi.Controllers
 {
@@ -13,10 +15,18 @@ namespace GetIntoTeachingApi.Controllers
     public class CandidatesController : ControllerBase
     {
         private readonly ILogger<CandidatesController> _logger;
+        private readonly ICandidateAccessTokenService _tokenService;
+        private readonly INotifyService _notifyService;
 
-        public CandidatesController(ILogger<CandidatesController> logger)
+        public CandidatesController(
+            ILogger<CandidatesController> logger, 
+            ICandidateAccessTokenService tokenService, 
+            INotifyService notifyService
+        )
         {
             _logger = logger;
+            _tokenService = tokenService;
+            _notifyService = notifyService;
         }
 
         [HttpPost]
@@ -36,6 +46,13 @@ that can then be used for verification.",
             if (!ModelState.IsValid)
             {
                 return BadRequest(this.ModelState);
+            }
+
+            if (true) // TODO:
+            {
+                string token = _tokenService.GenerateToken(candidate.Email);
+                var personalisation = new Dictionary<string, dynamic> { { "pin_code", token } };
+                _notifyService.SendEmail(candidate.Email, NotifyService.NewPinCodeEmailTemplateId, personalisation);
             }
 
             // TODO:
