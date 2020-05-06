@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GetIntoTeachingApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -9,6 +10,7 @@ namespace GetIntoTeachingApi.Controllers
 {
     [Route("api/teaching_events")]
     [ApiController]
+    [Authorize(Policy = "SharedSecret")]
     public class TeachingEventsController : ControllerBase
     {
         private readonly ILogger<TeachingEventsController> _logger;
