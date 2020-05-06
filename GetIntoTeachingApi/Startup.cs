@@ -10,6 +10,8 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using GetIntoTeachingApi.Auth;
 using GetIntoTeachingApi.Requirements;
+using System.Collections.Generic;
+using GetIntoTeachingApi.OperationFilters;
 
 namespace GetIntoTeachingApi
 {
@@ -63,6 +65,23 @@ The GIT API aims to provide:
                         }
                     }
                 );
+                c.AddSecurityDefinition("apiKey", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.ApiKey,
+                    Name = "Authorization",
+                    In = ParameterLocation.Header
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "apiKey" }
+                        },
+                        new List<string>()
+                    }
+                });
+                c.OperationFilter<AuthResponsesOperationFilter>();
                 c.EnableAnnotations();
                 c.AddFluentValidationRules();
             });

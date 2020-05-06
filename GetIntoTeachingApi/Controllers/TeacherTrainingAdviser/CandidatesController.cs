@@ -46,7 +46,6 @@ Retrieves an existing candidate for the Teacher Training Adviser service. The `a
             OperationId = "GetExistingTeacherTrainingAdviserCandidate",
             Tags = new[] { "Teacher Training Adviser" }
         )]
-        [ProducesResponseType(401)]
         public IActionResult Get(
             [FromRoute, SwaggerParameter("Access token (PIN code).", Required = true)] string accessToken,
             [FromHeader(Name = "Candidate-Email"), SwaggerParameter("Candidate email address.", Required = true)] string email
