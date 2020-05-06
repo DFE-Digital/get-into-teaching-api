@@ -5,11 +5,13 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
 {
     [Route("api/teacher_training_adviser/candidates")]
     [ApiController]
+    [Authorize(Policy = "SharedSecret")]
     public class CandidatesController : ControllerBase
     {
         private readonly ILogger<CandidatesController> _logger;

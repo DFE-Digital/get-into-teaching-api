@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
@@ -7,6 +8,7 @@ namespace GetIntoTeachingApi.Controllers
 {
     [Route("api/privacy_policies")]
     [ApiController]
+    [Authorize(Policy = "SharedSecret")]
     public class PrivacyPoliciesController : ControllerBase
     {
         private readonly ILogger<PrivacyPoliciesController> _logger;
