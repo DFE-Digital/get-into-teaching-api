@@ -5,11 +5,18 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Microsoft.AspNetCore.Mvc;
 using FluentAssertions;
+using GetIntoTeachingApiTests.Utils;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
     public class TeachingEventsControllerTests
     {
+        [Fact]
+        public void Authorize_HasSharedSecretPolicy()
+        {
+            PolicyTestHelpers.VerifyTypeIsAuthorizeWithSharedSecret(typeof(TeachingEventsController));
+        }
+
         [Fact]
         public void AddAttendee_InvalidRequest_RespondsWithValidationErrors()
         {

@@ -1,4 +1,5 @@
 ﻿using GetIntoTeachingApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -8,6 +9,7 @@ namespace GetIntoTeachingApi.Controllers
 {
     [Route("api/candidates")]
     [ApiController]
+    [Authorize(Policy = "SharedSecret")]
     public class CandidatesController : ControllerBase
     {
         private readonly ILogger<CandidatesController> _logger;
