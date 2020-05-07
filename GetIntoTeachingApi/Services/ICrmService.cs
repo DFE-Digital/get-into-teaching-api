@@ -8,5 +8,6 @@ namespace GetIntoTeachingApi.Services
     {
         public Task<IEnumerable<TypeEntity>> GetTeachingSubjects();
         public Task<IEnumerable<TypeEntity>> GetCountries();
+        public Task<PrivacyPolicy> GetLatestPrivacyPolicy();
     }
 }
