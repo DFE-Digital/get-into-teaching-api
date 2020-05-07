@@ -16,11 +16,33 @@ The API is an ASP.NET Core web application; to get up and running clone the repo
 
 When the application runs in development it will open the Swagger documentation by default.
 
+### Environment
+
+If you want to run the API locally end-to-end you will need to set some environment variables:
+
+```
+# Secret shared between the API and client.
+SHARED_SECRET=****
+
+# Secret used when generating Timed One Time Passwords
+TOTP_SECRET_KEY=****
+
+# CRM credentials
+CRM_SERVICE_URL=****
+CRM_CLIENT_ID=****
+CRM_CLIENT_SECRET=****
+
+# GOV.UK Notify Service credentials
+NOTIFY_API_KEY=****
+```
+
 ### Documentation
 
 [Swashbuckle](https://github.com/domaindrivendev/Swashbuckle.AspNetCore) is used for generating Swagger documentation. We use the swagger-ui middleware to expose interactive documentation when the application runs.
 
 We also use the [MicroElements.Swashbuckle.FluentValidation](https://github.com/micro-elements/MicroElements.Swashbuckle.FluentValidation) package to make Swashbuckle aware of the FluentValidation classes, so that additional validation meta data gets displayed alongside model attributes.
+
+You can hit the API endpoints directly from the Swagger UI - hit the `Authorize` button at the top and enter the development `Authorization` header value `Bearer <shared_secret>`. You can then open up an endpoint and 'Try it out' to execute a request.
 
 ### Validation
 
