@@ -1,8 +1,11 @@
-﻿using System;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
+using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Threading.Tasks;
 
 namespace GetIntoTeachingApi.Controllers
 {
@@ -12,10 +15,12 @@ namespace GetIntoTeachingApi.Controllers
     public class TypesController : ControllerBase
     {
         private readonly ILogger<TypesController> _logger;
+        private readonly ICrmService _crm;
 
-        public TypesController(ILogger<TypesController> logger)
+        public TypesController(ILogger<TypesController> logger, ICrmService crm)
         {
             _logger = logger;
+            _crm = crm;
         }
 
         [HttpGet]
@@ -25,10 +30,11 @@ namespace GetIntoTeachingApi.Controllers
             OperationId = "GetCountryTypes",
             Tags = new[] { "Types" }
         )]
-        public IActionResult GetCountries()
+        [ProducesResponseType(typeof(TypeEntity), 200)]
+        public async Task<IActionResult> GetCountries()
         {
-            // TODO:
-            return Ok(new[] { new Object() });
+            IEnumerable<TypeEntity> countryTypes = await _crm.GetCountries();
+            return Ok(countryTypes);
         }
 
         [HttpGet]
@@ -38,10 +44,11 @@ namespace GetIntoTeachingApi.Controllers
             OperationId = "GetTeachingSubjects",
             Tags = new[] { "Types" }
         )]
-        public IActionResult GetTeachingSubjects()
+        [ProducesResponseType(typeof(TypeEntity), 200)]
+        public async Task<IActionResult> GetTeachingSubjects()
         {
-            // TODO:
-            return Ok(new[] { new Object() });
+            IEnumerable<TypeEntity> teachingSubjectTypes = await _crm.GetTeachingSubjects();
+            return Ok(teachingSubjectTypes);
         }
     }
 }
