@@ -9,6 +9,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using Xunit;
+using System.Threading.Tasks;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -32,24 +33,24 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void GetCountries_ReturnsAllCountries()
+        public async void GetCountries_ReturnsAllCountries()
         {
             IEnumerable<TypeEntity> mockEntities = MockTypeEntities();
-            _mockCrm.Setup(mock => mock.GetCountries()).Returns(mockEntities);
+            _mockCrm.Setup(mock => mock.GetCountries()).Returns(Task.FromResult(mockEntities));
 
-            var response = _controller.GetCountries();
+            var response = await _controller.GetCountries();
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().BeEquivalentTo(mockEntities);
         }
 
         [Fact]
-        public void GetTeachingSubjects_ReturnsAllSubjects()
+        public async void GetTeachingSubjects_ReturnsAllSubjects()
         {
             IEnumerable<TypeEntity> mockEntities = MockTypeEntities();
-            _mockCrm.Setup(mock => mock.GetTeachingSubjects()).Returns(mockEntities);
+            _mockCrm.Setup(mock => mock.GetTeachingSubjects()).Returns(Task.FromResult(mockEntities));
 
-            var response = _controller.GetTeachingSubjects();
+            var response = await _controller.GetTeachingSubjects();
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().BeEquivalentTo(mockEntities);

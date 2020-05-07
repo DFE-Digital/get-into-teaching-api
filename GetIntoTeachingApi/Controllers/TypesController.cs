@@ -5,6 +5,7 @@ using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Threading.Tasks;
 
 namespace GetIntoTeachingApi.Controllers
 {
@@ -30,9 +31,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(TypeEntity), 200)]
-        public IActionResult GetCountries()
+        public async Task<IActionResult> GetCountries()
         {
-            IEnumerable<TypeEntity> countryTypes = _crm.GetCountries();
+            IEnumerable<TypeEntity> countryTypes = await _crm.GetCountries();
             return Ok(countryTypes);
         }
 
@@ -44,9 +45,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(TypeEntity), 200)]
-        public IActionResult GetTeachingSubjects()
+        public async Task<IActionResult> GetTeachingSubjects()
         {
-            IEnumerable<TypeEntity> teachingSubjectTypes = _crm.GetTeachingSubjects();
+            IEnumerable<TypeEntity> teachingSubjectTypes = await _crm.GetTeachingSubjects();
             return Ok(teachingSubjectTypes);
         }
     }

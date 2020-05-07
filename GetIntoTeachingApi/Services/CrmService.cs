@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
@@ -18,15 +19,15 @@ namespace GetIntoTeachingApi.Services
             _mapper = mapper;
         }
 
-        public IEnumerable<TypeEntity> GetTeachingSubjects()
+        public async Task<IEnumerable<TypeEntity>> GetTeachingSubjects()
         {
-            return from subject in _context.CreateQuery(ConnectionString(), "dfe_teachingsubjectlist")
+            return from subject in await _context.CreateQuery(ConnectionString(), "dfe_teachingsubjectlist")
                    select _mapper.Map<TypeEntity>(subject);
         }
 
-        public IEnumerable<TypeEntity> GetCountries()
+        public async Task<IEnumerable<TypeEntity>> GetCountries()
         {
-            return from subject in _context.CreateQuery(ConnectionString(), "dfe_country")
+            return from subject in await _context.CreateQuery(ConnectionString(), "dfe_country")
                    select _mapper.Map<TypeEntity>(subject);
         }
 
