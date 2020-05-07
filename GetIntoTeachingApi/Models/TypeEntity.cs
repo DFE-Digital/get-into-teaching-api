@@ -1,4 +1,7 @@
-﻿using System;
+﻿using AutoMapper;
+using AutoMapper.Configuration.Annotations;
+using Microsoft.Xrm.Sdk;
+using System;
 
 namespace GetIntoTeachingApi.Models
 {
