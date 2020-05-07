@@ -1,18 +1,18 @@
 ﻿using AutoMapper;
 using GetIntoTeachingApi.Profiles;
-using Xunit;
 
-namespace GetIntoTeachingApiTests.Profiles
+namespace GetIntoTeachingApiTests.Utils
 {
-    public class ProfileTests
+    public static class MapperHelpers
     {
-        [Fact]
-        public void TypeEntityProfile_HasValidConfiguration()
+        public static Mapper CreateMapper()
         {
             var config = new MapperConfiguration(config => {
                 config.AddProfile<TypeEntityProfile>();
+                config.AddProfile<PrivacyPolicyProfile>();
             });
-            config.AssertConfigurationIsValid();
+
+            return new Mapper(config);
         }
     }
 }

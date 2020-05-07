@@ -3,10 +3,10 @@ using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Profiles;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApiTests.Utils;
 using Microsoft.Xrm.Sdk;
 using Moq;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,13 +33,8 @@ namespace GetIntoTeachingApiTests.Services
             Environment.SetEnvironmentVariable("CRM_CLIENT_ID", "client_id");
             Environment.SetEnvironmentVariable("CRM_CLIENT_SECRET", "client_secret");
 
-            var config = new MapperConfiguration(config => {
-                config.AddProfile<TypeEntityProfile>();
-            });
-            var mapper = new Mapper(config);
-
             _mockContext = new Mock<IOrganizationServiceContextAdapter>();
-            _crm = new CrmService(_mockContext.Object, mapper);
+            _crm = new CrmService(_mockContext.Object, MapperHelpers.CreateMapper());
         }
 
         public void Dispose()
@@ -53,7 +48,8 @@ namespace GetIntoTeachingApiTests.Services
         public async void GetCountries_ReturnsAllOrderedByName()
         {
             IQueryable<Entity> queryableCountries = MockCountries().AsQueryable();
-            _mockContext.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_country")).Returns(Task.FromResult(queryableCountries));
+            _mockContext.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_country"))
+                .Returns(Task.FromResult(queryableCountries));
 
             var result = await _crm.GetCountries();
 
@@ -66,13 +62,55 @@ namespace GetIntoTeachingApiTests.Services
         public async void GetTeachingSubjects_ReturnsAllOrderedByName()
         {
             IQueryable<Entity> queryableCountries = MockTeachingSubjects().AsQueryable();
-            _mockContext.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_teachingsubjectlist")).Returns(Task.FromResult(queryableCountries));
+            _mockContext.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_teachingsubjectlist"))
+                .Returns(Task.FromResult(queryableCountries));
 
             var result = await _crm.GetTeachingSubjects();
 
             result.Select(subject => subject.Value).Should().BeEquivalentTo(
                 new[] { "Subject 1", "Subject 2", "Subject 3" }
             );
+        }
+
+        [Fact]
+        public async void GetLatestPrivacyPolicy_ReturnsMostRecentlyCreatedActiveWebPrivacyPolicy()
+        {
+            IQueryable<Entity> queryablePrivacyPolicies = MockPrivacyPolicies().AsQueryable();
+            _mockContext.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_privacypolicy"))
+                .Returns(Task.FromResult(queryablePrivacyPolicies));
+
+            var result = await _crm.GetLatestPrivacyPolicy();
+
+            result.Text.Should().Be("Latest Active Web");
+        }
+
+        private IEnumerable<Entity> MockPrivacyPolicies()
+        {
+            var policy1 = new Entity("dfe_privacypolicy");
+            policy1.Attributes["dfe_details"] = "Latest Active Web";
+            policy1.Attributes["dfe_policytype"] = new OptionSetValue { Value = (int) CrmService.PrivacyPolicyType.Web };
+            policy1.Attributes["createdon"] = DateTime.UtcNow.AddDays(-10);
+            policy1.Attributes["dfe_active"] = true;
+
+            var policy2 = new Entity("dfe_privacypolicy");
+            policy2.Attributes["dfe_details"] = "Not Web";
+            policy2.Attributes["dfe_policytype"] = new OptionSetValue { Value = 123 };
+            policy2.Attributes["createdon"] = DateTime.UtcNow.AddDays(-5);
+            policy2.Attributes["dfe_active"] = true;
+
+            var policy3 = new Entity("dfe_privacypolicy");
+            policy3.Attributes["dfe_policytype"] = new OptionSetValue { Value = (int)CrmService.PrivacyPolicyType.Web };
+            policy3.Attributes["dfe_details"] = "Not Active";
+            policy3.Attributes["createdon"] = DateTime.UtcNow.AddDays(-3);
+            policy3.Attributes["dfe_active"] = false;
+
+            var policy4 = new Entity("dfe_privacypolicy");
+            policy4.Attributes["dfe_details"] = "Not Latest";
+            policy4.Attributes["dfe_policytype"] = new OptionSetValue { Value = (int)CrmService.PrivacyPolicyType.Web };
+            policy4.Attributes["createdon"] = DateTime.UtcNow.AddDays(-15);
+            policy4.Attributes["dfe_active"] = true;
+
+            return new[] { policy1, policy2, policy3, policy4 };
         }
 
         private IEnumerable<Entity> MockCountries()
