@@ -9,6 +9,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Services
@@ -49,12 +50,12 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void GetCountries_ReturnsAllOrderedByName()
+        public async void GetCountries_ReturnsAllOrderedByName()
         {
             IQueryable<Entity> queryableCountries = MockCountries().AsQueryable();
-            _mockContext.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_country")).Returns(queryableCountries);
+            _mockContext.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_country")).Returns(Task.FromResult(queryableCountries));
 
-            var result = _crm.GetCountries();
+            var result = await _crm.GetCountries();
 
             result.Select(country => country.Value).Should().BeEquivalentTo(
                 new[] { "Country 1", "Country 2", "Country 3" }
@@ -62,12 +63,12 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void GetTeachingSubjects_ReturnsAllOrderedByName()
+        public async void GetTeachingSubjects_ReturnsAllOrderedByName()
         {
             IQueryable<Entity> queryableCountries = MockTeachingSubjects().AsQueryable();
-            _mockContext.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_teachingsubjectlist")).Returns(queryableCountries);
+            _mockContext.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_teachingsubjectlist")).Returns(Task.FromResult(queryableCountries));
 
-            var result = _crm.GetTeachingSubjects();
+            var result = await _crm.GetTeachingSubjects();
 
             result.Select(subject => subject.Value).Should().BeEquivalentTo(
                 new[] { "Subject 1", "Subject 2", "Subject 3" }
