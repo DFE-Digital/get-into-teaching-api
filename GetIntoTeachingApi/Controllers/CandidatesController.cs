@@ -30,7 +30,7 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpPost]
-        [Route("access_token")]
+        [Route("access_tokens")]
         [SwaggerOperation(
             Summary = "Creates a candidate access token.",
             Description = @"

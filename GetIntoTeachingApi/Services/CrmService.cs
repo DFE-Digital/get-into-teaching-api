@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using AutoMapper;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
+using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Services
 {
     public class CrmService : ICrmService
-    {
+    {       
+        public enum PrivacyPolicyType { Web = 222750001 }
         private readonly IOrganizationServiceContextAdapter _context;
         private readonly IMapper _mapper;
 
@@ -21,14 +23,26 @@ namespace GetIntoTeachingApi.Services
 
         public async Task<IEnumerable<TypeEntity>> GetTeachingSubjects()
         {
-            return from subject in await _context.CreateQuery(ConnectionString(), "dfe_teachingsubjectlist")
-                   select _mapper.Map<TypeEntity>(subject);
+            return (await _context.CreateQuery(ConnectionString(), "dfe_teachingsubjectlist"))
+                .Select((subject) => _mapper.Map<TypeEntity>(subject));
         }
 
         public async Task<IEnumerable<TypeEntity>> GetCountries()
         {
-            return from subject in await _context.CreateQuery(ConnectionString(), "dfe_country")
-                   select _mapper.Map<TypeEntity>(subject);
+            return (await _context.CreateQuery(ConnectionString(), "dfe_country"))
+                .Select((subject) => _mapper.Map<TypeEntity>(subject));
+        }
+
+        public async Task<PrivacyPolicy> GetLatestPrivacyPolicy()
+        {
+            return (await _context.CreateQuery(ConnectionString(), "dfe_privacypolicy"))
+                .Where((policy) => 
+                    policy.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int) PrivacyPolicyType.Web && 
+                    policy.GetAttributeValue<bool>("dfe_active")
+                )
+                .OrderByDescending((policy) => policy.GetAttributeValue<DateTime>("createdon"))
+                .Select((policy) => _mapper.Map<PrivacyPolicy>(policy))
+                .First();
         }
 
         private string ConnectionString()

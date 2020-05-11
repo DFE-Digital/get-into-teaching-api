@@ -41,7 +41,7 @@ namespace GetIntoTeachingApiTests.Controllers
             var response = await _controller.GetCountries();
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
-            ok.Value.Should().BeEquivalentTo(mockEntities);
+            ok.Value.Should().Be(mockEntities);
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace GetIntoTeachingApiTests.Controllers
             var response = await _controller.GetTeachingSubjects();
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
-            ok.Value.Should().BeEquivalentTo(mockEntities);
+            ok.Value.Should().Be(mockEntities);
         }
 
         private IEnumerable<TypeEntity> MockTypeEntities()

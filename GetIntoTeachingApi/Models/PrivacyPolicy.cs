@@ -2,9 +2,9 @@
 
 namespace GetIntoTeachingApi.Models
 {
-    public class TypeEntity
+    public class PrivacyPolicy
     {
         public Guid Id { get; set; }
-        public dynamic Value { get; set; }
+        public string Text { get; set; }
     }
 }

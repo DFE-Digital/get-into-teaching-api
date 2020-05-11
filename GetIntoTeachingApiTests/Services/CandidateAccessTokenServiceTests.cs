@@ -42,7 +42,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             string token1 = _service.GenerateToken("email1@address.com");
             string token2 = _service.GenerateToken("email2@address.com");
-            token1.Should().NotBeEquivalentTo(token2);
+            token1.Should().NotBe(token2);
         }
 
         [Fact]
@@ -50,7 +50,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             string token1 = _service.GenerateToken("email@address.com");
             string token2 = _service.GenerateToken("email@address.com");
-            token1.Should().BeEquivalentTo(token2);
+            token1.Should().Be(token2);
         }
 
         [Theory]
