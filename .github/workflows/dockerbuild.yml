@@ -5,7 +5,7 @@ on:
     branches:
       - master
 env:
-  DOCKERHUB_REPOSITORY: dfedigital/get-into-teaching-frontend
+  DOCKERHUB_REPOSITORY: dfedigital/get-into-teaching-api
   GOVUKPAAS_ORG: dfe-teacher-services
   GOVUKPAAS_SPACE: get-into-teaching
   CONTAINER: get-into-teaching-api
@@ -38,7 +38,7 @@ jobs:
       - name: Download CloudFoundry CLI
         run: wget -O /tmp/cf-cli.deb "https://packages.cloudfoundry.org/stable?release=debian64&source=github"
       - name: Install CloudFoundry CLI
-        run: sudo dpkg -i /tmp/cf-cli.deb
+        run: dpkg -i /tmp/cf-cli.deb
       - name: Check CloudFoundry CLI version
         run: cf --version
       - name: Login to PaaS
