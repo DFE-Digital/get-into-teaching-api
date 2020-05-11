@@ -10,7 +10,7 @@ namespace GetIntoTeachingApi.Profiles
         {
             CreateMap<Entity, TypeEntity>().ForMember(dest => 
                 dest.Value,
-                opt => opt.MapFrom(src => src.Attributes["dfe_name"])
+                opt => opt.MapFrom(src => src.GetAttributeValue<string>("dfe_name"))
             );
         }
     }

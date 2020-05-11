@@ -30,7 +30,7 @@ namespace GetIntoTeachingApi.Controllers
             OperationId = "GetCountryTypes",
             Tags = new[] { "Types" }
         )]
-        [ProducesResponseType(typeof(TypeEntity), 200)]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetCountries()
         {
             IEnumerable<TypeEntity> countryTypes = await _crm.GetCountries();
@@ -44,7 +44,7 @@ namespace GetIntoTeachingApi.Controllers
             OperationId = "GetTeachingSubjects",
             Tags = new[] { "Types" }
         )]
-        [ProducesResponseType(typeof(TypeEntity), 200)]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetTeachingSubjects()
         {
             IEnumerable<TypeEntity> teachingSubjectTypes = await _crm.GetTeachingSubjects();

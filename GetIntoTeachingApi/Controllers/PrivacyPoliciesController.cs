@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
+using System.Threading.Tasks;
 
 namespace GetIntoTeachingApi.Controllers
 {
@@ -12,10 +15,12 @@ namespace GetIntoTeachingApi.Controllers
     public class PrivacyPoliciesController : ControllerBase
     {
         private readonly ILogger<PrivacyPoliciesController> _logger;
+        private readonly ICrmService _crm;
 
-        public PrivacyPoliciesController(ILogger<PrivacyPoliciesController> logger)
+        public PrivacyPoliciesController(ILogger<PrivacyPoliciesController> logger, ICrmService crm)
         {
             _logger = logger;
+            _crm = crm;
         }
 
         [HttpGet]
@@ -25,10 +30,11 @@ namespace GetIntoTeachingApi.Controllers
             OperationId = "GetLatestPrivacyPolicy",
             Tags = new[] { "Privacy Policies" }
         )]
-        public IActionResult GetLatest()
+        [ProducesResponseType(typeof(PrivacyPolicy), 200)]
+        public async Task<IActionResult> GetLatest()
         {
-            // TODO:
-            return Ok(new Object());
+            PrivacyPolicy privacyPolicy = await _crm.GetLatestPrivacyPolicy();
+            return Ok(privacyPolicy);
         }
     }
 }
