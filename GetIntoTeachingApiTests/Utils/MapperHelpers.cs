@@ -10,6 +10,7 @@ namespace GetIntoTeachingApiTests.Utils
             var config = new MapperConfiguration(config => {
                 config.AddProfile<TypeEntityProfile>();
                 config.AddProfile<PrivacyPolicyProfile>();
+                config.AddProfile<CandidateProfile>();
             });
 
             return new Mapper(config);

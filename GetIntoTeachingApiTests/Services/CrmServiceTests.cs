@@ -1,7 +1,5 @@
-﻿using AutoMapper;
-using FluentAssertions;
+﻿using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
-using GetIntoTeachingApi.Profiles;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApiTests.Utils;
 using Microsoft.Xrm.Sdk;
@@ -82,6 +80,45 @@ namespace GetIntoTeachingApiTests.Services
             var result = await _crm.GetLatestPrivacyPolicy();
 
             result.Text.Should().Be("Latest Active Web");
+        }
+
+        [Theory]
+        [InlineData("john@doe.com", "New John")]
+        [InlineData("JOHN@doe.com", "New John")]
+        [InlineData("jane@doe.com", "Jane")]
+        [InlineData("bob@doe.com", null)]
+        public async void GetCandidate_MatchesNewestCandidateByEmail(string email, string firstName)
+        {
+            IQueryable<Entity> queryableCandidates = MockCandidates().AsQueryable();
+            _mockContext.Setup(mock => mock.CreateQuery(ConnectionString, "contact"))
+                .Returns(Task.FromResult(queryableCandidates));
+
+            var result = await _crm.GetCandidate(email);
+
+            result?.FirstName.Should().Be(firstName);
+        }
+
+        private IEnumerable<Entity> MockCandidates()
+        {
+            var candidate1 = new Entity("contact");
+            candidate1.Attributes["emailaddress1"] = "jane@doe.com";
+            candidate1.Attributes["firstname"] = "Jane";
+            candidate1.Attributes["lastname"] = "Doe";
+            candidate1.Attributes["createdon"] = DateTime.Now;
+
+            var candidate2 = new Entity("contact");
+            candidate2.Attributes["emailaddress1"] = "john@doe.com";
+            candidate2.Attributes["firstname"] = "New John";
+            candidate2.Attributes["lastname"] = "Doe";
+            candidate2.Attributes["createdon"] = DateTime.Now;
+
+            var candidate3 = new Entity("contact");
+            candidate3.Attributes["emailaddress1"] = "john@doe.com";
+            candidate3.Attributes["firstname"] = "Old John";
+            candidate3.Attributes["lastname"] = "Doe";
+            candidate3.Attributes["createdon"] = DateTime.Now.AddDays(-5);
+
+            return new[] { candidate1, candidate2, candidate3 };
         }
 
         private IEnumerable<Entity> MockPrivacyPolicies()

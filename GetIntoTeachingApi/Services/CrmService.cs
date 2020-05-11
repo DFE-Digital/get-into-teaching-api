@@ -45,6 +45,19 @@ namespace GetIntoTeachingApi.Services
                 .First();
         }
 
+        public async Task<Candidate> GetCandidate(string email)
+        {
+            return (await _context.CreateQuery(ConnectionString(), "contact"))
+                .Where((contact) =>
+                    // Will perform a case-insensitive comparison
+                    contact.GetAttributeValue<string>("emailaddress1") == email
+                )
+                .OrderByDescending((contact) => contact.GetAttributeValue<DateTime>("createdon"))
+                .Select((candidate) => _mapper.Map<Candidate>(candidate))
+                .FirstOrDefault();
+        }
+
+
         private string ConnectionString()
         {
             return $"AuthType=ClientSecret; url={InstanceUrl()}; ClientId={ClientId()}; ClientSecret={ClientSecret()}";
