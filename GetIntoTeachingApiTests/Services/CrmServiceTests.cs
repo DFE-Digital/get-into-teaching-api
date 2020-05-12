@@ -18,7 +18,7 @@ namespace GetIntoTeachingApiTests.Services
         private string _previousCrmServiceUrl;
         private string _previousCrmClientId;
         private string _previousCrmClientSecret;
-        private Mock<IOrganizationServiceContextAdapter> _mockContext;
+        private Mock<IOrganizationServiceAdapter> _mockOrganizationalService;
         private ICrmService _crm;
 
         public CrmServiceTests()
@@ -31,8 +31,8 @@ namespace GetIntoTeachingApiTests.Services
             Environment.SetEnvironmentVariable("CRM_CLIENT_ID", "client_id");
             Environment.SetEnvironmentVariable("CRM_CLIENT_SECRET", "client_secret");
 
-            _mockContext = new Mock<IOrganizationServiceContextAdapter>();
-            _crm = new CrmService(_mockContext.Object, MapperHelpers.CreateMapper());
+            _mockOrganizationalService = new Mock<IOrganizationServiceAdapter>();
+            _crm = new CrmService(_mockOrganizationalService.Object, MapperHelpers.CreateMapper());
         }
 
         public void Dispose()
@@ -46,7 +46,7 @@ namespace GetIntoTeachingApiTests.Services
         public async void GetCountries_ReturnsAllOrderedByName()
         {
             IQueryable<Entity> queryableCountries = MockCountries().AsQueryable();
-            _mockContext.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_country"))
+            _mockOrganizationalService.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_country"))
                 .Returns(Task.FromResult(queryableCountries));
 
             var result = await _crm.GetCountries();
@@ -60,7 +60,7 @@ namespace GetIntoTeachingApiTests.Services
         public async void GetTeachingSubjects_ReturnsAllOrderedByName()
         {
             IQueryable<Entity> queryableCountries = MockTeachingSubjects().AsQueryable();
-            _mockContext.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_teachingsubjectlist"))
+            _mockOrganizationalService.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_teachingsubjectlist"))
                 .Returns(Task.FromResult(queryableCountries));
 
             var result = await _crm.GetTeachingSubjects();
@@ -74,7 +74,7 @@ namespace GetIntoTeachingApiTests.Services
         public async void GetLatestPrivacyPolicy_ReturnsMostRecentlyCreatedActiveWebPrivacyPolicy()
         {
             IQueryable<Entity> queryablePrivacyPolicies = MockPrivacyPolicies().AsQueryable();
-            _mockContext.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_privacypolicy"))
+            _mockOrganizationalService.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_privacypolicy"))
                 .Returns(Task.FromResult(queryablePrivacyPolicies));
 
             var result = await _crm.GetLatestPrivacyPolicy();
@@ -90,7 +90,7 @@ namespace GetIntoTeachingApiTests.Services
         public async void GetCandidate_MatchesNewestCandidateByEmail(string email, string firstName)
         {
             IQueryable<Entity> queryableCandidates = MockCandidates().AsQueryable();
-            _mockContext.Setup(mock => mock.CreateQuery(ConnectionString, "contact"))
+            _mockOrganizationalService.Setup(mock => mock.CreateQuery(ConnectionString, "contact"))
                 .Returns(Task.FromResult(queryableCandidates));
 
             var result = await _crm.GetCandidate(email);
