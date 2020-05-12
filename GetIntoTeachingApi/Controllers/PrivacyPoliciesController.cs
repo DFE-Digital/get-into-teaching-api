@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
-using System.Threading.Tasks;
 
 namespace GetIntoTeachingApi.Controllers
 {
@@ -31,9 +29,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Privacy Policies" }
         )]
         [ProducesResponseType(typeof(PrivacyPolicy), 200)]
-        public async Task<IActionResult> GetLatest()
+        public IActionResult GetLatest()
         {
-            PrivacyPolicy privacyPolicy = await _crm.GetLatestPrivacyPolicy();
+            PrivacyPolicy privacyPolicy = _crm.GetLatestPrivacyPolicy();
             return Ok(privacyPolicy);
         }
     }
