@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
+using static Microsoft.PowerPlatform.Cds.Client.CdsServiceClient;
 
 namespace GetIntoTeachingApiTests.Services
 {
@@ -42,30 +43,29 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void GetCountries_ReturnsAllOrderedByName()
+        public void GetLookupItems_ReturnsAll()
         {
             IQueryable<Entity> queryableCountries = MockCountries().AsQueryable();
             _mockOrganizationalService.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_country"))
                 .Returns(queryableCountries);
 
-            var result = _crm.GetCountries();
+            var result = _crm.GetLookupItems("dfe_country");
 
             result.Select(country => country.Value).Should().BeEquivalentTo(
                 new[] { "Country 1", "Country 2", "Country 3" }
             );
         }
 
-        [Fact]
-        public void GetTeachingSubjects_ReturnsAllOrderedByName()
+        public void GetPickListItems_ReturnsAll()
         {
-            IQueryable<Entity> queryableCountries = MockTeachingSubjects().AsQueryable();
-            _mockOrganizationalService.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_teachingsubjectlist"))
-                .Returns(queryableCountries);
+            IEnumerable<PickListItem> initialTeacherTrainingYears = MockInitialTeacherTrainingYears();
+            _mockOrganizationalService.Setup(mock => mock.GetPickListItemsForAttribute(ConnectionString, "contact", "dfe_ittyear"))
+                .Returns(initialTeacherTrainingYears);
 
-            var result = _crm.GetTeachingSubjects();
+            var result = _crm.GetPickListItems("contact", "dfe_ittyear");
 
-            result.Select(subject => subject.Value).Should().BeEquivalentTo(
-                new[] { "Subject 1", "Subject 2", "Subject 3" }
+            result.Select(year => year.Value).Should().BeEquivalentTo(
+                new[] { "2010", "2011", "2012" }
             );
         }
 
@@ -160,21 +160,16 @@ namespace GetIntoTeachingApiTests.Services
             var country3 = new Entity("dfe_country");
             country3.Attributes["dfe_name"] = "Country 3";
 
-            return new[] { country3, country1, country2 };
+            return new[] { country1, country2, country3 };
         }
 
-        private IEnumerable<Entity> MockTeachingSubjects()
+        private IEnumerable<PickListItem> MockInitialTeacherTrainingYears()
         {
-            var subject1 = new Entity("dfe_teachingsubjectlist");
-            subject1.Attributes["dfe_name"] = "Subject 1";
+            var year1 = new PickListItem { PickListItemId = 1, DisplayLabel = "2010" };
+            var year2 = new PickListItem { PickListItemId = 2, DisplayLabel = "2011" };
+            var year3 = new PickListItem { PickListItemId = 3, DisplayLabel = "2012" };
 
-            var subject2 = new Entity("dfe_teachingsubjectlist");
-            subject2.Attributes["dfe_name"] = "Subject 2";
-
-            var subject3 = new Entity("dfe_teachingsubjectlist");
-            subject3.Attributes["dfe_name"] = "Subject 3";
-
-            return new[] { subject3, subject1, subject2 };
+            return new[] { year1, year2, year3 };
         }
     }
 }
