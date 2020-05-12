@@ -7,19 +7,19 @@ using Xunit;
 
 namespace GetIntoTeachingApiTests.Models.Validators
 {
-    public class CandidateAccessTokenRequestValidatorTests
+    public class ExistingCandidateRequestValidatorTests
     {
-        private readonly CandidateAccessTokenRequestValidator _validator;
+        private readonly ExistingCandidateRequestValidator _validator;
 
-        public CandidateAccessTokenRequestValidatorTests()
+        public ExistingCandidateRequestValidatorTests()
         {
-            _validator = new CandidateAccessTokenRequestValidator();
+            _validator = new ExistingCandidateRequestValidator();
         }
 
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var request = new CandidateAccessTokenRequest { Email = "email@address.com", FirstName = "first", DateOfBirth = DateTime.Now.AddDays(-18) };
+            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "first", DateOfBirth = DateTime.Now.AddDays(-18) };
 
             var result = _validator.TestValidate(request);
 
@@ -65,7 +65,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_SpecifyNoAdditionalRequiredAttributes_HasError()
         {
-            var request = new CandidateAccessTokenRequest();
+            var request = new ExistingCandidateRequest();
 
             var result = _validator.TestValidate(request);
 
@@ -75,7 +75,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_SpecifyOneAdditionalRequiredAttributes_HasError()
         {
-            var request = new CandidateAccessTokenRequest { FirstName = "first" };
+            var request = new ExistingCandidateRequest { FirstName = "first" };
 
             var result = _validator.TestValidate(request);
 
@@ -85,7 +85,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_SpecifyTwoAdditionalRequiredAttributes_HasNoError()
         {
-            var request = new CandidateAccessTokenRequest { FirstName = "first", LastName = "last" };
+            var request = new ExistingCandidateRequest { FirstName = "first", LastName = "last" };
 
             var result = _validator.TestValidate(request);
 
@@ -95,7 +95,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_SpecifyThreeAdditionalRequiredAttributes_HasNoError()
         {
-            var request = new CandidateAccessTokenRequest { FirstName = "first", LastName = "last", DateOfBirth = DateTime.Now.AddDays(-18) };
+            var request = new ExistingCandidateRequest { FirstName = "first", LastName = "last", DateOfBirth = DateTime.Now.AddDays(-18) };
 
             var result = _validator.TestValidate(request);
 

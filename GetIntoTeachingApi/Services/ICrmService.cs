@@ -8,6 +8,6 @@ namespace GetIntoTeachingApi.Services
         public IEnumerable<TypeEntity> GetLookupItems(string entityName);
         public IEnumerable<TypeEntity> GetPickListItems(string entityName, string attributeName);
         public PrivacyPolicy GetLatestPrivacyPolicy();
-        public Candidate GetCandidate(string email);
+        public Candidate GetCandidate(ExistingCandidateRequest request);
     }
 }
