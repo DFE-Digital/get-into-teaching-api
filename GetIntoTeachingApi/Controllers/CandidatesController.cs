@@ -45,15 +45,15 @@ that can then be used for verification.",
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
-        public IActionResult CreateAccessToken([FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] CandidateAccessTokenRequest request)
+        public IActionResult CreateAccessToken([FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] ExistingCandidateRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(this.ModelState);
             }
 
-            Candidate candidate = _crm.GetCandidate(request.Email);
-            if (!request.Match(candidate))
+            Candidate candidate = _crm.GetCandidate(request);
+            if (candidate == null)
             {
                 return NotFound();
             }

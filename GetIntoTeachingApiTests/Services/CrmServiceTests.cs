@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
+using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApiTests.Utils;
 using Microsoft.Xrm.Sdk;
@@ -56,6 +57,7 @@ namespace GetIntoTeachingApiTests.Services
             );
         }
 
+        [Fact]
         public void GetPickListItems_ReturnsAll()
         {
             IEnumerable<PickListItem> initialTeacherTrainingYears = MockInitialTeacherTrainingYears();
@@ -82,19 +84,25 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Theory]
-        [InlineData("john@doe.com", "New John")]
-        [InlineData("JOHN@doe.com", "New John")]
-        [InlineData("jane@doe.com", "Jane")]
-        [InlineData("bob@doe.com", null)]
-        public void GetCandidate_MatchesNewestCandidateByEmail(string email, string firstName)
+        [InlineData("john@doe.com", "New John", "Doe", "New John")]
+        [InlineData("JOHN@doe.com", "New John", "Doe", "New John")]
+        [InlineData("jane@doe.com", "Jane", "Doe", "Jane")]
+        [InlineData("bob@doe.com", "Bob", "Doe", null)]
+        public void GetCandidate_MatchesOnNewestCandidateWithEmail(
+            string email, 
+            string firstName, 
+            string lastName, 
+            string expectedFirstName
+        )
         {
+            var request = new ExistingCandidateRequest { Email = email, FirstName = firstName, LastName = lastName };
             IQueryable<Entity> queryableCandidates = MockCandidates().AsQueryable();
             _mockOrganizationalService.Setup(mock => mock.CreateQuery(ConnectionString, "contact"))
                 .Returns(queryableCandidates);
 
-            var result = _crm.GetCandidate(email);
+            var result = _crm.GetCandidate(request);
 
-            result?.FirstName.Should().Be(firstName);
+            result?.FirstName.Should().Be(expectedFirstName);
         }
 
         private IEnumerable<Entity> MockCandidates()
