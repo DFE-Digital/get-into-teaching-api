@@ -34,7 +34,7 @@ namespace GetIntoTeachingApi
 
             services.AddSingleton<IAuthorizationHandler, SharedSecretHandler>();
             services.AddSingleton<INotificationClientAdapter, NotificationClientAdapter>();
-            services.AddSingleton<IOrganizationServiceContextAdapter, OrganizationServiceContextAdapter>();
+            services.AddSingleton<IOrganizationServiceAdapter, OrganizationServiceAdapter>();
             services.AddSingleton<ICandidateAccessTokenService, CandidateAccessTokenService>();
             services.AddSingleton<ICrmService, CrmService>();
             services.AddSingleton<INotifyService, NotifyService>();
