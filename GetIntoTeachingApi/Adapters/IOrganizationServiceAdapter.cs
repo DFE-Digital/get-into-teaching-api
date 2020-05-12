@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace GetIntoTeachingApi.Adapters
 {
-    public interface IOrganizationServiceContextAdapter
+    public interface IOrganizationServiceAdapter
     {
         public Task<IQueryable<Entity>> CreateQuery(string connectionString, string entityName);
     }

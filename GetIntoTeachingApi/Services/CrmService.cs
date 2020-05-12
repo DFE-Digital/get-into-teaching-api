@@ -12,30 +12,30 @@ namespace GetIntoTeachingApi.Services
     public class CrmService : ICrmService
     {       
         public enum PrivacyPolicyType { Web = 222750001 }
-        private readonly IOrganizationServiceContextAdapter _context;
+        private readonly IOrganizationServiceAdapter _organizationalService;
         private readonly IMapper _mapper;
 
-        public CrmService(IOrganizationServiceContextAdapter context, IMapper mapper)
+        public CrmService(IOrganizationServiceAdapter organizationalService, IMapper mapper)
         {
-            _context = context;
+            _organizationalService = organizationalService;
             _mapper = mapper;
         }
 
         public async Task<IEnumerable<TypeEntity>> GetTeachingSubjects()
         {
-            return (await _context.CreateQuery(ConnectionString(), "dfe_teachingsubjectlist"))
+            return (await _organizationalService.CreateQuery(ConnectionString(), "dfe_teachingsubjectlist"))
                 .Select((subject) => _mapper.Map<TypeEntity>(subject));
         }
 
         public async Task<IEnumerable<TypeEntity>> GetCountries()
         {
-            return (await _context.CreateQuery(ConnectionString(), "dfe_country"))
+            return (await _organizationalService.CreateQuery(ConnectionString(), "dfe_country"))
                 .Select((subject) => _mapper.Map<TypeEntity>(subject));
         }
 
         public async Task<PrivacyPolicy> GetLatestPrivacyPolicy()
         {
-            return (await _context.CreateQuery(ConnectionString(), "dfe_privacypolicy"))
+            return (await _organizationalService.CreateQuery(ConnectionString(), "dfe_privacypolicy"))
                 .Where((policy) => 
                     policy.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int) PrivacyPolicyType.Web && 
                     policy.GetAttributeValue<bool>("dfe_active")
@@ -47,7 +47,7 @@ namespace GetIntoTeachingApi.Services
 
         public async Task<Candidate> GetCandidate(string email)
         {
-            return (await _context.CreateQuery(ConnectionString(), "contact"))
+            return (await _organizationalService.CreateQuery(ConnectionString(), "contact"))
                 .Where((contact) =>
                     // Will perform a case-insensitive comparison
                     contact.GetAttributeValue<string>("emailaddress1") == email

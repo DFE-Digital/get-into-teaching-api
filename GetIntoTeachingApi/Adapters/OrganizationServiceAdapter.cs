@@ -1,20 +1,19 @@
 ﻿using Microsoft.PowerPlatform.Cds.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace GetIntoTeachingApi.Adapters
 {
-    public class OrganizationServiceContextAdapter : IOrganizationServiceContextAdapter
+    public class OrganizationServiceAdapter : IOrganizationServiceAdapter
     {
-        private readonly IDictionary<string, OrganizationServiceContext> _contexts;
+        private readonly IDictionary<string, CdsServiceClient> _clients;
 
-        public OrganizationServiceContextAdapter()
+        public OrganizationServiceAdapter()
         {
-            _contexts = new Dictionary<string, OrganizationServiceContext>();
+            _clients = new Dictionary<string, CdsServiceClient>();
         }
 
         public async Task<IQueryable<Entity>> CreateQuery(string connectionString, string entityName)
@@ -26,13 +25,17 @@ namespace GetIntoTeachingApi.Adapters
 
         private OrganizationServiceContext Context(string connectionString)
         {
-            if (!_contexts.ContainsKey(connectionString))
+            return new OrganizationServiceContext(Client(connectionString));
+        }
+
+        private CdsServiceClient Client(string connectionString)
+        {
+            if (!_clients.ContainsKey(connectionString))
             {
-                var client = new CdsServiceClient(connectionString);
-                _contexts[connectionString] = new OrganizationServiceContext(client);
+                _clients[connectionString] = new CdsServiceClient(connectionString); 
             }
 
-            return _contexts[connectionString];
+            return _clients[connectionString];
         }
     }
 }
