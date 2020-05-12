@@ -3,7 +3,6 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace GetIntoTeachingApi.Adapters
 {
@@ -16,11 +15,10 @@ namespace GetIntoTeachingApi.Adapters
             _clients = new Dictionary<string, CdsServiceClient>();
         }
 
-        public async Task<IQueryable<Entity>> CreateQuery(string connectionString, string entityName)
+        public IQueryable<Entity> CreateQuery(string connectionString, string entityName)
         {
             var context = Context(connectionString);
-            var task = Task.Run(() => context.CreateQuery(entityName));
-            return await task;
+            return context.CreateQuery(entityName);
         }
 
         private OrganizationServiceContext Context(string connectionString)

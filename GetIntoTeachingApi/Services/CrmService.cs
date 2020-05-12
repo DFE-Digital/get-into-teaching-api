@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
@@ -21,21 +20,21 @@ namespace GetIntoTeachingApi.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<TypeEntity>> GetTeachingSubjects()
+        public IEnumerable<TypeEntity> GetTeachingSubjects()
         {
-            return (await _organizationalService.CreateQuery(ConnectionString(), "dfe_teachingsubjectlist"))
+            return _organizationalService.CreateQuery(ConnectionString(), "dfe_teachingsubjectlist")
                 .Select((subject) => _mapper.Map<TypeEntity>(subject));
         }
 
-        public async Task<IEnumerable<TypeEntity>> GetCountries()
+        public IEnumerable<TypeEntity> GetCountries()
         {
-            return (await _organizationalService.CreateQuery(ConnectionString(), "dfe_country"))
+            return _organizationalService.CreateQuery(ConnectionString(), "dfe_country")
                 .Select((subject) => _mapper.Map<TypeEntity>(subject));
         }
 
-        public async Task<PrivacyPolicy> GetLatestPrivacyPolicy()
+        public PrivacyPolicy GetLatestPrivacyPolicy()
         {
-            return (await _organizationalService.CreateQuery(ConnectionString(), "dfe_privacypolicy"))
+            return _organizationalService.CreateQuery(ConnectionString(), "dfe_privacypolicy")
                 .Where((policy) => 
                     policy.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int) PrivacyPolicyType.Web && 
                     policy.GetAttributeValue<bool>("dfe_active")
@@ -45,9 +44,9 @@ namespace GetIntoTeachingApi.Services
                 .First();
         }
 
-        public async Task<Candidate> GetCandidate(string email)
+        public Candidate GetCandidate(string email)
         {
-            return (await _organizationalService.CreateQuery(ConnectionString(), "contact"))
+            return _organizationalService.CreateQuery(ConnectionString(), "contact")
                 .Where((contact) =>
                     // Will perform a case-insensitive comparison
                     contact.GetAttributeValue<string>("emailaddress1") == email

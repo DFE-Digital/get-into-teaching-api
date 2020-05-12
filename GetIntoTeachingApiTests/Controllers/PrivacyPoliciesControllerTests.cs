@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using Xunit;
-using System.Threading.Tasks;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -32,12 +31,12 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void GetLatest_ReturnsLatestPrivacyPolicy()
+        public void GetLatest_ReturnsLatestPrivacyPolicy()
         {
             PrivacyPolicy mockPolicy = MockPrivacyPolicy();
-            _mockCrm.Setup(mock => mock.GetLatestPrivacyPolicy()).Returns(Task.FromResult(mockPolicy));
+            _mockCrm.Setup(mock => mock.GetLatestPrivacyPolicy()).Returns(mockPolicy);
 
-            var response = await _controller.GetLatest();
+            var response = _controller.GetLatest();
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().Be(mockPolicy);

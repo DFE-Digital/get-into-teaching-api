@@ -8,7 +8,6 @@ using FluentAssertions;
 using GetIntoTeachingApiTests.Utils;
 using GetIntoTeachingApi.Services;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -36,12 +35,12 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void CreateAccessToken_InvalidRequest_RespondsWithValidationErrors()
+        public void CreateAccessToken_InvalidRequest_RespondsWithValidationErrors()
         {
             var request = new CandidateAccessTokenRequest { Email = "invalid-email@" };
             _controller.ModelState.AddModelError("Email", "Email is invalid.");
 
-            var response = await _controller.CreateAccessToken(request);
+            var response = _controller.CreateAccessToken(request);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
@@ -54,9 +53,9 @@ namespace GetIntoTeachingApiTests.Controllers
             var request = new CandidateAccessTokenRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
             var candidate = new Candidate { Email = request.Email, FirstName = request.FirstName, LastName = request.LastName };
             _mockTokenService.Setup(mock => mock.GenerateToken("email@address.com")).Returns("123456");
-            _mockCrm.Setup(mock => mock.GetCandidate(request.Email)).Returns(Task.FromResult(candidate));
+            _mockCrm.Setup(mock => mock.GetCandidate(request.Email)).Returns(candidate);
 
-            var response = await _controller.CreateAccessToken(request);
+            var response = _controller.CreateAccessToken(request);
 
             response.Should().BeOfType<NoContentResult>();
             _mockNotifyService.Verify(
@@ -69,13 +68,13 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void CreateAccessToken_MismatchedCandidate_ReturnsNotFound()
+        public void CreateAccessToken_MismatchedCandidate_ReturnsNotFound()
         {
             var request = new CandidateAccessTokenRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
             var candidate = new Candidate { Email = request.Email, FirstName = "Jane", LastName = "Doe" };
-            _mockCrm.Setup(mock => mock.GetCandidate(request.Email)).Returns(Task.FromResult(candidate));
+            _mockCrm.Setup(mock => mock.GetCandidate(request.Email)).Returns(candidate);
 
-            var response = await _controller.CreateAccessToken(request);
+            var response = _controller.CreateAccessToken(request);
 
             response.Should().BeOfType<NotFoundResult>();
             _mockNotifyService.Verify(mock => 

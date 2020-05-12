@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace GetIntoTeachingApi.Controllers
 {
@@ -46,14 +45,14 @@ that can then be used for verification.",
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
-        public async Task<IActionResult> CreateAccessToken([FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] CandidateAccessTokenRequest request)
+        public IActionResult CreateAccessToken([FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] CandidateAccessTokenRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(this.ModelState);
             }
 
-            Candidate candidate = await _crm.GetCandidate(request.Email);
+            Candidate candidate = _crm.GetCandidate(request.Email);
             if (!request.Match(candidate))
             {
                 return NotFound();
