@@ -13,43 +13,43 @@ namespace GetIntoTeachingApi.Services
         public static readonly int StepInSeconds = 30;
         private static readonly int Length = 6;
 
-        public string GenerateToken(string email)
+        public string GenerateToken(ExistingCandidateRequest request)
         {
-           var  totp = CreateTotp(email);
+           var  totp = CreateTotp(request);
             return totp.ComputeTotp();
         }
 
-        public bool IsValid(CandidateAccessTokenChallenge challenge)
+        public bool IsValid(string token, ExistingCandidateRequest request)
         {
-            return IsValid(challenge, DateTime.UtcNow);
+            return IsValid(token, request, DateTime.UtcNow);
         }
 
-        public bool IsValid(CandidateAccessTokenChallenge challenge, DateTime timestamp)
+        public bool IsValid(string token, ExistingCandidateRequest request, DateTime timestamp)
         {
-            if (!challenge.HasToken())
+            if (string.IsNullOrWhiteSpace(token))
             {
                 return false;
             }
 
-            var totp = CreateTotp(challenge.Email);
+            var totp = CreateTotp(request);
 
             long timeWindowUsed;
             return totp.VerifyTotp(
                 timestamp,
-                challenge.Token,
+                token,
                 out timeWindowUsed,
                 new VerificationWindow(previous: VerificationWindow, future: VerificationWindow)
             );
         }
 
-        private Totp CreateTotp(string email)
+        private Totp CreateTotp(ExistingCandidateRequest request)
         {
-            return new Totp(CompoundSharedSecretBytes(email), totpSize: Length, step: StepInSeconds);
+            return new Totp(CompoundSharedSecretBytes(request.Slugify()), totpSize: Length, step: StepInSeconds);
         }
 
-        private byte[] CompoundSharedSecretBytes(string email)
+        private byte[] CompoundSharedSecretBytes(string slug)
         {
-            return Encoding.ASCII.GetBytes(email + TotpSecretKey());
+            return Encoding.ASCII.GetBytes(slug + TotpSecretKey());
         }
 
         private string TotpSecretKey()
