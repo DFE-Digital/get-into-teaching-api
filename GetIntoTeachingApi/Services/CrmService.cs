@@ -20,15 +20,15 @@ namespace GetIntoTeachingApi.Services
             _mapper = mapper;
         }
 
-        public IEnumerable<TypeEntity> GetTeachingSubjects()
+        public IEnumerable<TypeEntity> GetLookupItems(string entityName)
         {
-            return _organizationalService.CreateQuery(ConnectionString(), "dfe_teachingsubjectlist")
+            return _organizationalService.CreateQuery(ConnectionString(), entityName)
                 .Select((subject) => _mapper.Map<TypeEntity>(subject));
         }
 
-        public IEnumerable<TypeEntity> GetCountries()
+        public IEnumerable<TypeEntity> GetPickListItems(string entityName, string attributeName)
         {
-            return _organizationalService.CreateQuery(ConnectionString(), "dfe_country")
+            return _organizationalService.GetPickListItemsForAttribute(ConnectionString(), entityName, attributeName)
                 .Select((subject) => _mapper.Map<TypeEntity>(subject));
         }
 
