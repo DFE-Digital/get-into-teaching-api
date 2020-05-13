@@ -35,7 +35,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void GetCountries_ReturnsAllCountries()
         {
             IEnumerable<TypeEntity> mockEntities = MockTypeEntities();
-            _mockCrm.Setup(mock => mock.GetCountries()).Returns(mockEntities);
+            _mockCrm.Setup(mock => mock.GetLookupItems("dfe_country")).Returns(mockEntities);
 
             var response = _controller.GetCountries();
 
@@ -47,9 +47,57 @@ namespace GetIntoTeachingApiTests.Controllers
         public void GetTeachingSubjects_ReturnsAllSubjects()
         {
             IEnumerable<TypeEntity> mockEntities = MockTypeEntities();
-            _mockCrm.Setup(mock => mock.GetTeachingSubjects()).Returns(mockEntities);
+            _mockCrm.Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist")).Returns(mockEntities);
 
             var response = _controller.GetTeachingSubjects();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().Be(mockEntities);
+        }
+
+        [Fact]
+        public void GetCandidateInitialTeacherTrainingYears_ReturnsAllYears()
+        {
+            IEnumerable<TypeEntity> mockEntities = MockTypeEntities();
+            _mockCrm.Setup(mock => mock.GetPickListItems("contact", "dfe_ittyear")).Returns(mockEntities);
+
+            var response = _controller.GetCandidateInitialTeacherTrainingYears();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().Be(mockEntities);
+        }
+
+        [Fact]
+        public void GetCandidatePreferredEducationPhases_ReturnsAllPhases()
+        {
+            IEnumerable<TypeEntity> mockEntities = MockTypeEntities();
+            _mockCrm.Setup(mock => mock.GetPickListItems("contact", "dfe_preferrededucationphase01")).Returns(mockEntities);
+
+            var response = _controller.GetCandidatePreferredEducationPhases();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().Be(mockEntities);
+        }
+
+        [Fact]
+        public void GetCandidateLocations_ReturnsAllLocations()
+        {
+            IEnumerable<TypeEntity> mockEntities = MockTypeEntities();
+            _mockCrm.Setup(mock => mock.GetPickListItems("contact", "dfe_isinuk")).Returns(mockEntities);
+
+            var response = _controller.GetCandidateLocations();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().Be(mockEntities);
+        }
+
+        [Fact]
+        public void GetQualificationDegreeStatus_ReturnsAllStatus()
+        {
+            IEnumerable<TypeEntity> mockEntities = MockTypeEntities();
+            _mockCrm.Setup(mock => mock.GetPickListItems("dfe_qualification", "dfe_degreestatus")).Returns(mockEntities);
+
+            var response = _controller.GetQualificationDegreeStatus();
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().Be(mockEntities);
