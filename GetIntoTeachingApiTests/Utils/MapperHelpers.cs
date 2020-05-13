@@ -11,6 +11,8 @@ namespace GetIntoTeachingApiTests.Utils
                 config.AddProfile<TypeEntityProfile>();
                 config.AddProfile<PrivacyPolicyProfile>();
                 config.AddProfile<CandidateProfile>();
+                config.AddProfile<CandidateQualificationProfile>();
+                config.AddProfile<CandidatePastTeachingPositionProfile>();
             });
 
             return new Mapper(config);

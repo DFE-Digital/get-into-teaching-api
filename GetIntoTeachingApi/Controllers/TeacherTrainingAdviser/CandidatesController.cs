@@ -61,6 +61,7 @@ exchanged for your token matches the request payload here).",
             Tags = new[] { "Teacher Training Adviser" }
         )]
         [ProducesResponseType(typeof(Candidate), 200)]
+        [ProducesResponseType(404)]
         public IActionResult Get(
             [FromRoute, SwaggerParameter("Access token (PIN code).", Required = true)] string accessToken, 
             [FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] ExistingCandidateRequest request
@@ -71,8 +72,14 @@ exchanged for your token matches the request payload here).",
                 return Unauthorized();
             }
 
-            // TODO:
-            return Ok(new Object());
+            Candidate candidate = _crm.GetCandidate(request);
+
+            if (candidate == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(candidate);
         }
     }
 }

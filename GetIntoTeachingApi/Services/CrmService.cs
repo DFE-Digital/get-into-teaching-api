@@ -24,39 +24,62 @@ namespace GetIntoTeachingApi.Services
         public IEnumerable<TypeEntity> GetLookupItems(string entityName)
         {
             return _organizationalService.CreateQuery(ConnectionString(), entityName)
-                .Select((subject) => _mapper.Map<TypeEntity>(subject));
+                .Select((entity) => _mapper.Map<TypeEntity>(entity));
         }
 
         public IEnumerable<TypeEntity> GetPickListItems(string entityName, string attributeName)
         {
             return _organizationalService.GetPickListItemsForAttribute(ConnectionString(), entityName, attributeName)
-                .Select((subject) => _mapper.Map<TypeEntity>(subject));
+                .Select((entity) => _mapper.Map<TypeEntity>(entity));
         }
 
         public PrivacyPolicy GetLatestPrivacyPolicy()
         {
             return _organizationalService.CreateQuery(ConnectionString(), "dfe_privacypolicy")
-                .Where((policy) => 
-                    policy.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int) PrivacyPolicyType.Web && 
-                    policy.GetAttributeValue<bool>("dfe_active")
+                .Where((entity) =>
+                    entity.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int) PrivacyPolicyType.Web &&
+                    entity.GetAttributeValue<bool>("dfe_active")
                 )
                 .OrderByDescending((policy) => policy.GetAttributeValue<DateTime>("createdon"))
-                .Select((policy) => _mapper.Map<PrivacyPolicy>(policy))
+                .Select((entity) => _mapper.Map<PrivacyPolicy>(entity))
                 .First();
         }
 
         public Candidate GetCandidate(ExistingCandidateRequest request)
         {
-            return _organizationalService.CreateQuery(ConnectionString(), "contact")
-                .Where((contact) =>
+            var candidate = _organizationalService.CreateQuery(ConnectionString(), "contact")
+                .Where(entity =>
                     // Will perform a case-insensitive comparison
-                    contact.GetAttributeValue<string>("emailaddress1") == request.Email
+                    entity.GetAttributeValue<string>("emailaddress1") == request.Email
                 )
-                .OrderByDescending((contact) => contact.GetAttributeValue<DateTime>("createdon"))
-                .Select((candidate) => _mapper.Map<Candidate>(candidate))
+                .OrderByDescending(entity => entity.GetAttributeValue<DateTime>("createdon"))
+                .Select(entity => _mapper.Map<Candidate>(entity))
                 .Take(MaximumNumberOfCandidatesToMatch)
                 .ToList()
                 .FirstOrDefault(candidate => request.Match(candidate));
+
+            if (candidate == null) return null;
+
+            candidate.Qualifications = GetCandidateQualifications(candidate);
+            candidate.PastTeachingPositions = GetCandidatePastTeachingPositions(candidate);
+
+            return candidate;
+        }
+
+        private CandidateQualification[] GetCandidateQualifications(Candidate candidate)
+        {
+            return _organizationalService.CreateQuery(ConnectionString(), "dfe_candidatequalification")
+                .Where(entity => entity.GetAttributeValue<Guid>("dfe_contactid") == candidate.Id)
+                .Select(entity => _mapper.Map<CandidateQualification>(entity))
+                .ToArray();
+        }
+
+        private CandidatePastTeachingPosition[] GetCandidatePastTeachingPositions(Candidate candidate)
+        {
+            return _organizationalService.CreateQuery(ConnectionString(), "dfe_candidatepastteachingposition")
+                .Where(entity => entity.GetAttributeValue<Guid>("dfe_contactid") == candidate.Id)
+                .Select(entity => _mapper.Map<CandidatePastTeachingPosition>(entity))
+                .ToArray();
         }
 
         private string ConnectionString()
