@@ -22,12 +22,13 @@ namespace GetIntoTeachingApiTests.TeacherTrainingAdvisor.Controllers
         public void Get_InvalidAccessToken_RespondsWithUnauthorized()
         {
             var mockTokenService = new Mock<ICandidateAccessTokenService>();
-            var challenge = new CandidateAccessTokenChallenge { Token = "000000", Email = "email@address.com" };
-            mockTokenService.Setup(tokenService => tokenService.IsValid(challenge)).Returns(false);
+            var mockCrm = new Mock<ICrmService>();
+            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
+            mockTokenService.Setup(tokenService => tokenService.IsValid("000000", request)).Returns(false);
             var mockLogger = new Mock<ILogger<CandidatesController>>();
-            var controller = new CandidatesController(mockLogger.Object, mockTokenService.Object);
+            var controller = new CandidatesController(mockLogger.Object, mockTokenService.Object, mockCrm.Object);
 
-            var response = controller.Get("000000", "email@address.com");
+            var response = controller.Get("000000", request);
 
             response.Should().BeOfType<UnauthorizedResult>();
         }

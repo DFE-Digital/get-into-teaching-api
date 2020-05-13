@@ -16,10 +16,16 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
     {
         private readonly ILogger<CandidatesController> _logger;
         private readonly ICandidateAccessTokenService _tokenService;
+        private readonly ICrmService _crm;
 
-        public CandidatesController(ILogger<CandidatesController> logger, ICandidateAccessTokenService tokenService)
+        public CandidatesController(
+            ILogger<CandidatesController> logger, 
+            ICandidateAccessTokenService tokenService,
+            ICrmService crm
+        )
         {
             _logger = logger;
+            _crm = crm;
             _tokenService = tokenService;
         }
 
@@ -29,30 +35,38 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
             OperationId = "UpsertTeacherTrainingAdviserCandidate",
             Tags = new[] { "Teacher Training Adviser" }
         )]
+        [ProducesResponseType(typeof(Candidate), 200)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
-        public IActionResult Upsert([FromBody, SwaggerRequestBody("Candidate to upsert for the Teacher Training Adviser service.", Required = true)] Object candidate) // TODO:
+        public IActionResult Upsert(
+            [FromBody, SwaggerRequestBody("Candidate to upsert for the Teacher Training Adviser service.", Required = true)] Candidate candidate
+        )
         {
-            // TODO:
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(this.ModelState);
+            }
+
             return Ok(new Object());
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("{accessToken}")]
         [SwaggerOperation(
             Summary = "Retrieves an existing candidate for the Teacher Training Adviser service.",
             Description = @"
 Retrieves an existing candidate for the Teacher Training Adviser service. The `accessToken` is obtained from a 
-`POST /candidates/access_tokens` request and must be sent along with the shared secret in the `Authorization` header.",
+`POST /candidates/access_tokens` request (you must also ensure the `ExistingCandidateRequest` payload you 
+exchanged for your token matches the request payload here).",
             OperationId = "GetExistingTeacherTrainingAdviserCandidate",
             Tags = new[] { "Teacher Training Adviser" }
         )]
+        [ProducesResponseType(typeof(Candidate), 200)]
         public IActionResult Get(
-            [FromRoute, SwaggerParameter("Access token (PIN code).", Required = true)] string accessToken,
-            [FromHeader(Name = "Candidate-Email"), SwaggerParameter("Candidate email address.", Required = true)] string email
+            [FromRoute, SwaggerParameter("Access token (PIN code).", Required = true)] string accessToken, 
+            [FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] ExistingCandidateRequest request
         )
         {
-            var challenge = new CandidateAccessTokenChallenge { Token = accessToken, Email = email };
-            if (!_tokenService.IsValid(challenge))
+            if (!_tokenService.IsValid(accessToken, request))
             {
                 return Unauthorized();
             }

@@ -143,5 +143,25 @@ namespace GetIntoTeachingApiTests.Models
 
             _request.Match(candidate).Should().BeTrue();
         }
+
+        [Fact]
+        public void Slugify_ReturnsCorrectSlug()
+        {
+            _request.Slugify().Should().Be("email@address.com-first-last-01-01-2000");
+        }
+
+        [Fact]
+        public void Slugify_WithNullAdditionalAttribute_OmitsNull()
+        {
+            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "first" };
+            request.Slugify().Should().Be("email@address.com-first");
+        }
+
+        [Fact]
+        public void Slugify_WithMixedCasing_ReturnsLowerCase()
+        {
+            var request = new ExistingCandidateRequest { Email = "EMAIL@address.com", FirstName = "FIrst" };
+            request.Slugify().Should().Be("email@address.com-first");
+        }
     }
 }
