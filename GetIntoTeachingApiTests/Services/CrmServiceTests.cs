@@ -15,12 +15,13 @@ namespace GetIntoTeachingApiTests.Services
 {
     public class CrmServiceTests : IDisposable
     {
-        private static readonly string ConnectionString = "AuthType=ClientSecret; url=service_url; ClientId=client_id; ClientSecret=client_secret";
-        private string _previousCrmServiceUrl;
-        private string _previousCrmClientId;
-        private string _previousCrmClientSecret;
-        private Mock<IOrganizationServiceAdapter> _mockOrganizationalService;
-        private ICrmService _crm;
+        private const string ConnectionString = "AuthType=ClientSecret; url=service_url; ClientId=client_id; ClientSecret=client_secret";
+        private static Guid JaneDoeGuid = new Guid("bf927e43-5650-44aa-859a-8297139b8ddd");
+        private readonly string _previousCrmServiceUrl;
+        private readonly string _previousCrmClientId;
+        private readonly string _previousCrmClientSecret;
+        private readonly Mock<IOrganizationServiceAdapter> _mockOrganizationalService;
+        private readonly ICrmService _crm;
 
         public CrmServiceTests()
         {
@@ -96,18 +97,46 @@ namespace GetIntoTeachingApiTests.Services
         )
         {
             var request = new ExistingCandidateRequest { Email = email, FirstName = firstName, LastName = lastName };
-            IQueryable<Entity> queryableCandidates = MockCandidates().AsQueryable();
             _mockOrganizationalService.Setup(mock => mock.CreateQuery(ConnectionString, "contact"))
-                .Returns(queryableCandidates);
+                .Returns(MockCandidates().AsQueryable());
 
             var result = _crm.GetCandidate(request);
 
             result?.FirstName.Should().Be(expectedFirstName);
         }
 
+        [Fact]
+        public void GetCandidate_RetrievesAssociatedQualifications()
+        {
+            var request = new ExistingCandidateRequest { Email = "jane@doe.com", FirstName = "Jane", LastName = "Doe" };
+            _mockOrganizationalService.Setup(mock => mock.CreateQuery(ConnectionString, "contact"))
+                .Returns(MockCandidates().AsQueryable());
+            _mockOrganizationalService.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_candidatequalification"))
+                .Returns(MockCandidateQualifications().AsQueryable());
+
+            var result = _crm.GetCandidate(request);
+
+            result.Qualifications.Select(qualification => qualification.CategoryId).Should().BeEquivalentTo(new[] { 123, 456 });
+        }
+
+        [Fact]
+        public void GetCandidate_RetrievesAssociatedPastTeachingPositions()
+        {
+            var request = new ExistingCandidateRequest { Email = "jane@doe.com", FirstName = "Jane", LastName = "Doe" };
+            _mockOrganizationalService.Setup(mock => mock.CreateQuery(ConnectionString, "contact"))
+                .Returns(MockCandidates().AsQueryable());
+            _mockOrganizationalService.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_candidatepastteachingposition"))
+                .Returns(MockCandidatePastTeachingPositions().AsQueryable());
+
+            var result = _crm.GetCandidate(request);
+
+            result.PastTeachingPositions.Select(position => position.EducationPhaseId).Should().BeEquivalentTo(new[] { 111, 222 });
+        }
+
         private IEnumerable<Entity> MockCandidates()
         {
             var candidate1 = new Entity("contact");
+            candidate1.Id = JaneDoeGuid;
             candidate1.Attributes["emailaddress1"] = "jane@doe.com";
             candidate1.Attributes["firstname"] = "Jane";
             candidate1.Attributes["lastname"] = "Doe";
@@ -126,6 +155,40 @@ namespace GetIntoTeachingApiTests.Services
             candidate3.Attributes["createdon"] = DateTime.Now.AddDays(-5);
 
             return new[] { candidate1, candidate2, candidate3 };
+        }
+
+        private IEnumerable<Entity> MockCandidatePastTeachingPositions()
+        {
+            var position1 = new Entity("dfe_candidatepastteachingposition");
+            position1.Attributes["dfe_contactid"] = JaneDoeGuid;
+            position1.Attributes["dfe_educationphase"] = new OptionSetValue { Value = 111 };
+
+            var position2 = new Entity("dfe_candidatepastteachingposition");
+            position2.Attributes["dfe_contactid"] = JaneDoeGuid;
+            position2.Attributes["dfe_educationphase"] = new OptionSetValue { Value = 222 }; ;
+
+            var position3 = new Entity("dfe_candidatepastteachingposition");
+            position3.Attributes["dfe_contactid"] = Guid.NewGuid();
+            position3.Attributes["dfe_educationphase"] = new OptionSetValue { Value = 333 }; ;
+
+            return new[] { position1, position2, position3 };
+        }
+        
+        private IEnumerable<Entity> MockCandidateQualifications()
+        {
+            var qualification1 = new Entity("dfe_candidatequalification");
+            qualification1.Attributes["dfe_contactid"] = JaneDoeGuid;
+            qualification1.Attributes["dfe_category"] = new OptionSetValue { Value = 123 };
+
+            var qualification2 = new Entity("dfe_candidatequalification");
+            qualification2.Attributes["dfe_contactid"] = JaneDoeGuid;
+            qualification2.Attributes["dfe_category"] = new OptionSetValue { Value = 456 }; ;
+
+            var qualification3 = new Entity("dfe_candidatequalification");
+            qualification3.Attributes["dfe_contactid"] = Guid.NewGuid();
+            qualification3.Attributes["dfe_category"] = new OptionSetValue { Value = 789 }; ;
+
+            return new[] { qualification1, qualification2, qualification3 };
         }
 
         private IEnumerable<Entity> MockPrivacyPolicies()
