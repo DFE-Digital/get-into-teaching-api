@@ -5,8 +5,8 @@ namespace GetIntoTeachingApi.Services
 {
     public interface ICrmService
     {
-        public IEnumerable<TypeEntity> GetTeachingSubjects();
-        public IEnumerable<TypeEntity> GetCountries();
+        public IEnumerable<TypeEntity> GetLookupItems(string entityName);
+        public IEnumerable<TypeEntity> GetPickListItems(string entityName, string attributeName);
         public PrivacyPolicy GetLatestPrivacyPolicy();
         public Candidate GetCandidate(string email);
     }
