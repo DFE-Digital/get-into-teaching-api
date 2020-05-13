@@ -34,7 +34,7 @@ namespace GetIntoTeachingApiTests.Services
             Environment.SetEnvironmentVariable("CRM_CLIENT_SECRET", "client_secret");
 
             _mockOrganizationalService = new Mock<IOrganizationServiceAdapter>();
-            _crm = new CrmService(_mockOrganizationalService.Object, MapperHelpers.CreateMapper());
+            _crm = new CrmService(_mockOrganizationalService.Object);
         }
 
         public void Dispose()
