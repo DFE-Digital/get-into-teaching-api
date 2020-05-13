@@ -1,0 +1,4 @@
+---
+applications:
+- name: get-into-teaching-api
+  memory: 2G
