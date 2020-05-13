@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 using Microsoft.Extensions.Logging;
 using Moq;
 using GetIntoTeachingApi.Services;
@@ -8,10 +9,24 @@ using Microsoft.AspNetCore.Mvc;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApiTests.Utils;
 
-namespace GetIntoTeachingApiTests.TeacherTrainingAdvisor.Controllers
+namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
 {
     public class CandidatesControllerTests
     {
+        private readonly Mock<ICandidateAccessTokenService> _mockTokenService;
+        private readonly Mock<ICrmService> _mockCrm;
+        private readonly CandidatesController _controller;
+        private readonly ExistingCandidateRequest _request;
+
+        public CandidatesControllerTests()
+        {
+            _mockTokenService = new Mock<ICandidateAccessTokenService>();
+            _mockCrm = new Mock<ICrmService>();
+            _request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
+            var mockLogger = new Mock<ILogger<CandidatesController>>();
+            _controller = new CandidatesController(mockLogger.Object, _mockTokenService.Object, _mockCrm.Object);
+        }
+
         [Fact]
         public void Authorize_HasSharedSecretPolicy()
         {
@@ -21,16 +36,35 @@ namespace GetIntoTeachingApiTests.TeacherTrainingAdvisor.Controllers
         [Fact]
         public void Get_InvalidAccessToken_RespondsWithUnauthorized()
         {
-            var mockTokenService = new Mock<ICandidateAccessTokenService>();
-            var mockCrm = new Mock<ICrmService>();
-            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
-            mockTokenService.Setup(tokenService => tokenService.IsValid("000000", request)).Returns(false);
-            var mockLogger = new Mock<ILogger<CandidatesController>>();
-            var controller = new CandidatesController(mockLogger.Object, mockTokenService.Object, mockCrm.Object);
+            _mockTokenService.Setup(mock => mock.IsValid("000000", _request)).Returns(false);
 
-            var response = controller.Get("000000", request);
+            var response = _controller.Get("000000", _request);
 
             response.Should().BeOfType<UnauthorizedResult>();
+        }
+
+        [Fact]
+        public void Get_ValidToken_RespondsWithCandidate()
+        {
+            var candidate = new Candidate { Id = Guid.NewGuid() };
+            _mockTokenService.Setup(tokenService => tokenService.IsValid("000000", _request)).Returns(true);
+            _mockCrm.Setup(mock => mock.GetCandidate(_request)).Returns(candidate);
+
+            var response = _controller.Get("000000", _request);
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().Be(candidate);
+        }
+
+        [Fact]
+        public void Get_MissingCandidate_RespondsWithNotFound()
+        {
+            _mockTokenService.Setup(tokenService => tokenService.IsValid("000000", _request)).Returns(true);
+            _mockCrm.Setup(mock => mock.GetCandidate(_request)).Returns<Candidate>(null);
+
+            var response = _controller.Get("000000", _request);
+
+            response.Should().BeOfType<NotFoundResult>();
         }
     }
 }
