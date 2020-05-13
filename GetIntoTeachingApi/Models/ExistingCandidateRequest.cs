@@ -5,7 +5,7 @@ using System.Runtime.InteropServices.ComTypes;
 
 namespace GetIntoTeachingApi.Models
 {
-    public class CandidateAccessTokenRequest
+    public class ExistingCandidateRequest
     {
         private static readonly int MinimumAdditionalAttributeMatches = 2;
 

@@ -5,13 +5,13 @@ using Xunit;
 
 namespace GetIntoTeachingApiTests.Models
 {
-    public class CandidateAccessTokenRequestTests
+    public class ExistingCandidateRequestTests
     {
-        private readonly CandidateAccessTokenRequest _request;
+        private readonly ExistingCandidateRequest _request;
 
-        public CandidateAccessTokenRequestTests()
+        public ExistingCandidateRequestTests()
         {
-            _request = new CandidateAccessTokenRequest
+            _request = new ExistingCandidateRequest
             {
                 Email = "email@address.com",
                 FirstName = "first",
