@@ -23,10 +23,17 @@ namespace GetIntoTeachingApi.Models
             var entity = new Entity("dfe_candidatepastteachingposition");
 
             if (Id != null) entity.Id = (Guid)Id;
+
             if (SubjectTaughtId != null)
+            {
                 entity.Attributes.Add("dfe_subjecttaught",
-                    new EntityReference("dfe_teachingsubjectlist", (Guid) SubjectTaughtId));
-            if (EducationPhaseId != null) entity.Attributes.Add("dfe_educationphase", new OptionSetValue((int)EducationPhaseId));
+                    new EntityReference("dfe_teachingsubjectlist", (Guid)SubjectTaughtId));
+            }
+
+            if (EducationPhaseId != null)
+            {
+                entity.Attributes.Add("dfe_educationphase", new OptionSetValue((int)EducationPhaseId));
+            }
 
             return entity;
         }

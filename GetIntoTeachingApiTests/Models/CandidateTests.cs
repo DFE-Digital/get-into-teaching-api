@@ -98,5 +98,48 @@ namespace GetIntoTeachingApiTests.Models
             entity.GetAttributeValue<string>("address1_postalcode").Should().Be(candidate.Address.Postcode);
             entity.GetAttributeValue<string>("telephone1").Should().Be(candidate.Telephone);
         }
+
+        [Fact]
+        public void ToPhoneCallEntity_ReverseMapsCorrectly()
+        {
+            var candidate = new Candidate()
+            {
+                Id = Guid.NewGuid(),
+                Telephone = "07594 835 274",
+                PhoneCallScheduledStartAt = new DateTime(2021, 2, 13, 10, 34, 12),
+            };
+
+            var entity = candidate.ToPhoneCallEntity();
+
+            entity.LogicalName.Should().Be("phonecall");
+            entity.GetAttributeValue<string>("phonenumber").Should().Be(candidate.Telephone);
+            entity.GetAttributeValue<DateTime?>("scheduledstart").Should().Be(candidate.PhoneCallScheduledStartAt);
+            entity.GetAttributeValue<EntityReference>("regardingobjectid").Id.Should()
+                .Be((Guid)candidate.Id);
+            entity.GetAttributeValue<EntityReference>("regardingobjectid").LogicalName.Should()
+                .Be("contact");
+        }
+
+        [Fact]
+        public void ToCandidatePrivacyPolicyEntity_ReverseMapsCorrectly()
+        {
+            var candidate = new Candidate()
+            {
+                Id = Guid.NewGuid(),
+                AcceptedPrivacyPolicyId = Guid.NewGuid(),
+            };
+
+            var entity = candidate.ToCandidatePrivacyPolicyEntity();
+
+            entity.LogicalName.Should().Be("dfe_candidateprivacypolicy");
+            entity.GetAttributeValue<EntityReference>("dfe_candidate").Id.Should()
+                .Be((Guid)candidate.Id);
+            entity.GetAttributeValue<EntityReference>("dfe_candidate").LogicalName.Should()
+                .Be("contact");
+            entity.GetAttributeValue<EntityReference>("dfe_privacypolicynumber").Id.Should()
+                .Be((Guid)candidate.AcceptedPrivacyPolicyId);
+            entity.GetAttributeValue<EntityReference>("dfe_privacypolicynumber").LogicalName.Should()
+                .Be("dfe_privacypolicy");
+        }
     }
 }
