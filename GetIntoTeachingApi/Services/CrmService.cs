@@ -11,6 +11,7 @@ namespace GetIntoTeachingApi.Services
     public class CrmService : ICrmService
     {       
         public enum PrivacyPolicyType { Web = 222750001 }
+        private readonly int MaximumNumberOfCandidatesToMatch = 20;
         private readonly IOrganizationServiceAdapter _organizationalService;
         private readonly IMapper _mapper;
 
@@ -44,18 +45,19 @@ namespace GetIntoTeachingApi.Services
                 .First();
         }
 
-        public Candidate GetCandidate(string email)
+        public Candidate GetCandidate(ExistingCandidateRequest request)
         {
             return _organizationalService.CreateQuery(ConnectionString(), "contact")
                 .Where((contact) =>
                     // Will perform a case-insensitive comparison
-                    contact.GetAttributeValue<string>("emailaddress1") == email
+                    contact.GetAttributeValue<string>("emailaddress1") == request.Email
                 )
                 .OrderByDescending((contact) => contact.GetAttributeValue<DateTime>("createdon"))
                 .Select((candidate) => _mapper.Map<Candidate>(candidate))
-                .FirstOrDefault();
+                .Take(MaximumNumberOfCandidatesToMatch)
+                .ToList()
+                .FirstOrDefault(candidate => request.Match(candidate));
         }
-
 
         private string ConnectionString()
         {

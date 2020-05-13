@@ -37,7 +37,7 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void CreateAccessToken_InvalidRequest_RespondsWithValidationErrors()
         {
-            var request = new CandidateAccessTokenRequest { Email = "invalid-email@" };
+            var request = new ExistingCandidateRequest { Email = "invalid-email@" };
             _controller.ModelState.AddModelError("Email", "Email is invalid.");
 
             var response = _controller.CreateAccessToken(request);
@@ -48,12 +48,12 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void CreateAccessToken_ValidRequest_SendsPINCodeEmail()
+        public void CreateAccessToken_ValidRequest_SendsPINCodeEmail()
         {
-            var request = new CandidateAccessTokenRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
+            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
             var candidate = new Candidate { Email = request.Email, FirstName = request.FirstName, LastName = request.LastName };
             _mockTokenService.Setup(mock => mock.GenerateToken("email@address.com")).Returns("123456");
-            _mockCrm.Setup(mock => mock.GetCandidate(request.Email)).Returns(candidate);
+            _mockCrm.Setup(mock => mock.GetCandidate(request)).Returns(candidate);
 
             var response = _controller.CreateAccessToken(request);
 
@@ -70,9 +70,8 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void CreateAccessToken_MismatchedCandidate_ReturnsNotFound()
         {
-            var request = new CandidateAccessTokenRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
-            var candidate = new Candidate { Email = request.Email, FirstName = "Jane", LastName = "Doe" };
-            _mockCrm.Setup(mock => mock.GetCandidate(request.Email)).Returns(candidate);
+            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
+            _mockCrm.Setup(mock => mock.GetCandidate(request)).Returns<Candidate>(null);
 
             var response = _controller.CreateAccessToken(request);
 
