@@ -1,7 +1,6 @@
 ﻿using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 
 namespace GetIntoTeachingApi.Models
 {
@@ -20,18 +19,42 @@ namespace GetIntoTeachingApi.Models
 
         public bool Match(Candidate candidate)
         {
-            if (candidate == null || !candidate.Email.Equals(Email, StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
+            if (candidate == null) return false;
 
-            var additionalAttributeMatches = new[] {
-                (FirstName != null && FirstName.Equals(candidate.FirstName, StringComparison.OrdinalIgnoreCase)),
-                (LastName != null && LastName.Equals(candidate.LastName, StringComparison.OrdinalIgnoreCase)),
-                (DateOfBirth != null && DateOfBirth?.Date == candidate.DateOfBirth?.Date) 
-            };
+            return EmailMatchesCandidate(candidate) && MinimumAdditionalAttributesMatch(candidate);
+        }
 
-            return additionalAttributeMatches.Where(m => m).Count() >= MinimumAdditionalAttributeMatches;
+        public string Slugify()
+        {
+            var attributes = new[] {Email}.Concat(AdditionalAttributeValues(FirstName, LastName, DateOfBirth));
+            return string.Join("-", attributes).ToLower();
+        }
+
+        private bool EmailMatchesCandidate(Candidate candidate)
+        {
+            return candidate.Email.Equals(Email, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private string[] AdditionalAttributeValues(string firstName, string lastName, DateTime? dateOfBirth)
+        {
+            return new[]
+                {
+                    firstName,
+                    lastName,
+                    dateOfBirth?.Date.ToString("MM-dd-yyyy")
+                }
+                .Where(s => s != null)
+                .ToArray();
+        }
+
+        private bool MinimumAdditionalAttributesMatch(Candidate candidate)
+        {
+            var matches = AdditionalAttributeValues(FirstName, LastName, DateOfBirth).Intersect(
+                AdditionalAttributeValues(candidate.FirstName, candidate.LastName, candidate.DateOfBirth),
+                StringComparer.OrdinalIgnoreCase
+            );
+
+            return matches.Count() >= MinimumAdditionalAttributeMatches;
         }
     }
 }

@@ -52,7 +52,7 @@ namespace GetIntoTeachingApiTests.Controllers
         {
             var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
             var candidate = new Candidate { Email = request.Email, FirstName = request.FirstName, LastName = request.LastName };
-            _mockTokenService.Setup(mock => mock.GenerateToken("email@address.com")).Returns("123456");
+            _mockTokenService.Setup(mock => mock.GenerateToken(request)).Returns("123456");
             _mockCrm.Setup(mock => mock.GetCandidate(request)).Returns(candidate);
 
             var response = _controller.CreateAccessToken(request);

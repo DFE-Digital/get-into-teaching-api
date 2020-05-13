@@ -27,29 +27,43 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Theory]
-        [InlineData("email@address.com")]
-        [InlineData("email!@address.com")]
-        [InlineData("e@a.com")]
-        public void GenerateToken_ReturnsAValidToken(string email)
+        [InlineData("email@address.com", "John", "Doe")]
+        [InlineData("email!@address.com", "Jane", "Smith" )]
+        [InlineData("e@a.com", "B", "C")]
+        public void GenerateToken_ReturnsAValidToken(string email, string firstName, string lastName)
         {
-            string token = _service.GenerateToken(email);
-            var challenge = new CandidateAccessTokenChallenge { Token = token, Email = email };
-            _service.IsValid(challenge).Should().BeTrue();
+            var request = new ExistingCandidateRequest { Email = email, FirstName = firstName, LastName = lastName };
+            string token = _service.GenerateToken(request);
+
+            _service.IsValid(token, request).Should().BeTrue();
         }
 
         [Fact]
         public void GenerateToken_DifferentEmailsInSameStep_ReturnDifferentTokens()
         {
-            string token1 = _service.GenerateToken("email1@address.com");
-            string token2 = _service.GenerateToken("email2@address.com");
+            var request1 = new ExistingCandidateRequest { Email = "email1@address.com", FirstName = "John", LastName = "Doe" };
+            var request2 = new ExistingCandidateRequest { Email = "email2@address.com", FirstName = "John", LastName = "Doe" };
+            string token1 = _service.GenerateToken(request1);
+            string token2 = _service.GenerateToken(request2);
             token1.Should().NotBe(token2);
         }
 
         [Fact]
-        public void GenerateToken_SameEmailInSameStep_ReturnSameToken()
+        public void GenerateToken_DifferentFirstNameInSameStep_ReturnDifferentTokens()
         {
-            string token1 = _service.GenerateToken("email@address.com");
-            string token2 = _service.GenerateToken("email@address.com");
+            var request1 = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John1", LastName = "Doe" };
+            var request2 = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John2", LastName = "Doe" };
+            string token1 = _service.GenerateToken(request1);
+            string token2 = _service.GenerateToken(request2);
+            token1.Should().NotBe(token2);
+        }
+
+        [Fact]
+        public void GenerateToken_SameRequestInSameStep_ReturnSameToken()
+        {
+            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
+            string token1 = _service.GenerateToken(request);
+            string token2 = _service.GenerateToken(request);
             token1.Should().Be(token2);
         }
 
@@ -60,19 +74,19 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [InlineData("abcdef")]
         public void IsValid_WithInvalidToken_ReturnsFalse(string invalidToken)
         {
-            var challenge = new CandidateAccessTokenChallenge { Token = invalidToken, Email = "email@address.com" };
-            _service.IsValid(challenge).Should().BeFalse();
+            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
+            _service.IsValid(invalidToken, request).Should().BeFalse();
         }
 
 
         [Fact]
         public void IsValid_WithExpiredToken_ReturnsFalse()
         {
+            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
             int secondsToOutsideOfWindow = CandidateAccessTokenService.StepInSeconds * (2 * CandidateAccessTokenService.VerificationWindow);
             var dateTimeOutsideOfWindow = DateTime.UtcNow.AddSeconds(-secondsToOutsideOfWindow);
-            string token = _service.GenerateToken("email@address.com");
-            var challenge = new CandidateAccessTokenChallenge { Token = token, Email = "email@address.com" };
-            _service.IsValid(challenge, dateTimeOutsideOfWindow).Should().BeFalse();
+            string token = _service.GenerateToken(request);
+            _service.IsValid(token, request, dateTimeOutsideOfWindow).Should().BeFalse();
         }
     }
 }
