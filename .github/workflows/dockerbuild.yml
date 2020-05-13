@@ -38,7 +38,7 @@ jobs:
       - name: Download CloudFoundry CLI
         run: wget -O /tmp/cf-cli.deb "https://packages.cloudfoundry.org/stable?release=debian64&source=github"
       - name: Install CloudFoundry CLI
-        run: dpkg -i /tmp/cf-cli.deb
+        run: sudo dpkg -i /tmp/cf-cli.deb
       - name: Check CloudFoundry CLI version
         run: cf --version
       - name: Login to PaaS
