@@ -103,6 +103,42 @@ namespace GetIntoTeachingApiTests.Controllers
             ok.Value.Should().Be(mockEntities);
         }
 
+        [Fact]
+        public void GetQualificationCategories_ReturnsAllCategories()
+        {
+            IEnumerable<TypeEntity> mockEntities = MockTypeEntities();
+            _mockCrm.Setup(mock => mock.GetPickListItems("dfe_qualification", "dfe_category")).Returns(mockEntities);
+
+            var response = _controller.GetQualificationCategories();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().Be(mockEntities);
+        }
+
+        [Fact]
+        public void GetQualificatioTypes_ReturnsAllTypes()
+        {
+            IEnumerable<TypeEntity> mockEntities = MockTypeEntities();
+            _mockCrm.Setup(mock => mock.GetPickListItems("dfe_qualification", "dfe_type")).Returns(mockEntities);
+
+            var response = _controller.GetQualificationTypes();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().Be(mockEntities);
+        }
+
+        [Fact]
+        public void GetPastTeachingPositionEducationPhases_ReturnsAllPhases()
+        {
+            IEnumerable<TypeEntity> mockEntities = MockTypeEntities();
+            _mockCrm.Setup(mock => mock.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase")).Returns(mockEntities);
+
+            var response = _controller.GetPastTeachingPositionEducationPhases();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().Be(mockEntities);
+        }
+
         private IEnumerable<TypeEntity> MockTypeEntities()
         {
             return new []

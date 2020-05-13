@@ -32,8 +32,8 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetCountries()
         {
-            IEnumerable<TypeEntity> countryTypes = _crm.GetLookupItems("dfe_country");
-            return Ok(countryTypes);
+            IEnumerable<TypeEntity> countries = _crm.GetLookupItems("dfe_country");
+            return Ok(countries);
         }
 
         [HttpGet]
@@ -46,10 +46,9 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetTeachingSubjects()
         {
-            IEnumerable<TypeEntity> teachingSubjectTypes = _crm.GetLookupItems("dfe_teachingsubjectlist");
-            return Ok(teachingSubjectTypes);
+            IEnumerable<TypeEntity> subjects = _crm.GetLookupItems("dfe_teachingsubjectlist");
+            return Ok(subjects);
         }
-
 
         [HttpGet]
         [Route("candidate/initial_teacher_training_years")]
@@ -61,8 +60,8 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetCandidateInitialTeacherTrainingYears()
         {
-            IEnumerable<TypeEntity> initialTeacherTrainingYears = _crm.GetPickListItems("contact", "dfe_ittyear");
-            return Ok(initialTeacherTrainingYears);
+            IEnumerable<TypeEntity> years = _crm.GetPickListItems("contact", "dfe_ittyear");
+            return Ok(years);
         }
 
         [HttpGet]
@@ -75,12 +74,12 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetCandidatePreferredEducationPhases()
         {
-            IEnumerable<TypeEntity> preferredEducationPhases = _crm.GetPickListItems("contact", "dfe_preferrededucationphase01");
-            return Ok(preferredEducationPhases);
+            IEnumerable<TypeEntity> educationPhases = _crm.GetPickListItems("contact", "dfe_preferrededucationphase01");
+            return Ok(educationPhases);
         }
 
         [HttpGet]
-        [Route("candidate/location")]
+        [Route("candidate/locations")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate locations.",
             OperationId = "GetCandidateLocations",
@@ -97,7 +96,7 @@ namespace GetIntoTeachingApi.Controllers
         [Route("qualification/degree_status")]
         [SwaggerOperation(
             Summary = "Retrieves the list of qualification degree status.",
-            OperationId = "GetCandidateQualifications",
+            OperationId = "GetQualificationDegreeStatus",
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
@@ -105,6 +104,48 @@ namespace GetIntoTeachingApi.Controllers
         {
             IEnumerable<TypeEntity> status = _crm.GetPickListItems("dfe_qualification", "dfe_degreestatus");
             return Ok(status);
+        }
+
+        [HttpGet]
+        [Route("qualification/categories")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of qualification categories.",
+            OperationId = "GetQualificationCategories",
+            Tags = new[] { "Types" }
+        )]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public IActionResult GetQualificationCategories()
+        {
+            IEnumerable<TypeEntity> categories = _crm.GetPickListItems("dfe_qualification", "dfe_category");
+            return Ok(categories);
+        }
+
+        [HttpGet]
+        [Route("qualification/types")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of qualification types.",
+            OperationId = "GetQualificationTypes",
+            Tags = new[] { "Types" }
+        )]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public IActionResult GetQualificationTypes()
+        {
+            IEnumerable<TypeEntity> types = _crm.GetPickListItems("dfe_qualification", "dfe_type");
+            return Ok(types);
+        }
+
+        [HttpGet]
+        [Route("past_teaching_position/education_phases")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of past teaching position education phases.",
+            OperationId = "GetPastTeachingPositionEducationPhases",
+            Tags = new[] { "Types" }
+        )]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public IActionResult GetPastTeachingPositionEducationPhases()
+        {
+            IEnumerable<TypeEntity> educationPhases = _crm.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase");
+            return Ok(educationPhases);
         }
     }
 }
