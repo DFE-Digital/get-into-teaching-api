@@ -22,12 +22,12 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Must be a valid teaching subject.");
         }
 
-        public IEnumerable<Guid?> TeachingSubjectIds()
+        private IEnumerable<Guid?> TeachingSubjectIds()
         {
             return _crm.GetLookupItems("dfe_teachingsubjectlist").Select(subject => (Guid?)subject.Id);
         }
 
-        public IEnumerable<int?> EducationPhaseIds()
+        private IEnumerable<int?> EducationPhaseIds()
         {
             return _crm.
                 GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase")

@@ -26,17 +26,17 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Must be a valid qualification degree status.");
         }
 
-        public IEnumerable<int?> CategoryIds()
+        private IEnumerable<int?> CategoryIds()
         {
             return _crm.GetPickListItems("dfe_qualification", "dfe_category").Select(category => (int?)category.Id);
         }
 
-        public IEnumerable<int?> TypeIds()
+        private IEnumerable<int?> TypeIds()
         {
             return _crm.GetPickListItems("dfe_qualification", "dfe_type").Select(type => (int?)type.Id);
         }
 
-        public IEnumerable<int?> StatusIds()
+        private IEnumerable<int?> StatusIds()
         {
             return _crm.GetPickListItems("dfe_qualification", "dfe_degreestatus").Select(status => (int?)status.Id);
         }

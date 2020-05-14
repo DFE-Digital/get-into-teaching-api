@@ -47,13 +47,20 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         public void Get_ValidToken_RespondsWithCandidate()
         {
             var candidate = new Candidate { Id = Guid.NewGuid() };
+            var qualification = new CandidateQualification { Id = Guid.NewGuid() };
+            var position = new CandidatePastTeachingPosition() { Id = Guid.NewGuid() };
             _mockTokenService.Setup(tokenService => tokenService.IsValid("000000", _request)).Returns(true);
             _mockCrm.Setup(mock => mock.GetCandidate(_request)).Returns(candidate);
+            _mockCrm.Setup(mock => mock.GetCandidateQualifications(candidate)).Returns(new[] { qualification });
+            _mockCrm.Setup(mock => mock.GetCandidatePastTeachingPositions(candidate)).Returns(new [] { position  });
 
             var response = _controller.Get("000000", _request);
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
-            ok.Value.Should().Be(candidate);
+            var candidateResponse = ok.Value as Candidate;
+            candidateResponse.Should().Be(candidate);
+            candidateResponse.Qualifications.Should().Contain(qualification);
+            candidateResponse.PastTeachingPositions.Should().Contain(position);
         }
 
         [Fact]
@@ -78,6 +85,17 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
             errors.Should().ContainKey("Email").WhichValue.Should().BeOfType<string[]>().Which.Should().Contain("Email is invalid.");
+        }
+
+        [Fact]
+        public void Upsert_ValidRequest_UpsertsAndRespondsWithTheCandidate()
+        {
+            var candidate = new Candidate { FirstName = "first" };
+            _mockCrm.Setup(mock => mock.UpsertCandidate(candidate));
+
+            var response = _controller.Upsert(candidate);
+
+            response.Should().BeOfType<NoContentResult>();
         }
     }
 }

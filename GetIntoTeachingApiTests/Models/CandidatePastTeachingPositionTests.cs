@@ -13,36 +13,32 @@ namespace GetIntoTeachingApiTests.Models
         {
             var entity = new Entity();
             entity.Id = Guid.NewGuid();
-            entity.Attributes["dfe_subjecttaught"] = new EntityReference("dfe_teachingsubjectlist", Guid.NewGuid());
-            entity.Attributes["dfe_educationphase"] = new OptionSetValue { Value = 1 };
+            entity["dfe_subjecttaught"] = new EntityReference("dfe_teachingsubjectlist", Guid.NewGuid());
+            entity["dfe_educationphase"] = new OptionSetValue { Value = 1 };
 
-            var teachingPosition = new CandidatePastTeachingPosition(entity);
+            var position = new CandidatePastTeachingPosition(entity);
 
-            teachingPosition.Id.Should().Be(entity.Id);
-            teachingPosition.SubjectTaughtId.Should().Be(entity.GetAttributeValue<EntityReference>("dfe_subjecttaught").Id);
-            teachingPosition.EducationPhaseId.Should().Be(entity.GetAttributeValue<OptionSetValue>("dfe_educationphase").Value);
+            position.Id.Should().Be(entity.Id);
+            position.SubjectTaughtId.Should().Be(entity.GetAttributeValue<EntityReference>("dfe_subjecttaught").Id);
+            position.EducationPhaseId.Should().Be(entity.GetAttributeValue<OptionSetValue>("dfe_educationphase").Value);
         }
 
         [Fact]
-        public void ToEntity_ReverseMapsCorrectly()
+        public void PopulateEntity_ReverseMapsCorrectly()
         {
-            var teachingPosition = new CandidatePastTeachingPosition()
+            var position = new CandidatePastTeachingPosition()
             {
                 Id = Guid.NewGuid(),
                 SubjectTaughtId = Guid.NewGuid(),
                 EducationPhaseId = 1,
             };
 
-            var entity = teachingPosition.ToEntity();
+            var entity = new Entity("dfe_candidatepastteachingposition", (Guid) position.Id);
+            position.PopulateEntity(entity);
 
-            entity.LogicalName.Should().Be("dfe_candidatepastteachingposition");
-            entity.Id.Should().Be((Guid)teachingPosition.Id);
-            entity.GetAttributeValue<EntityReference>("dfe_subjecttaught").Id.Should()
-                .Be((Guid)teachingPosition.SubjectTaughtId);
-            entity.GetAttributeValue<EntityReference>("dfe_subjecttaught").LogicalName.Should()
-                .Be("dfe_teachingsubjectlist");
-            entity.GetAttributeValue<OptionSetValue>("dfe_educationphase").Value.Should()
-                .Be(teachingPosition.EducationPhaseId);
+            entity.GetAttributeValue<EntityReference>("dfe_subjecttaught").Id.Should().Be((Guid)position.SubjectTaughtId);
+            entity.GetAttributeValue<EntityReference>("dfe_subjecttaught").LogicalName.Should().Be("dfe_teachingsubjectlist");
+            entity.GetAttributeValue<OptionSetValue>("dfe_educationphase").Value.Should().Be(position.EducationPhaseId);
         }
     }
 }

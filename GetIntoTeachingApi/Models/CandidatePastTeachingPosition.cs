@@ -18,22 +18,10 @@ namespace GetIntoTeachingApi.Models
             EducationPhaseId = entity.GetAttributeValue<OptionSetValue>("dfe_educationphase")?.Value;
         }
 
-        public Entity ToEntity()
+        public Entity PopulateEntity(Entity entity)
         {
-            var entity = new Entity("dfe_candidatepastteachingposition");
-
-            if (Id != null) entity.Id = (Guid)Id;
-
-            if (SubjectTaughtId != null)
-            {
-                entity.Attributes.Add("dfe_subjecttaught",
-                    new EntityReference("dfe_teachingsubjectlist", (Guid)SubjectTaughtId));
-            }
-
-            if (EducationPhaseId != null)
-            {
-                entity.Attributes.Add("dfe_educationphase", new OptionSetValue((int)EducationPhaseId));
-            }
+            if (SubjectTaughtId != null) entity["dfe_subjecttaught"] = new EntityReference("dfe_teachingsubjectlist", (Guid)SubjectTaughtId);
+            if (EducationPhaseId != null) entity["dfe_educationphase"] = new OptionSetValue((int)EducationPhaseId);
 
             return entity;
         }

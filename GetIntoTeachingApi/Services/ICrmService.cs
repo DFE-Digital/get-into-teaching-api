@@ -10,5 +10,8 @@ namespace GetIntoTeachingApi.Services
         public PrivacyPolicy GetLatestPrivacyPolicy();
         public IEnumerable<PrivacyPolicy> GetPrivacyPolicies();
         public Candidate GetCandidate(ExistingCandidateRequest request);
+        public IEnumerable<CandidateQualification> GetCandidateQualifications(Candidate candidate);
+        public IEnumerable<CandidatePastTeachingPosition> GetCandidatePastTeachingPositions(Candidate candidate);
+        public void UpsertCandidate(Candidate candidate);
     }
 }
