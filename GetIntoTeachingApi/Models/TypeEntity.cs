@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.PowerPlatform.Cds.Client;
+using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
@@ -6,5 +7,19 @@ namespace GetIntoTeachingApi.Models
     {
         public dynamic Id { get; set; }
         public dynamic Value { get; set; }
+
+        public TypeEntity() {}
+
+        public TypeEntity(Entity entity)
+        {
+            Id = entity.Id;
+            Value = entity.GetAttributeValue<string>("dfe_name");
+        }
+
+        public TypeEntity(CdsServiceClient.PickListItem pickListItem)
+        {
+            Id = pickListItem.PickListItemId;
+            Value = pickListItem.DisplayLabel;
+        }
     }
 }
