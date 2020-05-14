@@ -1,0 +1,27 @@
+name: Pull Request 
+on:
+  pull_request:
+    types: [assigned, opened, synchronize, reopened]
+env:
+  DOCKERHUB_REPOSITORY: dfedigital/get-into-teaching-api
+  GOVUKPAAS_ORG: dfe-teacher-services
+  GOVUKPAAS_SPACE: get-into-teaching
+  CONTAINER: get-into-teaching-api
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.200
+    - name: Install NotifyBintray
+      run:  dotnet nuget add source --name NotifyBintray https://api.bintray.com/nuget/gov-uk-notify/nuget 
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
