@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using GetIntoTeachingApi.Auth;
-using GetIntoTeachingApi.Requirements;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Moq;

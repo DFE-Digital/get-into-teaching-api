@@ -25,10 +25,10 @@ namespace GetIntoTeachingApi.Services
                 email,
                 templateId,
                 personalisation
-            ).ContinueWith(task => _logger.LogWarning(task.Exception.Message), TaskContinuationOptions.OnlyOnFaulted);
+            ).ContinueWith(task => _logger.LogWarning(task.Exception?.Message), TaskContinuationOptions.OnlyOnFaulted);
         }
 
-        private string ApiKey()
+        private static string ApiKey()
         {
             return Environment.GetEnvironmentVariable("NOTIFY_API_KEY");
         }

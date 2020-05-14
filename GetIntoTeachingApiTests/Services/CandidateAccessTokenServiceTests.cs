@@ -9,8 +9,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
     public class CandidateAccessTokenServiceTests : IDisposable
     {
         private readonly ICandidateAccessTokenService _service;
-
-        private string _previousTotpSecretKey;
+        private readonly string _previousTotpSecretKey;
 
         public CandidateAccessTokenServiceTests()
         {
@@ -33,7 +32,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void GenerateToken_ReturnsAValidToken(string email, string firstName, string lastName)
         {
             var request = new ExistingCandidateRequest { Email = email, FirstName = firstName, LastName = lastName };
-            string token = _service.GenerateToken(request);
+            var token = _service.GenerateToken(request);
 
             _service.IsValid(token, request).Should().BeTrue();
         }
@@ -43,8 +42,8 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request1 = new ExistingCandidateRequest { Email = "email1@address.com", FirstName = "John", LastName = "Doe" };
             var request2 = new ExistingCandidateRequest { Email = "email2@address.com", FirstName = "John", LastName = "Doe" };
-            string token1 = _service.GenerateToken(request1);
-            string token2 = _service.GenerateToken(request2);
+            var token1 = _service.GenerateToken(request1);
+            var token2 = _service.GenerateToken(request2);
             token1.Should().NotBe(token2);
         }
 
@@ -53,8 +52,8 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request1 = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John1", LastName = "Doe" };
             var request2 = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John2", LastName = "Doe" };
-            string token1 = _service.GenerateToken(request1);
-            string token2 = _service.GenerateToken(request2);
+            var token1 = _service.GenerateToken(request1);
+            var token2 = _service.GenerateToken(request2);
             token1.Should().NotBe(token2);
         }
 
@@ -62,8 +61,8 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void GenerateToken_SameRequestInSameStep_ReturnSameToken()
         {
             var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
-            string token1 = _service.GenerateToken(request);
-            string token2 = _service.GenerateToken(request);
+            var token1 = _service.GenerateToken(request);
+            var token2 = _service.GenerateToken(request);
             token1.Should().Be(token2);
         }
 
@@ -83,9 +82,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void IsValid_WithExpiredToken_ReturnsFalse()
         {
             var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
-            int secondsToOutsideOfWindow = CandidateAccessTokenService.StepInSeconds * (2 * CandidateAccessTokenService.VerificationWindow);
+            var secondsToOutsideOfWindow = CandidateAccessTokenService.StepInSeconds * (2 * CandidateAccessTokenService.VerificationWindow);
             var dateTimeOutsideOfWindow = DateTime.UtcNow.AddSeconds(-secondsToOutsideOfWindow);
-            string token = _service.GenerateToken(request);
+            var token = _service.GenerateToken(request);
             _service.IsValid(token, request, dateTimeOutsideOfWindow).Should().BeFalse();
         }
     }

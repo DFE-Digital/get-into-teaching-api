@@ -72,7 +72,7 @@ exchanged for your token matches the request payload here).",
                 return Unauthorized();
             }
 
-            Candidate candidate = _crm.GetCandidate(request);
+            var candidate = _crm.GetCandidate(request);
 
             if (candidate == null)
             {
