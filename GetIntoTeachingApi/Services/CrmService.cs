@@ -4,30 +4,31 @@ using System.Linq;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
 
 namespace GetIntoTeachingApi.Services
 {
     public class CrmService : ICrmService
-    {       
+    {
         public enum PrivacyPolicyType { Web = 222750001 }
         private const int MaximumNumberOfCandidatesToMatch = 20;
         private const int MaximumNumberOfPrivacyPolicies = 3;
-        private readonly IOrganizationServiceAdapter _organizationalService;
+        private readonly IOrganizationServiceAdapter _service;
 
-        public CrmService(IOrganizationServiceAdapter organizationalService)
+        public CrmService(IOrganizationServiceAdapter service)
         {
-            _organizationalService = organizationalService;
+            _service = service;
         }
 
         public IEnumerable<TypeEntity> GetLookupItems(string entityName)
         {
-            return _organizationalService.CreateQuery(ConnectionString(), entityName)
+            return _service.CreateQuery(ConnectionString(), entityName)
                 .Select((entity) => new TypeEntity(entity));
         }
 
         public IEnumerable<TypeEntity> GetPickListItems(string entityName, string attributeName)
         {
-            return _organizationalService.GetPickListItemsForAttribute(ConnectionString(), entityName, attributeName)
+            return _service.GetPickListItemsForAttribute(ConnectionString(), entityName, attributeName)
                 .Select((pickListItem) => new TypeEntity(pickListItem));
         }
 
@@ -38,9 +39,9 @@ namespace GetIntoTeachingApi.Services
 
         public IEnumerable<PrivacyPolicy> GetPrivacyPolicies()
         {
-            return _organizationalService.CreateQuery(ConnectionString(), "dfe_privacypolicy")
+            return _service.CreateQuery(ConnectionString(), "dfe_privacypolicy")
                 .Where((entity) =>
-                    entity.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int) PrivacyPolicyType.Web &&
+                    entity.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int)PrivacyPolicyType.Web &&
                     entity.GetAttributeValue<bool>("dfe_active")
                 )
                 .OrderByDescending((policy) => policy.GetAttributeValue<DateTime>("createdon"))
@@ -50,7 +51,7 @@ namespace GetIntoTeachingApi.Services
 
         public Candidate GetCandidate(ExistingCandidateRequest request)
         {
-            var candidate = _organizationalService.CreateQuery(ConnectionString(), "contact")
+            return _service.CreateQuery(ConnectionString(), "contact")
                 .Where(entity =>
                     // Will perform a case-insensitive comparison
                     entity.GetAttributeValue<string>("emailaddress1") == request.Email
@@ -60,29 +61,90 @@ namespace GetIntoTeachingApi.Services
                 .Take(MaximumNumberOfCandidatesToMatch)
                 .ToList()
                 .FirstOrDefault(request.Match);
-
-            if (candidate == null) return null;
-
-            candidate.Qualifications = GetCandidateQualifications(candidate);
-            candidate.PastTeachingPositions = GetCandidatePastTeachingPositions(candidate);
-
-            return candidate;
         }
 
-        private CandidateQualification[] GetCandidateQualifications(Candidate candidate)
+        public IEnumerable<CandidateQualification> GetCandidateQualifications(Candidate candidate)
         {
-            return _organizationalService.CreateQuery(ConnectionString(), "dfe_candidatequalification")
+            return _service.CreateQuery(ConnectionString(), "dfe_candidatequalification")
                 .Where(entity => entity.GetAttributeValue<Guid>("dfe_contactid") == candidate.Id)
                 .Select(entity => new CandidateQualification(entity))
-                .ToArray();
+                .ToList();
         }
 
-        private CandidatePastTeachingPosition[] GetCandidatePastTeachingPositions(Candidate candidate)
+        public IEnumerable<CandidatePastTeachingPosition> GetCandidatePastTeachingPositions(Candidate candidate)
         {
-            return _organizationalService.CreateQuery(ConnectionString(), "dfe_candidatepastteachingposition")
+            return _service.CreateQuery(ConnectionString(), "dfe_candidatepastteachingposition")
                 .Where(entity => entity.GetAttributeValue<Guid>("dfe_contactid") == candidate.Id)
                 .Select(entity => new CandidatePastTeachingPosition(entity))
                 .ToArray();
+        }
+
+        public void UpsertCandidate(Candidate candidate)
+        {
+            using var context = _service.Context(ConnectionString());
+
+            var candidateEntity = UpsertCandidate(candidate, context);
+
+            candidate.Qualifications.ForEach(q => UpsertCandidateQualification(q, candidateEntity, context));
+            candidate.PastTeachingPositions.ForEach(p => UpsertCandidatePastTeachingPosition(p, candidateEntity, context));
+            
+            CreateCandidatePrivacyPolicy(candidate.PrivacyPolicy, candidateEntity, context);
+            CreatePhoneCall(candidate.PhoneCall, candidateEntity, context);
+
+            _service.SaveChanges(context);
+        }
+
+        private Entity UpsertCandidate(Candidate candidate, OrganizationServiceContext context)
+        {
+            var candidateEntity = NewOrExistingEntity(context, "contact", candidate.Id);
+            return candidate.PopulateEntity(candidateEntity);
+        }
+
+        private void UpsertCandidateQualification(CandidateQualification qualification, Entity candidateEntity,
+            OrganizationServiceContext context)
+        {
+            var entity = NewOrExistingEntity(context, "dfe_candidatequalification", qualification.Id);
+            qualification.PopulateEntity(entity);
+
+            if (entity.EntityState == EntityState.Created)
+                _service.AddLink(candidateEntity,
+                    new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), entity, context);
+        }
+
+        private void UpsertCandidatePastTeachingPosition(CandidatePastTeachingPosition position, Entity candidateEntity,
+            OrganizationServiceContext context)
+        {
+            var entity = NewOrExistingEntity(context, "dfe_candidatepastteachingposition", position.Id);
+            position.PopulateEntity(entity);
+
+            if (entity.EntityState == EntityState.Created)
+                _service.AddLink(candidateEntity,
+                    new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), entity, context);
+        }
+
+        private void CreateCandidatePrivacyPolicy(CandidatePrivacyPolicy policy, Entity candidateEntity,
+            OrganizationServiceContext context)
+        {
+            if (policy == null) return;
+
+            var entity = policy.PopulateEntity(_service.NewEntity("dfe_candidateprivacypolicy", context));
+            _service.AddLink(candidateEntity,
+                new Relationship("dfe_contact_dfe_candidateprivacypolicy_Candidate"), entity, context);
+        }
+
+        private void CreatePhoneCall(PhoneCall phoneCall, Entity candidateEntity, OrganizationServiceContext context)
+        {
+            if (phoneCall == null) return;
+
+            var entity = _service.NewEntity("phonecall", context);
+            phoneCall.PopulateEntity(entity, (string) candidateEntity["telephone1"]);
+            _service.AddLink(candidateEntity,
+                new Relationship("dfe_contact_phonecall_contactid"), entity, context);
+        }
+
+        private Entity NewOrExistingEntity(OrganizationServiceContext context, string entityName, Guid? id)
+        {
+            return id != null ? _service.BlankExistingEntity(entityName, (Guid)id, context) : _service.NewEntity(entityName, context);
         }
 
         private string ConnectionString()

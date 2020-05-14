@@ -14,7 +14,7 @@ namespace GetIntoTeachingApiTests.Models
         {
             var entity = new Entity();
             entity.Id = Guid.NewGuid();
-            entity.Attributes["dfe_name"] = "name";
+            entity["dfe_name"] = "name";
 
             var typeEntity = new TypeEntity(entity);
 
