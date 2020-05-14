@@ -9,20 +9,18 @@ env:
   CONTAINER: get-into-teaching-api
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-    - name: Install dependencies
-      run: dotnet restore
     - name: Install NotifyBintray
       run:  dotnet nuget add source --name NotifyBintray https://api.bintray.com/nuget/gov-uk-notify/nuget 
+    - name: Install dependencies
+      run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
