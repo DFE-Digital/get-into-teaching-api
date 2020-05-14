@@ -6,7 +6,7 @@ env:
   DOCKERHUB_REPOSITORY: dfedigital/get-into-teaching-api
   GOVUKPAAS_ORG: dfe-teacher-services
   GOVUKPAAS_SPACE: get-into-teaching-test
-  CONTAINER: get-into-teaching-api
+  CONTAINER: get-into-teaching-test-api
 
 jobs:
   deploy:
