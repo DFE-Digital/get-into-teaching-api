@@ -1,7 +1,7 @@
 name: Release for testing
 on:
   release:
-    types: [published, edited, created]
+    types: [created]
 env:
   DOCKERHUB_REPOSITORY: dfedigital/get-into-teaching-api
   GOVUKPAAS_ORG: dfe-teacher-services
