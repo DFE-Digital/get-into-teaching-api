@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AutoMapper;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using Microsoft.Xrm.Sdk;
@@ -13,24 +12,22 @@ namespace GetIntoTeachingApi.Services
         public enum PrivacyPolicyType { Web = 222750001 }
         private readonly int MaximumNumberOfCandidatesToMatch = 20;
         private readonly IOrganizationServiceAdapter _organizationalService;
-        private readonly IMapper _mapper;
 
-        public CrmService(IOrganizationServiceAdapter organizationalService, IMapper mapper)
+        public CrmService(IOrganizationServiceAdapter organizationalService)
         {
             _organizationalService = organizationalService;
-            _mapper = mapper;
         }
 
         public IEnumerable<TypeEntity> GetLookupItems(string entityName)
         {
             return _organizationalService.CreateQuery(ConnectionString(), entityName)
-                .Select((entity) => _mapper.Map<TypeEntity>(entity));
+                .Select((entity) => new TypeEntity(entity));
         }
 
         public IEnumerable<TypeEntity> GetPickListItems(string entityName, string attributeName)
         {
             return _organizationalService.GetPickListItemsForAttribute(ConnectionString(), entityName, attributeName)
-                .Select((entity) => _mapper.Map<TypeEntity>(entity));
+                .Select((pickListItem) => new TypeEntity(pickListItem));
         }
 
         public PrivacyPolicy GetLatestPrivacyPolicy()
@@ -41,7 +38,7 @@ namespace GetIntoTeachingApi.Services
                     entity.GetAttributeValue<bool>("dfe_active")
                 )
                 .OrderByDescending((policy) => policy.GetAttributeValue<DateTime>("createdon"))
-                .Select((entity) => _mapper.Map<PrivacyPolicy>(entity))
+                .Select((entity) => new PrivacyPolicy(entity))
                 .First();
         }
 
@@ -53,7 +50,7 @@ namespace GetIntoTeachingApi.Services
                     entity.GetAttributeValue<string>("emailaddress1") == request.Email
                 )
                 .OrderByDescending(entity => entity.GetAttributeValue<DateTime>("createdon"))
-                .Select(entity => _mapper.Map<Candidate>(entity))
+                .Select(entity => new Candidate(entity))
                 .Take(MaximumNumberOfCandidatesToMatch)
                 .ToList()
                 .FirstOrDefault(candidate => request.Match(candidate));
@@ -70,7 +67,7 @@ namespace GetIntoTeachingApi.Services
         {
             return _organizationalService.CreateQuery(ConnectionString(), "dfe_candidatequalification")
                 .Where(entity => entity.GetAttributeValue<Guid>("dfe_contactid") == candidate.Id)
-                .Select(entity => _mapper.Map<CandidateQualification>(entity))
+                .Select(entity => new CandidateQualification(entity))
                 .ToArray();
         }
 
@@ -78,7 +75,7 @@ namespace GetIntoTeachingApi.Services
         {
             return _organizationalService.CreateQuery(ConnectionString(), "dfe_candidatepastteachingposition")
                 .Where(entity => entity.GetAttributeValue<Guid>("dfe_contactid") == candidate.Id)
-                .Select(entity => _mapper.Map<CandidatePastTeachingPosition>(entity))
+                .Select(entity => new CandidatePastTeachingPosition(entity))
                 .ToArray();
         }
 

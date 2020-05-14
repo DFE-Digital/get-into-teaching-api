@@ -1,4 +1,6 @@
 ﻿using System;
+using Microsoft.Xrm.Sdk;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
 {
@@ -13,8 +15,101 @@ namespace GetIntoTeachingApi.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime? DateOfBirth { get; set; }
+        public string Telephone { get; set; }
         public Address Address { get; set; }
         public CandidateQualification[] Qualifications { get; set; }
         public CandidatePastTeachingPosition[] PastTeachingPositions { get; set; }
+        [SwaggerSchema("Set to schedule a phone call.", WriteOnly = true)]
+        public DateTime? PhoneCallScheduledStartAt { get; set; }
+        [SwaggerSchema("Set to update the accepted privacy policy.", WriteOnly = true)]
+        public Guid? AcceptedPrivacyPolicyId { get; set; }
+
+        public Candidate() { }
+
+        public Candidate(Entity entity)
+        {
+            Id = entity.Id;
+            PreferredTeachingSubjectId = entity.GetAttributeValue<EntityReference>("dfe_preferredteachingsubject01")?.Id;
+            PreferredEducationPhaseId = entity.GetAttributeValue<OptionSetValue>("dfe_preferrededucationphase01")?.Value;
+            LocationId = entity.GetAttributeValue<OptionSetValue>("dfe_isinuk")?.Value;
+            InitialTeacherTrainingYearId = entity.GetAttributeValue<OptionSetValue>("dfe_ittyear")?.Value;
+            Email = entity.GetAttributeValue<string>("emailaddress1");
+            FirstName = entity.GetAttributeValue<string>("firstname");
+            LastName = entity.GetAttributeValue<string>("lastname");
+            DateOfBirth = entity.GetAttributeValue<DateTime>("birthdate");
+            Telephone = entity.GetAttributeValue<string>("telephone1");
+            Address = new Address()
+            {
+                Line1 = entity.GetAttributeValue<string>("address1_line1"),
+                Line2 = entity.GetAttributeValue<string>("address1_line2"),
+                Line3 = entity.GetAttributeValue<string>("address1_line3"),
+                City = entity.GetAttributeValue<string>("address1_city"),
+                State = entity.GetAttributeValue<string>("address1_stateorprovince"),
+                Postcode = entity.GetAttributeValue<string>("address1_postalcode"),
+            };
+        }
+
+        public Entity ToEntity()
+        {
+            var entity = new Entity("contact");
+
+            if (Id != null) entity.Id = (Guid) Id;
+
+            if (PreferredTeachingSubjectId != null)
+            {
+                entity.Attributes.Add("dfe_preferredteachingsubject01",
+                    new EntityReference("dfe_teachingsubjectlist", (Guid) PreferredTeachingSubjectId));
+            }
+
+            if (PreferredEducationPhaseId != null)
+            {
+                entity.Attributes.Add("dfe_preferrededucationphase01", new OptionSetValue((int) PreferredEducationPhaseId));
+            }
+
+            if (LocationId != null)
+            {
+                entity.Attributes.Add("dfe_isinuk", new OptionSetValue((int)LocationId));
+            }
+
+            if (InitialTeacherTrainingYearId != null)
+            {
+                entity.Attributes.Add("dfe_ittyear", new OptionSetValue((int) InitialTeacherTrainingYearId));
+            }
+
+            entity.Attributes.Add("emailaddress1", Email);
+            entity.Attributes.Add("firstname", FirstName);
+            entity.Attributes.Add("lastname", LastName);
+            entity.Attributes.Add("birthdate", DateOfBirth);
+            entity.Attributes.Add("telephone1", Telephone);
+            entity.Attributes.Add("address1_line1", Address.Line1);
+            entity.Attributes.Add("address1_line2", Address.Line2);
+            entity.Attributes.Add("address1_line3", Address.Line3);
+            entity.Attributes.Add("address1_city", Address.City);
+            entity.Attributes.Add("address1_stateorprovince", Address.State);
+            entity.Attributes.Add("address1_postalcode", Address.Postcode);
+
+            return entity;
+        }
+
+        public Entity ToPhoneCallEntity()
+        {
+            var entity = new Entity("phonecall");
+
+            entity.Attributes.Add("regardingobjectid", new EntityReference("contact", (Guid)Id));
+            entity.Attributes.Add("phonenumber", Telephone);
+            entity.Attributes.Add("scheduledstart", PhoneCallScheduledStartAt);
+
+            return entity;
+        }
+
+        public Entity ToCandidatePrivacyPolicyEntity()
+        {
+            var entity = new Entity("dfe_candidateprivacypolicy");
+
+            entity.Attributes.Add("dfe_candidate", new EntityReference("contact", (Guid)Id));
+            entity.Attributes.Add("dfe_privacypolicynumber", new EntityReference("dfe_privacypolicy", (Guid)AcceptedPrivacyPolicyId));
+
+            return entity;
+        }
     }
 }

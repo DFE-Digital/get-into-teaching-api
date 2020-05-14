@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using GetIntoTeachingApi.OperationFilters;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Services;
-using AutoMapper;
 
 namespace GetIntoTeachingApi
 {
@@ -30,8 +29,6 @@ namespace GetIntoTeachingApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(Startup));
-
             services.AddSingleton<IAuthorizationHandler, SharedSecretHandler>();
             services.AddSingleton<INotificationClientAdapter, NotificationClientAdapter>();
             services.AddSingleton<IOrganizationServiceAdapter, OrganizationServiceAdapter>();
