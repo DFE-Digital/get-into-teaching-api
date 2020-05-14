@@ -27,12 +27,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_EmailAddressIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.Email, null as string);
-        }
-
-        [Fact]
         public void Validate_EmailAddressIsEmpty_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(request => request.Email, "");
@@ -42,6 +36,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_EmailAddressIsInvalid_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(request => request.Email, "invalid-email@");
+        }
+
+        [Fact]
+        public void Validate_EmailAddressTooLong_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.Email, $"{new string('a', 50)}@{new string('a', 50)}.com");
         }
 
         [Fact]
@@ -57,9 +57,15 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_DateOfBirthInPast_HasNoError()
+        public void Validate_FirstNameTooLong_HasError()
         {
-            _validator.ShouldNotHaveValidationErrorFor(request => request.DateOfBirth, DateTime.Now.AddDays(-1));
+            _validator.ShouldHaveValidationErrorFor(request => request.FirstName, new string('a', 257));
+        }
+
+        [Fact]
+        public void Validate_LastNameTooLong_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.LastName, new string('a', 257));
         }
 
         [Fact]
