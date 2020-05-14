@@ -1,0 +1,44 @@
+﻿using System.Collections.Generic;
+using FluentValidation;
+using GetIntoTeachingApi.Services;
+using System.Linq;
+
+namespace GetIntoTeachingApi.Models.Validators
+{
+    public class CandidateQualificationValidator : AbstractValidator<CandidateQualification>
+    {
+        private readonly ICrmService _crm;
+
+        public CandidateQualificationValidator(ICrmService crm)
+        {
+            _crm = crm;
+
+            RuleFor(qualification => qualification.TypeId)
+                .Must(id => TypeIds().Contains(id))
+                .WithMessage("Must be a valid qualification type.");
+            RuleFor(qualification => qualification.CategoryId)
+                .Must(id => CategoryIds().Contains(id))
+                .Unless(qualification => qualification.CategoryId == null)
+                .WithMessage("Must be a valid qualification category.");
+            RuleFor(qualification => qualification.DegreeStatusId)
+                .Must(id => StatusIds().Contains(id))
+                .Unless(qualification => qualification.DegreeStatusId == null)
+                .WithMessage("Must be a valid qualification degree status.");
+        }
+
+        public IEnumerable<int?> CategoryIds()
+        {
+            return _crm.GetPickListItems("dfe_qualification", "dfe_category").Select(category => (int?)category.Id);
+        }
+
+        public IEnumerable<int?> TypeIds()
+        {
+            return _crm.GetPickListItems("dfe_qualification", "dfe_type").Select(type => (int?)type.Id);
+        }
+
+        public IEnumerable<int?> StatusIds()
+        {
+            return _crm.GetPickListItems("dfe_qualification", "dfe_degreestatus").Select(status => (int?)status.Id);
+        }
+    }
+}

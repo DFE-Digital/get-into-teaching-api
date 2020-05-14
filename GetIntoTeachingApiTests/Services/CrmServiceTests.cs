@@ -84,6 +84,19 @@ namespace GetIntoTeachingApiTests.Services
             result.Text.Should().Be("Latest Active Web");
         }
 
+        [Fact]
+        public void GetPrivacyPolicies_Returns3MostRecentActiveWebPrivacyPolicies()
+        {
+            IQueryable<Entity> queryablePrivacyPolicies = MockPrivacyPolicies().AsQueryable();
+            _mockOrganizationalService.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_privacypolicy"))
+                .Returns(queryablePrivacyPolicies);
+
+            var result = _crm.GetPrivacyPolicies();
+
+            result.Count().Should().Be(3);
+            result.Select(policy => policy.Text).Should().BeEquivalentTo(new string[] { "Latest Active Web", "Not Latest 1", "Not Latest 2" });
+        }
+
         [Theory]
         [InlineData("john@doe.com", "New John", "Doe", "New John")]
         [InlineData("JOHN@doe.com", "New John", "Doe", "New John")]
@@ -212,12 +225,24 @@ namespace GetIntoTeachingApiTests.Services
             policy3.Attributes["dfe_active"] = false;
 
             var policy4 = new Entity("dfe_privacypolicy");
-            policy4.Attributes["dfe_details"] = "Not Latest";
+            policy4.Attributes["dfe_details"] = "Not Latest 1";
             policy4.Attributes["dfe_policytype"] = new OptionSetValue { Value = (int)CrmService.PrivacyPolicyType.Web };
             policy4.Attributes["createdon"] = DateTime.UtcNow.AddDays(-15);
             policy4.Attributes["dfe_active"] = true;
 
-            return new[] { policy1, policy2, policy3, policy4 };
+            var policy5 = new Entity("dfe_privacypolicy");
+            policy5.Attributes["dfe_details"] = "Not Latest 2";
+            policy5.Attributes["dfe_policytype"] = new OptionSetValue { Value = (int)CrmService.PrivacyPolicyType.Web };
+            policy5.Attributes["createdon"] = DateTime.UtcNow.AddDays(-20);
+            policy5.Attributes["dfe_active"] = true;
+
+            var policy6 = new Entity("dfe_privacypolicy");
+            policy6.Attributes["dfe_details"] = "Not Latest 3";
+            policy6.Attributes["dfe_policytype"] = new OptionSetValue { Value = (int)CrmService.PrivacyPolicyType.Web };
+            policy6.Attributes["createdon"] = DateTime.UtcNow.AddDays(-25);
+            policy6.Attributes["dfe_active"] = true;
+
+            return new[] { policy1, policy2, policy3, policy4, policy5, policy6 };
         }
 
         private IEnumerable<Entity> MockCountries()
