@@ -66,5 +66,18 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
 
             response.Should().BeOfType<NotFoundResult>();
         }
+
+        [Fact]
+        public void Upsert_InvalidRequest_RespondsWithValidationErrors()
+        {
+            var candidate = new Candidate { Email = "invalid-email@" };
+            _controller.ModelState.AddModelError("Email", "Email is invalid.");
+
+            var response = _controller.Upsert(candidate);
+
+            var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
+            var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
+            errors.Should().ContainKey("Email").WhichValue.Should().BeOfType<string[]>().Which.Should().Contain("Email is invalid.");
+        }
     }
 }

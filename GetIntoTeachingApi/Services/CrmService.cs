@@ -11,6 +11,7 @@ namespace GetIntoTeachingApi.Services
     {       
         public enum PrivacyPolicyType { Web = 222750001 }
         private readonly int MaximumNumberOfCandidatesToMatch = 20;
+        private readonly int MaximumNumberOfPrivacyPolicies = 3;
         private readonly IOrganizationServiceAdapter _organizationalService;
 
         public CrmService(IOrganizationServiceAdapter organizationalService)
@@ -32,6 +33,11 @@ namespace GetIntoTeachingApi.Services
 
         public PrivacyPolicy GetLatestPrivacyPolicy()
         {
+            return GetPrivacyPolicies().FirstOrDefault();
+        }
+
+        public IEnumerable<PrivacyPolicy> GetPrivacyPolicies()
+        {
             return _organizationalService.CreateQuery(ConnectionString(), "dfe_privacypolicy")
                 .Where((entity) =>
                     entity.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int) PrivacyPolicyType.Web &&
@@ -39,7 +45,7 @@ namespace GetIntoTeachingApi.Services
                 )
                 .OrderByDescending((policy) => policy.GetAttributeValue<DateTime>("createdon"))
                 .Select((entity) => new PrivacyPolicy(entity))
-                .First();
+                .Take(MaximumNumberOfPrivacyPolicies);
         }
 
         public Candidate GetCandidate(ExistingCandidateRequest request)
