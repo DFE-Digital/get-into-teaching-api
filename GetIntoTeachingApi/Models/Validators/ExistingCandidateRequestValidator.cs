@@ -8,17 +8,19 @@ namespace GetIntoTeachingApi.Models.Validators
     {
         public ExistingCandidateRequestValidator()
         {
-            RuleFor(request => request.Email).NotEmpty().EmailAddress();
+            RuleFor(request => request.FirstName).MaximumLength(256);
+            RuleFor(request => request.LastName).MaximumLength(256);
+            RuleFor(request => request.Email).NotEmpty().EmailAddress().MaximumLength(100);
             RuleFor(request => request.DateOfBirth).LessThan(request => DateTime.Now);
             RuleFor(request => request)
-                .Must(request => SpecifyTwoAdditionalRequiredAttributes(request))
+                .Must(SpecifyTwoAdditionalRequiredAttributes)
                 .WithMessage("You must specify values for 2 additional attributes (from birthdate, firstname and lastname).");
         }
 
-        private Boolean SpecifyTwoAdditionalRequiredAttributes(ExistingCandidateRequest request)
+        private static bool SpecifyTwoAdditionalRequiredAttributes(ExistingCandidateRequest request)
         {
-            var additionalRequiredAttributes = new Object[] { request.DateOfBirth, request.FirstName, request.LastName };
-            return additionalRequiredAttributes.Where(attribute => attribute != null).Count() >= 2;
+            var additionalRequiredAttributes = new object[] { request.DateOfBirth, request.FirstName, request.LastName };
+            return additionalRequiredAttributes.Count(attribute => attribute != null) >= 2;
         }
     }
 }
