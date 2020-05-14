@@ -33,7 +33,7 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void GetLatest_ReturnsLatestPrivacyPolicy()
         {
-            PrivacyPolicy mockPolicy = MockPrivacyPolicy();
+            var mockPolicy = MockPrivacyPolicy();
             _mockCrm.Setup(mock => mock.GetLatestPrivacyPolicy()).Returns(mockPolicy);
 
             var response = _controller.GetLatest();
@@ -42,7 +42,7 @@ namespace GetIntoTeachingApiTests.Controllers
             ok.Value.Should().Be(mockPolicy);
         }
 
-        private PrivacyPolicy MockPrivacyPolicy()
+        private static PrivacyPolicy MockPrivacyPolicy()
         {
             return new PrivacyPolicy { Id = Guid.NewGuid(), Text = "Example text" };
         }

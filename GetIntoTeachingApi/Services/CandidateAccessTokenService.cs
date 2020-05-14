@@ -33,11 +33,10 @@ namespace GetIntoTeachingApi.Services
 
             var totp = CreateTotp(request);
 
-            long timeWindowUsed;
             return totp.VerifyTotp(
                 timestamp,
                 token,
-                out timeWindowUsed,
+                out _,
                 new VerificationWindow(previous: VerificationWindow, future: VerificationWindow)
             );
         }

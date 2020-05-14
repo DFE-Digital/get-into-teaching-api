@@ -52,13 +52,13 @@ that can then be used for verification.",
                 return BadRequest(this.ModelState);
             }
 
-            Candidate candidate = _crm.GetCandidate(request);
+            var candidate = _crm.GetCandidate(request);
             if (candidate == null)
             {
                 return NotFound();
             }
 
-            string token = _tokenService.GenerateToken(request);
+            var token = _tokenService.GenerateToken(request);
             var personalisation = new Dictionary<string, dynamic> { { "pin_code", token } };
             _notifyService.SendEmail(request.Email, NotifyService.NewPinCodeEmailTemplateId, personalisation);
 

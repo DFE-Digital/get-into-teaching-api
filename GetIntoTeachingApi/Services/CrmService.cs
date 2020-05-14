@@ -10,8 +10,8 @@ namespace GetIntoTeachingApi.Services
     public class CrmService : ICrmService
     {       
         public enum PrivacyPolicyType { Web = 222750001 }
-        private readonly int MaximumNumberOfCandidatesToMatch = 20;
-        private readonly int MaximumNumberOfPrivacyPolicies = 3;
+        private const int MaximumNumberOfCandidatesToMatch = 20;
+        private const int MaximumNumberOfPrivacyPolicies = 3;
         private readonly IOrganizationServiceAdapter _organizationalService;
 
         public CrmService(IOrganizationServiceAdapter organizationalService)
@@ -59,7 +59,7 @@ namespace GetIntoTeachingApi.Services
                 .Select(entity => new Candidate(entity))
                 .Take(MaximumNumberOfCandidatesToMatch)
                 .ToList()
-                .FirstOrDefault(candidate => request.Match(candidate));
+                .FirstOrDefault(request.Match);
 
             if (candidate == null) return null;
 
@@ -90,17 +90,17 @@ namespace GetIntoTeachingApi.Services
             return $"AuthType=ClientSecret; url={InstanceUrl()}; ClientId={ClientId()}; ClientSecret={ClientSecret()}";
         }
 
-        private string InstanceUrl()
+        private static string InstanceUrl()
         {
             return Environment.GetEnvironmentVariable("CRM_SERVICE_URL");
         }
 
-        private string ClientId()
+        private static string ClientId()
         {
             return Environment.GetEnvironmentVariable("CRM_CLIENT_ID");
         }
 
-        private string ClientSecret()
+        private static string ClientSecret()
         {
             return Environment.GetEnvironmentVariable("CRM_CLIENT_SECRET");
         }

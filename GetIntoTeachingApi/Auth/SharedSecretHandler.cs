@@ -1,14 +1,12 @@
-﻿using GetIntoTeachingApi.Requirements;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using System;
 using System.Threading.Tasks;
 
 namespace GetIntoTeachingApi.Auth
 {
     public class SharedSecretHandler : AuthorizationHandler<SharedSecretRequirement>
     {
-        IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public SharedSecretHandler(IHttpContextAccessor httpContextAccessor)
         {
