@@ -1,0 +1,29 @@
+name: Release to test
+on: 
+   release:
+     types:  [edited, created]
+env:
+  DOCKERHUB_REPOSITORY: dfedigital/get-into-teaching-api
+  GOVUKPAAS_ORG: dfe-teacher-services
+  GOVUKPAAS_SPACE: get-into-teaching-test
+  CONTAINER: get-into-teaching-test-api
+
+jobs:
+  deploy:
+    name: Deploy to GovUK PaaS Test Environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Download CloudFoundry CLI
+        run: wget -O /tmp/cf-cli.deb "https://packages.cloudfoundry.org/stable?release=debian64&source=github"
+      - name: Install CloudFoundry CLI
+        run: sudo dpkg -i /tmp/cf-cli.deb
+      - name: Check CloudFoundry CLI version
+        run: cf --version
+      - name: Login to PaaS
+        run: cf login -a api.london.cloud.service.gov.uk -u "${{ secrets.GOVUKPAAS_USERNAME }}" -p "${{ secrets.GOVUKPAAS_PASSWORD }}" -o $GOVUKPAAS_ORG -s $GOVUKPAAS_SPACE
+      - name: Current Org and Space
+        run: cf target
+      - name: Deploy Built Image
+        run: cf push $CONTAINER  --docker-image $DOCKERHUB_REPOSITORY:sha-$(git rev-parse --short $GITHUB_SHA)
