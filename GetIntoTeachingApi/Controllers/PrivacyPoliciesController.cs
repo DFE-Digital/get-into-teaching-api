@@ -31,7 +31,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(PrivacyPolicy), 200)]
         public IActionResult GetLatest()
         {
-            PrivacyPolicy privacyPolicy = _crm.GetLatestPrivacyPolicy();
+            var privacyPolicy = _crm.GetLatestPrivacyPolicy();
             return Ok(privacyPolicy);
         }
     }

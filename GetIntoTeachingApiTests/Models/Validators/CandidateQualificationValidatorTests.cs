@@ -84,7 +84,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             _validator.ShouldNotHaveValidationErrorFor(qualification => qualification.DegreeStatusId, null as int?);
         }
 
-        private TypeEntity NewMock(dynamic id)
+        private static TypeEntity NewMock(dynamic id)
         {
             return new TypeEntity { Id = id };
         }

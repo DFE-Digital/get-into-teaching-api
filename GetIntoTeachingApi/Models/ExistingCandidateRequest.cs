@@ -1,5 +1,4 @@
-﻿using Swashbuckle.AspNetCore.Annotations;
-using System;
+﻿using System;
 using System.Linq;
 
 namespace GetIntoTeachingApi.Models
@@ -8,13 +7,9 @@ namespace GetIntoTeachingApi.Models
     {
         private static readonly int MinimumAdditionalAttributeMatches = 2;
 
-        [SwaggerSchema("First name")]
         public string FirstName { get; set; }
-        [SwaggerSchema("Last name")]
         public string LastName { get; set; }
-        [SwaggerSchema("Email address", Format = "email")]
         public string Email { get; set; }
-        [SwaggerSchema("Date of birth", Format = "date")]
         public DateTime? DateOfBirth { get; set; }
 
         public bool Match(Candidate candidate)

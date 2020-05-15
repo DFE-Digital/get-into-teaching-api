@@ -9,7 +9,6 @@ using System;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using GetIntoTeachingApi.Auth;
-using GetIntoTeachingApi.Requirements;
 using System.Collections.Generic;
 using GetIntoTeachingApi.OperationFilters;
 using GetIntoTeachingApi.Adapters;
