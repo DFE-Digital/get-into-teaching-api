@@ -256,6 +256,25 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void UpsertCandidate_WhenAlreadyAccepted_DoesNotInsertCandidatePrivacyPolicy()
+        {
+            var policy = new CandidatePrivacyPolicy() { AcceptedPolicyId = Guid.NewGuid() };
+            var candidate = new Candidate() { Id = Guid.NewGuid(), PrivacyPolicy = policy };
+            var candidateEntity = new Entity() { Id = (Guid)candidate.Id, EntityState = EntityState.Changed};
+            var acceptedPrivacyPolicy = new Entity();
+            acceptedPrivacyPolicy["dfe_candidate"] = new EntityReference("dfe_candidate", (Guid)candidate.Id);
+            acceptedPrivacyPolicy["dfe_privacypolicynumber"] = new EntityReference("dfe_privacypolicynumber", policy.AcceptedPolicyId);
+            _mockOrganizationalService.Setup(mock => mock.BlankExistingEntity("contact", 
+                (Guid)candidate.Id, It.IsAny<OrganizationServiceContext>())).Returns(candidateEntity);
+            _mockOrganizationalService.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_candidateprivacypolicy"))
+                .Returns(new List<Entity> { acceptedPrivacyPolicy }.AsQueryable());
+
+            _crm.UpsertCandidate(candidate);
+
+            _mockOrganizationalService.Verify(mock => mock.NewEntity("dfe_candidateprivacypolicy", null), Times.Never);
+        }
+
+        [Fact]
         public void UpsertCandidate_InsertsPhoneCall()
         {
             var phoneCall = new PhoneCall() { ScheduledAt = DateTime.Now.AddDays(3) };
