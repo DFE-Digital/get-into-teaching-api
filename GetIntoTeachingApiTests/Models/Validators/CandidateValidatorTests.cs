@@ -6,7 +6,6 @@ using GetIntoTeachingApi.Models.Validators;
 using GetIntoTeachingApi.Services;
 using Moq;
 using Xunit;
-using Guid = System.Guid;
 
 namespace GetIntoTeachingApiTests.Models.Validators
 {
@@ -242,7 +241,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.InitialTeacherTrainingYearId, null as int?);
         }
 
-        private TypeEntity NewMock(dynamic id)
+        private static TypeEntity NewMock(dynamic id)
         {
             return new TypeEntity { Id = id };
         }

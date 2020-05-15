@@ -62,7 +62,7 @@ namespace GetIntoTeachingApiTests.Services
 
             _service.SendEmail("email@address.com", NotifyService.NewPinCodeEmailTemplateId, _personalisation);
 
-            LoggerTestHelpers.VerifyWarningWasCalled(_mockLogger, "Unable to send email!");
+            _mockLogger.VerifyWarningWasCalled("Unable to send email!");
         }
     }
 }

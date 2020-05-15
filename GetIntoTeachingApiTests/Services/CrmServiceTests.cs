@@ -2,7 +2,6 @@
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
-using GetIntoTeachingApiTests.Utils;
 using Microsoft.Xrm.Sdk;
 using Moq;
 using System;
@@ -16,7 +15,7 @@ namespace GetIntoTeachingApiTests.Services
     public class CrmServiceTests : IDisposable
     {
         private const string ConnectionString = "AuthType=ClientSecret; url=service_url; ClientId=client_id; ClientSecret=client_secret";
-        private static Guid JaneDoeGuid = new Guid("bf927e43-5650-44aa-859a-8297139b8ddd");
+        private static readonly Guid JaneDoeGuid = new Guid("bf927e43-5650-44aa-859a-8297139b8ddd");
         private readonly string _previousCrmServiceUrl;
         private readonly string _previousCrmClientId;
         private readonly string _previousCrmClientSecret;
@@ -47,35 +46,35 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void GetLookupItems_ReturnsAll()
         {
-            IQueryable<Entity> queryableCountries = MockCountries().AsQueryable();
+            var queryableCountries = MockCountries().AsQueryable();
             _mockOrganizationalService.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_country"))
                 .Returns(queryableCountries);
 
             var result = _crm.GetLookupItems("dfe_country");
 
             result.Select(country => country.Value).Should().BeEquivalentTo(
-                new[] { "Country 1", "Country 2", "Country 3" }
+                new object[] { "Country 1", "Country 2", "Country 3" }
             );
         }
 
         [Fact]
         public void GetPickListItems_ReturnsAll()
         {
-            IEnumerable<PickListItem> initialTeacherTrainingYears = MockInitialTeacherTrainingYears();
+            var initialTeacherTrainingYears = MockInitialTeacherTrainingYears();
             _mockOrganizationalService.Setup(mock => mock.GetPickListItemsForAttribute(ConnectionString, "contact", "dfe_ittyear"))
                 .Returns(initialTeacherTrainingYears);
 
             var result = _crm.GetPickListItems("contact", "dfe_ittyear");
 
             result.Select(year => year.Value).Should().BeEquivalentTo(
-                new[] { "2010", "2011", "2012" }
+                new object[] { "2010", "2011", "2012" }
             );
         }
 
         [Fact]
         public void GetLatestPrivacyPolicy_ReturnsMostRecentlyCreatedActiveWebPrivacyPolicy()
         {
-            IQueryable<Entity> queryablePrivacyPolicies = MockPrivacyPolicies().AsQueryable();
+            var queryablePrivacyPolicies = MockPrivacyPolicies().AsQueryable();
             _mockOrganizationalService.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_privacypolicy"))
                 .Returns(queryablePrivacyPolicies);
 
@@ -87,7 +86,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void GetPrivacyPolicies_Returns3MostRecentActiveWebPrivacyPolicies()
         {
-            IQueryable<Entity> queryablePrivacyPolicies = MockPrivacyPolicies().AsQueryable();
+            var queryablePrivacyPolicies = MockPrivacyPolicies().AsQueryable();
             _mockOrganizationalService.Setup(mock => mock.CreateQuery(ConnectionString, "dfe_privacypolicy"))
                 .Returns(queryablePrivacyPolicies);
 
@@ -186,7 +185,7 @@ namespace GetIntoTeachingApiTests.Services
 
             return new[] { position1, position2, position3 };
         }
-        
+
         private IEnumerable<Entity> MockCandidateQualifications()
         {
             var qualification1 = new Entity("dfe_candidatequalification");
@@ -208,7 +207,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             var policy1 = new Entity("dfe_privacypolicy");
             policy1.Attributes["dfe_details"] = "Latest Active Web";
-            policy1.Attributes["dfe_policytype"] = new OptionSetValue { Value = (int) CrmService.PrivacyPolicyType.Web };
+            policy1.Attributes["dfe_policytype"] = new OptionSetValue { Value = (int)CrmService.PrivacyPolicyType.Web };
             policy1.Attributes["createdon"] = DateTime.UtcNow.AddDays(-10);
             policy1.Attributes["dfe_active"] = true;
 

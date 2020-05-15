@@ -32,7 +32,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetCountries()
         {
-            IEnumerable<TypeEntity> countries = _crm.GetLookupItems("dfe_country");
+            var countries = _crm.GetLookupItems("dfe_country");
             return Ok(countries);
         }
 
@@ -46,7 +46,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetTeachingSubjects()
         {
-            IEnumerable<TypeEntity> subjects = _crm.GetLookupItems("dfe_teachingsubjectlist");
+            var subjects = _crm.GetLookupItems("dfe_teachingsubjectlist");
             return Ok(subjects);
         }
 
@@ -60,7 +60,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetCandidateInitialTeacherTrainingYears()
         {
-            IEnumerable<TypeEntity> years = _crm.GetPickListItems("contact", "dfe_ittyear");
+            var years = _crm.GetPickListItems("contact", "dfe_ittyear");
             return Ok(years);
         }
 
@@ -74,7 +74,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetCandidatePreferredEducationPhases()
         {
-            IEnumerable<TypeEntity> educationPhases = _crm.GetPickListItems("contact", "dfe_preferrededucationphase01");
+            var educationPhases = _crm.GetPickListItems("contact", "dfe_preferrededucationphase01");
             return Ok(educationPhases);
         }
 
@@ -88,7 +88,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetCandidateLocations()
         {
-            IEnumerable<TypeEntity> locations = _crm.GetPickListItems("contact", "dfe_isinuk");
+            var locations = _crm.GetPickListItems("contact", "dfe_isinuk");
             return Ok(locations);
         }
 
@@ -102,7 +102,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetQualificationDegreeStatus()
         {
-            IEnumerable<TypeEntity> status = _crm.GetPickListItems("dfe_qualification", "dfe_degreestatus");
+            var status = _crm.GetPickListItems("dfe_qualification", "dfe_degreestatus");
             return Ok(status);
         }
 
@@ -116,7 +116,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetQualificationCategories()
         {
-            IEnumerable<TypeEntity> categories = _crm.GetPickListItems("dfe_qualification", "dfe_category");
+            var categories = _crm.GetPickListItems("dfe_qualification", "dfe_category");
             return Ok(categories);
         }
 
@@ -130,7 +130,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetQualificationTypes()
         {
-            IEnumerable<TypeEntity> types = _crm.GetPickListItems("dfe_qualification", "dfe_type");
+            var types = _crm.GetPickListItems("dfe_qualification", "dfe_type");
             return Ok(types);
         }
 
@@ -144,7 +144,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetPastTeachingPositionEducationPhases()
         {
-            IEnumerable<TypeEntity> educationPhases = _crm.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase");
+            var educationPhases = _crm.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase");
             return Ok(educationPhases);
         }
     }

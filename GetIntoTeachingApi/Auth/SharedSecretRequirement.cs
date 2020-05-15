@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace GetIntoTeachingApi.Requirements
+namespace GetIntoTeachingApi.Auth
 {
     public class SharedSecretRequirement : IAuthorizationRequirement
     {
