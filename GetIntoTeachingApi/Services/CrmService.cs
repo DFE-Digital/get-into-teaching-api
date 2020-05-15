@@ -87,7 +87,7 @@ namespace GetIntoTeachingApi.Services
 
             candidate.Qualifications.ForEach(q => UpsertCandidateQualification(q, candidateEntity, context));
             candidate.PastTeachingPositions.ForEach(p => UpsertCandidatePastTeachingPosition(p, candidateEntity, context));
-            
+
             CreateCandidatePrivacyPolicy(candidate.PrivacyPolicy, candidateEntity, context);
             CreatePhoneCall(candidate.PhoneCall, candidateEntity, context);
 
@@ -127,6 +127,10 @@ namespace GetIntoTeachingApi.Services
         {
             if (policy == null) return;
 
+            if (candidateEntity.EntityState == EntityState.Changed)
+                if (CandidateAlreadyAcceptedPrivacyPolicy(candidateEntity.Id, policy.AcceptedPolicyId))
+                    return;
+
             var entity = policy.PopulateEntity(_service.NewEntity("dfe_candidateprivacypolicy", context));
             _service.AddLink(candidateEntity,
                 new Relationship("dfe_contact_dfe_candidateprivacypolicy_Candidate"), entity, context);
@@ -145,6 +149,14 @@ namespace GetIntoTeachingApi.Services
         private Entity NewOrExistingEntity(OrganizationServiceContext context, string entityName, Guid? id)
         {
             return id != null ? _service.BlankExistingEntity(entityName, (Guid)id, context) : _service.NewEntity(entityName, context);
+        }
+
+        private bool CandidateAlreadyAcceptedPrivacyPolicy(Guid candidateId, Guid privacyPolicyId)
+        {
+            return _service.CreateQuery(ConnectionString(), "dfe_candidateprivacypolicy")
+                .Where(entity => entity.GetAttributeValue<EntityReference>("dfe_candidate").Id == candidateId &&
+                                 entity.GetAttributeValue<EntityReference>("dfe_privacypolicynumber").Id ==
+                                 privacyPolicyId).FirstOrDefault() != null;
         }
 
         private string ConnectionString()
