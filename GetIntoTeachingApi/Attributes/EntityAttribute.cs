@@ -8,6 +8,5 @@ namespace GetIntoTeachingApi.Attributes
         public string Name { get; set; }
         public Type Type { get; set; }
         public string Reference { get; set; }
-        public bool Flatten { get; set; }
     }
 }

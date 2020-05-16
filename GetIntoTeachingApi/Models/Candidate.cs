@@ -26,8 +26,18 @@ namespace GetIntoTeachingApi.Models
         public DateTime? DateOfBirth { get; set; }
         [Entity(Name = "telephone1")]
         public string Telephone { get; set; }
-        [Entity(Flatten = true)]
-        public Address Address { get; set; }
+        [Entity(Name = "address1_line1")]
+        public string AddressLine1 { get; set; }
+        [Entity(Name = "address1_line2")]
+        public string AddressLine2 { get; set; }
+        [Entity(Name = "address1_line3")]
+        public string AddressLine3 { get; set; }
+        [Entity(Name = "address1_city")]
+        public string AddressCity { get; set; }
+        [Entity(Name = "address1_stateorprovince")]
+        public string AddressState { get; set; }
+        [Entity(Name = "address1_postalcode")]
+        public string AddressPostcode { get; set; }
         public List<CandidateQualification> Qualifications { get; set; }
         public List<CandidatePastTeachingPosition> PastTeachingPositions { get; set; }
         [SwaggerSchema("Set to schedule a phone call.", WriteOnly = true)]
