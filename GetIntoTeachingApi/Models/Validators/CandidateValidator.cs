@@ -19,11 +19,15 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.Email).NotEmpty().EmailAddress().MaximumLength(100);
             RuleFor(candidate => candidate.DateOfBirth).NotNull().LessThan(candidate => DateTime.Now);
             RuleFor(candidate => candidate.Telephone).NotEmpty().MaximumLength(50);
+            RuleFor(candidate => candidate.AddressLine1).NotEmpty().MaximumLength(1024);
+            RuleFor(candidate => candidate.AddressLine2).MaximumLength(1024);
+            RuleFor(candidate => candidate.AddressLine3).MaximumLength(1024);
+            RuleFor(candidate => candidate.AddressCity).NotEmpty().MaximumLength(128);
+            RuleFor(candidate => candidate.AddressState).NotEmpty().MaximumLength(128);
+            RuleFor(candidate => candidate.AddressPostcode).NotEmpty().MaximumLength(40);
 
-            RuleFor(candidate => candidate.Address).SetValidator(new AddressValidator()).Unless(candidate => candidate.Address == null);
             RuleFor(candidate => candidate.PhoneCall).SetValidator(new PhoneCallValidator()).Unless(candidate => candidate.PhoneCall == null);
             RuleFor(candidate => candidate.PrivacyPolicy).SetValidator(new CandidatePrivacyPolicyValidator(crm)).Unless(candidate => candidate.PrivacyPolicy == null);
-            RuleFor(candidate => candidate.Address).SetValidator(new AddressValidator()).Unless(candidate => candidate.Address == null);
             RuleForEach(candidate => candidate.Qualifications).SetValidator(new CandidateQualificationValidator(crm));
             RuleForEach(candidate => candidate.PastTeachingPositions).SetValidator(new CandidatePastTeachingPositionValidator(crm));
 

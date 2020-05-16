@@ -49,6 +49,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 Email = "email@address.com",
                 DateOfBirth = DateTime.Now.AddYears(-18),
                 Telephone = "07584 734 576",
+                AddressLine1 = "line1",
+                AddressLine2 = "line2",
+                AddressLine3 = "line3",
+                AddressCity = "city",
+                AddressState = "state",
+                AddressPostcode = "postcode",
                 PreferredTeachingSubjectId = mockPreferredTeachingSubject.Id,
                 PreferredEducationPhaseId = mockPreferredEducationPhase.Id,
                 LocationId = mockLocation.Id,
@@ -58,15 +64,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var result = _validator.TestValidate(candidate);
 
             result.IsValid.Should().BeTrue();
-        }
-
-        [Fact]
-        public void Validate_AddressIsInvalid_HasError()
-        {
-            var candidate = new Candidate {Address = new Address {Line1 = ""}};
-            var result = _validator.TestValidate(candidate);
-
-            result.ShouldHaveValidationErrorFor(c => c.Address.Line1);
         }
 
         [Fact]
@@ -194,6 +191,66 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_TelephoneTooLong_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(candidate => candidate.Telephone, new string('a', 51));
+        }
+
+        [Fact]
+        public void Validate_AddressLine1IsEmpty_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(address => address.AddressLine1, "");
+        }
+
+        [Fact]
+        public void Validate_AddressLine1IsTooLong_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(address => address.AddressLine1, new string('a', 1025));
+        }
+
+        [Fact]
+        public void Validate_AddressLine2IsTooLong_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(address => address.AddressLine2, new string('a', 1025));
+        }
+
+        [Fact]
+        public void Validate_AddressLine3IsTooLong_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(address => address.AddressLine3, new string('a', 1025));
+        }
+
+        [Fact]
+        public void Validate_AddressCityIsEmpty_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(address => address.AddressCity, "");
+        }
+
+        [Fact]
+        public void Validate_AddressCityIsTooLong_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(address => address.AddressCity, new string('a', 129));
+        }
+
+        [Fact]
+        public void Validate_AddressStateIsEmpty_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(address => address.AddressState, "");
+        }
+
+        [Fact]
+        public void Validate_AddressStateIsTooLong_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(address => address.AddressState, new string('a', 129));
+        }
+
+        [Fact]
+        public void Validate_AddressPostcodeIsEmpty_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(address => address.AddressPostcode, "");
+        }
+
+        [Fact]
+        public void Validate_AddressPostcodeIsTooLong_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(address => address.AddressPostcode, new string('a', 41));
         }
 
         [Fact]

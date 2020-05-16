@@ -32,9 +32,7 @@ namespace GetIntoTeachingApi.Models
                 var attribute = EntityAttribute(property);
                 if (attribute == null) continue;
 
-                if (attribute.Flatten)
-                    property.SetValue(model, Activator.CreateInstance(property.PropertyType, entity));
-                else if (attribute.Type == typeof(EntityReference))
+                if (attribute.Type == typeof(EntityReference))
                     property.SetValue(model, entity.GetAttributeValue<EntityReference>(attribute.Name)?.Id);
                 else if (attribute.Type == typeof(OptionSetValue))
                     property.SetValue(model, entity.GetAttributeValue<OptionSetValue>(attribute.Name)?.Value);
@@ -52,9 +50,7 @@ namespace GetIntoTeachingApi.Models
 
                 if (attribute == null || value == null) continue;
 
-                if (attribute.Flatten)
-                    MapPropertiesToEntity(value, entity);    
-                else if (attribute.Type == typeof(EntityReference))
+                if (attribute.Type == typeof(EntityReference))
                     entity[attribute.Name] = new EntityReference(attribute.Reference, (Guid) value);
                 else if (attribute.Type == typeof(OptionSetValue))
                     entity[attribute.Name] = new OptionSetValue((int) value);

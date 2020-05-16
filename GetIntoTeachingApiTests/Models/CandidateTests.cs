@@ -40,12 +40,12 @@ namespace GetIntoTeachingApiTests.Models
             candidate.FirstName.Should().Be(entity.GetAttributeValue<string>("firstname"));
             candidate.LastName.Should().Be(entity.GetAttributeValue<string>("lastname"));
             candidate.DateOfBirth.Should().Be(entity.GetAttributeValue<DateTime>("birthdate"));
-            candidate.Address.Line1.Should().Be(entity.GetAttributeValue<string>("address1_line1"));
-            candidate.Address.Line2.Should().Be(entity.GetAttributeValue<string>("address1_line2"));
-            candidate.Address.Line3.Should().Be(entity.GetAttributeValue<string>("address1_line3"));
-            candidate.Address.City.Should().Be(entity.GetAttributeValue<string>("address1_city"));
-            candidate.Address.State.Should().Be(entity.GetAttributeValue<string>("address1_stateorprovince"));
-            candidate.Address.Postcode.Should().Be(entity.GetAttributeValue<string>("address1_postalcode"));
+            candidate.AddressLine1.Should().Be(entity.GetAttributeValue<string>("address1_line1"));
+            candidate.AddressLine2.Should().Be(entity.GetAttributeValue<string>("address1_line2"));
+            candidate.AddressLine3.Should().Be(entity.GetAttributeValue<string>("address1_line3"));
+            candidate.AddressCity.Should().Be(entity.GetAttributeValue<string>("address1_city"));
+            candidate.AddressState.Should().Be(entity.GetAttributeValue<string>("address1_stateorprovince"));
+            candidate.AddressPostcode.Should().Be(entity.GetAttributeValue<string>("address1_postalcode"));
             candidate.Telephone.Should().Be(entity.GetAttributeValue<string>("telephone1"));
         }
 
@@ -63,15 +63,12 @@ namespace GetIntoTeachingApiTests.Models
                 FirstName = "first",
                 LastName = "last",
                 DateOfBirth = new DateTime(1967, 3, 10),
-                Address = new Address()
-                {
-                    Line1 = "line1",
-                    Line2 = "line2",
-                    Line3 = "line3",
-                    City = "city",
-                    State = "state",
-                    Postcode = "postcode",
-                },
+                AddressLine1 = "line1",
+                AddressLine2 = "line2",
+                AddressLine3 = "line3",
+                AddressCity = "city",
+                AddressState = "state",
+                AddressPostcode = "postcode",
                 Telephone = "07584 275 483"
             };
 
@@ -91,12 +88,12 @@ namespace GetIntoTeachingApiTests.Models
             entity.GetAttributeValue<string>("firstname").Should().Be(candidate.FirstName);
             entity.GetAttributeValue<string>("lastname").Should().Be(candidate.LastName);
             entity.GetAttributeValue<DateTime>("birthdate").Should().Be(new DateTime(1967, 3, 10));
-            entity.GetAttributeValue<string>("address1_line1").Should().Be(candidate.Address.Line1);
-            entity.GetAttributeValue<string>("address1_line2").Should().Be(candidate.Address.Line2);
-            entity.GetAttributeValue<string>("address1_line3").Should().Be(candidate.Address.Line3);
-            entity.GetAttributeValue<string>("address1_city").Should().Be(candidate.Address.City);
-            entity.GetAttributeValue<string>("address1_stateorprovince").Should().Be(candidate.Address.State);
-            entity.GetAttributeValue<string>("address1_postalcode").Should().Be(candidate.Address.Postcode);
+            entity.GetAttributeValue<string>("address1_line1").Should().Be(candidate.AddressLine1);
+            entity.GetAttributeValue<string>("address1_line2").Should().Be(candidate.AddressLine2);
+            entity.GetAttributeValue<string>("address1_line3").Should().Be(candidate.AddressLine3);
+            entity.GetAttributeValue<string>("address1_city").Should().Be(candidate.AddressCity);
+            entity.GetAttributeValue<string>("address1_stateorprovince").Should().Be(candidate.AddressState);
+            entity.GetAttributeValue<string>("address1_postalcode").Should().Be(candidate.AddressPostcode);
             entity.GetAttributeValue<string>("telephone1").Should().Be(candidate.Telephone);
         }
     }
