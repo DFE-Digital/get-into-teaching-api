@@ -1,22 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using GetIntoTeachingApi.Attributes;
 using Microsoft.Xrm.Sdk;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
 {
-    public class Candidate
+    public class Candidate : BaseModel
     {
-        public Guid? Id { get; set; }
+        [Entity(Name = "dfe_preferredteachingsubject01", Type = typeof(EntityReference), Reference = "dfe_teachingsubjectlist")]
         public Guid? PreferredTeachingSubjectId { get; set; }
+        [Entity(Name = "dfe_preferrededucationphase01", Type = typeof(OptionSetValue))]
         public int? PreferredEducationPhaseId { get; set; }
+        [Entity(Name = "dfe_isinuk", Type = typeof(OptionSetValue))]
         public int? LocationId { get; set; }
+        [Entity(Name = "dfe_ittyear", Type = typeof(OptionSetValue))]
         public int? InitialTeacherTrainingYearId { get; set; }
+        [Entity(Name = "emailaddress1")]
         public string Email { get; set; }
+        [Entity(Name = "firstname")]
         public string FirstName { get; set; }
+        [Entity(Name = "lastname")]
         public string LastName { get; set; }
+        [Entity(Name = "birthdate")]
         public DateTime? DateOfBirth { get; set; }
+        [Entity(Name = "telephone1")]
         public string Telephone { get; set; }
+        [Entity(Flatten = true)]
         public Address Address { get; set; }
         public List<CandidateQualification> Qualifications { get; set; }
         public List<CandidatePastTeachingPosition> PastTeachingPositions { get; set; }
@@ -25,66 +35,12 @@ namespace GetIntoTeachingApi.Models
         [SwaggerSchema("Set to update the accepted privacy policy.", WriteOnly = true)]
         public CandidatePrivacyPolicy PrivacyPolicy { get; set; }
 
-        public Candidate()
+        public Candidate() : base()
         {
             Qualifications = new List<CandidateQualification>();
             PastTeachingPositions = new List<CandidatePastTeachingPosition>();
         }
 
-        public Candidate(Entity entity)
-        {
-            Id = entity.Id;
-            PreferredTeachingSubjectId = entity.GetAttributeValue<EntityReference>("dfe_preferredteachingsubject01")?.Id;
-            PreferredEducationPhaseId = entity.GetAttributeValue<OptionSetValue>("dfe_preferrededucationphase01")?.Value;
-            LocationId = entity.GetAttributeValue<OptionSetValue>("dfe_isinuk")?.Value;
-            InitialTeacherTrainingYearId = entity.GetAttributeValue<OptionSetValue>("dfe_ittyear")?.Value;
-            Email = entity.GetAttributeValue<string>("emailaddress1");
-            FirstName = entity.GetAttributeValue<string>("firstname");
-            LastName = entity.GetAttributeValue<string>("lastname");
-            DateOfBirth = entity.GetAttributeValue<DateTime>("birthdate");
-            Telephone = entity.GetAttributeValue<string>("telephone1");
-            Address = new Address()
-            {
-                Line1 = entity.GetAttributeValue<string>("address1_line1"),
-                Line2 = entity.GetAttributeValue<string>("address1_line2"),
-                Line3 = entity.GetAttributeValue<string>("address1_line3"),
-                City = entity.GetAttributeValue<string>("address1_city"),
-                State = entity.GetAttributeValue<string>("address1_stateorprovince"),
-                Postcode = entity.GetAttributeValue<string>("address1_postalcode"),
-            };
-        }
-
-        public Entity PopulateEntity(Entity entity)
-        {
-            if (PreferredTeachingSubjectId != null)
-                entity["dfe_preferredteachingsubject01"] = new EntityReference("dfe_teachingsubjectlist", (Guid) PreferredTeachingSubjectId);
-
-            if (PreferredEducationPhaseId != null)
-                entity["dfe_preferrededucationphase01"] = new OptionSetValue((int) PreferredEducationPhaseId);
-
-            if (LocationId != null)
-                entity["dfe_isinuk"] = new OptionSetValue((int)LocationId);
-
-            if (InitialTeacherTrainingYearId != null)
-                entity["dfe_ittyear"] = new OptionSetValue((int) InitialTeacherTrainingYearId);
-
-            entity["emailaddress1"] = Email;
-            entity["firstname"] = FirstName;
-            entity["lastname"] = LastName;
-            entity["birthdate"] = DateOfBirth;
-            entity["telephone1"] = Telephone;
-
-            if (Address != null)
-            {
-                entity["address1_line1"] = Address.Line1;
-                entity["address1_line2"] = Address.Line2;
-                entity["address1_line3"] = Address.Line3;
-                entity["address1_city"] = Address.City;
-                entity["address1_stateorprovince"] = Address.State;
-                entity["address1_postalcode"] = Address.Postcode;
-            }
-
-            return entity;
-        }
+        public Candidate(Entity entity) : base(entity) { }
     }
 }

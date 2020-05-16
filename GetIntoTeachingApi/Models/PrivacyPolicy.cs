@@ -1,19 +1,16 @@
 ﻿using System;
+using GetIntoTeachingApi.Attributes;
 using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
-    public class PrivacyPolicy
+    public class PrivacyPolicy : BaseModel
     {
-        public Guid Id { get; set; }
+        [Entity(Name = "dfe_details")]
         public string Text { get; set; }
 
-        public PrivacyPolicy() { }
+        public PrivacyPolicy() : base() { }
 
-        public PrivacyPolicy(Entity entity)
-        {
-            Id = entity.Id;
-            Text = entity.GetAttributeValue<string>("dfe_details");
-        }
+        public PrivacyPolicy(Entity entity) : base(entity) { }
     }
 }

@@ -1,32 +1,20 @@
 ﻿using System;
+using GetIntoTeachingApi.Attributes;
 using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
-    public class CandidateQualification
+    public class CandidateQualification : BaseModel
     {
-        public Guid? Id { get; set; }
+        [Entity(Name = "dfe_category", Type = typeof(OptionSetValue))]
         public int? CategoryId { get; set; }
+        [Entity(Name = "dfe_type", Type = typeof(OptionSetValue))]
         public int? TypeId { get; set; }
+        [Entity(Name = "dfe_degreestatus", Type = typeof(OptionSetValue))]
         public int? DegreeStatusId { get; set; }
 
-        public CandidateQualification() { }
+        public CandidateQualification() : base() { }
 
-        public CandidateQualification(Entity entity)
-        {
-            Id = entity.Id;
-            CategoryId = entity.GetAttributeValue<OptionSetValue>("dfe_category")?.Value;
-            TypeId = entity.GetAttributeValue<OptionSetValue>("dfe_type")?.Value;
-            DegreeStatusId = entity.GetAttributeValue<OptionSetValue>("dfe_degreestatus")?.Value;
-        }
-
-        public Entity PopulateEntity(Entity entity)
-        {
-            if (CategoryId != null) entity["dfe_category"] = new OptionSetValue((int)CategoryId);
-            if (TypeId != null) entity["dfe_type"] = new OptionSetValue((int)TypeId);
-            if (DegreeStatusId != null) entity["dfe_degreestatus"] = new OptionSetValue((int)DegreeStatusId);
-
-            return entity;
-        }
+        public CandidateQualification(Entity entity) : base(entity) { }
     }
 }

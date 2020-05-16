@@ -24,7 +24,7 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void PopulateEntity_ReverseMapsCorrectly()
+        public void ToEntity_ReverseMapsCorrectly()
         {
             var position = new CandidatePastTeachingPosition()
             {
@@ -34,7 +34,7 @@ namespace GetIntoTeachingApiTests.Models
             };
 
             var entity = new Entity("dfe_candidatepastteachingposition", (Guid) position.Id);
-            position.PopulateEntity(entity);
+            position.ToEntity(entity);
 
             entity.GetAttributeValue<EntityReference>("dfe_subjecttaught").Id.Should().Be((Guid)position.SubjectTaughtId);
             entity.GetAttributeValue<EntityReference>("dfe_subjecttaught").LogicalName.Should().Be("dfe_teachingsubjectlist");
