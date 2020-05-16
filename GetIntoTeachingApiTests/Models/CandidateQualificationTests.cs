@@ -26,7 +26,7 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void PopulateEntity_ReverseMapsCorrectly()
+        public void ToEntity_ReverseMapsCorrectly()
         {
             var qualification = new CandidateQualification()
             {
@@ -37,7 +37,7 @@ namespace GetIntoTeachingApiTests.Models
             };
 
             var entity = new Entity("dfe_candidatequalification", (Guid) qualification.Id);
-            qualification.PopulateEntity(entity);
+            qualification.ToEntity(entity);
 
             entity.GetAttributeValue<OptionSetValue>("dfe_category").Value.Should().Be(qualification.CategoryId);
             entity.GetAttributeValue<OptionSetValue>("dfe_type").Value.Should().Be(qualification.TypeId);

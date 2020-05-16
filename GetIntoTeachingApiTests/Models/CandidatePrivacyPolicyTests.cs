@@ -9,7 +9,7 @@ namespace GetIntoTeachingApiTests.Models
     public class CandidatePrivacyPolicyTests
     {
         [Fact]
-        public void PopulateEntity_ReverseMapsCorrectly()
+        public void ToEntity_ReverseMapsCorrectly()
         {
             var privacyPolicy = new CandidatePrivacyPolicy()
             {
@@ -17,10 +17,10 @@ namespace GetIntoTeachingApiTests.Models
             };
 
             var entity = new Entity("dfe_candidateprivacypolicy");
-            privacyPolicy.PopulateEntity(entity);
+            privacyPolicy.ToEntity(entity);
 
             entity.GetAttributeValue<EntityReference>("dfe_privacypolicynumber").Id.Should()
-                .Be((Guid)privacyPolicy.AcceptedPolicyId);
+                .Be(privacyPolicy.AcceptedPolicyId);
             entity.GetAttributeValue<EntityReference>("dfe_privacypolicynumber").LogicalName.Should()
                 .Be("dfe_privacypolicy");
         }

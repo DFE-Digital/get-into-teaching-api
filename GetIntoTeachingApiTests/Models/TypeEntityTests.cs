@@ -25,9 +25,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Constructor_WithPickListItem_MapsCorrectly()
         {
-            var pickListItem = new CdsServiceClient.PickListItem();
-            pickListItem.PickListItemId = 123;
-            pickListItem.DisplayLabel = "name";
+            var pickListItem = new CdsServiceClient.PickListItem {PickListItemId = 123, DisplayLabel = "name"};
 
             var typeEntity = new TypeEntity(pickListItem);
 

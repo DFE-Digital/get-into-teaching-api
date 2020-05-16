@@ -1,17 +1,16 @@
 ﻿using System;
+using GetIntoTeachingApi.Attributes;
 using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
-    public class CandidatePrivacyPolicy
+    public class CandidatePrivacyPolicy : BaseModel
     {
+        [Entity(Name = "dfe_privacypolicynumber", Type = typeof(EntityReference), Reference = "dfe_privacypolicy")]
         public Guid AcceptedPolicyId { get; set; }
 
-        public Entity PopulateEntity(Entity entity)
-        {
-            entity["dfe_privacypolicynumber"] = new EntityReference("dfe_privacypolicy", AcceptedPolicyId);
+        public CandidatePrivacyPolicy() : base() { }
 
-            return entity;
-        }
+        public CandidatePrivacyPolicy(Entity entity) : base(entity) { }
     }
 }

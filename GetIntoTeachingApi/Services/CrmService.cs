@@ -97,14 +97,14 @@ namespace GetIntoTeachingApi.Services
         private Entity UpsertCandidate(Candidate candidate, OrganizationServiceContext context)
         {
             var candidateEntity = NewOrExistingEntity(context, "contact", candidate.Id);
-            return candidate.PopulateEntity(candidateEntity);
+            return candidate.ToEntity(candidateEntity);
         }
 
         private void UpsertCandidateQualification(CandidateQualification qualification, Entity candidateEntity,
             OrganizationServiceContext context)
         {
             var entity = NewOrExistingEntity(context, "dfe_candidatequalification", qualification.Id);
-            qualification.PopulateEntity(entity);
+            qualification.ToEntity(entity);
 
             if (entity.EntityState == EntityState.Created)
                 _service.AddLink(candidateEntity,
@@ -115,7 +115,7 @@ namespace GetIntoTeachingApi.Services
             OrganizationServiceContext context)
         {
             var entity = NewOrExistingEntity(context, "dfe_candidatepastteachingposition", position.Id);
-            position.PopulateEntity(entity);
+            position.ToEntity(entity);
 
             if (entity.EntityState == EntityState.Created)
                 _service.AddLink(candidateEntity,
@@ -131,7 +131,7 @@ namespace GetIntoTeachingApi.Services
                 if (CandidateAlreadyAcceptedPrivacyPolicy(candidateEntity.Id, policy.AcceptedPolicyId))
                     return;
 
-            var entity = policy.PopulateEntity(_service.NewEntity("dfe_candidateprivacypolicy", context));
+            var entity = policy.ToEntity(_service.NewEntity("dfe_candidateprivacypolicy", context));
             _service.AddLink(candidateEntity,
                 new Relationship("dfe_contact_dfe_candidateprivacypolicy_Candidate"), entity, context);
         }
@@ -141,7 +141,7 @@ namespace GetIntoTeachingApi.Services
             if (phoneCall == null) return;
 
             var entity = _service.NewEntity("phonecall", context);
-            phoneCall.PopulateEntity(entity, (string) candidateEntity["telephone1"]);
+            phoneCall.ToEntity(entity);
             _service.AddLink(candidateEntity,
                 new Relationship("dfe_contact_phonecall_contactid"), entity, context);
         }

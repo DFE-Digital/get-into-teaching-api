@@ -24,6 +24,7 @@ namespace GetIntoTeachingApiTests.Models
             entity["address1_line1"] = "line1";
             entity["address1_line2"] = "line2";
             entity["address1_line3"] = "line3";
+            entity["address1_city"] = "city";
             entity["address1_stateorprovince"] = "state";
             entity["address1_postalcode"] = "postcode";
             entity["telephone1"] = "07564 374 624";
@@ -42,6 +43,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.Address.Line1.Should().Be(entity.GetAttributeValue<string>("address1_line1"));
             candidate.Address.Line2.Should().Be(entity.GetAttributeValue<string>("address1_line2"));
             candidate.Address.Line3.Should().Be(entity.GetAttributeValue<string>("address1_line3"));
+            candidate.Address.City.Should().Be(entity.GetAttributeValue<string>("address1_city"));
             candidate.Address.State.Should().Be(entity.GetAttributeValue<string>("address1_stateorprovince"));
             candidate.Address.Postcode.Should().Be(entity.GetAttributeValue<string>("address1_postalcode"));
             candidate.Telephone.Should().Be(entity.GetAttributeValue<string>("telephone1"));
@@ -74,7 +76,7 @@ namespace GetIntoTeachingApiTests.Models
             };
 
             var entity = new Entity("contact", (Guid) candidate.Id);
-            candidate.PopulateEntity(entity);
+            candidate.ToEntity(entity);
 
             entity.GetAttributeValue<EntityReference>("dfe_preferredteachingsubject01").Id.Should()
                 .Be((Guid)candidate.PreferredTeachingSubjectId);
