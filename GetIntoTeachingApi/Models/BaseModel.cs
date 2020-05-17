@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
 
 namespace GetIntoTeachingApi.Models
 {
@@ -13,40 +16,44 @@ namespace GetIntoTeachingApi.Models
 
         public BaseModel() { }
 
-        public BaseModel(Entity entity)
+        public BaseModel(Entity entity, IOrganizationServiceAdapter service)
         {
             Id = entity.Id;
-            MapEntityToProperties(this, entity);
+            MapFieldAttributesFromEntity(entity);
+            MapRelationshipAttributesFromEntity(entity, service);
         }
 
-        public Entity ToEntity(Entity entity)
+        public Entity ToEntity(IOrganizationServiceAdapter service, OrganizationServiceContext context)
         {
-            MapPropertiesToEntity(this, entity);
+            var entity = MappableEntity(service, context);
+            MapFieldAttributesToEntity(entity);
+            MapRelationshipAttributesToEntity(entity, service, context);
             return entity;
         }
 
-        private static void MapEntityToProperties(BaseModel model, Entity entity)
+        private void MapFieldAttributesFromEntity(Entity entity)
         {
-            foreach (var property in GetProperties(model))
+            foreach (var property in GetProperties(this))
             {
-                var attribute = EntityAttribute(property);
+                var attribute = EntityFieldAttribute(property);
+
                 if (attribute == null) continue;
 
                 if (attribute.Type == typeof(EntityReference))
-                    property.SetValue(model, entity.GetAttributeValue<EntityReference>(attribute.Name)?.Id);
+                    property.SetValue(this, entity.GetAttributeValue<EntityReference>(attribute.Name)?.Id);
                 else if (attribute.Type == typeof(OptionSetValue))
-                    property.SetValue(model, entity.GetAttributeValue<OptionSetValue>(attribute.Name)?.Value);
+                    property.SetValue(this, entity.GetAttributeValue<OptionSetValue>(attribute.Name)?.Value);
                 else
-                    property.SetValue(model, entity.GetAttributeValue<dynamic>(attribute.Name));
+                    property.SetValue(this, entity.GetAttributeValue<dynamic>(attribute.Name));
             }
         }
 
-        private static void MapPropertiesToEntity(object model, Entity entity)
+        private void MapFieldAttributesToEntity(Entity entity)
         {
-            foreach (var property in GetProperties(model))
+            foreach (var property in GetProperties(this))
             {
-                var attribute = EntityAttribute(property);
-                var value = property.GetValue(model);
+                var attribute = EntityFieldAttribute(property);
+                var value = property.GetValue(this);
 
                 if (attribute == null || value == null) continue;
 
@@ -59,15 +66,86 @@ namespace GetIntoTeachingApi.Models
             }
         }
 
+        private void MapRelationshipAttributesToEntity(Entity parent, IOrganizationServiceAdapter service, OrganizationServiceContext context)
+        {
+            foreach (var property in GetProperties(this))
+            {
+                var attribute = EntityRelationshipAttribute(property);
+                var value = property.GetValue(this);
+
+                if (attribute == null || value == null) continue;
+
+                foreach (var model in EnumerableRelationshipModels(value))
+                {
+                    var child = model.ToEntity(service, context);
+                    if (child.EntityState == EntityState.Created)
+                        service.AddLink(parent, new Relationship(attribute.Name), child, context);
+                }
+            }
+        }
+
+        private void MapRelationshipAttributesFromEntity(Entity entity, IOrganizationServiceAdapter service)
+        {
+            foreach (var property in GetProperties(this))
+            {
+                var attribute = EntityRelationshipAttribute(property);
+
+                if (attribute == null) continue;
+
+                var relatedEntities = service.RelatedEntities(entity, attribute.Name);
+
+                if (relatedEntities == null) continue;
+
+                var relatedModels = relatedEntities.Select(e => Activator.CreateInstance(attribute.Type, e, service));
+
+                if (typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
+                {
+                    var list = NewListOfType(attribute.Type);
+                    foreach (var model in relatedModels) list.Add(model);
+                    property.SetValue(this, list);
+                }
+                else
+                    property.SetValue(this, relatedModels.FirstOrDefault());
+            }
+        }
+
+        private static IList NewListOfType(Type type)
+        {
+            var listType = typeof(List<>).MakeGenericType(type);
+            return (IList) Activator.CreateInstance(listType);
+        }
+
+        private Entity MappableEntity(IOrganizationServiceAdapter service, OrganizationServiceContext context)
+        {
+            var entityName = EntityAttribute().LogicalName;
+            return Id != null ? service.BlankExistingEntity(entityName, (Guid)Id, context) : service.NewEntity(entityName, context);
+        }
+
+        public IEnumerable<BaseModel> EnumerableRelationshipModels(object relationship)
+        {
+            return relationship is BaseModel model ? new List<BaseModel> { model } : (IEnumerable<BaseModel>)relationship;
+        }
+
         private static IEnumerable<PropertyInfo> GetProperties(object model)
         {
             return model.GetType().GetProperties();
         }
 
-        private static EntityAttribute EntityAttribute(ICustomAttributeProvider property)
+        private static EntityFieldAttribute EntityFieldAttribute(ICustomAttributeProvider property)
         {
-            return (EntityAttribute) property.GetCustomAttributes(false)
-                .FirstOrDefault(a => a.GetType() == typeof(EntityAttribute));
+            return (EntityFieldAttribute)property.GetCustomAttributes(false)
+                .FirstOrDefault(a => a.GetType() == typeof(EntityFieldAttribute));
+        }
+
+        private static EntityRelationshipAttribute EntityRelationshipAttribute(ICustomAttributeProvider property)
+        {
+            return (EntityRelationshipAttribute)property.GetCustomAttributes(false)
+                .FirstOrDefault(a => a.GetType() == typeof(EntityRelationshipAttribute));
+        }
+
+        private EntityAttribute EntityAttribute()
+        {
+            return (EntityAttribute) Attribute.GetCustomAttribute(this.GetType(), typeof(EntityAttribute));
         }
     }
 }

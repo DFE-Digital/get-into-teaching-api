@@ -16,10 +16,22 @@ namespace GetIntoTeachingApi.Adapters
             _clients = new Dictionary<string, CdsServiceClient>();
         }
 
-        public IQueryable<Entity> CreateQuery(string connectionString, string entityName)
+        public IQueryable<Entity> CreateQuery(string entityName, OrganizationServiceContext context)
         {
-            var context = Context(connectionString);
             return context.CreateQuery(entityName);
+        }
+
+        public void LoadProperty(Entity entity, Relationship relationship, OrganizationServiceContext context)
+        {
+            context.LoadProperty(entity, relationship);
+        }
+
+        public IEnumerable<Entity> RelatedEntities(Entity entity, string attributeName)
+        {
+            return entity.RelatedEntities
+                .Where(pair => pair.Key.SchemaName == attributeName)
+                .Select(pair => pair.Value.Entities)
+                .FirstOrDefault();
         }
 
         public IEnumerable<CdsServiceClient.PickListItem> GetPickListItemsForAttribute(

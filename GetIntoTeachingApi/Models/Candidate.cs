@@ -1,56 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
+using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
 using Microsoft.Xrm.Sdk;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
 {
+    [Entity(LogicalName = "contact")]
     public class Candidate : BaseModel
     {
-        [Entity(Name = "dfe_preferredteachingsubject01", Type = typeof(EntityReference), Reference = "dfe_teachingsubjectlist")]
+        [EntityField(Name = "dfe_preferredteachingsubject01", Type = typeof(EntityReference), Reference = "dfe_teachingsubjectlist")]
         public Guid? PreferredTeachingSubjectId { get; set; }
-        [Entity(Name = "dfe_preferrededucationphase01", Type = typeof(OptionSetValue))]
+        [EntityField(Name = "dfe_preferrededucationphase01", Type = typeof(OptionSetValue))]
         public int? PreferredEducationPhaseId { get; set; }
-        [Entity(Name = "dfe_isinuk", Type = typeof(OptionSetValue))]
+        [EntityField(Name = "dfe_isinuk", Type = typeof(OptionSetValue))]
         public int? LocationId { get; set; }
-        [Entity(Name = "dfe_ittyear", Type = typeof(OptionSetValue))]
+        [EntityField(Name = "dfe_ittyear", Type = typeof(OptionSetValue))]
         public int? InitialTeacherTrainingYearId { get; set; }
-        [Entity(Name = "emailaddress1")]
+        [EntityField(Name = "emailaddress1")]
         public string Email { get; set; }
-        [Entity(Name = "firstname")]
+        [EntityField(Name = "firstname")]
         public string FirstName { get; set; }
-        [Entity(Name = "lastname")]
+        [EntityField(Name = "lastname")]
         public string LastName { get; set; }
-        [Entity(Name = "birthdate")]
+        [EntityField(Name = "birthdate")]
         public DateTime? DateOfBirth { get; set; }
-        [Entity(Name = "telephone1")]
+        [EntityField(Name = "telephone1")]
         public string Telephone { get; set; }
-        [Entity(Name = "address1_line1")]
+        [EntityField(Name = "address1_line1")]
         public string AddressLine1 { get; set; }
-        [Entity(Name = "address1_line2")]
+        [EntityField(Name = "address1_line2")]
         public string AddressLine2 { get; set; }
-        [Entity(Name = "address1_line3")]
+        [EntityField(Name = "address1_line3")]
         public string AddressLine3 { get; set; }
-        [Entity(Name = "address1_city")]
+        [EntityField(Name = "address1_city")]
         public string AddressCity { get; set; }
-        [Entity(Name = "address1_stateorprovince")]
+        [EntityField(Name = "address1_stateorprovince")]
         public string AddressState { get; set; }
-        [Entity(Name = "address1_postalcode")]
+        [EntityField(Name = "address1_postalcode")]
         public string AddressPostcode { get; set; }
+        [EntityRelationship(Name = "dfe_contact_dfe_candidatequalification_ContactId", Type = typeof(CandidateQualification))]
         public List<CandidateQualification> Qualifications { get; set; }
+        [EntityRelationship(Name = "dfe_contact_dfe_candidatepastteachingposition_ContactId", Type = typeof(CandidatePastTeachingPosition))]
         public List<CandidatePastTeachingPosition> PastTeachingPositions { get; set; }
         [SwaggerSchema("Set to schedule a phone call.", WriteOnly = true)]
+        [EntityRelationship(Name = "dfe_contact_phonecall_contactid", Type = typeof(PhoneCall))]
         public PhoneCall PhoneCall { get; set; }
         [SwaggerSchema("Set to update the accepted privacy policy.", WriteOnly = true)]
+        [EntityRelationship(Name = "dfe_contact_dfe_candidateprivacypolicy_Candidate", Type = typeof(CandidatePrivacyPolicy))]
         public CandidatePrivacyPolicy PrivacyPolicy { get; set; }
 
-        public Candidate() : base()
-        {
-            Qualifications = new List<CandidateQualification>();
-            PastTeachingPositions = new List<CandidatePastTeachingPosition>();
-        }
+        public Candidate() : base() { }
 
-        public Candidate(Entity entity) : base(entity) { }
+        public Candidate(Entity entity, IOrganizationServiceAdapter service) : base(entity, service) { }
     }
 }

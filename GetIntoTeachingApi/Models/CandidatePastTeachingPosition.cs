@@ -1,18 +1,20 @@
 ﻿using System;
+using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
 using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
+    [Entity(LogicalName = "dfe_candidatepastteachingposition")]
     public class CandidatePastTeachingPosition : BaseModel
     {
-        [Entity(Name = "dfe_subjecttaught", Type = typeof(EntityReference), Reference = "dfe_teachingsubjectlist")]
+        [EntityField(Name = "dfe_subjecttaught", Type = typeof(EntityReference), Reference = "dfe_teachingsubjectlist")]
         public Guid? SubjectTaughtId { get; set; }
-        [Entity(Name = "dfe_educationphase", Type = typeof(OptionSetValue))]
+        [EntityField(Name = "dfe_educationphase", Type = typeof(OptionSetValue))]
         public int? EducationPhaseId { get; set; }
 
         public CandidatePastTeachingPosition() : base() { }
 
-        public CandidatePastTeachingPosition(Entity entity) : base(entity) { }
+        public CandidatePastTeachingPosition(Entity entity, IOrganizationServiceAdapter service) : base(entity, service) { }
     }
 }
