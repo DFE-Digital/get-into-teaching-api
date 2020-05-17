@@ -1,7 +1,10 @@
 ﻿using System;
 using FluentAssertions;
+using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
+using Moq;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Models
@@ -11,6 +14,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Constructor_WithEntity_MapsCorrectly()
         {
+            var mockService = new Mock<IOrganizationServiceAdapter>();
             var entity = new Entity();
             entity.Id = Guid.NewGuid();
             entity["dfe_preferredteachingsubject01"] = new EntityReference { Id = Guid.NewGuid() };
@@ -29,7 +33,7 @@ namespace GetIntoTeachingApiTests.Models
             entity["address1_postalcode"] = "postcode";
             entity["telephone1"] = "07564 374 624";
 
-            var candidate = new Candidate(entity);
+            var candidate = new Candidate(entity, mockService.Object);
 
             candidate.Id.Should().Be(entity.Id);
             candidate.PreferredTeachingSubjectId.Should().Be(entity.GetAttributeValue<EntityReference>("dfe_preferredteachingsubject01").Id);
@@ -48,7 +52,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.AddressPostcode.Should().Be(entity.GetAttributeValue<string>("address1_postalcode"));
             candidate.Telephone.Should().Be(entity.GetAttributeValue<string>("telephone1"));
         }
-
+        
         [Fact]
         public void ToEntity_ReverseMapsCorrectly()
         {
@@ -69,11 +73,19 @@ namespace GetIntoTeachingApiTests.Models
                 AddressCity = "city",
                 AddressState = "state",
                 AddressPostcode = "postcode",
-                Telephone = "07584 275 483"
+                Telephone = "07584 275 483",
+                PhoneCall = new PhoneCall() { Telephone = "07435 843 274", ScheduledAt = DateTime.Now.AddDays(3) }
             };
 
-            var entity = new Entity("contact", (Guid) candidate.Id);
-            candidate.ToEntity(entity);
+            var entity = new Entity("contact", (Guid)candidate.Id);
+            var phoneCallEntity = new Entity("phonecall") {EntityState = EntityState.Created};
+            var mockService = new Mock<IOrganizationServiceAdapter>();
+            var mockContext = mockService.Object.Context("mock-connection-string");
+            mockService.Setup(mock => mock.BlankExistingEntity("contact",
+                entity.Id, It.IsAny<OrganizationServiceContext>())).Returns(entity);
+            mockService.Setup(mock => mock.NewEntity("phonecall", It.IsAny<OrganizationServiceContext>())).Returns(phoneCallEntity);
+
+            candidate.ToEntity(mockService.Object, mockContext);
 
             entity.GetAttributeValue<EntityReference>("dfe_preferredteachingsubject01").Id.Should()
                 .Be((Guid)candidate.PreferredTeachingSubjectId);
@@ -95,6 +107,9 @@ namespace GetIntoTeachingApiTests.Models
             entity.GetAttributeValue<string>("address1_stateorprovince").Should().Be(candidate.AddressState);
             entity.GetAttributeValue<string>("address1_postalcode").Should().Be(candidate.AddressPostcode);
             entity.GetAttributeValue<string>("telephone1").Should().Be(candidate.Telephone);
+
+            mockService.Verify(mock => mock.AddLink(entity,
+                new Relationship("dfe_contact_phonecall_contactid"), It.IsAny<Entity>(), It.IsAny<OrganizationServiceContext>()));
         }
     }
 }

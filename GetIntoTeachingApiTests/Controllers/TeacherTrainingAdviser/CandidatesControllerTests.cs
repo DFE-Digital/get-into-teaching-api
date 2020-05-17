@@ -47,20 +47,14 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         public void Get_ValidToken_RespondsWithCandidate()
         {
             var candidate = new Candidate { Id = Guid.NewGuid() };
-            var qualification = new CandidateQualification { Id = Guid.NewGuid() };
-            var position = new CandidatePastTeachingPosition() { Id = Guid.NewGuid() };
             _mockTokenService.Setup(tokenService => tokenService.IsValid("000000", _request)).Returns(true);
             _mockCrm.Setup(mock => mock.GetCandidate(_request)).Returns(candidate);
-            _mockCrm.Setup(mock => mock.GetCandidateQualifications(candidate)).Returns(new[] { qualification });
-            _mockCrm.Setup(mock => mock.GetCandidatePastTeachingPositions(candidate)).Returns(new [] { position  });
 
             var response = _controller.Get("000000", _request);
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             var candidateResponse = ok.Value as Candidate;
             candidateResponse.Should().Be(candidate);
-            candidateResponse.Qualifications.Should().Contain(qualification);
-            candidateResponse.PastTeachingPositions.Should().Contain(position);
         }
 
         [Fact]

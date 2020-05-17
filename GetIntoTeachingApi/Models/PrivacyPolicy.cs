@@ -1,4 +1,5 @@
 ﻿using System;
+using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
 using Microsoft.Xrm.Sdk;
 
@@ -6,11 +7,11 @@ namespace GetIntoTeachingApi.Models
 {
     public class PrivacyPolicy : BaseModel
     {
-        [Entity(Name = "dfe_details")]
+        [EntityField(Name = "dfe_details")]
         public string Text { get; set; }
 
         public PrivacyPolicy() : base() { }
 
-        public PrivacyPolicy(Entity entity) : base(entity) { }
+        public PrivacyPolicy(Entity entity, IOrganizationServiceAdapter service) : base(entity, service) { }
     }
 }

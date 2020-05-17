@@ -9,8 +9,10 @@ namespace GetIntoTeachingApi.Adapters
 {
     public interface IOrganizationServiceAdapter
     {
-        public IQueryable<Entity> CreateQuery(string connectionString, string entityName);
+        public IQueryable<Entity> CreateQuery(string entityName, OrganizationServiceContext context);
+        public void LoadProperty(Entity entity, Relationship relationship, OrganizationServiceContext context);
         public IEnumerable<CdsServiceClient.PickListItem> GetPickListItemsForAttribute(string connectionString, string entityName, string attributeName);
+        public IEnumerable<Entity> RelatedEntities(Entity entity, string attributeName);
         public OrganizationServiceContext Context(string connectionString);
         public Entity BlankExistingEntity(string entityName, Guid id, OrganizationServiceContext context);
         public Entity NewEntity(string entityName, OrganizationServiceContext context);

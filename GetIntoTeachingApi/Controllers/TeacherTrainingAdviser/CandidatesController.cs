@@ -69,7 +69,7 @@ exchanged for your token matches the request payload here).",
             [FromRoute, SwaggerParameter("Access token (PIN code).", Required = true)] string accessToken, 
             [FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] ExistingCandidateRequest request
         )
-        {
+        { 
             if (!_tokenService.IsValid(accessToken, request))
             {
                 return Unauthorized();
@@ -81,9 +81,6 @@ exchanged for your token matches the request payload here).",
             {
                 return NotFound();
             }
-
-            candidate.Qualifications = _crm.GetCandidateQualifications(candidate).ToList();
-            candidate.PastTeachingPositions = _crm.GetCandidatePastTeachingPositions(candidate).ToList();
 
             return Ok(candidate);
         }

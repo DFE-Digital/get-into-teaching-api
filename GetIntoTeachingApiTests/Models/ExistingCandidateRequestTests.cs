@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using GetIntoTeachingApi.Models;
 using System;
+using Microsoft.Xrm.Sdk;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Models
@@ -8,7 +9,7 @@ namespace GetIntoTeachingApiTests.Models
     public class ExistingCandidateRequestTests
     {
         private readonly ExistingCandidateRequest _request;
-
+        
         public ExistingCandidateRequestTests()
         {
             _request = new ExistingCandidateRequest
@@ -29,119 +30,101 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Match_WithEmailAndNoAdditionalAttributes_ReturnsFalse()
         {
-            var candidate = new Candidate
-            {
-                Email = "email@address.com",
-            };
+            var entity = new Entity();
+            entity["emailaddress1"] = "email@address.com";
 
-            _request.Match(candidate).Should().BeFalse();
+            _request.Match(entity).Should().BeFalse();
         }
 
         [Fact]
         public void Match_WithEmailAndOneAdditionalAttribute_ReturnsFalse()
         {
-            var candidate = new Candidate
-            {
-                Email = _request.Email,
-                FirstName = _request.FirstName
-            };
+            var entity = new Entity();
+            entity["emailaddress1"] = _request.Email;
+            entity["firstname"] = _request.FirstName;
 
-            _request.Match(candidate).Should().BeFalse();
+            _request.Match(entity).Should().BeFalse();
         }
 
         [Fact]
         public void Match_WithEmailAndTwoAdditionalAttributes_ReturnsTrue()
         {
-            var candidate = new Candidate
-            {
-                Email = _request.Email,
-                FirstName = _request.FirstName,
-                LastName = _request.LastName
-            };
+            var entity = new Entity();
+            entity["emailaddress1"] = _request.Email;
+            entity["firstname"] = _request.FirstName;
+            entity["lastname"] = _request.LastName;
 
-            _request.Match(candidate).Should().BeTrue();
+            _request.Match(entity).Should().BeTrue();
         }
 
         [Fact]
         public void Match_WithoutEmailAndWithTwoAdditionalAttributes_ReturnsFalse()
         {
-            var candidate = new Candidate
-            {
-                Email = "wrong@email.com",
-                FirstName = _request.FirstName,
-                LastName = _request.LastName
-            };
+            var entity = new Entity();
+            entity["emailaddress1"] = "wrong@email.com";
+            entity["firstname"] = _request.FirstName;
+            entity["lastname"] = _request.LastName;
 
-            _request.Match(candidate).Should().BeFalse();
+            _request.Match(entity).Should().BeFalse();
         }
 
         [Fact]
         public void Match_WithWrongEmailAndWithThreeAdditionalAttributes_ReturnsFalse()
         {
-            var candidate = new Candidate
-            {
-                Email = "wrong@email.com",
-                FirstName = _request.FirstName,
-                LastName = _request.LastName,
-                DateOfBirth = _request.DateOfBirth
-            };
+            var entity = new Entity();
+            entity["emailaddress1"] = "wrong@email.com";
+            entity["firstname"] = _request.FirstName;
+            entity["lastname"] = _request.LastName;
+            entity["birthdate"] = _request.DateOfBirth;
 
-            _request.Match(candidate).Should().BeFalse();
+            _request.Match(entity).Should().BeFalse();
         }
 
         [Fact]
         public void Match_WithNullEmailAndWithThreeAdditionalAttributes_ReturnsFalse()
         {
-            var candidate = new Candidate
-            {
-                Email = _request.Email,
-                FirstName = _request.FirstName,
-                LastName = _request.LastName,
-                DateOfBirth = _request.DateOfBirth
-            };
+            var entity = new Entity();
+            entity["emailaddress1"] = _request.Email;
+            entity["firstname"] = _request.FirstName;
+            entity["lastname"] = _request.LastName;
+            entity["birthdate"] = _request.DateOfBirth;
             _request.Email = null;
 
-            _request.Match(candidate).Should().BeFalse();
+            _request.Match(entity).Should().BeFalse();
         }
 
         [Fact]
         public void Match_WithEmailAndThreeAdditionalAttributes_ReturnsTrue()
         {
-            var candidate = new Candidate
-            {
-                Email = _request.Email,
-                FirstName = _request.FirstName,
-                LastName = _request.LastName,
-                DateOfBirth = _request.DateOfBirth
-            };
+            var entity = new Entity();
+            entity["emailaddress1"] = _request.Email;
+            entity["firstname"] = _request.FirstName;
+            entity["lastname"] = _request.LastName;
+            entity["birthdate"] = _request.DateOfBirth;
 
-            _request.Match(candidate).Should().BeTrue();
+            _request.Match(entity).Should().BeTrue();
         }
 
         [Fact]
         public void Match_WithCaseInsensitiveMatch_ReturnsTrue()
         {
-            var candidate = new Candidate
-            {
-                Email = _request.Email.ToUpper(),
-                FirstName = _request.FirstName.ToUpper(),
-                LastName = _request.LastName.ToUpper(),
-            };
+            var entity = new Entity();
+            entity["emailaddress1"] = _request.Email.ToUpper();
+            entity["firstname"] = _request.FirstName.ToUpper();
+            entity["lastname"] = _request.LastName.ToUpper();
 
-            _request.Match(candidate).Should().BeTrue();
+            _request.Match(entity).Should().BeTrue();
         }
 
         [Fact]
         public void Match_WithMatchingDateButDifferentTimes_ReturnsTrue()
         {
-            var candidate = new Candidate
-            {
-                Email = _request.Email,
-                FirstName = _request.FirstName,
-                DateOfBirth = _request.DateOfBirth?.AddMinutes(30),
-            };
+            var entity = new Entity();
+            entity["emailaddress1"] = _request.Email;
+            entity["firstname"] = _request.FirstName;
+            entity["birthdate"] = _request.DateOfBirth?.AddMinutes(30);
 
-            _request.Match(candidate).Should().BeTrue();
+            _request.Match(entity).Should().BeTrue();
         }
 
         [Fact]

@@ -1,7 +1,10 @@
 ﻿using System;
 using FluentAssertions;
+using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
+using Moq;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Models
@@ -17,7 +20,13 @@ namespace GetIntoTeachingApiTests.Models
             };
 
             var entity = new Entity("dfe_candidateprivacypolicy");
-            privacyPolicy.ToEntity(entity);
+            var mockService = new Mock<IOrganizationServiceAdapter>();
+            var mockContext = mockService.Object.Context("mock-connection-string");
+            mockService.Setup(mock => mock.NewEntity("dfe_candidateprivacypolicy", 
+                It.IsAny<OrganizationServiceContext>())).Returns(entity);
+
+            privacyPolicy.ToEntity(mockService.Object, mockContext);
+
 
             entity.GetAttributeValue<EntityReference>("dfe_privacypolicynumber").Id.Should()
                 .Be(privacyPolicy.AcceptedPolicyId);

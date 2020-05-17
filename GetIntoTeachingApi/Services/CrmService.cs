@@ -4,7 +4,6 @@ using System.Linq;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Client;
 
 namespace GetIntoTeachingApi.Services
 {
@@ -22,7 +21,8 @@ namespace GetIntoTeachingApi.Services
 
         public IEnumerable<TypeEntity> GetLookupItems(string entityName)
         {
-            return _service.CreateQuery(ConnectionString(), entityName)
+            var context = _service.Context(ConnectionString());
+            return _service.CreateQuery(entityName, context)
                 .Select((entity) => new TypeEntity(entity));
         }
 
@@ -39,124 +39,62 @@ namespace GetIntoTeachingApi.Services
 
         public IEnumerable<PrivacyPolicy> GetPrivacyPolicies()
         {
-            return _service.CreateQuery(ConnectionString(), "dfe_privacypolicy")
+            var context = _service.Context(ConnectionString());
+            return _service.CreateQuery("dfe_privacypolicy", context)
                 .Where((entity) =>
                     entity.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int)PrivacyPolicyType.Web &&
                     entity.GetAttributeValue<bool>("dfe_active")
                 )
                 .OrderByDescending((policy) => policy.GetAttributeValue<DateTime>("createdon"))
-                .Select((entity) => new PrivacyPolicy(entity))
+                .Select((entity) => new PrivacyPolicy(entity, _service))
                 .Take(MaximumNumberOfPrivacyPolicies);
         }
 
         public Candidate GetCandidate(ExistingCandidateRequest request)
         {
-            return _service.CreateQuery(ConnectionString(), "contact")
-                .Where(entity =>
+            var context = _service.Context(ConnectionString());
+            var entity = _service.CreateQuery("contact", context)
+                .Where(e =>
                     // Will perform a case-insensitive comparison
-                    entity.GetAttributeValue<string>("emailaddress1") == request.Email
+                    e.GetAttributeValue<string>("emailaddress1") == request.Email
                 )
-                .OrderByDescending(entity => entity.GetAttributeValue<DateTime>("createdon"))
-                .Select(entity => new Candidate(entity))
+                .OrderByDescending(e => e.GetAttributeValue<DateTime>("createdon"))
                 .Take(MaximumNumberOfCandidatesToMatch)
                 .ToList()
                 .FirstOrDefault(request.Match);
+
+            if (entity == null)
+                return null;
+
+            _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), context);
+            _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), context);
+
+            return new Candidate(entity, _service);
         }
 
         public IEnumerable<CandidateQualification> GetCandidateQualifications(Candidate candidate)
         {
-            return _service.CreateQuery(ConnectionString(), "dfe_candidatequalification")
+            var context = _service.Context(ConnectionString());
+            return _service.CreateQuery("dfe_candidatequalification", context)
                 .Where(entity => entity.GetAttributeValue<Guid>("dfe_contactid") == candidate.Id)
-                .Select(entity => new CandidateQualification(entity))
+                .Select(entity => new CandidateQualification(entity, _service))
                 .ToList();
         }
 
         public IEnumerable<CandidatePastTeachingPosition> GetCandidatePastTeachingPositions(Candidate candidate)
         {
-            return _service.CreateQuery(ConnectionString(), "dfe_candidatepastteachingposition")
+            var context = _service.Context(ConnectionString());
+            return _service.CreateQuery("dfe_candidatepastteachingposition", context)
                 .Where(entity => entity.GetAttributeValue<Guid>("dfe_contactid") == candidate.Id)
-                .Select(entity => new CandidatePastTeachingPosition(entity))
+                .Select(entity => new CandidatePastTeachingPosition(entity, _service))
                 .ToArray();
         }
 
         public void UpsertCandidate(Candidate candidate)
         {
             using var context = _service.Context(ConnectionString());
-
-            var candidateEntity = UpsertCandidate(candidate, context);
-
-            candidate.Qualifications.ForEach(q => UpsertCandidateQualification(q, candidateEntity, context));
-            candidate.PastTeachingPositions.ForEach(p => UpsertCandidatePastTeachingPosition(p, candidateEntity, context));
-
-            CreateCandidatePrivacyPolicy(candidate.PrivacyPolicy, candidateEntity, context);
-            CreatePhoneCall(candidate.PhoneCall, candidateEntity, context);
-
+            candidate.ToEntity(_service, context);
             _service.SaveChanges(context);
-        }
-
-        private Entity UpsertCandidate(Candidate candidate, OrganizationServiceContext context)
-        {
-            var candidateEntity = NewOrExistingEntity(context, "contact", candidate.Id);
-            return candidate.ToEntity(candidateEntity);
-        }
-
-        private void UpsertCandidateQualification(CandidateQualification qualification, Entity candidateEntity,
-            OrganizationServiceContext context)
-        {
-            var entity = NewOrExistingEntity(context, "dfe_candidatequalification", qualification.Id);
-            qualification.ToEntity(entity);
-
-            if (entity.EntityState == EntityState.Created)
-                _service.AddLink(candidateEntity,
-                    new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), entity, context);
-        }
-
-        private void UpsertCandidatePastTeachingPosition(CandidatePastTeachingPosition position, Entity candidateEntity,
-            OrganizationServiceContext context)
-        {
-            var entity = NewOrExistingEntity(context, "dfe_candidatepastteachingposition", position.Id);
-            position.ToEntity(entity);
-
-            if (entity.EntityState == EntityState.Created)
-                _service.AddLink(candidateEntity,
-                    new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), entity, context);
-        }
-
-        private void CreateCandidatePrivacyPolicy(CandidatePrivacyPolicy policy, Entity candidateEntity,
-            OrganizationServiceContext context)
-        {
-            if (policy == null) return;
-
-            if (candidateEntity.EntityState == EntityState.Changed)
-                if (CandidateAlreadyAcceptedPrivacyPolicy(candidateEntity.Id, policy.AcceptedPolicyId))
-                    return;
-
-            var entity = policy.ToEntity(_service.NewEntity("dfe_candidateprivacypolicy", context));
-            _service.AddLink(candidateEntity,
-                new Relationship("dfe_contact_dfe_candidateprivacypolicy_Candidate"), entity, context);
-        }
-
-        private void CreatePhoneCall(PhoneCall phoneCall, Entity candidateEntity, OrganizationServiceContext context)
-        {
-            if (phoneCall == null) return;
-
-            var entity = _service.NewEntity("phonecall", context);
-            phoneCall.ToEntity(entity);
-            _service.AddLink(candidateEntity,
-                new Relationship("dfe_contact_phonecall_contactid"), entity, context);
-        }
-
-        private Entity NewOrExistingEntity(OrganizationServiceContext context, string entityName, Guid? id)
-        {
-            return id != null ? _service.BlankExistingEntity(entityName, (Guid)id, context) : _service.NewEntity(entityName, context);
-        }
-
-        private bool CandidateAlreadyAcceptedPrivacyPolicy(Guid candidateId, Guid privacyPolicyId)
-        {
-            return _service.CreateQuery(ConnectionString(), "dfe_candidateprivacypolicy")
-                .Where(entity => entity.GetAttributeValue<EntityReference>("dfe_candidate").Id == candidateId &&
-                                 entity.GetAttributeValue<EntityReference>("dfe_privacypolicynumber").Id ==
-                                 privacyPolicyId).FirstOrDefault() != null;
         }
 
         private string ConnectionString()
