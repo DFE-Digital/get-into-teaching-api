@@ -1,18 +1,16 @@
 ﻿using System;
-using Microsoft.Xrm.Sdk;
+using GetIntoTeachingApi.Attributes;
 
 namespace GetIntoTeachingApi.Models
 {
-    public class PhoneCall
+    [Entity(LogicalName = "phonecall")]
+    public class PhoneCall : BaseModel
     {
+        [EntityField(Name = "scheduledstart")]
         public DateTime ScheduledAt { get; set; }
+        [EntityField(Name = "phonenumber")]
+        public string Telephone { get; set; }
 
-        public Entity PopulateEntity(Entity entity, string telephone)
-        {
-            entity["phonenumber"] = telephone;
-            entity["scheduledstart"] = ScheduledAt;
-
-            return entity;
-        }
+        public PhoneCall() : base() { }
     }
 }

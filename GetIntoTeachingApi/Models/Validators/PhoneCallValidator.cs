@@ -8,6 +8,7 @@ namespace GetIntoTeachingApi.Models.Validators
         public PhoneCallValidator()
         {
             RuleFor(phoneCall => phoneCall.ScheduledAt).GreaterThan(candidate => DateTime.Now);
+            RuleFor(phoneCall => phoneCall.Telephone).NotEmpty().MaximumLength(50);
         }
     }
 }

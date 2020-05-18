@@ -1,29 +1,20 @@
 ﻿using System;
+using GetIntoTeachingApi.Adapters;
+using GetIntoTeachingApi.Attributes;
 using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
-    public class CandidatePastTeachingPosition
+    [Entity(LogicalName = "dfe_candidatepastteachingposition")]
+    public class CandidatePastTeachingPosition : BaseModel
     {
-        public Guid? Id { get; set; }
+        [EntityField(Name = "dfe_subjecttaught", Type = typeof(EntityReference), Reference = "dfe_teachingsubjectlist")]
         public Guid? SubjectTaughtId { get; set; }
+        [EntityField(Name = "dfe_educationphase", Type = typeof(OptionSetValue))]
         public int? EducationPhaseId { get; set; }
 
-        public CandidatePastTeachingPosition() { }
+        public CandidatePastTeachingPosition() : base() { }
 
-        public CandidatePastTeachingPosition(Entity entity)
-        {
-            Id = entity.Id;
-            SubjectTaughtId = entity.GetAttributeValue<EntityReference>("dfe_subjecttaught")?.Id;
-            EducationPhaseId = entity.GetAttributeValue<OptionSetValue>("dfe_educationphase")?.Value;
-        }
-
-        public Entity PopulateEntity(Entity entity)
-        {
-            if (SubjectTaughtId != null) entity["dfe_subjecttaught"] = new EntityReference("dfe_teachingsubjectlist", (Guid)SubjectTaughtId);
-            if (EducationPhaseId != null) entity["dfe_educationphase"] = new OptionSetValue((int)EducationPhaseId);
-
-            return entity;
-        }
+        public CandidatePastTeachingPosition(Entity entity, IOrganizationServiceAdapter service) : base(entity, service) { }
     }
 }
