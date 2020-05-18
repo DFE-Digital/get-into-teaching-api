@@ -1,5 +1,5 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using Microsoft.Xrm.Sdk;
 using Xunit;
@@ -9,20 +9,14 @@ namespace GetIntoTeachingApiTests.Models
     public class CandidatePrivacyPolicyTests
     {
         [Fact]
-        public void PopulateEntity_ReverseMapsCorrectly()
+        public void EntityAttributes()
         {
-            var privacyPolicy = new CandidatePrivacyPolicy()
-            {
-                AcceptedPolicyId = Guid.NewGuid(),
-            };
+            var type = typeof(CandidatePrivacyPolicy);
 
-            var entity = new Entity("dfe_candidateprivacypolicy");
-            privacyPolicy.PopulateEntity(entity);
+            type.Should().BeDecoratedWith<EntityAttribute>(a => a.LogicalName == "dfe_candidateprivacypolicy");
 
-            entity.GetAttributeValue<EntityReference>("dfe_privacypolicynumber").Id.Should()
-                .Be((Guid)privacyPolicy.AcceptedPolicyId);
-            entity.GetAttributeValue<EntityReference>("dfe_privacypolicynumber").LogicalName.Should()
-                .Be("dfe_privacypolicy");
+            type.GetProperty("AcceptedPolicyId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "dfe_privacypolicynumber" && a.Type == typeof(EntityReference) && a.Reference == "dfe_privacypolicy");
         }
     }
 }

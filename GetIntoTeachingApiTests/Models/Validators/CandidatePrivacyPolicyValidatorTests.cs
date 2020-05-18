@@ -31,7 +31,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
             var policy = new CandidatePrivacyPolicy()
             {
-                AcceptedPolicyId = mockPrivacyPolicy.Id,
+                AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id,
             };
 
             var result = _validator.TestValidate(policy);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
@@ -12,11 +13,11 @@ namespace GetIntoTeachingApi.Models
         public string Email { get; set; }
         public DateTime? DateOfBirth { get; set; }
 
-        public bool Match(Candidate candidate)
+        public bool Match(Entity entity)
         {
-            if (candidate == null) return false;
+            if (entity == null) return false;
 
-            return EmailMatchesCandidate(candidate) && MinimumAdditionalAttributesMatch(candidate);
+            return EmailMatchesCandidate(entity) && MinimumAdditionalAttributesMatch(entity);
         }
 
         public string Slugify()
@@ -25,9 +26,9 @@ namespace GetIntoTeachingApi.Models
             return string.Join("-", attributes).ToLower();
         }
 
-        private bool EmailMatchesCandidate(Candidate candidate)
+        private bool EmailMatchesCandidate(Entity entity)
         {
-            return candidate.Email.Equals(Email, StringComparison.OrdinalIgnoreCase);
+            return entity.GetAttributeValue<string>("emailaddress1").Equals(Email, StringComparison.OrdinalIgnoreCase);
         }
 
         private string[] AdditionalAttributeValues(string firstName, string lastName, DateTime? dateOfBirth)
@@ -42,11 +43,12 @@ namespace GetIntoTeachingApi.Models
                 .ToArray();
         }
 
-        private bool MinimumAdditionalAttributesMatch(Candidate candidate)
+        private bool MinimumAdditionalAttributesMatch(Entity entity)
         {
             var matches = AdditionalAttributeValues(FirstName, LastName, DateOfBirth).Intersect(
-                AdditionalAttributeValues(candidate.FirstName, candidate.LastName, candidate.DateOfBirth),
-                StringComparer.OrdinalIgnoreCase
+                AdditionalAttributeValues(entity.GetAttributeValue<string>("firstname"), 
+                    entity.GetAttributeValue<string>("lastname"), 
+                    entity.GetAttributeValue<DateTime>("birthdate")), StringComparer.OrdinalIgnoreCase
             );
 
             return matches.Count() >= MinimumAdditionalAttributeMatches;

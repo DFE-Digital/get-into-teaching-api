@@ -1,5 +1,5 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using Microsoft.Xrm.Sdk;
 using Xunit;
@@ -9,36 +9,17 @@ namespace GetIntoTeachingApiTests.Models
     public class CandidatePastTeachingPositionTests
     {
         [Fact]
-        public void Constructor_WithEntity_MapsCorrectly()
+        public void EntityAttributes()
         {
-            var entity = new Entity();
-            entity.Id = Guid.NewGuid();
-            entity["dfe_subjecttaught"] = new EntityReference("dfe_teachingsubjectlist", Guid.NewGuid());
-            entity["dfe_educationphase"] = new OptionSetValue { Value = 1 };
+            var type = typeof(CandidatePastTeachingPosition);
 
-            var position = new CandidatePastTeachingPosition(entity);
+            type.Should().BeDecoratedWith<EntityAttribute>(a => a.LogicalName == "dfe_candidatepastteachingposition");
 
-            position.Id.Should().Be(entity.Id);
-            position.SubjectTaughtId.Should().Be(entity.GetAttributeValue<EntityReference>("dfe_subjecttaught").Id);
-            position.EducationPhaseId.Should().Be(entity.GetAttributeValue<OptionSetValue>("dfe_educationphase").Value);
-        }
+            type.GetProperty("SubjectTaughtId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "dfe_subjecttaught" && a.Type == typeof(EntityReference) && a.Reference == "dfe_teachingsubjectlist");
 
-        [Fact]
-        public void PopulateEntity_ReverseMapsCorrectly()
-        {
-            var position = new CandidatePastTeachingPosition()
-            {
-                Id = Guid.NewGuid(),
-                SubjectTaughtId = Guid.NewGuid(),
-                EducationPhaseId = 1,
-            };
-
-            var entity = new Entity("dfe_candidatepastteachingposition", (Guid) position.Id);
-            position.PopulateEntity(entity);
-
-            entity.GetAttributeValue<EntityReference>("dfe_subjecttaught").Id.Should().Be((Guid)position.SubjectTaughtId);
-            entity.GetAttributeValue<EntityReference>("dfe_subjecttaught").LogicalName.Should().Be("dfe_teachingsubjectlist");
-            entity.GetAttributeValue<OptionSetValue>("dfe_educationphase").Value.Should().Be(position.EducationPhaseId);
+            type.GetProperty("EducationPhaseId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "dfe_educationphase" && a.Type == typeof(OptionSetValue));
         }
     }
 }

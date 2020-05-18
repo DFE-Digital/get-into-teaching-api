@@ -1,7 +1,6 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
-using Microsoft.Xrm.Sdk;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Models
@@ -9,15 +8,14 @@ namespace GetIntoTeachingApiTests.Models
     public class PhoneCallTests
     {
         [Fact]
-        public void PopulateEntity_ReverseMapsCorrectly()
+        public void EntityAttributes()
         {
-            var phoneCall = new PhoneCall() { ScheduledAt = new DateTime(2021, 2, 13, 10, 34, 12) };
-            const string telephone = "07594 835 274";
-            var entity = new Entity("phonecall");
-            phoneCall.PopulateEntity(entity, telephone);
+            var type = typeof(PhoneCall);
 
-            entity.GetAttributeValue<string>("phonenumber").Should().Be(telephone);
-            entity.GetAttributeValue<DateTime?>("scheduledstart").Should().Be(phoneCall.ScheduledAt);
+            type.Should().BeDecoratedWith<EntityAttribute>(a => a.LogicalName == "phonecall");
+
+            type.GetProperty("ScheduledAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "scheduledstart");
+            type.GetProperty("Telephone").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "phonenumber");
         }
     }
 }
