@@ -73,6 +73,31 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
+        public void Constructor_WhenEntityHasNoLoadedRelationships_MapsCorrectly()
+        {
+            var entity = new Entity("mock") { Id = Guid.NewGuid() };
+            entity["dfe_field1"] = new EntityReference { Id = Guid.NewGuid() };
+            entity["dfe_field2"] = new OptionSetValue { Value = 1 };
+            entity["dfe_field3"] = "field3";
+
+            var mockService = new Mock<IOrganizationServiceAdapter>();
+            mockService.Setup(m => m.RelatedEntities(entity, "dfe_mock_dfe_relatedmock_mock"))
+                .Returns(new List<Entity>());
+            mockService.Setup(m => m.RelatedEntities(entity, "dfe_mock_dfe_relatedmock_mocks"))
+                .Returns(new List<Entity>());
+
+            var mock = new MockModel(entity, mockService.Object);
+
+            mock.Id.Should().Be(entity.Id);
+            mock.Field1.Should().Be(entity.GetAttributeValue<EntityReference>("dfe_field1").Id);
+            mock.Field2.Should().Be(entity.GetAttributeValue<OptionSetValue>("dfe_field2").Value);
+            mock.Field3.Should().Be(entity.GetAttributeValue<string>("dfe_field3"));
+
+            mock.RelatedMock.Should().BeNull();
+            mock.RelatedMocks.Should().BeNull();
+        }
+
+        [Fact]
         public void ToEntity_WithExisting_ReverseMapsCorrectly()
         {
             var mock = new MockModel()

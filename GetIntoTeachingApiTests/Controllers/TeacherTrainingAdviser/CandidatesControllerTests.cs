@@ -82,7 +82,7 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         }
 
         [Fact]
-        public void Upsert_ValidRequest_UpsertsAndRespondsWithTheCandidate()
+        public void Upsert_ValidRequest_UpsertsAndRespondsWithSuccess()
         {
             var candidate = new Candidate { FirstName = "first" };
             _mockCrm.Setup(mock => mock.UpsertCandidate(candidate));

@@ -1,7 +1,5 @@
 ﻿using System;
-using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
-using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
@@ -14,7 +12,5 @@ namespace GetIntoTeachingApi.Models
         public string Telephone { get; set; }
 
         public PhoneCall() : base() { }
-
-        public PhoneCall(Entity entity, IOrganizationServiceAdapter service) : base(entity, service) { }
     }
 }
