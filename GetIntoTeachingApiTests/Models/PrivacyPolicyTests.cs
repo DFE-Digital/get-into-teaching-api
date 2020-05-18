@@ -13,7 +13,7 @@ namespace GetIntoTeachingApiTests.Models
         {
             var entity = new Entity();
             entity.Id = Guid.NewGuid();
-            entity.Attributes["dfe_details"] = "text";
+            entity["dfe_details"] = "text";
 
             var privacyPolicy = new PrivacyPolicy(entity);
 

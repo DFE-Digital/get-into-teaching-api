@@ -13,20 +13,20 @@ namespace GetIntoTeachingApiTests.Models
         {
             var entity = new Entity();
             entity.Id = Guid.NewGuid();
-            entity.Attributes["dfe_preferredteachingsubject01"] = new EntityReference { Id = Guid.NewGuid() };
-            entity.Attributes["dfe_preferrededucationphase01"] = new OptionSetValue { Value = 1 };
-            entity.Attributes["dfe_isinuk"] = new OptionSetValue { Value = 2 };
-            entity.Attributes["dfe_ittyear"] = new OptionSetValue { Value = 3 };
-            entity.Attributes["emailaddress1"] = "email@address.com";
-            entity.Attributes["firstname"] = "first";
-            entity.Attributes["lastname"] = "last";
-            entity.Attributes["birthdate"] = new DateTime(1967, 3, 10);
-            entity.Attributes["address1_line1"] = "line1";
-            entity.Attributes["address1_line2"] = "line2";
-            entity.Attributes["address1_line3"] = "line3";
-            entity.Attributes["address1_stateorprovince"] = "state";
-            entity.Attributes["address1_postalcode"] = "postcode";
-            entity.Attributes["telephone1"] = "07564 374 624";
+            entity["dfe_preferredteachingsubject01"] = new EntityReference { Id = Guid.NewGuid() };
+            entity["dfe_preferrededucationphase01"] = new OptionSetValue { Value = 1 };
+            entity["dfe_isinuk"] = new OptionSetValue { Value = 2 };
+            entity["dfe_ittyear"] = new OptionSetValue { Value = 3 };
+            entity["emailaddress1"] = "email@address.com";
+            entity["firstname"] = "first";
+            entity["lastname"] = "last";
+            entity["birthdate"] = new DateTime(1967, 3, 10);
+            entity["address1_line1"] = "line1";
+            entity["address1_line2"] = "line2";
+            entity["address1_line3"] = "line3";
+            entity["address1_stateorprovince"] = "state";
+            entity["address1_postalcode"] = "postcode";
+            entity["telephone1"] = "07564 374 624";
 
             var candidate = new Candidate(entity);
 
@@ -73,10 +73,9 @@ namespace GetIntoTeachingApiTests.Models
                 Telephone = "07584 275 483"
             };
 
-            var entity = candidate.ToEntity();
+            var entity = new Entity("contact", (Guid) candidate.Id);
+            candidate.PopulateEntity(entity);
 
-            entity.LogicalName.Should().Be("contact");
-            entity.Id.Should().Be((Guid)candidate.Id);
             entity.GetAttributeValue<EntityReference>("dfe_preferredteachingsubject01").Id.Should()
                 .Be((Guid)candidate.PreferredTeachingSubjectId);
             entity.GetAttributeValue<EntityReference>("dfe_preferredteachingsubject01").LogicalName.Should()
@@ -97,49 +96,6 @@ namespace GetIntoTeachingApiTests.Models
             entity.GetAttributeValue<string>("address1_stateorprovince").Should().Be(candidate.Address.State);
             entity.GetAttributeValue<string>("address1_postalcode").Should().Be(candidate.Address.Postcode);
             entity.GetAttributeValue<string>("telephone1").Should().Be(candidate.Telephone);
-        }
-
-        [Fact]
-        public void ToPhoneCallEntity_ReverseMapsCorrectly()
-        {
-            var candidate = new Candidate()
-            {
-                Id = Guid.NewGuid(),
-                Telephone = "07594 835 274",
-                PhoneCallScheduledStartAt = new DateTime(2021, 2, 13, 10, 34, 12),
-            };
-
-            var entity = candidate.ToPhoneCallEntity();
-
-            entity.LogicalName.Should().Be("phonecall");
-            entity.GetAttributeValue<string>("phonenumber").Should().Be(candidate.Telephone);
-            entity.GetAttributeValue<DateTime?>("scheduledstart").Should().Be(candidate.PhoneCallScheduledStartAt);
-            entity.GetAttributeValue<EntityReference>("regardingobjectid").Id.Should()
-                .Be((Guid)candidate.Id);
-            entity.GetAttributeValue<EntityReference>("regardingobjectid").LogicalName.Should()
-                .Be("contact");
-        }
-
-        [Fact]
-        public void ToCandidatePrivacyPolicyEntity_ReverseMapsCorrectly()
-        {
-            var candidate = new Candidate()
-            {
-                Id = Guid.NewGuid(),
-                AcceptedPrivacyPolicyId = Guid.NewGuid(),
-            };
-
-            var entity = candidate.ToCandidatePrivacyPolicyEntity();
-
-            entity.LogicalName.Should().Be("dfe_candidateprivacypolicy");
-            entity.GetAttributeValue<EntityReference>("dfe_candidate").Id.Should()
-                .Be((Guid)candidate.Id);
-            entity.GetAttributeValue<EntityReference>("dfe_candidate").LogicalName.Should()
-                .Be("contact");
-            entity.GetAttributeValue<EntityReference>("dfe_privacypolicynumber").Id.Should()
-                .Be((Guid)candidate.AcceptedPrivacyPolicyId);
-            entity.GetAttributeValue<EntityReference>("dfe_privacypolicynumber").LogicalName.Should()
-                .Be("dfe_privacypolicy");
         }
     }
 }

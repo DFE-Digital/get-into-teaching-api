@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using FluentValidation.TestHelper;
 using GetIntoTeachingApi.Models;
@@ -23,15 +24,11 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
             var mockPreferredTeachingSubject = NewMock(Guid.NewGuid());
             var mockPreferredEducationPhase = NewMock(111);
             var mockLocation = NewMock(222);
             var mockInitialTeacherTrainingYear = NewMock(333);
 
-            _mockCrm
-                .Setup(mock => mock.GetPrivacyPolicies())
-                .Returns(new[] { mockPrivacyPolicy });
             _mockCrm
                 .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
                 .Returns(new[] { mockPreferredTeachingSubject });
@@ -52,8 +49,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 Email = "email@address.com",
                 DateOfBirth = DateTime.Now.AddYears(-18),
                 Telephone = "07584 734 576",
-                PhoneCallScheduledStartAt = DateTime.Now.AddDays(2),
-                AcceptedPrivacyPolicyId = mockPrivacyPolicy.Id,
                 PreferredTeachingSubjectId = mockPreferredTeachingSubject.Id,
                 PreferredEducationPhaseId = mockPreferredEducationPhase.Id,
                 LocationId = mockLocation.Id,
@@ -77,7 +72,13 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_QualificationIsInvalid_HasError()
         {
-            var candidate = new Candidate { Qualifications = new [] { new CandidateQualification { TypeId = 123 } } };
+            var candidate = new Candidate
+            {
+                Qualifications = new List<CandidateQualification>
+                {
+                    new CandidateQualification {TypeId = 123}
+                }
+            };
             var result = _validator.TestValidate(candidate);
 
             result.ShouldHaveValidationErrorFor("Qualifications[0].TypeId");
@@ -86,15 +87,41 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_PastTeachingPositionIsInvalid_HasError()
         {
-            var candidate = new Candidate { PastTeachingPositions = 
-                new[]
-                {
-                    new CandidatePastTeachingPosition() { SubjectTaughtId = Guid.NewGuid() }
-                }
+            var candidate = new Candidate
+            {
+                PastTeachingPositions =
+                    new List<CandidatePastTeachingPosition>
+                    {
+                        new CandidatePastTeachingPosition {SubjectTaughtId = Guid.NewGuid()}
+                    }
             };
             var result = _validator.TestValidate(candidate);
 
             result.ShouldHaveValidationErrorFor("PastTeachingPositions[0].SubjectTaughtId");
+        }
+
+        [Fact]
+        public void Validate_PhoneCallIsInvalid_HasError()
+        {
+            var candidate = new Candidate
+            {
+                PhoneCall = new PhoneCall() { ScheduledAt = DateTime.Now.AddDays(-10) }
+            };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor(c => c.PhoneCall.ScheduledAt);
+        }
+
+        [Fact]
+        public void Validate_PrivacyPolicyIsInvalid_HasError()
+        {
+            var candidate = new Candidate
+            {
+                PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = Guid.NewGuid() }
+            };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor(c => c.PrivacyPolicy.AcceptedPolicyId);
         }
 
         [Fact]
@@ -167,30 +194,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_TelephoneTooLong_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(candidate => candidate.Telephone, new string('a', 51));
-        }
-
-        [Fact]
-        public void Validate_PhoneCallScheduledStartAtIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.PhoneCallScheduledStartAt, null as DateTime?);
-        }
-
-        [Fact]
-        public void Validate_PhoneCallScheduledStartAtInPast_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.PhoneCallScheduledStartAt, DateTime.Now.AddDays(-1));
-        }
-
-        [Fact]
-        public void Validate_AcceptedPrivacyPolicyIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AcceptedPrivacyPolicyId, Guid.NewGuid());
-        }
-
-        [Fact]
-        public void Validate_AcceptedPrivacyPolicyIdIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AcceptedPrivacyPolicyId, null as Guid?);
         }
 
         [Fact]

@@ -13,9 +13,9 @@ namespace GetIntoTeachingApiTests.Models
         {
             var entity = new Entity();
             entity.Id = Guid.NewGuid();
-            entity.Attributes["dfe_category"] = new OptionSetValue { Value = 1 };
-            entity.Attributes["dfe_type"] = new OptionSetValue { Value = 2 };
-            entity.Attributes["dfe_degreestatus"] = new OptionSetValue { Value = 3 };
+            entity["dfe_category"] = new OptionSetValue { Value = 1 };
+            entity["dfe_type"] = new OptionSetValue { Value = 2 };
+            entity["dfe_degreestatus"] = new OptionSetValue { Value = 3 };
 
             var qualification = new CandidateQualification(entity);
 
@@ -26,7 +26,7 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void ToEntity_ReverseMapsCorrectly()
+        public void PopulateEntity_ReverseMapsCorrectly()
         {
             var qualification = new CandidateQualification()
             {
@@ -36,10 +36,9 @@ namespace GetIntoTeachingApiTests.Models
                 DegreeStatusId = 3,
             };
 
-            var entity = qualification.ToEntity();
+            var entity = new Entity("dfe_candidatequalification", (Guid) qualification.Id);
+            qualification.PopulateEntity(entity);
 
-            entity.LogicalName.Should().Be("dfe_candidatequalification");
-            entity.Id.Should().Be((Guid)qualification.Id);
             entity.GetAttributeValue<OptionSetValue>("dfe_category").Value.Should().Be(qualification.CategoryId);
             entity.GetAttributeValue<OptionSetValue>("dfe_type").Value.Should().Be(qualification.TypeId);
             entity.GetAttributeValue<OptionSetValue>("dfe_degreestatus").Value.Should().Be(qualification.DegreeStatusId);
