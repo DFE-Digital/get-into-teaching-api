@@ -4,15 +4,17 @@ using System.Linq;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
 
 namespace GetIntoTeachingApi.Services
 {
     public class CrmService : ICrmService
     {
         public enum PrivacyPolicyType { Web = 222750001 }
+
+        private readonly IOrganizationServiceAdapter _service;
         private const int MaximumNumberOfCandidatesToMatch = 20;
         private const int MaximumNumberOfPrivacyPolicies = 3;
-        private readonly IOrganizationServiceAdapter _service;
 
         public CrmService(IOrganizationServiceAdapter service)
         {
@@ -21,8 +23,7 @@ namespace GetIntoTeachingApi.Services
 
         public IEnumerable<TypeEntity> GetLookupItems(string entityName)
         {
-            var context = _service.Context(ConnectionString());
-            return _service.CreateQuery(entityName, context)
+            return _service.CreateQuery(entityName, Context())
                 .Select((entity) => new TypeEntity(entity));
         }
 
@@ -39,20 +40,19 @@ namespace GetIntoTeachingApi.Services
 
         public IEnumerable<PrivacyPolicy> GetPrivacyPolicies()
         {
-            var context = _service.Context(ConnectionString());
-            return _service.CreateQuery("dfe_privacypolicy", context)
+            return _service.CreateQuery("dfe_privacypolicy", Context())
                 .Where((entity) =>
                     entity.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int)PrivacyPolicyType.Web &&
                     entity.GetAttributeValue<bool>("dfe_active")
                 )
                 .OrderByDescending((policy) => policy.GetAttributeValue<DateTime>("createdon"))
-                .Select((entity) => new PrivacyPolicy(entity, _service))
+                .Select((entity) => new PrivacyPolicy(entity, this))
                 .Take(MaximumNumberOfPrivacyPolicies);
         }
 
         public Candidate GetCandidate(ExistingCandidateRequest request)
         {
-            var context = _service.Context(ConnectionString());
+            var context = Context();
             var entity = _service.CreateQuery("contact", context)
                 .Where(e =>
                     // Will perform a case-insensitive comparison
@@ -69,52 +69,49 @@ namespace GetIntoTeachingApi.Services
             _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), context);
             _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), context);
 
-            return new Candidate(entity, _service);
+            return new Candidate(entity, this);
         }
 
-        public IEnumerable<CandidateQualification> GetCandidateQualifications(Candidate candidate)
+        public bool CandidateYetToAcceptPrivacyPolicy(Guid candidateId, Guid privacyPolicyId)
         {
-            var context = _service.Context(ConnectionString());
-            return _service.CreateQuery("dfe_candidatequalification", context)
-                .Where(entity => entity.GetAttributeValue<Guid>("dfe_contactid") == candidate.Id)
-                .Select(entity => new CandidateQualification(entity, _service))
-                .ToList();
+            return _service.CreateQuery("dfe_candidateprivacypolicy", Context()).FirstOrDefault(entity => 
+                entity.GetAttributeValue<EntityReference>("dfe_candidate").Id == candidateId && 
+                entity.GetAttributeValue<EntityReference>("dfe_privacypolicynumber").Id == privacyPolicyId) == null;
         }
 
-        public IEnumerable<CandidatePastTeachingPosition> GetCandidatePastTeachingPositions(Candidate candidate)
+        public void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context)
         {
-            var context = _service.Context(ConnectionString());
-            return _service.CreateQuery("dfe_candidatepastteachingposition", context)
-                .Where(entity => entity.GetAttributeValue<Guid>("dfe_contactid") == candidate.Id)
-                .Select(entity => new CandidatePastTeachingPosition(entity, _service))
-                .ToArray();
+            _service.AddLink(source, relationship, target, context);
         }
 
-        public void UpsertCandidate(Candidate candidate)
+        public IEnumerable<Entity> RelatedEntities(Entity entity, string attributeName)
         {
-            using var context = _service.Context(ConnectionString());
-            candidate.ToEntity(_service, context);
+            return _service.RelatedEntities(entity, attributeName);
+        }
+
+        public Entity MappableEntity(string entityName, Guid? id, OrganizationServiceContext context)
+        { 
+            return id != null ? _service.BlankExistingEntity(entityName, (Guid)id, context) : _service.NewEntity(entityName, context);
+        }
+
+        public void Save(BaseModel model)
+        {
+            using var context = Context();
+            model.ToEntity(this, context);
             _service.SaveChanges(context);
         }
 
-        private string ConnectionString()
+        private OrganizationServiceContext Context()
         {
-            return $"AuthType=ClientSecret; url={InstanceUrl()}; ClientId={ClientId()}; ClientSecret={ClientSecret()}";
+            return _service.Context(ConnectionString());
         }
 
-        private static string InstanceUrl()
+        private static string ConnectionString()
         {
-            return Environment.GetEnvironmentVariable("CRM_SERVICE_URL");
-        }
-
-        private static string ClientId()
-        {
-            return Environment.GetEnvironmentVariable("CRM_CLIENT_ID");
-        }
-
-        private static string ClientSecret()
-        {
-            return Environment.GetEnvironmentVariable("CRM_CLIENT_SECRET");
+            var instanceUrl = Environment.GetEnvironmentVariable("CRM_SERVICE_URL");
+            var clientId = Environment.GetEnvironmentVariable("CRM_CLIENT_ID");
+            var clientSecret = Environment.GetEnvironmentVariable("CRM_CLIENT_SECRET");
+            return $"AuthType=ClientSecret; url={instanceUrl}; ClientId={clientId}; ClientSecret={clientSecret}";
         }
     }
 }
