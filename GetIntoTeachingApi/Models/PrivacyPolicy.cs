@@ -1,10 +1,10 @@
-﻿using System;
-using GetIntoTeachingApi.Adapters;
+﻿using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
 using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
+    [Entity(LogicalName = "dfe_privacypolicy")]
     public class PrivacyPolicy : BaseModel
     {
         [EntityField(Name = "dfe_details")]
