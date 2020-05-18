@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
+using System.Linq;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -35,7 +36,7 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
             OperationId = "UpsertTeacherTrainingAdviserCandidate",
             Tags = new[] { "Teacher Training Adviser" }
         )]
-        [ProducesResponseType(typeof(Candidate), 200)]
+        [ProducesResponseType(204)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
         public IActionResult Upsert(
             [FromBody, SwaggerRequestBody("Candidate to upsert for the Teacher Training Adviser service.", Required = true)] Candidate candidate
@@ -46,7 +47,9 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
                 return BadRequest(this.ModelState);
             }
 
-            return Ok(new Object());
+            _crm.UpsertCandidate(candidate);
+
+            return NoContent();
         }
 
         [HttpPost]
@@ -78,6 +81,9 @@ exchanged for your token matches the request payload here).",
             {
                 return NotFound();
             }
+
+            candidate.Qualifications = _crm.GetCandidateQualifications(candidate).ToList();
+            candidate.PastTeachingPositions = _crm.GetCandidatePastTeachingPositions(candidate).ToList();
 
             return Ok(candidate);
         }

@@ -10,13 +10,12 @@ namespace GetIntoTeachingApiTests.Auth
     public class SharedSecretHandlerTests
     {
         private readonly SharedSecretHandler _handler;
-        private readonly Mock<IHttpContextAccessor> _mockHttpHandler;
 
         public SharedSecretHandlerTests()
         {
-            _mockHttpHandler = new Mock<IHttpContextAccessor>();
-            _mockHttpHandler.Setup(mock => mock.HttpContext.Request.Headers["Authorization"]).Returns("Bearer shared_secret");
-            _handler = new SharedSecretHandler(_mockHttpHandler.Object);
+            var mockHttpHandler = new Mock<IHttpContextAccessor>();
+            mockHttpHandler.Setup(mock => mock.HttpContext.Request.Headers["Authorization"]).Returns("Bearer shared_secret");
+            _handler = new SharedSecretHandler(mockHttpHandler.Object);
         }
 
         [Fact]
