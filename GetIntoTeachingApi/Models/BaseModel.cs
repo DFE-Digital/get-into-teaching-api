@@ -23,7 +23,7 @@ namespace GetIntoTeachingApi.Models
             MapRelationshipAttributesFromEntity(entity, service);
         }
 
-        public Entity ToEntity(IOrganizationServiceAdapter service, OrganizationServiceContext context)
+        public virtual Entity ToEntity(IOrganizationServiceAdapter service, OrganizationServiceContext context)
         {
             var entity = MappableEntity(service, context);
             MapFieldAttributesToEntity(entity);

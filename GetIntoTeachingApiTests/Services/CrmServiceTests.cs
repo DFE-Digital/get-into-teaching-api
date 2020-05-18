@@ -147,136 +147,16 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void UpsertCandidate_InsertsCandidate()
+        public void UpsertCandidate_MapsToEntityAndSavesContext()
         {
-            var candidate = new Candidate() { FirstName = "first" };
-            var entity = new Entity() { EntityState = EntityState.Created };
-            _mockOrganizationalService.Setup(mock => mock.NewEntity("contact", null)).Returns(entity);
+            var mockCandidate = new Mock<Candidate>();
+            var mockContext = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
+            _mockOrganizationalService.Setup(mock => mock.Context(ConnectionString)).Returns(mockContext);
 
-            _crm.UpsertCandidate(candidate);
+            _crm.UpsertCandidate(mockCandidate.Object);
 
-            _mockOrganizationalService.Verify(mock => mock.SaveChanges(It.IsAny<OrganizationServiceContext>()));
-            entity["firstname"].Should().Be(candidate.FirstName);
-        }
-
-        [Fact]
-        public void UpsertCandidate_UpdatesCandidate()
-        {
-            var candidate = new Candidate() { Id = Guid.NewGuid(), FirstName = "first" };
-            var entity = new Entity() {EntityState = EntityState.Changed};
-            _mockOrganizationalService.Setup(mock => mock.BlankExistingEntity("contact", 
-                (Guid)candidate.Id, It.IsAny<OrganizationServiceContext>())).Returns(entity);
-
-            _crm.UpsertCandidate(candidate);
-
-            _mockOrganizationalService.Verify(mock => mock.SaveChanges(It.IsAny<OrganizationServiceContext>()));
-            entity["firstname"].Should().Be(candidate.FirstName);
-        }
-
-        [Fact]
-        public void UpsertCandidate_InsertsCandidateQualification()
-        {
-            var qualification = new CandidateQualification { CategoryId = 123 };
-            var candidate = new Candidate() { Qualifications = new List<CandidateQualification> { qualification } };
-            var qualificationEntity = new Entity() {EntityState = EntityState.Created};
-            var candidateEntity = new Entity() { EntityState = EntityState.Created };
-            _mockOrganizationalService.Setup(mock => mock.NewEntity("contact", null)).Returns(candidateEntity);
-            _mockOrganizationalService.Setup(mock => mock.NewEntity("dfe_candidatequalification", null)).Returns(qualificationEntity);
-
-            _crm.UpsertCandidate(candidate);
-
-            _mockOrganizationalService.Verify(mock => mock.AddLink(candidateEntity,
-                new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), qualificationEntity, It.IsAny<OrganizationServiceContext>()));
-            _mockOrganizationalService.Verify(mock => mock.SaveChanges(It.IsAny<OrganizationServiceContext>()));
-            qualificationEntity.GetAttributeValue<OptionSetValue>("dfe_category").Value.Should().Be(qualification.CategoryId);
-        }
-
-        [Fact]
-        public void UpsertCandidate_UpdatesCandidateQualification()
-        {
-            var qualification = new CandidateQualification { Id = Guid.NewGuid(), CategoryId = 123 };
-            var candidate = new Candidate() { Qualifications = new List<CandidateQualification> { qualification } };
-            var entity = new Entity() { EntityState = EntityState.Changed };
-            var candidateEntity = new Entity() { EntityState = EntityState.Created };
-            _mockOrganizationalService.Setup(mock => mock.NewEntity("contact", null)).Returns(candidateEntity);
-            _mockOrganizationalService.Setup(mock => mock.BlankExistingEntity("dfe_candidatequalification",
-                (Guid)qualification.Id, It.IsAny<OrganizationServiceContext>())).Returns(entity);
-
-            _crm.UpsertCandidate(candidate);
-
-            _mockOrganizationalService.Verify(mock => mock.SaveChanges(It.IsAny<OrganizationServiceContext>()));
-            entity.GetAttributeValue<OptionSetValue>("dfe_category").Value.Should().Be(qualification.CategoryId);
-        }
-
-        [Fact]
-        public void UpsertCandidate_InsertsCandidatePastTeachingPosition()
-        {
-            var position = new CandidatePastTeachingPosition { SubjectTaughtId = Guid.NewGuid() };
-            var candidate = new Candidate() { PastTeachingPositions = new List<CandidatePastTeachingPosition> { position } };
-            var candidateEntity = new Entity() { EntityState = EntityState.Created };
-            var positionEntity = new Entity() {EntityState = EntityState.Created};
-            _mockOrganizationalService.Setup(mock => mock.NewEntity("contact", null)).Returns(candidateEntity);
-            _mockOrganizationalService.Setup(mock => mock.NewEntity("dfe_candidatepastteachingposition", null)).Returns(positionEntity);
-
-            _crm.UpsertCandidate(candidate);
-
-            _mockOrganizationalService.Verify(mock => mock.AddLink(candidateEntity,
-                new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), positionEntity, It.IsAny<OrganizationServiceContext>()));
-            _mockOrganizationalService.Verify(mock => mock.SaveChanges(It.IsAny<OrganizationServiceContext>()));
-            positionEntity.GetAttributeValue<EntityReference>("dfe_subjecttaught").Id.Should().Be((Guid)position.SubjectTaughtId);
-        }
-
-        [Fact]
-        public void UpsertCandidate_UpdatesCandidatePastTeachingPosition()
-        {
-            var position = new CandidatePastTeachingPosition { Id = Guid.NewGuid(), SubjectTaughtId = Guid.NewGuid() };
-            var candidate = new Candidate() { PastTeachingPositions = new List<CandidatePastTeachingPosition> { position } };
-            var entity = new Entity() { EntityState = EntityState.Changed };
-            var candidateEntity = new Entity() { EntityState = EntityState.Created };
-            _mockOrganizationalService.Setup(mock => mock.NewEntity("contact", null)).Returns(candidateEntity);
-            _mockOrganizationalService.Setup(mock => mock.BlankExistingEntity("dfe_candidatepastteachingposition",
-                (Guid)position.Id, It.IsAny<OrganizationServiceContext>())).Returns(entity);
-
-            _crm.UpsertCandidate(candidate);
-
-            _mockOrganizationalService.Verify(mock => mock.SaveChanges(It.IsAny<OrganizationServiceContext>()));
-            entity.GetAttributeValue<EntityReference>("dfe_subjecttaught").Id.Should().Be((Guid)position.SubjectTaughtId);
-        }
-
-        [Fact]
-        public void UpsertCandidate_InsertsCandidatePrivacyPolicy()
-        {
-            var policy = new CandidatePrivacyPolicy() { AcceptedPolicyId = Guid.NewGuid() };
-            var candidate = new Candidate() { PrivacyPolicy = policy };
-            var candidateEntity = new Entity() {EntityState = EntityState.Created};
-            var policyEntity = new Entity() { EntityState = EntityState.Created };
-            _mockOrganizationalService.Setup(mock => mock.NewEntity("contact", null)).Returns(candidateEntity);
-            _mockOrganizationalService.Setup(mock => mock.NewEntity("dfe_candidateprivacypolicy", null)).Returns(policyEntity);
-
-            _crm.UpsertCandidate(candidate);
-
-            _mockOrganizationalService.Verify(mock => mock.AddLink(candidateEntity,
-                new Relationship("dfe_contact_dfe_candidateprivacypolicy_Candidate"), policyEntity, It.IsAny<OrganizationServiceContext>()));
-            _mockOrganizationalService.Verify(mock => mock.SaveChanges(It.IsAny<OrganizationServiceContext>()));
-            policyEntity.GetAttributeValue<EntityReference>("dfe_privacypolicynumber").Id.Should().Be((Guid)policy.AcceptedPolicyId);
-        }
-
-        [Fact]
-        public void UpsertCandidate_InsertsPhoneCall()
-        {
-            var phoneCall = new PhoneCall() { ScheduledAt = DateTime.Now.AddDays(3) };
-            var candidate = new Candidate() { PhoneCall = phoneCall };
-            var candidateEntity = new Entity() { EntityState = EntityState.Created };
-            var phoneCallEntity = new Entity() { EntityState = EntityState.Created };
-            _mockOrganizationalService.Setup(mock => mock.NewEntity("contact", null)).Returns(candidateEntity);
-            _mockOrganizationalService.Setup(mock => mock.NewEntity("phonecall", null)).Returns(phoneCallEntity);
-
-            _crm.UpsertCandidate(candidate);
-
-            _mockOrganizationalService.Verify(mock => mock.AddLink(candidateEntity,
-                new Relationship("dfe_contact_phonecall_contactid"), phoneCallEntity, It.IsAny<OrganizationServiceContext>()));
-            _mockOrganizationalService.Verify(mock => mock.SaveChanges(It.IsAny<OrganizationServiceContext>()));
-            phoneCallEntity["scheduledstart"].Should().Be(phoneCall.ScheduledAt);
+            mockCandidate.Verify(mock => mock.ToEntity(_mockOrganizationalService.Object, mockContext));
+            _mockOrganizationalService.Verify(mock => mock.SaveChanges(mockContext));
         }
 
         private IEnumerable<Entity> MockCandidates()
