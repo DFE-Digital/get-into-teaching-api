@@ -1,6 +1,6 @@
 ﻿using System;
-using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
+using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
@@ -15,6 +15,6 @@ namespace GetIntoTeachingApi.Models
 
         public CandidatePastTeachingPosition() : base() { }
 
-        public CandidatePastTeachingPosition(Entity entity, IOrganizationServiceAdapter service) : base(entity, service) { }
+        public CandidatePastTeachingPosition(Entity entity, ICrmService crm) : base(entity, crm) { }
     }
 }

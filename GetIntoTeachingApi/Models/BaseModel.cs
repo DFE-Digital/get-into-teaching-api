@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
+using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 
@@ -16,19 +16,25 @@ namespace GetIntoTeachingApi.Models
 
         public BaseModel() { }
 
-        public BaseModel(Entity entity, IOrganizationServiceAdapter service)
+        public BaseModel(Entity entity, ICrmService crm)
         {
             Id = entity.Id;
             MapFieldAttributesFromEntity(entity);
-            MapRelationshipAttributesFromEntity(entity, service);
+            MapRelationshipAttributesFromEntity(entity, crm);
         }
 
-        public virtual Entity ToEntity(IOrganizationServiceAdapter service, OrganizationServiceContext context)
+        public virtual Entity ToEntity(ICrmService crm, OrganizationServiceContext context)
         {
-            var entity = MappableEntity(service, context);
+            var entity = crm.MappableEntity(EntityAttribute().LogicalName, Id, context);
             MapFieldAttributesToEntity(entity);
-            MapRelationshipAttributesToEntity(entity, service, context);
+            MapRelationshipAttributesToEntity(entity, crm, context);
             return entity;
+        }
+
+        protected virtual bool ShouldMapRelationship(string propertyName, dynamic value, ICrmService crm)
+        {
+            // Hook.
+            return true;
         }
 
         private void MapFieldAttributesFromEntity(Entity entity)
@@ -66,25 +72,26 @@ namespace GetIntoTeachingApi.Models
             }
         }
 
-        private void MapRelationshipAttributesToEntity(Entity parent, IOrganizationServiceAdapter service, OrganizationServiceContext context)
+        private void MapRelationshipAttributesToEntity(Entity source, ICrmService crm, OrganizationServiceContext context)
         {
             foreach (var property in GetProperties(this))
             {
                 var attribute = EntityRelationshipAttribute(property);
                 var value = property.GetValue(this);
+                var shouldMap = ShouldMapRelationship(property.Name, value, crm);
 
-                if (attribute == null || value == null) continue;
+                if (attribute == null || value == null || !shouldMap) continue;
 
-                foreach (var model in EnumerableRelationshipModels(value))
+                foreach (var relatedModel in EnumerableRelationshipModels(value))
                 {
-                    var child = model.ToEntity(service, context);
-                    if (child.EntityState == EntityState.Created)
-                        service.AddLink(parent, new Relationship(attribute.Name), child, context);
+                    var target = relatedModel.ToEntity(crm, context);
+                    if (target?.EntityState == EntityState.Created)
+                        crm.AddLink(source, new Relationship(attribute.Name), target, context);
                 }
             }
         }
 
-        private void MapRelationshipAttributesFromEntity(Entity entity, IOrganizationServiceAdapter service)
+        private void MapRelationshipAttributesFromEntity(Entity entity, ICrmService crm)
         {
             foreach (var property in GetProperties(this))
             {
@@ -92,11 +99,11 @@ namespace GetIntoTeachingApi.Models
 
                 if (attribute == null) continue;
 
-                var relatedEntities = service.RelatedEntities(entity, attribute.Name);
+                var relatedEntities = crm.RelatedEntities(entity, attribute.Name).ToList();
 
                 if (!relatedEntities.Any()) continue;
 
-                var relatedModels = relatedEntities.Select(e => Activator.CreateInstance(attribute.Type, e, service));
+                var relatedModels = relatedEntities.Select(e => Activator.CreateInstance(attribute.Type, e, crm));
 
                 if (typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
                 {
@@ -115,13 +122,7 @@ namespace GetIntoTeachingApi.Models
             return (IList) Activator.CreateInstance(listType);
         }
 
-        private Entity MappableEntity(IOrganizationServiceAdapter service, OrganizationServiceContext context)
-        {
-            var entityName = EntityAttribute().LogicalName;
-            return Id != null ? service.BlankExistingEntity(entityName, (Guid)Id, context) : service.NewEntity(entityName, context);
-        }
-
-        public IEnumerable<BaseModel> EnumerableRelationshipModels(object relationship)
+        private static IEnumerable<BaseModel> EnumerableRelationshipModels(object relationship)
         {
             return relationship is BaseModel model ? new List<BaseModel> { model } : (IEnumerable<BaseModel>)relationship;
         }

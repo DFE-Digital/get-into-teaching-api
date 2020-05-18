@@ -47,7 +47,7 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
                 return BadRequest(this.ModelState);
             }
 
-            _crm.UpsertCandidate(candidate);
+            _crm.Save(candidate);
 
             return NoContent();
         }

@@ -1,5 +1,8 @@
-﻿using GetIntoTeachingApi.Models;
+﻿using System;
+using GetIntoTeachingApi.Models;
 using System.Collections.Generic;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
 
 namespace GetIntoTeachingApi.Services
 {
@@ -10,8 +13,10 @@ namespace GetIntoTeachingApi.Services
         public PrivacyPolicy GetLatestPrivacyPolicy();
         public IEnumerable<PrivacyPolicy> GetPrivacyPolicies();
         public Candidate GetCandidate(ExistingCandidateRequest request);
-        public IEnumerable<CandidateQualification> GetCandidateQualifications(Candidate candidate);
-        public IEnumerable<CandidatePastTeachingPosition> GetCandidatePastTeachingPositions(Candidate candidate);
-        public void UpsertCandidate(Candidate candidate);
+        public bool CandidateYetToAcceptPrivacyPolicy(Guid candidateId, Guid privacyPolicyId);
+        public void Save(BaseModel model);
+        public void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);
+        public IEnumerable<Entity> RelatedEntities(Entity entity, string attributeName);
+        public Entity MappableEntity(string entityName, Guid? id, OrganizationServiceContext context);
     }
 }

@@ -20,7 +20,8 @@ namespace GetIntoTeachingApiTests.Services
         private readonly string _previousCrmServiceUrl;
         private readonly string _previousCrmClientId;
         private readonly string _previousCrmClientSecret;
-        private readonly Mock<IOrganizationServiceAdapter> _mockOrganizationalService;
+        private readonly Mock<IOrganizationServiceAdapter> _mockService;
+        private readonly OrganizationServiceContext _context;
         private readonly ICrmService _crm;
 
         public CrmServiceTests()
@@ -33,8 +34,10 @@ namespace GetIntoTeachingApiTests.Services
             Environment.SetEnvironmentVariable("CRM_CLIENT_ID", "client_id");
             Environment.SetEnvironmentVariable("CRM_CLIENT_SECRET", "client_secret");
 
-            _mockOrganizationalService = new Mock<IOrganizationServiceAdapter>();
-            _crm = new CrmService(_mockOrganizationalService.Object);
+            _mockService = new Mock<IOrganizationServiceAdapter>();
+            _context = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
+            _mockService.Setup(mock => mock.Context(ConnectionString)).Returns(_context);
+            _crm = new CrmService(_mockService.Object);
         }
 
         public void Dispose()
@@ -48,7 +51,7 @@ namespace GetIntoTeachingApiTests.Services
         public void GetLookupItems_ReturnsAll()
         {
             var queryableCountries = MockCountries().AsQueryable();
-            _mockOrganizationalService.Setup(mock => mock.CreateQuery("dfe_country", It.IsAny<OrganizationServiceContext>()))
+            _mockService.Setup(mock => mock.CreateQuery("dfe_country", _context))
                 .Returns(queryableCountries);
 
             var result = _crm.GetLookupItems("dfe_country");
@@ -62,7 +65,7 @@ namespace GetIntoTeachingApiTests.Services
         public void GetPickListItems_ReturnsAll()
         {
             var initialTeacherTrainingYears = MockInitialTeacherTrainingYears();
-            _mockOrganizationalService.Setup(mock => mock.GetPickListItemsForAttribute(ConnectionString, "contact", "dfe_ittyear"))
+            _mockService.Setup(mock => mock.GetPickListItemsForAttribute(ConnectionString, "contact", "dfe_ittyear"))
                 .Returns(initialTeacherTrainingYears);
 
             var result = _crm.GetPickListItems("contact", "dfe_ittyear");
@@ -76,7 +79,7 @@ namespace GetIntoTeachingApiTests.Services
         public void GetLatestPrivacyPolicy_ReturnsMostRecentlyCreatedActiveWebPrivacyPolicy()
         {
             var queryablePrivacyPolicies = MockPrivacyPolicies().AsQueryable();
-            _mockOrganizationalService.Setup(mock => mock.CreateQuery("dfe_privacypolicy", It.IsAny<OrganizationServiceContext>()))
+            _mockService.Setup(mock => mock.CreateQuery("dfe_privacypolicy", _context))
                 .Returns(queryablePrivacyPolicies);
 
             var result = _crm.GetLatestPrivacyPolicy();
@@ -88,13 +91,49 @@ namespace GetIntoTeachingApiTests.Services
         public void GetPrivacyPolicies_Returns3MostRecentActiveWebPrivacyPolicies()
         {
             var queryablePrivacyPolicies = MockPrivacyPolicies().AsQueryable();
-            _mockOrganizationalService.Setup(mock => mock.CreateQuery("dfe_privacypolicy", It.IsAny<OrganizationServiceContext>()))
+            _mockService.Setup(mock => mock.CreateQuery("dfe_privacypolicy", _context))
                 .Returns(queryablePrivacyPolicies);
 
-            var result = _crm.GetPrivacyPolicies();
+            var result = _crm.GetPrivacyPolicies().ToList();
 
             result.Count().Should().Be(3);
             result.Select(policy => policy.Text).Should().BeEquivalentTo(new string[] { "Latest Active Web", "Not Latest 1", "Not Latest 2" });
+        }
+
+        [Fact]
+        public void CandidateYetToAcceptPrivacyPolicy_WhenAlreadyAccepted_ReturnsFalse()
+        {
+            var policy = new CandidatePrivacyPolicy() { AcceptedPolicyId = Guid.NewGuid() };
+            var candidate = new Candidate() { Id = Guid.NewGuid(), PrivacyPolicy = policy };
+
+            var entity = new Entity();
+            entity["dfe_candidate"] = new EntityReference("dfe_candidate", (Guid)candidate.Id);
+            entity["dfe_privacypolicynumber"] = new EntityReference("dfe_privacypolicynumber", policy.AcceptedPolicyId);
+
+            _mockService.Setup(m => m.CreateQuery("dfe_candidateprivacypolicy", _context))
+                .Returns(new List<Entity> { entity }.AsQueryable());
+
+            var result = _crm.CandidateYetToAcceptPrivacyPolicy((Guid)candidate.Id, policy.AcceptedPolicyId);
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void CandidateYetToAcceptPrivacyPolicy_WhenNotYetAccepted_ReturnsTrue()
+        {
+            var policy = new CandidatePrivacyPolicy() { AcceptedPolicyId = Guid.NewGuid() };
+            var candidate = new Candidate() { Id = Guid.NewGuid(), PrivacyPolicy = policy };
+
+            var entity = new Entity();
+            entity["dfe_candidate"] = new EntityReference("dfe_candidate", (Guid)candidate.Id);
+            entity["dfe_privacypolicynumber"] = new EntityReference("dfe_privacypolicynumber", policy.AcceptedPolicyId);
+
+            _mockService.Setup(m => m.CreateQuery("dfe_candidateprivacypolicy", It.IsAny<OrganizationServiceContext>()))
+                .Returns(new List<Entity> { entity }.AsQueryable());
+
+            var result = _crm.CandidateYetToAcceptPrivacyPolicy((Guid)candidate.Id, Guid.NewGuid());
+
+            result.Should().BeTrue();
         }
 
         [Theory]
@@ -110,12 +149,11 @@ namespace GetIntoTeachingApiTests.Services
         )
         {
             var request = new ExistingCandidateRequest { Email = email, FirstName = firstName, LastName = lastName };
-            _mockOrganizationalService.Setup(mock => mock.CreateQuery("contact", It.IsAny<OrganizationServiceContext>()))
-                .Returns(MockCandidates().AsQueryable());
-            _mockOrganizationalService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
-                new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), It.IsAny<OrganizationServiceContext>()));
-            _mockOrganizationalService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
-                new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), It.IsAny<OrganizationServiceContext>()));
+            _mockService.Setup(mock => mock.CreateQuery("contact", _context)).Returns(MockCandidates().AsQueryable());
+            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(), 
+                new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), _context));
+            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
+                new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), _context));
 
             var result = _crm.GetCandidate(request);
 
@@ -123,43 +161,68 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void GetCandidateQualifications_RetrievesQualifications()
-        {
-            var candidate = new Candidate() { Id = JaneDoeGuid };
-            _mockOrganizationalService.Setup(mock => mock.CreateQuery("dfe_candidatequalification", It.IsAny<OrganizationServiceContext>()))
-                .Returns(MockCandidateQualifications().AsQueryable());
-
-            var result = _crm.GetCandidateQualifications(candidate);
-
-            result.Select(qualification => qualification.CategoryId).Should().BeEquivalentTo(new[] { 123, 456 });
-        }
-
-        [Fact]
-        public void GetCandidate_RetrievesAssociatedPastTeachingPositions()
-        {
-            var candidate = new Candidate() { Id = JaneDoeGuid };
-            _mockOrganizationalService.Setup(mock => mock.CreateQuery("dfe_candidatepastteachingposition", It.IsAny<OrganizationServiceContext>()))
-                .Returns(MockCandidatePastTeachingPositions().AsQueryable());
-
-            var result = _crm.GetCandidatePastTeachingPositions(candidate);
-
-            result.Select(position => position.EducationPhaseId).Should().BeEquivalentTo(new[] { 111, 222 });
-        }
-
-        [Fact]
-        public void UpsertCandidate_MapsToEntityAndSavesContext()
+        public void Save_MapsEntityAndSavesContext()
         {
             var mockCandidate = new Mock<Candidate>();
-            var mockContext = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
-            _mockOrganizationalService.Setup(mock => mock.Context(ConnectionString)).Returns(mockContext);
 
-            _crm.UpsertCandidate(mockCandidate.Object);
+            _crm.Save(mockCandidate.Object);
 
-            mockCandidate.Verify(mock => mock.ToEntity(_mockOrganizationalService.Object, mockContext));
-            _mockOrganizationalService.Verify(mock => mock.SaveChanges(mockContext));
+            mockCandidate.Verify(mock => mock.ToEntity(_crm, _context));
+            _mockService.Verify(mock => mock.SaveChanges(_context));
         }
 
-        private IEnumerable<Entity> MockCandidates()
+        [Fact]
+        public void AddLink_ProxiesToService()
+        {
+            var source = new Entity("parent");
+            var target = new Entity("child");
+            var relationship = new Relationship("child");
+
+            _crm.AddLink(source, relationship, target, _context);
+
+            _mockService.Verify(mock => mock.AddLink(source, relationship, target, _context));
+        }
+
+        [Fact]
+        public void RelatedEntities_ProxiesToService()
+        {
+            var entity = new Entity("parent");
+            const string attributeName = "children";
+            var relatedEntities = new List<Entity>() {new Entity("mock")};
+            _mockService.Setup(mock => mock.RelatedEntities(entity, attributeName)).Returns(relatedEntities);
+
+            var result = _crm.RelatedEntities(entity, attributeName);
+
+            result.Should().BeEquivalentTo(relatedEntities);
+        }
+
+        [Fact]
+        public void MappableEntity_CallsNewEntityOnServiceWhenIdNull()
+        {
+            const string entityName = "entity";
+            var newEntity = new Entity("mock");
+            _mockService.Setup(mock => mock.NewEntity(entityName, _context)).Returns(newEntity);
+
+            var result = _crm.MappableEntity(entityName, null, _context);
+
+            result.Should().Be(newEntity);
+        }
+
+        [Fact]
+        public void MappableEntity_CallsBlankExistingEntityOnServiceWhenIdNotNull()
+        {
+            const string entityName = "entity";
+            var id = Guid.NewGuid();
+            var existingEntity = new Entity("mock");
+            _mockService.Setup(mock => mock.BlankExistingEntity(entityName, id, _context))
+                .Returns(existingEntity);
+
+            var result = _crm.MappableEntity(entityName, id, _context);
+
+            result.Should().Be(existingEntity);
+        }
+
+        private static IEnumerable<Entity> MockCandidates()
         {
             var candidate1 = new Entity("contact");
             candidate1.Id = JaneDoeGuid;
@@ -183,41 +246,7 @@ namespace GetIntoTeachingApiTests.Services
             return new[] { candidate1, candidate2, candidate3 };
         }
 
-        private IEnumerable<Entity> MockCandidatePastTeachingPositions()
-        {
-            var position1 = new Entity("dfe_candidatepastteachingposition");
-            position1["dfe_contactid"] = JaneDoeGuid;
-            position1["dfe_educationphase"] = new OptionSetValue { Value = 111 };
-
-            var position2 = new Entity("dfe_candidatepastteachingposition");
-            position2["dfe_contactid"] = JaneDoeGuid;
-            position2["dfe_educationphase"] = new OptionSetValue { Value = 222 }; ;
-
-            var position3 = new Entity("dfe_candidatepastteachingposition");
-            position3["dfe_contactid"] = Guid.NewGuid();
-            position3["dfe_educationphase"] = new OptionSetValue { Value = 333 }; ;
-
-            return new[] { position1, position2, position3 };
-        }
-
-        private IEnumerable<Entity> MockCandidateQualifications()
-        {
-            var qualification1 = new Entity("dfe_candidatequalification");
-            qualification1["dfe_contactid"] = JaneDoeGuid;
-            qualification1["dfe_category"] = new OptionSetValue { Value = 123 };
-
-            var qualification2 = new Entity("dfe_candidatequalification");
-            qualification2["dfe_contactid"] = JaneDoeGuid;
-            qualification2["dfe_category"] = new OptionSetValue { Value = 456 }; ;
-
-            var qualification3 = new Entity("dfe_candidatequalification");
-            qualification3["dfe_contactid"] = Guid.NewGuid();
-            qualification3["dfe_category"] = new OptionSetValue { Value = 789 }; ;
-
-            return new[] { qualification1, qualification2, qualification3 };
-        }
-
-        private IEnumerable<Entity> MockPrivacyPolicies()
+        private static IEnumerable<Entity> MockPrivacyPolicies()
         {
             var policy1 = new Entity("dfe_privacypolicy");
             policy1["dfe_details"] = "Latest Active Web";
@@ -258,7 +287,7 @@ namespace GetIntoTeachingApiTests.Services
             return new[] { policy1, policy2, policy3, policy4, policy5, policy6 };
         }
 
-        private IEnumerable<Entity> MockCountries()
+        private static IEnumerable<Entity> MockCountries()
         {
             var country1 = new Entity("dfe_country");
             country1["dfe_name"] = "Country 1";
@@ -272,7 +301,7 @@ namespace GetIntoTeachingApiTests.Services
             return new[] { country1, country2, country3 };
         }
 
-        private List<PickListItem> MockInitialTeacherTrainingYears()
+        private static List<PickListItem> MockInitialTeacherTrainingYears()
         {
             var year1 = new PickListItem { PickListItemId = 1, DisplayLabel = "2010" };
             var year2 = new PickListItem { PickListItemId = 2, DisplayLabel = "2011" };

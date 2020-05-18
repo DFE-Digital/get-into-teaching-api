@@ -1,5 +1,5 @@
-﻿using GetIntoTeachingApi.Adapters;
-using GetIntoTeachingApi.Attributes;
+﻿using GetIntoTeachingApi.Attributes;
+using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
@@ -16,6 +16,6 @@ namespace GetIntoTeachingApi.Models
 
         public CandidateQualification() : base() { }
 
-        public CandidateQualification(Entity entity, IOrganizationServiceAdapter service) : base(entity, service) { }
+        public CandidateQualification(Entity entity, ICrmService crm) : base(entity, crm) { }
     }
 }

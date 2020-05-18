@@ -10,7 +10,7 @@ namespace GetIntoTeachingApiTests.Models
     public class TypeEntityTests
     {
         [Fact]
-        public void Constructor_WithEntity_MapsCorrectly()
+        public void Constructor_WithEntity()
         {
             var entity = new Entity();
             entity.Id = Guid.NewGuid();
@@ -23,7 +23,7 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void Constructor_WithPickListItem_MapsCorrectly()
+        public void Constructor_WithPickListItem()
         {
             var pickListItem = new CdsServiceClient.PickListItem {PickListItemId = 123, DisplayLabel = "name"};
 

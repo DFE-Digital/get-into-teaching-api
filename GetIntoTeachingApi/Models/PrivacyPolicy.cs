@@ -1,5 +1,5 @@
-﻿using GetIntoTeachingApi.Adapters;
-using GetIntoTeachingApi.Attributes;
+﻿using GetIntoTeachingApi.Attributes;
+using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
@@ -12,6 +12,6 @@ namespace GetIntoTeachingApi.Models
 
         public PrivacyPolicy() : base() { }
 
-        public PrivacyPolicy(Entity entity, IOrganizationServiceAdapter service) : base(entity, service) { }
+        public PrivacyPolicy(Entity entity, ICrmService crm) : base(entity, crm) { }
     }
 }
