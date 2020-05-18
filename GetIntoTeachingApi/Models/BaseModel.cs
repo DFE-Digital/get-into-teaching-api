@@ -94,7 +94,7 @@ namespace GetIntoTeachingApi.Models
 
                 var relatedEntities = service.RelatedEntities(entity, attribute.Name);
 
-                if (relatedEntities == null) continue;
+                if (!relatedEntities.Any()) continue;
 
                 var relatedModels = relatedEntities.Select(e => Activator.CreateInstance(attribute.Type, e, service));
 
