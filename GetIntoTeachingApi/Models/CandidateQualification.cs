@@ -1,5 +1,4 @@
-﻿using System;
-using GetIntoTeachingApi.Adapters;
+﻿using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
 using Microsoft.Xrm.Sdk;
 
