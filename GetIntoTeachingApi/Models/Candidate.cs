@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
+using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
@@ -53,6 +54,14 @@ namespace GetIntoTeachingApi.Models
 
         public Candidate() : base() { }
 
-        public Candidate(Entity entity, IOrganizationServiceAdapter service) : base(entity, service) { }
+        public Candidate(Entity entity, ICrmService crm) : base(entity, crm) { }
+
+        protected override bool ShouldMapRelationship(string propertyName, dynamic value, ICrmService crm)
+        {
+            if (propertyName != "PrivacyPolicy" || Id == null || PrivacyPolicy?.AcceptedPolicyId == null)
+                return true;
+
+            return crm.CandidateYetToAcceptPrivacyPolicy((Guid)Id, (Guid)PrivacyPolicy.AcceptedPolicyId);
+        }
     }
 }
