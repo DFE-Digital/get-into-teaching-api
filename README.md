@@ -1,4 +1,5 @@
-# Get into Teaching API 
+# Get into Teaching API
+
 ![Build and Deploy](https://github.com/DFE-Digital/get-into-teaching-api/workflows/Build%20and%20Deploy/badge.svg)
 
 > Provides a RESTful API for integrating with the Get into Teaching CRM.
@@ -10,6 +11,21 @@ The GIT API aims to provide:
 - Simple, task-based RESTful APIs.
 - Message queueing (while the GIT CRM is offline for updates).
 - Validation to ensure consistency across services writing to the GIT CRM.
+
+## Architecture
+
+The API is a .NET Core web app that interacts with Dynamics365 using the PowerPlatform [CdsServiceClient](https://github.com/microsoft/PowerPlatform-CdsServiceClient) wrapped in an [OrganizationServiceContext](https://docs.microsoft.com/en-us/dotnet/api/microsoft.xrm.sdk.client.organizationservicecontext?view=dynamics-general-ce-9). The Dynamics entities are modelled using plain C# objects decorated with custom attributes to describe how they map to/from [Xrm Entity](https://docs.microsoft.com/en-us/dotnet/api/microsoft.xrm.sdk.entity?view=dynamics-general-ce-9) objects. The mapping is performed by the `BaseModel` using reflection and the custom attributes. All interactions with Dynamics funnel through the `CrmService` and, ultimately, the `OrganizationServiceAdapter` which is a minimal abstraction of the `CdsServiceClient` and enables mocking the Dynamics boundry in the test suite. The web app also integrates with the [GOV.UK Notify Service](https://www.notifications.service.gov.uk/) to send emails to candidates.
+
+Other methods of integrating with the Dynamics instance were considered:
+
+- [Common Data Service Web API](https://docs.microsoft.com/en-us/powerapps/developer/common-data-service/webapi/overview)
+  - Microsoft suggest generating an OData client from the Dynamics metadata to interact with their Web API. When we attempted this we found the resulting client did not build (perhaps due to the size/complexity of our Dynamics instance).
+- [CrmServiceClient](https://docs.microsoft.com/en-us/dotnet/api/microsoft.xrm.tooling.connector.crmserviceclient?view=dynamics-xrmtooling-ce-9)
+  - This is the .NET Framework compatible SDK and it was discounted as we were keen to use .NET Core.
+
+The `CdsServiceClient` we are using is currently in ALPHA, however it mirrors the `CmsServiceClient` interface very closely so we have the option of switching to that if we find it is not stable enough. We could also swap to using the OData API (without a generated client) relatively easily by updating the `BaseModel` to map to JSON instead of [Xrm Entity](https://docs.microsoft.com/en-us/dotnet/api/microsoft.xrm.sdk.entity?view=dynamics-general-ce-9) objects.
+
+With hindsight, the OData API may have been a better choice initially as the SDK - whilst giving us some functionality more easily (such as authentication) - has ended up being harder to work with in other areas (doing a 'deep insert', for example, required exposing the `OrganizationServiceContext` and passing down the mapping chain with wasn't ideal).
 
 ## Getting Started
 
