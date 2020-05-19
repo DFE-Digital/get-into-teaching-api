@@ -34,6 +34,7 @@ namespace GetIntoTeachingApi
             services.AddSingleton<ICandidateAccessTokenService, CandidateAccessTokenService>();
             services.AddSingleton<ICrmService, CrmService>();
             services.AddSingleton<INotifyService, NotifyService>();
+            services.AddSingleton<ICrmCache, CrmCache>();
 
             services.AddAuthorization(options =>
             {

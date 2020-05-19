@@ -58,11 +58,11 @@ namespace GetIntoTeachingApiTests.Services
                     NotifyService.NewPinCodeEmailTemplateId, 
                     _personalisation
                 )
-            ).ThrowsAsync(new Exception("Unable to send email!"));
+            ).ThrowsAsync(new Exception("bang"));
 
             _service.SendEmail("email@address.com", NotifyService.NewPinCodeEmailTemplateId, _personalisation);
 
-            _mockLogger.VerifyWarningWasCalled("Unable to send email!");
+            _mockLogger.VerifyWarningWasCalled("NotifyService - Failed to send email");
         }
     }
 }
