@@ -25,7 +25,8 @@ namespace GetIntoTeachingApi.Services
                 email,
                 templateId,
                 personalisation
-            ).ContinueWith(task => _logger.LogWarning(task.Exception?.Message), TaskContinuationOptions.OnlyOnFaulted);
+            ).ContinueWith(task => _logger.LogWarning($"NotifyService - Failed to send email: {task.Exception?.Message}"), 
+                TaskContinuationOptions.OnlyOnFaulted);
         }
 
         private static string ApiKey()
