@@ -7,6 +7,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk.Client;
 using Xunit;
 using static Microsoft.PowerPlatform.Cds.Client.CdsServiceClient;
@@ -37,7 +38,8 @@ namespace GetIntoTeachingApiTests.Services
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _context = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
             _mockService.Setup(mock => mock.Context(ConnectionString)).Returns(_context);
-            _crm = new CrmService(_mockService.Object);
+            var cache = new CrmCache(new Mock<ILogger<CrmCache>>().Object);
+            _crm = new CrmService(_mockService.Object, cache);
         }
 
         public void Dispose()
@@ -62,6 +64,20 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void GetLookupItems_IsCached()
+        {
+            var queryableCountries = MockCountries().AsQueryable();
+            _mockService.Setup(mock => mock.CreateQuery("dfe_country", _context))
+                .Returns(queryableCountries);
+
+            var result1 = _crm.GetLookupItems("dfe_country");
+            var result2 = _crm.GetLookupItems("dfe_country");
+
+            result1.Should().BeEquivalentTo(result2);
+            _mockService.Verify(mock => mock.CreateQuery("dfe_country", _context), Times.Once);
+        }
+
+        [Fact]
         public void GetPickListItems_ReturnsAll()
         {
             var initialTeacherTrainingYears = MockInitialTeacherTrainingYears();
@@ -73,6 +89,20 @@ namespace GetIntoTeachingApiTests.Services
             result.Select(year => year.Value).Should().BeEquivalentTo(
                 new object[] { "2010", "2011", "2012" }
             );
+        }
+
+        [Fact]
+        public void GetPickListItems_IsCached()
+        {
+            var initialTeacherTrainingYears = MockInitialTeacherTrainingYears();
+            _mockService.Setup(mock => mock.GetPickListItemsForAttribute(ConnectionString, "contact", "dfe_ittyear"))
+                .Returns(initialTeacherTrainingYears);
+
+            var result1 = _crm.GetPickListItems("contact", "dfe_ittyear");
+            var result2 = _crm.GetPickListItems("contact", "dfe_ittyear");
+
+            result1.Should().BeEquivalentTo(result2);
+            _mockService.Verify(mock => mock.GetPickListItemsForAttribute(ConnectionString, "contact", "dfe_ittyear"), Times.Once);
         }
 
         [Fact]
@@ -98,6 +128,20 @@ namespace GetIntoTeachingApiTests.Services
 
             result.Count().Should().Be(3);
             result.Select(policy => policy.Text).Should().BeEquivalentTo(new string[] { "Latest Active Web", "Not Latest 1", "Not Latest 2" });
+        }
+
+        [Fact]
+        public void GetPrivacyPolicies_IsCached()
+        {
+            var queryablePrivacyPolicies = MockPrivacyPolicies().AsQueryable();
+            _mockService.Setup(mock => mock.CreateQuery("dfe_privacypolicy", _context))
+                .Returns(queryablePrivacyPolicies);
+
+            var result1 = _crm.GetPrivacyPolicies();
+            var result2 = _crm.GetPrivacyPolicies();
+
+            result1.Should().BeEquivalentTo(result2);
+            _mockService.Verify(mock => mock.CreateQuery("dfe_privacypolicy", _context), Times.Once);
         }
 
         [Fact]

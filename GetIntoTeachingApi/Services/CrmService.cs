@@ -13,24 +13,28 @@ namespace GetIntoTeachingApi.Services
         public enum PrivacyPolicyType { Web = 222750001 }
 
         private readonly IOrganizationServiceAdapter _service;
+        private readonly ICrmCache _cache;
+        private const int CacheDurationInHours = 3;
         private const int MaximumNumberOfCandidatesToMatch = 20;
         private const int MaximumNumberOfPrivacyPolicies = 3;
 
-        public CrmService(IOrganizationServiceAdapter service)
+        public CrmService(IOrganizationServiceAdapter service, ICrmCache cache)
         {
             _service = service;
+            _cache = cache;
         }
 
         public IEnumerable<TypeEntity> GetLookupItems(string entityName)
         {
-            return _service.CreateQuery(entityName, Context())
-                .Select((entity) => new TypeEntity(entity));
+            return _cache.GetOrCreate(entityName, CacheExpiry(), 
+                () => _service.CreateQuery(entityName, Context()).Select((entity) => new TypeEntity(entity)));
         }
 
         public IEnumerable<TypeEntity> GetPickListItems(string entityName, string attributeName)
         {
-            return _service.GetPickListItemsForAttribute(ConnectionString(), entityName, attributeName)
-                .Select((pickListItem) => new TypeEntity(pickListItem));
+            return _cache.GetOrCreate(entityName, CacheExpiry(),
+                () => _service.GetPickListItemsForAttribute(ConnectionString(), entityName, attributeName)
+                    .Select((pickListItem) => new TypeEntity(pickListItem)));
         }
 
         public PrivacyPolicy GetLatestPrivacyPolicy()
@@ -40,14 +44,17 @@ namespace GetIntoTeachingApi.Services
 
         public IEnumerable<PrivacyPolicy> GetPrivacyPolicies()
         {
-            return _service.CreateQuery("dfe_privacypolicy", Context())
-                .Where((entity) =>
-                    entity.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int)PrivacyPolicyType.Web &&
-                    entity.GetAttributeValue<bool>("dfe_active")
-                )
-                .OrderByDescending((policy) => policy.GetAttributeValue<DateTime>("createdon"))
-                .Select((entity) => new PrivacyPolicy(entity, this))
-                .Take(MaximumNumberOfPrivacyPolicies);
+            return _cache.GetOrCreate("dfe_privacypolicy", CacheExpiry(), () => 
+            {
+                return _service.CreateQuery("dfe_privacypolicy", Context())
+                    .Where((entity) =>
+                        entity.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int)PrivacyPolicyType.Web &&
+                        entity.GetAttributeValue<bool>("dfe_active")
+                    )
+                    .OrderByDescending((policy) => policy.GetAttributeValue<DateTime>("createdon"))
+                    .Select((entity) => new PrivacyPolicy(entity, this))
+                    .Take(MaximumNumberOfPrivacyPolicies);
+            });
         }
 
         public Candidate GetCandidate(ExistingCandidateRequest request)
@@ -99,6 +106,11 @@ namespace GetIntoTeachingApi.Services
             using var context = Context();
             model.ToEntity(this, context);
             _service.SaveChanges(context);
+        }
+
+        private DateTime CacheExpiry()
+        {
+            return DateTime.Now.AddHours(CacheDurationInHours);
         }
 
         private OrganizationServiceContext Context()
