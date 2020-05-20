@@ -55,7 +55,9 @@ namespace GetIntoTeachingApiTests.Services
             var result = _cache.GetOrCreate("key", DateTime.Now.AddSeconds(30), () =>
             { 
                 throw new Exception("bang");
+                #pragma warning disable 0162
                 return "";
+                #pragma warning restore 0162
             });
 
             result.Should().Be("value");
