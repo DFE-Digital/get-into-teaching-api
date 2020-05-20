@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,11 +14,14 @@ namespace GetIntoTeachingApi.Controllers
     [Authorize(Policy = "SharedSecret")]
     public class TeachingEventsController : ControllerBase
     {
+        private const int MaximumUpcomingRequests = 50;
         private readonly ILogger<TeachingEventsController> _logger;
+        private readonly ICrmService _crm;
 
-        public TeachingEventsController(ILogger<TeachingEventsController> logger)
+        public TeachingEventsController(ILogger<TeachingEventsController> logger, ICrmService crm)
         {
             _logger = logger;
+            _crm = crm;
         }
 
         [HttpGet]
@@ -30,10 +34,15 @@ maximum of 50 using the `limit` query parameter.",
             OperationId = "GetUpcomingTeachingEvents",
             Tags = new[] { "Teaching Events" }
         )]
-        public IActionResult GetUpcoming([FromQuery, SwaggerParameter("Number of results to return (maximum of 50).")] int limit)
+        [ProducesResponseType(typeof(IEnumerable<TeachingEvent>), 200)]
+        [ProducesResponseType(400)]
+        public IActionResult GetUpcoming([FromQuery, SwaggerParameter("Number of results to return (maximum of 50).")] int limit = 10)
         {
-            // TODO:
-            return Ok(new[] { new Object() });
+            if (limit > MaximumUpcomingRequests)
+                return BadRequest();
+
+            var upcomingEvents = _crm.GetUpcomingTeachingEvents(limit);
+            return Ok(upcomingEvents);
         }
 
         [HttpGet]
