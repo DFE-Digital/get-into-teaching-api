@@ -138,6 +138,18 @@ namespace GetIntoTeachingApiTests.Controllers
             ok.Value.Should().Be(mockEntities);
         }
 
+        [Fact]
+        public void GetTeachingEventTypes_ReturnsAllTypes()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockCrm.Setup(mock => mock.GetPickListItems("msevtmgt_event", "dfe_event_type")).Returns(mockEntities);
+
+            var response = _controller.GetTeachingEventTypes();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().Be(mockEntities);
+        }
+
         private static IEnumerable<TypeEntity> MockTypeEntities()
         {
             return new []
