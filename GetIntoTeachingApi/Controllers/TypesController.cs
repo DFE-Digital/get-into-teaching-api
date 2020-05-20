@@ -147,5 +147,19 @@ namespace GetIntoTeachingApi.Controllers
             var educationPhases = _crm.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase");
             return Ok(educationPhases);
         }
+
+        [HttpGet]
+        [Route("teaching_event/types")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of teaching event types.",
+            OperationId = "GetTeachingEventTypes",
+            Tags = new[] { "Types" }
+        )]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public IActionResult GetTeachingEventTypes()
+        {
+            var eventTypes = _crm.GetPickListItems("msevtmgt_event", "dfe_event_type");
+            return Ok(eventTypes);
+        }
     }
 }

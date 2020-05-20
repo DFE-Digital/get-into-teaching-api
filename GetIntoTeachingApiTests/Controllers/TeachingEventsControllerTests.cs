@@ -1,16 +1,29 @@
-﻿using Xunit;
+﻿using System;
+using System.Collections.Generic;
+using FluentAssertions;
+using Xunit;
 using GetIntoTeachingApi.Controllers;
 using GetIntoTeachingApi.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Microsoft.AspNetCore.Mvc;
-using FluentAssertions;
+using GetIntoTeachingApi.Services;
 using GetIntoTeachingApiTests.Utils;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
     public class TeachingEventsControllerTests
     {
+        private readonly Mock<ICrmService> _mockCrm;
+        private readonly TeachingEventsController _controller;
+
+        public TeachingEventsControllerTests()
+        {
+            var mockLogger = new Mock<ILogger<TeachingEventsController>>();
+            _mockCrm = new Mock<ICrmService>();
+            _controller = new TeachingEventsController(mockLogger.Object, _mockCrm.Object);
+        }
+
         [Fact]
         public void Authorize_HasSharedSecretPolicy()
         {
@@ -21,15 +34,42 @@ namespace GetIntoTeachingApiTests.Controllers
         public void AddAttendee_InvalidRequest_RespondsWithValidationErrors()
         {
             var attendee = new CandidateIdentification { FirstName = null };
-            var mockLogger = new Mock<ILogger<TeachingEventsController>>();
-            var controller = new TeachingEventsController(mockLogger.Object);
-            controller.ModelState.AddModelError("FirstName", "First name must be specified.");
+            _controller.ModelState.AddModelError("FirstName", "First name must be specified.");
 
-            var response = controller.AddAttendee("123", attendee);
+            var response = _controller.AddAttendee("123", attendee);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
             errors.Should().ContainKey("FirstName").WhichValue.Should().BeOfType<string[]>().Which.Should().Contain("First name must be specified.");
+        }
+
+        [Fact]
+        public void GetUpcoming_LimitMoreThan50_RespondsWithBadRequest()
+        {
+            var response = _controller.GetUpcoming(51);
+            
+            response.Should().BeOfType<BadRequestResult>();
+        }
+
+        [Fact]
+        public void GetUpcoming_ReturnsUpcomingTeachingEvents()
+        {
+            var mockEvents = MockEvents();
+            _mockCrm.Setup(mock => mock.GetUpcomingTeachingEvents(3)).Returns(mockEvents);
+
+            var response = _controller.GetUpcoming(3);
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().Be(mockEvents);
+        }
+
+        private static IEnumerable<TeachingEvent> MockEvents()
+        {
+            var event1 = new TeachingEvent() { Name = "Event 1" };
+            var event2 = new TeachingEvent() { Name = "Event 2" };
+            var event3 = new TeachingEvent() { Name = "Event 3" };
+
+            return new[] {event1, event2, event3};
         }
     }
 }

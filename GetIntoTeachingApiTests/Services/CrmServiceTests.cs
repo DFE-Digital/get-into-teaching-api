@@ -52,21 +52,21 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void GetLookupItems_ReturnsAll()
         {
-            var queryableCountries = MockCountries().AsQueryable();
+            var queryableCountries = MockCountries();
             _mockService.Setup(mock => mock.CreateQuery("dfe_country", _context))
                 .Returns(queryableCountries);
 
             var result = _crm.GetLookupItems("dfe_country");
 
             result.Select(country => country.Value).Should().BeEquivalentTo(
-                new object[] { "Country 1", "Country 2", "Country 3" }
-            );
+                new object[] { "Country 1", "Country 2", "Country 3" }, 
+                options => options.WithStrictOrdering());
         }
 
         [Fact]
         public void GetLookupItems_IsCached()
         {
-            var queryableCountries = MockCountries().AsQueryable();
+            var queryableCountries = MockCountries();
             _mockService.Setup(mock => mock.CreateQuery("dfe_country", _context))
                 .Returns(queryableCountries);
 
@@ -86,9 +86,8 @@ namespace GetIntoTeachingApiTests.Services
 
             var result = _crm.GetPickListItems("contact", "dfe_ittyear");
 
-            result.Select(year => year.Value).Should().BeEquivalentTo(
-                new object[] { "2010", "2011", "2012" }
-            );
+            result.Select(year => year.Value).Should().BeEquivalentTo(new object[] { "2010", "2011", "2012" }, 
+                options => options.WithStrictOrdering());
         }
 
         [Fact]
@@ -106,9 +105,37 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void GetUpcomingTeachingEvents_ReturnsUpcomingEventsInOrder()
+        {
+            var teachingEvents = MockTeachingEvents();
+            _mockService.Setup(mock => mock.CreateQuery("msevtmgt_event", _context))
+                .Returns(teachingEvents);
+
+            var result = _crm.GetUpcomingTeachingEvents(3);
+
+
+            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] {"Event 2", "Event 4", "Event 1"}, 
+                options => options.WithStrictOrdering());
+        }
+
+        [Fact]
+        public void GetUpcomingTeachingEvents_IsCached()
+        {
+            var teachingEvents = MockTeachingEvents();
+            _mockService.Setup(mock => mock.CreateQuery("msevtmgt_event", _context))
+                .Returns(teachingEvents);
+
+            var result1 = _crm.GetUpcomingTeachingEvents(3);
+            var result2 = _crm.GetUpcomingTeachingEvents(3);
+
+            result1.Should().BeEquivalentTo(result2);
+            _mockService.Verify(mock => mock.CreateQuery("msevtmgt_event", _context), Times.Once);
+        }
+
+        [Fact]
         public void GetLatestPrivacyPolicy_ReturnsMostRecentlyCreatedActiveWebPrivacyPolicy()
         {
-            var queryablePrivacyPolicies = MockPrivacyPolicies().AsQueryable();
+            var queryablePrivacyPolicies = MockPrivacyPolicies();
             _mockService.Setup(mock => mock.CreateQuery("dfe_privacypolicy", _context))
                 .Returns(queryablePrivacyPolicies);
 
@@ -120,20 +147,21 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void GetPrivacyPolicies_Returns3MostRecentActiveWebPrivacyPolicies()
         {
-            var queryablePrivacyPolicies = MockPrivacyPolicies().AsQueryable();
+            var queryablePrivacyPolicies = MockPrivacyPolicies();
             _mockService.Setup(mock => mock.CreateQuery("dfe_privacypolicy", _context))
                 .Returns(queryablePrivacyPolicies);
 
             var result = _crm.GetPrivacyPolicies().ToList();
 
-            result.Count().Should().Be(3);
-            result.Select(policy => policy.Text).Should().BeEquivalentTo(new string[] { "Latest Active Web", "Not Latest 1", "Not Latest 2" });
+            result.Select(policy => policy.Text).Should().BeEquivalentTo(
+                new object[] { "Latest Active Web", "Not Latest 1", "Not Latest 2" },
+                options => options.WithStrictOrdering());
         }
 
         [Fact]
         public void GetPrivacyPolicies_IsCached()
         {
-            var queryablePrivacyPolicies = MockPrivacyPolicies().AsQueryable();
+            var queryablePrivacyPolicies = MockPrivacyPolicies();
             _mockService.Setup(mock => mock.CreateQuery("dfe_privacypolicy", _context))
                 .Returns(queryablePrivacyPolicies);
 
@@ -193,7 +221,7 @@ namespace GetIntoTeachingApiTests.Services
         )
         {
             var request = new ExistingCandidateRequest { Email = email, FirstName = firstName, LastName = lastName };
-            _mockService.Setup(mock => mock.CreateQuery("contact", _context)).Returns(MockCandidates().AsQueryable());
+            _mockService.Setup(mock => mock.CreateQuery("contact", _context)).Returns(MockCandidates());
             _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(), 
                 new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), _context));
             _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
@@ -266,7 +294,32 @@ namespace GetIntoTeachingApiTests.Services
             result.Should().Be(existingEntity);
         }
 
-        private static IEnumerable<Entity> MockCandidates()
+        private static IQueryable<Entity> MockTeachingEvents()
+        {
+            var event1 = new Entity("msevtmgt_event");
+            event1["msevtmgt_name"] = "Event 1";
+            event1["msevtmgt_eventstartdate"] = DateTime.Now.AddDays(5);
+
+            var event2 = new Entity("msevtmgt_event");
+            event2["msevtmgt_name"] = "Event 2";
+            event2["msevtmgt_eventstartdate"] = DateTime.Now.AddDays(1);
+
+            var event3 = new Entity("msevtmgt_event");
+            event3["msevtmgt_name"] = "Event 3";
+            event3["msevtmgt_eventstartdate"] = DateTime.Now.AddDays(10);
+
+            var event4 = new Entity("msevtmgt_event");
+            event4["msevtmgt_name"] = "Event 4";
+            event4["msevtmgt_eventstartdate"] = DateTime.Now.AddDays(3);
+
+            var event5 = new Entity("msevtmgt_event");
+            event5["msevtmgt_name"] = "Event 5";
+            event5["msevtmgt_eventstartdate"] = DateTime.Now.AddDays(15);
+
+            return new[] { event1, event2, event3, event4, event5 }.AsQueryable();
+        }
+
+        private static IQueryable<Entity> MockCandidates()
         {
             var candidate1 = new Entity("contact");
             candidate1.Id = JaneDoeGuid;
@@ -287,10 +340,10 @@ namespace GetIntoTeachingApiTests.Services
             candidate3["lastname"] = "Doe";
             candidate3["createdon"] = DateTime.Now.AddDays(-5);
 
-            return new[] { candidate1, candidate2, candidate3 };
+            return new[] { candidate1, candidate2, candidate3 }.AsQueryable();
         }
 
-        private static IEnumerable<Entity> MockPrivacyPolicies()
+        private static IQueryable<Entity> MockPrivacyPolicies()
         {
             var policy1 = new Entity("dfe_privacypolicy");
             policy1["dfe_details"] = "Latest Active Web";
@@ -328,10 +381,10 @@ namespace GetIntoTeachingApiTests.Services
             policy6["createdon"] = DateTime.UtcNow.AddDays(-25);
             policy6["dfe_active"] = true;
 
-            return new[] { policy1, policy2, policy3, policy4, policy5, policy6 };
+            return new[] { policy1, policy2, policy3, policy4, policy5, policy6 }.AsQueryable();
         }
 
-        private static IEnumerable<Entity> MockCountries()
+        private static IQueryable<Entity> MockCountries()
         {
             var country1 = new Entity("dfe_country");
             country1["dfe_name"] = "Country 1";
@@ -342,7 +395,7 @@ namespace GetIntoTeachingApiTests.Services
             var country3 = new Entity("dfe_country");
             country3["dfe_name"] = "Country 3";
 
-            return new[] { country1, country2, country3 };
+            return new[] { country1, country2, country3 }.AsQueryable();
         }
 
         private static List<PickListItem> MockInitialTeacherTrainingYears()

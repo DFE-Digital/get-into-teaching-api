@@ -57,6 +57,14 @@ namespace GetIntoTeachingApi.Services
             });
         }
 
+        public IEnumerable<TeachingEvent> GetUpcomingTeachingEvents(int limit)
+        {
+            return GetTeachingEvents()
+                .Where((entity) => entity.StartAt > DateTime.Now)
+                .OrderBy(entity => entity.StartAt)
+                .Take(limit);
+        }
+
         public Candidate GetCandidate(ExistingCandidateRequest request)
         {
             var context = Context();
@@ -106,6 +114,16 @@ namespace GetIntoTeachingApi.Services
             using var context = Context();
             model.ToEntity(this, context);
             _service.SaveChanges(context);
+        }
+
+        private IEnumerable<TeachingEvent> GetTeachingEvents()
+        {
+            return _cache.GetOrCreate("msevtmgt_event", CacheExpiry(), () =>
+            {
+                return _service.CreateQuery("msevtmgt_event", Context())
+                    .Select((entity) => new TeachingEvent(entity, this))
+                    .ToList();
+            });
         }
 
         private DateTime CacheExpiry()
