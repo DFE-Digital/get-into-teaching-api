@@ -49,9 +49,9 @@ namespace GetIntoTeachingApi.Services
     internal class CacheEntry
     {
         public DateTime ExpiresAt { get; set; }
-        public object Entry { get; set; }
+        public dynamic Entry { get; set; }
 
-        public CacheEntry(object entry, DateTime expiresAt)
+        public CacheEntry(dynamic entry, DateTime expiresAt)
         {
             Entry = entry;
             ExpiresAt = expiresAt;

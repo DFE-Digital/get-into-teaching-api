@@ -18,6 +18,8 @@ namespace GetIntoTeachingApi.Models
         public DateTime StartAt { get; set; }
         [EntityField(Name = "msevtmgt_eventenddate")]
         public DateTime EndAt { get; set; }
+        [EntityRelationship(Name = "msevtmgt_event_building", Type = typeof(TeachingEventBuilding))]
+        public TeachingEventBuilding Building { get; set; }
 
         public TeachingEvent() : base() { }
 
