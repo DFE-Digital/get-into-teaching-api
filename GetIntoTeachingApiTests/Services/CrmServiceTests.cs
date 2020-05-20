@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk.Client;
+using Microsoft.Xrm.Sdk.Query;
 using Xunit;
 using static Microsoft.PowerPlatform.Cds.Client.CdsServiceClient;
 
@@ -21,6 +22,7 @@ namespace GetIntoTeachingApiTests.Services
         private readonly string _previousCrmServiceUrl;
         private readonly string _previousCrmClientId;
         private readonly string _previousCrmClientSecret;
+        private readonly Mock<IPostcodeService> _mockPostcodeService;
         private readonly Mock<IOrganizationServiceAdapter> _mockService;
         private readonly OrganizationServiceContext _context;
         private readonly ICrmService _crm;
@@ -35,11 +37,12 @@ namespace GetIntoTeachingApiTests.Services
             Environment.SetEnvironmentVariable("CRM_CLIENT_ID", "client_id");
             Environment.SetEnvironmentVariable("CRM_CLIENT_SECRET", "client_secret");
 
+            _mockPostcodeService = new Mock<IPostcodeService>();
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _context = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
             _mockService.Setup(mock => mock.Context(ConnectionString)).Returns(_context);
             var cache = new CrmCache(new Mock<ILogger<CrmCache>>().Object);
-            _crm = new CrmService(_mockService.Object, cache);
+            _crm = new CrmService(_mockService.Object, cache, _mockPostcodeService.Object);
         }
 
         public void Dispose()
@@ -105,14 +108,40 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void SearchTeachingEvents_ReturnsMatchingEventsInOrder()
+        {
+            var request = new TeachingEventSearchRequest() {Postcode = "CA4 8LE", TypeId = 123};
+            _mockService.Setup(mock => mock.RetrieveMultiple(ConnectionString, It.Is<QueryExpression>(
+                q => q.EntityName == "msevtmgt_event"))).Returns(MockTeachingEvents());
+
+            var result = _crm.SearchTeachingEvents(request);
+
+            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 4" },
+                options => options.WithStrictOrdering());
+        }
+
+        [Fact]
+        public void SearcTeachingEvents_IsCached()
+        {
+            var request = new TeachingEventSearchRequest() {Postcode = "KY12 8FE"};
+            _mockService.Setup(mock => mock.RetrieveMultiple(ConnectionString, It.Is<QueryExpression>(
+                q => q.EntityName == "msevtmgt_event"))).Returns(MockTeachingEvents());
+
+            var result1 = _crm.SearchTeachingEvents(request);
+            var result2 = _crm.SearchTeachingEvents(request);
+
+            result1.Should().BeEquivalentTo(result2);
+            _mockService.Verify(mock => mock.RetrieveMultiple(ConnectionString,
+                It.Is<QueryExpression>(q => q.EntityName == "msevtmgt_event")), Times.Once);
+        }
+
+        [Fact]
         public void GetUpcomingTeachingEvents_ReturnsUpcomingEventsInOrder()
         {
-            var teachingEvents = MockTeachingEvents();
-            _mockService.Setup(mock => mock.CreateQuery("msevtmgt_event", _context))
-                .Returns(teachingEvents);
+            _mockService.Setup(mock => mock.RetrieveMultiple(ConnectionString, It.Is<QueryExpression>(
+                q => q.EntityName == "msevtmgt_event"))).Returns(MockTeachingEvents());
 
             var result = _crm.GetUpcomingTeachingEvents(3);
-
 
             result.Select(e => e.Name).Should().BeEquivalentTo(new string[] {"Event 2", "Event 4", "Event 1"}, 
                 options => options.WithStrictOrdering());
@@ -121,15 +150,15 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void GetUpcomingTeachingEvents_IsCached()
         {
-            var teachingEvents = MockTeachingEvents();
-            _mockService.Setup(mock => mock.CreateQuery("msevtmgt_event", _context))
-                .Returns(teachingEvents);
+            _mockService.Setup(mock => mock.RetrieveMultiple(ConnectionString, It.Is<QueryExpression>(
+                q => q.EntityName == "msevtmgt_event"))).Returns(MockTeachingEvents());
 
             var result1 = _crm.GetUpcomingTeachingEvents(3);
             var result2 = _crm.GetUpcomingTeachingEvents(3);
 
             result1.Should().BeEquivalentTo(result2);
-            _mockService.Verify(mock => mock.CreateQuery("msevtmgt_event", _context), Times.Once);
+            _mockService.Verify(mock => mock.RetrieveMultiple(ConnectionString, 
+                It.Is<QueryExpression>(q => q.EntityName == "msevtmgt_event")), Times.Once);
         }
 
         [Fact]
@@ -260,12 +289,27 @@ namespace GetIntoTeachingApiTests.Services
         {
             var entity = new Entity("parent");
             const string attributeName = "children";
-            var relatedEntities = new List<Entity>() {new Entity("mock")};
+            var relatedEntities = new List<Entity>() { new Entity("mock") };
             _mockService.Setup(mock => mock.RelatedEntities(entity, attributeName)).Returns(relatedEntities);
 
-            var result = _crm.RelatedEntities(entity, attributeName);
+            var result = _crm.RelatedEntities(entity, attributeName, "mock");
 
             result.Should().BeEquivalentTo(relatedEntities);
+        }
+
+        [Fact]
+        public void RelatedEntities_ExtractsFromParent()
+        {
+            var childId = Guid.NewGuid();
+            var entity = new Entity("parent");
+            entity.Attributes.Add("children.childid", new AliasedValue("child", "children", childId));
+            const string attributeName = "children";
+            var relatedEntity = new Entity() { Id = childId };
+            relatedEntity.Attributes.Add("childid", childId);
+
+            var result = _crm.RelatedEntities(entity, attributeName, "child");
+
+            result.Should().BeEquivalentTo(new List<Entity>() { relatedEntity });
         }
 
         [Fact]
@@ -302,6 +346,7 @@ namespace GetIntoTeachingApiTests.Services
 
             var event2 = new Entity("msevtmgt_event");
             event2["msevtmgt_name"] = "Event 2";
+            event2["dfe_event_type"] = new OptionSetValue(123);
             event2["msevtmgt_eventstartdate"] = DateTime.Now.AddDays(1);
 
             var event3 = new Entity("msevtmgt_event");
@@ -310,6 +355,7 @@ namespace GetIntoTeachingApiTests.Services
 
             var event4 = new Entity("msevtmgt_event");
             event4["msevtmgt_name"] = "Event 4";
+            event4["dfe_event_type"] = new OptionSetValue(123);
             event4["msevtmgt_eventstartdate"] = DateTime.Now.AddDays(3);
 
             var event5 = new Entity("msevtmgt_event");

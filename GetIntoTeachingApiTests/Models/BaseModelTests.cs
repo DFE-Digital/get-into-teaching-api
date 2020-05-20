@@ -44,6 +44,7 @@ namespace GetIntoTeachingApiTests.Models
     {
         private readonly Mock<IOrganizationServiceAdapter> _mockService;
         private readonly Mock<ICrmCache> _mockCrmCache;
+        private readonly CrmService _crm;
         private readonly OrganizationServiceContext _context;
 
         public BaseModelTests()
@@ -51,6 +52,7 @@ namespace GetIntoTeachingApiTests.Models
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _mockCrmCache = new Mock<ICrmCache>();
             _context = _mockService.Object.Context("mock-connection-string");
+            _crm = new CrmService(_mockService.Object, _mockCrmCache.Object, new PostcodeService());
         }
 
         [Fact]
@@ -62,17 +64,14 @@ namespace GetIntoTeachingApiTests.Models
             entity["dfe_field3"] = "field3";
 
             var relatedEntity1 = new Entity("relatedMock") { Id = Guid.NewGuid() };
-            entity["dfe_mock_dfe_relatedmock_mock"] = relatedEntity1;
-
             var relatedEntity2 = new Entity("relatedMock") { Id = Guid.NewGuid() };
-            entity["dfe_mock_dfe_relatedmock_mocks"] = new List<Entity>() { relatedEntity2 };
 
             _mockService.Setup(m => m.RelatedEntities(entity, "dfe_mock_dfe_relatedmock_mock"))
                 .Returns(new List<Entity> { relatedEntity1 });
             _mockService.Setup(m => m.RelatedEntities(entity, "dfe_mock_dfe_relatedmock_mocks"))
                 .Returns(new List<Entity> { relatedEntity2 });
 
-            var mock = new MockModel(entity, new CrmService(_mockService.Object, _mockCrmCache.Object));
+            var mock = new MockModel(entity, _crm);
 
             mock.Id.Should().Be(entity.Id);
             mock.Field1.Should().Be(entity.GetAttributeValue<EntityReference>("dfe_field1").Id);
@@ -94,7 +93,7 @@ namespace GetIntoTeachingApiTests.Models
             _mockService.Setup(m => m.RelatedEntities(entity, "dfe_mock_dfe_relatedmock_mock")).Returns(new List<Entity>());
             _mockService.Setup(m => m.RelatedEntities(entity, "dfe_mock_dfe_relatedmock_mocks")).Returns(new List<Entity>());
 
-            var mock = new MockModel(entity, new CrmService(_mockService.Object, _mockCrmCache.Object));
+            var mock = new MockModel(entity, _crm);
 
             mock.Id.Should().Be(entity.Id);
             mock.Field1.Should().Be(entity.GetAttributeValue<EntityReference>("dfe_field1").Id);
@@ -128,7 +127,7 @@ namespace GetIntoTeachingApiTests.Models
             _mockService.Setup(m => m.BlankExistingEntity("relatedMock", 
                 (Guid)mock.RelatedMocks.First().Id, _context)).Returns(relatedMockEntity);
 
-            mock.ToEntity(new CrmService(_mockService.Object, _mockCrmCache.Object), _context);
+            mock.ToEntity(_crm, _context);
 
             mockEntity.GetAttributeValue<EntityReference>("dfe_field1").Id.Should().Be((Guid)mock.Field1);
             mockEntity.GetAttributeValue<EntityReference>("dfe_field1").LogicalName.Should().Be("dfe_list");
@@ -159,7 +158,7 @@ namespace GetIntoTeachingApiTests.Models
             _mockService.Setup(m => m.NewEntity("mock", _context)).Returns(mockEntity);
             _mockService.Setup(m => m.NewEntity("relatedMock", _context)).Returns(relatedMockEntity);
 
-            mock.ToEntity(new CrmService(_mockService.Object, _mockCrmCache.Object), _context);
+            mock.ToEntity(_crm, _context);
 
             mockEntity.GetAttributeValue<EntityReference>("dfe_field1").Id.Should().Be((Guid)mock.Field1);
             mockEntity.GetAttributeValue<EntityReference>("dfe_field1").LogicalName.Should().Be("dfe_list");
@@ -191,7 +190,7 @@ namespace GetIntoTeachingApiTests.Models
             _mockService.Setup(m => m.BlankExistingEntity("mock", mockEntity.Id, _context)).Returns(mockEntity);
             _mockService.Setup(m => m.NewEntity("relatedMock", _context)).Returns(relatedMockEntity);
 
-            mock.ToEntity(new CrmService(_mockService.Object, _mockCrmCache.Object), _context);
+            mock.ToEntity(_crm, _context);
 
             mockEntity.GetAttributeValue<EntityReference>("dfe_field1").Id.Should().Be((Guid)mock.Field1);
             mockEntity.GetAttributeValue<EntityReference>("dfe_field1").LogicalName.Should().Be("dfe_list");
@@ -202,6 +201,13 @@ namespace GetIntoTeachingApiTests.Models
                 relatedMockEntity, _context), Times.Never());
             _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mocks"), 
                 relatedMockEntity, _context), Times.Never());
+        }
+
+        [Fact]
+        public void EntityFieldAttributeNames_ReturnsAllNames()
+        {
+            var names = BaseModel.EntityFieldAttributeNames(typeof(MockModel));
+            names.Should().BeEquivalentTo(new [] { "dfe_field1", "dfe_field2", "dfe_field3", "mockid" });
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using System;
+using Microsoft.Xrm.Sdk.Query;
 
 namespace GetIntoTeachingApi.Adapters
 {
@@ -21,6 +22,13 @@ namespace GetIntoTeachingApi.Adapters
             return context.CreateQuery(entityName);
         }
 
+        public IEnumerable<Entity> RetrieveMultiple(string connectionString, QueryBase query)
+        {
+            var client = RetrieveClient(connectionString);
+            var collection = client.RetrieveMultiple(query);
+            return collection.Entities;
+        }
+
         public void LoadProperty(Entity entity, Relationship relationship, OrganizationServiceContext context)
         {
             context.LoadProperty(entity, relationship);
@@ -28,10 +36,17 @@ namespace GetIntoTeachingApi.Adapters
 
         public IEnumerable<Entity> RelatedEntities(Entity entity, string attributeName)
         {
-            return entity.RelatedEntities
+            var result = new List<Entity>();
+
+            var entities = entity.RelatedEntities
                 .Where(pair => pair.Key.SchemaName == attributeName)
                 .Select(pair => pair.Value.Entities)
                 .FirstOrDefault();
+
+            if (entities != null)
+                result.AddRange(entities);
+
+            return result;
         }
 
         public IEnumerable<CdsServiceClient.PickListItem> GetPickListItemsForAttribute(
