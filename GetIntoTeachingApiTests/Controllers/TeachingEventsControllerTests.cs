@@ -89,6 +89,28 @@ namespace GetIntoTeachingApiTests.Controllers
             ok.Value.Should().Be(mockEvents);
         }
 
+        [Fact]
+        public void Get_ReturnsTeachingEvents()
+        {
+            var teachingEvent = new TeachingEvent() {Id = Guid.NewGuid()};
+            _mockCrm.Setup(mock => mock.GetTeachingEvent((Guid)teachingEvent.Id)).Returns(teachingEvent);
+
+            var response = _controller.Get((Guid)teachingEvent.Id);
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().Be(teachingEvent);
+        }
+
+        [Fact]
+        public void Get_WithMissingEvent_ReturnsNotFound()
+        {
+            _mockCrm.Setup(mock => mock.GetTeachingEvent(It.IsAny<Guid>())).Returns<TeachingEvent>(null);
+
+            var response = _controller.Get(Guid.NewGuid());
+
+            response.Should().BeOfType<NotFoundResult>();
+        }
+
         private static IEnumerable<TeachingEvent> MockEvents()
         {
             var event1 = new TeachingEvent() { Name = "Event 1" };

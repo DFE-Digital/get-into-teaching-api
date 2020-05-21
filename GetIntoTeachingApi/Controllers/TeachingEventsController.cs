@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -68,16 +67,22 @@ maximum of 50 using the `limit` query parameter.",
         }
 
         [HttpGet]
-        [Route("{readableEventId}")]
+        [Route("{id}")]
         [SwaggerOperation(
             Summary = "Retrieves an event.",
             OperationId = "GetTeachingEvent",
             Tags = new[] { "Teaching Events" }
         )]
-        public IActionResult Get([FromRoute, SwaggerParameter("The `readableEventId` of the `TeachingEvent`.", Required = true)] string readableEventId)
+        [ProducesResponseType(typeof(TeachingEvent), 200)]
+        [ProducesResponseType(404)]
+        public IActionResult Get([FromRoute, SwaggerParameter("The `id` of the `TeachingEvent`.", Required = true)] Guid id)
         {
-            // TODO:
-            return Ok(new Object());
+            var teachingEvent = _crm.GetTeachingEvent(id);
+
+            if (teachingEvent == null)
+                return NotFound();
+
+            return Ok(teachingEvent);
         }
 
         [HttpPost]
