@@ -76,6 +76,13 @@ namespace GetIntoTeachingApi.Services
                 .OrderBy(teachingEvent => teachingEvent.StartAt);
         }
 
+        public TeachingEvent GetTeachingEvent(Guid id)
+        {
+            return GetTeachingEvents()
+                .Where((teachingEvent) => teachingEvent.Id == id)
+                .FirstOrDefault();
+        }
+
         public Candidate GetCandidate(ExistingCandidateRequest request)
         {
             var context = Context();
