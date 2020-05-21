@@ -99,16 +99,18 @@ maximum of 50 using the `limit` query parameter.",
         }
 
         [HttpPost]
-        [Route("{readableEventId}/attendees")]
+        [Route("{id}/attendees")]
         [SwaggerOperation(
             Summary = "Adds an attendee to a teaching event.",
             OperationId = "AddTeachingEventAttendee",
             Tags = new[] { "Teaching Events" }
         )]
+        [ProducesResponseType(typeof(TeachingEvent), 200)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
+        [ProducesResponseType(404)]
         public IActionResult AddAttendee(
-            [FromRoute, SwaggerParameter("The `readableEventId` of the `TeachingEvent`.", Required = true)] string readableEventId,
-            [FromBody, SwaggerRequestBody("Attendee to add to the teaching event.", Required = true)] CandidateIdentification attendee
+            [FromRoute, SwaggerParameter("The `id` of the `TeachingEvent`.", Required = true)] string id,
+            [FromBody, SwaggerRequestBody("Attendee to add to the teaching event.", Required = true)] ExistingCandidateRequest attendee
         )
         {
             if (!ModelState.IsValid)
