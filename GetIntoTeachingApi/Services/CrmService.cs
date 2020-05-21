@@ -78,9 +78,7 @@ namespace GetIntoTeachingApi.Services
 
         public TeachingEvent GetTeachingEvent(Guid id)
         {
-            return GetTeachingEvents()
-                .Where((teachingEvent) => teachingEvent.Id == id)
-                .FirstOrDefault();
+            return GetTeachingEvents().FirstOrDefault(teachingEvent => teachingEvent.Id == id);
         }
 
         public Candidate GetCandidate(ExistingCandidateRequest request)

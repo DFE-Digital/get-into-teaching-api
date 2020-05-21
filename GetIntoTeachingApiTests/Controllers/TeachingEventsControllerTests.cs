@@ -33,7 +33,7 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void AddAttendee_InvalidRequest_RespondsWithValidationErrors()
         {
-            var attendee = new CandidateIdentification { FirstName = null };
+            var attendee = new ExistingCandidateRequest() { FirstName = null };
             _controller.ModelState.AddModelError("FirstName", "First name must be specified.");
 
             var response = _controller.AddAttendee("123", attendee);

@@ -29,7 +29,7 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Mailing List" }
         )]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
-        public IActionResult AddMember([FromBody, SwaggerRequestBody("Member to add to the mailing list.", Required = true)] CandidateIdentification member)
+        public IActionResult AddMember([FromBody, SwaggerRequestBody("Member to add to the mailing list.", Required = true)] ExistingCandidateRequest member)
         {
             if (!ModelState.IsValid)
             {

@@ -20,7 +20,7 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void CreateCandidateAccessToken_InvalidRequest_RespondsWithValidationErrors()
         {
-            var member = new CandidateIdentification { FirstName = null };
+            var member = new ExistingCandidateRequest() { FirstName = null };
             var mockLogger = new Mock<ILogger<MailingListController>>();
             var controller = new MailingListController(mockLogger.Object);
             controller.ModelState.AddModelError("FirstName", "First name must be specified.");
