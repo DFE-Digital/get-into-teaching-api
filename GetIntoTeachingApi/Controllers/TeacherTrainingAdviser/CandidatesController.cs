@@ -1,9 +1,7 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
-using System.Linq;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -43,9 +41,7 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
         )
         {
             if (!ModelState.IsValid)
-            {
                 return BadRequest(this.ModelState);
-            }
 
             _crm.Save(candidate);
 
@@ -71,16 +67,12 @@ exchanged for your token matches the request payload here).",
         )
         { 
             if (!_tokenService.IsValid(accessToken, request))
-            {
                 return Unauthorized();
-            }
 
             var candidate = _crm.GetCandidate(request);
 
             if (candidate == null)
-            {
                 return NotFound();
-            }
 
             return Ok(candidate);
         }
