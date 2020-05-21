@@ -36,11 +36,36 @@ namespace GetIntoTeachingApiTests.Controllers
             var attendee = new ExistingCandidateRequest() { FirstName = null };
             _controller.ModelState.AddModelError("FirstName", "First name must be specified.");
 
-            var response = _controller.AddAttendee("123", attendee);
+            var response = _controller.AddAttendee(Guid.NewGuid(), attendee);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
             errors.Should().ContainKey("FirstName").WhichValue.Should().BeOfType<string[]>().Which.Should().Contain("First name must be specified.");
+        }
+
+        [Fact]
+        public void AddAttendee_MissingEvent_RespondsWithNotFound()
+        {
+            var attendee = new ExistingCandidateRequest() { FirstName = null };
+            var teachingEventId = Guid.NewGuid();
+            _mockCrm.Setup(mock => mock.GetTeachingEvent(teachingEventId)).Returns<TeachingEvent>(null);
+
+            var response = _controller.AddAttendee(teachingEventId, attendee);
+
+            response.Should().BeOfType<NotFoundResult>();
+        }
+
+        [Fact]
+        public void AddAttendee_MissingCandidate_RespondsWithNotFound()
+        {
+            var attendee = new ExistingCandidateRequest() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
+            var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
+            _mockCrm.Setup(mock => mock.GetTeachingEvent((Guid)teachingEvent.Id)).Returns(teachingEvent);
+            _mockCrm.Setup(mock => mock.GetCandidate(attendee)).Returns<Candidate>(null);
+
+            var response = _controller.AddAttendee((Guid)teachingEvent.Id, attendee);
+
+            response.Should().BeOfType<NotFoundResult>();
         }
 
         [Fact]
