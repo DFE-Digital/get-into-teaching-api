@@ -86,19 +86,6 @@ maximum of 50 using the `limit` query parameter.",
         }
 
         [HttpPost]
-        [SwaggerOperation(
-            Summary = "Creates a new teaching event.",
-            OperationId = "CreateTeachingEvent",
-            Tags = new[] { "Teaching Events" }
-        )]
-        [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
-        public IActionResult Create([FromBody, SwaggerRequestBody("Teaching event to create.", Required = true)] Object teachingEvent) // TODO:
-        {
-            // TODO:
-            return Ok(new Object());
-        }
-
-        [HttpPost]
         [Route("{id}/attendees")]
         [SwaggerOperation(
             Summary = "Adds an attendee to a teaching event.",
