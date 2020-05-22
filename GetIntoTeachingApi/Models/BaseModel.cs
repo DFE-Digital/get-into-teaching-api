@@ -25,6 +25,8 @@ namespace GetIntoTeachingApi.Models
 
         public virtual Entity ToEntity(ICrmService crm, OrganizationServiceContext context)
         {
+            if (!ShouldMap(crm)) return null;
+
             var entity = crm.MappableEntity(LogicalName(), Id, context);
             MapFieldAttributesToEntity(entity);
             MapRelationshipAttributesToEntity(entity, crm, context);
@@ -41,6 +43,12 @@ namespace GetIntoTeachingApi.Models
         }
 
         protected virtual bool ShouldMapRelationship(string propertyName, dynamic value, ICrmService crm)
+        {
+            // Hook.
+            return true;
+        }
+
+        protected virtual bool ShouldMap(ICrmService crm)
         {
             // Hook.
             return true;

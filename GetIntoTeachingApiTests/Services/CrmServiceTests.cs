@@ -255,10 +255,46 @@ namespace GetIntoTeachingApiTests.Services
             entity["dfe_candidate"] = new EntityReference("dfe_candidate", (Guid)candidate.Id);
             entity["dfe_privacypolicynumber"] = new EntityReference("dfe_privacypolicynumber", policy.AcceptedPolicyId);
 
-            _mockService.Setup(m => m.CreateQuery("dfe_candidateprivacypolicy", It.IsAny<OrganizationServiceContext>()))
+            _mockService.Setup(m => m.CreateQuery("dfe_candidateprivacypolicy", _context))
                 .Returns(new List<Entity> { entity }.AsQueryable());
 
             var result = _crm.CandidateYetToAcceptPrivacyPolicy((Guid)candidate.Id, Guid.NewGuid());
+
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void CandidateYetToRegisterForTeachingEvent_WhenAlreadyRegistered_ReturnsFalse()
+        {
+            var candidate = new Candidate() { Id = Guid.NewGuid() };
+            var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
+
+            var entity = new Entity();
+            entity["msevtmgt_contactid"] = new EntityReference("dfe_candidate", (Guid)candidate.Id);
+            entity["msevtmgt_eventid"] = new EntityReference("msevtmgt_event", (Guid)teachingEvent.Id);
+
+            _mockService.Setup(m => m.CreateQuery("msevtmgt_eventregistration", _context))
+                .Returns(new List<Entity> { entity }.AsQueryable());
+
+            var result = _crm.CandidateYetToRegisterForTeachingEvent((Guid)candidate.Id, (Guid)teachingEvent.Id);
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void CandidateYetToRegisterForTeachingEvent_WhenNotYetRegistered_ReturnsTrue()
+        {
+            var candidate = new Candidate() { Id = Guid.NewGuid() };
+            var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
+
+            var entity = new Entity();
+            entity["msevtmgt_contactid"] = new EntityReference("dfe_candidate", (Guid)candidate.Id);
+            entity["msevtmgt_eventid"] = new EntityReference("msevtmgt_event", (Guid)teachingEvent.Id);
+
+            _mockService.Setup(m => m.CreateQuery("dfe_candidateprivacypolicy", _context))
+                .Returns(new List<Entity> { entity }.AsQueryable());
+
+            var result = _crm.CandidateYetToRegisterForTeachingEvent((Guid)candidate.Id, Guid.NewGuid());
 
             result.Should().BeTrue();
         }

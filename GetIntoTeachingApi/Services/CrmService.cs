@@ -5,7 +5,6 @@ using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace GetIntoTeachingApi.Services
@@ -108,6 +107,13 @@ namespace GetIntoTeachingApi.Services
             return _service.CreateQuery("dfe_candidateprivacypolicy", Context()).FirstOrDefault(entity => 
                 entity.GetAttributeValue<EntityReference>("dfe_candidate").Id == candidateId && 
                 entity.GetAttributeValue<EntityReference>("dfe_privacypolicynumber").Id == privacyPolicyId) == null;
+        }
+
+        public bool CandidateYetToRegisterForTeachingEvent(Guid candidateId, Guid teachingEventId)
+        {
+            return _service.CreateQuery("msevtmgt_eventregistration", Context()).FirstOrDefault(entity =>
+                entity.GetAttributeValue<EntityReference>("msevtmgt_contactid").Id == candidateId &&
+                entity.GetAttributeValue<EntityReference>("msevtmgt_eventid").Id == teachingEventId) == null;
         }
 
         public void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context)
