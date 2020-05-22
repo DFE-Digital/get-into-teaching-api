@@ -69,6 +69,22 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
+        public void AddAttendee_ValidRequest_RespondsWithNoContent()
+        {
+            var attendee = new ExistingCandidateRequest() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
+            var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
+            var candidate = new Candidate() { Id = Guid.NewGuid() };
+            _mockCrm.Setup(mock => mock.GetTeachingEvent((Guid)teachingEvent.Id)).Returns(teachingEvent);
+            _mockCrm.Setup(mock => mock.GetCandidate(attendee)).Returns(candidate);
+
+            var response = _controller.AddAttendee((Guid)teachingEvent.Id, attendee);
+
+            response.Should().BeOfType<NoContentResult>();
+            _mockCrm.Verify(mock => mock.Save(It.Is<TeachingEventRegistration>(
+                registration => registration.CandidateId == candidate.Id && registration.EventId == teachingEvent.Id)));
+        }
+
+        [Fact]
         public void Search_InvalidRequest_RespondsWithValidationErrors()
         {
             var request = new TeachingEventSearchRequest() { Postcode = null};

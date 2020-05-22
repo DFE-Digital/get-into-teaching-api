@@ -17,6 +17,7 @@ namespace GetIntoTeachingApi.Services
         public IEnumerable<TeachingEvent> SearchTeachingEvents(TeachingEventSearchRequest request);
         public TeachingEvent GetTeachingEvent(Guid id);
         public bool CandidateYetToAcceptPrivacyPolicy(Guid candidateId, Guid privacyPolicyId);
+        public bool CandidateYetToRegisterForTeachingEvent(Guid candidateId, Guid teachingEventId);
         public void Save(BaseModel model);
         public void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);
         public IEnumerable<Entity> RelatedEntities(Entity entity, string attributeName, string logicalName);

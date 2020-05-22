@@ -90,7 +90,7 @@ maximum of 50 using the `limit` query parameter.",
             OperationId = "AddTeachingEventAttendee",
             Tags = new[] { "Teaching Events" }
         )]
-        [ProducesResponseType(typeof(TeachingEvent), 200)]
+        [ProducesResponseType(204)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
         [ProducesResponseType(404)]
         public IActionResult AddAttendee(
@@ -107,8 +107,15 @@ maximum of 50 using the `limit` query parameter.",
             if (teachingEvent == null || candidate == null)
                 return NotFound();
 
-            // TODO:
-            return Ok(new Object());
+            var registration = new TeachingEventRegistration()
+            {
+                CandidateId = (Guid) candidate.Id, 
+                EventId = (Guid) teachingEvent.Id
+            };
+
+            _crm.Save(registration);
+
+            return NoContent();
         }
     }
 }
