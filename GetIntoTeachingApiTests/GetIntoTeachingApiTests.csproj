@@ -19,4 +19,10 @@
     <ProjectReference Include="..\GetIntoTeachingApi\GetIntoTeachingApi.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Fixtures\ukpostcodes.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

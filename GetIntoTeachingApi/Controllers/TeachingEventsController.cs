@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -53,14 +54,17 @@ maximum of 50 using the `limit` query parameter.",
             OperationId = "SearchTeachingEvents",
             Tags = new[] { "Teaching Events" }
         )]
-        public IActionResult Search(
-            [FromQuery, SwaggerParameter("Postcode to center search around.", Required = true)] string postcode,
-            [FromQuery, SwaggerParameter("Search radius in miles (omit to search nationally).")] string radius,
-            [FromQuery, SwaggerParameter("Type of teaching events to search for (omit to search for all types). Must match an `eventType` of the `TeachingEvent` schema.")] int type
-            )
+        [ProducesResponseType(typeof(IEnumerable<TeachingEvent>), 200)]
+        [ProducesResponseType(400)]
+        public IActionResult Search([FromQuery, SwaggerParameter("Event search criteria.", Required = true)] TeachingEventSearchRequest request)
         {
-            // TODO:
-            return Ok(new[] { new Object() });
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(this.ModelState);
+            }
+
+            var teachingEvents = _crm.SearchTeachingEvents(request);
+            return Ok(teachingEvents);
         }
 
         [HttpGet]

@@ -44,6 +44,32 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
+        public void Search_InvalidRequest_RespondsWithValidationErrors()
+        {
+            var request = new TeachingEventSearchRequest() { Postcode = null};
+            _controller.ModelState.AddModelError("Postcode", "Postcode must be specified.");
+
+            var response = _controller.Search(request);
+
+            var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
+            var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
+            errors.Should().ContainKey("Postcode").WhichValue.Should().BeOfType<string[]>().Which.Should().Contain("Postcode must be specified.");
+        }
+
+        [Fact]
+        public void GetUpcoming_ValidRequest_ReturnsTeachingEvents()
+        {
+            var request = new TeachingEventSearchRequest() {Postcode = "KY12 8FG"};
+            var mockEvents = MockEvents();
+            _mockCrm.Setup(mock => mock.SearchTeachingEvents(request)).Returns(mockEvents);
+
+            var response = _controller.Search(request);
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().Be(mockEvents);
+        }
+
+        [Fact]
         public void GetUpcoming_LimitMoreThan50_RespondsWithBadRequest()
         {
             var response = _controller.GetUpcoming(51);
