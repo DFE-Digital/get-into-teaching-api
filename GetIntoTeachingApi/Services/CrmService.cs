@@ -5,6 +5,8 @@ using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
+using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Query;
 
 namespace GetIntoTeachingApi.Services
 {
@@ -14,14 +16,16 @@ namespace GetIntoTeachingApi.Services
 
         private readonly IOrganizationServiceAdapter _service;
         private readonly ICrmCache _cache;
+        private readonly IPostcodeService _postcodeService;
         private const int CacheDurationInHours = 3;
         private const int MaximumNumberOfCandidatesToMatch = 20;
         private const int MaximumNumberOfPrivacyPolicies = 3;
 
-        public CrmService(IOrganizationServiceAdapter service, ICrmCache cache)
+        public CrmService(IOrganizationServiceAdapter service, ICrmCache cache, IPostcodeService postcodeService)
         {
             _service = service;
             _cache = cache;
+            _postcodeService = postcodeService;
         }
 
         public IEnumerable<TypeEntity> GetLookupItems(string entityName)
@@ -32,7 +36,7 @@ namespace GetIntoTeachingApi.Services
 
         public IEnumerable<TypeEntity> GetPickListItems(string entityName, string attributeName)
         {
-            return _cache.GetOrCreate(entityName, CacheExpiry(),
+            return _cache.GetOrCreate($"{entityName}-{attributeName}", CacheExpiry(),
                 () => _service.GetPickListItemsForAttribute(ConnectionString(), entityName, attributeName)
                     .Select((pickListItem) => new TypeEntity(pickListItem)));
         }
@@ -60,9 +64,16 @@ namespace GetIntoTeachingApi.Services
         public IEnumerable<TeachingEvent> GetUpcomingTeachingEvents(int limit)
         {
             return GetTeachingEvents()
-                .Where((entity) => entity.StartAt > DateTime.Now)
-                .OrderBy(entity => entity.StartAt)
+                .Where((teachingEvent) => teachingEvent.StartAt > DateTime.Now)
+                .OrderBy(teachingEvent => teachingEvent.StartAt)
                 .Take(limit);
+        }
+
+        public IEnumerable<TeachingEvent> SearchTeachingEvents(TeachingEventSearchRequest request)
+        {
+            return GetTeachingEvents()
+                .Where((teachingEvent) => request.Match(teachingEvent, _postcodeService))
+                .OrderBy(teachingEvent => teachingEvent.StartAt);
         }
 
         public Candidate GetCandidate(ExistingCandidateRequest request)
@@ -99,9 +110,25 @@ namespace GetIntoTeachingApi.Services
             _service.AddLink(source, relationship, target, context);
         }
 
-        public IEnumerable<Entity> RelatedEntities(Entity entity, string attributeName)
+        public IEnumerable<Entity> RelatedEntities(Entity entity, string relationshipName, string logicalName)
         {
-            return _service.RelatedEntities(entity, attributeName);
+            var relatedEntityKeys = entity.Attributes.Keys.Where(k => k.StartsWith($"{relationshipName}.")).ToList();
+
+            if (!relatedEntityKeys.Any())
+                // If we used LINQ and AddProperty the related entities are already in the context
+                // and can be queried with the relationship.
+                return _service.RelatedEntities(entity, relationshipName);
+
+            // If we used a QueryExpression and AddLink the related entities are left outer joined
+            // into the parent entity, keyed under the relationship name.
+            var id = entity.GetAttributeValue<AliasedValue>($"{relationshipName}.{logicalName}id").Value;
+            var relatedEntity = new Entity() { Id = (Guid) id };
+
+            foreach (var key in relatedEntityKeys)
+                relatedEntity.Attributes[key.Replace($"{relationshipName}.", "")] = 
+                    entity.GetAttributeValue<AliasedValue>(key).Value;
+
+            return new List<Entity>() { relatedEntity };
         }
 
         public Entity MappableEntity(string entityName, Guid? id, OrganizationServiceContext context)
@@ -120,9 +147,16 @@ namespace GetIntoTeachingApi.Services
         {
             return _cache.GetOrCreate("msevtmgt_event", CacheExpiry(), () =>
             {
-                return _service.CreateQuery("msevtmgt_event", Context())
-                    .Select((entity) => new TeachingEvent(entity, this))
-                    .ToList();
+                var query = new QueryExpression("msevtmgt_event");
+                query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(TeachingEvent)));
+
+                var link = query.AddLink("msevtmgt_building", "msevtmgt_building", "msevtmgt_buildingid", JoinOperator.LeftOuter);
+                link.Columns.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(TeachingEventBuilding)));
+                link.EntityAlias = "msevtmgt_event_building";
+
+                var entities = _service.RetrieveMultiple(ConnectionString(), query);
+
+                return entities.Select((entity) => new TeachingEvent(entity, this)).ToList();
             });
         }
 

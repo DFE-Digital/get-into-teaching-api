@@ -13,7 +13,7 @@ namespace GetIntoTeachingApi.Models
     public class BaseModel
     {
         public Guid? Id { get; set; }
-
+        
         public BaseModel() { }
 
         public BaseModel(Entity entity, ICrmService crm)
@@ -25,10 +25,19 @@ namespace GetIntoTeachingApi.Models
 
         public virtual Entity ToEntity(ICrmService crm, OrganizationServiceContext context)
         {
-            var entity = crm.MappableEntity(EntityAttribute().LogicalName, Id, context);
+            var entity = crm.MappableEntity(LogicalName(), Id, context);
             MapFieldAttributesToEntity(entity);
             MapRelationshipAttributesToEntity(entity, crm, context);
             return entity;
+        }
+
+        public static string[] EntityFieldAttributeNames(Type type)
+        {
+            var entityAttribute = (EntityAttribute) Attribute.GetCustomAttribute(type, typeof(EntityAttribute));
+            var attributes = type.GetProperties().Select(EntityFieldAttribute).Where(a => a != null);
+            var fieldNames = attributes.Select(a => a.Name);
+
+            return fieldNames.Concat(new[] {$"{entityAttribute.LogicalName}id"}).ToArray();
         }
 
         protected virtual bool ShouldMapRelationship(string propertyName, dynamic value, ICrmService crm)
@@ -99,7 +108,8 @@ namespace GetIntoTeachingApi.Models
 
                 if (attribute == null) continue;
 
-                var relatedEntities = crm.RelatedEntities(entity, attribute.Name).ToList();
+                var relatedEntityAttribute = (EntityAttribute)Attribute.GetCustomAttribute(attribute.Type, typeof(EntityAttribute));
+                var relatedEntities = crm.RelatedEntities(entity, attribute.Name, relatedEntityAttribute.LogicalName).ToList();
 
                 if (!relatedEntities.Any()) continue;
 
@@ -144,9 +154,10 @@ namespace GetIntoTeachingApi.Models
                 .FirstOrDefault(a => a.GetType() == typeof(EntityRelationshipAttribute));
         }
 
-        private EntityAttribute EntityAttribute()
+        private string LogicalName()
         {
-            return (EntityAttribute) Attribute.GetCustomAttribute(this.GetType(), typeof(EntityAttribute));
+            var attribute = (EntityAttribute) Attribute.GetCustomAttribute(GetType(), typeof(EntityAttribute));
+            return attribute.LogicalName;
         }
     }
 }
