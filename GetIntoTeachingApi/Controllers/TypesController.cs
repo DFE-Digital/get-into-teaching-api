@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using GetIntoTeachingApi.Models;
-using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Services.Crm;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -14,12 +15,12 @@ namespace GetIntoTeachingApi.Controllers
     public class TypesController : ControllerBase
     {
         private readonly ILogger<TypesController> _logger;
-        private readonly ICrmService _crm;
+        private readonly IWebApiClient _client;
 
-        public TypesController(ILogger<TypesController> logger, ICrmService crm)
+        public TypesController(ILogger<TypesController> logger, IWebApiClient client)
         {
             _logger = logger;
-            _crm = crm;
+            _client = client;
         }
 
         [HttpGet]
@@ -30,9 +31,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetCountries()
+        public async Task<IActionResult> GetCountries()
         {
-            var countries = _crm.GetLookupItems("dfe_country");
+            var countries = await _client.GetLookupItems(Lookup.Country);
             return Ok(countries);
         }
 
@@ -44,9 +45,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetTeachingSubjects()
+        public async Task<IActionResult> GetTeachingSubjects()
         {
-            var subjects = _crm.GetLookupItems("dfe_teachingsubjectlist");
+            var subjects = await _client.GetLookupItems(Lookup.TeachingSubject);
             return Ok(subjects);
         }
 
@@ -58,9 +59,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetCandidateInitialTeacherTrainingYears()
+        public async Task<IActionResult> GetCandidateInitialTeacherTrainingYears()
         {
-            var years = _crm.GetPickListItems("contact", "dfe_ittyear");
+            var years = await _client.GetOptionSetItems(OptionSet.CandidateInitialTeacherTrainingYears);
             return Ok(years);
         }
 
@@ -72,9 +73,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetCandidatePreferredEducationPhases()
+        public async Task<IActionResult> GetCandidatePreferredEducationPhases()
         {
-            var educationPhases = _crm.GetPickListItems("contact", "dfe_preferrededucationphase01");
+            var educationPhases = await _client.GetOptionSetItems(OptionSet.CandidatePreferredEducationPhases);
             return Ok(educationPhases);
         }
 
@@ -86,9 +87,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetCandidateLocations()
+        public async Task<IActionResult> GetCandidateLocations()
         {
-            var locations = _crm.GetPickListItems("contact", "dfe_isinuk");
+            var locations = await _client.GetOptionSetItems(OptionSet.CandidateLocations);
             return Ok(locations);
         }
 
@@ -100,9 +101,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetQualificationDegreeStatus()
+        public async Task<IActionResult> GetQualificationDegreeStatus()
         {
-            var status = _crm.GetPickListItems("dfe_qualification", "dfe_degreestatus");
+            var status = await _client.GetOptionSetItems(OptionSet.QualificationDegreeStatus);
             return Ok(status);
         }
 
@@ -114,9 +115,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetQualificationCategories()
+        public async Task<IActionResult> GetQualificationCategories()
         {
-            var categories = _crm.GetPickListItems("dfe_qualification", "dfe_category");
+            var categories = await _client.GetOptionSetItems(OptionSet.QualificationCategories);
             return Ok(categories);
         }
 
@@ -128,9 +129,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetQualificationTypes()
+        public async Task<IActionResult> GetQualificationTypes()
         {
-            var types = _crm.GetPickListItems("dfe_qualification", "dfe_type");
+            var types = await _client.GetOptionSetItems(OptionSet.QualificationTypes);
             return Ok(types);
         }
 
@@ -142,9 +143,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetPastTeachingPositionEducationPhases()
+        public async Task<IActionResult> GetPastTeachingPositionEducationPhases()
         {
-            var educationPhases = _crm.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase");
+            var educationPhases = await _client.GetOptionSetItems(OptionSet.PastTeachingPositionEducationPhases);
             return Ok(educationPhases);
         }
 
@@ -156,9 +157,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetTeachingEventTypes()
+        public async Task<IActionResult> GetTeachingEventTypes()
         {
-            var eventTypes = _crm.GetPickListItems("msevtmgt_event", "dfe_event_type");
+            var eventTypes = await _client.GetOptionSetItems(OptionSet.TeachingEventTypes);
             return Ok(eventTypes);
         }
     }

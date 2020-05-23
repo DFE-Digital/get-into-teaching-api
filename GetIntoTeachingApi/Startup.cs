@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using GetIntoTeachingApi.OperationFilters;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Services.Crm;
+using Simple.OData.Client;
 
 namespace GetIntoTeachingApi
 {
@@ -33,9 +35,13 @@ namespace GetIntoTeachingApi
             services.AddSingleton<IOrganizationServiceAdapter, OrganizationServiceAdapter>();
             services.AddSingleton<ICandidateAccessTokenService, CandidateAccessTokenService>();
             services.AddSingleton<ICrmService, CrmService>();
+            services.AddSingleton<IODataClient>(WebApiClient.CreateODataClient(new ODataCredentials(), new AccessTokenProvider()));
+            services.AddSingleton<IWebApiClient, WebApiClient>();
+            services.AddSingleton<IWebApiClientCache, WebApiClientCache>();
             services.AddSingleton<INotifyService, NotifyService>();
             services.AddSingleton<ICrmCache, CrmCache>();
             services.AddSingleton<IPostcodeService, PostcodeService>();
+            services.AddSingleton<IAccessTokenProvider, AccessTokenProvider>();
 
             services.AddAuthorization(options =>
             {
