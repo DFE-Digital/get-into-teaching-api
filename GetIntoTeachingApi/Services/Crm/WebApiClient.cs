@@ -15,6 +15,7 @@ namespace GetIntoTeachingApi.Services.Crm
         private readonly IWebApiClientCache _cache;
         private static DateTime CacheExpiry => DateTime.Now.AddHours(3);
         private const int MaximumNumberOfPrivacyPolicies = 3;
+        private const int MaximumNumberOfCandidatesToMatch = 20;
 
         public WebApiClient(IWebApiClientCache cache, IODataClient client)
         {
@@ -57,6 +58,17 @@ namespace GetIntoTeachingApi.Services.Crm
                 async () => await _client.For<PrivacyPolicy>().Top(MaximumNumberOfPrivacyPolicies)
                     .Filter(p => p.IsActive && p.Type == (int) PrivacyPolicy.Types.Web)
                     .OrderByDescending(p => p.CreatedAt).FindEntriesAsync());
+        }
+
+        public async Task<Candidate> GetCandidate(ExistingCandidateRequest request)
+        {
+            var candidates = await _client.For<Candidate>().Top(MaximumNumberOfCandidatesToMatch)
+                .Expand(c => c.Qualifications)
+                .Expand(c => c.PastTeachingPositions)
+                .Filter(c => c.Email == request.Email) // Will perform a case-insensitive comparison
+                .OrderByDescending(c => c.CreatedAt).FindEntriesAsync();
+
+            return candidates.FirstOrDefault(request.Match);
         }
 
         public static ODataClient CreateODataClient(IODataCredentials credentials, IAccessTokenProvider tokenProvider)

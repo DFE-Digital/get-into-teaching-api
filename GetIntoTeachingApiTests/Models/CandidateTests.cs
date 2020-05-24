@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
@@ -82,6 +83,35 @@ namespace GetIntoTeachingApiTests.Models
             candidate.ToEntity(mockCrm.Object, context);
 
             mockService.Verify(m => m.NewEntity("dfe_candidateprivacypolicy", context), Times.Never);
+        }
+
+        [Fact]
+        public void EntityFrameworkAttributes()
+        {
+            var type = typeof(Candidate);
+
+            type.Should().BeDecoratedWith<TableAttribute>(a => a.Name == "contacts");
+
+            type.GetProperty("Id").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "contactid");
+            type.GetProperty("PreferredTeachingSubjectId").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "dfe_preferredteachingsubject01");
+            type.GetProperty("PreferredEducationPhaseId").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "dfe_preferrededucationphase01");
+            type.GetProperty("LocationId").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "dfe_isinuk");
+            type.GetProperty("InitialTeacherTrainingYearId").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "dfe_ittyear");
+            type.GetProperty("Email").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "emailaddress1");
+            type.GetProperty("FirstName").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "firstname");
+            type.GetProperty("LastName").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "lastname");
+            type.GetProperty("DateOfBirth").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "birthdate");
+            type.GetProperty("Telephone").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "telephone1");
+            type.GetProperty("AddressLine1").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "address1_line1");
+            type.GetProperty("AddressLine2").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "address1_line2");
+            type.GetProperty("AddressLine3").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "address1_line3");
+            type.GetProperty("AddressCity").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "address1_city");
+            type.GetProperty("AddressState").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "address1_stateorprovince");
+            type.GetProperty("AddressPostcode").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "address1_postalcode");
+            type.GetProperty("Qualifications").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "dfe_contact_dfe_candidatequalification_ContactId");
+            type.GetProperty("PastTeachingPositions").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "dfe_contact_dfe_candidatepastteachingposition_ContactId");
+            type.GetProperty("PhoneCall").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "dfe_contact_phonecall_contactid");
+            type.GetProperty("PrivacyPolicy").Should().BeDecoratedWith<ColumnAttribute>(a => a.Name == "dfe_contact_dfe_candidateprivacypolicy_Candidate");
         }
     }
 }

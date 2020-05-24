@@ -287,30 +287,6 @@ namespace GetIntoTeachingApiTests.Services
             result.Should().BeTrue();
         }
 
-        [Theory]
-        [InlineData("john@doe.com", "New John", "Doe", "New John")]
-        [InlineData("JOHN@doe.com", "New John", "Doe", "New John")]
-        [InlineData("jane@doe.com", "Jane", "Doe", "Jane")]
-        [InlineData("bob@doe.com", "Bob", "Doe", null)]
-        public void GetCandidate_MatchesOnNewestCandidateWithEmail(
-            string email,
-            string firstName,
-            string lastName,
-            string expectedFirstName
-        )
-        {
-            var request = new ExistingCandidateRequest { Email = email, FirstName = firstName, LastName = lastName };
-            _mockService.Setup(mock => mock.CreateQuery("contact", _context)).Returns(MockCandidates());
-            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(), 
-                new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), _context));
-            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
-                new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), _context));
-
-            var result = _crm.GetCandidate(request);
-
-            result?.FirstName.Should().Be(expectedFirstName);
-        }
-
         [Fact]
         public void Save_MapsEntityAndSavesContext()
         {
@@ -413,30 +389,6 @@ namespace GetIntoTeachingApiTests.Services
             event5["msevtmgt_eventstartdate"] = DateTime.Now.AddDays(15);
 
             return new[] { event1, event2, event3, event4, event5 }.AsQueryable();
-        }
-
-        private static IQueryable<Entity> MockCandidates()
-        {
-            var candidate1 = new Entity("contact");
-            candidate1.Id = JaneDoeGuid;
-            candidate1["emailaddress1"] = "jane@doe.com";
-            candidate1["firstname"] = "Jane";
-            candidate1["lastname"] = "Doe";
-            candidate1["createdon"] = DateTime.Now;
-
-            var candidate2 = new Entity("contact");
-            candidate2["emailaddress1"] = "john@doe.com";
-            candidate2["firstname"] = "New John";
-            candidate2["lastname"] = "Doe";
-            candidate2["createdon"] = DateTime.Now;
-
-            var candidate3 = new Entity("contact");
-            candidate3["emailaddress1"] = "john@doe.com";
-            candidate3["firstname"] = "Old John";
-            candidate3["lastname"] = "Doe";
-            candidate3["createdon"] = DateTime.Now.AddDays(-5);
-
-            return new[] { candidate1, candidate2, candidate3 }.AsQueryable();
         }
 
         private static IQueryable<Entity> MockPrivacyPolicies()

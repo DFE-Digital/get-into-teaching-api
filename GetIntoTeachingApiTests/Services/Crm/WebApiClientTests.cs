@@ -7,6 +7,8 @@ using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services.Crm;
 using Microsoft.Extensions.Logging;
+using Microsoft.OData.Edm;
+using Microsoft.Xrm.Sdk;
 using Moq;
 using Newtonsoft.Json.Linq;
 using Simple.OData.Client;
@@ -152,6 +154,57 @@ namespace GetIntoTeachingApiTests.Services.Crm
 
             result1.Should().BeEquivalentTo(result2);
             _mockODataClient.Verify(mock => mock.For<PrivacyPolicy>(It.IsAny<string>()), Times.Once);
+        }
+
+        [Theory]
+        [InlineData("john@doe.com", "New John", "Doe", "New John")]
+        [InlineData("JOHN@doe.com", "New John", "Doe", "New John")]
+        [InlineData("jane@doe.com", "Jane", "Doe", "Jane")]
+        [InlineData("bob@doe.com", "Bob", "Doe", null)]
+        public async void GetCandidate_MatchesOnNewestCandidateWithEmail(
+            string email,
+            string firstName,
+            string lastName,
+            string expectedFirstName
+        )
+        {
+            var request = new ExistingCandidateRequest {Email = email, FirstName = firstName, LastName = lastName};
+            _mockODataClient.Setup(mock => mock.For<Candidate>(It.IsAny<string>())
+                .Top(20).Expand(c => c.Qualifications).Expand(c => c.PastTeachingPositions)
+                .Filter(c => c.Email == request.Email).OrderByDescending(c => c.CreatedAt)
+                .FindEntriesAsync()).ReturnsAsync(MockCandidates());
+
+            var result = await _client.GetCandidate(request);
+            result?.FirstName.Should().Be(expectedFirstName);
+        }
+
+        private static IEnumerable<Candidate> MockCandidates()
+        {
+            var candidate1 = new Candidate()
+            {
+                Email = "jane@doe.com",
+                FirstName = "Jane",
+                LastName = "Doe",
+                CreatedAt = Date.Now,
+            };
+
+            var candidate2 = new Candidate()
+            {
+                Email = "john@doe.com",
+                FirstName = "John",
+                LastName = "Doe",
+                CreatedAt = Date.Now,
+            };
+
+            var candidate3 = new Candidate()
+            {
+                Email = "john@doe.com",
+                FirstName = "Old John",
+                LastName = "Doe",
+                CreatedAt = DateTime.Now.AddDays(-5),
+            };
+
+            return new[] { candidate1, candidate2, candidate3 };
         }
 
         private static IEnumerable<PrivacyPolicy> MockPrivacyPolicies()

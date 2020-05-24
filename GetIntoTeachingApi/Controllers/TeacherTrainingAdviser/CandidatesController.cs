@@ -2,8 +2,10 @@
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Services.Crm;
 using Microsoft.AspNetCore.Authorization;
 
 namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
@@ -15,16 +17,19 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
     {
         private readonly ILogger<CandidatesController> _logger;
         private readonly ICandidateAccessTokenService _tokenService;
+        private readonly IWebApiClient _client;
         private readonly ICrmService _crm;
 
         public CandidatesController(
             ILogger<CandidatesController> logger, 
             ICandidateAccessTokenService tokenService,
-            ICrmService crm
+            ICrmService crm,
+            IWebApiClient client
         )
         {
             _logger = logger;
             _crm = crm;
+            _client = client;
             _tokenService = tokenService;
         }
 
@@ -61,7 +66,7 @@ exchanged for your token matches the request payload here).",
         )]
         [ProducesResponseType(typeof(Candidate), 200)]
         [ProducesResponseType(404)]
-        public IActionResult Get(
+        public async Task<IActionResult> Get(
             [FromRoute, SwaggerParameter("Access token (PIN code).", Required = true)] string accessToken, 
             [FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] ExistingCandidateRequest request
         )
@@ -69,7 +74,7 @@ exchanged for your token matches the request payload here).",
             if (!_tokenService.IsValid(accessToken, request))
                 return Unauthorized();
 
-            var candidate = _crm.GetCandidate(request);
+            var candidate = await _client.GetCandidate(request);
 
             if (candidate == null)
                 return NotFound();

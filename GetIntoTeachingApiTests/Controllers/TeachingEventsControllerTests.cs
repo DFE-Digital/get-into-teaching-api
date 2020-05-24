@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Microsoft.AspNetCore.Mvc;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Services.Crm;
 using GetIntoTeachingApiTests.Utils;
 
 namespace GetIntoTeachingApiTests.Controllers
@@ -15,13 +16,15 @@ namespace GetIntoTeachingApiTests.Controllers
     public class TeachingEventsControllerTests
     {
         private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<IWebApiClient> _mockClient;
         private readonly TeachingEventsController _controller;
 
         public TeachingEventsControllerTests()
         {
             var mockLogger = new Mock<ILogger<TeachingEventsController>>();
             _mockCrm = new Mock<ICrmService>();
-            _controller = new TeachingEventsController(mockLogger.Object, _mockCrm.Object);
+            _mockClient = new Mock<IWebApiClient>();
+            _controller = new TeachingEventsController(mockLogger.Object, _mockCrm.Object, _mockClient.Object);
         }
 
         [Fact]
@@ -31,12 +34,12 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void AddAttendee_InvalidRequest_RespondsWithValidationErrors()
+        public async void AddAttendee_InvalidRequest_RespondsWithValidationErrors()
         {
             var attendee = new ExistingCandidateRequest() { FirstName = null };
             _controller.ModelState.AddModelError("FirstName", "First name must be specified.");
 
-            var response = _controller.AddAttendee(Guid.NewGuid(), attendee);
+            var response = await _controller.AddAttendee(Guid.NewGuid(), attendee);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
@@ -44,40 +47,40 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void AddAttendee_MissingEvent_RespondsWithNotFound()
+        public async void AddAttendee_MissingEvent_RespondsWithNotFound()
         {
             var attendee = new ExistingCandidateRequest() { FirstName = null };
             var teachingEventId = Guid.NewGuid();
             _mockCrm.Setup(mock => mock.GetTeachingEvent(teachingEventId)).Returns<TeachingEvent>(null);
 
-            var response = _controller.AddAttendee(teachingEventId, attendee);
+            var response = await _controller.AddAttendee(teachingEventId, attendee);
 
             response.Should().BeOfType<NotFoundResult>();
         }
 
         [Fact]
-        public void AddAttendee_MissingCandidate_RespondsWithNotFound()
+        public async void AddAttendee_MissingCandidate_RespondsWithNotFound()
         {
             var attendee = new ExistingCandidateRequest() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
             var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
             _mockCrm.Setup(mock => mock.GetTeachingEvent((Guid)teachingEvent.Id)).Returns(teachingEvent);
-            _mockCrm.Setup(mock => mock.GetCandidate(attendee)).Returns<Candidate>(null);
+            _mockClient.Setup(mock => mock.GetCandidate(attendee)).ReturnsAsync((Candidate) null);
 
-            var response = _controller.AddAttendee((Guid)teachingEvent.Id, attendee);
+            var response = await _controller.AddAttendee((Guid)teachingEvent.Id, attendee);
 
             response.Should().BeOfType<NotFoundResult>();
         }
 
         [Fact]
-        public void AddAttendee_ValidRequest_RespondsWithNoContent()
+        public async void AddAttendee_ValidRequest_RespondsWithNoContent()
         {
             var attendee = new ExistingCandidateRequest() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
             var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
             var candidate = new Candidate() { Id = Guid.NewGuid() };
             _mockCrm.Setup(mock => mock.GetTeachingEvent((Guid)teachingEvent.Id)).Returns(teachingEvent);
-            _mockCrm.Setup(mock => mock.GetCandidate(attendee)).Returns(candidate);
+            _mockClient.Setup(mock => mock.GetCandidate(attendee)).ReturnsAsync(candidate);
 
-            var response = _controller.AddAttendee((Guid)teachingEvent.Id, attendee);
+            var response = await _controller.AddAttendee((Guid)teachingEvent.Id, attendee);
 
             response.Should().BeOfType<NoContentResult>();
             _mockCrm.Verify(mock => mock.Save(It.Is<TeachingEventRegistration>(

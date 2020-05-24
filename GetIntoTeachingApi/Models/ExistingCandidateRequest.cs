@@ -1,37 +1,39 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
     public class ExistingCandidateRequest
     {
-        private static readonly int MinimumAdditionalAttributeMatches = 2;
+        private const int MinimumAdditionalAttributeMatches = 2;
 
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
         public DateTime? DateOfBirth { get; set; }
 
-        public bool Match(Entity entity)
+        public bool Match(Candidate candidate)
         {
-            if (entity == null) return false;
+            if (candidate == null) return false;
 
-            return EmailMatchesCandidate(entity) && MinimumAdditionalAttributesMatch(entity);
+            return EmailMatchesCandidate(candidate) && MinimumAdditionalAttributesMatch(candidate);
         }
 
         public string Slugify()
         {
-            var attributes = new[] {Email}.Concat(AdditionalAttributeValues(FirstName, LastName, DateOfBirth));
+            var attributes = new[] {Email}.Concat(
+                AdditionalAttributeValues(FirstName, LastName, DateOfBirth));
             return string.Join("-", attributes).ToLower();
         }
 
-        private bool EmailMatchesCandidate(Entity entity)
+        private bool EmailMatchesCandidate(Candidate candidate)
         {
-            return entity.GetAttributeValue<string>("emailaddress1").Equals(Email, StringComparison.OrdinalIgnoreCase);
+            return candidate.Email.Equals(Email, StringComparison.OrdinalIgnoreCase);
         }
 
-        private string[] AdditionalAttributeValues(string firstName, string lastName, DateTime? dateOfBirth)
+        private static IEnumerable<string> AdditionalAttributeValues(
+            string firstName, string lastName, DateTime? dateOfBirth)
         {
             return new[]
                 {
@@ -43,12 +45,11 @@ namespace GetIntoTeachingApi.Models
                 .ToArray();
         }
 
-        private bool MinimumAdditionalAttributesMatch(Entity entity)
+        private bool MinimumAdditionalAttributesMatch(Candidate candidate)
         {
             var matches = AdditionalAttributeValues(FirstName, LastName, DateOfBirth).Intersect(
-                AdditionalAttributeValues(entity.GetAttributeValue<string>("firstname"), 
-                    entity.GetAttributeValue<string>("lastname"), 
-                    entity.GetAttributeValue<DateTime>("birthdate")), StringComparer.OrdinalIgnoreCase
+                AdditionalAttributeValues(candidate.FirstName, candidate.LastName, candidate.DateOfBirth), 
+                StringComparer.OrdinalIgnoreCase
             );
 
             return matches.Count() >= MinimumAdditionalAttributeMatches;

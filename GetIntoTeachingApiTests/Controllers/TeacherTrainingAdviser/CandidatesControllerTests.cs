@@ -7,6 +7,7 @@ using GetIntoTeachingApi.Controllers.TeacherTrainingAdviser;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Services.Crm;
 using GetIntoTeachingApiTests.Utils;
 
 namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
@@ -15,6 +16,7 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
     {
         private readonly Mock<ICandidateAccessTokenService> _mockTokenService;
         private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<IWebApiClient> _mockClient;
         private readonly CandidatesController _controller;
         private readonly ExistingCandidateRequest _request;
 
@@ -22,9 +24,10 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         {
             _mockTokenService = new Mock<ICandidateAccessTokenService>();
             _mockCrm = new Mock<ICrmService>();
+            _mockClient = new Mock<IWebApiClient>();
             _request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
             var mockLogger = new Mock<ILogger<CandidatesController>>();
-            _controller = new CandidatesController(mockLogger.Object, _mockTokenService.Object, _mockCrm.Object);
+            _controller = new CandidatesController(mockLogger.Object, _mockTokenService.Object, _mockCrm.Object, _mockClient.Object);
         }
 
         [Fact]
@@ -34,23 +37,23 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         }
 
         [Fact]
-        public void Get_InvalidAccessToken_RespondsWithUnauthorized()
+        public async void Get_InvalidAccessToken_RespondsWithUnauthorized()
         {
             _mockTokenService.Setup(mock => mock.IsValid("000000", _request)).Returns(false);
 
-            var response = _controller.Get("000000", _request);
+            var response = await _controller.Get("000000", _request);
 
             response.Should().BeOfType<UnauthorizedResult>();
         }
 
         [Fact]
-        public void Get_ValidToken_RespondsWithCandidate()
+        public async void Get_ValidToken_RespondsWithCandidate()
         {
             var candidate = new Candidate { Id = Guid.NewGuid() };
             _mockTokenService.Setup(tokenService => tokenService.IsValid("000000", _request)).Returns(true);
-            _mockCrm.Setup(mock => mock.GetCandidate(_request)).Returns(candidate);
+            _mockClient.Setup(mock => mock.GetCandidate(_request)).ReturnsAsync(candidate);
 
-            var response = _controller.Get("000000", _request);
+            var response = await _controller.Get("000000", _request);
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             var candidateResponse = ok.Value as Candidate;
@@ -58,12 +61,12 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         }
 
         [Fact]
-        public void Get_MissingCandidate_RespondsWithNotFound()
+        public async void Get_MissingCandidate_RespondsWithNotFound()
         {
             _mockTokenService.Setup(tokenService => tokenService.IsValid("000000", _request)).Returns(true);
-            _mockCrm.Setup(mock => mock.GetCandidate(_request)).Returns<Candidate>(null);
+            _mockClient.Setup(mock => mock.GetCandidate(_request)).ReturnsAsync((Candidate) null);
 
-            var response = _controller.Get("000000", _request);
+            var response = await _controller.Get("000000", _request);
 
             response.Should().BeOfType<NotFoundResult>();
         }

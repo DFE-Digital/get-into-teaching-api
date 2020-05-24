@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using GetIntoTeachingApi.Services.Crm;
 
 namespace GetIntoTeachingApi.Controllers
 {
@@ -16,19 +18,19 @@ namespace GetIntoTeachingApi.Controllers
         private readonly ILogger<CandidatesController> _logger;
         private readonly ICandidateAccessTokenService _tokenService;
         private readonly INotifyService _notifyService;
-        private readonly ICrmService _crm;
+        private readonly IWebApiClient _client;
 
         public CandidatesController(
             ILogger<CandidatesController> logger,
             ICandidateAccessTokenService tokenService,
             INotifyService notifyService,
-            ICrmService crm
+            IWebApiClient client
         )
         {
             _logger = logger;
             _tokenService = tokenService;
             _notifyService = notifyService;
-            _crm = crm;
+            _client = client;
         }
 
         [HttpPost]
@@ -45,18 +47,21 @@ that can then be used for verification.",
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
-        public IActionResult CreateAccessToken([FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] ExistingCandidateRequest request)
+        public async Task<IActionResult> CreateAccessToken([FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] ExistingCandidateRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(this.ModelState);
 
-            var candidate = _crm.GetCandidate(request);
+            var candidate = await _client.GetCandidate(request);
             if (candidate == null)
                 return NotFound();
 
             var token = _tokenService.GenerateToken(request);
             var personalisation = new Dictionary<string, dynamic> { { "pin_code", token } };
+#pragma warning disable 4014
+            // Don't wait for a response; respond 204 immediately.
             _notifyService.SendEmail(request.Email, NotifyService.NewPinCodeEmailTemplateId, personalisation);
+#pragma warning restore 4014
 
             return NoContent();
         }

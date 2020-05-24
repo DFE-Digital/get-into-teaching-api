@@ -17,7 +17,6 @@ namespace GetIntoTeachingApi.Services
         private readonly ICrmCache _cache;
         private readonly IPostcodeService _postcodeService;
         private const int CacheDurationInHours = 3;
-        private const int MaximumNumberOfCandidatesToMatch = 20;
         private const int MaximumNumberOfPrivacyPolicies = 3;
 
         public CrmService(IOrganizationServiceAdapter service, ICrmCache cache, IPostcodeService postcodeService)
@@ -73,28 +72,6 @@ namespace GetIntoTeachingApi.Services
         public TeachingEvent GetTeachingEvent(Guid id)
         {
             return GetTeachingEvents().FirstOrDefault(teachingEvent => teachingEvent.Id == id);
-        }
-
-        public Candidate GetCandidate(ExistingCandidateRequest request)
-        {
-            var context = Context();
-            var entity = _service.CreateQuery("contact", context)
-                .Where(e =>
-                    // Will perform a case-insensitive comparison
-                    e.GetAttributeValue<string>("emailaddress1") == request.Email
-                )
-                .OrderByDescending(e => e.GetAttributeValue<DateTime>("createdon"))
-                .Take(MaximumNumberOfCandidatesToMatch)
-                .ToList()
-                .FirstOrDefault(request.Match);
-
-            if (entity == null)
-                return null;
-
-            _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), context);
-            _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), context);
-
-            return new Candidate(entity, this);
         }
 
         public bool CandidateYetToAcceptPrivacyPolicy(Guid candidateId, Guid privacyPolicyId)

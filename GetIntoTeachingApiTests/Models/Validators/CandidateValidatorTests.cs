@@ -5,6 +5,7 @@ using FluentValidation.TestHelper;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Validators;
 using GetIntoTeachingApi.Services;
+using Microsoft.OData.Edm;
 using Moq;
 using Xunit;
 
@@ -148,13 +149,13 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_DateOfBirthIsNull_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.DateOfBirth, null as DateTime?);
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.DateOfBirth, null as Date?);
         }
 
         [Fact]
         public void Validate_DateOfBirthInFuture_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.DateOfBirth, DateTime.Now.AddDays(1));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.DateOfBirth, Date.Now.AddDays(1));
         }
 
         [Fact]

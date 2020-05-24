@@ -10,5 +10,6 @@ namespace GetIntoTeachingApi.Services.Crm
         Task<IEnumerable<TypeEntity>> GetOptionSetItems(OptionSet optionSet);
         Task<PrivacyPolicy> GetLatestPrivacyPolicy();
         Task<IEnumerable<PrivacyPolicy>> GetPrivacyPolicies();
+        Task<Candidate> GetCandidate(ExistingCandidateRequest request);
     }
 }

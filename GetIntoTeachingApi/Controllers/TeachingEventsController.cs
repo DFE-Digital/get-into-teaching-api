@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Services.Crm;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -17,11 +19,14 @@ namespace GetIntoTeachingApi.Controllers
         private const int MaximumUpcomingRequests = 50;
         private readonly ILogger<TeachingEventsController> _logger;
         private readonly ICrmService _crm;
+        private readonly IWebApiClient _client;
 
-        public TeachingEventsController(ILogger<TeachingEventsController> logger, ICrmService crm)
+        public TeachingEventsController(
+            ILogger<TeachingEventsController> logger, ICrmService crm, IWebApiClient client)
         {
             _logger = logger;
             _crm = crm;
+            _client = client;
         }
 
         [HttpGet]
@@ -93,7 +98,7 @@ maximum of 50 using the `limit` query parameter.",
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
         [ProducesResponseType(404)]
-        public IActionResult AddAttendee(
+        public async Task<IActionResult> AddAttendee(
             [FromRoute, SwaggerParameter("The `id` of the `TeachingEvent`.", Required = true)] Guid id,
             [FromBody, SwaggerRequestBody("Attendee to add to the teaching event.", Required = true)] ExistingCandidateRequest attendee
         )
@@ -102,7 +107,7 @@ maximum of 50 using the `limit` query parameter.",
                 return BadRequest(this.ModelState);
 
             var teachingEvent = _crm.GetTeachingEvent(id);
-            var candidate = _crm.GetCandidate(attendee);
+            var candidate = await _client.GetCandidate(attendee);
 
             if (teachingEvent == null || candidate == null)
                 return NotFound();

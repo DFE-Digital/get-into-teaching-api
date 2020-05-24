@@ -8,6 +8,7 @@ using FluentAssertions;
 using GetIntoTeachingApiTests.Utils;
 using GetIntoTeachingApi.Services;
 using System.Collections.Generic;
+using GetIntoTeachingApi.Services.Crm;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -16,7 +17,7 @@ namespace GetIntoTeachingApiTests.Controllers
         private readonly Mock<ILogger<CandidatesController>> _mockLogger;
         private readonly Mock<ICandidateAccessTokenService> _mockTokenService;
         private readonly Mock<INotifyService> _mockNotifyService;
-        private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<IWebApiClient> _mockClient;
         private readonly CandidatesController _controller;
 
         public CandidatesControllerTests()
@@ -24,8 +25,8 @@ namespace GetIntoTeachingApiTests.Controllers
             _mockLogger = new Mock<ILogger<CandidatesController>>();
             _mockTokenService = new Mock<ICandidateAccessTokenService>();
             _mockNotifyService = new Mock<INotifyService>();
-            _mockCrm = new Mock<ICrmService>();
-            _controller = new CandidatesController(_mockLogger.Object, _mockTokenService.Object, _mockNotifyService.Object, _mockCrm.Object);
+            _mockClient = new Mock<IWebApiClient>();
+            _controller = new CandidatesController(_mockLogger.Object, _mockTokenService.Object, _mockNotifyService.Object, _mockClient.Object);
         }
 
         [Fact]
@@ -35,12 +36,12 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void CreateAccessToken_InvalidRequest_RespondsWithValidationErrors()
+        public async void CreateAccessToken_InvalidRequest_RespondsWithValidationErrors()
         {
             var request = new ExistingCandidateRequest { Email = "invalid-email@" };
             _controller.ModelState.AddModelError("Email", "Email is invalid.");
 
-            var response = _controller.CreateAccessToken(request);
+            var response = await _controller.CreateAccessToken(request);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
@@ -48,14 +49,14 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void CreateAccessToken_ValidRequest_SendsPINCodeEmail()
+        public async void CreateAccessToken_ValidRequest_SendsPINCodeEmail()
         {
             var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
             var candidate = new Candidate { Email = request.Email, FirstName = request.FirstName, LastName = request.LastName };
             _mockTokenService.Setup(mock => mock.GenerateToken(request)).Returns("123456");
-            _mockCrm.Setup(mock => mock.GetCandidate(request)).Returns(candidate);
+            _mockClient.Setup(mock => mock.GetCandidate(request)).ReturnsAsync(candidate);
 
-            var response = _controller.CreateAccessToken(request);
+            var response = await _controller.CreateAccessToken(request);
 
             response.Should().BeOfType<NoContentResult>();
             _mockNotifyService.Verify(
@@ -68,12 +69,12 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void CreateAccessToken_MismatchedCandidate_ReturnsNotFound()
+        public async void CreateAccessToken_MismatchedCandidate_ReturnsNotFound()
         {
             var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
-            _mockCrm.Setup(mock => mock.GetCandidate(request)).Returns<Candidate>(null);
+            _mockClient.Setup(mock => mock.GetCandidate(request)).ReturnsAsync((Candidate) null);
 
-            var response = _controller.CreateAccessToken(request);
+            var response = await _controller.CreateAccessToken(request);
 
             response.Should().BeOfType<NotFoundResult>();
             _mockNotifyService.Verify(mock => 
