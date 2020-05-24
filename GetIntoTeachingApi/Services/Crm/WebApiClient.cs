@@ -14,6 +14,7 @@ namespace GetIntoTeachingApi.Services.Crm
         private readonly IODataClient _client;
         private readonly IWebApiClientCache _cache;
         private static DateTime CacheExpiry => DateTime.Now.AddHours(3);
+        private const int MaximumNumberOfPrivacyPolicies = 3;
 
         public WebApiClient(IWebApiClientCache cache, IODataClient client)
         {
@@ -43,6 +44,19 @@ namespace GetIntoTeachingApi.Services.Crm
 
                 return options.Select(item => new TypeEntity() { Id = item["Value"], Value = ExtractLabel(item) });
             });
+        }
+
+        public async Task<PrivacyPolicy> GetLatestPrivacyPolicy()
+        {
+            return (await GetPrivacyPolicies()).FirstOrDefault();
+        }
+
+        public async Task<IEnumerable<PrivacyPolicy>> GetPrivacyPolicies()
+        {
+            return await _cache.GetOrCreateAsync("dfe_privacypolicy", CacheExpiry, 
+                async () => await _client.For<PrivacyPolicy>().Top(MaximumNumberOfPrivacyPolicies)
+                    .Filter(p => p.IsActive && p.Type == (int) PrivacyPolicy.Types.Web)
+                    .OrderByDescending(p => p.CreatedAt).FindEntriesAsync());
         }
 
         public static ODataClient CreateODataClient(IODataCredentials credentials, IAccessTokenProvider tokenProvider)

@@ -2,26 +2,26 @@
 using GetIntoTeachingApiTests.Utils;
 ﻿using FluentAssertions;
 using GetIntoTeachingApi.Models;
-using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System;
+using GetIntoTeachingApi.Services.Crm;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
     public class PrivacyPoliciesControllerTests
     {
-        private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<IWebApiClient> _mockClient;
         private readonly Mock<ILogger<PrivacyPoliciesController>> _mockLogger;
         private readonly PrivacyPoliciesController _controller;
 
         public PrivacyPoliciesControllerTests()
         {
-            _mockCrm = new Mock<ICrmService>();
+            _mockClient = new Mock<IWebApiClient>();
             _mockLogger = new Mock<ILogger<PrivacyPoliciesController>>();
-            _controller = new PrivacyPoliciesController(_mockLogger.Object, _mockCrm.Object);
+            _controller = new PrivacyPoliciesController(_mockLogger.Object, _mockClient.Object);
         }
 
         [Fact]
@@ -31,12 +31,12 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void GetLatest_ReturnsLatestPrivacyPolicy()
+        public async void GetLatest_ReturnsLatestPrivacyPolicy()
         {
             var mockPolicy = MockPrivacyPolicy();
-            _mockCrm.Setup(mock => mock.GetLatestPrivacyPolicy()).Returns(mockPolicy);
+            _mockClient.Setup(mock => mock.GetLatestPrivacyPolicy()).ReturnsAsync(mockPolicy);
 
-            var response = _controller.GetLatest();
+            var response = await _controller.GetLatest();
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().Be(mockPolicy);

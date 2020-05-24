@@ -10,7 +10,6 @@ namespace GetIntoTeachingApi.Services
     {
         public IEnumerable<TypeEntity> GetLookupItems(string entityName);
         public IEnumerable<TypeEntity> GetPickListItems(string entityName, string attributeName);
-        public PrivacyPolicy GetLatestPrivacyPolicy();
         public IEnumerable<PrivacyPolicy> GetPrivacyPolicies();
         public Candidate GetCandidate(ExistingCandidateRequest request);
         public IEnumerable<TeachingEvent> GetUpcomingTeachingEvents(int limit);

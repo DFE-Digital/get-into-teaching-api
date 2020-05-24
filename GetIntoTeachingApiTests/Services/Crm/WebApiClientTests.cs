@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
+using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services.Crm;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -58,27 +59,25 @@ namespace GetIntoTeachingApiTests.Services.Crm
 
             server.Stop();
         }
-        
+
         [Fact]
         public async void GetLookupItems_ReturnsAll()
         {
-            var mockCountries = MockCountries();
             _mockODataClient.Setup(m => m.For("dfe_countries").Select("dfe_countryid", "dfe_name").FindEntriesAsync())
-                .ReturnsAsync(mockCountries);
+                .ReturnsAsync(MockCountries());
 
             var result = await _client.GetLookupItems(Lookup.Country);
 
             result.Select(country => country.Value).Should()
-                .BeEquivalentTo(mockCountries.Select(c => c["dfe_name"]), 
+                .BeEquivalentTo(MockCountries().Select(c => c["dfe_name"]), 
                 options => options.WithStrictOrdering());
         }
 
         [Fact]
         public async void GetLookupItems_IsCached()
         {
-            var mockCountries = MockCountries();
             _mockODataClient.Setup(m => m.For("dfe_countries").Select("dfe_countryid", "dfe_name").FindEntriesAsync())
-                .ReturnsAsync(mockCountries);
+                .ReturnsAsync(MockCountries());
 
             var result1 = await _client.GetLookupItems(Lookup.Country);
             var result2 = await _client.GetLookupItems(Lookup.Country);
@@ -90,10 +89,9 @@ namespace GetIntoTeachingApiTests.Services.Crm
         [Fact]
         public async void GetOptionSetItems_ReturnsAll()
         {
-            var locations = MockLocations();
             var query = $"EntityDefinitions(608861bc-50a4-4c5f-a02c-21fe1943e2cf)/Attributes(4e7556f1-f6c2-e811-a96b-000d3a233b72)/" +
                 $"Microsoft.Dynamics.CRM.PicklistAttributeMetadata?$select=OptionSet&$expand=OptionSet";
-            _mockODataClient.Setup(m => m.FindEntryAsync(query)).ReturnsAsync(locations);
+            _mockODataClient.Setup(m => m.FindEntryAsync(query)).ReturnsAsync(MockLocations());
 
             var result = await _client.GetOptionSetItems(OptionSet.CandidateLocations);
 
@@ -105,10 +103,9 @@ namespace GetIntoTeachingApiTests.Services.Crm
         [Fact]
         public async void GetOptionSetItems_IsCached()
         {
-            var locations = MockLocations();
             var query = $"EntityDefinitions(608861bc-50a4-4c5f-a02c-21fe1943e2cf)/Attributes(4e7556f1-f6c2-e811-a96b-000d3a233b72)/" +
                 $"Microsoft.Dynamics.CRM.PicklistAttributeMetadata?$select=OptionSet&$expand=OptionSet";
-            _mockODataClient.Setup(m => m.FindEntryAsync(query)).ReturnsAsync(locations);
+            _mockODataClient.Setup(m => m.FindEntryAsync(query)).ReturnsAsync(MockLocations());
 
             var result1 = await _client.GetOptionSetItems(OptionSet.CandidateLocations);
             var result2 = await _client.GetOptionSetItems(OptionSet.CandidateLocations);
@@ -117,10 +114,59 @@ namespace GetIntoTeachingApiTests.Services.Crm
             _mockODataClient.Verify(mock => mock.FindEntryAsync(query), Times.Once);
         }
 
+        [Fact]
+        public async void GetLatestPrivacyPolicy_ReturnsMostRecentActiveWebPrivacyPolicy()
+        {
+            _mockODataClient.Setup(m => m.For<PrivacyPolicy>(It.IsAny<string>()).Top(3)
+                .Filter(p => p.IsActive && p.Type == (int) PrivacyPolicy.Types.Web)
+                .OrderByDescending(p => p.CreatedAt).FindEntriesAsync()).ReturnsAsync(MockPrivacyPolicies());
+
+            var result = await _client.GetLatestPrivacyPolicy();
+
+            result.Text.Should().Be("Latest Active Web");
+        }
+        
+        [Fact]
+        public async void GetPrivacyPolicies_Returns3MostRecentActiveWebPrivacyPolicies()
+        {
+            _mockODataClient.Setup(m => m.For<PrivacyPolicy>(It.IsAny<string>()).Top(3)
+                .Filter(p => p.IsActive && p.Type == (int)PrivacyPolicy.Types.Web)
+                .OrderByDescending(p => p.CreatedAt).FindEntriesAsync()).ReturnsAsync(MockPrivacyPolicies());
+
+            var result = await _client.GetPrivacyPolicies();
+
+            result.Select(policy => policy.Text).Should().BeEquivalentTo(
+                new object[] { "Latest Active Web", "Policy 2", "Policy 3" },
+                options => options.WithStrictOrdering());
+        }
+
+        [Fact]
+        public async void GetPrivacyPolicies_IsCached()
+        {
+            _mockODataClient.Setup(m => m.For<PrivacyPolicy>(It.IsAny<string>()).Top(3)
+                .Filter(p => p.IsActive && p.Type == (int)PrivacyPolicy.Types.Web)
+                .OrderByDescending(p => p.CreatedAt).FindEntriesAsync()).ReturnsAsync(MockPrivacyPolicies());
+
+            var result1 = await _client.GetPrivacyPolicies();
+            var result2 = await _client.GetPrivacyPolicies();
+
+            result1.Should().BeEquivalentTo(result2);
+            _mockODataClient.Verify(mock => mock.For<PrivacyPolicy>(It.IsAny<string>()), Times.Once);
+        }
+
+        private static IEnumerable<PrivacyPolicy> MockPrivacyPolicies()
+        {
+            var policy1 = new PrivacyPolicy() { Id = Guid.NewGuid(), Text = "Latest Active Web" };
+            var policy2 = new PrivacyPolicy() { Id = Guid.NewGuid(), Text = "Policy 2" };
+            var policy3 = new PrivacyPolicy() { Id = Guid.NewGuid(), Text = "Policy 3" };
+
+            return new List<PrivacyPolicy>() { policy1, policy2, policy3 };
+        }
+
         private static IDictionary<string, object> MockLocations()
         {
-            var json = "[{\"Value\":222750000,\"Label\":{\"LocalizedLabels\":[{\"Label\":\"In the UK\"}]}}," +
-                "{\"Value\":222750001,\"Label\":{\"LocalizedLabels\":[{\"Label\":\"Overseas\"}]}}]";
+            const string json = "[{\"Value\":222750000,\"Label\":{\"LocalizedLabels\":[{\"Label\":\"In the UK\"}]}}," +
+                                "{\"Value\":222750001,\"Label\":{\"LocalizedLabels\":[{\"Label\":\"Overseas\"}]}}]";
             var locations = JArray.Parse(json);
 
             return new Dictionary<string, object>() { { "Options", locations.ToObject<object[]>() } };
@@ -128,25 +174,12 @@ namespace GetIntoTeachingApiTests.Services.Crm
 
         private static List<IDictionary<string, object>> MockCountries()
         {
-            var country1 = new Dictionary<string, object>()
-            {
-                { "dfe_countryid", Guid.NewGuid() },
-                { "dfe_name", "Country 1" }
-            };
+            var json = $"[{{\"dfe_countryid\":\"{Guid.NewGuid()}\",\"dfe_name\":\"Country 1\"}}," +
+                          $"{{\"dfe_countryid\":\"{Guid.NewGuid()}\",\"dfe_name\":\"Country 2\"}}," +
+                          $"{{\"dfe_countryid\":\"{Guid.NewGuid()}\",\"dfe_name\":\"Country 3\"}}]";
+            var countries = JArray.Parse(json);
 
-            var country2 = new Dictionary<string, object>()
-            {
-                { "dfe_countryid", Guid.NewGuid() },
-                { "dfe_name", "Country 2" }
-            };
-
-            var country3 = new Dictionary<string, object>()
-            {
-                { "dfe_countryid", Guid.NewGuid() },
-                { "dfe_name", "Country 3" }
-            };
-
-            return new List<IDictionary<string, object>>() { country1, country2, country3 };
+            return countries.ToObject<List<IDictionary<string, object>>>();
         }
     }
 }

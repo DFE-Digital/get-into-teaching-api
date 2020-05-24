@@ -188,18 +188,6 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void GetLatestPrivacyPolicy_ReturnsMostRecentlyCreatedActiveWebPrivacyPolicy()
-        {
-            var queryablePrivacyPolicies = MockPrivacyPolicies();
-            _mockService.Setup(mock => mock.CreateQuery("dfe_privacypolicy", _context))
-                .Returns(queryablePrivacyPolicies);
-
-            var result = _crm.GetLatestPrivacyPolicy();
-
-            result.Text.Should().Be("Latest Active Web");
-        }
-
-        [Fact]
         public void GetPrivacyPolicies_Returns3MostRecentActiveWebPrivacyPolicies()
         {
             var queryablePrivacyPolicies = MockPrivacyPolicies();

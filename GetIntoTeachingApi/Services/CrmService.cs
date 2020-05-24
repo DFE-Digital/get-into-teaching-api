@@ -40,11 +40,6 @@ namespace GetIntoTeachingApi.Services
                     .Select((pickListItem) => new TypeEntity(pickListItem)));
         }
 
-        public PrivacyPolicy GetLatestPrivacyPolicy()
-        {
-            return GetPrivacyPolicies().FirstOrDefault();
-        }
-
         public IEnumerable<PrivacyPolicy> GetPrivacyPolicies()
         {
             return _cache.GetOrCreate("dfe_privacypolicy", CacheExpiry(), () => 

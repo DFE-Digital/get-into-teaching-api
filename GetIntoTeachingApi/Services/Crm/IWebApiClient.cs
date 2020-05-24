@@ -6,7 +6,9 @@ namespace GetIntoTeachingApi.Services.Crm
 {
     public interface IWebApiClient
     {
-        public Task<IEnumerable<TypeEntity>> GetLookupItems(Lookup lookup);
-        public Task<IEnumerable<TypeEntity>> GetOptionSetItems(OptionSet optionSet);
+        Task<IEnumerable<TypeEntity>> GetLookupItems(Lookup lookup);
+        Task<IEnumerable<TypeEntity>> GetOptionSetItems(OptionSet optionSet);
+        Task<PrivacyPolicy> GetLatestPrivacyPolicy();
+        Task<IEnumerable<PrivacyPolicy>> GetPrivacyPolicies();
     }
 }
