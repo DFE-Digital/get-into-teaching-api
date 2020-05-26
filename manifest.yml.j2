@@ -1,12 +1,12 @@
 ---
 applications:
-- name: get-into-teaching-api
+- name: {{APPLICATION}}
   memory: 2G
+  docker:
+    image: {{DOCKER_IMAGE}}
   env:
     CRM_CLIENT_ID: {{CRM_CLIENT_ID}}
     CRM_CLIENT_SECRET: {{CRM_CLIENT_SECRET}}
     CRM_SERVICE_URL: {{CRM_SERVICE_URL}}
     CRM_TENANT_ID: {{CRM_TENANT_ID}}
     SHARED_SECRET: {{SHARED_SECRET}}
-    APPLICATION: {{APPLICATION}}
-    DOCKER_IMAGE: {{DOCKER_IMAGE}}
