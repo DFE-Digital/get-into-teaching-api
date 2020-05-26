@@ -41,6 +41,19 @@ jobs:
         run: sudo dpkg -i /tmp/cf-cli.deb
       - name: Check CloudFoundry CLI version
         run: cf --version
+      - name: Deploy Built Image
+        uses: cuchi/jinja2-action@v1.1.0
+        with:
+          template:  manifest.yml.j2
+          output_file:  manifest.yml
+          variables: |
+            CRM_CLIENT_IDD=“${{ secrets.CRM_CLIENT_ID }}”
+            CRM_CLIENT_SECRET=“${{ secrets.CRM_CLIENT_SECRET }}”
+            CRM_SERVICE_URL=“${{ secrets.CRM_SERVICE_URL }}”
+            CRM_TENANT_ID=“${{ secrets.CRM_TENANT_ID }}”
+            SHARED_SECRET=“${{ secrets.SHARED_SECRET }}”
+            APPLICATION=“${{env.CONTAINER}}”
+            DOCKER_IMAGE=${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}}   
       - name: Login to PaaS
         run: cf login -a api.london.cloud.service.gov.uk -u "${{ secrets.GOVUKPAAS_USERNAME }}" -p "${{ secrets.GOVUKPAAS_PASSWORD }}" -o $GOVUKPAAS_ORG -s $GOVUKPAAS_SPACE
       - name: Current Org and Space
