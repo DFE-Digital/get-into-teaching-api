@@ -53,7 +53,9 @@ jobs:
             CRM_TENANT_ID=“${{ secrets.CRM_TENANT_ID }}”
             SHARED_SECRET=“${{ secrets.SHARED_SECRET }}”
             APPLICATION=“${{env.CONTAINER}}”
-            DOCKER_IMAGE=${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}}   
+            DOCKER_IMAGE=${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
+      - name: Display manifst ( remove this later )
+        run: cat manifest.yml  
       - name: Login to PaaS
         run: cf login -a api.london.cloud.service.gov.uk -u "${{ secrets.GOVUKPAAS_USERNAME }}" -p "${{ secrets.GOVUKPAAS_PASSWORD }}" -o $GOVUKPAAS_ORG -s $GOVUKPAAS_SPACE
       - name: Current Org and Space
