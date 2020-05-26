@@ -19,10 +19,10 @@ namespace GetIntoTeachingApiTests.Services
     {
         private const string ConnectionString = "AuthType=ClientSecret; url=service_url; ClientId=client_id; ClientSecret=client_secret";
         private static readonly Guid JaneDoeGuid = new Guid("bf927e43-5650-44aa-859a-8297139b8ddd");
+        private static readonly Guid FindEventGuid = new Guid("ff927e43-5650-44aa-859a-8297139b8eee");
         private readonly string _previousCrmServiceUrl;
         private readonly string _previousCrmClientId;
         private readonly string _previousCrmClientSecret;
-        private readonly Mock<IPostcodeService> _mockPostcodeService;
         private readonly Mock<IOrganizationServiceAdapter> _mockService;
         private readonly OrganizationServiceContext _context;
         private readonly ICrmService _crm;
@@ -37,12 +37,12 @@ namespace GetIntoTeachingApiTests.Services
             Environment.SetEnvironmentVariable("CRM_CLIENT_ID", "client_id");
             Environment.SetEnvironmentVariable("CRM_CLIENT_SECRET", "client_secret");
 
-            _mockPostcodeService = new Mock<IPostcodeService>();
+            var mockPostcodeService = new Mock<IPostcodeService>();
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _context = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
             _mockService.Setup(mock => mock.Context(ConnectionString)).Returns(_context);
             var cache = new CrmCache(new Mock<ILogger<CrmCache>>().Object);
-            _crm = new CrmService(_mockService.Object, cache, _mockPostcodeService.Object);
+            _crm = new CrmService(_mockService.Object, cache, mockPostcodeService.Object);
         }
 
         public void Dispose()
@@ -110,7 +110,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void SearchTeachingEvents_ReturnsMatchingEventsInOrder()
         {
-            var request = new TeachingEventSearchRequest() {Postcode = "CA4 8LE", TypeId = 123};
+            var request = new TeachingEventSearchRequest() { Postcode = "CA4 8LE", TypeId = 123 };
             _mockService.Setup(mock => mock.RetrieveMultiple(ConnectionString, It.Is<QueryExpression>(
                 q => q.EntityName == "msevtmgt_event"))).Returns(MockTeachingEvents());
 
@@ -121,9 +121,35 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void SearcTeachingEvents_IsCached()
+        public void SearchTeachingEvents_IsCached()
         {
-            var request = new TeachingEventSearchRequest() {Postcode = "KY12 8FE"};
+            var request = new TeachingEventSearchRequest() { Postcode = "KY12 8FE" };
+            _mockService.Setup(mock => mock.RetrieveMultiple(ConnectionString, It.Is<QueryExpression>(
+                q => q.EntityName == "msevtmgt_event"))).Returns(MockTeachingEvents());
+
+            var result1 = _crm.SearchTeachingEvents(request);
+            var result2 = _crm.SearchTeachingEvents(request);
+
+            result1.Should().BeEquivalentTo(result2);
+            _mockService.Verify(mock => mock.RetrieveMultiple(ConnectionString,
+                It.Is<QueryExpression>(q => q.EntityName == "msevtmgt_event")), Times.Once);
+        }
+
+        [Fact]
+        public void GetTeachingEvents_ReturnsMatchingEvent()
+        {
+            _mockService.Setup(mock => mock.RetrieveMultiple(ConnectionString, It.Is<QueryExpression>(
+                q => q.EntityName == "msevtmgt_event"))).Returns(MockTeachingEvents());
+
+            var result = _crm.GetTeachingEvent(FindEventGuid);
+
+            result.Id.Should().Be(FindEventGuid);
+        }
+
+        [Fact]
+        public void GetTeachingEvent_IsCached()
+        {
+            var request = new TeachingEventSearchRequest() { Postcode = "KY12 8FE" };
             _mockService.Setup(mock => mock.RetrieveMultiple(ConnectionString, It.Is<QueryExpression>(
                 q => q.EntityName == "msevtmgt_event"))).Returns(MockTeachingEvents());
 
@@ -344,7 +370,7 @@ namespace GetIntoTeachingApiTests.Services
             event1["msevtmgt_name"] = "Event 1";
             event1["msevtmgt_eventstartdate"] = DateTime.Now.AddDays(5);
 
-            var event2 = new Entity("msevtmgt_event");
+            var event2 = new Entity("msevtmgt_event") { Id = FindEventGuid };
             event2["msevtmgt_name"] = "Event 2";
             event2["dfe_event_type"] = new OptionSetValue(123);
             event2["msevtmgt_eventstartdate"] = DateTime.Now.AddDays(1);

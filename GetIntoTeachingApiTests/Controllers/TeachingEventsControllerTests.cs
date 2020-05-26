@@ -33,7 +33,7 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void AddAttendee_InvalidRequest_RespondsWithValidationErrors()
         {
-            var attendee = new CandidateIdentification { FirstName = null };
+            var attendee = new ExistingCandidateRequest() { FirstName = null };
             _controller.ModelState.AddModelError("FirstName", "First name must be specified.");
 
             var response = _controller.AddAttendee("123", attendee);
@@ -87,6 +87,28 @@ namespace GetIntoTeachingApiTests.Controllers
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().Be(mockEvents);
+        }
+
+        [Fact]
+        public void Get_ReturnsTeachingEvents()
+        {
+            var teachingEvent = new TeachingEvent() {Id = Guid.NewGuid()};
+            _mockCrm.Setup(mock => mock.GetTeachingEvent((Guid)teachingEvent.Id)).Returns(teachingEvent);
+
+            var response = _controller.Get((Guid)teachingEvent.Id);
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().Be(teachingEvent);
+        }
+
+        [Fact]
+        public void Get_WithMissingEvent_ReturnsNotFound()
+        {
+            _mockCrm.Setup(mock => mock.GetTeachingEvent(It.IsAny<Guid>())).Returns<TeachingEvent>(null);
+
+            var response = _controller.Get(Guid.NewGuid());
+
+            response.Should().BeOfType<NotFoundResult>();
         }
 
         private static IEnumerable<TeachingEvent> MockEvents()

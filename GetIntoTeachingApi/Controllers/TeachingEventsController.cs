@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -68,42 +67,37 @@ maximum of 50 using the `limit` query parameter.",
         }
 
         [HttpGet]
-        [Route("{readableEventId}")]
+        [Route("{id}")]
         [SwaggerOperation(
             Summary = "Retrieves an event.",
             OperationId = "GetTeachingEvent",
             Tags = new[] { "Teaching Events" }
         )]
-        public IActionResult Get([FromRoute, SwaggerParameter("The `readableEventId` of the `TeachingEvent`.", Required = true)] string readableEventId)
+        [ProducesResponseType(typeof(TeachingEvent), 200)]
+        [ProducesResponseType(404)]
+        public IActionResult Get([FromRoute, SwaggerParameter("The `id` of the `TeachingEvent`.", Required = true)] Guid id)
         {
-            // TODO:
-            return Ok(new Object());
+            var teachingEvent = _crm.GetTeachingEvent(id);
+
+            if (teachingEvent == null)
+                return NotFound();
+
+            return Ok(teachingEvent);
         }
 
         [HttpPost]
-        [SwaggerOperation(
-            Summary = "Creates a new teaching event.",
-            OperationId = "CreateTeachingEvent",
-            Tags = new[] { "Teaching Events" }
-        )]
-        [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
-        public IActionResult Create([FromBody, SwaggerRequestBody("Teaching event to create.", Required = true)] Object teachingEvent) // TODO:
-        {
-            // TODO:
-            return Ok(new Object());
-        }
-
-        [HttpPost]
-        [Route("{readableEventId}/attendees")]
+        [Route("{id}/attendees")]
         [SwaggerOperation(
             Summary = "Adds an attendee to a teaching event.",
             OperationId = "AddTeachingEventAttendee",
             Tags = new[] { "Teaching Events" }
         )]
+        [ProducesResponseType(typeof(TeachingEvent), 200)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
+        [ProducesResponseType(404)]
         public IActionResult AddAttendee(
-            [FromRoute, SwaggerParameter("The `readableEventId` of the `TeachingEvent`.", Required = true)] string readableEventId,
-            [FromBody, SwaggerRequestBody("Attendee to add to the teaching event.", Required = true)] CandidateIdentification attendee
+            [FromRoute, SwaggerParameter("The `id` of the `TeachingEvent`.", Required = true)] string id,
+            [FromBody, SwaggerRequestBody("Attendee to add to the teaching event.", Required = true)] ExistingCandidateRequest attendee
         )
         {
             if (!ModelState.IsValid)
