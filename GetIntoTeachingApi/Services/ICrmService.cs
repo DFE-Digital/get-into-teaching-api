@@ -15,6 +15,7 @@ namespace GetIntoTeachingApi.Services
         public Candidate GetCandidate(ExistingCandidateRequest request);
         public IEnumerable<TeachingEvent> GetUpcomingTeachingEvents(int limit);
         public IEnumerable<TeachingEvent> SearchTeachingEvents(TeachingEventSearchRequest request);
+        public TeachingEvent GetTeachingEvent(Guid id);
         public bool CandidateYetToAcceptPrivacyPolicy(Guid candidateId, Guid privacyPolicyId);
         public void Save(BaseModel model);
         public void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);
