@@ -48,15 +48,11 @@ that can then be used for verification.",
         public IActionResult CreateAccessToken([FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] ExistingCandidateRequest request)
         {
             if (!ModelState.IsValid)
-            {
                 return BadRequest(this.ModelState);
-            }
 
             var candidate = _crm.GetCandidate(request);
             if (candidate == null)
-            {
                 return NotFound();
-            }
 
             var token = _tokenService.GenerateToken(request);
             var personalisation = new Dictionary<string, dynamic> { { "pin_code", token } };

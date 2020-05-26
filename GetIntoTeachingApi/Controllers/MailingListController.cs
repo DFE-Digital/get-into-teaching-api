@@ -32,9 +32,7 @@ namespace GetIntoTeachingApi.Controllers
         public IActionResult AddMember([FromBody, SwaggerRequestBody("Member to add to the mailing list.", Required = true)] ExistingCandidateRequest member)
         {
             if (!ModelState.IsValid)
-            {
                 return BadRequest(this.ModelState);
-            }
 
             // TODO:
             return Ok(new Object());

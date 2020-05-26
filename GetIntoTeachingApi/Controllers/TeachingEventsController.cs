@@ -58,9 +58,7 @@ maximum of 50 using the `limit` query parameter.",
         public IActionResult Search([FromQuery, SwaggerParameter("Event search criteria.", Required = true)] TeachingEventSearchRequest request)
         {
             if (!ModelState.IsValid)
-            {
                 return BadRequest(this.ModelState);
-            }
 
             var teachingEvents = _crm.SearchTeachingEvents(request);
             return Ok(teachingEvents);
@@ -92,21 +90,32 @@ maximum of 50 using the `limit` query parameter.",
             OperationId = "AddTeachingEventAttendee",
             Tags = new[] { "Teaching Events" }
         )]
-        [ProducesResponseType(typeof(TeachingEvent), 200)]
+        [ProducesResponseType(204)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
         [ProducesResponseType(404)]
         public IActionResult AddAttendee(
-            [FromRoute, SwaggerParameter("The `id` of the `TeachingEvent`.", Required = true)] string id,
+            [FromRoute, SwaggerParameter("The `id` of the `TeachingEvent`.", Required = true)] Guid id,
             [FromBody, SwaggerRequestBody("Attendee to add to the teaching event.", Required = true)] ExistingCandidateRequest attendee
         )
         {
             if (!ModelState.IsValid)
-            {
                 return BadRequest(this.ModelState);
-            }
 
-            // TODO:
-            return Ok(new Object());
+            var teachingEvent = _crm.GetTeachingEvent(id);
+            var candidate = _crm.GetCandidate(attendee);
+
+            if (teachingEvent == null || candidate == null)
+                return NotFound();
+
+            var registration = new TeachingEventRegistration()
+            {
+                CandidateId = (Guid) candidate.Id, 
+                EventId = (Guid) teachingEvent.Id
+            };
+
+            _crm.Save(registration);
+
+            return NoContent();
         }
     }
 }
