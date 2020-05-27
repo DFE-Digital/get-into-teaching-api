@@ -15,6 +15,12 @@ The GIT API aims to provide:
 
 The API is an ASP.NET Core web application; to get up and running clone the repository and open `GetIntoTeachingApi.sln` in Visual Studio.
 
+Before you build the app you will need to add a package source for the GOV.UK Notify service:
+
+```
+https://api.bintray.com/nuget/gov-uk-notify/nuget
+```
+
 When the application runs in development it will open the Swagger documentation by default.
 
 ### Environment
