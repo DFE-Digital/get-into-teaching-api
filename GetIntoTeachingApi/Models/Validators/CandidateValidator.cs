@@ -26,15 +26,12 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.AddressState).NotEmpty().MaximumLength(128);
             RuleFor(candidate => candidate.AddressPostcode).NotEmpty().MaximumLength(40);
 
+            RuleFor(candidate => candidate.PreferredTeachingSubject).SetValidator(new TeachingSubjectValidator(crm)).Unless(candidate => candidate.PreferredTeachingSubject == null);
             RuleFor(candidate => candidate.PhoneCall).SetValidator(new PhoneCallValidator()).Unless(candidate => candidate.PhoneCall == null);
             RuleFor(candidate => candidate.PrivacyPolicy).SetValidator(new CandidatePrivacyPolicyValidator(crm)).Unless(candidate => candidate.PrivacyPolicy == null);
             RuleForEach(candidate => candidate.Qualifications).SetValidator(new CandidateQualificationValidator(crm));
             RuleForEach(candidate => candidate.PastTeachingPositions).SetValidator(new CandidatePastTeachingPositionValidator(crm));
 
-            RuleFor(candidate => candidate.PreferredTeachingSubjectId)
-                .Must(id => PreferredTeachingSubjectIds().Contains(id))
-                .Unless(candidate => candidate.PreferredTeachingSubjectId == null)
-                .WithMessage("Must be a valid teaching subject.");
             RuleFor(candidate => candidate.PreferredEducationPhaseId)
                 .Must(id => PreferredEducationPhaseIds().Contains(id))
                 .Unless(candidate => candidate.PreferredEducationPhaseId == null)
@@ -47,11 +44,6 @@ namespace GetIntoTeachingApi.Models.Validators
                 .Must(id => InitialTeacherTrainingYearIds().Contains(id))
                 .Unless(candidate => candidate.InitialTeacherTrainingYearId == null)
                 .WithMessage("Must be a valid candidate initial teacher training year.");
-        }
-
-        private IEnumerable<Guid?> PreferredTeachingSubjectIds()
-        {
-            return _crm.GetLookupItems("dfe_teachingsubjectlist").Select(subject => (Guid?)subject.Id);
         }
 
         private IEnumerable<int?> PreferredEducationPhaseIds()

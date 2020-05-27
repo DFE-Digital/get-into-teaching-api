@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Models;
 
@@ -11,5 +12,7 @@ namespace GetIntoTeachingApi.Services.Crm
         Task<PrivacyPolicy> GetLatestPrivacyPolicy();
         Task<IEnumerable<PrivacyPolicy>> GetPrivacyPolicies();
         Task<Candidate> GetCandidate(ExistingCandidateRequest request);
+        Task<IEnumerable<T>> Upsert<T>(IEnumerable<T> models) where T : BaseModel;
+        Task<T> Upsert<T>(T model) where T : BaseModel;
     }
 }

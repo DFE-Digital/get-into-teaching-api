@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Models;
@@ -18,7 +19,6 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
         private readonly ILogger<CandidatesController> _logger;
         private readonly ICandidateAccessTokenService _tokenService;
         private readonly IWebApiClient _client;
-        private readonly ICrmService _crm;
 
         public CandidatesController(
             ILogger<CandidatesController> logger, 
@@ -28,7 +28,6 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
         )
         {
             _logger = logger;
-            _crm = crm;
             _client = client;
             _tokenService = tokenService;
         }
@@ -41,14 +40,24 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
         )]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
-        public IActionResult Upsert(
+        public async Task<IActionResult> Upsert(
             [FromBody, SwaggerRequestBody("Candidate to upsert for the Teacher Training Adviser service.", Required = true)] Candidate candidate
         )
         {
             if (!ModelState.IsValid)
                 return BadRequest(this.ModelState);
 
-            _crm.Save(candidate);
+            candidate.Qualifications = (await _client.Upsert(candidate.Qualifications)).ToList();
+            candidate.PastTeachingPositions = (await _client.Upsert(candidate.PastTeachingPositions)).ToList();
+
+            if (candidate.PhoneCall != null) await _client.Upsert(candidate.PhoneCall);
+            if (candidate.PrivacyPolicy != null) await _client.Upsert(candidate.PrivacyPolicy);
+
+            candidate = await _client.Upsert(candidate);
+
+            // TODO: temp -- issue; qualifications are not correctly created on the candidate for some reason
+            var test = await _client.GetCandidate(new ExistingCandidateRequest()
+                {Email = candidate.Email, FirstName = candidate.FirstName, LastName = candidate.LastName});
 
             return NoContent();
         }

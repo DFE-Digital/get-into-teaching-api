@@ -1,14 +1,16 @@
 ﻿using System;
-using GetIntoTeachingApi.Attributes;
-using Microsoft.Xrm.Sdk;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GetIntoTeachingApi.Models
 {
-    [Entity(LogicalName = "dfe_candidateprivacypolicy")]
+    [Table("dfe_candidateprivacypolicy")]
     public class CandidatePrivacyPolicy : BaseModel
     {
-        [EntityField(Name = "dfe_privacypolicynumber", Type = typeof(EntityReference), Reference = "dfe_privacypolicy")]
-        public Guid AcceptedPolicyId { get; set; }
+        [Column("dfe_candidateprivacypolicyid")]
+        public new Guid? Id { get => base.Id; set => base.Id = value; }
+
+        [Column("dfe_PrivacyPolicyNumber")]
+        public PrivacyPolicy AcceptedPolicy { get; set; }
 
         public CandidatePrivacyPolicy() : base() { }
     }

@@ -12,6 +12,7 @@ using GetIntoTeachingApi.Auth;
 using System.Collections.Generic;
 using GetIntoTeachingApi.OperationFilters;
 using GetIntoTeachingApi.Adapters;
+using GetIntoTeachingApi.Converters;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Services.Crm;
 using Simple.OData.Client;
@@ -55,6 +56,9 @@ namespace GetIntoTeachingApi
             services.AddControllers().AddFluentValidation(c =>
             {
                 c.RegisterValidatorsFromAssemblyContaining<Startup>();
+            }).AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new EdmDateConverter());
             });
 
             services.AddSwaggerGen(c =>

@@ -214,7 +214,7 @@ namespace GetIntoTeachingApiTests.Services
             result1.Should().BeEquivalentTo(result2);
             _mockService.Verify(mock => mock.CreateQuery("dfe_privacypolicy", _context), Times.Once);
         }
-
+        /* TODO:
         [Fact]
         public void CandidateYetToAcceptPrivacyPolicy_WhenAlreadyAccepted_ReturnsFalse()
         {
@@ -249,7 +249,7 @@ namespace GetIntoTeachingApiTests.Services
             var result = _crm.CandidateYetToAcceptPrivacyPolicy((Guid)candidate.Id, Guid.NewGuid());
 
             result.Should().BeTrue();
-        }
+        }*/
 
         [Fact]
         public void CandidateYetToRegisterForTeachingEvent_WhenAlreadyRegistered_ReturnsFalse()

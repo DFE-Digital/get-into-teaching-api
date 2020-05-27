@@ -25,14 +25,10 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var mockPreferredTeachingSubject = NewMock(Guid.NewGuid());
             var mockPreferredEducationPhase = NewMock(111);
             var mockLocation = NewMock(222);
             var mockInitialTeacherTrainingYear = NewMock(333);
 
-            _mockCrm
-                .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
-                .Returns(new[] { mockPreferredTeachingSubject });
             _mockCrm
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_preferrededucationphase01"))
                 .Returns(new[] { mockPreferredEducationPhase });
@@ -56,7 +52,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 AddressCity = "city",
                 AddressState = "state",
                 AddressPostcode = "postcode",
-                PreferredTeachingSubjectId = mockPreferredTeachingSubject.Id,
                 PreferredEducationPhaseId = mockPreferredEducationPhase.Id,
                 LocationId = mockLocation.Id,
                 InitialTeacherTrainingYearId = mockInitialTeacherTrainingYear.Id,
@@ -65,6 +60,18 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var result = _validator.TestValidate(candidate);
 
             result.IsValid.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Validate_PreferredTeachingSubjectIsInvalid_HasError()
+        {
+            var candidate = new Candidate
+            {
+                PreferredTeachingSubject = new TeachingSubject() {  Id = Guid.NewGuid() }
+            };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor("PreferredTeachingSubject.Id");
         }
 
         [Fact]
@@ -90,12 +97,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 PastTeachingPositions =
                     new List<CandidatePastTeachingPosition>
                     {
-                        new CandidatePastTeachingPosition {SubjectTaughtId = Guid.NewGuid()}
+                        new CandidatePastTeachingPosition { EducationPhaseId = null }
                     }
             };
             var result = _validator.TestValidate(candidate);
 
-            result.ShouldHaveValidationErrorFor("PastTeachingPositions[0].SubjectTaughtId");
+            result.ShouldHaveValidationErrorFor("PastTeachingPositions[0].EducationPhaseId");
         }
 
         [Fact]
@@ -115,11 +122,11 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var candidate = new Candidate
             {
-                PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = Guid.NewGuid() }
+                PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicy = null }
             };
             var result = _validator.TestValidate(candidate);
 
-            result.ShouldHaveValidationErrorFor(c => c.PrivacyPolicy.AcceptedPolicyId);
+            result.ShouldHaveValidationErrorFor(c => c.PrivacyPolicy.AcceptedPolicy);
         }
 
         [Fact]
@@ -252,18 +259,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_AddressPostcodeIsTooLong_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(address => address.AddressPostcode, new string('a', 41));
-        }
-
-        [Fact]
-        public void Validate_PreferredTeachingSubjectIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.PreferredTeachingSubjectId, Guid.NewGuid());
-        }
-
-        [Fact]
-        public void Validate_PreferredTeachingSubjectIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.PreferredTeachingSubjectId, null as Guid?);
         }
 
         [Fact]

@@ -1,14 +1,17 @@
 ﻿using System;
-using GetIntoTeachingApi.Attributes;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GetIntoTeachingApi.Models
 {
-    [Entity(LogicalName = "phonecall")]
+    [Table("phonecall")]
     public class PhoneCall : BaseModel
     {
-        [EntityField(Name = "scheduledstart")]
+        [Column("phonecallid")]
+        public new Guid? Id { get => base.Id; set => base.Id = value; }
+
+        [Column("scheduledstart")]
         public DateTime ScheduledAt { get; set; }
-        [EntityField(Name = "phonenumber")]
+        [Column("phonenumber")]
         public string Telephone { get; set; }
 
         public PhoneCall() : base() { }

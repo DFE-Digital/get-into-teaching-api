@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FluentValidation;
 using GetIntoTeachingApi.Services;
 using System.Linq;
@@ -14,17 +13,10 @@ namespace GetIntoTeachingApi.Models.Validators
         {
             _crm = crm;
 
+            RuleFor(position => position.SubjectTaught).NotNull().SetValidator(new TeachingSubjectValidator(crm));
             RuleFor(position => position.EducationPhaseId)
                 .Must(id => EducationPhaseIds().Contains(id))
                 .WithMessage("Must be a valid past teaching position education phase.");
-            RuleFor(candidate => candidate.SubjectTaughtId)
-                .Must(id => TeachingSubjectIds().Contains(id))
-                .WithMessage("Must be a valid teaching subject.");
-        }
-
-        private IEnumerable<Guid?> TeachingSubjectIds()
-        {
-            return _crm.GetLookupItems("dfe_teachingsubjectlist").Select(subject => (Guid?)subject.Id);
         }
 
         private IEnumerable<int?> EducationPhaseIds()

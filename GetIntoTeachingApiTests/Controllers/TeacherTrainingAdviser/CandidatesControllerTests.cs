@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Xunit;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -72,12 +73,12 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         }
 
         [Fact]
-        public void Upsert_InvalidRequest_RespondsWithValidationErrors()
+        public async void Upsert_InvalidRequest_RespondsWithValidationErrors()
         {
             var candidate = new Candidate { Email = "invalid-email@" };
             _controller.ModelState.AddModelError("Email", "Email is invalid.");
 
-            var response = _controller.Upsert(candidate);
+            var response = await _controller.Upsert(candidate);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
@@ -85,14 +86,51 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         }
 
         [Fact]
-        public void Upsert_ValidRequest_SavesAndRespondsWithSuccess()
+        public async void Upsert_ValidRequest_SavesAndRespondsWithSuccess()
         {
-            var candidate = new Candidate { FirstName = "first" };
-            _mockCrm.Setup(mock => mock.Save(candidate));
+            var qualifications = new List<CandidateQualification> { new CandidateQualification() { CategoryId = 123 } };
+            var positions = new List<CandidatePastTeachingPosition> { new CandidatePastTeachingPosition() { EducationPhaseId = 456 } };
+            var phoneCall = new PhoneCall() { Telephone = "08574 857 364" };
+            var privacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicy = new PrivacyPolicy() };
+            var candidate = new Candidate
+            {
+                Qualifications = qualifications,
+                PastTeachingPositions = positions,
+                PhoneCall = phoneCall,
+                PrivacyPolicy = privacyPolicy
+            };
 
-            var response = _controller.Upsert(candidate);
+            _mockClient.Setup(mock => mock.Upsert(qualifications)).ReturnsAsync(qualifications);
+            _mockClient.Setup(mock => mock.Upsert(positions)).ReturnsAsync(positions);
+            _mockClient.Setup(mock => mock.Upsert(phoneCall)).ReturnsAsync(phoneCall);
+            _mockClient.Setup(mock => mock.Upsert(privacyPolicy)).ReturnsAsync(privacyPolicy);
+            _mockClient.Setup(mock => mock.Upsert(candidate)).ReturnsAsync(candidate);
+
+            var response = await _controller.Upsert(candidate);
 
             response.Should().BeOfType<NoContentResult>();
+        }
+
+        [Fact]
+        public async void Upsert_WithNullPhoneCallAndPrivacyPolicy_SavesAndRespondsWithSuccess()
+        {
+            var qualifications = new List<CandidateQualification> { new CandidateQualification() { CategoryId = 123 } };
+            var positions = new List<CandidatePastTeachingPosition> { new CandidatePastTeachingPosition() { EducationPhaseId = 456 } };
+            var candidate = new Candidate
+            {
+                Qualifications = qualifications,
+                PastTeachingPositions = positions,
+            };
+
+            _mockClient.Setup(mock => mock.Upsert(qualifications)).ReturnsAsync(qualifications);
+            _mockClient.Setup(mock => mock.Upsert(positions)).ReturnsAsync(positions);
+            _mockClient.Setup(mock => mock.Upsert(candidate)).ReturnsAsync(candidate);
+
+            var response = await _controller.Upsert(candidate);
+
+            response.Should().BeOfType<NoContentResult>();
+            _mockClient.Verify(mock => mock.Upsert(It.IsAny<PrivacyPolicy>()), Times.Never);
+            _mockClient.Verify(mock => mock.Upsert(It.IsAny<PhoneCall>()), Times.Never);
         }
     }
 }

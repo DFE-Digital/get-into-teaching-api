@@ -14,14 +14,7 @@ namespace GetIntoTeachingApi.Models.Validators
         {
             _crm = crm;
 
-            RuleFor(privacyPolicy => privacyPolicy.AcceptedPolicyId)
-                .Must(id => PrivacyPolicyIds().Contains(id))
-                .WithMessage("Must be a valid privacy policy.");
-        }
-
-        private IEnumerable<Guid?> PrivacyPolicyIds()
-        {
-            return _crm.GetPrivacyPolicies().Select(policy => (Guid?)policy.Id);
+            RuleFor(candidate => candidate.AcceptedPolicy).NotNull().SetValidator(new PrivacyPolicyValidator(crm));
         }
     }
 }

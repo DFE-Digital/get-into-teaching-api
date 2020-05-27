@@ -23,20 +23,20 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var mockSubject = NewMock(Guid.NewGuid());
-            var mockPhase = NewMock(123);
+            var mockTeachingSubject = new TypeEntity { Id = Guid.NewGuid() };
+            var mockPhase = new TypeEntity { Id = 123 };
 
-            _mockCrm
-                .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
-                .Returns(new[] { mockSubject });
             _mockCrm
                 .Setup(mock => mock.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase"))
                 .Returns(new[] { mockPhase });
+            _mockCrm
+                .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
+                .Returns(new[] { mockTeachingSubject });
 
             var position = new CandidatePastTeachingPosition
             {
-                SubjectTaughtId = mockSubject.Id,
                 EducationPhaseId = mockPhase.Id,
+                SubjectTaught = new TeachingSubject() { Id = mockTeachingSubject.Id }
             };
 
             var result = _validator.TestValidate(position);
@@ -45,15 +45,21 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_SubjectTaughtIdIsInvalid_HasError()
+        public void Validate_SubjectTaughtIsInvalid_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(position => position.SubjectTaughtId, Guid.NewGuid());
+            var position = new CandidatePastTeachingPosition()
+            {
+                SubjectTaught = new TeachingSubject() { Id = Guid.NewGuid() }
+            };
+            var result = _validator.TestValidate(position);
+
+            result.ShouldHaveValidationErrorFor("SubjectTaught.Id");
         }
 
         [Fact]
-        public void Validate_SubjectTaughtIdIsNull_HasError()
+        public void Validate_SubjectTaughtIsNull_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(position => position.SubjectTaughtId, null as Guid?);
+            _validator.ShouldHaveValidationErrorFor(position => position.SubjectTaught, null as TeachingSubject);
         }
 
         [Fact]
@@ -66,11 +72,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_EducationPhaseIsNull_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(position => position.EducationPhaseId, null as int?);
-        }
-
-        private static TypeEntity NewMock(dynamic id)
-        {
-            return new TypeEntity { Id = id };
         }
     }
 }

@@ -20,7 +20,7 @@ namespace GetIntoTeachingApiTests.Services.Crm
             _previousClientId = Environment.GetEnvironmentVariable("CRM_CLIENT_ID");
             _previousSecret = Environment.GetEnvironmentVariable("CRM_CLIENT_SECRET");
 
-            Environment.SetEnvironmentVariable("CRM_SERVICE_URL", "service_url");
+            Environment.SetEnvironmentVariable("CRM_SERVICE_URL", "http://service_url.com");
             Environment.SetEnvironmentVariable("CRM_TENANT_ID", "tenant_id");
             Environment.SetEnvironmentVariable("CRM_CLIENT_ID", "client_id");
             Environment.SetEnvironmentVariable("CRM_CLIENT_SECRET", "client_secret");
@@ -39,7 +39,7 @@ namespace GetIntoTeachingApiTests.Services.Crm
         [Fact]
         public void ServiceUrl_PopulatesFromEnvironment()
         {
-            _credentials.ServiceUrl().Should().Be("service_url");
+            _credentials.ServiceUrl().Should().Be("http://service_url.com");
         }
 
         [Fact]
@@ -64,6 +64,12 @@ namespace GetIntoTeachingApiTests.Services.Crm
         public void AuthUrl_PopulatesFromEnvironment()
         {
             _credentials.AuthUrl().Should().Be("https://login.microsoftonline.com/tenant_id");
+        }
+
+        [Fact]
+        public void ODataServiceUri_PopulatesFromEnvironment()
+        {
+            _credentials.ODataServiceUri().Should().Be(new Uri($"{_credentials.ServiceUrl()}/api/data/v9.1"));
         }
     }
 }

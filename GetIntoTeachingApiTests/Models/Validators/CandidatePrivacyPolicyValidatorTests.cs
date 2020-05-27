@@ -31,7 +31,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
             var policy = new CandidatePrivacyPolicy()
             {
-                AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id,
+                AcceptedPolicy = mockPrivacyPolicy,
             };
 
             var result = _validator.TestValidate(policy);
@@ -40,9 +40,21 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_AcceptedPolicyIdIsInvalid_HasError()
+        public void Validate_AcceptedPrivacyPolicyIsNull_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(policy => policy.AcceptedPolicyId, Guid.NewGuid());
+            _validator.ShouldHaveValidationErrorFor(candidatePolicy => candidatePolicy.AcceptedPolicy, null as PrivacyPolicy);
+        }
+
+        [Fact]
+        public void Validate_AcceptedPrivacyPolicyIsInvalid_HasError()
+        {
+            var candidatePolicy = new CandidatePrivacyPolicy()
+            {
+                AcceptedPolicy = new PrivacyPolicy() { Id = Guid.NewGuid() }
+            };
+            var result = _validator.TestValidate(candidatePolicy);
+
+            result.ShouldHaveValidationErrorFor("AcceptedPolicy.Id");
         }
     }
 }

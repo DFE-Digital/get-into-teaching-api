@@ -40,24 +40,42 @@ namespace GetIntoTeachingApiTests.Services.Crm
             var server = WireMockServer.Start();
 
             var mockCredentials = new Mock<IODataCredentials>();
-            mockCredentials.Setup(m => m.ServiceUrl()).Returns($"http://localhost:{server.Ports.First()}");
+            mockCredentials.Setup(m => m.ODataServiceUri()).Returns(new Uri($"http://localhost:{server.Ports.First()}"));
 
             var mockTokenProvider = new Mock<IAccessTokenProvider>();
             mockTokenProvider.Setup(m => m.GetAccessTokenAsync(mockCredentials.Object)).ReturnsAsync(token);
 
-            var metadataRequest = Request.Create().WithPath("/api/data/v9.1/$metadata")
-                        .WithHeader("Authorization", "Bearer abc123")
-                        .WithHeader("OData-MaxVersion", "4.0")
-                        .WithHeader("OData-Version", "4.0");
+            var metadataRequest = Request.Create().WithPath("/$metadata")
+                .WithHeader("Authorization", "Bearer abc123")
+                .WithHeader("OData-MaxVersion", "4.0")
+                .WithHeader("OData-Version", "4.0");
 
             server
                 .Given(metadataRequest)
-                .RespondWith(Response.Create().WithStatusCode(200)
-                .WithHeader("Content-Type", "application/xml").WithBody(metadata));
+                .RespondWith(Response.Create().WithStatusCode(200).WithBodyAsJson(new { status = "Ok" })
+                    .WithHeader("Content-Type", "application/json").WithBody(metadata));
 
-            WebApiClient.CreateODataClient(mockCredentials.Object, mockTokenProvider.Object);
+            var client = WebApiClient.CreateODataClient(mockCredentials.Object, mockTokenProvider.Object);
 
+            // Ensure metadata is requested when client is instantiated.
             server.FindLogEntries(metadataRequest).Count().Should().Be(1);
+
+            var createRequest = Request.Create().WithPath("/Products(123)")
+                .WithHeader("Authorization", "Bearer abc123")
+                .WithHeader("OData-MaxVersion", "4.0")
+                .WithHeader("OData-Version", "4.0");
+
+            server
+                .Given(createRequest)
+                .RespondWith(Response.Create().WithHeader("Content-Type", "application/json").WithStatusCode(200)
+                    .WithHeader("Content-Type", "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false")
+                    .WithBody("{ \"@odata.context\":\"http://localhost/$metadata#Products/$entity\" }"));
+
+            await client.InsertEntryAsync("products", new Dictionary<string, object>() { { "Id", 123 }, { "Price", 10.12 }, { "Name", null } });
+
+            // Ensure null values are stripped from request bodies.
+            var requestBody = server.LogEntries.ToArray()[1].RequestMessage.Body;
+            requestBody.GetType().Should().NotHaveProperty("Name");
 
             server.Stop();
         }
@@ -170,12 +188,38 @@ namespace GetIntoTeachingApiTests.Services.Crm
         {
             var request = new ExistingCandidateRequest {Email = email, FirstName = firstName, LastName = lastName};
             _mockODataClient.Setup(mock => mock.For<Candidate>(It.IsAny<string>())
-                .Top(20).Expand(c => c.Qualifications).Expand(c => c.PastTeachingPositions)
+                .Top(20).Expand(c => c.PastTeachingPositions).Expand(c => c.Qualifications)
+                .Expand("dfe_contact_dfe_candidatepastteachingposition_ContactId/dfe_SubjectTaught")
+                .Expand(c => c.PreferredTeachingSubject)
                 .Filter(c => c.Email == request.Email).OrderByDescending(c => c.CreatedAt)
                 .FindEntriesAsync()).ReturnsAsync(MockCandidates());
 
             var result = await _client.GetCandidate(request);
             result?.FirstName.Should().Be(expectedFirstName);
+        }
+
+        [Fact]
+        public async void Upsert_WithNewModel_Inserts()
+        {
+            var mockCandidate = new Candidate();
+            _mockODataClient.Setup(m => m.For<Candidate>(It.IsAny<string>())
+                .Set(mockCandidate).InsertEntryAsync()).ReturnsAsync(mockCandidate);
+
+            var result = await _client.Upsert(mockCandidate);
+
+            result.Should().Be(mockCandidate);
+        }
+
+        [Fact]
+        public async void Upsert_WithExistingModel_Updates()
+        {
+            var mockCandidate = new Candidate() { Id = Guid.NewGuid() };
+            _mockODataClient.Setup(m => m.For<Candidate>(It.IsAny<string>())
+                .Set(mockCandidate).UpdateEntryAsync()).ReturnsAsync(mockCandidate);
+
+            var result = await _client.Upsert(mockCandidate);
+
+            result.Should().Be(mockCandidate);
         }
 
         private static IEnumerable<Candidate> MockCandidates()

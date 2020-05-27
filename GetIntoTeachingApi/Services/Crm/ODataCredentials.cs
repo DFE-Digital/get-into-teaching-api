@@ -9,5 +9,6 @@ namespace GetIntoTeachingApi.Services.Crm
         public string ClientId() => Environment.GetEnvironmentVariable("CRM_CLIENT_ID");
         public string Secret() => Environment.GetEnvironmentVariable("CRM_CLIENT_SECRET");
         public string AuthUrl() => $"https://login.microsoftonline.com/{TenantId()}";
+        public Uri ODataServiceUri() => new Uri($"{ServiceUrl()}/api/data/v9.1");
     }
 }
