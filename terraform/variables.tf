@@ -2,7 +2,7 @@
 # or set with environment variables TF_VAR_xxxx
 
 variable user {
-    default = "steve.fawcett@digital.education.gov.uk"
+    default = "get-into-teaching-tech@digital.education.gov.uk"
 }
 
 variable key {}
