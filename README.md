@@ -43,6 +43,18 @@ CRM_CLIENT_SECRET=****
 NOTIFY_API_KEY=****
 ```
 
+The Postgres connection is setup in `appsettings.json` and not used in development (it is replaced by in-memory alternatives by default). If you want to connect to a Postgres instance running in PaaS, such as the test environment instance, you can do so by creating a conduit to it using Cloud Foundry:
+
+```
+cf conduit get-into-teaching-api-dev-pg-svc
+```
+
+You then need to replace the connection string to include the username/password for your conduit session and point it to localhost:
+
+```
+Server=127.0.0.1;SSL Mode=Require;Trust Server Certificate=true;Port=7080;Database=rdsbroker_277c8858_eb3a_427b_99ed_0f4f4171701e;User Id=******;Password=******;
+```
+
 ### Documentation
 
 [Swashbuckle](https://github.com/domaindrivendev/Swashbuckle.AspNetCore) is used for generating Swagger documentation. We use the swagger-ui middleware to expose interactive documentation when the application runs.
@@ -75,3 +87,9 @@ public void UnitOfWork_StateUnderTest_ExpectedBehavior()
 ### Emails
 
 We send emails using the [GOV.UK Notify](https://www.notifications.service.gov.uk/) service; leveraging the [.Net Client](https://github.com/alphagov/notifications-net-client).
+
+### Background Jobs
+
+[Hangfire](https://www.hangfire.io/) is used for queueing and processing background jobs; an in-memory storage is used for development and PostgreSQL is used in production (the PRO version is required to use Redis as the storage provider). Failed jobs get retries on a 60 minute interval a maximum of 24 times before they are deleted (in development this is reduced to 1 minute interval a maximum of 5 times) - if this happens we attempt to inform the user by sending them an email.
+
+The Hangfire web dashboard can be accessed at `/hangfire` in development.
