@@ -12,6 +12,7 @@ namespace GetIntoTeachingApi.Models
         public Guid CandidateId { get; set; }
         [EntityField(Name = "msevtmgt_eventid", Type = typeof(EntityReference))]
         public Guid EventId { get; set; }
+        public string CandidateEmail { get; set; }
 
         public TeachingEventRegistration() : base() { }
 

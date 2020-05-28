@@ -2,8 +2,10 @@
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
+using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Models;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 
 namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
@@ -16,16 +18,19 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
         private readonly ILogger<CandidatesController> _logger;
         private readonly ICandidateAccessTokenService _tokenService;
         private readonly ICrmService _crm;
+        private readonly IBackgroundJobClient _jobClient;
 
         public CandidatesController(
             ILogger<CandidatesController> logger, 
             ICandidateAccessTokenService tokenService,
-            ICrmService crm
+            ICrmService crm,
+            IBackgroundJobClient jobClient
         )
         {
             _logger = logger;
             _crm = crm;
             _tokenService = tokenService;
+            _jobClient = jobClient;
         }
 
         [HttpPost]
@@ -43,7 +48,7 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
             if (!ModelState.IsValid)
                 return BadRequest(this.ModelState);
 
-            _crm.Save(candidate);
+            _jobClient.Enqueue<CandidateRegistrationJob>((x) => x.Run(candidate, null));
 
             return NoContent();
         }
