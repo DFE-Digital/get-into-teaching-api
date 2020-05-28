@@ -52,6 +52,8 @@ jobs:
             CRM_SERVICE_URL="${{ secrets.CRM_SERVICE_URL }}"
             CRM_TENANT_ID="${{ secrets.CRM_TENANT_ID }}"
             SHARED_SECRET="${{ secrets.SHARED_SECRET }}"
+            NOTIFY_API_KEY="${{ secrets.NOTIFY_API_KEY }}"
+            TOTP_SECRET_KEY="${{ secrets.TOTP_SECRET_KEY }}"
             APPLICATION="${{env.CONTAINER}}"
             DOCKER_IMAGE=${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
       - name: Login to PaaS
