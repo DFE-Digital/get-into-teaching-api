@@ -75,6 +75,8 @@ jobs:
     - name: Terraform Plan
       run: |
           cd terraform && pwd
+          echo ${TF_VAR_user}
+          echo ${TF_VAR_password}
           terraform plan -var-file=test.env.tfvars -out plan
       env:
           TF_VAR_api_docker_image:   ${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
