@@ -17,7 +17,6 @@ using GetIntoTeachingApi.Services;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
-using Microsoft.Crm.Sdk.Messages;
 
 namespace GetIntoTeachingApi
 {
@@ -142,7 +141,10 @@ The GIT API aims to provide:
 
             app.UseRouting();
 
-            app.UseHangfireDashboard();
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[] { new HangfireDashboardAuthroizationFilter() }
+            });
 
             app.UseSwagger();
 
