@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using System;
 
-namespace GetIntoTeachingApiTests.Utils
+namespace GetIntoTeachingApiTests.Helpers
 {
     class PolicyTestHelpers
     {

@@ -8,7 +8,7 @@ using FluentAssertions;
 using GetIntoTeachingApi.Jobs;
 using Microsoft.AspNetCore.Mvc;
 using GetIntoTeachingApi.Models;
-using GetIntoTeachingApiTests.Utils;
+using GetIntoTeachingApiTests.Helpers;
 using Hangfire;
 using Hangfire.Common;
 using Hangfire.States;
