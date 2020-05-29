@@ -79,3 +79,9 @@ jobs:
       env:
           TF_VAR_api_docker_image:   ${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
 
+    - name: Terraform Apply
+      run: |
+          cd terraform && pwd
+          terraform apply -auto-approve -var-file=test.env.tfvars  plan
+      env:
+          TF_VAR_api_docker_image:   ${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
