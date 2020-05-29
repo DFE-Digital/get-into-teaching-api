@@ -3,25 +3,31 @@ using System.Collections.Generic;
 using FluentAssertions;
 using Xunit;
 using GetIntoTeachingApi.Controllers;
+using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Microsoft.AspNetCore.Mvc;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApiTests.Utils;
+using Hangfire;
+using Hangfire.Common;
+using Hangfire.States;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
     public class TeachingEventsControllerTests
     {
         private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly TeachingEventsController _controller;
 
         public TeachingEventsControllerTests()
         {
             var mockLogger = new Mock<ILogger<TeachingEventsController>>();
             _mockCrm = new Mock<ICrmService>();
-            _controller = new TeachingEventsController(mockLogger.Object, _mockCrm.Object);
+            _mockJobClient = new Mock<IBackgroundJobClient>();
+            _controller = new TeachingEventsController(mockLogger.Object, _mockCrm.Object, _mockJobClient.Object);
         }
 
         [Fact]
@@ -69,19 +75,23 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void AddAttendee_ValidRequest_RespondsWithNoContent()
+        public void AddAttendee_ValidRequest_EnqueuesJobRespondsWithNoContent()
         {
             var attendee = new ExistingCandidateRequest() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
             var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
-            var candidate = new Candidate() { Id = Guid.NewGuid() };
+            var candidate = new Candidate() { Id = Guid.NewGuid(), Email = "test@test.com" };
             _mockCrm.Setup(mock => mock.GetTeachingEvent((Guid)teachingEvent.Id)).Returns(teachingEvent);
             _mockCrm.Setup(mock => mock.GetCandidate(attendee)).Returns(candidate);
 
             var response = _controller.AddAttendee((Guid)teachingEvent.Id, attendee);
 
             response.Should().BeOfType<NoContentResult>();
-            _mockCrm.Verify(mock => mock.Save(It.Is<TeachingEventRegistration>(
-                registration => registration.CandidateId == candidate.Id && registration.EventId == teachingEvent.Id)));
+            _mockJobClient.Verify(x => x.Create(
+                It.Is<Job>(job => job.Type == typeof(TeachingEventRegistrationJob) && job.Method.Name == "Run" &&
+                                  ((TeachingEventRegistration)job.Args[0]).CandidateId == candidate.Id &&
+                                  ((TeachingEventRegistration)job.Args[0]).CandidateEmail == candidate.Email &&
+                                  ((TeachingEventRegistration) job.Args[0]).EventId == teachingEvent.Id), 
+                It.IsAny<EnqueuedState>()));
         }
 
         [Fact]

@@ -12,7 +12,11 @@ using GetIntoTeachingApi.Auth;
 using System.Collections.Generic;
 using GetIntoTeachingApi.OperationFilters;
 using GetIntoTeachingApi.Adapters;
+using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Services;
+using Hangfire;
+using Hangfire.MemoryStorage;
+using Hangfire.PostgreSql;
 
 namespace GetIntoTeachingApi
 {
@@ -36,6 +40,7 @@ namespace GetIntoTeachingApi
             services.AddSingleton<INotifyService, NotifyService>();
             services.AddSingleton<ICrmCache, CrmCache>();
             services.AddSingleton<IPostcodeService, PostcodeService>();
+            services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
 
             services.AddAuthorization(options =>
             {
@@ -99,6 +104,29 @@ The GIT API aims to provide:
                 c.EnableAnnotations();
                 c.AddFluentValidationRules();
             });
+
+            services.AddHangfire((provider, config) =>
+            {
+                var automaticRetry = new AutomaticRetryAttribute
+                {
+                    Attempts = JobConfiguration.Attempts,
+                    DelaysInSeconds = new[] { JobConfiguration.RetryIntervalInSeconds },
+                    OnAttemptsExceeded = AttemptsExceededAction.Delete
+                };
+
+                config
+                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                    .UseSimpleAssemblyNameTypeSerializer()
+                    .UseRecommendedSerializerSettings()
+                    .UseFilter(automaticRetry);
+
+                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+                    config.UseMemoryStorage().WithJobExpirationTimeout(JobConfiguration.ExpirationTimeout);
+                else
+                    config.UsePostgreSqlStorage(Configuration.GetConnectionString("PostgresConnectionString"));
+            });
+
+            services.AddHangfireServer();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -112,6 +140,11 @@ The GIT API aims to provide:
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[] { new HangfireDashboardAuthroizationFilter() }
+            });
 
             app.UseSwagger();
 
