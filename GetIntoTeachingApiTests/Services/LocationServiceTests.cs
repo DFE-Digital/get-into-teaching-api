@@ -4,13 +4,13 @@ using Xunit;
 
 namespace GetIntoTeachingApiTests.Services
 {
-    public class PostcodeServiceTests
+    public class LocationServiceTests
     {
-        private readonly IPostcodeService _service;
+        private readonly ILocationService _service;
 
-        public PostcodeServiceTests()
+        public LocationServiceTests()
         {
-            _service = new PostcodeService("./Fixtures/ukpostcodes.csv");
+            _service = new LocationService("./Fixtures/ukpostcodes.csv");
         }
 
         [Theory]

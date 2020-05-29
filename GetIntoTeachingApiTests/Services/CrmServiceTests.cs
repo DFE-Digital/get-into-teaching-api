@@ -37,12 +37,12 @@ namespace GetIntoTeachingApiTests.Services
             Environment.SetEnvironmentVariable("CRM_CLIENT_ID", "client_id");
             Environment.SetEnvironmentVariable("CRM_CLIENT_SECRET", "client_secret");
 
-            var mockPostcodeService = new Mock<IPostcodeService>();
+            var mockLocationService = new Mock<ILocationService>();
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _context = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
             _mockService.Setup(mock => mock.Context(ConnectionString)).Returns(_context);
             var cache = new CrmCache(new Mock<ILogger<CrmCache>>().Object);
-            _crm = new CrmService(_mockService.Object, cache, mockPostcodeService.Object);
+            _crm = new CrmService(_mockService.Object, cache, mockLocationService.Object);
         }
 
         public void Dispose()
