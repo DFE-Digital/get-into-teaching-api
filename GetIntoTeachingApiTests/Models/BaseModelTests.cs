@@ -52,7 +52,7 @@ namespace GetIntoTeachingApiTests.Models
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _mockCrmCache = new Mock<ICrmCache>();
             _context = _mockService.Object.Context("mock-connection-string");
-            _crm = new CrmService(_mockService.Object, _mockCrmCache.Object, new PostcodeService());
+            _crm = new CrmService(_mockService.Object, _mockCrmCache.Object, new LocationService());
         }
 
         [Fact]

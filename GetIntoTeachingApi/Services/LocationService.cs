@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -9,12 +8,12 @@ using GetIntoTeachingApi.Utils;
 
 namespace GetIntoTeachingApi.Services
 {
-    public class PostcodeService : IPostcodeService
+    public class LocationService : ILocationService
     {
         private readonly IDictionary<string, PostcodeEntry> _postcodes;
         private const double MetersToMiles = 0.000621371;
 
-        public PostcodeService(string fixture = "./Fixtures/ukpostcodes.csv")
+        public LocationService(string fixture = "./Fixtures/ukpostcodes.csv")
         {
             _postcodes = new Dictionary<string, PostcodeEntry>();
 

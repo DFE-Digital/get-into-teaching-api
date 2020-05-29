@@ -40,7 +40,7 @@ namespace GetIntoTeachingApi
             services.AddSingleton<ICrmService, CrmService>();
             services.AddSingleton<INotifyService, NotifyService>();
             services.AddSingleton<ICrmCache, CrmCache>();
-            services.AddSingleton<IPostcodeService, PostcodeService>();
+            services.AddSingleton<ILocationService, LocationService>();
             services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
 
             services.AddAuthorization(options =>
