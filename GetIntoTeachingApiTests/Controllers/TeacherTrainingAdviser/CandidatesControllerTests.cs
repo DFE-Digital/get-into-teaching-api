@@ -5,9 +5,13 @@ using Moq;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Controllers.TeacherTrainingAdviser;
 using FluentAssertions;
+using GetIntoTeachingApi.Jobs;
 using Microsoft.AspNetCore.Mvc;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApiTests.Utils;
+using Hangfire;
+using Hangfire.Common;
+using Hangfire.States;
 
 namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
 {
@@ -15,6 +19,7 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
     {
         private readonly Mock<ICandidateAccessTokenService> _mockTokenService;
         private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly CandidatesController _controller;
         private readonly ExistingCandidateRequest _request;
 
@@ -22,9 +27,10 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         {
             _mockTokenService = new Mock<ICandidateAccessTokenService>();
             _mockCrm = new Mock<ICrmService>();
+            _mockJobClient = new Mock<IBackgroundJobClient>();
             _request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
             var mockLogger = new Mock<ILogger<CandidatesController>>();
-            _controller = new CandidatesController(mockLogger.Object, _mockTokenService.Object, _mockCrm.Object);
+            _controller = new CandidatesController(mockLogger.Object, _mockTokenService.Object, _mockCrm.Object, _mockJobClient.Object);
         }
 
         [Fact]
@@ -82,14 +88,16 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         }
 
         [Fact]
-        public void Upsert_ValidRequest_SavesAndRespondsWithSuccess()
+        public void Upsert_ValidRequest_EnqueuesJobAndRespondsWithSuccess()
         {
             var candidate = new Candidate { FirstName = "first" };
-            _mockCrm.Setup(mock => mock.Save(candidate));
 
             var response = _controller.Upsert(candidate);
 
             response.Should().BeOfType<NoContentResult>();
+            _mockJobClient.Verify(x => x.Create(
+                It.Is<Job>(job => job.Type == typeof(CandidateRegistrationJob) && job.Method.Name == "Run" && job.Args[0] == candidate),
+                It.IsAny<EnqueuedState>()));
         }
     }
 }
