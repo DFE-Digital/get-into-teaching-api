@@ -51,8 +51,9 @@ namespace GetIntoTeachingApiTests.Models
         {
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _mockCrmCache = new Mock<ICrmCache>();
+            var mockLocationService = new Mock<LocationService>();
             _context = _mockService.Object.Context("mock-connection-string");
-            _crm = new CrmService(_mockService.Object, _mockCrmCache.Object, new LocationService());
+            _crm = new CrmService(_mockService.Object, _mockCrmCache.Object, mockLocationService.Object);
         }
 
         [Fact]

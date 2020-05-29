@@ -2,7 +2,7 @@
 {
     public interface ILocationService
     {
-        public bool IsValid(string postcode);
-        public double DistanceBetween(string originPostcode, string destinationPostcode);
+        bool IsValid(string postcode);
+        double DistanceBetween(string originPostcode, string destinationPostcode);
     }
 }

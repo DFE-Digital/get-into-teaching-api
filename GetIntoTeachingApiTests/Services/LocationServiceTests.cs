@@ -1,16 +1,17 @@
 ﻿using FluentAssertions;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApiTests.Helpers;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Services
 {
-    public class LocationServiceTests
+    public class LocationServiceTests : DatabaseTests
     {
         private readonly ILocationService _service;
 
         public LocationServiceTests()
         {
-            _service = new LocationService("./Fixtures/ukpostcodes.csv");
+            _service = new LocationService(DbContext);
         }
 
         [Theory]
