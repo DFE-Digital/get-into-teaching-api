@@ -45,3 +45,6 @@ variable "CRM_CLIENT_ID" {}
 variable "CRM_TENANT_ID" {} 
 variable "CRM_CLIENT_SECRET" {}
 variable "SHARED_SECRET" {}
+variable "NOTIFY_API_KEY" {}
+variable "TOTP_SECRET_KEY" {}
+
