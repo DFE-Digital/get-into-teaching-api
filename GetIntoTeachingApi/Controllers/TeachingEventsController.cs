@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -17,11 +19,13 @@ namespace GetIntoTeachingApi.Controllers
         private const int MaximumUpcomingRequests = 50;
         private readonly ILogger<TeachingEventsController> _logger;
         private readonly ICrmService _crm;
+        private readonly IBackgroundJobClient _jobClient;
 
-        public TeachingEventsController(ILogger<TeachingEventsController> logger, ICrmService crm)
+        public TeachingEventsController(ILogger<TeachingEventsController> logger, ICrmService crm, IBackgroundJobClient jobClient)
         {
             _logger = logger;
             _crm = crm;
+            _jobClient = jobClient;
         }
 
         [HttpGet]
@@ -110,10 +114,11 @@ maximum of 50 using the `limit` query parameter.",
             var registration = new TeachingEventRegistration()
             {
                 CandidateId = (Guid) candidate.Id, 
-                EventId = (Guid) teachingEvent.Id
+                EventId = (Guid) teachingEvent.Id,
+                CandidateEmail = candidate.Email
             };
 
-            _crm.Save(registration);
+            _jobClient.Enqueue<TeachingEventRegistrationJob>((x) => x.Run(registration, null));
 
             return NoContent();
         }

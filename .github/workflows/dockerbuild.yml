@@ -49,6 +49,7 @@ jobs:
     if: github.ref == 'refs/heads/GITPB-233' && github.event_name == 'push'
 
     steps:
+
     - name: Checkout
       uses: actions/checkout@v2
 
@@ -79,3 +80,4 @@ jobs:
           terraform plan -var-file=test.env.tfvars
       env:
           TF_VAR_api_docker_image:   ${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
+
