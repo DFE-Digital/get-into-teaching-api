@@ -5,12 +5,19 @@ on:
     branches:
       - master
 env:
-  DOCKERHUB_REPOSITORY: dfedigital/get-into-teaching-api
-  GOVUKPAAS_ORG: dfe-teacher-services
-  GOVUKPAAS_SPACE: get-into-teaching
-  CONTAINER: get-into-teaching-api
+  DOCKERHUB_REPOSITORY:     dfedigital/get-into-teaching-api
+  TF_VAR_user:              "${{ secrets.GOVUKPAAS_USERNAME  }}"
+  TF_VAR_password:          "${{ secrets.GOVUKPAAS_PASSSWORD }}"
+  TF_VAR_CRM_SERVICE_URL:   "${{ secrets.CRM_SERVICE_URL     }}"
+  TF_VAR_CRM_CLIENT_ID:     "${{ secrets.CRM_CLIENT_ID       }}"
+  TF_VAR_CRM_CLIENT_SECRET: "${{ secrets.CRM_CLIENT_SECRET   }}"
+  TF_VAR_CRM_TENANT_ID:     "${{ secrets.CRM_TENANT_ID       }}"
+  TF_VAR_SHARED_SECRET:     "${{ secrets.SHARED_SECRET       }}"
+  TF_VAR_NOTIFY_API_KEY:    "${{ secrets.NOTIFY_API_KEY      }}"
+  TF_VAR_TOTP_SECRET_KEY:   "${{ secrets.TOTP_SECRET_KEY     }}"
+
 jobs:
-  build_and_push:
+  build_docker:
     name: Build and push to DockerHub
     runs-on: ubuntu-latest
     steps:
@@ -27,38 +34,50 @@ jobs:
           tag_with_ref: true
           tag_with_sha: true
           push: true
-  deploy:
-    name: Deploy to GovUK PaaS
+
+  deploy_qa:
+    name: 'Deploy to Quality Assurance'
     runs-on: ubuntu-latest
+
     needs:
-      - build_and_push
+         build_docker
+
+    defaults:
+      run:
+        shell: bash
+
+    if: github.ref == 'refs/heads/GITPB-233' && github.event_name == 'push'
+
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
-      - name: Download CloudFoundry CLI
-        run: wget -O /tmp/cf-cli.deb "https://packages.cloudfoundry.org/stable?release=debian64&source=github"
-      - name: Install CloudFoundry CLI
-        run: sudo dpkg -i /tmp/cf-cli.deb
-      - name: Check CloudFoundry CLI version
-        run: cf --version
-      - name: Deploy Built Image
-        uses: cuchi/jinja2-action@v1.1.0
-        with:
-          template:  manifest.yml.j2
-          output_file:  manifest.yml
-          variables: |
-            CRM_CLIENT_ID="${{ secrets.CRM_CLIENT_ID }}"
-            CRM_CLIENT_SECRET="${{ secrets.CRM_CLIENT_SECRET }}"
-            CRM_SERVICE_URL="${{ secrets.CRM_SERVICE_URL }}"
-            CRM_TENANT_ID="${{ secrets.CRM_TENANT_ID }}"
-            SHARED_SECRET="${{ secrets.SHARED_SECRET }}"
-            NOTIFY_API_KEY="${{ secrets.NOTIFY_API_KEY }}"
-            TOTP_SECRET_KEY="${{ secrets.TOTP_SECRET_KEY }}"
-            APPLICATION="${{env.CONTAINER}}"
-            DOCKER_IMAGE=${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
-      - name: Login to PaaS
-        run: cf login -a api.london.cloud.service.gov.uk -u "${{ secrets.GOVUKPAAS_USERNAME }}" -p "${{ secrets.GOVUKPAAS_PASSWORD }}" -o $GOVUKPAAS_ORG -s $GOVUKPAAS_SPACE
-      - name: Current Org and Space
-        run: cf target
-      - name: Deploy Built Image
-        run: cf push $CONTAINER  --docker-image $DOCKERHUB_REPOSITORY:sha-$(git rev-parse --short $GITHUB_SHA)
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Get Short SHA
+      id: sha
+      run: echo ::set-output name=short::$(git rev-parse --short $GITHUB_SHA)
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Install Terraform CloudFoundry Provider
+      run: |
+          wget https://github.com/cloudfoundry-community/terraform-provider-cf/releases/download/v0.12.2/terraform-provider-cloudfoundry_linux_amd64
+          mkdir -p $HOME/.terraform.d/plugins/linux_amd64
+          mv terraform-provider-cloudfoundry_linux_amd64 $HOME/.terraform.d/plugins/linux_amd64/terraform-provider-cloudfoundry
+          cd $HOME/.terraform.d/plugins/linux_amd64
+          chmod 755 terraform-provider-cloudfoundry
+          pwd && ls -lafg
+
+    - name: Terraform Init
+      run: |
+          cd $HOME/work/find-teacher-training/find-teacher-training/terraform/paas
+          terraform init
+
+    - name: Terraform Plan
+      run: |
+          cd terraform && pwd
+          terraform plan -var-file=test.env.tfvars
+      env:
+          TF_VAR_api_docker_image:   ${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
+
