@@ -1,7 +1,6 @@
 provider "cloudfoundry" {
-    store_tokens_path = "./tokens"
-    api_url = "https://api.london.cloud.service.gov.uk"
+    api_url = var.api_url
     user = var.user
-    sso_passcode =var.key 
+    password =var.password 
 }
 

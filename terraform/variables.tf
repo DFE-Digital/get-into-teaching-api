@@ -5,7 +5,12 @@ variable user {
     default = "get-into-teaching-tech@digital.education.gov.uk"
 }
 
-variable key {}
+variable api_url {
+     default = "https://api.london.cloud.service.gov.uk"
+}
+
+variable password {}
+
 
 variable "paas_space" {
    default = "sandbox"
@@ -33,15 +38,10 @@ variable "paas_api_route_name" {
 
 # Environment variables
 
-variable "CRM_CLIENT_ID" {
-   default = "c55ecf07-7059-410a-8595-a65ea7948177"
-}
 variable "CRM_SERVICE_URL" {
    default = "https://gitis-dev.api.crm4.dynamics.com"
 }
-variable "CRM_TENANT_ID" {
-   default = "fad277c9-c60a-4da1-b5f3-b3b8b34a82f9"
-}
-
-variable "CRM_CLIENT_SECRET" { }
-variable "SHARED_SECRET" { }
+variable "CRM_CLIENT_ID" {}
+variable "CRM_TENANT_ID" {} 
+variable "CRM_CLIENT_SECRET" {}
+variable "SHARED_SECRET" {}
