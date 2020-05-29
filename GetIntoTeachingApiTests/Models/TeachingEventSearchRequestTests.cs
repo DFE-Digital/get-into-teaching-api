@@ -73,6 +73,24 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
+        public void Match_RadiusSpecifiedAndAddressPostcodeIsNull_ReturnsFalse()
+        {
+            var teachingEvent = new TeachingEvent() { Building = new TeachingEventBuilding() { AddressPostcode = null } };
+            var request = new TeachingEventSearchRequest() { Postcode = "CA4 8HF", Radius = 20 };
+            _mockLocationService.Setup(mock => mock.DistanceBetween("CA4 8HF", "KY10 9DS")).Returns(21);
+            request.Match(teachingEvent, _mockLocationService.Object).Should().BeFalse();
+        }
+
+        [Fact]
+        public void Match_RadiusSpecifiedAndBuildingIsNull_ReturnsFalse()
+        {
+            var teachingEvent = new TeachingEvent() { Building = null };
+            var request = new TeachingEventSearchRequest() { Postcode = "CA4 8HF", Radius = 20 };
+            _mockLocationService.Setup(mock => mock.DistanceBetween("CA4 8HF", "KY10 9DS")).Returns(21);
+            request.Match(teachingEvent, _mockLocationService.Object).Should().BeFalse();
+        }
+
+        [Fact]
         public void Match_RadiusLessThanDistanceBetweenPostcodes_ReturnsFalse()
         {
             var teachingEvent = new TeachingEvent() { Building = new TeachingEventBuilding() { AddressPostcode = "KY10 9DS" } };

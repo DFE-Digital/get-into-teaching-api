@@ -28,8 +28,14 @@ namespace GetIntoTeachingApi.Models
             if (StartBefore != null && StartBefore < teachingEvent.StartAt)
                 return false;
 
-            if (Radius != null && Radius < locationService.DistanceBetween(Postcode, teachingEvent.Building.AddressPostcode)) 
-              return false;
+            if (Radius != null)
+            {
+                if (teachingEvent.Building?.AddressPostcode == null)
+                    return false;
+
+                if(Radius < locationService.DistanceBetween(Postcode, teachingEvent.Building.AddressPostcode))
+                    return false;
+            }
 
             return true;
         }
