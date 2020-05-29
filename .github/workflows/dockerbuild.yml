@@ -69,13 +69,13 @@ jobs:
 
     - name: Terraform Init
       run: |
-          cd $HOME/work/find-teacher-training/find-teacher-training/terraform/paas
+          cd terraform && pwd
           terraform init
 
     - name: Terraform Plan
       run: |
           cd terraform && pwd
-          terraform plan -var-file=test.env.tfvars
+          terraform plan -var-file=test.env.tfvars -out plan
       env:
           TF_VAR_api_docker_image:   ${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
 
