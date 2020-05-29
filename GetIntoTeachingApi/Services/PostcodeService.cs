@@ -5,6 +5,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using CsvHelper;
 using GeoCoordinatePortable;
+using GetIntoTeachingApi.Utils;
 
 namespace GetIntoTeachingApi.Services
 {
@@ -17,8 +18,7 @@ namespace GetIntoTeachingApi.Services
         {
             _postcodes = new Dictionary<string, PostcodeEntry>();
 
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-                fixture = "./Fixtures/ukpostcodes.dev.csv";
+            if (Env.IsDevelopment) fixture = "./Fixtures/ukpostcodes.dev.csv";
 
             LoadPostcodesFixture(fixture);
         }

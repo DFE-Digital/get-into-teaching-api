@@ -14,6 +14,7 @@ using GetIntoTeachingApi.OperationFilters;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
@@ -120,7 +121,7 @@ The GIT API aims to provide:
                     .UseRecommendedSerializerSettings()
                     .UseFilter(automaticRetry);
 
-                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+                if (Env.IsDevelopment)
                     config.UseMemoryStorage().WithJobExpirationTimeout(JobConfiguration.ExpirationTimeout);
                 else
                     config.UsePostgreSqlStorage(Configuration.GetConnectionString("PostgresConnectionString"));
