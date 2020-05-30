@@ -69,19 +69,17 @@ jobs:
 
     - name: Terraform Init
       run: |
-          cd terraform && pwd
+          cd terraform/paas && pwd
           terraform init
 
     - name: Terraform Plan
       run: |
-          cd terraform && pwd
+          cd terraform/paas && pwd
           terraform plan -var-file=test.env.tfvars -out plan
       env:
-          TF_VAR_api_docker_image:   ${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
+          TF_VAR_api_docker_image: ${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
 
     - name: Terraform Apply
       run: |
-          cd terraform && pwd
+          cd terraform/paas && pwd
           terraform apply -auto-approve -var-file=test.env.tfvars  plan
-      env:
-          TF_VAR_api_docker_image:   ${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
