@@ -20,7 +20,11 @@ variable "paas_org_name" {
    default = "dfe-teacher-services"
 }
 
-variable "paas_postgres_name" {
+variable "paas_postgres_1_name" {
+   default = "dfe-teacher-services-sb-pg-svc"
+}
+
+variable "paas_postgres_2_name" {
    default = "dfe-teacher-services-sb-pg-svc"
 }
 
@@ -36,11 +40,7 @@ variable "paas_api_route_name" {
    default = "dfe-teacher-services-sb-api"
 }
 
-# Environment variables
-
-variable "CRM_SERVICE_URL" {
-   default = "https://gitis-dev.api.crm4.dynamics.com"
-}
+variable "CRM_SERVICE_URL"  {}
 variable "CRM_CLIENT_ID" {}
 variable "CRM_TENANT_ID" {} 
 variable "CRM_CLIENT_SECRET" {}
