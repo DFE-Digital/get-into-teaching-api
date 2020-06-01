@@ -48,49 +48,53 @@ jobs:
 
     steps:
 
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Get Short SHA
-      id: sha
-      run: echo ::set-output name=short::$(git rev-parse --short $GITHUB_SHA)
-
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-
-    - name: Download the terraform state
-      uses: actions/download-artifact@v2
-      with:
-         name: terraform/paas/terraform.tfstate
-
-    - name: Install Terraform CloudFoundry Provider
-      run: |
-          wget https://github.com/cloudfoundry-community/terraform-provider-cf/releases/download/v0.12.2/terraform-provider-cloudfoundry_linux_amd64
-          mkdir -p $HOME/.terraform.d/plugins/linux_amd64
-          mv terraform-provider-cloudfoundry_linux_amd64 $HOME/.terraform.d/plugins/linux_amd64/terraform-provider-cloudfoundry
-          cd $HOME/.terraform.d/plugins/linux_amd64
-          chmod 755 terraform-provider-cloudfoundry
-          pwd && ls -lafg
-
-    - name: Terraform Init
-      run: |
-          cd terraform/paas && pwd
-          terraform init
-
-    - name: Terraform Plan
-      run: |
-          cd terraform/paas && pwd
-          terraform plan -var-file=test.env.tfvars -out plan
-      env:
-          TF_VAR_api_docker_image: ${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
-
-    - name: Terraform Apply
-      run: |
-          cd terraform/paas && pwd
-          terraform apply -auto-approve plan
-
-    - name: uppload the terraform state
-      uses: actions/upload-artifact@v2
-      with:
-         name: terraform/paas/terraform.tfstate
-
+       - name: Checkout
+         uses: actions/checkout@v2
+   
+       - name: Get Short SHA
+         id: sha
+         run: echo ::set-output name=short::$(git rev-parse --short $GITHUB_SHA)
+   
+       - name: Setup Terraform
+         uses: hashicorp/setup-terraform@v1
+   
+       - name: Download the terraform state
+         uses: actions/download-artifact@v2
+         with:
+            name: terraform/paas/terraform.tfstate
+   
+       - name: No terraform state
+         run: "echo ::warning::No Terraform State"
+         if: ${{ failure() }}
+   
+       - name: Install Terraform CloudFoundry Provider
+         run: |
+             wget https://github.com/cloudfoundry-community/terraform-provider-cf/releases/download/v0.12.2/terraform-provider-cloudfoundry_linux_amd64
+             mkdir -p $HOME/.terraform.d/plugins/linux_amd64
+             mv terraform-provider-cloudfoundry_linux_amd64 $HOME/.terraform.d/plugins/linux_amd64/terraform-provider-cloudfoundry
+             cd $HOME/.terraform.d/plugins/linux_amd64
+             chmod 755 terraform-provider-cloudfoundry
+             pwd && ls -lafg
+   
+       - name: Terraform Init
+         run: |
+             cd terraform/paas && pwd
+             terraform init
+   
+       - name: Terraform Plan
+         run: |
+             cd terraform/paas && pwd
+             terraform plan -var-file=test.env.tfvars -out plan
+         env:
+             TF_VAR_api_docker_image: ${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
+   
+       - name: Terraform Apply
+         run: |
+             cd terraform/paas && pwd
+             terraform apply -auto-approve plan
+   
+       - name: uppload the terraform state
+         uses: actions/upload-artifact@v2
+         with:
+            name: terraform/paas/terraform.tfstate
+   
