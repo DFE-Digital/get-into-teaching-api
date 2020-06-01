@@ -173,6 +173,26 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
+        public void ToEntity_NewWithExistingRelationships()
+        {
+            var mock = new MockModel()
+            {
+                RelatedMock = new MockRelatedModel(),
+            };
+
+            var mockEntity = new Entity("mock");
+            var relatedMockEntity = new Entity("mock");
+
+            _mockService.Setup(m => m.NewEntity("mock", _context)).Returns(mockEntity);
+            _mockService.Setup(m => m.NewEntity("relatedMock", _context)).Returns(relatedMockEntity);
+
+            mock.ToEntity(_crm, _context);
+
+            _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mock"),
+                relatedMockEntity, _context), Times.Never);
+        }
+
+        [Fact]
         public void ToEntity_WithNullProperties()
         {
             var mock = new MockModel()
@@ -202,6 +222,21 @@ namespace GetIntoTeachingApiTests.Models
                 relatedMockEntity, _context), Times.Never());
             _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mocks"), 
                 relatedMockEntity, _context), Times.Never());
+        }
+
+        [Fact]
+        public void ToEntity_WithNullRelationship()
+        {
+            var mock = new MockModel() { Id = Guid.NewGuid() };
+
+            var mockEntity = new Entity("mock", (Guid)mock.Id);
+
+            _mockService.Setup(m => m.BlankExistingEntity("mock", mockEntity.Id, _context)).Returns(mockEntity);
+            _mockService.Setup(m => m.NewEntity("relatedMock", _context)).Returns<Entity>(null);
+
+            mock.ToEntity(_crm, _context);
+
+            _mockService.Verify(m => m.AddLink(mockEntity, It.IsAny<Relationship>(), It.IsAny<Entity>(), _context), Times.Never());
         }
 
         [Fact]

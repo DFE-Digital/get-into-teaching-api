@@ -16,8 +16,6 @@ namespace GetIntoTeachingApi.Models
 
         public TeachingEventRegistration() : base() { }
 
-        public TeachingEventRegistration(Entity entity, ICrmService crm) : base(entity, crm) { }
-
         protected override bool ShouldMap(ICrmService crm)
         {
             return crm.CandidateYetToRegisterForTeachingEvent(CandidateId, EventId);
