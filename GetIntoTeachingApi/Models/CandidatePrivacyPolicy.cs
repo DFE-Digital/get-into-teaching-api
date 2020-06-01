@@ -1,5 +1,6 @@
 ﻿using System;
 using GetIntoTeachingApi.Attributes;
+using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
@@ -11,5 +12,7 @@ namespace GetIntoTeachingApi.Models
         public Guid AcceptedPolicyId { get; set; }
 
         public CandidatePrivacyPolicy() : base() { }
+
+        public CandidatePrivacyPolicy(Entity entity, ICrmService crm) : base(entity, crm) { }
     }
 }
