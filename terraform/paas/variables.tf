@@ -40,6 +40,9 @@ variable "paas_api_route_name" {
    default = "dfe-teacher-services-sb-api"
 }
 
+variable "ASPNETCORE_ENVIRONMENT" {
+   default = "Staging"
+}
 variable "CRM_SERVICE_URL"  {}
 variable "CRM_CLIENT_ID" {}
 variable "CRM_TENANT_ID" {} 

@@ -19,6 +19,7 @@ resource "cloudfoundry_app" "api_application" {
          NOTIFY_API_KEY    = var.NOTIFY_API_KEY
          TOTP_SECRET_KEY   = var.TOTP_SECRET_KEY
          SHARED_SECRET     = var.SHARED_SECRET
+         ASPNETCORE_ENVIRONMENT = var.ASPNETCORE_ENVIRONMENT
     }    
 }
 
