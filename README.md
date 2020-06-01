@@ -43,7 +43,7 @@ CRM_CLIENT_SECRET=****
 NOTIFY_API_KEY=****
 ```
 
-The Postgres connection is setup in `appsettings.json` and not used in development (it is replaced by in-memory alternatives by default). If you want to connect to a Postgres instance running in PaaS, such as the test environment instance, you can do so by creating a conduit to it using Cloud Foundry:
+The Postgres connections (for Hangfire and our database) are setup in `appsettings.json` and not used in development (they are replaced by in-memory alternatives by default). If you want to connect to a Postgres instance running in PaaS, such as the test environment instance, you can do so by creating a conduit to it using Cloud Foundry:
 
 ```
 cf conduit get-into-teaching-api-dev-pg-svc
@@ -93,3 +93,7 @@ We send emails using the [GOV.UK Notify](https://www.notifications.service.gov.u
 [Hangfire](https://www.hangfire.io/) is used for queueing and processing background jobs; an in-memory storage is used for development and PostgreSQL is used in production (the PRO version is required to use Redis as the storage provider). Failed jobs get retries on a 60 minute interval a maximum of 24 times before they are deleted (in development this is reduced to 1 minute interval a maximum of 5 times) - if this happens we attempt to inform the user by sending them an email.
 
 The Hangfire web dashboard can be accessed at `/hangfire` in development.
+
+### Database
+
+We run Entity Framework Core in order to persist some models/data to a Postgres database. Currently this is being used to store and query the UK postcode geolocation information that is used when searching for events within a given radius of another postcode.

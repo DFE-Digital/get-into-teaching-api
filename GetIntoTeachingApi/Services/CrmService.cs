@@ -15,16 +15,16 @@ namespace GetIntoTeachingApi.Services
 
         private readonly IOrganizationServiceAdapter _service;
         private readonly ICrmCache _cache;
-        private readonly IPostcodeService _postcodeService;
+        private readonly ILocationService _locationService;
         private const int CacheDurationInHours = 3;
         private const int MaximumNumberOfCandidatesToMatch = 20;
         private const int MaximumNumberOfPrivacyPolicies = 3;
 
-        public CrmService(IOrganizationServiceAdapter service, ICrmCache cache, IPostcodeService postcodeService)
+        public CrmService(IOrganizationServiceAdapter service, ICrmCache cache, ILocationService locationService)
         {
             _service = service;
             _cache = cache;
-            _postcodeService = postcodeService;
+            _locationService = locationService;
         }
 
         public IEnumerable<TypeEntity> GetLookupItems(string entityName)
@@ -71,7 +71,7 @@ namespace GetIntoTeachingApi.Services
         public IEnumerable<TeachingEvent> SearchTeachingEvents(TeachingEventSearchRequest request)
         {
             return GetTeachingEvents()
-                .Where((teachingEvent) => request.Match(teachingEvent, _postcodeService))
+                .Where((teachingEvent) => request.Match(teachingEvent, _locationService))
                 .OrderBy(teachingEvent => teachingEvent.StartAt);
         }
 

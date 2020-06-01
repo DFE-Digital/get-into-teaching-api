@@ -12,11 +12,15 @@ using GetIntoTeachingApi.Auth;
 using System.Collections.Generic;
 using GetIntoTeachingApi.OperationFilters;
 using GetIntoTeachingApi.Adapters;
+using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 namespace GetIntoTeachingApi
 {
@@ -36,11 +40,24 @@ namespace GetIntoTeachingApi
             services.AddSingleton<INotificationClientAdapter, NotificationClientAdapter>();
             services.AddSingleton<IOrganizationServiceAdapter, OrganizationServiceAdapter>();
             services.AddSingleton<ICandidateAccessTokenService, CandidateAccessTokenService>();
-            services.AddSingleton<ICrmService, CrmService>();
+            services.AddScoped<ICrmService, CrmService>();
             services.AddSingleton<INotifyService, NotifyService>();
             services.AddSingleton<ICrmCache, CrmCache>();
-            services.AddSingleton<IPostcodeService, PostcodeService>();
+            services.AddScoped<ILocationService, LocationService>();
             services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
+            services.AddScoped<DbConfiguration, DbConfiguration>();
+
+            if (Env.IsDevelopment)
+            {
+                var keepAliveConnection = new SqliteConnection("DataSource=:memory:");
+                keepAliveConnection.Open();
+                services.AddDbContext<GetIntoTeachingDbContext>(options => options.UseSqlite(keepAliveConnection));
+            }
+            else
+            {
+                services.AddDbContext<GetIntoTeachingDbContext>(options =>
+                    options.UseNpgsql(Configuration.GetConnectionString(DbConfiguration.DatabaseConnectionString())));
+            }
 
             services.AddAuthorization(options =>
             {
@@ -120,10 +137,10 @@ The GIT API aims to provide:
                     .UseRecommendedSerializerSettings()
                     .UseFilter(automaticRetry);
 
-                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+                if (Env.IsDevelopment)
                     config.UseMemoryStorage().WithJobExpirationTimeout(JobConfiguration.ExpirationTimeout);
                 else
-                    config.UsePostgreSqlStorage(Configuration.GetConnectionString("PostgresConnectionString"));
+                    config.UsePostgreSqlStorage(Configuration.GetConnectionString(DbConfiguration.HangfireConnectionString()));
             });
 
             services.AddHangfireServer();
@@ -154,6 +171,13 @@ The GIT API aims to provide:
             });
 
             app.UseAuthorization();
+
+            // Configure and seed the database.
+            using (var serviceScope = app.ApplicationServices.CreateScope())
+            {
+                var dbConfiguration = serviceScope.ServiceProvider.GetService<DbConfiguration>();
+                dbConfiguration.Configure();
+            }
 
             app.UseEndpoints(endpoints =>
             {

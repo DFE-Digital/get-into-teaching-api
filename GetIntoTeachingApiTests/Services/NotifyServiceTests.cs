@@ -1,6 +1,6 @@
 ﻿using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Services;
-using GetIntoTeachingApiTests.Utils;
+using GetIntoTeachingApiTests.Helpers;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System;
