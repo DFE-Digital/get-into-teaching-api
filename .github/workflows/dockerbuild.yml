@@ -64,6 +64,7 @@ jobs:
             name: terraform/paas/terraform.tfstate
    
        - name: No terraform state
+         run: "echo ::warning::No Terraform State"
          if: ${{ failure() }}
    
        - name: Install Terraform CloudFoundry Provider
