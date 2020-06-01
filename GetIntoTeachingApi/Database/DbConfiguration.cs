@@ -1,12 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using CsvHelper;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Npgsql;
 
 namespace GetIntoTeachingApi.Database
 {
@@ -19,6 +24,10 @@ namespace GetIntoTeachingApi.Database
         {
             _dbContext = dbContext;
         }
+
+        public static string DatabaseConnectionString() => GenerateConnectionString("get-into-teaching-api-dev-pg-svc-2");
+
+        public static string HangfireConnectionString() => GenerateConnectionString("get-into-teaching-api-dev-pg-svc");
 
         public void Configure()
         { 
@@ -74,5 +83,45 @@ namespace GetIntoTeachingApi.Database
 
         private static string LocationsFixturePath() =>
             Env.IsDevelopment ? "./Fixtures/ukpostcodes.dev.csv" : "./Fixtures/ukpostcodes.csv";
+
+        private static string GenerateConnectionString(string instanceName)
+        {
+            var vcap = JsonConvert.DeserializeObject<VcapServices>(Environment.GetEnvironmentVariable("VCAP_SERVICES"));
+            var postgres = vcap.Postgres.First(p => p.InstanceName == instanceName);
+
+            var builder = new NpgsqlConnectionStringBuilder
+            {
+                Host = postgres.Credentials.Host,
+                Database = postgres.Credentials.Name,
+                Username = postgres.Credentials.Username,
+                Password = postgres.Credentials.Password,
+                Port = postgres.Credentials.Port,
+                SslMode = SslMode.Require,
+                TrustServerCertificate = true
+            };
+
+            return builder.ConnectionString;
+        }
+
+        internal class VcapServices
+        {
+            public IEnumerable<VcapPostgres> Postgres { get; set; }
+        }
+
+        internal class VcapPostgres
+        {
+            [JsonProperty("instance_name")]
+            public string InstanceName { get; set; }
+            public VcapCredentials Credentials { get; set; }
+        }
+
+        internal class VcapCredentials
+        {
+            public string Host { get; set; }
+            public string Name { get; set; }
+            public string Username { get; set; }
+            public string Password { get; set; }
+            public int Port { get; set; }
+        }
     }
 }
