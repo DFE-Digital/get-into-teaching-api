@@ -43,6 +43,7 @@ namespace GetIntoTeachingApi
             services.AddScoped<ICrmService, CrmService>();
             services.AddSingleton<INotifyService, NotifyService>();
             services.AddSingleton<ICrmCache, CrmCache>();
+            services.AddScoped<IStore, Store>();
             services.AddScoped<ILocationService, LocationService>();
             services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
             services.AddScoped<DbConfiguration, DbConfiguration>();
@@ -172,12 +173,16 @@ The GIT API aims to provide:
 
             app.UseAuthorization();
 
-            // Configure and seed the database.
             using (var serviceScope = app.ApplicationServices.CreateScope())
             {
+                // Configure and seed the database.
                 var dbConfiguration = serviceScope.ServiceProvider.GetService<DbConfiguration>();
                 dbConfiguration.Configure();
             }
+
+            // Kick off/update recurring jobs.
+            RecurringJob.AddOrUpdate<CrmSyncJob>("crm-sync", (x) => x.Run(), Cron.Daily());
+            RecurringJob.Trigger("crm-sync");
 
             app.UseEndpoints(endpoints =>
             {

@@ -18,13 +18,14 @@ namespace GetIntoTeachingApi.Controllers
     {
         private const int MaximumUpcomingRequests = 50;
         private readonly ILogger<TeachingEventsController> _logger;
-        private readonly ICrmService _crm;
+        private readonly IStore _store;
         private readonly IBackgroundJobClient _jobClient;
 
-        public TeachingEventsController(ILogger<TeachingEventsController> logger, ICrmService crm, IBackgroundJobClient jobClient)
+        public TeachingEventsController(ILogger<TeachingEventsController> logger, 
+            IStore store, IBackgroundJobClient jobClient)
         {
             _logger = logger;
-            _crm = crm;
+            _store = store;
             _jobClient = jobClient;
         }
 
@@ -45,7 +46,7 @@ maximum of 50 using the `limit` query parameter.",
             if (limit > MaximumUpcomingRequests)
                 return BadRequest();
 
-            var upcomingEvents = _crm.GetUpcomingTeachingEvents(limit);
+            var upcomingEvents = _store.GetUpcomingTeachingEvents(limit);
             return Ok(upcomingEvents);
         }
 
@@ -64,7 +65,7 @@ maximum of 50 using the `limit` query parameter.",
             if (!ModelState.IsValid)
                 return BadRequest(this.ModelState);
 
-            var teachingEvents = _crm.SearchTeachingEvents(request);
+            var teachingEvents = _store.SearchTeachingEvents(request);
             return Ok(teachingEvents);
         }
 
@@ -79,7 +80,7 @@ maximum of 50 using the `limit` query parameter.",
         [ProducesResponseType(404)]
         public IActionResult Get([FromRoute, SwaggerParameter("The `id` of the `TeachingEvent`.", Required = true)] Guid id)
         {
-            var teachingEvent = _crm.GetTeachingEvent(id);
+            var teachingEvent = _store.GetTeachingEvent(id);
 
             if (teachingEvent == null)
                 return NotFound();
@@ -105,7 +106,7 @@ maximum of 50 using the `limit` query parameter.",
             if (!ModelState.IsValid)
                 return BadRequest(this.ModelState);
 
-            var teachingEvent = _crm.GetTeachingEvent(id);
+            var teachingEvent = _store.GetTeachingEvent(id);
 
             if (teachingEvent == null)
                 return NotFound();
