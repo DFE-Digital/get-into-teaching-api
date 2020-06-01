@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Microsoft.AspNetCore.Mvc;
 using GetIntoTeachingApi.Services;
-using GetIntoTeachingApiTests.Utils;
+using GetIntoTeachingApiTests.Helpers;
 using Hangfire;
 using Hangfire.Common;
 using Hangfire.States;
