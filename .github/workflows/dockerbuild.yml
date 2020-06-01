@@ -61,11 +61,9 @@ jobs:
        - name: Download the terraform state
          uses: actions/download-artifact@v2
          with:
-            name: terraform/paas/terraform.tfstate
-   
-       - name: No terraform state
-         run: "echo ::warning::No Terraform State"
-         if: ${{ failure() }}
+            name: terraform.tfstate
+            path: terraform/paas/terraform.tfstate
+         continue-on-error: true
    
        - name: Install Terraform CloudFoundry Provider
          run: |
@@ -96,5 +94,6 @@ jobs:
        - name: uppload the terraform state
          uses: actions/upload-artifact@v2
          with:
-            name: terraform/paas/terraform.tfstate
+            name: terraform.tfstate
+            path: terraform/paas/terraform.tfstate
    
