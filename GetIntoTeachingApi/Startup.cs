@@ -56,7 +56,7 @@ namespace GetIntoTeachingApi
             else
             {
                 services.AddDbContext<GetIntoTeachingDbContext>(options =>
-                    options.UseNpgsql(Configuration.GetConnectionString("DatabaseConnectionString")));
+                    options.UseNpgsql(Configuration.GetConnectionString(DbConfiguration.DatabaseConnectionString())));
             }
 
             services.AddAuthorization(options =>
@@ -140,7 +140,7 @@ The GIT API aims to provide:
                 if (Env.IsDevelopment)
                     config.UseMemoryStorage().WithJobExpirationTimeout(JobConfiguration.ExpirationTimeout);
                 else
-                    config.UsePostgreSqlStorage(Configuration.GetConnectionString("HangfireConnectionString"));
+                    config.UsePostgreSqlStorage(Configuration.GetConnectionString(DbConfiguration.HangfireConnectionString()));
             });
 
             services.AddHangfireServer();
