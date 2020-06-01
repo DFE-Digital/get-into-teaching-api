@@ -21,5 +21,7 @@ namespace GetIntoTeachingApi.Models
         public string AddressPostcode { get; set; }
 
         public TeachingEventBuilding() : base() { }
+
+        public TeachingEventBuilding(Entity entity, ICrmService crm) : base(entity, crm) { }
     }
 }

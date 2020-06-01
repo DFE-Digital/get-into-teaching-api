@@ -15,5 +15,7 @@ namespace GetIntoTeachingApi.Models
         public int? DegreeStatusId { get; set; }
 
         public CandidateQualification() : base() { }
+
+        public CandidateQualification(Entity entity, ICrmService crm) : base(entity, crm) { }
     }
 }
