@@ -5,3 +5,4 @@ paas_api_application_name="get-into-teaching-test-api"
 paas_api_route_name="get-into-teaching-test-api"
 
 CRM_SERVICE_URL="https://gitis-dev.api.crm4.dynamics.com"
+ASPNETCORE_ENVIRONMENT="Staging"

@@ -82,4 +82,4 @@ jobs:
     - name: Terraform Apply
       run: |
           cd terraform/paas && pwd
-          terraform apply -auto-approve -var-file=test.env.tfvars  plan
+          terraform apply -auto-approve plan
