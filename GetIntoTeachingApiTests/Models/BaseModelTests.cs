@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
 using FluentAssertions;
@@ -44,17 +46,25 @@ namespace GetIntoTeachingApiTests.Models
     public class BaseModelTests
     {
         private readonly Mock<IOrganizationServiceAdapter> _mockService;
-        private readonly Mock<ICrmCache> _mockCrmCache;
         private readonly CrmService _crm;
         private readonly OrganizationServiceContext _context;
 
         public BaseModelTests()
         {
             _mockService = new Mock<IOrganizationServiceAdapter>();
-            _mockCrmCache = new Mock<ICrmCache>();
+            var mockCrmCache = new Mock<ICrmCache>();
             var mockLocationService = new Mock<LocationService>();
             _context = _mockService.Object.Context("mock-connection-string");
-            _crm = new CrmService(_mockService.Object, _mockCrmCache.Object, mockLocationService.Object);
+            _crm = new CrmService(_mockService.Object, mockCrmCache.Object, mockLocationService.Object);
+        }
+
+        [Fact]
+        public void EntityAttributes()
+        {
+            var type = typeof(BaseModel);
+
+            type.GetProperty("Id").Should().BeDecoratedWith<DatabaseGeneratedAttribute>(
+                a => a.DatabaseGeneratedOption == DatabaseGeneratedOption.None);
         }
 
         [Fact]

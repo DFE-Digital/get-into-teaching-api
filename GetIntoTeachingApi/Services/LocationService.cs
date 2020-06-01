@@ -1,12 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.RegularExpressions;
-using CsvHelper;
 using GetIntoTeachingApi.Database;
-using GetIntoTeachingApi.Models;
-using GetIntoTeachingApi.Utils;
 
 namespace GetIntoTeachingApi.Services
 {

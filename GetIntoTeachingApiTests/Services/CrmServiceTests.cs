@@ -19,7 +19,6 @@ namespace GetIntoTeachingApiTests.Services
     {
         private const string ConnectionString = "AuthType=ClientSecret; url=service_url; ClientId=client_id; ClientSecret=client_secret";
         private static readonly Guid JaneDoeGuid = new Guid("bf927e43-5650-44aa-859a-8297139b8ddd");
-        private static readonly Guid FindEventGuid = new Guid("ff927e43-5650-44aa-859a-8297139b8eee");
         private readonly string _previousCrmServiceUrl;
         private readonly string _previousCrmClientId;
         private readonly string _previousCrmClientSecret;
@@ -108,83 +107,15 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void SearchTeachingEvents_ReturnsMatchingEventsInOrder()
+        public void GetTeachingEvents_ReturnsAllTeachingEvents()
         {
-            var request = new TeachingEventSearchRequest() { Postcode = "CA4 8LE", TypeId = 123 };
             _mockService.Setup(mock => mock.RetrieveMultiple(ConnectionString, It.Is<QueryExpression>(
                 q => q.EntityName == "msevtmgt_event"))).Returns(MockTeachingEvents());
 
-            var result = _crm.SearchTeachingEvents(request);
+            var result = _crm.GetTeachingEvents();
 
-            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 4" },
+            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 1", "Event 2", "Event 3" },
                 options => options.WithStrictOrdering());
-        }
-
-        [Fact]
-        public void SearchTeachingEvents_IsCached()
-        {
-            var request = new TeachingEventSearchRequest() { Postcode = "KY12 8FE" };
-            _mockService.Setup(mock => mock.RetrieveMultiple(ConnectionString, It.Is<QueryExpression>(
-                q => q.EntityName == "msevtmgt_event"))).Returns(MockTeachingEvents());
-
-            var result1 = _crm.SearchTeachingEvents(request);
-            var result2 = _crm.SearchTeachingEvents(request);
-
-            result1.Should().BeEquivalentTo(result2);
-            _mockService.Verify(mock => mock.RetrieveMultiple(ConnectionString,
-                It.Is<QueryExpression>(q => q.EntityName == "msevtmgt_event")), Times.Once);
-        }
-
-        [Fact]
-        public void GetTeachingEvents_ReturnsMatchingEvent()
-        {
-            _mockService.Setup(mock => mock.RetrieveMultiple(ConnectionString, It.Is<QueryExpression>(
-                q => q.EntityName == "msevtmgt_event"))).Returns(MockTeachingEvents());
-
-            var result = _crm.GetTeachingEvent(FindEventGuid);
-
-            result.Id.Should().Be(FindEventGuid);
-        }
-
-        [Fact]
-        public void GetTeachingEvent_IsCached()
-        {
-            var request = new TeachingEventSearchRequest() { Postcode = "KY12 8FE" };
-            _mockService.Setup(mock => mock.RetrieveMultiple(ConnectionString, It.Is<QueryExpression>(
-                q => q.EntityName == "msevtmgt_event"))).Returns(MockTeachingEvents());
-
-            var result1 = _crm.SearchTeachingEvents(request);
-            var result2 = _crm.SearchTeachingEvents(request);
-
-            result1.Should().BeEquivalentTo(result2);
-            _mockService.Verify(mock => mock.RetrieveMultiple(ConnectionString,
-                It.Is<QueryExpression>(q => q.EntityName == "msevtmgt_event")), Times.Once);
-        }
-
-        [Fact]
-        public void GetUpcomingTeachingEvents_ReturnsUpcomingEventsInOrder()
-        {
-            _mockService.Setup(mock => mock.RetrieveMultiple(ConnectionString, It.Is<QueryExpression>(
-                q => q.EntityName == "msevtmgt_event"))).Returns(MockTeachingEvents());
-
-            var result = _crm.GetUpcomingTeachingEvents(3);
-
-            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] {"Event 2", "Event 4", "Event 1"}, 
-                options => options.WithStrictOrdering());
-        }
-
-        [Fact]
-        public void GetUpcomingTeachingEvents_IsCached()
-        {
-            _mockService.Setup(mock => mock.RetrieveMultiple(ConnectionString, It.Is<QueryExpression>(
-                q => q.EntityName == "msevtmgt_event"))).Returns(MockTeachingEvents());
-
-            var result1 = _crm.GetUpcomingTeachingEvents(3);
-            var result2 = _crm.GetUpcomingTeachingEvents(3);
-
-            result1.Should().BeEquivalentTo(result2);
-            _mockService.Verify(mock => mock.RetrieveMultiple(ConnectionString, 
-                It.Is<QueryExpression>(q => q.EntityName == "msevtmgt_event")), Times.Once);
         }
 
         [Fact]
@@ -407,27 +338,14 @@ namespace GetIntoTeachingApiTests.Services
         {
             var event1 = new Entity("msevtmgt_event");
             event1["msevtmgt_name"] = "Event 1";
-            event1["msevtmgt_eventstartdate"] = DateTime.Now.AddDays(5);
 
-            var event2 = new Entity("msevtmgt_event") { Id = FindEventGuid };
+            var event2 = new Entity("msevtmgt_event");
             event2["msevtmgt_name"] = "Event 2";
-            event2["dfe_event_type"] = new OptionSetValue(123);
-            event2["msevtmgt_eventstartdate"] = DateTime.Now.AddDays(1);
 
             var event3 = new Entity("msevtmgt_event");
             event3["msevtmgt_name"] = "Event 3";
-            event3["msevtmgt_eventstartdate"] = DateTime.Now.AddDays(10);
 
-            var event4 = new Entity("msevtmgt_event");
-            event4["msevtmgt_name"] = "Event 4";
-            event4["dfe_event_type"] = new OptionSetValue(123);
-            event4["msevtmgt_eventstartdate"] = DateTime.Now.AddDays(3);
-
-            var event5 = new Entity("msevtmgt_event");
-            event5["msevtmgt_name"] = "Event 5";
-            event5["msevtmgt_eventstartdate"] = DateTime.Now.AddDays(15);
-
-            return new[] { event1, event2, event3, event4, event5 }.AsQueryable();
+            return new[] { event1, event2, event3 }.AsQueryable();
         }
 
         private static IQueryable<Entity> MockCandidates()

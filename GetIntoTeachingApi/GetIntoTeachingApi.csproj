@@ -6,6 +6,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="CsvHelper" Version="15.0.5" />
+		<PackageReference Include="FlexLabs.EntityFrameworkCore.Upsert" Version="3.1.0" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="8.6.2" />
 		<PackageReference Include="GeoCoordinate.NetStandard1" Version="1.0.1" />
 		<PackageReference Include="Hangfire.AspNetCore" Version="1.7.11" />

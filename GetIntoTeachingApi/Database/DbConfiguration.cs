@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using CsvHelper;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Npgsql;
 
 namespace GetIntoTeachingApi.Database
@@ -30,8 +28,13 @@ namespace GetIntoTeachingApi.Database
         public static string HangfireConnectionString() => GenerateConnectionString("get-into-teaching-api-dev-pg-svc");
 
         public void Configure()
-        { 
-            _dbContext.Database.Migrate();
+        {
+            var migrationsAreSupported = _dbContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.Sqlite";
+
+            if (migrationsAreSupported)
+                _dbContext.Database.Migrate();
+            else 
+                _dbContext.Database.EnsureCreated();
 
             SeedLocations();
         }
