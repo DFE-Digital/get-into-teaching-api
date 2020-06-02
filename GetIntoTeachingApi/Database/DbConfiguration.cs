@@ -4,17 +4,19 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using CsvHelper;
-using GetIntoTeachingApi.Models;
-using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
 using Newtonsoft.Json;
 using Npgsql;
+using Location = GetIntoTeachingApi.Models.Location;
 
 namespace GetIntoTeachingApi.Database
 {
     public class DbConfiguration
     {
+        public const int Srid = 4326; // WGS 84 (GPS Standard)
         private const int BufferFlushInterval = 1000;
         private readonly GetIntoTeachingDbContext _dbContext;
 
@@ -54,7 +56,7 @@ namespace GetIntoTeachingApi.Database
             {
                 var location = CreateLocation(csv);
 
-                if (location.IsNonGeographic()) continue;
+                if (location == null) continue;
 
                 buffer.Add(location);
 
@@ -64,13 +66,19 @@ namespace GetIntoTeachingApi.Database
             FlushBuffer(buffer, _dbContext.Locations, true);
         }
 
-        private static Location CreateLocation(CsvReader csv)
+        private static Location CreateLocation(IReaderRow csv)
         {
+            var latitude = csv.GetField<double?>("latitude");
+            var longitude = csv.GetField<double?>("longitude");
+
+            if (latitude == null || longitude == null) return null;
+
+            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: Srid);
+
             return new Location()
             {
-                Postcode = LocationService.Sanitize(csv.GetField<string>("postcode")),
-                Latitude = csv.GetField<double?>("latitude"),
-                Longitude = csv.GetField<double?>("longitude")
+                Postcode = Location.SanitizePostcode(csv.GetField<string>("postcode")),
+                Coordinate = geometryFactory.CreatePoint(new Coordinate((double)longitude, (double)latitude))
             };
         }
 

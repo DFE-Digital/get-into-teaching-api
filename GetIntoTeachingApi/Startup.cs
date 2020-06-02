@@ -44,7 +44,6 @@ namespace GetIntoTeachingApi
             services.AddSingleton<INotifyService, NotifyService>();
             services.AddSingleton<ICrmCache, CrmCache>();
             services.AddScoped<IStore, Store>();
-            services.AddScoped<ILocationService, LocationService>();
             services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
             services.AddScoped<DbConfiguration, DbConfiguration>();
 
@@ -52,12 +51,14 @@ namespace GetIntoTeachingApi
             {
                 var keepAliveConnection = new SqliteConnection("DataSource=:memory:");
                 keepAliveConnection.Open();
-                services.AddDbContext<GetIntoTeachingDbContext>(options => options.UseSqlite(keepAliveConnection));
+                services.AddDbContext<GetIntoTeachingDbContext>(options => 
+                    options.UseSqlite(keepAliveConnection, x => x.UseNetTopologySuite()));
             }
             else
             {
                 services.AddDbContext<GetIntoTeachingDbContext>(options =>
-                    options.UseNpgsql(Configuration.GetConnectionString(DbConfiguration.DatabaseConnectionString())));
+                    options.UseNpgsql(Configuration.GetConnectionString(
+                        DbConfiguration.DatabaseConnectionString()), x => x.UseNetTopologySuite()));
             }
 
             services.AddAuthorization(options =>

@@ -10,5 +10,6 @@ namespace GetIntoTeachingApi.Services
         IEnumerable<TeachingEvent> GetUpcomingTeachingEvents(int limit);
         IEnumerable<TeachingEvent> SearchTeachingEvents(TeachingEventSearchRequest request);
         TeachingEvent GetTeachingEvent(Guid id);
+        bool IsValidPostcode(string postcode);
     }
 }

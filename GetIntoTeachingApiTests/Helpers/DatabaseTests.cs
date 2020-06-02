@@ -16,7 +16,7 @@ namespace GetIntoTeachingApiTests.Helpers
             _connection.Open();
 
             var options = new DbContextOptionsBuilder<GetIntoTeachingDbContext>()
-                .UseSqlite(_connection).Options;
+                .UseSqlite(_connection, x => x.UseNetTopologySuite()).Options;
             DbContext = new GetIntoTeachingDbContext(options);
             new DbConfiguration(DbContext).Configure();
         }

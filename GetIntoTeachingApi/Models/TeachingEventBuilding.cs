@@ -1,6 +1,8 @@
-﻿using GetIntoTeachingApi.Attributes;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
+using NetTopologySuite.Geometries;
 
 namespace GetIntoTeachingApi.Models
 {
@@ -19,6 +21,7 @@ namespace GetIntoTeachingApi.Models
         public string AddressState { get; set; }
         [EntityField(Name = "msevtmgt_postalcode")]
         public string AddressPostcode { get; set; }
+        public Point Coordinate { get; set; }
 
         public TeachingEventBuilding() : base() { }
 

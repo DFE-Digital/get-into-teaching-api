@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using GeoCoordinatePortable;
+using System.Text.RegularExpressions;
+using NetTopologySuite.Geometries;
 
 namespace GetIntoTeachingApi.Models
 {
@@ -7,12 +8,11 @@ namespace GetIntoTeachingApi.Models
     {
         [Key]
         public string Postcode { get; set; }
-        public double? Latitude { get; set; }
-        public double? Longitude { get; set; }
+        public Point Coordinate { get; set; }
 
-        public GeoCoordinate Coordinate => IsNonGeographic() ? null : 
-            new GeoCoordinate((double) Latitude, (double) Longitude);
-
-        public bool IsNonGeographic() => Latitude == null || Longitude == null;
+        public static string SanitizePostcode(string postcode)
+        {
+            return Regex.Replace(postcode, @"\s+", "").ToLower();
+        }
     }
 }
