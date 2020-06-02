@@ -14,5 +14,7 @@ namespace GetIntoTeachingApi.Models
         public int? EducationPhaseId { get; set; }
 
         public CandidatePastTeachingPosition() : base() { }
+
+        public CandidatePastTeachingPosition(Entity entity, ICrmService crm) : base(entity, crm) { }
     }
 }
