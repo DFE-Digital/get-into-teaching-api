@@ -62,35 +62,19 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void AddAttendee_MissingCandidate_RespondsWithNotFound()
-        {
-            var attendee = new ExistingCandidateRequest() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
-            var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
-            _mockCrm.Setup(mock => mock.GetTeachingEvent((Guid)teachingEvent.Id)).Returns(teachingEvent);
-            _mockCrm.Setup(mock => mock.GetCandidate(attendee)).Returns<Candidate>(null);
-
-            var response = _controller.AddAttendee((Guid)teachingEvent.Id, attendee);
-
-            response.Should().BeOfType<NotFoundResult>();
-        }
-
-        [Fact]
         public void AddAttendee_ValidRequest_EnqueuesJobRespondsWithNoContent()
         {
             var attendee = new ExistingCandidateRequest() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
             var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
-            var candidate = new Candidate() { Id = Guid.NewGuid(), Email = "test@test.com" };
             _mockCrm.Setup(mock => mock.GetTeachingEvent((Guid)teachingEvent.Id)).Returns(teachingEvent);
-            _mockCrm.Setup(mock => mock.GetCandidate(attendee)).Returns(candidate);
 
             var response = _controller.AddAttendee((Guid)teachingEvent.Id, attendee);
 
             response.Should().BeOfType<NoContentResult>();
             _mockJobClient.Verify(x => x.Create(
                 It.Is<Job>(job => job.Type == typeof(TeachingEventRegistrationJob) && job.Method.Name == "Run" &&
-                                  ((TeachingEventRegistration)job.Args[0]).CandidateId == candidate.Id &&
-                                  ((TeachingEventRegistration)job.Args[0]).CandidateEmail == candidate.Email &&
-                                  ((TeachingEventRegistration) job.Args[0]).EventId == teachingEvent.Id), 
+                                  ((ExistingCandidateRequest)job.Args[0]) == attendee &&
+                                  ((Guid) job.Args[1]) == teachingEvent.Id), 
                 It.IsAny<EnqueuedState>()));
         }
 
