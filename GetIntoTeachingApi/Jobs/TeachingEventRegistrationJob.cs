@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
@@ -20,18 +21,48 @@ namespace GetIntoTeachingApi.Jobs
             _contextAdapter = contextAdapter;
         }
 
-        public void Run(TeachingEventRegistration registration, PerformContext context)
+        public void Run(ExistingCandidateRequest attendee, Guid teachingEventId, PerformContext context)
         {
             if (IsLastAttempt(context, _contextAdapter))
-            {
-                var personalisation = new Dictionary<string, dynamic>();
-                _notifyService.SendEmail(
-                    registration.CandidateEmail,
-                    NotifyService.TeachingEventRegistrationFailedTemplateId, 
-                    personalisation);
-            }
+                NotifyAttendeeOfFailure(attendee);
             else
-                _crm.Save(registration);
+                RegisterAttendeeForEvent(attendee, teachingEventId);
+        }
+
+        private void RegisterAttendeeForEvent(ExistingCandidateRequest attendee, Guid teachingEventId)
+        {
+            var candidate = _crm.GetCandidate(attendee) ?? CreateCandidate(attendee);
+
+            var registration = new TeachingEventRegistration()
+            {
+                CandidateId = (Guid)candidate.Id,
+                EventId = teachingEventId,
+            };
+
+            _crm.Save(registration);
+        }
+
+        private void NotifyAttendeeOfFailure(ExistingCandidateRequest attendee)
+        {
+            _notifyService.SendEmail(
+                attendee.Email,
+                NotifyService.TeachingEventRegistrationFailedTemplateId,
+                new Dictionary<string, dynamic>());
+        }
+
+        private Candidate CreateCandidate(ExistingCandidateRequest attendee)
+        {
+            var candidate = new Candidate()
+            {
+                Email = attendee.Email, 
+                FirstName = attendee.FirstName, 
+                LastName = attendee.LastName,
+                DateOfBirth = attendee.DateOfBirth
+            };
+
+            _crm.Save(candidate);
+
+            return candidate;
         }
     }
 }
