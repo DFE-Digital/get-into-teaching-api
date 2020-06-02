@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
@@ -54,6 +55,21 @@ namespace GetIntoTeachingApiTests.Models
             var mockLocationService = new Mock<LocationService>();
             _context = _mockService.Object.Context("mock-connection-string");
             _crm = new CrmService(_mockService.Object, _mockCrmCache.Object, mockLocationService.Object);
+        }
+
+        [Fact]
+        public void AllSubTypes_HaveRequiredConstructor()
+        {
+            var assembly = typeof(BaseModel).Assembly;
+            var subTypes = assembly.GetTypes().Where(t => t.BaseType == typeof(BaseModel));
+
+            foreach (var subType in subTypes)
+            {
+                // Constructor is required for creating related models in BaseModel.MapRelationshipAttributesFromEntity
+                var requiredConstructor = subType.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, 
+                    new Type[] { typeof(Entity), typeof(ICrmService) }, null);
+                requiredConstructor.Should().NotBeNull();
+            }
         }
 
         [Fact]
