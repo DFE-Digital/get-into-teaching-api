@@ -326,12 +326,15 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void Save_MapsEntityAndSavesContext()
         {
+            var entity = new Entity() {Id = Guid.NewGuid()};
             var mockCandidate = new Mock<Candidate>();
+            // The id is actually set on SaveChanges, but mocked here for ease.
+            mockCandidate.Setup(mock => mock.ToEntity(_crm, _context)).Returns(entity);
 
             _crm.Save(mockCandidate.Object);
 
-            mockCandidate.Verify(mock => mock.ToEntity(_crm, _context));
-            _mockService.Verify(mock => mock.SaveChanges(_context));
+            _mockService.Verify(mock => mock.SaveChanges(_context), Times.Once);
+            mockCandidate.Object.Id.Should().Be(entity.Id);
         }
 
         [Fact]

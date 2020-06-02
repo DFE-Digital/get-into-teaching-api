@@ -150,8 +150,9 @@ namespace GetIntoTeachingApi.Services
         public void Save(BaseModel model)
         {
             using var context = Context();
-            model.ToEntity(this, context);
+            var entity = model.ToEntity(this, context);
             _service.SaveChanges(context);
+            model.Id = entity.Id;
         }
 
         private IEnumerable<TeachingEvent> GetTeachingEvents()
