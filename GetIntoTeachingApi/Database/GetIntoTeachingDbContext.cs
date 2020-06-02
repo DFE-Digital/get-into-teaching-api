@@ -11,5 +11,12 @@ namespace GetIntoTeachingApi.Database
 
         public GetIntoTeachingDbContext(DbContextOptions<GetIntoTeachingDbContext> options) 
             : base(options) { }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Location>().Property(m => m.Coordinate).HasSrid(DbConfiguration.Srid);
+            modelBuilder.Entity<TeachingEventBuilding>().Property(m => m.Coordinate).HasSrid(DbConfiguration.Srid);
+            modelBuilder.Entity<TeachingEvent>().HasOne(c => c.Building);
+        }
     }
 }

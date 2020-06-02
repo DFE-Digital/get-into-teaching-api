@@ -15,16 +15,14 @@ namespace GetIntoTeachingApi.Services
 
         private readonly IOrganizationServiceAdapter _service;
         private readonly ICrmCache _cache;
-        private readonly ILocationService _locationService;
         private const int CacheDurationInHours = 3;
         private const int MaximumNumberOfCandidatesToMatch = 20;
         private const int MaximumNumberOfPrivacyPolicies = 3;
 
-        public CrmService(IOrganizationServiceAdapter service, ICrmCache cache, ILocationService locationService)
+        public CrmService(IOrganizationServiceAdapter service, ICrmCache cache)
         {
             _service = service;
             _cache = cache;
-            _locationService = locationService;
         }
 
         public IEnumerable<TypeEntity> GetLookupItems(string entityName)
@@ -149,7 +147,7 @@ namespace GetIntoTeachingApi.Services
             return entities.Select((entity) => new TeachingEvent(entity, this)).ToList();
         }
 
-        private DateTime CacheExpiry()
+        private static DateTime CacheExpiry()
         {
             return DateTime.Now.AddHours(CacheDurationInHours);
         }
