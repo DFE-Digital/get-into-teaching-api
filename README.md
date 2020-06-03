@@ -93,3 +93,8 @@ We send emails using the [GOV.UK Notify](https://www.notifications.service.gov.u
 [Hangfire](https://www.hangfire.io/) is used for queueing and processing background jobs; an in-memory storage is used for development and PostgreSQL is used in production (the PRO version is required to use Redis as the storage provider). Failed jobs get retries on a 60 minute interval a maximum of 24 times before they are deleted (in development this is reduced to 1 minute interval a maximum of 5 times) - if this happens we attempt to inform the user by sending them an email.
 
 The Hangfire web dashboard can be accessed at `/hangfire` in development.
+
+
+### Deployment
+
+Deployment is via Terraform and the key will be stored in Azure.
