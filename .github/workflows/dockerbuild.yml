@@ -15,7 +15,7 @@ env:
   TF_VAR_SHARED_SECRET:     "${{ secrets.SHARED_SECRET       }}"
   TF_VAR_NOTIFY_API_KEY:    "${{ secrets.NOTIFY_API_KEY      }}"
   TF_VAR_TOTP_SECRET_KEY:   "${{ secrets.TOTP_SECRET_KEY     }}"
-  TF_VAR_TF_STATE_KEY:      "${{ secrets.TF_STATE_KEY        }}"
+  ARM_ACCESS_KEY:           "${{ secrets.TF_STATE_KEY        }}"
 
 jobs:
   build_docker:
