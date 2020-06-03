@@ -15,5 +15,7 @@ namespace GetIntoTeachingApi.Models
         public DateTime? StartAfter { get; set; }
         [SwaggerSchema("Set to filter results to those that start before a given date.")]
         public DateTime? StartBefore { get; set; }
+
+        public double? RadiusInMeters => Radius * 1609.34;
     }
 }

@@ -16,7 +16,8 @@ namespace GetIntoTeachingApi.Database
 {
     public class DbConfiguration
     {
-        public const int Srid = 4326; // WGS 84 (GPS Standard)
+        public const int Wgs84Srid = 4326;
+        public const int UkSrid = 27700;
         private const int BufferFlushInterval = 1000;
         private readonly GetIntoTeachingDbContext _dbContext;
 
@@ -73,7 +74,7 @@ namespace GetIntoTeachingApi.Database
 
             if (latitude == null || longitude == null) return null;
 
-            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: Srid);
+            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: Wgs84Srid);
 
             return new Location()
             {

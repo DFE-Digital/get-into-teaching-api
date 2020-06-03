@@ -14,8 +14,8 @@ namespace GetIntoTeachingApi.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Location>().Property(m => m.Coordinate).HasSrid(DbConfiguration.Srid);
-            modelBuilder.Entity<TeachingEventBuilding>().Property(m => m.Coordinate).HasSrid(DbConfiguration.Srid);
+            modelBuilder.Entity<Location>().Property(m => m.Coordinate).HasSrid(DbConfiguration.Wgs84Srid);
+            modelBuilder.Entity<TeachingEventBuilding>().Property(m => m.Coordinate).HasSrid(DbConfiguration.Wgs84Srid);
             modelBuilder.Entity<TeachingEvent>().HasOne(c => c.Building);
         }
     }
