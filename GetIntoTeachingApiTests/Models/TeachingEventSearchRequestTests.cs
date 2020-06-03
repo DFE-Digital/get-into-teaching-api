@@ -7,13 +7,13 @@ namespace GetIntoTeachingApiTests.Models
     public class TeachingEventSearchRequestTests
     {
         [Theory]
-        [InlineData(1, 1609.34)]
-        [InlineData(-1, -1609.34)]
+        [InlineData(1, 1.6093)]
+        [InlineData(-1, -1.6093)]
         [InlineData(0, 0)]
-        [InlineData(87, 140012.58)]
-        public void RadiusInMeters_ConvertsCorrectly(int miles, double meters)
+        [InlineData(87, 140.0125)]
+        public void RadiusInKm_ConvertsCorrectly(int miles, double km)
         {
-            new TeachingEventSearchRequest() {Radius = miles}.RadiusInMeters.Should().Be(meters);
+            new TeachingEventSearchRequest() {Radius = miles}.RadiusInKm.Should().BeApproximately(km, 4);
         }
     }
 }
