@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Utils;
 using Microsoft.EntityFrameworkCore;
+using MoreLinq;
 using NetTopologySuite.Geometries;
 using Location = GetIntoTeachingApi.Models.Location;
 
@@ -11,6 +13,8 @@ namespace GetIntoTeachingApi.Services
 {
     public class Store : IStore
     {
+        private const double EarthCircumferenceInMeters = 40075.017;
+        private const double ErrorMarginInMeters = 16093.4;
         private readonly GetIntoTeachingDbContext _dbContext;
 
         public Store(GetIntoTeachingDbContext dbContext)
@@ -33,7 +37,7 @@ namespace GetIntoTeachingApi.Services
 
         public IEnumerable<TeachingEvent> SearchTeachingEvents(TeachingEventSearchRequest request)
         {
-            var teachingEvents = _dbContext.TeachingEvents.Include(te => te.Building).AsQueryable();
+            IEnumerable<TeachingEvent> teachingEvents = _dbContext.TeachingEvents.Include(te => te.Building);
 
             if (request.TypeId != null)
                 teachingEvents = teachingEvents.Where(te => te.TypeId == request.TypeId);
@@ -49,8 +53,16 @@ namespace GetIntoTeachingApi.Services
                 var origin = CoordinateForPostcode(request.Postcode);
 
                 teachingEvents = teachingEvents.Where(te => te.Building != null && te.Building.Coordinate != null);
-                teachingEvents = teachingEvents.Where(te => te.Building.Coordinate
-                    .IsWithinDistance(origin, MilesToDegrees((double)request.Radius)));
+
+                // Approximate distance filtering in the database, with a suitable error margin (treats distance as an arc degree).
+                teachingEvents = teachingEvents.Where(te => EarthCircumferenceInMeters * 
+                    te.Building.Coordinate.Distance(origin) / 360 < request.RadiusInMeters + ErrorMarginInMeters);
+
+                // Project coordinates in-memory for accurate distance filtering.
+                teachingEvents = teachingEvents.ToList().Where(te => 
+                    te.Building.Coordinate.ProjectTo(DbConfiguration.UkSrid)
+                        .IsWithinDistance(origin.ProjectTo(DbConfiguration.UkSrid), 
+                            (double) request.RadiusInMeters));
             }
 
             return teachingEvents.OrderBy(te => te.StartAt);
@@ -74,14 +86,28 @@ namespace GetIntoTeachingApi.Services
             var teachingEvents = crm.GetTeachingEvents().ToList();
             PopulateTeachingEventCoordinates(teachingEvents);
 
-            var ids = teachingEvents.Select(te => te.Id);
-            var existingTeachingEventIds = _dbContext.TeachingEvents
-                .Where(te => ids.Contains(te.Id)).Select(te => te.Id);
-
-            _dbContext.UpdateRange(teachingEvents.Where(te => existingTeachingEventIds.Contains(te.Id)));
-            _dbContext.AddRange(teachingEvents.Where(te => !existingTeachingEventIds.Contains(te.Id)));
+            UpsertTeachingEventBuildings(teachingEvents);
+            UpsertTeachingEvents(teachingEvents);
 
             _dbContext.SaveChanges();
+        }
+
+        private void UpsertTeachingEventBuildings(IEnumerable<TeachingEvent> teachingEvents)
+        {
+            var buildings = teachingEvents.Where(te => te.Building != null).Select(te => te.Building).DistinctBy(b => b.Id);
+            var buildingIds = buildings.Select(b => b.Id);
+            var existingBuildingIds = _dbContext.TeachingEventBuildings.Where(b => buildingIds.Contains(b.Id)).Select(b => b.Id);
+            _dbContext.UpdateRange(buildings.Where(b => existingBuildingIds.Contains(b.Id)));
+            _dbContext.AddRange(buildings.Where(b => !existingBuildingIds.Contains(b.Id)));
+        }
+
+        private void UpsertTeachingEvents(IEnumerable<TeachingEvent> teachingEvents)
+        {
+            var teachingEventIds = teachingEvents.Select(te => te.Id);
+            var existingTeachingEventIds = _dbContext.TeachingEvents.Where(te => teachingEventIds.Contains(te.Id)).Select(te => te.Id);
+            teachingEvents.Where(te => te.Building != null).ToList().ForEach(te => te.Building = _dbContext.TeachingEventBuildings.Find(te.Building.Id));
+            _dbContext.UpdateRange(teachingEvents.Where(te => existingTeachingEventIds.Contains(te.Id)));
+            _dbContext.AddRange(teachingEvents.Where(te => !existingTeachingEventIds.Contains(te.Id)));
         }
 
         private void PopulateTeachingEventCoordinates(IEnumerable<TeachingEvent> teachingEvents)
@@ -90,16 +116,6 @@ namespace GetIntoTeachingApi.Services
             {
                 teachingEvent.Building.Coordinate = CoordinateForPostcode(teachingEvent.Building.AddressPostcode);
             }
-        }
-
-        private static double MilesToDegrees(double miles)
-        { 
-            const double metersInAMile = 1609.34;
-            // EarthMeanRadius * PI / 180
-            // (within 1% accuracy to the geodesic distance for the WGS84 ellipsoid).
-            const double metersPerDegree = 111195;
-
-            return (miles * metersInAMile) / metersPerDegree;
         }
 
         private Point CoordinateForPostcode(string postcode)

@@ -36,7 +36,7 @@ namespace GetIntoTeachingApiTests.Services
             var teachingEventNames = DbContext.TeachingEvents.Select(teachingEvent => teachingEvent.Name);
             teachingEventNames.Should().BeEquivalentTo(mockTeachingEvents.Select(teachingEvent => teachingEvent.Name));
 
-            DbContext.TeachingEvents.Count().Should().Be(5);
+            DbContext.TeachingEvents.Count().Should().Be(6);
             DbContext.TeachingEventBuildings.Count().Should().Be(4);
         }
 
@@ -59,7 +59,7 @@ namespace GetIntoTeachingApiTests.Services
             teachingEvents.Where(te => te.Building != null).Select(te => te.Building.AddressLine1).ToList()
                 .ForEach(line1 => line1.Should().Contain("Updated"));
 
-            DbContext.TeachingEvents.Count().Should().Be(5);
+            DbContext.TeachingEvents.Count().Should().Be(6);
             DbContext.TeachingEventBuildings.Count().Should().Be(4);
         }
 
@@ -79,12 +79,32 @@ namespace GetIntoTeachingApiTests.Services
         public void SearchTeachingEvents_WithoutFilters_ReturnsAll()
         {
             SeedMockTeachingEvents();
-            var request = new TeachingEventSearchRequest() {};
+            var request = new TeachingEventSearchRequest() { };
 
             var result = _store.SearchTeachingEvents(request);
 
             result.Select(e => e.Name).Should().BeEquivalentTo(
-                new string[] { "Event 2", "Event 4", "Event 1", "Event 3", "Event 5" },
+                new string[] { "Event 2", "Event 4", "Event 1", "Event 3", "Event 5", "Event 6" },
+                options => options.WithStrictOrdering());
+        }
+
+        [Fact]
+        public void SearchTeachingEvents_WithFilters_ReturnsMatching()
+        {
+            SeedMockTeachingEvents();
+            var request = new TeachingEventSearchRequest()
+            {
+                Postcode = "KY6 2NJ", 
+                Radius = 15, 
+                TypeId = 123, 
+                StartAfter = DateTime.Now, 
+                StartBefore = DateTime.Now.AddDays(3)
+            };
+
+            var result = _store.SearchTeachingEvents(request);
+
+            result.Select(e => e.Name).Should().BeEquivalentTo(
+                new string[] { "Event 2" },
                 options => options.WithStrictOrdering());
         }
 
@@ -108,7 +128,7 @@ namespace GetIntoTeachingApiTests.Services
 
             var result = _store.SearchTeachingEvents(request);
 
-            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 3", "Event 5" },
+            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 3", "Event 5", "Event 6" },
                 options => options.WithStrictOrdering());
         }
 
@@ -128,7 +148,7 @@ namespace GetIntoTeachingApiTests.Services
         public void SearchTeachingEvents_FilteredByRadius_ReturnsMatching()
         {
             SeedMockTeachingEvents();
-            var request = new TeachingEventSearchRequest() { Postcode = "KY6 2NJ", Radius = 50 };
+            var request = new TeachingEventSearchRequest() { Postcode = "KY6 2NJ", Radius = 15 };
 
             var result = _store.SearchTeachingEvents(request);
 
@@ -179,7 +199,8 @@ namespace GetIntoTeachingApiTests.Services
 
         private static IEnumerable<TeachingEvent> MockTeachingEvents()
         {
-            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: DbConfiguration.Srid);
+            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: DbConfiguration.Wgs84Srid);
+            var sharedBuildingId = Guid.NewGuid();
 
             var event1 = new TeachingEvent()
             {
@@ -188,7 +209,7 @@ namespace GetIntoTeachingApiTests.Services
                 StartAt = DateTime.Now.AddDays(5),
                 Building = new TeachingEventBuilding()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = sharedBuildingId,
                     AddressLine1 = "Line 1"
                 }
             };
@@ -244,15 +265,29 @@ namespace GetIntoTeachingApiTests.Services
                 StartAt = DateTime.Now.AddDays(15),
             };
 
-            return new TeachingEvent[] {event1, event2, event3, event4, event5};
+            var event6 = new TeachingEvent()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Event 6",
+                StartAt = DateTime.Now.AddDays(60),
+                Building = new TeachingEventBuilding()
+                {
+                    Id = sharedBuildingId,
+                    AddressLine1 = "Line 1"
+                }
+            };
+
+            return new TeachingEvent[] { event1, event2, event3, event4, event5, event6 };
         }
 
         private IEnumerable<TeachingEvent> SeedMockTeachingEvents()
         {
             var teachingEvents = MockTeachingEvents().ToList();
+            var mockCrm = new Mock<ICrmService>();
 
-            DbContext.AddRange(teachingEvents);
-            DbContext.SaveChanges();
+            mockCrm.Setup(m => m.GetTeachingEvents()).Returns(teachingEvents);
+            
+            _store.Sync(mockCrm.Object);
 
             return teachingEvents;
         }

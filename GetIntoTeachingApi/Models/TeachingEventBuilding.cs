@@ -21,6 +21,7 @@ namespace GetIntoTeachingApi.Models
         public string AddressState { get; set; }
         [EntityField(Name = "msevtmgt_postalcode")]
         public string AddressPostcode { get; set; }
+        [Column(TypeName = "geography")]
         public Point Coordinate { get; set; }
 
         public TeachingEventBuilding() : base() { }
