@@ -33,7 +33,7 @@ variable "paas_api_application_name" {
 }
 
 variable "paas_api_docker_image" {
-   default = "dfedigital/get-into-teaching-api:GITPB-149"
+   default = "dfedigital/get-into-teaching-api:latest"
 }
 
 variable "paas_api_route_name" {
