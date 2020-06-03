@@ -78,7 +78,7 @@ jobs:
              cd terraform/paas && pwd
              terraform plan -var-file=test.env.tfvars -out plan
          env:
-             TF_VAR_api_docker_image: ${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
+             TF_VAR_paas_api_docker_image: ${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
    
        - name: Terraform Apply
          run: |
