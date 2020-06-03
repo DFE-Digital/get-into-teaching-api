@@ -101,3 +101,10 @@ The Hangfire web dashboard can be accessed at `/hangfire` in development.
 We run Entity Framework Core in order to persist some models/data to a Postgres database. Currently this is being used to store and query the UK postcode geolocation information that is used when searching for events within a given radius of another postcode.
 
 Migrations are applied from code when the application starts (see `DbConfiguration.cs`). You can add a migration by modifying the models and running `dotnet ef migrations add MyNewMigration`.
+
+### Deployment
+
+Deployment is via Terraform and the key will be stored in Azure.
+
+
+
