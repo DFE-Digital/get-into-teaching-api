@@ -13,13 +13,13 @@ namespace GetIntoTeachingApiTests.Models.Validators
     {
         private readonly TeachingEventSearchRequestValidator _validator;
         private readonly Mock<ICrmService> _mockCrm;
-        private readonly Mock<ILocationService> _mockLocationService;
+        private readonly Mock<IStore> _mockStore;
 
         public TeachingEventSearchRequestValidatorTests()
         {
             _mockCrm = new Mock<ICrmService>();
-            _mockLocationService = new Mock<ILocationService>();
-            _validator = new TeachingEventSearchRequestValidator(_mockCrm.Object, _mockLocationService.Object);
+            _mockStore = new Mock<IStore>();
+            _validator = new TeachingEventSearchRequestValidator(_mockCrm.Object, _mockStore.Object);
         }
 
         [Fact]
@@ -31,7 +31,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 .Setup(mock => mock.GetPickListItems("msevtmgt_event", "dfe_event_type"))
                 .Returns(new[] { mockType });
 
-            _mockLocationService.Setup(mock => mock.IsValid("KY11 9HF")).Returns(true);
+            _mockStore.Setup(mock => mock.IsValidPostcode("KY11 9HF")).Returns(true);
 
             var request = new TeachingEventSearchRequest()
             {

@@ -15,16 +15,14 @@ namespace GetIntoTeachingApi.Services
 
         private readonly IOrganizationServiceAdapter _service;
         private readonly ICrmCache _cache;
-        private readonly ILocationService _locationService;
         private const int CacheDurationInHours = 3;
         private const int MaximumNumberOfCandidatesToMatch = 20;
         private const int MaximumNumberOfPrivacyPolicies = 3;
 
-        public CrmService(IOrganizationServiceAdapter service, ICrmCache cache, ILocationService locationService)
+        public CrmService(IOrganizationServiceAdapter service, ICrmCache cache)
         {
             _service = service;
             _cache = cache;
-            _locationService = locationService;
         }
 
         public IEnumerable<TypeEntity> GetLookupItems(string entityName)
@@ -58,26 +56,6 @@ namespace GetIntoTeachingApi.Services
                     .Select((entity) => new PrivacyPolicy(entity, this))
                     .Take(MaximumNumberOfPrivacyPolicies);
             });
-        }
-
-        public IEnumerable<TeachingEvent> GetUpcomingTeachingEvents(int limit)
-        {
-            return GetTeachingEvents()
-                .Where((teachingEvent) => teachingEvent.StartAt > DateTime.Now)
-                .OrderBy(teachingEvent => teachingEvent.StartAt)
-                .Take(limit);
-        }
-
-        public IEnumerable<TeachingEvent> SearchTeachingEvents(TeachingEventSearchRequest request)
-        {
-            return GetTeachingEvents()
-                .Where((teachingEvent) => request.Match(teachingEvent, _locationService))
-                .OrderBy(teachingEvent => teachingEvent.StartAt);
-        }
-
-        public TeachingEvent GetTeachingEvent(Guid id)
-        {
-            return GetTeachingEvents().FirstOrDefault(teachingEvent => teachingEvent.Id == id);
         }
 
         public Candidate GetCandidate(ExistingCandidateRequest request)
@@ -155,24 +133,21 @@ namespace GetIntoTeachingApi.Services
             model.Id = entity.Id;
         }
 
-        private IEnumerable<TeachingEvent> GetTeachingEvents()
+        public IEnumerable<TeachingEvent> GetTeachingEvents()
         {
-            return _cache.GetOrCreate("msevtmgt_event", CacheExpiry(), () =>
-            {
-                var query = new QueryExpression("msevtmgt_event");
-                query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(TeachingEvent)));
+            var query = new QueryExpression("msevtmgt_event");
+            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(TeachingEvent)));
 
-                var link = query.AddLink("msevtmgt_building", "msevtmgt_building", "msevtmgt_buildingid", JoinOperator.LeftOuter);
-                link.Columns.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(TeachingEventBuilding)));
-                link.EntityAlias = "msevtmgt_event_building";
+            var link = query.AddLink("msevtmgt_building", "msevtmgt_building", "msevtmgt_buildingid", JoinOperator.LeftOuter);
+            link.Columns.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(TeachingEventBuilding)));
+            link.EntityAlias = "msevtmgt_event_building";
 
-                var entities = _service.RetrieveMultiple(ConnectionString(), query);
+            var entities = _service.RetrieveMultiple(ConnectionString(), query);
 
-                return entities.Select((entity) => new TeachingEvent(entity, this)).ToList();
-            });
+            return entities.Select((entity) => new TeachingEvent(entity, this)).ToList();
         }
 
-        private DateTime CacheExpiry()
+        private static DateTime CacheExpiry()
         {
             return DateTime.Now.AddHours(CacheDurationInHours);
         }
