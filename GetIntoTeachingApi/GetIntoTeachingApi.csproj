@@ -13,9 +13,16 @@
 		<PackageReference Include="Hangfire.MemoryStorage" Version="1.7.0" />
 		<PackageReference Include="Hangfire.PostgreSql" Version="1.6.4.2" />
 		<PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="3.1.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.4">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.4" />
 		<PackageReference Include="Microsoft.Powerplatform.Cds.Client" Version="0.2.1-Alpha" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
 		<PackageReference Include="Notify" Version="2.7.0" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.4" />
 		<PackageReference Include="Otp.NET" Version="1.2.2" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="5.4.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="5.4.1" />

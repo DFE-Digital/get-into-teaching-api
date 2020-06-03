@@ -43,17 +43,19 @@ CRM_CLIENT_SECRET=****
 NOTIFY_API_KEY=****
 ```
 
-The Postgres connection is setup in `appsettings.json` and not used in development (it is replaced by in-memory alternatives by default). If you want to connect to a Postgres instance running in PaaS, such as the test environment instance, you can do so by creating a conduit to it using Cloud Foundry:
+The Postgres connections (for Hangfire and our database) are setup in `appsettings.json` and not used in development (they are replaced by in-memory alternatives by default). If you want to connect to a Postgres instance running in PaaS, such as the test environment instance, you can do so by creating a conduit to it using Cloud Foundry:
 
 ```
 cf conduit get-into-teaching-api-dev-pg-svc
 ```
 
-You then need to replace the connection string to include the username/password for your conduit session and point it to localhost:
+You then need to add a connection string containing the details for your conduit session and point it to localhost:
 
 ```
 Server=127.0.0.1;SSL Mode=Require;Trust Server Certificate=true;Port=7080;Database=rdsbroker_277c8858_eb3a_427b_99ed_0f4f4171701e;User Id=******;Password=******;
 ```
+
+Finally, update `Startup.cs` to use your connection string instead of the builder in `DbConfiguration.cs`.
 
 ### Documentation
 
@@ -94,7 +96,15 @@ We send emails using the [GOV.UK Notify](https://www.notifications.service.gov.u
 
 The Hangfire web dashboard can be accessed at `/hangfire` in development.
 
+### Database
+
+We run Entity Framework Core in order to persist some models/data to a Postgres database. Currently this is being used to store and query the UK postcode geolocation information that is used when searching for events within a given radius of another postcode.
+
+Migrations are applied from code when the application starts (see `DbConfiguration.cs`). You can add a migration by modifying the models and running `dotnet ef migrations add MyNewMigration`.
 
 ### Deployment
 
 Deployment is via Terraform and the key will be stored in Azure.
+
+
+

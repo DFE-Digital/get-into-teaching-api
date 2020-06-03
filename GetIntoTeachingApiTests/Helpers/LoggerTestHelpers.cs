@@ -2,7 +2,7 @@
 using Moq;
 using System;
 
-namespace GetIntoTeachingApiTests.Utils
+namespace GetIntoTeachingApiTests.Helpers
 {
     public static class LoggerTestHelpers
     {

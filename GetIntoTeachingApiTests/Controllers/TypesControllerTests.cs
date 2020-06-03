@@ -1,5 +1,5 @@
 ﻿using GetIntoTeachingApi.Controllers;
-using GetIntoTeachingApiTests.Utils;
+using GetIntoTeachingApiTests.Helpers;
 ﻿using FluentAssertions;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;

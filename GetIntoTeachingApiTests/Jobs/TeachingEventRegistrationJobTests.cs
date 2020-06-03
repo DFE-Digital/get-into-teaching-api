@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
+﻿using System;
+using System.Collections.Generic;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
@@ -14,7 +14,8 @@ namespace GetIntoTeachingApiTests.Jobs
         private readonly Mock<IPerformContextAdapter> _mockContext;
         private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<INotifyService> _mockNotifyService;
-        private readonly TeachingEventRegistration _registration;
+        private readonly ExistingCandidateRequest _attendee;
+        private readonly Guid _teachingEventId;
         private readonly TeachingEventRegistrationJob _job;
 
         public TeachingEventRegistrationJobTests()
@@ -22,18 +23,38 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockContext = new Mock<IPerformContextAdapter>();
             _mockCrm = new Mock<ICrmService>();
             _mockNotifyService = new Mock<INotifyService>();
-            _registration = new TeachingEventRegistration() { CandidateEmail = "test@test.com" };
+            _teachingEventId = Guid.NewGuid();
+            _attendee = new ExistingCandidateRequest() { Email = "test@test.com", FirstName = "first", LastName = "last" };
             _job = new TeachingEventRegistrationJob(_mockCrm.Object, _mockNotifyService.Object, _mockContext.Object);
         }
 
         [Fact]
-        public void Run_OnSuccess_SavesCandidate()
+        public void Run_OnSuccessWithExistingCandidate_SavesRegistration()
         {
+            var candidate = new Candidate() { Id = Guid.NewGuid() };
+            _mockCrm.Setup(m => m.GetCandidate(_attendee)).Returns(candidate);
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
 
-            _job.Run(_registration, null);
+            _job.Run(_attendee, _teachingEventId, null);
 
-            _mockCrm.Verify(mock => mock.Save(_registration), Times.Once);
+            _mockCrm.Verify(mock => mock.Save(It.Is<TeachingEventRegistration>(r =>
+                r.EventId == _teachingEventId &&
+                r.CandidateId == candidate.Id)), Times.Once);
+        }
+
+        [Fact]
+        public void Run_OnSuccessWithNewCandidate_SavesRegistration()
+        {
+            var candidateId = Guid.NewGuid();
+            _mockCrm.Setup(m => m.GetCandidate(_attendee)).Returns<Candidate>(null);
+            _mockCrm.Setup(m => m.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
+            _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
+
+            _job.Run(_attendee, _teachingEventId, null);
+
+            _mockCrm.Verify(mock => mock.Save(It.Is<TeachingEventRegistration>(r => 
+                r.EventId == _teachingEventId && 
+                r.CandidateId == candidateId)), Times.Once);
         }
 
         [Fact]
@@ -41,10 +62,10 @@ namespace GetIntoTeachingApiTests.Jobs
         {
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(JobConfiguration.Attempts);
 
-            _job.Run(_registration, null);
+            _job.Run(_attendee, _teachingEventId, null);
 
-            _mockCrm.Verify(mock => mock.Save(_registration), Times.Never);
-            _mockNotifyService.Verify(mock => mock.SendEmail(_registration.CandidateEmail,
+            _mockCrm.Verify(mock => mock.Save(It.IsAny<TeachingEventRegistration>()), Times.Never);
+            _mockNotifyService.Verify(mock => mock.SendEmail(_attendee.Email,
                 NotifyService.TeachingEventRegistrationFailedTemplateId, It.IsAny<Dictionary<string, dynamic>>()));
         }
     }
