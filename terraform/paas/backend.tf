@@ -4,6 +4,5 @@ terraform {
     storage_account_name = "s146t01sgtfstate"
     container_name       = "pass-tfstate"
     key                  = "api.test.terraform.tfstate"
-    access_key           = var.tf_state_key 
   }
 }
