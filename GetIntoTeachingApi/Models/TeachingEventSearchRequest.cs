@@ -17,7 +17,7 @@ namespace GetIntoTeachingApi.Models
         [SwaggerSchema("Set to filter results to those that start before a given date.")]
         public DateTime? StartBefore { get; set; }
 
-        public bool Match(TeachingEvent teachingEvent, IPostcodeService postcodeService)
+        public bool Match(TeachingEvent teachingEvent, ILocationService locationService)
         {
             if (TypeId != null && TypeId != teachingEvent.TypeId)
                 return false;
@@ -28,8 +28,14 @@ namespace GetIntoTeachingApi.Models
             if (StartBefore != null && StartBefore < teachingEvent.StartAt)
                 return false;
 
-            if (Radius != null && Radius < postcodeService.DistanceBetween(Postcode, teachingEvent.Building.AddressPostcode)) 
-              return false;
+            if (Radius != null)
+            {
+                if (teachingEvent.Building?.AddressPostcode == null)
+                    return false;
+
+                if(Radius < locationService.DistanceBetween(Postcode, teachingEvent.Building.AddressPostcode))
+                    return false;
+            }
 
             return true;
         }

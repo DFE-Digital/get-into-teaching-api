@@ -106,19 +106,11 @@ maximum of 50 using the `limit` query parameter.",
                 return BadRequest(this.ModelState);
 
             var teachingEvent = _crm.GetTeachingEvent(id);
-            var candidate = _crm.GetCandidate(attendee);
 
-            if (teachingEvent == null || candidate == null)
+            if (teachingEvent == null)
                 return NotFound();
 
-            var registration = new TeachingEventRegistration()
-            {
-                CandidateId = (Guid) candidate.Id, 
-                EventId = (Guid) teachingEvent.Id,
-                CandidateEmail = candidate.Email
-            };
-
-            _jobClient.Enqueue<TeachingEventRegistrationJob>((x) => x.Run(registration, null));
+            _jobClient.Enqueue<TeachingEventRegistrationJob>((x) => x.Run(attendee, id, null));
 
             return NoContent();
         }

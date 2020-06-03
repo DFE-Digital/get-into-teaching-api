@@ -9,13 +9,13 @@ namespace GetIntoTeachingApi.Models.Validators
     {
         private readonly ICrmService _crm;
 
-        public TeachingEventSearchRequestValidator(ICrmService crm, IPostcodeService postcodeService)
+        public TeachingEventSearchRequestValidator(ICrmService crm, ILocationService locationService)
         {
             _crm = crm;
 
             RuleFor(request => request.Postcode)
                 .NotEmpty()
-                .Must(postcodeService.IsValid)
+                .Must(locationService.IsValid)
                 .WithMessage("Must be a valid postcode.");
             RuleFor(request => request.TypeId)
                 .Must(id => TypeIds().Contains(id))

@@ -83,5 +83,22 @@ namespace GetIntoTeachingApiTests.Models
 
             mockService.Verify(m => m.NewEntity("dfe_candidateprivacypolicy", context), Times.Never);
         }
+
+        [Fact]
+        public void ToEntity_WhenPrivacyPolicyIsNull_DoesNotCreatePrivacyPolicyEntity()
+        {
+            var mockService = new Mock<IOrganizationServiceAdapter>();
+            var context = mockService.Object.Context("mock-connection-string");
+            var mockCrm = new Mock<ICrmService>();
+            var candidate = new Candidate()  { Id = Guid.NewGuid(), PrivacyPolicy = null };
+            mockService.Setup(m => m.BlankExistingEntity("candidate", (Guid)candidate.Id, context))
+                .Returns(new Entity("contact"));
+
+            candidate.ToEntity(mockCrm.Object, context);
+
+            mockCrm.Verify(m => m.CandidateYetToAcceptPrivacyPolicy(
+                It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
+            mockService.Verify(m => m.NewEntity("dfe_candidateprivacypolicy", context), Times.Never);
+        }
     }
 }
