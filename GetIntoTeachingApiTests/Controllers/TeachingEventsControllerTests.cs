@@ -18,16 +18,17 @@ namespace GetIntoTeachingApiTests.Controllers
 {
     public class TeachingEventsControllerTests
     {
-        private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
+        private readonly Mock<IStore> _mockStore;
         private readonly TeachingEventsController _controller;
 
         public TeachingEventsControllerTests()
         {
             var mockLogger = new Mock<ILogger<TeachingEventsController>>();
-            _mockCrm = new Mock<ICrmService>();
+            _mockStore = new Mock<IStore>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
-            _controller = new TeachingEventsController(mockLogger.Object, _mockCrm.Object, _mockJobClient.Object);
+            _controller = new TeachingEventsController(mockLogger.Object, 
+                _mockStore.Object, _mockJobClient.Object);
         }
 
         [Fact]
@@ -54,7 +55,7 @@ namespace GetIntoTeachingApiTests.Controllers
         {
             var attendee = new ExistingCandidateRequest() { FirstName = null };
             var teachingEventId = Guid.NewGuid();
-            _mockCrm.Setup(mock => mock.GetTeachingEvent(teachingEventId)).Returns<TeachingEvent>(null);
+            _mockStore.Setup(mock => mock.GetTeachingEvent(teachingEventId)).Returns<TeachingEvent>(null);
 
             var response = _controller.AddAttendee(teachingEventId, attendee);
 
@@ -66,7 +67,7 @@ namespace GetIntoTeachingApiTests.Controllers
         {
             var attendee = new ExistingCandidateRequest() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
             var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
-            _mockCrm.Setup(mock => mock.GetTeachingEvent((Guid)teachingEvent.Id)).Returns(teachingEvent);
+            _mockStore.Setup(mock => mock.GetTeachingEvent((Guid)teachingEvent.Id)).Returns(teachingEvent);
 
             var response = _controller.AddAttendee((Guid)teachingEvent.Id, attendee);
 
@@ -96,7 +97,7 @@ namespace GetIntoTeachingApiTests.Controllers
         {
             var request = new TeachingEventSearchRequest() {Postcode = "KY12 8FG"};
             var mockEvents = MockEvents();
-            _mockCrm.Setup(mock => mock.SearchTeachingEvents(request)).Returns(mockEvents);
+            _mockStore.Setup(mock => mock.SearchTeachingEvents(request)).Returns(mockEvents);
 
             var response = _controller.Search(request);
 
@@ -116,7 +117,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void GetUpcoming_ReturnsUpcomingTeachingEvents()
         {
             var mockEvents = MockEvents();
-            _mockCrm.Setup(mock => mock.GetUpcomingTeachingEvents(3)).Returns(mockEvents);
+            _mockStore.Setup(mock => mock.GetUpcomingTeachingEvents(3)).Returns(mockEvents);
 
             var response = _controller.GetUpcoming(3);
 
@@ -128,7 +129,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void Get_ReturnsTeachingEvents()
         {
             var teachingEvent = new TeachingEvent() {Id = Guid.NewGuid()};
-            _mockCrm.Setup(mock => mock.GetTeachingEvent((Guid)teachingEvent.Id)).Returns(teachingEvent);
+            _mockStore.Setup(mock => mock.GetTeachingEvent((Guid)teachingEvent.Id)).Returns(teachingEvent);
 
             var response = _controller.Get((Guid)teachingEvent.Id);
 
@@ -139,7 +140,7 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void Get_WithMissingEvent_ReturnsNotFound()
         {
-            _mockCrm.Setup(mock => mock.GetTeachingEvent(It.IsAny<Guid>())).Returns<TeachingEvent>(null);
+            _mockStore.Setup(mock => mock.GetTeachingEvent(It.IsAny<Guid>())).Returns<TeachingEvent>(null);
 
             var response = _controller.Get(Guid.NewGuid());
 

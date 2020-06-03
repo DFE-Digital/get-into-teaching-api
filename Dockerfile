@@ -3,6 +3,11 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /source
 ENV ASPNETCORE_URLS=http://+:8080
 
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+	libsqlite3-mod-spatialite \
+&& rm -rf /var/lib/apt/lists/*
+
 # copy csproj and restore as distinct layers
 COPY *.sln .
 COPY GetIntoTeachingApi/*.csproj ./GetIntoTeachingApi/

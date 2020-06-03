@@ -3,14 +3,16 @@ using System;
 using GetIntoTeachingApi.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GetIntoTeachingApi.Migrations
 {
     [DbContext(typeof(GetIntoTeachingDbContext))]
-    partial class GetIntoTeachingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200601135511_DisableDatabaseGeneratedIds")]
+    partial class DisableDatabaseGeneratedIds
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

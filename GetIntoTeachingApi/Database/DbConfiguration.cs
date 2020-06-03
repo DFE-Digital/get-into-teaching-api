@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using CsvHelper;
-using GetIntoTeachingApi.Models;
-using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Npgsql;
+using Location = GetIntoTeachingApi.Models.Location;
 
 namespace GetIntoTeachingApi.Database
 {
     public class DbConfiguration
     {
+        public const int Wgs84Srid = 4326;
+        public const int UkSrid = 27700;
         private const int BufferFlushInterval = 1000;
         private readonly GetIntoTeachingDbContext _dbContext;
 
@@ -30,8 +31,13 @@ namespace GetIntoTeachingApi.Database
         public static string HangfireConnectionString() => GenerateConnectionString("get-into-teaching-api-dev-pg-svc");
 
         public void Configure()
-        { 
-            _dbContext.Database.Migrate();
+        {
+            var migrationsAreSupported = _dbContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.Sqlite";
+
+            if (migrationsAreSupported)
+                _dbContext.Database.Migrate();
+            else 
+                _dbContext.Database.EnsureCreated();
 
             SeedLocations();
         }
@@ -51,7 +57,7 @@ namespace GetIntoTeachingApi.Database
             {
                 var location = CreateLocation(csv);
 
-                if (location.IsNonGeographic()) continue;
+                if (location == null) continue;
 
                 buffer.Add(location);
 
@@ -61,13 +67,19 @@ namespace GetIntoTeachingApi.Database
             FlushBuffer(buffer, _dbContext.Locations, true);
         }
 
-        private static Location CreateLocation(CsvReader csv)
+        private static Location CreateLocation(IReaderRow csv)
         {
+            var latitude = csv.GetField<double?>("latitude");
+            var longitude = csv.GetField<double?>("longitude");
+
+            if (latitude == null || longitude == null) return null;
+
+            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: Wgs84Srid);
+
             return new Location()
             {
-                Postcode = LocationService.Sanitize(csv.GetField<string>("postcode")),
-                Latitude = csv.GetField<double?>("latitude"),
-                Longitude = csv.GetField<double?>("longitude")
+                Postcode = Location.SanitizePostcode(csv.GetField<string>("postcode")),
+                Coordinate = geometryFactory.CreatePoint(new Coordinate((double)longitude, (double)latitude))
             };
         }
 
