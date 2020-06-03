@@ -199,7 +199,6 @@ namespace GetIntoTeachingApiTests.Services
 
         private static IEnumerable<TeachingEvent> MockTeachingEvents()
         {
-            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: DbConfiguration.Wgs84Srid);
             var sharedBuildingId = Guid.NewGuid();
 
             var event1 = new TeachingEvent()
@@ -225,7 +224,6 @@ namespace GetIntoTeachingApiTests.Services
                     Id = Guid.NewGuid(),
                     AddressLine1 = "Line 1",
                     AddressPostcode = "KY11 9YU",
-                    Coordinate = geometryFactory.CreatePoint(new Coordinate(-3.3587, 56.02748)),
                 }
             };
 
@@ -239,7 +237,6 @@ namespace GetIntoTeachingApiTests.Services
                     Id = Guid.NewGuid(),
                     AddressLine1 = "Line 1",
                     AddressPostcode = "KY6 2NJ",
-                    Coordinate = geometryFactory.CreatePoint(new Coordinate(-3.178240, 56.182790)),
                 }
             };
 
@@ -254,7 +251,6 @@ namespace GetIntoTeachingApiTests.Services
                     Id = Guid.NewGuid(),
                     AddressLine1 = "Line 1",
                     AddressPostcode = "CA4 8LE",
-                    Coordinate = geometryFactory.CreatePoint(new Coordinate(-2.839040, 54.888770)),
                 }
             };
 
