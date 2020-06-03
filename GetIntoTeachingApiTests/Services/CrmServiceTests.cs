@@ -7,6 +7,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GetIntoTeachingApi.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
@@ -15,39 +16,25 @@ using static Microsoft.PowerPlatform.Cds.Client.CdsServiceClient;
 
 namespace GetIntoTeachingApiTests.Services
 {
-    public class CrmServiceTests : IDisposable
+    public class CrmServiceTests
     {
         private const string ConnectionString = "AuthType=ClientSecret; url=service_url; ClientId=client_id; ClientSecret=client_secret";
         private static readonly Guid JaneDoeGuid = new Guid("bf927e43-5650-44aa-859a-8297139b8ddd");
-        private readonly string _previousCrmServiceUrl;
-        private readonly string _previousCrmClientId;
-        private readonly string _previousCrmClientSecret;
         private readonly Mock<IOrganizationServiceAdapter> _mockService;
         private readonly OrganizationServiceContext _context;
         private readonly ICrmService _crm;
 
         public CrmServiceTests()
         {
-            _previousCrmServiceUrl = Environment.GetEnvironmentVariable("CRM_SERVICE_URL");
-            _previousCrmClientId = Environment.GetEnvironmentVariable("CRM_CLIENT_ID");
-            _previousCrmClientSecret = Environment.GetEnvironmentVariable("CRM_CLIENT_SECRET");
-
-            Environment.SetEnvironmentVariable("CRM_SERVICE_URL", "service_url");
-            Environment.SetEnvironmentVariable("CRM_CLIENT_ID", "client_id");
-            Environment.SetEnvironmentVariable("CRM_CLIENT_SECRET", "client_secret");
-
+            var mockEnv = new Mock<IEnv>();
+            mockEnv.Setup(m => m.CrmServiceUrl).Returns("service_url");
+            mockEnv.Setup(m => m.CrmClientId).Returns("client_id");
+            mockEnv.Setup(m => m.CrmClientSecret).Returns("client_secret");
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _context = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
             _mockService.Setup(mock => mock.Context(ConnectionString)).Returns(_context);
             var cache = new CrmCache(new Mock<ILogger<CrmCache>>().Object);
-            _crm = new CrmService(_mockService.Object, cache);
-        }
-
-        public void Dispose()
-        {
-            Environment.SetEnvironmentVariable("CRM_SERVICE_URL", _previousCrmServiceUrl);
-            Environment.SetEnvironmentVariable("CRM_CLIENT_ID", _previousCrmClientId);
-            Environment.SetEnvironmentVariable("CRM_CLIENT_SECRET", _previousCrmClientSecret);
+            _crm = new CrmService(_mockService.Object, cache, mockEnv.Object);
         }
 
         [Fact]

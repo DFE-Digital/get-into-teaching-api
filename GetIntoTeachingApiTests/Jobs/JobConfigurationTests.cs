@@ -5,20 +5,8 @@ using Xunit;
 
 namespace GetIntoTeachingApiTests.Jobs
 {
-    public class JobConfigurationTests : IDisposable
+    public class JobConfigurationTests
     {
-        private static string _previousEnvironment;
-
-        public JobConfigurationTests()
-        {
-            _previousEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        }
-
-        public void Dispose()
-        {  
-            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", _previousEnvironment);
-        }
-
         [Theory]
         [InlineData("Development", 5)]
         [InlineData("Production", 24)]

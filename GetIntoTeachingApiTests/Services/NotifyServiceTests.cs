@@ -5,13 +5,13 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
+using GetIntoTeachingApi.Utils;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Services
 {
-    public class NotifyServiceTests : IDisposable
+    public class NotifyServiceTests
     {
-        private readonly string _previousNotifyApiKey;
         private readonly Mock<INotificationClientAdapter> _mockNotificationClient;
         private readonly Mock<ILogger<NotifyService>> _mockLogger;
         private readonly NotifyService _service;
@@ -19,18 +19,12 @@ namespace GetIntoTeachingApiTests.Services
 
         public NotifyServiceTests()
         {
-            _previousNotifyApiKey = Environment.GetEnvironmentVariable("NOTIFY_API_KEY");
-            Environment.SetEnvironmentVariable("NOTIFY_API_KEY", "api_key");
-
+            var mockEnv = new Mock<IEnv>();
+            mockEnv.Setup(m => m.NotifyApiKey).Returns("api_key");
             _mockNotificationClient = new Mock<INotificationClientAdapter>();
             _mockLogger = new Mock<ILogger<NotifyService>>();
-            _service = new NotifyService(_mockLogger.Object, _mockNotificationClient.Object);
+            _service = new NotifyService(_mockLogger.Object, _mockNotificationClient.Object, mockEnv.Object);
             _personalisation = new Dictionary<string, dynamic> { { "pin_code", "123456" } };
-        }
-
-        public void Dispose()
-        {
-            Environment.SetEnvironmentVariable("NOTIFY_API_KEY", _previousNotifyApiKey);
         }
 
         [Fact]

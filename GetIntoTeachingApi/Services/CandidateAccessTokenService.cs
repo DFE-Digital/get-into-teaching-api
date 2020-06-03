@@ -2,6 +2,7 @@
 using OtpNet;
 using System;
 using System.Text;
+using GetIntoTeachingApi.Utils;
 
 namespace GetIntoTeachingApi.Services
 {
@@ -12,6 +13,12 @@ namespace GetIntoTeachingApi.Services
         public static readonly int VerificationWindow = 2;
         public static readonly int StepInSeconds = 30;
         private static readonly int Length = 6;
+        private readonly IEnv _env;
+
+        public CandidateAccessTokenService(IEnv env)
+        {
+            _env = env;
+        }
 
         public string GenerateToken(ExistingCandidateRequest request)
         {
@@ -51,9 +58,6 @@ namespace GetIntoTeachingApi.Services
             return Encoding.ASCII.GetBytes(slug + TotpSecretKey());
         }
 
-        private string TotpSecretKey()
-        {
-            return Environment.GetEnvironmentVariable("TOTP_SECRET_KEY");
-        }
+        private string TotpSecretKey() => _env.TotpSecretKey;
     }
 }
