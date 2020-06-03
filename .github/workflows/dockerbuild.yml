@@ -15,6 +15,7 @@ env:
   TF_VAR_SHARED_SECRET:     "${{ secrets.SHARED_SECRET       }}"
   TF_VAR_NOTIFY_API_KEY:    "${{ secrets.NOTIFY_API_KEY      }}"
   TF_VAR_TOTP_SECRET_KEY:   "${{ secrets.TOTP_SECRET_KEY     }}"
+  TF_VAR_TF_STATE_KEY:      "${{ secrets.TF_STATE_KEY        }}"
 
 jobs:
   build_docker:
@@ -58,15 +59,6 @@ jobs:
        - name: Setup Terraform
          uses: hashicorp/setup-terraform@v1
    
-       - name: Download the terraform state
-         uses: actions/download-artifact@v2
-         with:
-            name: terraform/paas/terraform.tfstate
-   
-       - name: No terraform state
-         run: "echo ::warning::No Terraform State"
-         if: ${{ failure() }}
-   
        - name: Install Terraform CloudFoundry Provider
          run: |
              wget https://github.com/cloudfoundry-community/terraform-provider-cf/releases/download/v0.12.2/terraform-provider-cloudfoundry_linux_amd64
@@ -92,9 +84,4 @@ jobs:
          run: |
              cd terraform/paas && pwd
              terraform apply -auto-approve plan
-   
-       - name: uppload the terraform state
-         uses: actions/upload-artifact@v2
-         with:
-            name: terraform/paas/terraform.tfstate
    

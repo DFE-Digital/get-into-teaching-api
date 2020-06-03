@@ -1,6 +1,8 @@
 # These settings are for the sandbox and should mainly be overriden by TF_VARS 
 # or set with environment variables TF_VAR_xxxx
 
+variable tf_state_key {}
+
 variable user {
     default = "get-into-teaching-tech@digital.education.gov.uk"
 }
