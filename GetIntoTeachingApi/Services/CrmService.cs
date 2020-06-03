@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Utils;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
@@ -15,14 +16,16 @@ namespace GetIntoTeachingApi.Services
 
         private readonly IOrganizationServiceAdapter _service;
         private readonly ICrmCache _cache;
+        private readonly IEnv _env;
         private const int CacheDurationInHours = 3;
         private const int MaximumNumberOfCandidatesToMatch = 20;
         private const int MaximumNumberOfPrivacyPolicies = 3;
 
-        public CrmService(IOrganizationServiceAdapter service, ICrmCache cache)
+        public CrmService(IOrganizationServiceAdapter service, ICrmCache cache, IEnv env)
         {
             _service = service;
             _cache = cache;
+            _env = env;
         }
 
         public IEnumerable<TypeEntity> GetLookupItems(string entityName)
@@ -149,11 +152,11 @@ namespace GetIntoTeachingApi.Services
             return _service.Context(ConnectionString());
         }
 
-        private static string ConnectionString()
+        private string ConnectionString()
         {
-            var instanceUrl = Environment.GetEnvironmentVariable("CRM_SERVICE_URL");
-            var clientId = Environment.GetEnvironmentVariable("CRM_CLIENT_ID");
-            var clientSecret = Environment.GetEnvironmentVariable("CRM_CLIENT_SECRET");
+            var instanceUrl = _env.CrmServiceUrl;
+            var clientId = _env.CrmClientId;
+            var clientSecret = _env.CrmClientSecret;
             return $"AuthType=ClientSecret; url={instanceUrl}; ClientId={clientId}; ClientSecret={clientSecret}";
         }
     }

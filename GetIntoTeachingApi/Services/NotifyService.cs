@@ -1,8 +1,8 @@
 ﻿using GetIntoTeachingApi.Adapters;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GetIntoTeachingApi.Utils;
 
 namespace GetIntoTeachingApi.Services
 {
@@ -13,11 +13,13 @@ namespace GetIntoTeachingApi.Services
         public static readonly string TeachingEventRegistrationFailedTemplateId = "b4084e28-60a6-417d-bd66-42112bd7ad09";
         private readonly ILogger<NotifyService> _logger;
         private readonly INotificationClientAdapter _client;
+        private readonly IEnv _env;
 
-        public NotifyService(ILogger<NotifyService> logger, INotificationClientAdapter client)
+        public NotifyService(ILogger<NotifyService> logger, INotificationClientAdapter client, IEnv env)
         {
             _logger = logger;
             _client = client;
+            _env = env;
         }
 
         public void SendEmail(string email, string templateId, Dictionary<string, dynamic> personalisation)
@@ -31,9 +33,6 @@ namespace GetIntoTeachingApi.Services
                 TaskContinuationOptions.OnlyOnFaulted);
         }
 
-        private static string ApiKey()
-        {
-            return Environment.GetEnvironmentVariable("NOTIFY_API_KEY");
-        }
+        private string ApiKey() => _env.NotifyApiKey;
     }
 }

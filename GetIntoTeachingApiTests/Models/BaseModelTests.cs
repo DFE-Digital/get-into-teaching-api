@@ -9,6 +9,7 @@ using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Moq;
@@ -54,7 +55,8 @@ namespace GetIntoTeachingApiTests.Models
             _mockService = new Mock<IOrganizationServiceAdapter>();
             var mockCrmCache = new Mock<ICrmCache>();
             _context = _mockService.Object.Context("mock-connection-string");
-            _crm = new CrmService(_mockService.Object, mockCrmCache.Object);
+            var mockEnv = new Mock<IEnv>();
+            _crm = new CrmService(_mockService.Object, mockCrmCache.Object, mockEnv.Object);
         }
 
         [Fact]
