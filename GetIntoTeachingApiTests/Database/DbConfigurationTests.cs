@@ -12,6 +12,8 @@ namespace GetIntoTeachingApiTests.Database
         {
             using StreamReader reader = new StreamReader("./Fixtures/vcap_services.json");
             var json = reader.ReadToEnd();
+            Environment.SetEnvironmentVariable("DATABASE_INSTANCE_NAME", "get-into-teaching-api-dev-pg-svc-2");
+            Environment.SetEnvironmentVariable("HANGFIRE_INSTANCE_NAME", "get-into-teaching-api-dev-pg-svc");
             Environment.SetEnvironmentVariable("VCAP_SERVICES", json);
         }
 
