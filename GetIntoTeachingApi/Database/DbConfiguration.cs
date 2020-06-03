@@ -26,9 +26,9 @@ namespace GetIntoTeachingApi.Database
             _dbContext = dbContext;
         }
 
-        public static string DatabaseConnectionString() => GenerateConnectionString("get-into-teaching-api-dev-pg-svc-2");
+        public static string DatabaseConnectionString() => GenerateConnectionString(Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME"));
 
-        public static string HangfireConnectionString() => GenerateConnectionString("get-into-teaching-api-dev-pg-svc");
+        public static string HangfireConnectionString() => GenerateConnectionString(Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME"));
 
         public void Configure()
         {

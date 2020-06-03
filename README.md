@@ -41,6 +41,10 @@ CRM_CLIENT_SECRET=****
 
 # GOV.UK Notify Service credentials
 NOTIFY_API_KEY=****
+
+# Postgres instance names
+DATABASE_INSTANCE_NAME=****
+HANGFIRE_INSTANCE_NAME=****
 ```
 
 The Postgres connections (for Hangfire and our database) are setup in `appsettings.json` and not used in development (they are replaced by in-memory alternatives by default). If you want to connect to a Postgres instance running in PaaS, such as the test environment instance, you can do so by creating a conduit to it using Cloud Foundry:
