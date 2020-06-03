@@ -1,4 +1,5 @@
-﻿using GetIntoTeachingApi.Adapters;
+﻿using System;
+using GetIntoTeachingApi.Adapters;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -22,9 +23,9 @@ namespace GetIntoTeachingApi.Services
             _env = env;
         }
 
-        public void SendEmail(string email, string templateId, Dictionary<string, dynamic> personalisation)
+        public Task SendEmail(string email, string templateId, Dictionary<string, dynamic> personalisation)
         {
-            _client.SendEmailAsync(
+            return _client.SendEmailAsync(
                 ApiKey(),
                 email,
                 templateId,
