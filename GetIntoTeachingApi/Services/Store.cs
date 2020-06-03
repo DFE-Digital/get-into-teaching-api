@@ -13,8 +13,10 @@ namespace GetIntoTeachingApi.Services
 {
     public class Store : IStore
     {
-        private const double EarthCircumferenceInMeters = 40075.017;
-        private const double ErrorMarginInMeters = 16093.4;
+        private const double EarthCircumferenceInKm = 40075.017;
+        // We get a 16km error when approximating the distance between postcodes for
+        // John O'Groats and Lands End.
+        private const double ErrorMarginInKm = 25;
         private readonly GetIntoTeachingDbContext _dbContext;
 
         public Store(GetIntoTeachingDbContext dbContext)
@@ -55,14 +57,14 @@ namespace GetIntoTeachingApi.Services
                 teachingEvents = teachingEvents.Where(te => te.Building != null && te.Building.Coordinate != null);
 
                 // Approximate distance filtering in the database, with a suitable error margin (treats distance as an arc degree).
-                teachingEvents = teachingEvents.Where(te => EarthCircumferenceInMeters * 
-                    te.Building.Coordinate.Distance(origin) / 360 < request.RadiusInMeters + ErrorMarginInMeters);
+                teachingEvents = teachingEvents.Where(te => EarthCircumferenceInKm * 
+                    te.Building.Coordinate.Distance(origin) / 360 < request.RadiusInKm + ErrorMarginInKm);
 
-                // Project coordinates in-memory for accurate distance filtering.
+                // Project coordinates in-memory for additional, accurate distance filtering.
                 teachingEvents = teachingEvents.ToList().Where(te => 
                     te.Building.Coordinate.ProjectTo(DbConfiguration.UkSrid)
                         .IsWithinDistance(origin.ProjectTo(DbConfiguration.UkSrid), 
-                            (double) request.RadiusInMeters));
+                            (double) request.RadiusInKm * 1000));
             }
 
             return teachingEvents.OrderBy(te => te.StartAt);
