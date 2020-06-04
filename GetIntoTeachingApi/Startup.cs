@@ -42,7 +42,6 @@ namespace GetIntoTeachingApi
             services.AddSingleton<ICandidateAccessTokenService, CandidateAccessTokenService>();
             services.AddScoped<ICrmService, CrmService>();
             services.AddSingleton<INotifyService, NotifyService>();
-            services.AddSingleton<ICrmCache, CrmCache>();
             services.AddScoped<IStore, Store>();
             services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
             services.AddSingleton<IEnv, Env>();
