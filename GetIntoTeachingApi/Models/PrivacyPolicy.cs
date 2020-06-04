@@ -1,4 +1,5 @@
-﻿using GetIntoTeachingApi.Attributes;
+﻿using System;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
 
@@ -9,6 +10,8 @@ namespace GetIntoTeachingApi.Models
     {
         [EntityField(Name = "dfe_details")]
         public string Text { get; set; }
+        [EntityField(Name = "createdon")]
+        public DateTime CreatedAt { get; set; }
 
         public PrivacyPolicy() : base() { }
 

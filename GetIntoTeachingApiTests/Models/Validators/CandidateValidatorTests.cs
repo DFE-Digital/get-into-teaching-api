@@ -18,7 +18,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public CandidateValidatorTests()
         {
             _mockCrm = new Mock<ICrmService>();
-            _validator = new CandidateValidator(_mockCrm.Object);
+            _validator = new CandidateValidator(_mockCrm.Object, new Mock<IStore>().Object);
         }
 
         [Fact]

@@ -12,12 +12,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
     public class CandidatePrivacyPolicyValidatorTests
     {
         private readonly CandidatePrivacyPolicyValidator _validator;
-        private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<IStore> _mockStore;
 
         public CandidatePrivacyPolicyValidatorTests()
         {
-            _mockCrm = new Mock<ICrmService>();
-            _validator = new CandidatePrivacyPolicyValidator(_mockCrm.Object);
+            _mockStore = new Mock<IStore>();
+            _validator = new CandidatePrivacyPolicyValidator(_mockStore.Object);
         }
 
         [Fact]
@@ -25,7 +25,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
 
-            _mockCrm
+            _mockStore
                 .Setup(mock => mock.GetPrivacyPolicies())
                 .Returns(new[] { mockPrivacyPolicy });
 
