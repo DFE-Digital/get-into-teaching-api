@@ -10,7 +10,7 @@ namespace GetIntoTeachingApi.Models.Validators
     {
         private readonly ICrmService _crm;
 
-        public CandidateValidator(ICrmService crm)
+        public CandidateValidator(ICrmService crm, IStore store)
         {
             _crm = crm;
 
@@ -27,7 +27,7 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.AddressPostcode).NotEmpty().MaximumLength(40);
 
             RuleFor(candidate => candidate.PhoneCall).SetValidator(new PhoneCallValidator()).Unless(candidate => candidate.PhoneCall == null);
-            RuleFor(candidate => candidate.PrivacyPolicy).SetValidator(new CandidatePrivacyPolicyValidator(crm)).Unless(candidate => candidate.PrivacyPolicy == null);
+            RuleFor(candidate => candidate.PrivacyPolicy).SetValidator(new CandidatePrivacyPolicyValidator(store)).Unless(candidate => candidate.PrivacyPolicy == null);
             RuleForEach(candidate => candidate.Qualifications).SetValidator(new CandidateQualificationValidator(crm));
             RuleForEach(candidate => candidate.PastTeachingPositions).SetValidator(new CandidatePastTeachingPositionValidator(crm));
 

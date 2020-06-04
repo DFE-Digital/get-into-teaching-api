@@ -8,11 +8,11 @@ namespace GetIntoTeachingApi.Models.Validators
 {
     public class CandidatePrivacyPolicyValidator : AbstractValidator<CandidatePrivacyPolicy>
     {
-        private readonly ICrmService _crm;
+        private readonly IStore _store;
 
-        public CandidatePrivacyPolicyValidator(ICrmService crm)
+        public CandidatePrivacyPolicyValidator(IStore store)
         {
-            _crm = crm;
+            _store = store;
 
             RuleFor(privacyPolicy => privacyPolicy.AcceptedPolicyId)
                 .Must(id => PrivacyPolicyIds().Contains(id))
@@ -21,7 +21,7 @@ namespace GetIntoTeachingApi.Models.Validators
 
         private IEnumerable<Guid?> PrivacyPolicyIds()
         {
-            return _crm.GetPrivacyPolicies().Select(policy => (Guid?)policy.Id);
+            return _store.GetPrivacyPolicies().Select(policy => (Guid?)policy.Id);
         }
     }
 }

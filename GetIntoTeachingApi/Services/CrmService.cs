@@ -38,24 +38,16 @@ namespace GetIntoTeachingApi.Services
                     .Select((pickListItem) => new TypeEntity(pickListItem)));
         }
 
-        public PrivacyPolicy GetLatestPrivacyPolicy()
-        {
-            return GetPrivacyPolicies().FirstOrDefault();
-        }
-
         public IEnumerable<PrivacyPolicy> GetPrivacyPolicies()
         {
-            return _cache.GetOrCreate("dfe_privacypolicy", CacheExpiry(), () => 
-            {
-                return _service.CreateQuery("dfe_privacypolicy", Context())
-                    .Where((entity) =>
-                        entity.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int)PrivacyPolicyType.Web &&
-                        entity.GetAttributeValue<bool>("dfe_active")
-                    )
-                    .OrderByDescending((policy) => policy.GetAttributeValue<DateTime>("createdon"))
-                    .Select((entity) => new PrivacyPolicy(entity, this))
-                    .Take(MaximumNumberOfPrivacyPolicies);
-            });
+            return _service.CreateQuery("dfe_privacypolicy", Context())
+                .Where((entity) =>
+                    entity.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int)PrivacyPolicyType.Web &&
+                    entity.GetAttributeValue<bool>("dfe_active")
+                )
+                .OrderByDescending((policy) => policy.GetAttributeValue<DateTime>("createdon"))
+                .Select((entity) => new PrivacyPolicy(entity, this))
+                .Take(MaximumNumberOfPrivacyPolicies);
         }
 
         public Candidate GetCandidate(ExistingCandidateRequest request)
