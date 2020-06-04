@@ -1,29 +1,26 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using GetIntoTeachingApi.Auth;
+using GetIntoTeachingApi.Utils;
+using Moq;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Auth
 {
-    public class HangfireDashboardAuthorizationFilterTests : IDisposable
+    public class HangfireDashboardAuthorizationFilterTests
     {
-        private readonly HangfireDashboardAuthroizationFilter _filter;
-        private readonly string _previousEnvironment;
+        private readonly HangfireDashboardAuthorizationFilter _filter;
+        private readonly Mock<IEnv> _mockEnv;
 
         public HangfireDashboardAuthorizationFilterTests()
         {
-            _filter = new HangfireDashboardAuthroizationFilter();
-            _previousEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        }
-        public void Dispose()
-        {
-            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", _previousEnvironment);
+            _mockEnv = new Mock<IEnv>();
+            _filter = new HangfireDashboardAuthorizationFilter(_mockEnv.Object);
         }
 
         [Fact]
         public void Authorize_Staging_IsTrue()
         {
-            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Staging");
+            _mockEnv.Setup(m => m.EnvironmentName).Returns("Staging");
 
             _filter.Authorize(null).Should().BeTrue();
         }
@@ -31,7 +28,7 @@ namespace GetIntoTeachingApiTests.Auth
         [Fact]
         public void Authorize_Development_IsTrue()
         {
-            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
+            _mockEnv.Setup(m => m.EnvironmentName).Returns("Development");
 
             _filter.Authorize(null).Should().BeTrue();
         }
@@ -44,7 +41,7 @@ namespace GetIntoTeachingApiTests.Auth
         [InlineData(null)]
         public void Authorize_Other_IsFalse(string environment)
         {
-            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", environment);
+            _mockEnv.Setup(m => m.EnvironmentName).Returns(environment);
 
             _filter.Authorize(null).Should().BeFalse();
         }

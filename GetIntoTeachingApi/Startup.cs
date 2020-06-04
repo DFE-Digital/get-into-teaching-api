@@ -45,6 +45,7 @@ namespace GetIntoTeachingApi
             services.AddSingleton<ICrmCache, CrmCache>();
             services.AddScoped<IStore, Store>();
             services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
+            services.AddSingleton<IEnv, Env>();
             services.AddScoped<DbConfiguration, DbConfiguration>();
 
             if (Env.IsDevelopment)
@@ -65,7 +66,7 @@ namespace GetIntoTeachingApi
             {
                 options.AddPolicy("SharedSecret", policy => 
                     policy.Requirements.Add(
-                        new SharedSecretRequirement(Environment.GetEnvironmentVariable("SHARED_SECRET"))
+                        new SharedSecretRequirement(new Env().SharedSecret)
                     )
                 );
             });
@@ -162,7 +163,7 @@ The GIT API aims to provide:
 
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
-                Authorization = new[] { new HangfireDashboardAuthroizationFilter() }
+                Authorization = new[] { new HangfireDashboardAuthorizationFilter(new Env()) }
             });
 
             app.UseSwagger();

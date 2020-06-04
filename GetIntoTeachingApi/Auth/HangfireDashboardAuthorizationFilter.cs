@@ -1,15 +1,21 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using GetIntoTeachingApi.Utils;
 using Hangfire.Dashboard;
 
 namespace GetIntoTeachingApi.Auth
 {
-    public class HangfireDashboardAuthroizationFilter : IDashboardAuthorizationFilter
+    public class HangfireDashboardAuthorizationFilter : IDashboardAuthorizationFilter
     {
+        private readonly IEnv _env;
+
+        public HangfireDashboardAuthorizationFilter(IEnv env)
+        {
+            _env = env;
+        }
+
         public bool Authorize(DashboardContext context)
         {
-            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            return new[] {"Development", "Staging"}.Contains(environment);
+            return new[] {"Development", "Staging"}.Contains(_env.EnvironmentName);
         }
     }
 }
