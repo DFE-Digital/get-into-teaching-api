@@ -12,14 +12,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
     public class TeachingEventSearchRequestValidatorTests
     {
         private readonly TeachingEventSearchRequestValidator _validator;
-        private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<IStore> _mockStore;
 
         public TeachingEventSearchRequestValidatorTests()
         {
-            _mockCrm = new Mock<ICrmService>();
             _mockStore = new Mock<IStore>();
-            _validator = new TeachingEventSearchRequestValidator(_mockCrm.Object, _mockStore.Object);
+            _validator = new TeachingEventSearchRequestValidator(_mockStore.Object);
         }
 
         [Fact]
@@ -27,7 +25,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var mockType = new TypeEntity { Id = "123" };
 
-            _mockCrm
+            _mockStore
                 .Setup(mock => mock.GetPickListItems("msevtmgt_event", "dfe_event_type"))
                 .Returns(new[] { mockType });
 

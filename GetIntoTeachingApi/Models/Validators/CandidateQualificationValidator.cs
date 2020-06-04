@@ -7,11 +7,11 @@ namespace GetIntoTeachingApi.Models.Validators
 {
     public class CandidateQualificationValidator : AbstractValidator<CandidateQualification>
     {
-        private readonly ICrmService _crm;
+        private readonly IStore _store;
 
-        public CandidateQualificationValidator(ICrmService crm)
+        public CandidateQualificationValidator(IStore store)
         {
-            _crm = crm;
+            _store = store;
 
             RuleFor(qualification => qualification.TypeId)
                 .Must(id => TypeIds().Contains(id.ToString()))
@@ -28,17 +28,17 @@ namespace GetIntoTeachingApi.Models.Validators
 
         private IEnumerable<string> CategoryIds()
         {
-            return _crm.GetPickListItems("dfe_qualification", "dfe_category").Select(category => category.Id);
+            return _store.GetPickListItems("dfe_qualification", "dfe_category").Select(category => category.Id);
         }
 
         private IEnumerable<string> TypeIds()
         {
-            return _crm.GetPickListItems("dfe_qualification", "dfe_type").Select(type => type.Id);
+            return _store.GetPickListItems("dfe_qualification", "dfe_type").Select(type => type.Id);
         }
 
         private IEnumerable<string> StatusIds()
         {
-            return _crm.GetPickListItems("dfe_qualification", "dfe_degreestatus").Select(status => status.Id);
+            return _store.GetPickListItems("dfe_qualification", "dfe_degreestatus").Select(status => status.Id);
         }
     }
 }

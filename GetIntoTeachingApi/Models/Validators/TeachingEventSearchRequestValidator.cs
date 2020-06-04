@@ -7,11 +7,11 @@ namespace GetIntoTeachingApi.Models.Validators
 {
     public class TeachingEventSearchRequestValidator : AbstractValidator<TeachingEventSearchRequest>
     {
-        private readonly ICrmService _crm;
+        private readonly IStore _store;
 
-        public TeachingEventSearchRequestValidator(ICrmService crm, IStore store)
+        public TeachingEventSearchRequestValidator(IStore store)
         {
-            _crm = crm;
+            _store = store;
 
             RuleFor(request => request.Postcode)
                 .NotEmpty()
@@ -35,7 +35,7 @@ namespace GetIntoTeachingApi.Models.Validators
 
         private IEnumerable<string> TypeIds()
         {
-            return _crm.GetPickListItems("msevtmgt_event", "dfe_event_type").Select(type => type.Id);
+            return _store.GetPickListItems("msevtmgt_event", "dfe_event_type").Select(type => type.Id);
         }
     }
 }

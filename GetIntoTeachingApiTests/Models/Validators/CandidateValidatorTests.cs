@@ -13,12 +13,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
     public class CandidateValidatorTests
     {
         private readonly CandidateValidator _validator;
-        private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<IStore> _mockStore;
 
         public CandidateValidatorTests()
         {
-            _mockCrm = new Mock<ICrmService>();
-            _validator = new CandidateValidator(_mockCrm.Object, new Mock<IStore>().Object);
+            _mockStore = new Mock<IStore>();
+            _validator = new CandidateValidator(_mockStore.Object);
         }
 
         [Fact]
@@ -29,16 +29,16 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var mockLocation = NewMock(222);
             var mockInitialTeacherTrainingYear = NewMock(333);
 
-            _mockCrm
+            _mockStore
                 .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
                 .Returns(new[] { mockPreferredTeachingSubject });
-            _mockCrm
+            _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_preferrededucationphase01"))
                 .Returns(new[] { mockPreferredEducationPhase });
-            _mockCrm
+            _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_isinuk"))
                 .Returns(new[] { mockLocation });
-            _mockCrm
+            _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_ittyear"))
                 .Returns(new[] { mockInitialTeacherTrainingYear });
 
