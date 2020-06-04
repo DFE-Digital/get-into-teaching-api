@@ -5,20 +5,8 @@ using Xunit;
 
 namespace GetIntoTeachingApiTests.Utils
 {
-    public class EnvTests : IDisposable
+    public class EnvTests
     {
-        private readonly string _previousEnvironment;
-
-        public EnvTests()
-        {
-            _previousEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        }
-
-        public void Dispose()
-        {
-            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", _previousEnvironment);
-        }
-
         [Theory]
         [InlineData("Development", true)]
         [InlineData("Staging", false)]

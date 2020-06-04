@@ -2,27 +2,21 @@
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using System;
+using GetIntoTeachingApi.Utils;
+using Moq;
 using Xunit;
 
-namespace GetIntoTeachingApiTests.Models.Validators
+namespace GetIntoTeachingApiTests.Services
 {
-    public class CandidateAccessTokenServiceTests : IDisposable
+    public class CandidateAccessTokenServiceTests
     {
         private readonly ICandidateAccessTokenService _service;
-        private readonly string _previousTotpSecretKey;
 
         public CandidateAccessTokenServiceTests()
         {
-            _previousTotpSecretKey = Environment.GetEnvironmentVariable("TOTP_SECRET_KEY");
-
-            Environment.SetEnvironmentVariable("TOTP_SECRET_KEY", "secret_key");
-
-            _service = new CandidateAccessTokenService();
-        }
-
-        public void Dispose()
-        {
-            Environment.SetEnvironmentVariable("TOTP_SECRET_KEY", _previousTotpSecretKey);
+            var mockEnv = new Mock<IEnv>();
+            mockEnv.Setup(m => m.TotpSecretKey).Returns("secret_key");
+            _service = new CandidateAccessTokenService(mockEnv.Object);
         }
 
         [Theory]

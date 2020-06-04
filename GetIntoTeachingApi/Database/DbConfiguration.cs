@@ -105,7 +105,7 @@ namespace GetIntoTeachingApi.Database
 
             logger.LogWarning($"VCAP_SERVICES: {Environment.GetEnvironmentVariable("VCAP_SERVICES")}");
 
-            var vcap = JsonConvert.DeserializeObject<VcapServices>(Environment.GetEnvironmentVariable("VCAP_SERVICES"));
+            var vcap = JsonConvert.DeserializeObject<VcapServices>(new Env().VcapServices);
 
             logger.LogWarning($"VCAP_SERVICES (deserialized): {vcap}");
 

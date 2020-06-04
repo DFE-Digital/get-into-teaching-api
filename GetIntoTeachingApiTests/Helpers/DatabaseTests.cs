@@ -21,6 +21,6 @@ namespace GetIntoTeachingApiTests.Helpers
             new DbConfiguration(DbContext).Configure();
         }
 
-        public void Dispose() => _connection.Close();
+        public void Dispose() => _connection.Dispose();
     }
 }
