@@ -118,18 +118,6 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void GetLatestPrivacyPolicy_ReturnsMostRecentlyCreatedActiveWebPrivacyPolicy()
-        {
-            var queryablePrivacyPolicies = MockPrivacyPolicies();
-            _mockService.Setup(mock => mock.CreateQuery("dfe_privacypolicy", _context))
-                .Returns(queryablePrivacyPolicies);
-
-            var result = _crm.GetLatestPrivacyPolicy();
-
-            result.Text.Should().Be("Latest Active Web");
-        }
-
-        [Fact]
         public void GetPrivacyPolicies_Returns3MostRecentActiveWebPrivacyPolicies()
         {
             var queryablePrivacyPolicies = MockPrivacyPolicies();
@@ -141,20 +129,6 @@ namespace GetIntoTeachingApiTests.Services
             result.Select(policy => policy.Text).Should().BeEquivalentTo(
                 new object[] { "Latest Active Web", "Not Latest 1", "Not Latest 2" },
                 options => options.WithStrictOrdering());
-        }
-
-        [Fact]
-        public void GetPrivacyPolicies_IsCached()
-        {
-            var queryablePrivacyPolicies = MockPrivacyPolicies();
-            _mockService.Setup(mock => mock.CreateQuery("dfe_privacypolicy", _context))
-                .Returns(queryablePrivacyPolicies);
-
-            var result1 = _crm.GetPrivacyPolicies();
-            var result2 = _crm.GetPrivacyPolicies();
-
-            result1.Should().BeEquivalentTo(result2);
-            _mockService.Verify(mock => mock.CreateQuery("dfe_privacypolicy", _context), Times.Once);
         }
 
         [Fact]

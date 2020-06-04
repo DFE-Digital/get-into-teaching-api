@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApiTests.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using Xunit;
 
@@ -33,9 +31,8 @@ namespace GetIntoTeachingApiTests.Services
 
             _store.Sync(mockCrm.Object);
 
-            var teachingEventNames = DbContext.TeachingEvents.Select(teachingEvent => teachingEvent.Name);
-            teachingEventNames.Should().BeEquivalentTo(mockTeachingEvents.Select(teachingEvent => teachingEvent.Name));
-
+            var ids = DbContext.TeachingEvents.Select(te => te.Id);
+            ids.Should().BeEquivalentTo(mockTeachingEvents.Select(te => te.Id));
             DbContext.TeachingEvents.Count().Should().Be(6);
             DbContext.TeachingEventBuildings.Count().Should().Be(4);
         }
@@ -58,13 +55,12 @@ namespace GetIntoTeachingApiTests.Services
             teachingEvents.Select(te => te.Name).ToList().ForEach(name => name.Should().Contain("Updated"));
             teachingEvents.Where(te => te.Building != null).Select(te => te.Building.AddressLine1).ToList()
                 .ForEach(line1 => line1.Should().Contain("Updated"));
-
             DbContext.TeachingEvents.Count().Should().Be(6);
             DbContext.TeachingEventBuildings.Count().Should().Be(4);
         }
 
         [Fact]
-        public void Sync_PopulatesBuildingCoordinates()
+        public void Sync_PopulatesTeachingEventBuildingCoordinates()
         {
             var mockCrm = new Mock<ICrmService>();
             mockCrm.Setup(m => m.GetTeachingEvents()).Returns(MockTeachingEvents);
@@ -73,6 +69,55 @@ namespace GetIntoTeachingApiTests.Services
 
             var teachingEvent = DbContext.TeachingEvents.Include(te => te.Building).First(te => te.Id == FindEventGuid);
             teachingEvent.Building.Coordinate.Should().Be(new Point(new Coordinate(-3.3587, 56.02748)));
+        }
+
+        [Fact]
+        public void Sync_InsertsNewPrivacyPolicies()
+        {
+            var mockPolicies = MockPrivacyPolicies().ToList();
+            var mockCrm = new Mock<ICrmService>();
+            mockCrm.Setup(m => m.GetPrivacyPolicies()).Returns(mockPolicies);
+
+            _store.Sync(mockCrm.Object);
+
+            var ids = DbContext.PrivacyPolicies.Select(p => p.Id);
+            ids.Should().BeEquivalentTo(mockPolicies.Select(p => p.Id));
+            DbContext.PrivacyPolicies.Count().Should().Be(3);
+        }
+
+        [Fact]
+        public void Sync_UpdatesExistingPrivacyPolicies()
+        {
+            var updatedPolicies = SeedMockPrivacyPolicies().ToList();
+            updatedPolicies.ForEach(te => te.Text += "Updated");
+            var mockCrm = new Mock<ICrmService>();
+            mockCrm.Setup(m => m.GetPrivacyPolicies()).Returns(updatedPolicies);
+
+            _store.Sync(mockCrm.Object);
+
+            var policies = DbContext.PrivacyPolicies.ToList();
+            policies.Select(te => te.Text).ToList().ForEach(name => name.Should().Contain("Updated"));
+            DbContext.PrivacyPolicies.Count().Should().Be(3);
+        }
+
+        [Fact]
+        public void GetPrivacyPolicies_ReturnsAll()
+        {
+            SeedMockPrivacyPolicies();
+
+            var result = _store.GetPrivacyPolicies();
+
+            result.Select(p => p.Text).Should().BeEquivalentTo(new string[] { "Policy 1", "Policy 2", "Policy 3" });
+        }
+
+        [Fact]
+        public void GetLatestPrivacyPolicy_ReturnsMostRecent()
+        {
+            SeedMockPrivacyPolicies();
+
+            var result = _store.GetLatestPrivacyPolicy();
+
+            result.Text.Should().Be("Policy 2");
         }
 
         [Fact]
@@ -286,6 +331,27 @@ namespace GetIntoTeachingApiTests.Services
             _store.Sync(mockCrm.Object);
 
             return teachingEvents;
+        }
+
+        private static IEnumerable<PrivacyPolicy> MockPrivacyPolicies()
+        {
+            var policy1 = new PrivacyPolicy() { Id = Guid.NewGuid(), Text = "Policy 1", CreatedAt = DateTime.Now.AddDays(-10) };
+            var policy2 = new PrivacyPolicy() { Id = Guid.NewGuid(), Text = "Policy 2", CreatedAt = DateTime.Now };
+            var policy3 = new PrivacyPolicy() { Id = Guid.NewGuid(), Text = "Policy 3", CreatedAt = DateTime.Now.AddDays(-5) };
+
+            return new PrivacyPolicy[] {policy1, policy2, policy3};
+        }
+
+        private IEnumerable<PrivacyPolicy> SeedMockPrivacyPolicies()
+        {
+            var privacyPolicies = MockPrivacyPolicies().ToList();
+            var mockCrm = new Mock<ICrmService>();
+
+            mockCrm.Setup(m => m.GetPrivacyPolicies()).Returns(privacyPolicies);
+
+            _store.Sync(mockCrm.Object);
+
+            return privacyPolicies;
         }
     }
 }

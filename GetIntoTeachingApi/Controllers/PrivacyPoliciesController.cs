@@ -13,12 +13,12 @@ namespace GetIntoTeachingApi.Controllers
     public class PrivacyPoliciesController : ControllerBase
     {
         private readonly ILogger<PrivacyPoliciesController> _logger;
-        private readonly ICrmService _crm;
+        private readonly IStore _store;
 
-        public PrivacyPoliciesController(ILogger<PrivacyPoliciesController> logger, ICrmService crm)
+        public PrivacyPoliciesController(ILogger<PrivacyPoliciesController> logger, IStore store)
         {
             _logger = logger;
-            _crm = crm;
+            _store = store;
         }
 
         [HttpGet]
@@ -31,7 +31,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(PrivacyPolicy), 200)]
         public IActionResult GetLatest()
         {
-            var privacyPolicy = _crm.GetLatestPrivacyPolicy();
+            var privacyPolicy = _store.GetLatestPrivacyPolicy();
             return Ok(privacyPolicy);
         }
     }
