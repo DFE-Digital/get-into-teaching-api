@@ -38,9 +38,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
             var qualification = new CandidateQualification()
             {
-                TypeId = mockType.Id,
-                CategoryId = mockCategory.Id,
-                DegreeStatusId = mockDegreeStatus.Id,
+                TypeId = int.Parse(mockType.Id),
+                CategoryId = int.Parse(mockCategory.Id),
+                DegreeStatusId = int.Parse(mockDegreeStatus.Id),
             };
 
             var result = _validator.TestValidate(qualification);
@@ -86,7 +86,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
         private static TypeEntity NewMock(dynamic id)
         {
-            return new TypeEntity { Id = id };
+            return new TypeEntity { Id = id.ToString() };
         }
     }
 }

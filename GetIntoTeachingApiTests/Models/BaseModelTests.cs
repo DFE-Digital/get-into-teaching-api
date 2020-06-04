@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
@@ -53,10 +52,9 @@ namespace GetIntoTeachingApiTests.Models
         public BaseModelTests()
         {
             _mockService = new Mock<IOrganizationServiceAdapter>();
-            var mockCrmCache = new Mock<ICrmCache>();
             _context = _mockService.Object.Context("mock-connection-string");
             var mockEnv = new Mock<IEnv>();
-            _crm = new CrmService(_mockService.Object, mockCrmCache.Object, mockEnv.Object);
+            _crm = new CrmService(_mockService.Object, mockEnv.Object);
         }
 
         [Fact]

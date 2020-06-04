@@ -154,8 +154,8 @@ namespace GetIntoTeachingApiTests.Controllers
         {
             return new []
             {
-                new TypeEntity { Id = Guid.NewGuid(), Value = "Type 1" },
-                new TypeEntity { Id = Guid.NewGuid(), Value = "Type 2" },
+                new TypeEntity { Id = Guid.NewGuid().ToString(), Value = "Type 1" },
+                new TypeEntity { Id = Guid.NewGuid().ToString(), Value = "Type 2" },
             };
         }
     }

@@ -35,8 +35,8 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
             var position = new CandidatePastTeachingPosition
             {
-                SubjectTaughtId = mockSubject.Id,
-                EducationPhaseId = mockPhase.Id,
+                SubjectTaughtId = Guid.Parse(mockSubject.Id),
+                EducationPhaseId = int.Parse(mockPhase.Id),
             };
 
             var result = _validator.TestValidate(position);
@@ -70,7 +70,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
         private static TypeEntity NewMock(dynamic id)
         {
-            return new TypeEntity { Id = id };
+            return new TypeEntity { Id = id.ToString() };
         }
     }
 }

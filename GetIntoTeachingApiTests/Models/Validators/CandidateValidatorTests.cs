@@ -55,10 +55,10 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 AddressCity = "city",
                 AddressState = "state",
                 AddressPostcode = "postcode",
-                PreferredTeachingSubjectId = mockPreferredTeachingSubject.Id,
-                PreferredEducationPhaseId = mockPreferredEducationPhase.Id,
-                LocationId = mockLocation.Id,
-                InitialTeacherTrainingYearId = mockInitialTeacherTrainingYear.Id,
+                PreferredTeachingSubjectId = Guid.Parse(mockPreferredTeachingSubject.Id),
+                PreferredEducationPhaseId = int.Parse(mockPreferredEducationPhase.Id),
+                LocationId = int.Parse(mockLocation.Id),
+                InitialTeacherTrainingYearId = int.Parse(mockInitialTeacherTrainingYear.Id),
             };
 
             var result = _validator.TestValidate(candidate);
@@ -303,7 +303,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
         private static TypeEntity NewMock(dynamic id)
         {
-            return new TypeEntity { Id = id };
+            return new TypeEntity { Id = id.ToString() };
         }
     }
 }

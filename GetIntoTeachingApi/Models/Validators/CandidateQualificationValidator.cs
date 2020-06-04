@@ -14,31 +14,31 @@ namespace GetIntoTeachingApi.Models.Validators
             _crm = crm;
 
             RuleFor(qualification => qualification.TypeId)
-                .Must(id => TypeIds().Contains(id))
+                .Must(id => TypeIds().Contains(id.ToString()))
                 .WithMessage("Must be a valid qualification type.");
             RuleFor(qualification => qualification.CategoryId)
-                .Must(id => CategoryIds().Contains(id))
+                .Must(id => CategoryIds().Contains(id.ToString()))
                 .Unless(qualification => qualification.CategoryId == null)
                 .WithMessage("Must be a valid qualification category.");
             RuleFor(qualification => qualification.DegreeStatusId)
-                .Must(id => StatusIds().Contains(id))
+                .Must(id => StatusIds().Contains(id.ToString()))
                 .Unless(qualification => qualification.DegreeStatusId == null)
                 .WithMessage("Must be a valid qualification degree status.");
         }
 
-        private IEnumerable<int?> CategoryIds()
+        private IEnumerable<string> CategoryIds()
         {
-            return _crm.GetPickListItems("dfe_qualification", "dfe_category").Select(category => (int?)category.Id);
+            return _crm.GetPickListItems("dfe_qualification", "dfe_category").Select(category => category.Id);
         }
 
-        private IEnumerable<int?> TypeIds()
+        private IEnumerable<string> TypeIds()
         {
-            return _crm.GetPickListItems("dfe_qualification", "dfe_type").Select(type => (int?)type.Id);
+            return _crm.GetPickListItems("dfe_qualification", "dfe_type").Select(type => type.Id);
         }
 
-        private IEnumerable<int?> StatusIds()
+        private IEnumerable<string> StatusIds()
         {
-            return _crm.GetPickListItems("dfe_qualification", "dfe_degreestatus").Select(status => (int?)status.Id);
+            return _crm.GetPickListItems("dfe_qualification", "dfe_degreestatus").Select(status => status.Id);
         }
     }
 }
