@@ -25,7 +25,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var mockType = new TypeEntity { Id = 123 };
+            var mockType = new TypeEntity { Id = "123" };
 
             _mockCrm
                 .Setup(mock => mock.GetPickListItems("msevtmgt_event", "dfe_event_type"))
@@ -37,7 +37,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             {
                 Postcode = "KY11 9HF",
                 Radius = 10,
-                TypeId = mockType.Id,
+                TypeId = int.Parse(mockType.Id),
                 StartAfter = DateTime.Now.AddDays(-1),
                 StartBefore = DateTime.Now.AddDays(1)
             };

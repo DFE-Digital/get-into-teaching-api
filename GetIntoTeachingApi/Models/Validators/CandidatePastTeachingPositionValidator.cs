@@ -15,23 +15,23 @@ namespace GetIntoTeachingApi.Models.Validators
             _crm = crm;
 
             RuleFor(position => position.EducationPhaseId)
-                .Must(id => EducationPhaseIds().Contains(id))
+                .Must(id => EducationPhaseIds().Contains(id.ToString()))
                 .WithMessage("Must be a valid past teaching position education phase.");
             RuleFor(candidate => candidate.SubjectTaughtId)
-                .Must(id => TeachingSubjectIds().Contains(id))
+                .Must(id => TeachingSubjectIds().Contains(id.ToString()))
                 .WithMessage("Must be a valid teaching subject.");
         }
 
-        private IEnumerable<Guid?> TeachingSubjectIds()
+        private IEnumerable<string> TeachingSubjectIds()
         {
-            return _crm.GetLookupItems("dfe_teachingsubjectlist").Select(subject => (Guid?)subject.Id);
+            return _crm.GetLookupItems("dfe_teachingsubjectlist").Select(subject => subject.Id);
         }
 
-        private IEnumerable<int?> EducationPhaseIds()
+        private IEnumerable<string> EducationPhaseIds()
         {
             return _crm.
                 GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase")
-                .Select(type => (int?)type.Id);
+                .Select(type => type.Id);
         }
     }
 }

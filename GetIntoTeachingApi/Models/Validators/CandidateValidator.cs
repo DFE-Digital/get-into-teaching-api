@@ -32,41 +32,41 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleForEach(candidate => candidate.PastTeachingPositions).SetValidator(new CandidatePastTeachingPositionValidator(crm));
 
             RuleFor(candidate => candidate.PreferredTeachingSubjectId)
-                .Must(id => PreferredTeachingSubjectIds().Contains(id))
+                .Must(id => PreferredTeachingSubjectIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.PreferredTeachingSubjectId == null)
                 .WithMessage("Must be a valid teaching subject.");
             RuleFor(candidate => candidate.PreferredEducationPhaseId)
-                .Must(id => PreferredEducationPhaseIds().Contains(id))
+                .Must(id => PreferredEducationPhaseIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.PreferredEducationPhaseId == null)
                 .WithMessage("Must be a valid candidate education phase.");
             RuleFor(candidate => candidate.LocationId)
-                .Must(id => LocationIds().Contains(id))
+                .Must(id => LocationIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.LocationId == null)
                 .WithMessage("Must be a valid candidate location.");
             RuleFor(candidate => candidate.InitialTeacherTrainingYearId)
-                .Must(id => InitialTeacherTrainingYearIds().Contains(id))
+                .Must(id => InitialTeacherTrainingYearIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.InitialTeacherTrainingYearId == null)
                 .WithMessage("Must be a valid candidate initial teacher training year.");
         }
 
-        private IEnumerable<Guid?> PreferredTeachingSubjectIds()
+        private IEnumerable<string> PreferredTeachingSubjectIds()
         {
-            return _crm.GetLookupItems("dfe_teachingsubjectlist").Select(subject => (Guid?)subject.Id);
+            return _crm.GetLookupItems("dfe_teachingsubjectlist").Select(subject => subject.Id);
         }
 
-        private IEnumerable<int?> PreferredEducationPhaseIds()
+        private IEnumerable<string> PreferredEducationPhaseIds()
         {
-            return _crm.GetPickListItems("contact", "dfe_preferrededucationphase01").Select(phase => (int?)phase.Id);
+            return _crm.GetPickListItems("contact", "dfe_preferrededucationphase01").Select(phase => phase.Id);
         }
 
-        private IEnumerable<int?> LocationIds()
+        private IEnumerable<string> LocationIds()
         {
-            return _crm.GetPickListItems("contact", "dfe_isinuk").Select(location => (int?)location.Id);
+            return _crm.GetPickListItems("contact", "dfe_isinuk").Select(location => location.Id);
         }
 
-        private IEnumerable<int?> InitialTeacherTrainingYearIds()
+        private IEnumerable<string> InitialTeacherTrainingYearIds()
         {
-            return _crm.GetPickListItems("contact", "dfe_ittyear").Select(year => (int?)year.Id);
+            return _crm.GetPickListItems("contact", "dfe_ittyear").Select(year => year.Id);
         }
     }
 }
