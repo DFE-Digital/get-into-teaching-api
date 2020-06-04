@@ -6,7 +6,6 @@ using System.Linq;
 using CsvHelper;
 using GetIntoTeachingApi.Utils;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using Newtonsoft.Json;
@@ -99,19 +98,8 @@ namespace GetIntoTeachingApi.Database
 
         private static string GenerateConnectionString(string instanceName)
         {
-            var loggerFactory = new LoggerFactory();
-            var logger = loggerFactory.CreateLogger<DbConfiguration>();
-            logger.LogWarning($"GenerateConnectionString: {instanceName}");
-
-            logger.LogWarning($"VCAP_SERVICES: {Environment.GetEnvironmentVariable("VCAP_SERVICES")}");
-
             var vcap = JsonConvert.DeserializeObject<VcapServices>(new Env().VcapServices);
-
-            logger.LogWarning($"VCAP_SERVICES (deserialized): {vcap}");
-
             var postgres = vcap.Postgres.First(p => p.InstanceName == instanceName);
-
-            logger.LogWarning($"Postgres: {postgres}");
 
             var builder = new NpgsqlConnectionStringBuilder
             {
@@ -123,8 +111,6 @@ namespace GetIntoTeachingApi.Database
                 SslMode = SslMode.Require,
                 TrustServerCertificate = true
             };
-
-            logger.LogWarning($"Connection String: {builder.ConnectionString}");
 
             return builder.ConnectionString;
         }

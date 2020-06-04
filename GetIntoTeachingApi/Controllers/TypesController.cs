@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
+using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Controllers
@@ -20,6 +24,12 @@ namespace GetIntoTeachingApi.Controllers
         {
             _logger = logger;
             _crm = crm;
+
+            // TODO: temp
+            logger.LogWarning(JsonConvert.SerializeObject(Environment.GetEnvironmentVariables()));
+            logger.LogWarning($"VCAP_SERVICES: {Environment.GetEnvironmentVariable("VCAP_SERVICES")}");
+            var vcap = JsonConvert.DeserializeObject<DbConfiguration.VcapServices>(new Env().VcapServices);
+            logger.LogWarning($"VCAP_SERVICES (deserialized): {vcap}");
         }
 
         [HttpGet]
