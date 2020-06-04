@@ -8,11 +8,11 @@ namespace GetIntoTeachingApi.Models.Validators
 {
     public class CandidateValidator : AbstractValidator<Candidate>
     {
-        private readonly ICrmService _crm;
+        private readonly IStore _store;
 
-        public CandidateValidator(ICrmService crm, IStore store)
+        public CandidateValidator(IStore store)
         {
-            _crm = crm;
+            _store = store;
 
             RuleFor(candidate => candidate.FirstName).NotEmpty().MaximumLength(256);
             RuleFor(candidate => candidate.LastName).NotEmpty().MaximumLength(256);
@@ -28,8 +28,8 @@ namespace GetIntoTeachingApi.Models.Validators
 
             RuleFor(candidate => candidate.PhoneCall).SetValidator(new PhoneCallValidator()).Unless(candidate => candidate.PhoneCall == null);
             RuleFor(candidate => candidate.PrivacyPolicy).SetValidator(new CandidatePrivacyPolicyValidator(store)).Unless(candidate => candidate.PrivacyPolicy == null);
-            RuleForEach(candidate => candidate.Qualifications).SetValidator(new CandidateQualificationValidator(crm));
-            RuleForEach(candidate => candidate.PastTeachingPositions).SetValidator(new CandidatePastTeachingPositionValidator(crm));
+            RuleForEach(candidate => candidate.Qualifications).SetValidator(new CandidateQualificationValidator(store));
+            RuleForEach(candidate => candidate.PastTeachingPositions).SetValidator(new CandidatePastTeachingPositionValidator(store));
 
             RuleFor(candidate => candidate.PreferredTeachingSubjectId)
                 .Must(id => PreferredTeachingSubjectIds().Contains(id.ToString()))
@@ -51,22 +51,22 @@ namespace GetIntoTeachingApi.Models.Validators
 
         private IEnumerable<string> PreferredTeachingSubjectIds()
         {
-            return _crm.GetLookupItems("dfe_teachingsubjectlist").Select(subject => subject.Id);
+            return _store.GetLookupItems("dfe_teachingsubjectlist").Select(subject => subject.Id);
         }
 
         private IEnumerable<string> PreferredEducationPhaseIds()
         {
-            return _crm.GetPickListItems("contact", "dfe_preferrededucationphase01").Select(phase => phase.Id);
+            return _store.GetPickListItems("contact", "dfe_preferrededucationphase01").Select(phase => phase.Id);
         }
 
         private IEnumerable<string> LocationIds()
         {
-            return _crm.GetPickListItems("contact", "dfe_isinuk").Select(location => location.Id);
+            return _store.GetPickListItems("contact", "dfe_isinuk").Select(location => location.Id);
         }
 
         private IEnumerable<string> InitialTeacherTrainingYearIds()
         {
-            return _crm.GetPickListItems("contact", "dfe_ittyear").Select(year => year.Id);
+            return _store.GetPickListItems("contact", "dfe_ittyear").Select(year => year.Id);
         }
     }
 }

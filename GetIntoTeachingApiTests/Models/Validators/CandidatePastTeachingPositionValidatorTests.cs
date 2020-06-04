@@ -12,12 +12,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
     public class CandidatePastTeachingPositionValidatorTests
     {
         private readonly CandidatePastTeachingPositionValidator _validator;
-        private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<IStore> _mockStore;
 
         public CandidatePastTeachingPositionValidatorTests()
         {
-            _mockCrm = new Mock<ICrmService>();
-            _validator = new CandidatePastTeachingPositionValidator(_mockCrm.Object);
+            _mockStore = new Mock<IStore>();
+            _validator = new CandidatePastTeachingPositionValidator(_mockStore.Object);
         }
 
         [Fact]
@@ -26,10 +26,10 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var mockSubject = NewMock(Guid.NewGuid());
             var mockPhase = NewMock(123);
 
-            _mockCrm
+            _mockStore
                 .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
                 .Returns(new[] { mockSubject });
-            _mockCrm
+            _mockStore
                 .Setup(mock => mock.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase"))
                 .Returns(new[] { mockPhase });
 
