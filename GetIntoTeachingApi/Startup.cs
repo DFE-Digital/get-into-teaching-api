@@ -48,7 +48,7 @@ namespace GetIntoTeachingApi
             services.AddSingleton<IEnv, Env>();
             services.AddScoped<DbConfiguration, DbConfiguration>();
 
-            if (Env.IsDevelopment)
+            if (true || Env.IsDevelopment) // TODO: temp
             {
                 var keepAliveConnection = new SqliteConnection("DataSource=:memory:");
                 keepAliveConnection.Open();
@@ -140,7 +140,7 @@ The GIT API aims to provide:
                     .UseRecommendedSerializerSettings()
                     .UseFilter(automaticRetry);
 
-                if (Env.IsDevelopment)
+                if (true || Env.IsDevelopment) // TODO: temp
                     config.UseMemoryStorage().WithJobExpirationTimeout(JobConfiguration.ExpirationTimeout);
                 else
                     config.UsePostgreSqlStorage(Configuration.GetConnectionString(DbConfiguration.HangfireConnectionString()));
