@@ -27,6 +27,17 @@ namespace GetIntoTeachingApi.Services
         public void Sync(ICrmService crm)
         {
             SyncTeachingEvents(crm);
+            SyncPrivacyPolicies(crm);
+        }
+
+        public PrivacyPolicy GetLatestPrivacyPolicy()
+        {
+            return GetPrivacyPolicies().OrderByDescending(p => p.CreatedAt).FirstOrDefault();
+        }
+
+        public IEnumerable<PrivacyPolicy> GetPrivacyPolicies()
+        {
+            return _dbContext.PrivacyPolicies;
         }
 
         public IEnumerable<TeachingEvent> GetUpcomingTeachingEvents(int limit)
@@ -88,28 +99,32 @@ namespace GetIntoTeachingApi.Services
             var teachingEvents = crm.GetTeachingEvents().ToList();
             PopulateTeachingEventCoordinates(teachingEvents);
 
-            UpsertTeachingEventBuildings(teachingEvents);
-            UpsertTeachingEvents(teachingEvents);
+            var buildings = teachingEvents.Where(te => te.Building != null)
+                .Select(te => te.Building).DistinctBy(b => b.Id);
+
+            Upsert(buildings, _dbContext.TeachingEventBuildings);
+
+            // Link events with buildings attached to the context prior to upsert.
+            teachingEvents.Where(te => te.Building != null).ToList()
+                .ForEach(te => te.Building = _dbContext.TeachingEventBuildings.Find(te.Building.Id));
+
+            Upsert(teachingEvents, _dbContext.TeachingEvents);
 
             _dbContext.SaveChanges();
         }
 
-        private void UpsertTeachingEventBuildings(IEnumerable<TeachingEvent> teachingEvents)
+        private void SyncPrivacyPolicies(ICrmService crm)
         {
-            var buildings = teachingEvents.Where(te => te.Building != null).Select(te => te.Building).DistinctBy(b => b.Id);
-            var buildingIds = buildings.Select(b => b.Id);
-            var existingBuildingIds = _dbContext.TeachingEventBuildings.Where(b => buildingIds.Contains(b.Id)).Select(b => b.Id);
-            _dbContext.UpdateRange(buildings.Where(b => existingBuildingIds.Contains(b.Id)));
-            _dbContext.AddRange(buildings.Where(b => !existingBuildingIds.Contains(b.Id)));
+            var policies = crm.GetPrivacyPolicies().ToList();
+            Upsert(policies, _dbContext.PrivacyPolicies);
+            _dbContext.SaveChanges();
         }
 
-        private void UpsertTeachingEvents(IEnumerable<TeachingEvent> teachingEvents)
+        private void Upsert<T>(IEnumerable<T> models, IQueryable<T> dbSet) where T : BaseModel
         {
-            var teachingEventIds = teachingEvents.Select(te => te.Id);
-            var existingTeachingEventIds = _dbContext.TeachingEvents.Where(te => teachingEventIds.Contains(te.Id)).Select(te => te.Id);
-            teachingEvents.Where(te => te.Building != null).ToList().ForEach(te => te.Building = _dbContext.TeachingEventBuildings.Find(te.Building.Id));
-            _dbContext.UpdateRange(teachingEvents.Where(te => existingTeachingEventIds.Contains(te.Id)));
-            _dbContext.AddRange(teachingEvents.Where(te => !existingTeachingEventIds.Contains(te.Id)));
+            var existingIds = dbSet.Select(m => m.Id);
+            _dbContext.UpdateRange(models.Where(m => existingIds.Contains(m.Id)));
+            _dbContext.AddRange(models.Where(m => !existingIds.Contains(m.Id)));
         }
 
         private void PopulateTeachingEventCoordinates(IEnumerable<TeachingEvent> teachingEvents)

@@ -13,15 +13,15 @@ namespace GetIntoTeachingApiTests.Controllers
 {
     public class PrivacyPoliciesControllerTests
     {
-        private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<IStore> _mockStore;
         private readonly Mock<ILogger<PrivacyPoliciesController>> _mockLogger;
         private readonly PrivacyPoliciesController _controller;
 
         public PrivacyPoliciesControllerTests()
         {
-            _mockCrm = new Mock<ICrmService>();
+            _mockStore = new Mock<IStore>();
             _mockLogger = new Mock<ILogger<PrivacyPoliciesController>>();
-            _controller = new PrivacyPoliciesController(_mockLogger.Object, _mockCrm.Object);
+            _controller = new PrivacyPoliciesController(_mockLogger.Object, _mockStore.Object);
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void GetLatest_ReturnsLatestPrivacyPolicy()
         {
             var mockPolicy = MockPrivacyPolicy();
-            _mockCrm.Setup(mock => mock.GetLatestPrivacyPolicy()).Returns(mockPolicy);
+            _mockStore.Setup(mock => mock.GetLatestPrivacyPolicy()).Returns(mockPolicy);
 
             var response = _controller.GetLatest();
 
