@@ -13,3 +13,8 @@ resource "cloudfoundry_service_instance" "postgres2" {
   space = data.cloudfoundry_space.space.id
   service_plan = data.cloudfoundry_service.postgres.service_plans["tiny-unencrypted-9_5"]
 }
+
+data "cloudfoundry_user_provided_service" "logging" {
+  name = var.paas_logging_name
+  space = data.cloudfoundry_space.space.id
+}
