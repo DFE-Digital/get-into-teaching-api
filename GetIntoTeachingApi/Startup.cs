@@ -61,8 +61,7 @@ namespace GetIntoTeachingApi
             else
             {
                 services.AddDbContext<GetIntoTeachingDbContext>(options =>
-                    options.UseNpgsql(Configuration.GetConnectionString(
-                        DbConfiguration.DatabaseConnectionString()), x => x.UseNetTopologySuite()));
+                    options.UseNpgsql(DbConfiguration.DatabaseConnectionString(), x => x.UseNetTopologySuite()));
             }
 
             services.AddAuthorization(options =>
