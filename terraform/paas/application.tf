@@ -10,7 +10,7 @@ resource "cloudfoundry_app" "api_application" {
             service_instance = cloudfoundry_service_instance.postgres2.id
     } 
     service_binding  { 
-            service_instance = data.cloudfoundry_user_provided_service.logging.id
+            service_instance = cloudfoundry_user_provided_service.logging.id
     } 
     routes {
         route = cloudfoundry_route.api_route.id
