@@ -47,6 +47,9 @@ namespace GetIntoTeachingApi.Models.Validators
                 .Must(id => InitialTeacherTrainingYearIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.InitialTeacherTrainingYearId == null)
                 .WithMessage("Must be a valid candidate initial teacher training year.");
+            RuleFor(candidate => candidate.ChannelId)
+                .Must(id => ChannelIds().Contains(id.ToString()))
+                .WithMessage("Must be a valid candidate channel.");
         }
 
         private IEnumerable<string> PreferredTeachingSubjectIds()
@@ -67,6 +70,11 @@ namespace GetIntoTeachingApi.Models.Validators
         private IEnumerable<string> InitialTeacherTrainingYearIds()
         {
             return _store.GetPickListItems("contact", "dfe_ittyear").Select(year => year.Id);
+        }
+
+        private IEnumerable<string> ChannelIds()
+        {
+            return _store.GetPickListItems("contact", "dfe_channelcreation").Select(channel => channel.Id);
         }
     }
 }

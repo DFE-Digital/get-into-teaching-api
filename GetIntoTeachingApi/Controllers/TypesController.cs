@@ -93,6 +93,20 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [Route("candidate/channels")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of candidate channels.",
+            OperationId = "GetCandidateChannels",
+            Tags = new[] { "Types" }
+        )]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public IActionResult GetCandidateChannels()
+        {
+            var channels = _store.GetPickListItems("contact", "dfe_channelcreation");
+            return Ok(channels);
+        }
+
+        [HttpGet]
         [Route("qualification/degree_status")]
         [SwaggerOperation(
             Summary = "Retrieves the list of qualification degree status.",
