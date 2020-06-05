@@ -52,7 +52,7 @@ namespace GetIntoTeachingApi
             services.AddSingleton<IEnv, Env>();
             services.AddScoped<DbConfiguration, DbConfiguration>();
 
-            /*if (Env.IsDevelopment) // TODO: temp
+            if (Env.IsDevelopment)
             {
                 var keepAliveConnection = new SqliteConnection("DataSource=:memory:");
                 keepAliveConnection.Open();
@@ -64,8 +64,7 @@ namespace GetIntoTeachingApi
                 services.AddDbContext<GetIntoTeachingDbContext>(options =>
                     options.UseNpgsql(Configuration.GetConnectionString(
                         DbConfiguration.DatabaseConnectionString()), x => x.UseNetTopologySuite()));
-            }*/
-            services.AddDbContext<GetIntoTeachingDbContext>(); // TODO: temp
+            }
 
             services.AddAuthorization(options =>
             {
@@ -129,7 +128,7 @@ The GIT API aims to provide:
                 c.EnableAnnotations();
                 c.AddFluentValidationRules();
             });
-            /* TODO: temp
+
             services.AddHangfire((provider, config) =>
             {
                 var automaticRetry = new AutomaticRetryAttribute
@@ -151,54 +150,12 @@ The GIT API aims to provide:
                     config.UsePostgreSqlStorage(Configuration.GetConnectionString(DbConfiguration.HangfireConnectionString()));
             });
 
-            services.AddHangfireServer();*/
+            services.AddHangfireServer();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // TODO: temp
-            logger.LogWarning(JsonConvert.SerializeObject(Environment.GetEnvironmentVariables()));
-            logger.LogWarning($"VCAP_SERVICES: {Environment.GetEnvironmentVariable("VCAP_SERVICES")}");
-            var vcap = JsonConvert.DeserializeObject<DbConfiguration.VcapServices>(new Env().VcapServices);
-
-            var databaseInstanceName = Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME");
-            var hangfireInstanceName = Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME");
-
-            logger.LogWarning($"DATABASE: {databaseInstanceName}");
-
-            var postgres = vcap.Postgres.First(p => p.InstanceName == databaseInstanceName);
-
-            var builder = new NpgsqlConnectionStringBuilder
-            {
-                Host = postgres.Credentials.Host,
-                Database = postgres.Credentials.Name,
-                Username = postgres.Credentials.Username,
-                Password = postgres.Credentials.Password,
-                Port = postgres.Credentials.Port,
-                SslMode = SslMode.Require,
-                TrustServerCertificate = true
-            };
-
-            logger.LogWarning($"DATABASE CS: {builder.ConnectionString}");
-
-            logger.LogWarning($"HANGFIRE: {hangfireInstanceName}");
-
-            var postgres1 = vcap.Postgres.First(p => p.InstanceName == hangfireInstanceName);
-
-            var builder1 = new NpgsqlConnectionStringBuilder
-            {
-                Host = postgres1.Credentials.Host,
-                Database = postgres1.Credentials.Name,
-                Username = postgres1.Credentials.Username,
-                Password = postgres1.Credentials.Password,
-                Port = postgres1.Credentials.Port,
-                SslMode = SslMode.Require,
-                TrustServerCertificate = true
-            };
-
-            logger.LogWarning($"HANGFIRE CS: {builder1.ConnectionString}");
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
