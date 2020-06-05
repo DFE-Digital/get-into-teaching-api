@@ -1,12 +1,26 @@
 ﻿using System;
 using FluentAssertions;
 using GetIntoTeachingApi.Jobs;
+using GetIntoTeachingApiTests.Helpers;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Jobs
 {
-    public class JobConfigurationTests
+    // We're changing the environment in these tests.
+    [Collection(nameof(NotThreadSafeResourceCollection))]
+    public class JobConfigurationTests : IDisposable
     {
+        private readonly string _previousEnvironment;
+
+        public JobConfigurationTests()
+        {
+            _previousEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        }
+        public void Dispose()
+        {
+            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", _previousEnvironment);
+        }
+
         [Theory]
         [InlineData("Development", 5)]
         [InlineData("Production", 24)]

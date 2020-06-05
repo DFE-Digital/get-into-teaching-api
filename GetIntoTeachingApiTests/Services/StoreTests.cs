@@ -251,6 +251,18 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void SearchTeachingEvents_FilteredByRadius_ReturnsMatching()
+        {
+            SeedMockTeachingEvents();
+            var request = new TeachingEventSearchRequest() { Postcode = "KY6 2NJ", Radius = 15 };
+
+            var result = _store.SearchTeachingEvents(request);
+
+            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 3" },
+                options => options.WithStrictOrdering());
+        }
+
+        [Fact]
         public void SearchTeachingEvents_FilteredByType_ReturnsMatching()
         {
             SeedMockTeachingEvents();
@@ -287,18 +299,6 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void SearchTeachingEvents_FilteredByRadius_ReturnsMatching()
-        {
-            SeedMockTeachingEvents();
-            var request = new TeachingEventSearchRequest() { Postcode = "KY6 2NJ", Radius = 15 };
-
-            var result = _store.SearchTeachingEvents(request);
-
-            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 3" },
-                options => options.WithStrictOrdering());
-        }
-
-        [Fact]
         public void GetTeachingEvents_ReturnsMatchingEvent()
         {
             SeedMockTeachingEvents();
@@ -322,7 +322,6 @@ namespace GetIntoTeachingApiTests.Services
         [InlineData("ky11 9yu")]
         [InlineData("ky119yu")]
         [InlineData("k y 119 YU")]
-        [InlineData("CA4 8LE")]
         public void IsValidPostcode_WithValidPostcode_ReturnsTrue(string postcode)
         {
             _store.IsValidPostcode(postcode).Should().BeTrue();
