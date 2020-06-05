@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
@@ -23,7 +22,6 @@ namespace GetIntoTeachingApi.Models
         [EntityField(Name = "msevtmgt_postalcode")]
         public string AddressPostcode { get; set; }
         [JsonIgnore]
-        [Column(TypeName = "geography")]
         public Point Coordinate { get; set; }
 
         public TeachingEventBuilding() : base() { }

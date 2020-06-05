@@ -23,7 +23,7 @@ namespace GetIntoTeachingApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Point>("Coordinate")
-                        .HasColumnType("geography")
+                        .HasColumnType("POINT")
                         .HasAnnotation("Sqlite:Srid", 4326);
 
                     b.HasKey("Postcode");
@@ -101,7 +101,7 @@ namespace GetIntoTeachingApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Point>("Coordinate")
-                        .HasColumnType("geography")
+                        .HasColumnType("POINT")
                         .HasAnnotation("Sqlite:Srid", 4326);
 
                     b.HasKey("Id");
