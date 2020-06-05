@@ -61,8 +61,7 @@ namespace GetIntoTeachingApi
             else
             {
                 services.AddDbContext<GetIntoTeachingDbContext>(options =>
-                    options.UseNpgsql(Configuration.GetConnectionString(
-                        DbConfiguration.DatabaseConnectionString()), x => x.UseNetTopologySuite()));
+                    options.UseNpgsql(DbConfiguration.DatabaseConnectionString(), x => x.UseNetTopologySuite()));
             }
 
             services.AddAuthorization(options =>
@@ -128,7 +127,6 @@ The GIT API aims to provide:
                 c.AddFluentValidationRules();
             });
 
-            /* TODO: temp disable
             services.AddHangfire((provider, config) =>
             {
                 var automaticRetry = new AutomaticRetryAttribute
@@ -147,10 +145,10 @@ The GIT API aims to provide:
                 if (Env.IsDevelopment)
                     config.UseMemoryStorage().WithJobExpirationTimeout(JobConfiguration.ExpirationTimeout);
                 else
-                    config.UsePostgreSqlStorage(Configuration.GetConnectionString(DbConfiguration.HangfireConnectionString()));
+                    config.UsePostgreSqlStorage(DbConfiguration.HangfireConnectionString());
             });
 
-            services.AddHangfireServer();*/
+            services.AddHangfireServer();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -164,11 +162,11 @@ The GIT API aims to provide:
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            /* TODO: temp disable
+
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
                 Authorization = new[] { new HangfireDashboardAuthorizationFilter(new Env()) }
-            });*/
+            });
 
             app.UseSwagger();
 
