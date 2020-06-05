@@ -12,6 +12,10 @@ variable api_url {
 variable password {}
 
 
+variable "application_stopped" {
+   default = true
+}
+
 variable "paas_space" {
    default = "sandbox"
 }

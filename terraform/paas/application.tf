@@ -2,6 +2,7 @@ resource "cloudfoundry_app" "api_application" {
     name =  var.paas_api_application_name
     space = data.cloudfoundry_space.space.id
     docker_image = var.paas_api_docker_image
+    stopped = var.application_stopped
     service_binding  { 
             service_instance = cloudfoundry_service_instance.postgres1.id
     } 
