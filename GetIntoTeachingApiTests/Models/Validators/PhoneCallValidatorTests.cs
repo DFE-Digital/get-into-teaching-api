@@ -3,6 +3,8 @@ using FluentAssertions;
 using FluentValidation.TestHelper;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Validators;
+using GetIntoTeachingApi.Services;
+using Moq;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Models.Validators
@@ -10,19 +12,27 @@ namespace GetIntoTeachingApiTests.Models.Validators
     public class PhoneCallValidatorTests
     {
         private readonly PhoneCallValidator _validator;
+        private readonly Mock<IStore> _mockStore;
 
         public PhoneCallValidatorTests()
         {
-            _validator = new PhoneCallValidator();
+            _mockStore = new Mock<IStore>();
+            _validator = new PhoneCallValidator(_mockStore.Object);
         }
 
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
+            var mockChannel = new TypeEntity { Id = "123" };
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("phonecall", "dfe_channelcreation"))
+                .Returns(new[] { mockChannel });
+
             var phoneCall = new PhoneCall()
             {
                 ScheduledAt = DateTime.Now.AddDays(2),
                 Telephone = "07584 395 284",
+                ChannelId = int.Parse(mockChannel.Id),
             };
 
             var result = _validator.TestValidate(phoneCall);
@@ -46,6 +56,18 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_TelephoneTooLong_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(phoneCall => phoneCall.Telephone, new string('a', 51));
+        }
+
+        [Fact]
+        public void Validate_ChannelIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(phoneCall => phoneCall.ChannelId, 123);
+        }
+
+        [Fact]
+        public void Validate_ChannelIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(phoneCall => phoneCall.ChannelId, null as int?);
         }
     }
 }

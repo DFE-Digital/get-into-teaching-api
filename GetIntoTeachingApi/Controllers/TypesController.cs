@@ -175,5 +175,19 @@ namespace GetIntoTeachingApi.Controllers
             var eventTypes = _store.GetPickListItems("msevtmgt_event", "dfe_event_type");
             return Ok(eventTypes);
         }
+
+        [HttpGet]
+        [Route("phone_call/channels")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of phone call channels.",
+            OperationId = "GetPhoneCallChannels",
+            Tags = new[] { "Types" }
+        )]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public IActionResult GetPhoneCallChannels()
+        {
+            var channels = _store.GetPickListItems("phonecall", "dfe_channelcreation");
+            return Ok(channels);
+        }
     }
 }
