@@ -251,6 +251,18 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void SearchTeachingEvents_FilteredByRadius_ReturnsMatching()
+        {
+            SeedMockTeachingEvents();
+            var request = new TeachingEventSearchRequest() { Postcode = "KY6 2NJ", Radius = 15 };
+
+            var result = _store.SearchTeachingEvents(request);
+
+            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 3" },
+                options => options.WithStrictOrdering());
+        }
+
+        [Fact]
         public void SearchTeachingEvents_FilteredByType_ReturnsMatching()
         {
             SeedMockTeachingEvents();
@@ -283,18 +295,6 @@ namespace GetIntoTeachingApiTests.Services
             var result = _store.SearchTeachingEvents(request);
 
             result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 4", "Event 1" },
-                options => options.WithStrictOrdering());
-        }
-
-        [Fact]
-        public void SearchTeachingEvents_FilteredByRadius_ReturnsMatching()
-        {
-            SeedMockTeachingEvents();
-            var request = new TeachingEventSearchRequest() { Postcode = "KY6 2NJ", Radius = 15 };
-
-            var result = _store.SearchTeachingEvents(request);
-
-            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 3" },
                 options => options.WithStrictOrdering());
         }
 
