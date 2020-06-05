@@ -73,8 +73,9 @@ namespace GetIntoTeachingApiTests.Controllers
             var response = _controller.CreateAccessToken(request);
 
             response.Should().BeOfType<NotFoundResult>();
-            _mockNotifyService.Verify(mock =>
-                mock.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, dynamic>>()),
+
+            _mockNotifyService.Verify(mock => 
+                mock.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, dynamic>>()), 
                 Times.Never()
             );
         }

@@ -30,6 +30,22 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void CheckStatus_WhenHealthy_ReturnsOk()
+        {
+            _mockService.Setup(mock => mock.CheckStatus()).Returns(HealthCheckResponse.StatusOk);
+
+            _crm.CheckStatus().Should().Be(HealthCheckResponse.StatusOk);
+        }
+
+        [Fact]
+        public void IsHealthy_WhenUnhealthy_ReturnsError()
+        {
+            _mockService.Setup(mock => mock.CheckStatus()).Returns("this is an error");
+
+            _crm.CheckStatus().Should().Be("this is an error");
+        }
+
+        [Fact]
         public void GetLookupItems_ReturnsAll()
         {
             var queryableCountries = MockCountries();
