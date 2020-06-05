@@ -128,6 +128,7 @@ The GIT API aims to provide:
                 c.AddFluentValidationRules();
             });
 
+            /* TODO: temp disable
             services.AddHangfire((provider, config) =>
             {
                 var automaticRetry = new AutomaticRetryAttribute
@@ -149,7 +150,7 @@ The GIT API aims to provide:
                     config.UsePostgreSqlStorage(Configuration.GetConnectionString(DbConfiguration.HangfireConnectionString()));
             });
 
-            services.AddHangfireServer();
+            services.AddHangfireServer();*/
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -163,11 +164,11 @@ The GIT API aims to provide:
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            /* TODO: temp disable
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
                 Authorization = new[] { new HangfireDashboardAuthorizationFilter(new Env()) }
-            });
+            });*/
 
             app.UseSwagger();
 
