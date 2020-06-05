@@ -322,7 +322,6 @@ namespace GetIntoTeachingApiTests.Services
         [InlineData("ky11 9yu")]
         [InlineData("ky119yu")]
         [InlineData("k y 119 YU")]
-        [InlineData("CA4 8LE")]
         public void IsValidPostcode_WithValidPostcode_ReturnsTrue(string postcode)
         {
             _store.IsValidPostcode(postcode).Should().BeTrue();

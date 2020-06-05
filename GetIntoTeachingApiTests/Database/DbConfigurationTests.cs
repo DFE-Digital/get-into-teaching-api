@@ -2,19 +2,38 @@
 using System.IO;
 using FluentAssertions;
 using GetIntoTeachingApi.Database;
+using GetIntoTeachingApiTests.Helpers;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Database
 {
-    public class DbConfigurationTests
+    // We're changing the environment in these tests.
+    [Collection(nameof(NotThreadSafeResourceCollection))]
+    public class DbConfigurationTests : IDisposable
     {
+        private readonly string _previousDatabaseInstanceName;
+        private readonly string _previousHangfireInstanceName;
+        private readonly string _previousVcapServices;
+
         public DbConfigurationTests()
         {
             using StreamReader reader = new StreamReader("./Fixtures/vcap_services.json");
             var json = reader.ReadToEnd();
+
+            _previousDatabaseInstanceName = Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME");
+            _previousHangfireInstanceName = Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME");
+            _previousVcapServices = Environment.GetEnvironmentVariable("VCAP_SERVICES");
+
             Environment.SetEnvironmentVariable("DATABASE_INSTANCE_NAME", "get-into-teaching-api-dev-pg-svc-2");
             Environment.SetEnvironmentVariable("HANGFIRE_INSTANCE_NAME", "get-into-teaching-api-dev-pg-svc");
             Environment.SetEnvironmentVariable("VCAP_SERVICES", json);
+        }
+
+        public void Dispose()
+        {
+            Environment.SetEnvironmentVariable("DATABASE_INSTANCE_NAME", _previousDatabaseInstanceName);
+            Environment.SetEnvironmentVariable("HANGFIRE_INSTANCE_NAME", _previousHangfireInstanceName);
+            Environment.SetEnvironmentVariable("VCAP_SERVICES", _previousVcapServices);
         }
 
         [Fact]

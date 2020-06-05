@@ -10,7 +10,6 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using GetIntoTeachingApi.Auth;
 using System.Collections.Generic;
-using System.Linq;
 using GetIntoTeachingApi.OperationFilters;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Database;
@@ -22,9 +21,6 @@ using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Npgsql;
 
 namespace GetIntoTeachingApi
 {
