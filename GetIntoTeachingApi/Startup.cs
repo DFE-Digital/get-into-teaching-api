@@ -21,6 +21,8 @@ using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace GetIntoTeachingApi
 {
@@ -48,7 +50,7 @@ namespace GetIntoTeachingApi
             services.AddSingleton<IEnv, Env>();
             services.AddScoped<DbConfiguration, DbConfiguration>();
 
-            if (true || Env.IsDevelopment) // TODO: temp
+            /*if (Env.IsDevelopment) // TODO: temp
             {
                 var keepAliveConnection = new SqliteConnection("DataSource=:memory:");
                 keepAliveConnection.Open();
@@ -60,7 +62,8 @@ namespace GetIntoTeachingApi
                 services.AddDbContext<GetIntoTeachingDbContext>(options =>
                     options.UseNpgsql(Configuration.GetConnectionString(
                         DbConfiguration.DatabaseConnectionString()), x => x.UseNetTopologySuite()));
-            }
+            }*/
+            services.AddDbContext<GetIntoTeachingDbContext>(); // TODO: temp
 
             services.AddAuthorization(options =>
             {
@@ -124,7 +127,7 @@ The GIT API aims to provide:
                 c.EnableAnnotations();
                 c.AddFluentValidationRules();
             });
-
+            /* TODO: temp
             services.AddHangfire((provider, config) =>
             {
                 var automaticRetry = new AutomaticRetryAttribute
@@ -139,19 +142,25 @@ The GIT API aims to provide:
                     .UseSimpleAssemblyNameTypeSerializer()
                     .UseRecommendedSerializerSettings()
                     .UseFilter(automaticRetry);
-
-                if (true || Env.IsDevelopment) // TODO: temp
+                
+                if (Env.IsDevelopment)
                     config.UseMemoryStorage().WithJobExpirationTimeout(JobConfiguration.ExpirationTimeout);
                 else
                     config.UsePostgreSqlStorage(Configuration.GetConnectionString(DbConfiguration.HangfireConnectionString()));
             });
 
-            services.AddHangfireServer();
+            services.AddHangfireServer();*/
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
+            // TODO: temp
+            logger.LogWarning(JsonConvert.SerializeObject(Environment.GetEnvironmentVariables()));
+            logger.LogWarning($"VCAP_SERVICES: {Environment.GetEnvironmentVariable("VCAP_SERVICES")}");
+            var vcap = JsonConvert.DeserializeObject<DbConfiguration.VcapServices>(new Env().VcapServices);
+            logger.LogWarning($"VCAP_SERVICES (deserialized): {vcap}");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
