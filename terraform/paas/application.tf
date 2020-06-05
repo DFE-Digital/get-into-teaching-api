@@ -3,6 +3,7 @@ resource "cloudfoundry_app" "api_application" {
     space = data.cloudfoundry_space.space.id
     docker_image = var.paas_api_docker_image
     stopped = var.application_stopped
+    strategy = "blue-green-v2"
     service_binding  { 
             service_instance = cloudfoundry_service_instance.postgres1.id
     } 
