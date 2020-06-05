@@ -10,7 +10,7 @@ using NetTopologySuite.Geometries;
 namespace GetIntoTeachingApi.Migrations
 {
     [DbContext(typeof(GetIntoTeachingDbContext))]
-    [Migration("20200605120505_InitialCreate")]
+    [Migration("20200605130657_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace GetIntoTeachingApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Point>("Coordinate")
-                        .HasColumnType("geography")
+                        .HasColumnType("POINT")
                         .HasAnnotation("Sqlite:Srid", 4326);
 
                     b.HasKey("Postcode");
@@ -103,7 +103,7 @@ namespace GetIntoTeachingApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Point>("Coordinate")
-                        .HasColumnType("geography")
+                        .HasColumnType("POINT")
                         .HasAnnotation("Sqlite:Srid", 4326);
 
                     b.HasKey("Id");
