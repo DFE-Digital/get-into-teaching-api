@@ -26,6 +26,21 @@ namespace GetIntoTeachingApi.Services
             _dbContext = dbContext;
         }
 
+        public async Task<string> CheckStatusAsync()
+        {
+            try
+            {
+                await _dbContext.Database.OpenConnectionAsync();
+                await _dbContext.Database.CloseConnectionAsync();
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+
+            return HealthCheckResponse.StatusOk;
+        }
+
         public async Task SyncAsync(ICrmService crm)
         {
             await SyncTeachingEvents(crm);

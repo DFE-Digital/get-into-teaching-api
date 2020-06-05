@@ -27,6 +27,19 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public async void CheckStatusAsync_WhenHealthy_ReturnsOk()
+        {
+            (await _store.CheckStatusAsync()).Should().Be(HealthCheckResponse.StatusOk);
+        }
+
+        [Fact]
+        public async void CheckStatusAsync_WhenUnhealthy_ReturnsError()
+        {
+            await DbContext.DisposeAsync();
+            (await _store.CheckStatusAsync()).Should().Contain("Cannot access a disposed object.");
+        }
+
+        [Fact]
         public async void SyncAsync_WithFailure_RetainsExistingData()
         {
             await SeedMockPrivacyPoliciesAsync();

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Utils;
@@ -21,6 +21,11 @@ namespace GetIntoTeachingApi.Services
             _logger = logger;
             _client = client;
             _env = env;
+        }
+
+        public async Task<string> CheckStatusAsync()
+        {
+            return await _client.CheckStatusAsync(ApiKey());
         }
 
         public Task SendEmailAsync(string email, string templateId, Dictionary<string, dynamic> personalisation)

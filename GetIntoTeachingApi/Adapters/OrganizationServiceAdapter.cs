@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GetIntoTeachingApi.Models;
 using Microsoft.PowerPlatform.Cds.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
@@ -15,6 +16,20 @@ namespace GetIntoTeachingApi.Adapters
         public OrganizationServiceAdapter(IOrganizationService client)
         {
             _client = (CdsServiceClient)client;
+        }
+
+        public string CheckStatus()
+        {
+            try
+            {
+                _client.GetMyCdsUserId();
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+
+            return HealthCheckResponse.StatusOk;
         }
 
         public IQueryable<Entity> CreateQuery(string entityName, OrganizationServiceContext context)
