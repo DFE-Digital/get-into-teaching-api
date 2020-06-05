@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GetIntoTeachingApi.Utils;
-using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
 using Xunit;
@@ -33,8 +32,7 @@ namespace GetIntoTeachingApiTests.Services
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _context = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
             _mockService.Setup(mock => mock.Context(ConnectionString)).Returns(_context);
-            var cache = new CrmCache(new Mock<ILogger<CrmCache>>().Object);
-            _crm = new CrmService(_mockService.Object, cache, mockEnv.Object);
+            _crm = new CrmService(_mockService.Object, mockEnv.Object);
         }
 
         [Fact]
@@ -44,25 +42,12 @@ namespace GetIntoTeachingApiTests.Services
             _mockService.Setup(mock => mock.CreateQuery("dfe_country", _context))
                 .Returns(queryableCountries);
 
-            var result = _crm.GetLookupItems("dfe_country");
+            var result = _crm.GetLookupItems("dfe_country").ToList();
 
             result.Select(country => country.Value).Should().BeEquivalentTo(
                 new object[] { "Country 1", "Country 2", "Country 3" }, 
                 options => options.WithStrictOrdering());
-        }
-
-        [Fact]
-        public void GetLookupItems_IsCached()
-        {
-            var queryableCountries = MockCountries();
-            _mockService.Setup(mock => mock.CreateQuery("dfe_country", _context))
-                .Returns(queryableCountries);
-
-            var result1 = _crm.GetLookupItems("dfe_country");
-            var result2 = _crm.GetLookupItems("dfe_country");
-
-            result1.Should().BeEquivalentTo(result2);
-            _mockService.Verify(mock => mock.CreateQuery("dfe_country", _context), Times.Once);
+            result.Select(country => country.EntityName).Should().OnlyContain(name => name == "dfe_country");
         }
 
         [Fact]
@@ -72,24 +57,12 @@ namespace GetIntoTeachingApiTests.Services
             _mockService.Setup(mock => mock.GetPickListItemsForAttribute(ConnectionString, "contact", "dfe_ittyear"))
                 .Returns(initialTeacherTrainingYears);
 
-            var result = _crm.GetPickListItems("contact", "dfe_ittyear");
+            var result = _crm.GetPickListItems("contact", "dfe_ittyear").ToList();
 
             result.Select(year => year.Value).Should().BeEquivalentTo(new object[] { "2010", "2011", "2012" }, 
                 options => options.WithStrictOrdering());
-        }
-
-        [Fact]
-        public void GetPickListItems_IsCached()
-        {
-            var initialTeacherTrainingYears = MockInitialTeacherTrainingYears();
-            _mockService.Setup(mock => mock.GetPickListItemsForAttribute(ConnectionString, "contact", "dfe_ittyear"))
-                .Returns(initialTeacherTrainingYears);
-
-            var result1 = _crm.GetPickListItems("contact", "dfe_ittyear");
-            var result2 = _crm.GetPickListItems("contact", "dfe_ittyear");
-
-            result1.Should().BeEquivalentTo(result2);
-            _mockService.Verify(mock => mock.GetPickListItemsForAttribute(ConnectionString, "contact", "dfe_ittyear"), Times.Once);
+            result.Select(year => year.EntityName).Should().OnlyContain(name => name == "contact");
+            result.Select(year => year.AttributeName).Should().OnlyContain(name => name == "dfe_ittyear");
         }
 
         [Fact]
@@ -387,7 +360,7 @@ namespace GetIntoTeachingApiTests.Services
             return new[] { country1, country2, country3 }.AsQueryable();
         }
 
-        private static List<PickListItem> MockInitialTeacherTrainingYears()
+        private static IEnumerable<PickListItem> MockInitialTeacherTrainingYears()
         {
             var year1 = new PickListItem { PickListItemId = 1, DisplayLabel = "2010" };
             var year2 = new PickListItem { PickListItemId = 2, DisplayLabel = "2011" };

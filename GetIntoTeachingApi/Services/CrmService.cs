@@ -15,30 +15,25 @@ namespace GetIntoTeachingApi.Services
         public enum PrivacyPolicyType { Web = 222750001 }
 
         private readonly IOrganizationServiceAdapter _service;
-        private readonly ICrmCache _cache;
         private readonly IEnv _env;
-        private const int CacheDurationInHours = 3;
         private const int MaximumNumberOfCandidatesToMatch = 20;
         private const int MaximumNumberOfPrivacyPolicies = 3;
 
-        public CrmService(IOrganizationServiceAdapter service, ICrmCache cache, IEnv env)
+        public CrmService(IOrganizationServiceAdapter service, IEnv env)
         {
             _service = service;
-            _cache = cache;
             _env = env;
         }
 
         public IEnumerable<TypeEntity> GetLookupItems(string entityName)
         {
-            return _cache.GetOrCreate(entityName, CacheExpiry(), 
-                () => _service.CreateQuery(entityName, Context()).Select((entity) => new TypeEntity(entity)));
+            return _service.CreateQuery(entityName, Context()).Select((entity) => new TypeEntity(entity, entityName));
         }
 
         public IEnumerable<TypeEntity> GetPickListItems(string entityName, string attributeName)
         {
-            return _cache.GetOrCreate($"{entityName}-{attributeName}", CacheExpiry(),
-                () => _service.GetPickListItemsForAttribute(ConnectionString(), entityName, attributeName)
-                    .Select((pickListItem) => new TypeEntity(pickListItem)));
+            return _service.GetPickListItemsForAttribute(ConnectionString(), entityName, attributeName)
+                .Select((pickListItem) => new TypeEntity(pickListItem, entityName, attributeName));
         }
 
         public IEnumerable<PrivacyPolicy> GetPrivacyPolicies()
@@ -140,11 +135,6 @@ namespace GetIntoTeachingApi.Services
             var entities = _service.RetrieveMultiple(ConnectionString(), query);
 
             return entities.Select((entity) => new TeachingEvent(entity, this)).ToList();
-        }
-
-        private static DateTime CacheExpiry()
-        {
-            return DateTime.Now.AddHours(CacheDurationInHours);
         }
 
         private OrganizationServiceContext Context()

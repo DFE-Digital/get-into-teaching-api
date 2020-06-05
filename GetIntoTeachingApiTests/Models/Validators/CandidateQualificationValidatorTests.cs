@@ -11,12 +11,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
     public class CandidateQualificationValidatorTests
     {
         private readonly CandidateQualificationValidator _validator;
-        private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<IStore> _mockStore;
 
         public CandidateQualificationValidatorTests()
         {
-            _mockCrm = new Mock<ICrmService>();
-            _validator = new CandidateQualificationValidator(_mockCrm.Object);
+            _mockStore = new Mock<IStore>();
+            _validator = new CandidateQualificationValidator(_mockStore.Object);
         }
 
         [Fact]
@@ -26,21 +26,21 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var mockType = NewMock(222);
             var mockDegreeStatus = NewMock(333);
 
-            _mockCrm
+            _mockStore
                 .Setup(mock => mock.GetPickListItems("dfe_qualification", "dfe_category"))
                 .Returns(new[] { mockCategory });
-            _mockCrm
+            _mockStore
                 .Setup(mock => mock.GetPickListItems("dfe_qualification", "dfe_type"))
                 .Returns(new[] { mockType });
-            _mockCrm
+            _mockStore
                 .Setup(mock => mock.GetPickListItems("dfe_qualification", "dfe_degreestatus"))
                 .Returns(new[] { mockDegreeStatus });
 
             var qualification = new CandidateQualification()
             {
-                TypeId = mockType.Id,
-                CategoryId = mockCategory.Id,
-                DegreeStatusId = mockDegreeStatus.Id,
+                TypeId = int.Parse(mockType.Id),
+                CategoryId = int.Parse(mockCategory.Id),
+                DegreeStatusId = int.Parse(mockDegreeStatus.Id),
             };
 
             var result = _validator.TestValidate(qualification);
@@ -86,7 +86,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
         private static TypeEntity NewMock(dynamic id)
         {
-            return new TypeEntity { Id = id };
+            return new TypeEntity { Id = id.ToString() };
         }
     }
 }

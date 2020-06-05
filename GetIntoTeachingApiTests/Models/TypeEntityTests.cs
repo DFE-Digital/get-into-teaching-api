@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using FluentAssertions;
 using GetIntoTeachingApi.Models;
 using Microsoft.PowerPlatform.Cds.Client;
@@ -10,16 +11,26 @@ namespace GetIntoTeachingApiTests.Models
     public class TypeEntityTests
     {
         [Fact]
+        public void EntityAttributes()
+        {
+            var type = typeof(BaseModel);
+
+            type.GetProperty("Id").Should().BeDecoratedWith<DatabaseGeneratedAttribute>(
+                a => a.DatabaseGeneratedOption == DatabaseGeneratedOption.None);
+        }
+
+        [Fact]
         public void Constructor_WithEntity()
         {
             var entity = new Entity();
             entity.Id = Guid.NewGuid();
             entity["dfe_name"] = "name";
 
-            var typeEntity = new TypeEntity(entity);
+            var typeEntity = new TypeEntity(entity, "entityName");
 
-            ((Guid)typeEntity.Id).Should().Be(entity.Id);
-            (typeEntity.Value as string).Should().Be(entity.GetAttributeValue<string>("dfe_name"));
+            typeEntity.Id.Should().Be(entity.Id.ToString());
+            typeEntity.Value.Should().Be(entity.GetAttributeValue<string>("dfe_name"));
+            typeEntity.EntityName.Should().Be("entityName");
         }
 
         [Fact]
@@ -27,10 +38,12 @@ namespace GetIntoTeachingApiTests.Models
         {
             var pickListItem = new CdsServiceClient.PickListItem {PickListItemId = 123, DisplayLabel = "name"};
 
-            var typeEntity = new TypeEntity(pickListItem);
+            var typeEntity = new TypeEntity(pickListItem, "entityName", "attributeName");
 
-            ((int)typeEntity.Id).Should().Be(pickListItem.PickListItemId);
-            (typeEntity.Value as string).Should().Be(pickListItem.DisplayLabel);
+            typeEntity.Id.Should().Be(pickListItem.PickListItemId.ToString());
+            typeEntity.Value.Should().Be(pickListItem.DisplayLabel);
+            typeEntity.EntityName.Should().Be("entityName");
+            typeEntity.AttributeName.Should().Be("attributeName");
         }
     }
 }

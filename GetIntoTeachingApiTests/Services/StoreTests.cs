@@ -101,13 +101,110 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void Sync_InsertsNewLookupItems()
+        {
+            var mockCountries = MockCountries().ToList();
+            var mockCrm = new Mock<ICrmService>();
+            mockCrm.Setup(m => m.GetLookupItems("dfe_country")).Returns(mockCountries);
+
+            _store.Sync(mockCrm.Object);
+
+            var ids = DbContext.TypeEntities.Select(e => e.Id);
+            ids.Should().BeEquivalentTo(mockCountries.Select(e => e.Id));
+            DbContext.TypeEntities.Count().Should().Be(3);
+        }
+
+        [Fact]
+        public void Sync_UpdatesExistingLookupItems()
+        {
+            var updatedCountries = SeedMockCountries().ToList();
+            updatedCountries.ForEach(c => c.Value += "Updated");
+            var mockCrm = new Mock<ICrmService>();
+            mockCrm.Setup(m => m.GetLookupItems("dfe_country")).Returns(updatedCountries);
+
+            _store.Sync(mockCrm.Object);
+
+            var countries = DbContext.TypeEntities.ToList();
+            countries.Select(c => c.Value).ToList().ForEach(value => value.Should().Contain("Updated"));
+            DbContext.TypeEntities.Count().Should().Be(3);
+        }
+
+        [Fact]
+        public void Sync_InsertsNewPickListItems()
+        {
+            var mockYears = MockInitialTeacherTrainingYears().ToList();
+            var mockCrm = new Mock<ICrmService>();
+            mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_ittyear")).Returns(mockYears);
+
+            _store.Sync(mockCrm.Object);
+
+            var ids = DbContext.TypeEntities.Select(e => e.Id);
+            ids.Should().BeEquivalentTo(mockYears.Select(e => e.Id));
+            DbContext.TypeEntities.Count().Should().Be(3);
+        }
+
+        [Fact]
+        public void Sync_UpdatesExistingPickListItems()
+        {
+            var updatedYears = SeedMockInitialTeacherTrainingYears().ToList();
+            updatedYears.ForEach(c => c.Value += "Updated");
+            var mockCrm = new Mock<ICrmService>();
+            mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_ittyear")).Returns(updatedYears);
+
+            _store.Sync(mockCrm.Object);
+
+            var countries = DbContext.TypeEntities.ToList();
+            countries.Select(c => c.Value).ToList().ForEach(value => value.Should().Contain("Updated"));
+            DbContext.TypeEntities.Count().Should().Be(3);
+        }
+
+        [Fact]
+        public void Sync_SyncsAllTypeEntities()
+        {
+            var mockCrm = new Mock<ICrmService>();
+
+            _store.Sync(mockCrm.Object);
+
+            mockCrm.Verify(m => m.GetLookupItems("dfe_country"));
+            mockCrm.Verify(m => m.GetLookupItems("dfe_teachingsubjectlist"));
+            mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_ittyear"));
+            mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_preferrededucationphase01"));
+            mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_isinuk"));
+            mockCrm.Verify(m => m.GetPickListItems("dfe_qualification", "dfe_degreestatus"));
+            mockCrm.Verify(m => m.GetPickListItems("dfe_qualification", "dfe_category"));
+            mockCrm.Verify(m => m.GetPickListItems("dfe_qualification", "dfe_type"));
+            mockCrm.Verify(m => m.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase"));
+            mockCrm.Verify(m => m.GetPickListItems("msevtmgt_event", "dfe_event_type"));
+        }
+
+        [Fact]
+        public void GetLookupItems_ReturnsMatching()
+        {
+            SeedMockCountries();
+
+            var result = _store.GetLookupItems("dfe_country");
+
+            result.Select(t => t.Value).Should().BeEquivalentTo(new string[] { "Country 1", "Country 2", "Country 3" });
+        }
+
+        [Fact]
+        public void GetPickListItems_ReturnsMatching()
+        {
+            SeedMockInitialTeacherTrainingYears();
+
+            var result = _store.GetPickListItems("contact", "dfe_ittyear");
+
+            result.Select(t => t.Value).Should().BeEquivalentTo(new string[] { "2009", "2010", "2011" });
+        }
+
+        [Fact]
         public void GetPrivacyPolicies_ReturnsAll()
         {
             SeedMockPrivacyPolicies();
 
             var result = _store.GetPrivacyPolicies();
 
-            result.Select(p => p.Text).Should().BeEquivalentTo(new string[] { "Policy 1", "Policy 2", "Policy 3" });
+            result.Select(t => t.Text).Should().BeEquivalentTo(new string[] { "Policy 1", "Policy 2", "Policy 3" });
         }
 
         [Fact]
@@ -339,7 +436,7 @@ namespace GetIntoTeachingApiTests.Services
             var policy2 = new PrivacyPolicy() { Id = Guid.NewGuid(), Text = "Policy 2", CreatedAt = DateTime.Now };
             var policy3 = new PrivacyPolicy() { Id = Guid.NewGuid(), Text = "Policy 3", CreatedAt = DateTime.Now.AddDays(-5) };
 
-            return new PrivacyPolicy[] {policy1, policy2, policy3};
+            return new PrivacyPolicy[] { policy1, policy2, policy3 };
         }
 
         private IEnumerable<PrivacyPolicy> SeedMockPrivacyPolicies()
@@ -352,6 +449,48 @@ namespace GetIntoTeachingApiTests.Services
             _store.Sync(mockCrm.Object);
 
             return privacyPolicies;
+        }
+
+        private static IEnumerable<TypeEntity> MockCountries()
+        {
+            var country1 = new TypeEntity() { Id = Guid.NewGuid().ToString(), Value = "Country 1", EntityName = "dfe_country" };
+            var country2 = new TypeEntity() { Id = Guid.NewGuid().ToString(), Value = "Country 2", EntityName = "dfe_country" };
+            var country3 = new TypeEntity() { Id = Guid.NewGuid().ToString(), Value = "Country 3", EntityName = "dfe_country" };
+
+            return new TypeEntity[] { country1, country2, country3 };
+        }
+
+        private IEnumerable<TypeEntity> SeedMockCountries()
+        {
+            var types = MockCountries().ToList();
+            var mockCrm = new Mock<ICrmService>();
+
+            mockCrm.Setup(m => m.GetLookupItems("dfe_country")).Returns(types);
+
+            _store.Sync(mockCrm.Object);
+
+            return types;
+        }
+
+        private static IEnumerable<TypeEntity> MockInitialTeacherTrainingYears()
+        {
+            var year1 = new TypeEntity() { Id = "1", Value = "2009", EntityName = "contact", AttributeName = "dfe_ittyear" };
+            var year2 = new TypeEntity() { Id = "2", Value = "2010", EntityName = "contact", AttributeName = "dfe_ittyear" };
+            var year3 = new TypeEntity() { Id = "3", Value = "2011", EntityName = "contact", AttributeName = "dfe_ittyear" };
+
+            return new TypeEntity[] { year1, year2, year3 };
+        }
+
+        private IEnumerable<TypeEntity> SeedMockInitialTeacherTrainingYears()
+        {
+            var types = MockInitialTeacherTrainingYears().ToList();
+            var mockCrm = new Mock<ICrmService>();
+
+            mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_ittyear")).Returns(types);
+
+            _store.Sync(mockCrm.Object);
+
+            return types;
         }
     }
 }
