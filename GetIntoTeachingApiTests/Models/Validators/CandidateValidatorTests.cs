@@ -28,6 +28,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var mockPreferredEducationPhase = NewMock(111);
             var mockLocation = NewMock(222);
             var mockInitialTeacherTrainingYear = NewMock(333);
+            var mockChannel = NewMock(444);
 
             _mockStore
                 .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
@@ -41,6 +42,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_ittyear"))
                 .Returns(new[] { mockInitialTeacherTrainingYear });
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_channelcreation"))
+                .Returns(new[] { mockChannel });
 
             var candidate = new Candidate()
             {
@@ -59,6 +63,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 PreferredEducationPhaseId = int.Parse(mockPreferredEducationPhase.Id),
                 LocationId = int.Parse(mockLocation.Id),
                 InitialTeacherTrainingYearId = int.Parse(mockInitialTeacherTrainingYear.Id),
+                ChannelId = int.Parse(mockChannel.Id),
             };
 
             var result = _validator.TestValidate(candidate);
@@ -299,6 +304,18 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_InitialTeacherTrainingYearIdIsNull_HasNoError()
         {
             _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.InitialTeacherTrainingYearId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_ChannelIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.ChannelId, 123);
+        }
+
+        [Fact]
+        public void Validate_ChannelIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.ChannelId, null as int?);
         }
 
         private static TypeEntity NewMock(dynamic id)
