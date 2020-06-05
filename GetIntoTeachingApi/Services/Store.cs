@@ -144,6 +144,7 @@ namespace GetIntoTeachingApi.Services
             UpsertTypes(crm.GetPickListItems("dfe_qualification", "dfe_type"));
             UpsertTypes(crm.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase"));
             UpsertTypes(crm.GetPickListItems("msevtmgt_event", "dfe_event_type"));
+            UpsertTypes(crm.GetPickListItems("phonecall", "dfe_channelcreation"));
             _dbContext.SaveChanges();
         }
 
