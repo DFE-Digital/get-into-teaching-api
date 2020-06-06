@@ -9,15 +9,14 @@ namespace GetIntoTeachingApi.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
-                .Annotation("Sqlite:InitSpatialMetaData", true);
+                .Annotation("Npgsql:PostgresExtension:postgis", ",,");
 
             migrationBuilder.CreateTable(
                 name: "Locations",
                 columns: table => new
                 {
                     Postcode = table.Column<string>(nullable: false),
-                    Coordinate = table.Column<Point>(nullable: true)
-                        .Annotation("Sqlite:Srid", 4326)
+                    Coordinate = table.Column<Point>(type: "geography", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -48,8 +47,7 @@ namespace GetIntoTeachingApi.Migrations
                     AddressCity = table.Column<string>(nullable: true),
                     AddressState = table.Column<string>(nullable: true),
                     AddressPostcode = table.Column<string>(nullable: true),
-                    Coordinate = table.Column<Point>(nullable: true)
-                        .Annotation("Sqlite:Srid", 4326)
+                    Coordinate = table.Column<Point>(type: "geography", nullable: true)
                 },
                 constraints: table =>
                 {
