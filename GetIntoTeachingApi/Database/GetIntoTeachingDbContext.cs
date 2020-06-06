@@ -16,8 +16,19 @@ namespace GetIntoTeachingApi.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Location>().Property(m => m.Coordinate).HasSrid(DbConfiguration.Wgs84Srid);
-            modelBuilder.Entity<TeachingEventBuilding>().Property(m => m.Coordinate).HasSrid(DbConfiguration.Wgs84Srid);
+            switch (Database.ProviderName)
+            {
+                case "Microsoft.EntityFrameworkCore.Sqlite":
+                    modelBuilder.Entity<Location>().Property(m => m.Coordinate)
+                        .HasSrid(DbConfiguration.Wgs84Srid);
+                    modelBuilder.Entity<TeachingEventBuilding>().Property(m => m.Coordinate)
+                        .HasSrid(DbConfiguration.Wgs84Srid);
+                    break;
+                case "Npgsql.EntityFrameworkCore.PostgreSQL":
+                    modelBuilder.HasPostgresExtension("postgis");
+                    break;
+            }
+
             modelBuilder.Entity<TeachingEvent>().HasOne(c => c.Building);
             modelBuilder.Entity<TypeEntity>().HasKey(t => new {t.Id, t.EntityName, t.AttributeName});
         }
