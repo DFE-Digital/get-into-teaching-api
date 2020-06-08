@@ -107,18 +107,7 @@ The GIT API aims to provide:
                     In = ParameterLocation.Header
                 });
                 
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "apiKey" }
-                        },
-                        new List<string>()
-                    }
-                });
-
-                c.OperationFilter<AuthResponsesOperationFilter>();
+                c.OperationFilter<AuthOperationFilter>();
                 c.EnableAnnotations();
                 c.AddFluentValidationRules();
             });
