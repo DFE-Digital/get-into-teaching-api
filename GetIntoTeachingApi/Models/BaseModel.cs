@@ -29,7 +29,7 @@ namespace GetIntoTeachingApi.Models
         {
             if (!ShouldMap(crm)) return null;
 
-            var entity = crm.MappableEntity(LogicalName(), Id, context);
+            var entity = crm.MappableEntity(LogicalName(GetType()), Id, context);
             MapFieldAttributesToEntity(entity);
             MapRelationshipAttributesToEntity(entity, crm, context);
             return entity;
@@ -42,6 +42,24 @@ namespace GetIntoTeachingApi.Models
             var fieldNames = attributes.Select(a => a.Name);
 
             return fieldNames.Concat(new[] {$"{entityAttribute.LogicalName}id"}).ToArray();
+        }
+
+        public static EntityFieldAttribute EntityFieldAttribute(ICustomAttributeProvider property)
+        {
+            return (EntityFieldAttribute)property.GetCustomAttributes(false)
+                .FirstOrDefault(a => a.GetType() == typeof(EntityFieldAttribute));
+        }
+
+        public static EntityRelationshipAttribute EntityRelationshipAttribute(ICustomAttributeProvider property)
+        {
+            return (EntityRelationshipAttribute)property.GetCustomAttributes(false)
+                .FirstOrDefault(a => a.GetType() == typeof(EntityRelationshipAttribute));
+        }
+
+        public static string LogicalName(MemberInfo type)
+        {
+            var attribute = (EntityAttribute)Attribute.GetCustomAttribute(type, typeof(EntityAttribute));
+            return attribute.LogicalName;
         }
 
         protected virtual bool ShouldMapRelationship(string propertyName, dynamic value, ICrmService crm)
@@ -150,24 +168,6 @@ namespace GetIntoTeachingApi.Models
         private static IEnumerable<PropertyInfo> GetProperties(object model)
         {
             return model.GetType().GetProperties();
-        }
-
-        private static EntityFieldAttribute EntityFieldAttribute(ICustomAttributeProvider property)
-        {
-            return (EntityFieldAttribute)property.GetCustomAttributes(false)
-                .FirstOrDefault(a => a.GetType() == typeof(EntityFieldAttribute));
-        }
-
-        private static EntityRelationshipAttribute EntityRelationshipAttribute(ICustomAttributeProvider property)
-        {
-            return (EntityRelationshipAttribute)property.GetCustomAttributes(false)
-                .FirstOrDefault(a => a.GetType() == typeof(EntityRelationshipAttribute));
-        }
-
-        private string LogicalName()
-        {
-            var attribute = (EntityAttribute) Attribute.GetCustomAttribute(GetType(), typeof(EntityAttribute));
-            return attribute.LogicalName;
         }
     }
 }

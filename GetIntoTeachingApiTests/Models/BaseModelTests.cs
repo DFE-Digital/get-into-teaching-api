@@ -9,6 +9,7 @@ using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
+using GetIntoTeachingApiTests.Mocks;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Moq;
@@ -16,33 +17,6 @@ using Xunit;
 
 namespace GetIntoTeachingApiTests.Models
 {
-    [Entity(LogicalName = "mock")]
-    internal class MockModel : BaseModel
-    {
-        [EntityField(Name = "dfe_field1", Type = typeof(EntityReference), Reference = "dfe_list")]
-        public Guid? Field1 { get; set; }
-        [EntityField(Name = "dfe_field2", Type = typeof(OptionSetValue))]
-        public int? Field2 { get; set; }
-        [EntityField(Name = "dfe_field3")]
-        public string Field3 { get; set; }
-        [EntityRelationship(Name = "dfe_mock_dfe_relatedmock_mock", Type = typeof(MockRelatedModel))]
-        public MockRelatedModel RelatedMock { get; set; }
-        [EntityRelationship(Name = "dfe_mock_dfe_relatedmock_mocks", Type = typeof(MockRelatedModel))]
-        public IEnumerable<MockRelatedModel> RelatedMocks { get; set; }
-
-        public MockModel() : base() { }
-
-        public MockModel(Entity entity, ICrmService crm) : base(entity, crm) { }
-    }
-
-    [Entity(LogicalName = "relatedMock")]
-    internal class MockRelatedModel : BaseModel
-    {
-        public MockRelatedModel() : base() { }
-
-        public MockRelatedModel(Entity entity, ICrmService crm) : base(entity, crm) { }
-    }
-
     public class BaseModelTests
     {
         private readonly Mock<IOrganizationServiceAdapter> _mockService;
@@ -55,6 +29,40 @@ namespace GetIntoTeachingApiTests.Models
             _context = _mockService.Object.Context("mock-connection-string");
             var mockEnv = new Mock<IEnv>();
             _crm = new CrmService(_mockService.Object, mockEnv.Object);
+        }
+
+        [Fact]
+        public void EntityFieldAttribute_OnPropertyWithAttribute_ReturnsAttribute()
+        {
+            var property = typeof(MockModel).GetProperty("Field1");
+            BaseModel.EntityFieldAttribute(property).Should().BeOfType<EntityFieldAttribute>();
+        }
+
+        [Fact]
+        public void EntityFieldAttribute_OnPropertyWithoutAttribute_ReturnsNull()
+        {
+            var property = typeof(MockModel).GetProperty("RelatedMock");
+            BaseModel.EntityFieldAttribute(property).Should().BeNull();
+        }
+
+        [Fact]
+        public void EntityRelationshipAttribute_OnPropertyWithAttribute_ReturnsAttribute()
+        {
+            var property = typeof(MockModel).GetProperty("RelatedMock");
+            BaseModel.EntityRelationshipAttribute(property).Should().BeOfType<EntityRelationshipAttribute>();
+        }
+
+        [Fact]
+        public void EntityRelationshipAttribute_OnPropertyWithoutAttribute_ReturnsNull()
+        {
+            var property = typeof(MockModel).GetProperty("Field1");
+            BaseModel.EntityRelationshipAttribute(property).Should().BeNull();
+        }
+
+        [Fact]
+        public void LogicalName_ReturnsCorrectly()
+        {
+            BaseModel.LogicalName(typeof(MockModel)).Should().Be("mock");
         }
 
         [Fact]
