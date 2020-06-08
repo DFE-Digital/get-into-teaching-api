@@ -60,6 +60,20 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void Sync_DeletesOrphanedTeachingEventsAndBuildings()
+        {
+            var teachingEvents = SeedMockTeachingEvents().ToList();
+            var mockCrm = new Mock<ICrmService>();
+            mockCrm.Setup(m => m.GetTeachingEvents()).Returns(teachingEvents.GetRange(0, 1));
+
+            _store.Sync(mockCrm.Object);
+
+            DbContext.TeachingEvents.Should().BeEquivalentTo(teachingEvents.GetRange(0, 1));
+            DbContext.TeachingEventBuildings.Should()
+                .BeEquivalentTo(teachingEvents.GetRange(0, 1).Select(te => te.Building));
+        }
+
+        [Fact]
         public void Sync_PopulatesTeachingEventBuildingCoordinates()
         {
             var mockCrm = new Mock<ICrmService>();
@@ -101,6 +115,19 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void Sync_DeletesOrphanedPrivacyPolicies()
+        {
+            var policies = SeedMockPrivacyPolicies().ToList();
+            var mockCrm = new Mock<ICrmService>();
+            mockCrm.Setup(m => m.GetPrivacyPolicies()).Returns(policies.GetRange(0, 2));
+
+            _store.Sync(mockCrm.Object);
+
+            var remainingPolicies = DbContext.PrivacyPolicies.ToArray();
+            remainingPolicies.Should().BeEquivalentTo(policies.GetRange(0, 2));
+        }
+
+        [Fact]
         public void Sync_InsertsNewLookupItems()
         {
             var mockCountries = MockCountries().ToList();
@@ -130,6 +157,19 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void Sync_DeletesOrphanedLookupItems()
+        {
+            var countries = SeedMockCountries().ToList();
+            var mockCrm = new Mock<ICrmService>();
+            mockCrm.Setup(m => m.GetLookupItems("dfe_country")).Returns(countries.GetRange(0, 2));
+
+            _store.Sync(mockCrm.Object);
+
+            var remainingCountries = DbContext.TypeEntities.Where(te => te.EntityName == "dfe_country").ToArray();
+            remainingCountries.Should().BeEquivalentTo(countries.GetRange(0, 2));
+        }
+
+        [Fact]
         public void Sync_InsertsNewPickListItems()
         {
             var mockYears = MockInitialTeacherTrainingYears().ToList();
@@ -156,6 +196,20 @@ namespace GetIntoTeachingApiTests.Services
             var countries = DbContext.TypeEntities.ToList();
             countries.Select(c => c.Value).ToList().ForEach(value => value.Should().Contain("Updated"));
             DbContext.TypeEntities.Count().Should().Be(3);
+        }
+
+        [Fact]
+        public void Sync_DeletesOrphanedPickListItems()
+        {
+            var years = SeedMockInitialTeacherTrainingYears().ToList();
+            var mockCrm = new Mock<ICrmService>();
+            mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_ittyear")).Returns(years.GetRange(0, 2));
+
+            _store.Sync(mockCrm.Object);
+
+            var remainingCountries = DbContext.TypeEntities
+                .Where(te => te.EntityName == "contact" && te.AttributeName == "dfe_ittyear").ToArray();
+            remainingCountries.Should().BeEquivalentTo(years.GetRange(0, 2));
         }
 
         [Fact]
