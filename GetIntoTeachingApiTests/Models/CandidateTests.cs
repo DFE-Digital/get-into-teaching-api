@@ -29,12 +29,14 @@ namespace GetIntoTeachingApiTests.Models
                 a => a.Name == "dfe_isinuk" && a.Type == typeof(OptionSetValue));
             type.GetProperty("InitialTeacherTrainingYearId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_ittyear" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("ChannelId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "dfe_channelcreation" && a.Type == typeof(OptionSetValue));
 
             type.GetProperty("Email").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "emailaddress1");
             type.GetProperty("FirstName").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "firstname");
             type.GetProperty("LastName").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "lastname");
             type.GetProperty("DateOfBirth").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "birthdate");
-            type.GetProperty("Telephone").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "telephone1");
+            type.GetProperty("Telephone").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_telephone1");
             type.GetProperty("AddressLine1").Should()
                 .BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_line1");
             type.GetProperty("AddressLine2").Should()

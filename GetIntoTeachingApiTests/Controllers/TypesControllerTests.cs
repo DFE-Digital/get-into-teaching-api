@@ -91,6 +91,18 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
+        public void GetCandidateChannels_ReturnsAllChannels()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_channelcreation")).Returns(mockEntities);
+
+            var response = _controller.GetCandidateChannels();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().Be(mockEntities);
+        }
+
+        [Fact]
         public void GetQualificationDegreeStatus_ReturnsAllStatus()
         {
             var mockEntities = MockTypeEntities();
@@ -145,6 +157,18 @@ namespace GetIntoTeachingApiTests.Controllers
             _mockStore.Setup(mock => mock.GetPickListItems("msevtmgt_event", "dfe_event_type")).Returns(mockEntities);
 
             var response = _controller.GetTeachingEventTypes();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().Be(mockEntities);
+        }
+
+        [Fact]
+        public void GetPhoneCallChannels_ReturnsAllChannels()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("phonecall", "dfe_channelcreation")).Returns(mockEntities);
+
+            var response = _controller.GetPhoneCallChannels();
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().Be(mockEntities);
