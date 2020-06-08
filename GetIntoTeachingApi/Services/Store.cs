@@ -113,13 +113,13 @@ namespace GetIntoTeachingApi.Services
             var buildings = teachingEvents.Where(te => te.Building != null)
                 .Select(te => te.Building).DistinctBy(b => b.Id);
 
-            UpsertModels(buildings, _dbContext.TeachingEventBuildings);
+            UpsertAndRemoveOrphanedModels(buildings, _dbContext.TeachingEventBuildings);
 
             // Link events with buildings attached to the context prior to upsert.
             teachingEvents.Where(te => te.Building != null).ToList()
                 .ForEach(te => te.Building = _dbContext.TeachingEventBuildings.Find(te.Building.Id));
 
-            UpsertModels(teachingEvents, _dbContext.TeachingEvents);
+            UpsertAndRemoveOrphanedModels(teachingEvents, _dbContext.TeachingEvents);
 
             _dbContext.SaveChanges();
         }
@@ -127,44 +127,50 @@ namespace GetIntoTeachingApi.Services
         private void SyncPrivacyPolicies(ICrmService crm)
         {
             var policies = crm.GetPrivacyPolicies().ToList();
-            UpsertModels(policies, _dbContext.PrivacyPolicies);
-            _dbContext.SaveChanges();
+            UpsertAndRemoveOrphanedModels(policies, _dbContext.PrivacyPolicies);
         }
 
         private void SyncTypeEntities(ICrmService crm)
         {
-            UpsertTypes(crm.GetLookupItems("dfe_country"));
-            UpsertTypes(crm.GetLookupItems("dfe_teachingsubjectlist"));
-            UpsertTypes(crm.GetPickListItems("contact", "dfe_ittyear"));
-            UpsertTypes(crm.GetPickListItems("contact", "dfe_preferrededucationphase01"));
-            UpsertTypes(crm.GetPickListItems("contact", "dfe_isinuk"));
-            UpsertTypes(crm.GetPickListItems("contact", "dfe_channelcreation"));
-            UpsertTypes(crm.GetPickListItems("dfe_qualification", "dfe_degreestatus"));
-            UpsertTypes(crm.GetPickListItems("dfe_qualification", "dfe_category"));
-            UpsertTypes(crm.GetPickListItems("dfe_qualification", "dfe_type"));
-            UpsertTypes(crm.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase"));
-            UpsertTypes(crm.GetPickListItems("msevtmgt_event", "dfe_event_type"));
-            UpsertTypes(crm.GetPickListItems("phonecall", "dfe_channelcreation"));
+            UpsertAndRemoveOrphanedTypes(crm.GetLookupItems("dfe_country"));
+            UpsertAndRemoveOrphanedTypes(crm.GetLookupItems("dfe_teachingsubjectlist"));
+            UpsertAndRemoveOrphanedTypes(crm.GetPickListItems("contact", "dfe_ittyear"));
+            UpsertAndRemoveOrphanedTypes(crm.GetPickListItems("contact", "dfe_preferrededucationphase01"));
+            UpsertAndRemoveOrphanedTypes(crm.GetPickListItems("contact", "dfe_isinuk"));
+            UpsertAndRemoveOrphanedTypes(crm.GetPickListItems("contact", "dfe_channelcreation"));
+            UpsertAndRemoveOrphanedTypes(crm.GetPickListItems("dfe_qualification", "dfe_degreestatus"));
+            UpsertAndRemoveOrphanedTypes(crm.GetPickListItems("dfe_qualification", "dfe_category"));
+            UpsertAndRemoveOrphanedTypes(crm.GetPickListItems("dfe_qualification", "dfe_type"));
+            UpsertAndRemoveOrphanedTypes(crm.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase"));
+            UpsertAndRemoveOrphanedTypes(crm.GetPickListItems("msevtmgt_event", "dfe_event_type"));
+            UpsertAndRemoveOrphanedTypes(crm.GetPickListItems("phonecall", "dfe_channelcreation"));
+        }
+
+        private void UpsertAndRemoveOrphanedModels<T>(IEnumerable<T> models, IQueryable<T> dbSet) where T : BaseModel
+        {
+            var existingIds = dbSet.Select(m => m.Id);
+            var modelIds = models.Select(m => m.Id);
+
+            _dbContext.RemoveRange(dbSet.Where(m => !modelIds.Contains(m.Id)));
+            _dbContext.UpdateRange(models.Where(m => existingIds.Contains(m.Id)));
+            _dbContext.AddRange(models.Where(m => !existingIds.Contains(m.Id)));
             _dbContext.SaveChanges();
         }
 
-        private void UpsertModels<T>(IEnumerable<T> models, IQueryable<T> dbSet) where T : BaseModel
-        {
-            var existingIds = dbSet.Select(m => m.Id);
-            _dbContext.UpdateRange(models.Where(m => existingIds.Contains(m.Id)));
-            _dbContext.AddRange(models.Where(m => !existingIds.Contains(m.Id)));
-        }
-
-        private void UpsertTypes(IEnumerable<TypeEntity> types)
+        private void UpsertAndRemoveOrphanedTypes(IEnumerable<TypeEntity> types)
         {
             if (!types.Any()) return;
 
-            var key = types.Select(te => new { te.EntityName, te.AttributeName }).First();
+            var key = types.Select(t => new { t.EntityName, t.AttributeName }).First();
+            var typeIds = types.Select(t => t.Id);
             var existingIds = _dbContext.TypeEntities
-                .Where(m => m.EntityName == key.EntityName && m.AttributeName == key.AttributeName)
-                .Select(m => m.Id);
-            _dbContext.UpdateRange(types.Where(m => existingIds.Contains(m.Id)));
-            _dbContext.AddRange(types.Where(m => !existingIds.Contains(m.Id)));
+                .Where(t => t.EntityName == key.EntityName && t.AttributeName == key.AttributeName)
+                .Select(t => t.Id);
+
+            _dbContext.RemoveRange(_dbContext.TypeEntities.Where(t => t.EntityName == key.EntityName 
+                && t.AttributeName == key.AttributeName && !typeIds.Contains(t.Id)));
+            _dbContext.UpdateRange(types.Where(t => existingIds.Contains(t.Id)));
+            _dbContext.AddRange(types.Where(t => !existingIds.Contains(t.Id)));
             _dbContext.SaveChanges();
         }
 
