@@ -26,9 +26,11 @@ namespace GetIntoTeachingApi.Database
             _dbContext = dbContext;
         }
 
-        public static string DatabaseConnectionString() => GenerateConnectionString(Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME"));
+        public static string DatabaseConnectionString() => 
+            GenerateConnectionString(Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME"));
 
-        public static string HangfireConnectionString() => GenerateConnectionString(Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME"));
+        public static string HangfireConnectionString() => 
+            GenerateConnectionString(Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME"));
 
         public void Configure()
         {
