@@ -23,6 +23,22 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void Sync_WithFailure_RetainsExistingData()
+        {
+            SeedMockPrivacyPolicies();
+            var countBefore = DbContext.PrivacyPolicies.Count();
+            var mockCrm = new Mock<ICrmService>();
+            mockCrm.Setup(m => m.GetPrivacyPolicies()).Throws<Exception>();
+
+            _store.Invoking(s => s.Sync(mockCrm.Object))
+                .Should().Throw<Exception>();
+
+            var countAfter = DbContext.PrivacyPolicies.Count();
+            countBefore.Should().BeGreaterThan(0);
+            countAfter.Should().Be(countBefore);
+        }
+
+        [Fact]
         public void Sync_InsertsNewTeachingEvents()
         {
             var mockTeachingEvents = MockTeachingEvents().ToList();
