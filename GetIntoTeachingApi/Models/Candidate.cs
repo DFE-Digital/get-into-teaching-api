@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Client;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
@@ -19,6 +18,8 @@ namespace GetIntoTeachingApi.Models
         public int? LocationId { get; set; }
         [EntityField(Name = "dfe_ittyear", Type = typeof(OptionSetValue))]
         public int? InitialTeacherTrainingYearId { get; set; }
+        [EntityField(Name = "dfe_channelcreation", Type = typeof(OptionSetValue))]
+        public int? ChannelId { get; set; }
         [EntityField(Name = "emailaddress1")]
         public string Email { get; set; }
         [EntityField(Name = "firstname")]
@@ -27,7 +28,7 @@ namespace GetIntoTeachingApi.Models
         public string LastName { get; set; }
         [EntityField(Name = "birthdate")]
         public DateTime? DateOfBirth { get; set; }
-        [EntityField(Name = "telephone1")]
+        [EntityField(Name = "address1_telephone1")]
         public string Telephone { get; set; }
         [EntityField(Name = "address1_line1")]
         public string AddressLine1 { get; set; }
@@ -41,7 +42,9 @@ namespace GetIntoTeachingApi.Models
         public string AddressState { get; set; }
         [EntityField(Name = "address1_postalcode")]
         public string AddressPostcode { get; set; }
-        [EntityRelationship(Name = "dfe_contact_dfe_candidatequalification_ContactId", Type = typeof(CandidateQualification))]
+
+        [EntityRelationship(Name = "dfe_contact_dfe_candidatequalification_ContactId",
+            Type = typeof(CandidateQualification))]
         public List<CandidateQualification> Qualifications { get; set; }
         [EntityRelationship(Name = "dfe_contact_dfe_candidatepastteachingposition_ContactId", Type = typeof(CandidatePastTeachingPosition))]
         public List<CandidatePastTeachingPosition> PastTeachingPositions { get; set; }

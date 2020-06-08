@@ -26,7 +26,7 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.AddressState).NotEmpty().MaximumLength(128);
             RuleFor(candidate => candidate.AddressPostcode).NotEmpty().MaximumLength(40);
 
-            RuleFor(candidate => candidate.PhoneCall).SetValidator(new PhoneCallValidator()).Unless(candidate => candidate.PhoneCall == null);
+            RuleFor(candidate => candidate.PhoneCall).SetValidator(new PhoneCallValidator(store)).Unless(candidate => candidate.PhoneCall == null);
             RuleFor(candidate => candidate.PrivacyPolicy).SetValidator(new CandidatePrivacyPolicyValidator(store)).Unless(candidate => candidate.PrivacyPolicy == null);
             RuleForEach(candidate => candidate.Qualifications).SetValidator(new CandidateQualificationValidator(store));
             RuleForEach(candidate => candidate.PastTeachingPositions).SetValidator(new CandidatePastTeachingPositionValidator(store));
@@ -47,6 +47,9 @@ namespace GetIntoTeachingApi.Models.Validators
                 .Must(id => InitialTeacherTrainingYearIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.InitialTeacherTrainingYearId == null)
                 .WithMessage("Must be a valid candidate initial teacher training year.");
+            RuleFor(candidate => candidate.ChannelId)
+                .Must(id => ChannelIds().Contains(id.ToString()))
+                .WithMessage("Must be a valid candidate channel.");
         }
 
         private IEnumerable<string> PreferredTeachingSubjectIds()
@@ -67,6 +70,11 @@ namespace GetIntoTeachingApi.Models.Validators
         private IEnumerable<string> InitialTeacherTrainingYearIds()
         {
             return _store.GetPickListItems("contact", "dfe_ittyear").Select(year => year.Id);
+        }
+
+        private IEnumerable<string> ChannelIds()
+        {
+            return _store.GetPickListItems("contact", "dfe_channelcreation").Select(channel => channel.Id);
         }
     }
 }
