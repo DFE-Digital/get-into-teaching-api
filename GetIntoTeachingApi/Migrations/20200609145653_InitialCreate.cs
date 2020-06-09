@@ -14,7 +14,6 @@ namespace GetIntoTeachingApi.Migrations
                 {
                     Postcode = table.Column<string>(nullable: false),
                     Coordinate = table.Column<Point>(type: "geography", nullable: true)
-                        .Annotation("Sqlite:Srid", 4326)
                 },
                 constraints: table =>
                 {
@@ -46,7 +45,6 @@ namespace GetIntoTeachingApi.Migrations
                     AddressState = table.Column<string>(nullable: true),
                     AddressPostcode = table.Column<string>(nullable: true),
                     Coordinate = table.Column<Point>(type: "geography", nullable: true)
-                        .Annotation("Sqlite:Srid", 4326)
                 },
                 constraints: table =>
                 {
