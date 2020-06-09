@@ -9,7 +9,7 @@ env:
   CONTAINER: get-into-teaching-api
 
 jobs:
-  test:
+  test_dot_net:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -25,3 +25,11 @@ jobs:
       run: sudo dotnet build --configuration Release --no-restore
     - name: Test
       run: sudo dotnet test --no-restore --verbosity normal
+  test_docker:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Lint Dockerfile
+      uses: brpaz/hadolint-action@master
+      with:
+        dockerfile: "Dockerfile"

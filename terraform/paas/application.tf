@@ -5,7 +5,7 @@ resource "cloudfoundry_app" "api_application" {
     stopped = var.application_stopped
     strategy = "blue-green-v2"
     service_binding  { 
-            service_instance = cloudfoundry_service_instance.postgres1.id
+            service_instance = cloudfoundry_service_instance.hangfire.id
     } 
     service_binding  { 
             service_instance = cloudfoundry_service_instance.postgres2.id
@@ -26,7 +26,7 @@ resource "cloudfoundry_app" "api_application" {
          SHARED_SECRET     = var.SHARED_SECRET
          ASPNETCORE_ENVIRONMENT = var.ASPNETCORE_ENVIRONMENT
          DATABASE_INSTANCE_NAME = cloudfoundry_service_instance.postgres2.name
-         HANGFIRE_INSTANCE_NAME = cloudfoundry_service_instance.postgres1.name
+         HANGFIRE_INSTANCE_NAME = cloudfoundry_service_instance.hangfire.name
     }    
 }
 
