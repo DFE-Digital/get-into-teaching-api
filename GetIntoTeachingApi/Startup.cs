@@ -9,7 +9,6 @@ using System;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using GetIntoTeachingApi.Auth;
-using System.Collections.Generic;
 using System.Linq;
 using GetIntoTeachingApi.OperationFilters;
 using GetIntoTeachingApi.Adapters;
@@ -22,9 +21,6 @@ using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Npgsql;
 
 namespace GetIntoTeachingApi
 {
@@ -46,13 +42,12 @@ namespace GetIntoTeachingApi
             services.AddSingleton<ICandidateAccessTokenService, CandidateAccessTokenService>();
             services.AddScoped<ICrmService, CrmService>();
             services.AddSingleton<INotifyService, NotifyService>();
-            services.AddSingleton<ICrmCache, CrmCache>();
             services.AddScoped<IStore, Store>();
             services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
             services.AddSingleton<IEnv, Env>();
             services.AddScoped<DbConfiguration, DbConfiguration>();
 
-            /*if (Env.IsDevelopment) // TODO: temp
+            if (Env.IsDevelopment)
             {
                 var keepAliveConnection = new SqliteConnection("DataSource=:memory:");
                 keepAliveConnection.Open();
@@ -62,10 +57,8 @@ namespace GetIntoTeachingApi
             else
             {
                 services.AddDbContext<GetIntoTeachingDbContext>(options =>
-                    options.UseNpgsql(Configuration.GetConnectionString(
-                        DbConfiguration.DatabaseConnectionString()), x => x.UseNetTopologySuite()));
-            }*/
-            services.AddDbContext<GetIntoTeachingDbContext>(); // TODO: temp
+                    options.UseNpgsql(DbConfiguration.DatabaseConnectionString(), x => x.UseNetTopologySuite()));
+            }
 
             services.AddAuthorization(options =>
             {
@@ -114,22 +107,11 @@ The GIT API aims to provide:
                     In = ParameterLocation.Header
                 });
                 
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "apiKey" }
-                        },
-                        new List<string>()
-                    }
-                });
-
-                c.OperationFilter<AuthResponsesOperationFilter>();
+                c.OperationFilter<AuthOperationFilter>();
                 c.EnableAnnotations();
                 c.AddFluentValidationRules();
             });
-            /* TODO: temp
+
             services.AddHangfire((provider, config) =>
             {
                 var automaticRetry = new AutomaticRetryAttribute
@@ -148,57 +130,15 @@ The GIT API aims to provide:
                 if (Env.IsDevelopment)
                     config.UseMemoryStorage().WithJobExpirationTimeout(JobConfiguration.ExpirationTimeout);
                 else
-                    config.UsePostgreSqlStorage(Configuration.GetConnectionString(DbConfiguration.HangfireConnectionString()));
+                    config.UsePostgreSqlStorage(DbConfiguration.HangfireConnectionString());
             });
 
-            services.AddHangfireServer();*/
+            services.AddHangfireServer();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // TODO: temp
-            logger.LogWarning(JsonConvert.SerializeObject(Environment.GetEnvironmentVariables()));
-            logger.LogWarning($"VCAP_SERVICES: {Environment.GetEnvironmentVariable("VCAP_SERVICES")}");
-            var vcap = JsonConvert.DeserializeObject<DbConfiguration.VcapServices>(new Env().VcapServices);
-
-            var databaseInstanceName = Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME");
-            var hangfireInstanceName = Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME");
-
-            logger.LogWarning($"DATABASE: {databaseInstanceName}");
-
-            var postgres = vcap.Postgres.First(p => p.InstanceName == databaseInstanceName);
-
-            var builder = new NpgsqlConnectionStringBuilder
-            {
-                Host = postgres.Credentials.Host,
-                Database = postgres.Credentials.Name,
-                Username = postgres.Credentials.Username,
-                Password = postgres.Credentials.Password,
-                Port = postgres.Credentials.Port,
-                SslMode = SslMode.Require,
-                TrustServerCertificate = true
-            };
-
-            logger.LogWarning($"DATABASE CS: {builder.ConnectionString}");
-
-            logger.LogWarning($"HANGFIRE: {hangfireInstanceName}");
-
-            var postgres1 = vcap.Postgres.First(p => p.InstanceName == hangfireInstanceName);
-
-            var builder1 = new NpgsqlConnectionStringBuilder
-            {
-                Host = postgres1.Credentials.Host,
-                Database = postgres1.Credentials.Name,
-                Username = postgres1.Credentials.Username,
-                Password = postgres1.Credentials.Password,
-                Port = postgres1.Credentials.Port,
-                SslMode = SslMode.Require,
-                TrustServerCertificate = true
-            };
-
-            logger.LogWarning($"HANGFIRE CS: {builder1.ConnectionString}");
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -222,16 +162,24 @@ The GIT API aims to provide:
 
             app.UseAuthorization();
 
-            using (var serviceScope = app.ApplicationServices.CreateScope())
-            {
-                // Configure and seed the database.
-                var dbConfiguration = serviceScope.ServiceProvider.GetService<DbConfiguration>();
-                dbConfiguration.Configure();
-            }
-
-            // Kick off/update recurring jobs.
+            // Configure recurring jobs.
             RecurringJob.AddOrUpdate<CrmSyncJob>("crm-sync", (x) => x.Run(), Cron.Daily());
+            RecurringJob.AddOrUpdate<LocationSyncJob>("location-sync", (x) => 
+                x.RunAsync("https://www.freemaptools.com/download/full-postcodes/ukpostcodes.zip"), Cron.Weekly());
+
+            using var serviceScope = app.ApplicationServices.CreateScope();
+
+            // Configure and seed the database.
+            var dbConfiguration = serviceScope.ServiceProvider.GetService<DbConfiguration>();
+            dbConfiguration.Configure();
+
+            // Sync with the CRM.
             RecurringJob.Trigger("crm-sync");
+
+            // Initial locations sync.
+            var dbContext = serviceScope.ServiceProvider.GetService<GetIntoTeachingDbContext>();
+            if (!dbContext.Locations.Any())
+                RecurringJob.Trigger("location-sync");
 
             app.UseEndpoints(endpoints =>
             {

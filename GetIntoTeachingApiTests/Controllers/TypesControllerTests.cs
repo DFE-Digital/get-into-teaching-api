@@ -14,14 +14,14 @@ namespace GetIntoTeachingApiTests.Controllers
 {
     public class TypesControllerTests
     {
-        private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<IStore> _mockStore;
         private readonly TypesController _controller;
 
         public TypesControllerTests()
         {
-            _mockCrm = new Mock<ICrmService>();
+            _mockStore = new Mock<IStore>();
             var mockLogger = new Mock<ILogger<TypesController>>();
-            _controller = new TypesController(mockLogger.Object, _mockCrm.Object);
+            _controller = new TypesController(mockLogger.Object, _mockStore.Object);
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void GetCountries_ReturnsAllCountries()
         {
             var mockEntities = MockTypeEntities();
-            _mockCrm.Setup(mock => mock.GetLookupItems("dfe_country")).Returns(mockEntities);
+            _mockStore.Setup(mock => mock.GetLookupItems("dfe_country")).Returns(mockEntities);
 
             var response = _controller.GetCountries();
 
@@ -46,7 +46,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void GetTeachingSubjects_ReturnsAllSubjects()
         {
             var mockEntities = MockTypeEntities();
-            _mockCrm.Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist")).Returns(mockEntities);
+            _mockStore.Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist")).Returns(mockEntities);
 
             var response = _controller.GetTeachingSubjects();
 
@@ -58,7 +58,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void GetCandidateInitialTeacherTrainingYears_ReturnsAllYears()
         {
             var mockEntities = MockTypeEntities();
-            _mockCrm.Setup(mock => mock.GetPickListItems("contact", "dfe_ittyear")).Returns(mockEntities);
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_ittyear")).Returns(mockEntities);
 
             var response = _controller.GetCandidateInitialTeacherTrainingYears();
 
@@ -70,7 +70,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void GetCandidatePreferredEducationPhases_ReturnsAllPhases()
         {
             var mockEntities = MockTypeEntities();
-            _mockCrm.Setup(mock => mock.GetPickListItems("contact", "dfe_preferrededucationphase01")).Returns(mockEntities);
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_preferrededucationphase01")).Returns(mockEntities);
 
             var response = _controller.GetCandidatePreferredEducationPhases();
 
@@ -82,9 +82,21 @@ namespace GetIntoTeachingApiTests.Controllers
         public void GetCandidateLocations_ReturnsAllLocations()
         {
             var mockEntities = MockTypeEntities();
-            _mockCrm.Setup(mock => mock.GetPickListItems("contact", "dfe_isinuk")).Returns(mockEntities);
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_isinuk")).Returns(mockEntities);
 
             var response = _controller.GetCandidateLocations();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().Be(mockEntities);
+        }
+
+        [Fact]
+        public void GetCandidateChannels_ReturnsAllChannels()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_channelcreation")).Returns(mockEntities);
+
+            var response = _controller.GetCandidateChannels();
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().Be(mockEntities);
@@ -94,7 +106,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void GetQualificationDegreeStatus_ReturnsAllStatus()
         {
             var mockEntities = MockTypeEntities();
-            _mockCrm.Setup(mock => mock.GetPickListItems("dfe_qualification", "dfe_degreestatus")).Returns(mockEntities);
+            _mockStore.Setup(mock => mock.GetPickListItems("dfe_qualification", "dfe_degreestatus")).Returns(mockEntities);
 
             var response = _controller.GetQualificationDegreeStatus();
 
@@ -106,7 +118,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void GetQualificationCategories_ReturnsAllCategories()
         {
             var mockEntities = MockTypeEntities();
-            _mockCrm.Setup(mock => mock.GetPickListItems("dfe_qualification", "dfe_category")).Returns(mockEntities);
+            _mockStore.Setup(mock => mock.GetPickListItems("dfe_qualification", "dfe_category")).Returns(mockEntities);
 
             var response = _controller.GetQualificationCategories();
 
@@ -118,7 +130,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void GetQualificatioTypes_ReturnsAllTypes()
         {
             var mockEntities = MockTypeEntities();
-            _mockCrm.Setup(mock => mock.GetPickListItems("dfe_qualification", "dfe_type")).Returns(mockEntities);
+            _mockStore.Setup(mock => mock.GetPickListItems("dfe_qualification", "dfe_type")).Returns(mockEntities);
 
             var response = _controller.GetQualificationTypes();
 
@@ -130,7 +142,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void GetPastTeachingPositionEducationPhases_ReturnsAllPhases()
         {
             var mockEntities = MockTypeEntities();
-            _mockCrm.Setup(mock => mock.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase")).Returns(mockEntities);
+            _mockStore.Setup(mock => mock.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase")).Returns(mockEntities);
 
             var response = _controller.GetPastTeachingPositionEducationPhases();
 
@@ -142,9 +154,21 @@ namespace GetIntoTeachingApiTests.Controllers
         public void GetTeachingEventTypes_ReturnsAllTypes()
         {
             var mockEntities = MockTypeEntities();
-            _mockCrm.Setup(mock => mock.GetPickListItems("msevtmgt_event", "dfe_event_type")).Returns(mockEntities);
+            _mockStore.Setup(mock => mock.GetPickListItems("msevtmgt_event", "dfe_event_type")).Returns(mockEntities);
 
             var response = _controller.GetTeachingEventTypes();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().Be(mockEntities);
+        }
+
+        [Fact]
+        public void GetPhoneCallChannels_ReturnsAllChannels()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("phonecall", "dfe_channelcreation")).Returns(mockEntities);
+
+            var response = _controller.GetPhoneCallChannels();
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().Be(mockEntities);
@@ -154,8 +178,8 @@ namespace GetIntoTeachingApiTests.Controllers
         {
             return new []
             {
-                new TypeEntity { Id = Guid.NewGuid(), Value = "Type 1" },
-                new TypeEntity { Id = Guid.NewGuid(), Value = "Type 2" },
+                new TypeEntity { Id = Guid.NewGuid().ToString(), Value = "Type 1" },
+                new TypeEntity { Id = Guid.NewGuid().ToString(), Value = "Type 2" },
             };
         }
     }

@@ -12,22 +12,20 @@ namespace GetIntoTeachingApiTests.Models.Validators
     public class TeachingEventSearchRequestValidatorTests
     {
         private readonly TeachingEventSearchRequestValidator _validator;
-        private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<IStore> _mockStore;
 
         public TeachingEventSearchRequestValidatorTests()
         {
-            _mockCrm = new Mock<ICrmService>();
             _mockStore = new Mock<IStore>();
-            _validator = new TeachingEventSearchRequestValidator(_mockCrm.Object, _mockStore.Object);
+            _validator = new TeachingEventSearchRequestValidator(_mockStore.Object);
         }
 
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var mockType = new TypeEntity { Id = 123 };
+            var mockType = new TypeEntity { Id = "123" };
 
-            _mockCrm
+            _mockStore
                 .Setup(mock => mock.GetPickListItems("msevtmgt_event", "dfe_event_type"))
                 .Returns(new[] { mockType });
 
@@ -37,7 +35,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             {
                 Postcode = "KY11 9HF",
                 Radius = 10,
-                TypeId = mockType.Id,
+                TypeId = int.Parse(mockType.Id),
                 StartAfter = DateTime.Now.AddDays(-1),
                 StartBefore = DateTime.Now.AddDays(1)
             };
