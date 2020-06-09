@@ -24,9 +24,6 @@ namespace GetIntoTeachingApi.Database
                     modelBuilder.Entity<TeachingEventBuilding>().Property(m => m.Coordinate)
                         .HasSrid(DbConfiguration.Wgs84Srid);
                     break;
-                case "Npgsql.EntityFrameworkCore.PostgreSQL":
-                    modelBuilder.HasPostgresExtension("postgis");
-                    break;
             }
 
             modelBuilder.Entity<TeachingEvent>().HasOne(c => c.Building);
