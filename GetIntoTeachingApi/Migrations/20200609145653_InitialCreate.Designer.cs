@@ -6,27 +6,29 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace GetIntoTeachingApi.Migrations
 {
     [DbContext(typeof(GetIntoTeachingDbContext))]
-    [Migration("20200609110318_InitialCreate")]
+    [Migration("20200609145653_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.4");
+                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+                .HasAnnotation("ProductVersion", "3.1.4")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("GetIntoTeachingApi.Models.Location", b =>
                 {
                     b.Property<string>("Postcode")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<Point>("Coordinate")
-                        .HasColumnType("geography")
-                        .HasAnnotation("Sqlite:Srid", 4326);
+                        .HasColumnType("geography");
 
                     b.HasKey("Postcode");
 
@@ -36,13 +38,13 @@ namespace GetIntoTeachingApi.Migrations
             modelBuilder.Entity("GetIntoTeachingApi.Models.PrivacyPolicy", b =>
                 {
                     b.Property<Guid?>("Id")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Text")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -52,25 +54,25 @@ namespace GetIntoTeachingApi.Migrations
             modelBuilder.Entity("GetIntoTeachingApi.Models.TeachingEvent", b =>
                 {
                     b.Property<Guid?>("Id")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid?>("BuildingId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("EndAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("StartAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("TypeId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -82,29 +84,28 @@ namespace GetIntoTeachingApi.Migrations
             modelBuilder.Entity("GetIntoTeachingApi.Models.TeachingEventBuilding", b =>
                 {
                     b.Property<Guid?>("Id")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("AddressCity")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("AddressLine1")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("AddressLine2")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("AddressLine3")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("AddressPostcode")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("AddressState")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<Point>("Coordinate")
-                        .HasColumnType("geography")
-                        .HasAnnotation("Sqlite:Srid", 4326);
+                        .HasColumnType("geography");
 
                     b.HasKey("Id");
 
@@ -114,16 +115,16 @@ namespace GetIntoTeachingApi.Migrations
             modelBuilder.Entity("GetIntoTeachingApi.Models.TypeEntity", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("EntityName")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("AttributeName")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id", "EntityName", "AttributeName");
 
