@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
+using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApiTests.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using Xunit;
+using Location = GetIntoTeachingApi.Models.Location;
 
 namespace GetIntoTeachingApiTests.Services
 {
@@ -92,6 +95,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void Sync_PopulatesTeachingEventBuildingCoordinates()
         {
+            SeedMockLocations();
             var mockCrm = new Mock<ICrmService>();
             mockCrm.Setup(m => m.GetTeachingEvents()).Returns(MockTeachingEvents);
 
@@ -305,6 +309,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void SearchTeachingEvents_WithFilters_ReturnsMatching()
         {
+            SeedMockLocations();
             SeedMockTeachingEvents();
             var request = new TeachingEventSearchRequest()
             {
@@ -325,6 +330,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void SearchTeachingEvents_FilteredByRadius_ReturnsMatching()
         {
+            SeedMockLocations();
             SeedMockTeachingEvents();
             var request = new TeachingEventSearchRequest() { Postcode = "KY6 2NJ", Radius = 15 };
 
@@ -337,6 +343,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void SearchTeachingEvents_FilteredByType_ReturnsMatching()
         {
+            SeedMockLocations();
             SeedMockTeachingEvents();
             var request = new TeachingEventSearchRequest() { TypeId = 123 };
 
@@ -396,6 +403,7 @@ namespace GetIntoTeachingApiTests.Services
         [InlineData("k y 119 YU")]
         public void IsValidPostcode_WithValidPostcode_ReturnsTrue(string postcode)
         {
+            SeedMockLocations();
             _store.IsValidPostcode(postcode).Should().BeTrue();
         }
 
@@ -407,6 +415,7 @@ namespace GetIntoTeachingApiTests.Services
         [InlineData("Non-Geographic")]
         public void IsValidPostcode_WithInvalidPostcode_ReturnsFalse(string postcode)
         {
+            SeedMockLocations();
             _store.IsValidPostcode(postcode).Should().BeFalse();
         }
 
@@ -562,6 +571,22 @@ namespace GetIntoTeachingApiTests.Services
             _store.Sync(mockCrm.Object);
 
             return types;
+        }
+
+        private void SeedMockLocations()
+        {
+            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: DbConfiguration.Wgs84Srid);
+            var locations = new Location[]
+            {
+                new Location() {Postcode = "ky119yu", Coordinate = geometryFactory.CreatePoint(new Coordinate(-3.35870, 56.02748))},
+                new Location() {Postcode = "ca48le", Coordinate = geometryFactory.CreatePoint(new Coordinate(-2.84000, 54.89014))},
+                new Location() {Postcode = "ky62nj", Coordinate = geometryFactory.CreatePoint(new Coordinate(-3.178240, 56.182790))},
+                new Location() {Postcode = "kw14yl", Coordinate = geometryFactory.CreatePoint(new Coordinate(-3.10075, 58.64102))},
+                new Location() {Postcode = "tr182ab", Coordinate = geometryFactory.CreatePoint(new Coordinate(-5.53987, 50.12279))},
+            };
+
+            DbContext.Locations.AddRange(locations);
+            DbContext.SaveChanges();
         }
     }
 }

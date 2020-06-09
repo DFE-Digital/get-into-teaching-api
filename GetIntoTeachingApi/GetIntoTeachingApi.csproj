@@ -33,6 +33,7 @@
 		<PackageReference Include="ProjNET4GeoAPI" Version="1.4.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="5.4.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="5.4.1" />
+		<PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -40,9 +41,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="Fixtures\ukpostcodes.csv">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
 		<None Update="Fixtures\ukpostcodes.dev.csv">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
