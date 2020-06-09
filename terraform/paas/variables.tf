@@ -13,7 +13,7 @@ variable password {}
 
 
 variable "application_stopped" {
-   default = true
+   default = false
 }
 
 variable "paas_space" {
