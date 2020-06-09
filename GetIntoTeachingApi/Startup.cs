@@ -9,7 +9,7 @@ using System;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using GetIntoTeachingApi.Auth;
-using System.Collections.Generic;
+using System.Linq;
 using GetIntoTeachingApi.OperationFilters;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Database;
@@ -162,16 +162,24 @@ The GIT API aims to provide:
 
             app.UseAuthorization();
 
-            using (var serviceScope = app.ApplicationServices.CreateScope())
-            {
-                // Configure and seed the database.
-                var dbConfiguration = serviceScope.ServiceProvider.GetService<DbConfiguration>();
-                dbConfiguration.Configure();
-            }
-
-            // Kick off/update recurring jobs.
+            // Configure recurring jobs.
             RecurringJob.AddOrUpdate<CrmSyncJob>("crm-sync", (x) => x.Run(), Cron.Daily());
+            RecurringJob.AddOrUpdate<LocationSyncJob>("location-sync", (x) => 
+                x.RunAsync("https://www.freemaptools.com/download/full-postcodes/ukpostcodes.zip"), Cron.Weekly());
+
+            using var serviceScope = app.ApplicationServices.CreateScope();
+
+            // Configure and seed the database.
+            var dbConfiguration = serviceScope.ServiceProvider.GetService<DbConfiguration>();
+            dbConfiguration.Configure();
+
+            // Sync with the CRM.
             RecurringJob.Trigger("crm-sync");
+
+            // Initial locations sync.
+            var dbContext = serviceScope.ServiceProvider.GetService<GetIntoTeachingDbContext>();
+            if (!dbContext.Locations.Any())
+                RecurringJob.Trigger("location-sync");
 
             app.UseEndpoints(endpoints =>
             {

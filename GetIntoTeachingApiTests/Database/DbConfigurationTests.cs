@@ -17,7 +17,7 @@ namespace GetIntoTeachingApiTests.Database
 
         public DbConfigurationTests()
         {
-            using StreamReader reader = new StreamReader("./Fixtures/vcap_services.json");
+            using var reader = new StreamReader("./Fixtures/vcap_services.json");
             var json = reader.ReadToEnd();
 
             _previousDatabaseInstanceName = Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME");
