@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using GetIntoTeachingApi.Adapters;
-using GetIntoTeachingApi.Jobs;
-using GetIntoTeachingApi.Models;
+﻿using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Services;
 using Moq;
 using Xunit;
