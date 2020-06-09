@@ -13,12 +13,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
     public class CandidateValidatorTests
     {
         private readonly CandidateValidator _validator;
-        private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<IStore> _mockStore;
 
         public CandidateValidatorTests()
         {
-            _mockCrm = new Mock<ICrmService>();
-            _validator = new CandidateValidator(_mockCrm.Object, new Mock<IStore>().Object);
+            _mockStore = new Mock<IStore>();
+            _validator = new CandidateValidator(_mockStore.Object);
         }
 
         [Fact]
@@ -28,19 +28,23 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var mockPreferredEducationPhase = NewMock(111);
             var mockLocation = NewMock(222);
             var mockInitialTeacherTrainingYear = NewMock(333);
+            var mockChannel = NewMock(444);
 
-            _mockCrm
+            _mockStore
                 .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
                 .Returns(new[] { mockPreferredTeachingSubject });
-            _mockCrm
+            _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_preferrededucationphase01"))
                 .Returns(new[] { mockPreferredEducationPhase });
-            _mockCrm
+            _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_isinuk"))
                 .Returns(new[] { mockLocation });
-            _mockCrm
+            _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_ittyear"))
                 .Returns(new[] { mockInitialTeacherTrainingYear });
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_channelcreation"))
+                .Returns(new[] { mockChannel });
 
             var candidate = new Candidate()
             {
@@ -55,10 +59,11 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 AddressCity = "city",
                 AddressState = "state",
                 AddressPostcode = "postcode",
-                PreferredTeachingSubjectId = mockPreferredTeachingSubject.Id,
-                PreferredEducationPhaseId = mockPreferredEducationPhase.Id,
-                LocationId = mockLocation.Id,
-                InitialTeacherTrainingYearId = mockInitialTeacherTrainingYear.Id,
+                PreferredTeachingSubjectId = Guid.Parse(mockPreferredTeachingSubject.Id),
+                PreferredEducationPhaseId = int.Parse(mockPreferredEducationPhase.Id),
+                LocationId = int.Parse(mockLocation.Id),
+                InitialTeacherTrainingYearId = int.Parse(mockInitialTeacherTrainingYear.Id),
+                ChannelId = int.Parse(mockChannel.Id),
             };
 
             var result = _validator.TestValidate(candidate);
@@ -301,9 +306,21 @@ namespace GetIntoTeachingApiTests.Models.Validators
             _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.InitialTeacherTrainingYearId, null as int?);
         }
 
+        [Fact]
+        public void Validate_ChannelIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.ChannelId, 123);
+        }
+
+        [Fact]
+        public void Validate_ChannelIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.ChannelId, null as int?);
+        }
+
         private static TypeEntity NewMock(dynamic id)
         {
-            return new TypeEntity { Id = id };
+            return new TypeEntity { Id = id.ToString() };
         }
     }
 }

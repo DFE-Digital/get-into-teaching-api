@@ -14,12 +14,12 @@ namespace GetIntoTeachingApi.Controllers
     public class TypesController : ControllerBase
     {
         private readonly ILogger<TypesController> _logger;
-        private readonly ICrmService _crm;
+        private readonly IStore _store;
 
-        public TypesController(ILogger<TypesController> logger, ICrmService crm)
+        public TypesController(ILogger<TypesController> logger, IStore store)
         {
             _logger = logger;
-            _crm = crm;
+            _store = store;
         }
 
         [HttpGet]
@@ -32,7 +32,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetCountries()
         {
-            var countries = _crm.GetLookupItems("dfe_country");
+            var countries = _store.GetLookupItems("dfe_country");
             return Ok(countries);
         }
 
@@ -46,7 +46,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetTeachingSubjects()
         {
-            var subjects = _crm.GetLookupItems("dfe_teachingsubjectlist");
+            var subjects = _store.GetLookupItems("dfe_teachingsubjectlist");
             return Ok(subjects);
         }
 
@@ -60,7 +60,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetCandidateInitialTeacherTrainingYears()
         {
-            var years = _crm.GetPickListItems("contact", "dfe_ittyear");
+            var years = _store.GetPickListItems("contact", "dfe_ittyear");
             return Ok(years);
         }
 
@@ -74,7 +74,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetCandidatePreferredEducationPhases()
         {
-            var educationPhases = _crm.GetPickListItems("contact", "dfe_preferrededucationphase01");
+            var educationPhases = _store.GetPickListItems("contact", "dfe_preferrededucationphase01");
             return Ok(educationPhases);
         }
 
@@ -88,8 +88,22 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetCandidateLocations()
         {
-            var locations = _crm.GetPickListItems("contact", "dfe_isinuk");
+            var locations = _store.GetPickListItems("contact", "dfe_isinuk");
             return Ok(locations);
+        }
+
+        [HttpGet]
+        [Route("candidate/channels")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of candidate channels.",
+            OperationId = "GetCandidateChannels",
+            Tags = new[] { "Types" }
+        )]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public IActionResult GetCandidateChannels()
+        {
+            var channels = _store.GetPickListItems("contact", "dfe_channelcreation");
+            return Ok(channels);
         }
 
         [HttpGet]
@@ -102,7 +116,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetQualificationDegreeStatus()
         {
-            var status = _crm.GetPickListItems("dfe_qualification", "dfe_degreestatus");
+            var status = _store.GetPickListItems("dfe_qualification", "dfe_degreestatus");
             return Ok(status);
         }
 
@@ -116,7 +130,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetQualificationCategories()
         {
-            var categories = _crm.GetPickListItems("dfe_qualification", "dfe_category");
+            var categories = _store.GetPickListItems("dfe_qualification", "dfe_category");
             return Ok(categories);
         }
 
@@ -130,7 +144,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetQualificationTypes()
         {
-            var types = _crm.GetPickListItems("dfe_qualification", "dfe_type");
+            var types = _store.GetPickListItems("dfe_qualification", "dfe_type");
             return Ok(types);
         }
 
@@ -144,7 +158,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetPastTeachingPositionEducationPhases()
         {
-            var educationPhases = _crm.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase");
+            var educationPhases = _store.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase");
             return Ok(educationPhases);
         }
 
@@ -158,8 +172,22 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public IActionResult GetTeachingEventTypes()
         {
-            var eventTypes = _crm.GetPickListItems("msevtmgt_event", "dfe_event_type");
+            var eventTypes = _store.GetPickListItems("msevtmgt_event", "dfe_event_type");
             return Ok(eventTypes);
+        }
+
+        [HttpGet]
+        [Route("phone_call/channels")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of phone call channels.",
+            OperationId = "GetPhoneCallChannels",
+            Tags = new[] { "Types" }
+        )]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public IActionResult GetPhoneCallChannels()
+        {
+            var channels = _store.GetPickListItems("phonecall", "dfe_channelcreation");
+            return Ok(channels);
         }
     }
 }
