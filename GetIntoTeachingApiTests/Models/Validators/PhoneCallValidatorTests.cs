@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using FluentAssertions;
 using FluentValidation.TestHelper;
 using GetIntoTeachingApi.Models;
@@ -26,7 +27,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var mockChannel = new TypeEntity { Id = "123" };
             _mockStore
                 .Setup(mock => mock.GetPickListItems("phonecall", "dfe_channelcreation"))
-                .Returns(new[] { mockChannel });
+                .Returns(new[] { mockChannel }.AsQueryable());
 
             var phoneCall = new PhoneCall()
             {

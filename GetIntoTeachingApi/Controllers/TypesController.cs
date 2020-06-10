@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -30,10 +32,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetCountries()
+        public async Task<IActionResult> GetCountries()
         {
-            var countries = _store.GetLookupItems("dfe_country");
-            return Ok(countries);
+            return Ok(await _store.GetLookupItems("dfe_country").ToListAsync());
         }
 
         [HttpGet]
@@ -44,10 +45,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetTeachingSubjects()
+        public async Task<IActionResult> GetTeachingSubjects()
         {
-            var subjects = _store.GetLookupItems("dfe_teachingsubjectlist");
-            return Ok(subjects);
+            return Ok(await _store.GetLookupItems("dfe_teachingsubjectlist").ToListAsync());
         }
 
         [HttpGet]
@@ -58,10 +58,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetCandidateInitialTeacherTrainingYears()
+        public async Task<IActionResult> GetCandidateInitialTeacherTrainingYears()
         {
-            var years = _store.GetPickListItems("contact", "dfe_ittyear");
-            return Ok(years);
+            return Ok(await _store.GetPickListItems("contact", "dfe_ittyear").ToListAsync());
         }
 
         [HttpGet]
@@ -72,10 +71,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetCandidatePreferredEducationPhases()
+        public async Task<IActionResult> GetCandidatePreferredEducationPhases()
         {
-            var educationPhases = _store.GetPickListItems("contact", "dfe_preferrededucationphase01");
-            return Ok(educationPhases);
+            return Ok(await _store.GetPickListItems("contact", "dfe_preferrededucationphase01").ToListAsync());
         }
 
         [HttpGet]
@@ -86,10 +84,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetCandidateLocations()
+        public async Task<IActionResult> GetCandidateLocations()
         {
-            var locations = _store.GetPickListItems("contact", "dfe_isinuk");
-            return Ok(locations);
+            return Ok(await _store.GetPickListItems("contact", "dfe_isinuk").ToListAsync());
         }
 
         [HttpGet]
@@ -100,10 +97,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetCandidateChannels()
+        public async Task<IActionResult> GetCandidateChannels()
         {
-            var channels = _store.GetPickListItems("contact", "dfe_channelcreation");
-            return Ok(channels);
+            return Ok(await _store.GetPickListItems("contact", "dfe_channelcreation").ToListAsync());
         }
 
         [HttpGet]
@@ -114,10 +110,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetQualificationDegreeStatus()
+        public async Task<IActionResult> GetQualificationDegreeStatus()
         {
-            var status = _store.GetPickListItems("dfe_qualification", "dfe_degreestatus");
-            return Ok(status);
+            return Ok(await _store.GetPickListItems("dfe_qualification", "dfe_degreestatus").ToListAsync());
         }
 
         [HttpGet]
@@ -128,10 +123,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetQualificationCategories()
+        public async Task<IActionResult> GetQualificationCategories()
         {
-            var categories = _store.GetPickListItems("dfe_qualification", "dfe_category");
-            return Ok(categories);
+            return Ok(await _store.GetPickListItems("dfe_qualification", "dfe_category").ToListAsync());
         }
 
         [HttpGet]
@@ -142,10 +136,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetQualificationTypes()
+        public async Task<IActionResult> GetQualificationTypes()
         {
-            var types = _store.GetPickListItems("dfe_qualification", "dfe_type");
-            return Ok(types);
+            return Ok(await _store.GetPickListItems("dfe_qualification", "dfe_type").ToListAsync());
         }
 
         [HttpGet]
@@ -156,10 +149,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetPastTeachingPositionEducationPhases()
+        public async Task<IActionResult> GetPastTeachingPositionEducationPhases()
         {
-            var educationPhases = _store.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase");
-            return Ok(educationPhases);
+            return Ok(await _store.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase").ToListAsync());
         }
 
         [HttpGet]
@@ -170,10 +162,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetTeachingEventTypes()
+        public async Task<IActionResult> GetTeachingEventTypes()
         {
-            var eventTypes = _store.GetPickListItems("msevtmgt_event", "dfe_event_type");
-            return Ok(eventTypes);
+            return Ok(await _store.GetPickListItems("msevtmgt_event", "dfe_event_type").ToListAsync());
         }
 
         [HttpGet]
@@ -184,10 +175,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Types" }
         )]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public IActionResult GetPhoneCallChannels()
+        public async Task<IActionResult> GetPhoneCallChannels()
         {
-            var channels = _store.GetPickListItems("phonecall", "dfe_channelcreation");
-            return Ok(channels);
+            return Ok(await _store.GetPickListItems("phonecall", "dfe_channelcreation").ToListAsync());
         }
     }
 }
