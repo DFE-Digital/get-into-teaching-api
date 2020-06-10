@@ -284,11 +284,11 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void GetLatestPrivacyPolicy_ReturnsMostRecent()
+        public async void GetLatestPrivacyPolicy_ReturnsMostRecent()
         {
             SeedMockPrivacyPolicies();
 
-            var result = _store.GetLatestPrivacyPolicy();
+            var result = await _store.GetLatestPrivacyPolicyAsync();
 
             result.Text.Should().Be("Policy 2");
         }

@@ -42,12 +42,12 @@ namespace GetIntoTeachingApi.Services
             return _dbContext.TypeEntities.Where(t => t.EntityName == entityName && t.AttributeName == attributeName);
         }
 
-        public PrivacyPolicy GetLatestPrivacyPolicy()
+        public async Task<PrivacyPolicy> GetLatestPrivacyPolicyAsync()
         {
-            return GetPrivacyPolicies().OrderByDescending(p => p.CreatedAt).FirstOrDefault();
+            return await GetPrivacyPolicies().OrderByDescending(p => p.CreatedAt).FirstOrDefaultAsync();
         }
 
-        public IEnumerable<PrivacyPolicy> GetPrivacyPolicies()
+        public IQueryable<PrivacyPolicy> GetPrivacyPolicies()
         {
             return _dbContext.PrivacyPolicies;
         }

@@ -11,8 +11,8 @@ namespace GetIntoTeachingApi.Services
         void Sync(ICrmService crm);
         IQueryable<TypeEntity> GetLookupItems(string entityName);
         IQueryable<TypeEntity> GetPickListItems(string entityName, string attributeName);
-        PrivacyPolicy GetLatestPrivacyPolicy();
-        IEnumerable<PrivacyPolicy> GetPrivacyPolicies();
+        Task<PrivacyPolicy> GetLatestPrivacyPolicyAsync();
+        IQueryable<PrivacyPolicy> GetPrivacyPolicies();
         IQueryable<TeachingEvent> GetUpcomingTeachingEvents(int limit);
         Task<IEnumerable<TeachingEvent>> SearchTeachingEventsAsync(TeachingEventSearchRequest request);
         Task<TeachingEvent> GetTeachingEventAsync(Guid id);
