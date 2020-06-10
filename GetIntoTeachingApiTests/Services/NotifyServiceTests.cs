@@ -30,7 +30,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void SendEmail_SendsAnEmail()
         {
-            _service.SendEmail("email@address.com", NotifyService.NewPinCodeEmailTemplateId, _personalisation);
+            _service.SendEmailAsync("email@address.com", NotifyService.NewPinCodeEmailTemplateId, _personalisation);
 
             _mockNotificationClient.Verify(
                 mock => mock.SendEmailAsync(
@@ -54,7 +54,7 @@ namespace GetIntoTeachingApiTests.Services
                 )
             ).ThrowsAsync(new Exception("bang"));
 
-            _service.SendEmail("email@address.com", NotifyService.NewPinCodeEmailTemplateId, _personalisation).Wait();
+            _service.SendEmailAsync("email@address.com", NotifyService.NewPinCodeEmailTemplateId, _personalisation).Wait();
 
             _mockLogger.VerifyWarningWasCalled("NotifyService - Failed to send email");
         }
