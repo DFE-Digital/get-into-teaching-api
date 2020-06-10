@@ -17,10 +17,6 @@ RUN dotnet publish -c release -o /app --no-restore
 
 # final stage/image
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-	libsqlite3-mod-spatialite \
-&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 COPY --from=build /app ./
