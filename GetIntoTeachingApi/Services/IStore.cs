@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GetIntoTeachingApi.Models;
 
 namespace GetIntoTeachingApi.Services
@@ -12,9 +13,9 @@ namespace GetIntoTeachingApi.Services
         IQueryable<TypeEntity> GetPickListItems(string entityName, string attributeName);
         PrivacyPolicy GetLatestPrivacyPolicy();
         IEnumerable<PrivacyPolicy> GetPrivacyPolicies();
-        IEnumerable<TeachingEvent> GetUpcomingTeachingEvents(int limit);
-        IEnumerable<TeachingEvent> SearchTeachingEvents(TeachingEventSearchRequest request);
-        TeachingEvent GetTeachingEvent(Guid id);
+        IQueryable<TeachingEvent> GetUpcomingTeachingEvents(int limit);
+        Task<IEnumerable<TeachingEvent>> SearchTeachingEventsAsync(TeachingEventSearchRequest request);
+        Task<TeachingEvent> GetTeachingEventAsync(Guid id);
         bool IsValidPostcode(string postcode);
     }
 }

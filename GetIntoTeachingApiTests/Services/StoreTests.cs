@@ -294,12 +294,12 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void SearchTeachingEvents_WithoutFilters_ReturnsAll()
+        public async void SearchTeachingEvents_WithoutFilters_ReturnsAll()
         {
             SeedMockTeachingEvents();
             var request = new TeachingEventSearchRequest() { };
 
-            var result = _store.SearchTeachingEvents(request);
+            var result = await _store.SearchTeachingEventsAsync(request);
 
             result.Select(e => e.Name).Should().BeEquivalentTo(
                 new string[] { "Event 2", "Event 4", "Event 1", "Event 3", "Event 5", "Event 6" },
@@ -307,7 +307,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void SearchTeachingEvents_WithFilters_ReturnsMatching()
+        public async void SearchTeachingEvents_WithFilters_ReturnsMatching()
         {
             SeedMockLocations();
             SeedMockTeachingEvents();
@@ -320,7 +320,7 @@ namespace GetIntoTeachingApiTests.Services
                 StartBefore = DateTime.Now.AddDays(3)
             };
 
-            var result = _store.SearchTeachingEvents(request);
+            var result = await _store.SearchTeachingEventsAsync(request);
 
             result.Select(e => e.Name).Should().BeEquivalentTo(
                 new string[] { "Event 2" },
@@ -328,60 +328,60 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void SearchTeachingEvents_FilteredByRadius_ReturnsMatching()
+        public async void SearchTeachingEvents_FilteredByRadius_ReturnsMatching()
         {
             SeedMockLocations();
             SeedMockTeachingEvents();
             var request = new TeachingEventSearchRequest() { Postcode = "KY6 2NJ", Radius = 15 };
 
-            var result = _store.SearchTeachingEvents(request);
+            var result = await _store.SearchTeachingEventsAsync(request);
 
             result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 3" },
                 options => options.WithStrictOrdering());
         }
 
         [Fact]
-        public void SearchTeachingEvents_FilteredByType_ReturnsMatching()
+        public async void SearchTeachingEvents_FilteredByType_ReturnsMatching()
         {
             SeedMockLocations();
             SeedMockTeachingEvents();
             var request = new TeachingEventSearchRequest() { TypeId = 123 };
 
-            var result = _store.SearchTeachingEvents(request);
+            var result = await _store.SearchTeachingEventsAsync(request);
 
             result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 4" },
                 options => options.WithStrictOrdering());
         }
 
         [Fact]
-        public void SearchTeachingEvents_FilteredByStartAfter_ReturnsMatching()
+        public async void SearchTeachingEvents_FilteredByStartAfter_ReturnsMatching()
         {
             SeedMockTeachingEvents();
             var request = new TeachingEventSearchRequest() { StartAfter = DateTime.Now.AddDays(6) };
 
-            var result = _store.SearchTeachingEvents(request);
+            var result = await _store.SearchTeachingEventsAsync(request);
 
             result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 3", "Event 5", "Event 6" },
                 options => options.WithStrictOrdering());
         }
 
         [Fact]
-        public void SearchTeachingEvents_FilteredByStartBefore_ReturnsMatching()
+        public async void SearchTeachingEvents_FilteredByStartBefore_ReturnsMatching()
         {
             SeedMockTeachingEvents();
             var request = new TeachingEventSearchRequest() { StartBefore = DateTime.Now.AddDays(6) };
 
-            var result = _store.SearchTeachingEvents(request);
+            var result = await _store.SearchTeachingEventsAsync(request);
 
             result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 4", "Event 1" },
                 options => options.WithStrictOrdering());
         }
 
         [Fact]
-        public void GetTeachingEvents_ReturnsMatchingEvent()
+        public async void GetTeachingEvents_ReturnsMatchingEvent()
         {
             SeedMockTeachingEvents();
-            var result = _store.GetTeachingEvent(FindEventGuid);
+            var result = await _store.GetTeachingEventAsync(FindEventGuid);
 
             result.Id.Should().Be(FindEventGuid);
         }
