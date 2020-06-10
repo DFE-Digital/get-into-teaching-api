@@ -7,7 +7,7 @@ ENV ASPNETCORE_URLS=http://+:8080
 COPY *.sln .
 COPY GetIntoTeachingApi/*.csproj ./GetIntoTeachingApi/
 COPY GetIntoTeachingApiTests/*.csproj ./GetIntoTeachingApiTests/
-RUN dotnet nuget add source --name NotifyBintray https://api.bintray.com/nuget/gov-uk-notify/nuget
+# RUN dotnet nuget add source --name NotifyBintray https://api.bintray.com/nuget/gov-uk-notify/nuget
 RUN dotnet restore -r linux-x64 
 
 # copy everything else and build app
