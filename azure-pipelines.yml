@@ -23,7 +23,7 @@ steps:
     command: 'restore'
     projects: '**/*.csproj'
     feedsToUse: 'config'
-    nugetConfigPath: './'
+    nugetConfigPath: '$(Build.SourcesDirectory)/NuGet.config'
         
 - task: NuGetCommand@2
   inputs:
