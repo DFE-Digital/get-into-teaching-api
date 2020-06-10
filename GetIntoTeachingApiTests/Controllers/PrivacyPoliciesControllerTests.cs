@@ -31,12 +31,12 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void GetLatest_ReturnsLatestPrivacyPolicy()
+        public async void GetLatest_ReturnsLatestPrivacyPolicy()
         {
             var mockPolicy = MockPrivacyPolicy();
-            _mockStore.Setup(mock => mock.GetLatestPrivacyPolicy()).Returns(mockPolicy);
+            _mockStore.Setup(mock => mock.GetLatestPrivacyPolicyAsync()).ReturnsAsync(mockPolicy);
 
-            var response = _controller.GetLatest();
+            var response = await _controller.GetLatest();
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().Be(mockPolicy);
