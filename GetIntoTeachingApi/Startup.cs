@@ -20,7 +20,6 @@ using Hangfire;
 using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
 using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
 
 namespace GetIntoTeachingApi
 {
@@ -50,14 +49,11 @@ namespace GetIntoTeachingApi
             if (Env.IsDevelopment)
             {
                 var keepAliveConnection = new SqliteConnection("DataSource=:memory:");
-                keepAliveConnection.Open();
-                services.AddDbContext<GetIntoTeachingDbContext>(options => 
-                    options.UseSqlite(keepAliveConnection, x => x.UseNetTopologySuite()));
+                services.AddDbContext<GetIntoTeachingDbContext>(builder => DbConfiguration.ConfigSqLite(builder, keepAliveConnection));
             }
             else
             {
-                services.AddDbContext<GetIntoTeachingDbContext>(options =>
-                    options.UseNpgsql(DbConfiguration.DatabaseConnectionString(), x => x.UseNetTopologySuite()));
+                services.AddDbContext<GetIntoTeachingDbContext>(DbConfiguration.ConfigPostgres);
             }
 
             services.AddAuthorization(options =>
