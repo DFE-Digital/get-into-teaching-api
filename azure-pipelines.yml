@@ -21,8 +21,8 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'custom'
-    custom: 'add'
-    arguments: 'nuget add source --name NotifyBintray https://api.bintray.com/nuget/gov-uk-notify/nuget'
+    custom: 'nuget'
+    arguments: 'add source --name NotifyBintray https://api.bintray.com/nuget/gov-uk-notify/nuget'
     
 - task: NuGetCommand@2
   inputs:
