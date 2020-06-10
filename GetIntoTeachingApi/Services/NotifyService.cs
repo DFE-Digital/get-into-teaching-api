@@ -23,7 +23,7 @@ namespace GetIntoTeachingApi.Services
             _env = env;
         }
 
-        public Task SendEmail(string email, string templateId, Dictionary<string, dynamic> personalisation)
+        public Task SendEmailAsync(string email, string templateId, Dictionary<string, dynamic> personalisation)
         {
             return _client.SendEmailAsync(
                 ApiKey(),

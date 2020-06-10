@@ -44,7 +44,8 @@ namespace GetIntoTeachingApi.Jobs
 
         private void NotifyAttendeeOfFailure(ExistingCandidateRequest attendee)
         {
-            _notifyService.SendEmail(
+            // We fire and forget the email, ensuring the job succeeds.
+            _notifyService.SendEmailAsync(
                 attendee.Email,
                 NotifyService.TeachingEventRegistrationFailedTemplateId,
                 new Dictionary<string, dynamic>());
