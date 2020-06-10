@@ -12,12 +12,23 @@ variable api_url {
 variable password {}
 
 
+variable "application_stopped" {
+   default = false
+}
+
 variable "paas_space" {
    default = "sandbox"
 }
 
 variable "paas_org_name" {
    default = "dfe-teacher-services"
+}
+
+variable "paas_logging_name" {
+   default = "logit-ssl-drain"
+}
+
+variable "paas_logging_endpoint_port" {
 }
 
 variable "paas_postgres_1_name" {
