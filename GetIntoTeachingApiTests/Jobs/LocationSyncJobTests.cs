@@ -1,28 +1,30 @@
-﻿using FluentAssertions;
-using GetIntoTeachingApi.Database;
+﻿using System.Collections.Generic;
 using GetIntoTeachingApi.Jobs;
-using GetIntoTeachingApiTests.Helpers;
-using NetTopologySuite;
-using NetTopologySuite.Geometries;
+using Hangfire;
+using Hangfire.Common;
+using Hangfire.States;
+using Moq;
+using Newtonsoft.Json;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using Xunit;
-using Location = GetIntoTeachingApi.Models.Location;
 
 namespace GetIntoTeachingApiTests.Jobs
 {
-    public class LocationSyncJobTests : DatabaseTests
+    public class LocationSyncJobTests
     {
         private readonly LocationSyncJob _job;
+        private readonly Mock<IBackgroundJobClient> _mockJobClient;
 
         public LocationSyncJobTests()
         {
-            _job = new LocationSyncJob(DbContext);
+            _mockJobClient = new Mock<IBackgroundJobClient>();
+            _job = new LocationSyncJob(_mockJobClient.Object);
         }
 
         [Fact]
-        public async void RunAsync_InsertsNewLocations()
+        public async void RunAsync_EnqueuesLocationBatchJob()
         {
             var server = WireMockServer.Start();
             var ukPostcodeCsvUrl = $"http://localhost:{server.Ports[0]}/test";
@@ -31,24 +33,23 @@ namespace GetIntoTeachingApiTests.Jobs
                 .RespondWith(Response.Create()
                     .WithBodyFromFile("./Fixtures/ukpostcodes.csv.zip")
                 );
-            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: DbConfiguration.Wgs84Srid);
-            var existingLocation = new Location()
-                {Postcode = "ky119yu", Coordinate = geometryFactory.CreatePoint(new Coordinate(-3.35870, 56.02748))};
-            await DbContext.Locations.AddAsync(existingLocation);
-            await DbContext.SaveChangesAsync();
 
             await _job.RunAsync(ukPostcodeCsvUrl);
 
-            var expectedLocations = new Location[]
+            var expectedLocationBatch = new List<dynamic>
             {
-                existingLocation,
-                new Location() {Postcode = "ca48le", Coordinate = geometryFactory.CreatePoint(new Coordinate(-2.84000, 54.89014))},
-                new Location() {Postcode = "ky62nj", Coordinate = geometryFactory.CreatePoint(new Coordinate(-3.178240, 56.182790))},
-                new Location() {Postcode = "kw14yl", Coordinate = geometryFactory.CreatePoint(new Coordinate(-3.10075, 58.64102))},
-                new Location() {Postcode = "tr182ab", Coordinate = geometryFactory.CreatePoint(new Coordinate(-5.53987, 50.12279))},
+                new { Postcode = "ky119yu", Latitude = 56.02748, Longitude = -3.35870 },
+                new { Postcode = "ca48le", Latitude = 54.89014, Longitude = -2.84000 },
+                new { Postcode = "ky62nj", Latitude = 56.182790, Longitude = -3.178240 },
+                new { Postcode = "kw14yl", Latitude = 58.64102, Longitude = -3.10075 },
+                new { Postcode = "tr182ab", Latitude = 50.12279, Longitude = -5.53987 },
             };
 
-            DbContext.Locations.Should().BeEquivalentTo(expectedLocations);
+            _mockJobClient.Verify(x => x.Create(
+                It.Is<Job>(job => job.Type == typeof(LocationBatchJob) && 
+                                  job.Method.Name == "RunAsync" && 
+                                  (string) job.Args[0] == JsonConvert.SerializeObject(expectedLocationBatch)),
+                It.IsAny<EnqueuedState>()));
         }
     }
 }

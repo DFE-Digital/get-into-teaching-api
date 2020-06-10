@@ -6,23 +6,22 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
-using GetIntoTeachingApi.Database;
+using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Utils;
-using NetTopologySuite;
-using NetTopologySuite.Geometries;
-using Location = GetIntoTeachingApi.Models.Location;
+using Hangfire;
+using Newtonsoft.Json;
 
 namespace GetIntoTeachingApi.Jobs
 {
     public class LocationSyncJob : BaseJob
     {
         public const string UkPostcodeCsvFilename = "ukpostcodes.csv";
-        private const int BufferFlushInterval = 1000;
-        private readonly GetIntoTeachingDbContext _dbContext;
+        private const int BatchInterval = 100;
+        private readonly IBackgroundJobClient _jobClient;
 
-        public LocationSyncJob(GetIntoTeachingDbContext dbContext)
+        public LocationSyncJob(IBackgroundJobClient jobClient)
         {
-            _dbContext = dbContext;
+            _jobClient = jobClient;
         }
 
         public async Task RunAsync(string ukPostcodeCsvUrl)
@@ -41,7 +40,7 @@ namespace GetIntoTeachingApi.Jobs
 
         private async Task SyncLocations(string csvPath)
         {
-            var buffer = new List<Location>();
+            var batch = new List<dynamic>();
             using var reader = new StreamReader(csvPath);
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -53,41 +52,35 @@ namespace GetIntoTeachingApi.Jobs
                 var location = CreateLocation(csv);
                 if (location == null) continue;
 
-                buffer.Add(location);
+                batch.Add(location);
 
-                await FlushBuffer(buffer);
+                QueueBatch(batch);
             }
 
-            await FlushBuffer(buffer, true);
+            QueueBatch(batch, true);
         }
 
-        private static Location CreateLocation(IReaderRow csv)
+        private static dynamic CreateLocation(IReaderRow csv)
         {
             var latitude = csv.GetField<double?>("latitude");
             var longitude = csv.GetField<double?>("longitude");
 
             if (latitude == null || longitude == null) return null;
 
-            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: DbConfiguration.Wgs84Srid);
             var postcode = Location.SanitizePostcode(csv.GetField<string>("postcode"));
-            var coordinate = geometryFactory.CreatePoint(new Coordinate((double) longitude, (double) latitude));
 
-            return new Location() { Postcode = postcode, Coordinate = coordinate };
+            return new { Postcode = postcode, Latitude = latitude, Longitude = longitude };
         }
 
-        private async Task FlushBuffer(ICollection<Location> buffer, bool force = false)
+        private void QueueBatch(ICollection<dynamic> batch, bool force = false)
         {
-            if (!force && buffer.Count() != BufferFlushInterval)
+            if (!force && batch.Count() != BatchInterval)
                 return;
 
-            var bufferPostcodes = buffer.Select(l => l.Postcode);
-            var existingPostcodes = _dbContext.Locations.Where(l => bufferPostcodes.Contains(l.Postcode)).Select(l => l.Postcode);
-            var newLocations = buffer.Where(b => !existingPostcodes.Contains(b.Postcode));
+            // Batch is serialized to pass by value.
+            _jobClient.Enqueue<LocationBatchJob>(x => x.RunAsync(JsonConvert.SerializeObject(batch)));
 
-            await _dbContext.Locations.AddRangeAsync(newLocations);
-            await _dbContext.SaveChangesAsync();
-
-            buffer.Clear();
+            batch.Clear();
         }
 
         private static async Task<string> RetrieveCsv(string ukPostcodeCsvUrl)
