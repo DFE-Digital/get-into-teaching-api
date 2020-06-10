@@ -7,20 +7,20 @@ namespace GetIntoTeachingApiTests.Helpers
 {
     public abstract class DatabaseTests : IDisposable
     {
-        private readonly SqliteConnection _connection;
+        private readonly SqliteConnection _keepAliveConnection;
         protected readonly GetIntoTeachingDbContext DbContext;
 
         protected DatabaseTests()
         {
-            _connection = new SqliteConnection("DataSource=:memory:");
-            _connection.Open();
+            _keepAliveConnection = new SqliteConnection("DataSource=:memory:");
 
-            var options = new DbContextOptionsBuilder<GetIntoTeachingDbContext>()
-                .UseSqlite(_connection, x => x.UseNetTopologySuite()).Options;
-            DbContext = new GetIntoTeachingDbContext(options);
+            var builder = new DbContextOptionsBuilder<GetIntoTeachingDbContext>();
+            DbConfiguration.ConfigSqLite(builder, _keepAliveConnection);
+
+            DbContext = new GetIntoTeachingDbContext(builder.Options);
             new DbConfiguration(DbContext).Configure();
         }
 
-        public void Dispose() => _connection.Dispose();
+        public void Dispose() => _keepAliveConnection.Dispose();
     }
 }
