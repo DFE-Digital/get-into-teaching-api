@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Utils;
@@ -51,7 +52,7 @@ namespace GetIntoTeachingApi.Services
             return _dbContext.PrivacyPolicies;
         }
 
-        public IEnumerable<TeachingEvent> GetUpcomingTeachingEvents(int limit)
+        public IQueryable<TeachingEvent> GetUpcomingTeachingEvents(int limit)
         {
             return _dbContext.TeachingEvents
                 .Where((teachingEvent) => teachingEvent.StartAt > DateTime.Now)
@@ -59,9 +60,11 @@ namespace GetIntoTeachingApi.Services
                 .Take(limit);
         }
 
-        public IEnumerable<TeachingEvent> SearchTeachingEvents(TeachingEventSearchRequest request)
+        public async Task<IEnumerable<TeachingEvent>> SearchTeachingEventsAsync(TeachingEventSearchRequest request)
         {
-            IEnumerable<TeachingEvent> teachingEvents = _dbContext.TeachingEvents.Include(te => te.Building);
+            IQueryable<TeachingEvent> teachingEvents = _dbContext.TeachingEvents
+                .Include(te => te.Building)
+                .OrderBy(te => te.StartAt);
 
             if (request.TypeId != null)
                 teachingEvents = teachingEvents.Where(te => te.TypeId == request.TypeId);
@@ -72,29 +75,15 @@ namespace GetIntoTeachingApi.Services
             if (request.StartBefore != null)
                 teachingEvents = teachingEvents.Where(te => request.StartBefore > te.StartAt);
 
-            if (request.Radius != null)
-            {
-                var origin = CoordinateForPostcode(request.Postcode);
+            if (request.Radius == null)
+                return await teachingEvents.ToListAsync();
 
-                teachingEvents = teachingEvents.Where(te => te.Building != null && te.Building.Coordinate != null);
-
-                // Approximate distance filtering in the database, with a suitable error margin (treats distance as an arc degree).
-                teachingEvents = teachingEvents.Where(te => EarthCircumferenceInKm * 
-                    te.Building.Coordinate.Distance(origin) / 360 < request.RadiusInKm + ErrorMarginInKm);
-
-                // Project coordinates in-memory for additional, accurate distance filtering.
-                teachingEvents = teachingEvents.ToList().Where(te => 
-                    te.Building.Coordinate.ProjectTo(DbConfiguration.UkSrid)
-                        .IsWithinDistance(origin.ProjectTo(DbConfiguration.UkSrid), 
-                            (double) request.RadiusInKm * 1000));
-            }
-
-            return teachingEvents.OrderBy(te => te.StartAt);
+            return await FilterTeachingEventsByRadius(teachingEvents, request);
         }
 
-        public TeachingEvent GetTeachingEvent(Guid id)
+        public async Task<TeachingEvent> GetTeachingEventAsync(Guid id)
         {
-            return _dbContext.TeachingEvents.FirstOrDefault(teachingEvent => teachingEvent.Id == id);
+            return await _dbContext.TeachingEvents.FirstOrDefaultAsync(teachingEvent => teachingEvent.Id == id);
         }
 
         public bool IsValidPostcode(string postcode)
@@ -103,6 +92,25 @@ namespace GetIntoTeachingApi.Services
                 return false;
 
             return _dbContext.Locations.Any(l => l.Postcode == Location.SanitizePostcode(postcode));
+        }
+
+        private async Task<IEnumerable<TeachingEvent>> FilterTeachingEventsByRadius(
+            IQueryable<TeachingEvent> teachingEvents, TeachingEventSearchRequest request)
+        {
+            var origin = CoordinateForPostcode(request.Postcode);
+
+            // Exclude events we don't have a location for.
+            teachingEvents = teachingEvents.Where(te => te.Building != null && te.Building.Coordinate != null);
+
+            // Approximate distance filtering in the database, with a suitable error margin (treats distance as an arc degree).
+            teachingEvents = teachingEvents.Where(te => EarthCircumferenceInKm *
+                te.Building.Coordinate.Distance(origin) / 360 < request.RadiusInKm + ErrorMarginInKm);
+
+            var inMemoryTeachingEvents = await teachingEvents.ToListAsync();
+
+            // Project coordinates onto UK coordinate system for final, accurate distance filtering.
+            return inMemoryTeachingEvents.Where(te => te.Building.Coordinate.ProjectTo(DbConfiguration.UkSrid)
+                    .IsWithinDistance(origin.ProjectTo(DbConfiguration.UkSrid), (double) request.RadiusInKm * 1000));
         }
 
         private void SyncTeachingEvents(ICrmService crm)

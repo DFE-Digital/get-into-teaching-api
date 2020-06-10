@@ -38,12 +38,12 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void AddAttendee_InvalidRequest_RespondsWithValidationErrors()
+        public async void AddAttendee_InvalidRequest_RespondsWithValidationErrors()
         {
             var attendee = new ExistingCandidateRequest() { FirstName = null };
             _controller.ModelState.AddModelError("FirstName", "First name must be specified.");
 
-            var response = _controller.AddAttendee(Guid.NewGuid(), attendee);
+            var response = await _controller.AddAttendee(Guid.NewGuid(), attendee);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
@@ -51,25 +51,25 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void AddAttendee_MissingEvent_RespondsWithNotFound()
+        public async void AddAttendee_MissingEvent_RespondsWithNotFound()
         {
             var attendee = new ExistingCandidateRequest() { FirstName = null };
             var teachingEventId = Guid.NewGuid();
-            _mockStore.Setup(mock => mock.GetTeachingEvent(teachingEventId)).Returns<TeachingEvent>(null);
+            _mockStore.Setup(mock => mock.GetTeachingEventAsync(teachingEventId)).ReturnsAsync(null as TeachingEvent);
 
-            var response = _controller.AddAttendee(teachingEventId, attendee);
+            var response = await _controller.AddAttendee(teachingEventId, attendee);
 
             response.Should().BeOfType<NotFoundResult>();
         }
 
         [Fact]
-        public void AddAttendee_ValidRequest_EnqueuesJobRespondsWithNoContent()
+        public async void AddAttendee_ValidRequest_EnqueuesJobRespondsWithNoContent()
         {
             var attendee = new ExistingCandidateRequest() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
             var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
-            _mockStore.Setup(mock => mock.GetTeachingEvent((Guid)teachingEvent.Id)).Returns(teachingEvent);
+            _mockStore.Setup(mock => mock.GetTeachingEventAsync((Guid)teachingEvent.Id)).ReturnsAsync(teachingEvent);
 
-            var response = _controller.AddAttendee((Guid)teachingEvent.Id, attendee);
+            var response = await _controller.AddAttendee((Guid)teachingEvent.Id, attendee);
 
             response.Should().BeOfType<NoContentResult>();
             _mockJobClient.Verify(x => x.Create(
@@ -80,12 +80,12 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void Search_InvalidRequest_RespondsWithValidationErrors()
+        public async void Search_InvalidRequest_RespondsWithValidationErrors()
         {
             var request = new TeachingEventSearchRequest() { Postcode = null};
             _controller.ModelState.AddModelError("Postcode", "Postcode must be specified.");
 
-            var response = _controller.Search(request);
+            var response = await _controller.Search(request);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
@@ -93,56 +93,56 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void GetUpcoming_ValidRequest_ReturnsTeachingEvents()
+        public async void GetUpcoming_ValidRequest_ReturnsTeachingEvents()
         {
             var request = new TeachingEventSearchRequest() {Postcode = "KY12 8FG"};
             var mockEvents = MockEvents();
-            _mockStore.Setup(mock => mock.SearchTeachingEvents(request)).Returns(mockEvents);
+            _mockStore.Setup(mock => mock.SearchTeachingEventsAsync(request)).ReturnsAsync(mockEvents);
 
-            var response = _controller.Search(request);
+            var response = await _controller.Search(request);
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().Be(mockEvents);
         }
 
         [Fact]
-        public void GetUpcoming_LimitMoreThan50_RespondsWithBadRequest()
+        public async void GetUpcoming_LimitMoreThan50_RespondsWithBadRequest()
         {
-            var response = _controller.GetUpcoming(51);
+            var response = await _controller.GetUpcoming(51);
             
             response.Should().BeOfType<BadRequestResult>();
         }
 
         [Fact]
-        public void GetUpcoming_ReturnsUpcomingTeachingEvents()
+        public async void GetUpcoming_ReturnsUpcomingTeachingEvents()
         {
             var mockEvents = MockEvents();
-            _mockStore.Setup(mock => mock.GetUpcomingTeachingEvents(3)).Returns(mockEvents);
+            _mockStore.Setup(mock => mock.GetUpcomingTeachingEvents(3)).Returns(mockEvents.AsAsyncQueryable());
 
-            var response = _controller.GetUpcoming(3);
+            var response = await _controller.GetUpcoming(3);
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
-            ok.Value.Should().Be(mockEvents);
+            ok.Value.Should().BeEquivalentTo(mockEvents);
         }
 
         [Fact]
-        public void Get_ReturnsTeachingEvents()
+        public async void Get_ReturnsTeachingEvents()
         {
             var teachingEvent = new TeachingEvent() {Id = Guid.NewGuid()};
-            _mockStore.Setup(mock => mock.GetTeachingEvent((Guid)teachingEvent.Id)).Returns(teachingEvent);
+            _mockStore.Setup(mock => mock.GetTeachingEventAsync((Guid)teachingEvent.Id)).ReturnsAsync(teachingEvent);
 
-            var response = _controller.Get((Guid)teachingEvent.Id);
+            var response = await _controller.Get((Guid)teachingEvent.Id);
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().Be(teachingEvent);
         }
 
         [Fact]
-        public void Get_WithMissingEvent_ReturnsNotFound()
+        public async void Get_WithMissingEvent_ReturnsNotFound()
         {
-            _mockStore.Setup(mock => mock.GetTeachingEvent(It.IsAny<Guid>())).Returns<TeachingEvent>(null);
+            _mockStore.Setup(mock => mock.GetTeachingEventAsync(It.IsAny<Guid>())).ReturnsAsync(null as TeachingEvent);
 
-            var response = _controller.Get(Guid.NewGuid());
+            var response = await _controller.Get(Guid.NewGuid());
 
             response.Should().BeOfType<NotFoundResult>();
         }
