@@ -20,10 +20,11 @@ steps:
 
 - task: DotNetCoreCLI@2
   inputs:
-    command: 'custom'
-    custom: 'nuget'
-    arguments: 'add source --name NotifyBintray https://api.bintray.com/nuget/gov-uk-notify/nuget'
-    
+    command: 'restore'
+    projects: '**/*.csproj'
+    feedsToUse: 'config'
+    nugetConfigPath: './'
+        
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '$(solution)'
