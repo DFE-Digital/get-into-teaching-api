@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using FluentValidation.TestHelper;
 using GetIntoTeachingApi.Models;
@@ -32,19 +33,19 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
             _mockStore
                 .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
-                .Returns(new[] { mockPreferredTeachingSubject });
+                .Returns(new[] { mockPreferredTeachingSubject }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_preferrededucationphase01"))
-                .Returns(new[] { mockPreferredEducationPhase });
+                .Returns(new[] { mockPreferredEducationPhase }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_isinuk"))
-                .Returns(new[] { mockLocation });
+                .Returns(new[] { mockLocation }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_ittyear"))
-                .Returns(new[] { mockInitialTeacherTrainingYear });
+                .Returns(new[] { mockInitialTeacherTrainingYear }.AsQueryable);
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_channelcreation"))
-                .Returns(new[] { mockChannel });
+                .Returns(new[] { mockChannel }.AsQueryable());
 
             var candidate = new Candidate()
             {

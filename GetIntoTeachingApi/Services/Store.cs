@@ -31,12 +31,12 @@ namespace GetIntoTeachingApi.Services
             SyncTypeEntities(crm);
         }
 
-        public IEnumerable<TypeEntity> GetLookupItems(string entityName)
+        public IQueryable<TypeEntity> GetLookupItems(string entityName)
         {
             return _dbContext.TypeEntities.Where(t => t.EntityName == entityName);
         }
 
-        public IEnumerable<TypeEntity> GetPickListItems(string entityName, string attributeName)
+        public IQueryable<TypeEntity> GetPickListItems(string entityName, string attributeName)
         {
             return _dbContext.TypeEntities.Where(t => t.EntityName == entityName && t.AttributeName == attributeName);
         }
