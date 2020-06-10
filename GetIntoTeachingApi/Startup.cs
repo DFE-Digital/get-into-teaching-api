@@ -160,8 +160,7 @@ The GIT API aims to provide:
 
             // Configure recurring jobs.
             RecurringJob.AddOrUpdate<CrmSyncJob>("crm-sync", (x) => x.Run(), Cron.Daily());
-            RecurringJob.AddOrUpdate<LocationSyncJob>("location-sync", (x) => 
-                x.RunAsync("https://www.freemaptools.com/download/full-postcodes/ukpostcodes.zip"), Cron.Weekly());
+            RecurringJob.RemoveIfExists("location-sync");
 
             using var serviceScope = app.ApplicationServices.CreateScope();
 
@@ -171,11 +170,6 @@ The GIT API aims to provide:
 
             // Sync with the CRM.
             RecurringJob.Trigger("crm-sync");
-
-            // Initial locations sync.
-            var dbContext = serviceScope.ServiceProvider.GetService<GetIntoTeachingDbContext>();
-            if (!dbContext.Locations.Any())
-                RecurringJob.Trigger("location-sync");
 
             app.UseEndpoints(endpoints =>
             {
