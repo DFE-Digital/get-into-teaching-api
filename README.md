@@ -47,7 +47,7 @@ DATABASE_INSTANCE_NAME=****
 HANGFIRE_INSTANCE_NAME=****
 ```
 
-The Postgres connections (for Hangfire and our database) are setup in `appsettings.json` and not used in development (they are replaced by in-memory alternatives by default). If you want to connect to a Postgres instance running in PaaS, such as the test environment instance, you can do so by creating a conduit to it using Cloud Foundry:
+The Postgres connections (for Hangfire and our database) are setup dynamically from the `VCAP_SERVICES` environment variable provided by GOV.UK PaaS and not used in development (they are replaced by in-memory alternatives by default). If you want to connect to a Postgres instance running in PaaS, such as the test environment instance, you can do so by creating a conduit to it using Cloud Foundry:
 
 ```
 cf conduit get-into-teaching-api-dev-pg-svc
@@ -102,9 +102,9 @@ The Hangfire web dashboard can be accessed at `/hangfire` in development.
 
 ### Database
 
-We run Entity Framework Core in order to persist some models/data to a Postgres database. Currently this is being used to store and query the UK postcode geolocation information that is used when searching for events within a given radius of another postcode.
+We run Entity Framework Core in order to persist models/data to a Postgres database.
 
-Migrations are applied from code when the application starts (see `DbConfiguration.cs`). You can add a migration by modifying the models and running `dotnet ef migrations add MyNewMigration`.
+Migrations are applied from code when the application starts (see `DbConfiguration.cs`). You can add a migration by modifying the models and running `Add-Migration MyNewMigration` from the package manager console. As we run SQLite in development and Postgres in production we need to tell EF Core which provider to use at design-time; the `GetIntoTeachingDbContextFactory` takes care of this.
 
 ### Deployment
 

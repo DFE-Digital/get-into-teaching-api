@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GetIntoTeachingApi.Utils;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Npgsql;
@@ -24,6 +25,17 @@ namespace GetIntoTeachingApi.Database
 
         public static string HangfireConnectionString() => 
             GenerateConnectionString(Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME"));
+
+        public static void ConfigPostgres(DbContextOptionsBuilder builder)
+        {
+            builder.UseNpgsql(DbConfiguration.DatabaseConnectionString(), x => x.UseNetTopologySuite());
+        }
+
+        public static void ConfigSqLite(DbContextOptionsBuilder builder, SqliteConnection keepAliveConnection)
+        {
+            keepAliveConnection.Open();
+            builder.UseSqlite(keepAliveConnection, x => x.UseNetTopologySuite());
+        }
 
         public void Configure()
         {
