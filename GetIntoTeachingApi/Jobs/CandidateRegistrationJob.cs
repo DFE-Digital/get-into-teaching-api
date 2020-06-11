@@ -26,7 +26,8 @@ namespace GetIntoTeachingApi.Jobs
             if (IsLastAttempt(context, _contextAdapter))
             {
                 var personalisation = new Dictionary<string, dynamic>();
-                _notifyService.SendEmail(candidate.Email, NotifyService.CandidateRegistrationFailedTemplateId, personalisation);
+                // We fire and forget the email, ensuring the job succeeds.
+                _notifyService.SendEmailAsync(candidate.Email, NotifyService.CandidateRegistrationFailedTemplateId, personalisation);
             }
             else
                 _crm.Save(candidate);

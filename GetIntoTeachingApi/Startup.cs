@@ -20,6 +20,7 @@ using Hangfire;
 using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
 using Microsoft.Data.Sqlite;
+using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi
 {
@@ -35,16 +36,20 @@ namespace GetIntoTeachingApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<CdsServiceClientWrapper, CdsServiceClientWrapper>();
+            services.AddTransient<IOrganizationService>(sp => sp.GetService<CdsServiceClientWrapper>().CdsServiceClient.Clone());
+            services.AddTransient<IOrganizationServiceAdapter, OrganizationServiceAdapter>();
+            services.AddTransient<ICrmService, CrmService>();
+
+            services.AddScoped<IStore, Store>();
+            services.AddScoped<DbConfiguration, DbConfiguration>();
+
             services.AddSingleton<IAuthorizationHandler, SharedSecretHandler>();
             services.AddSingleton<INotificationClientAdapter, NotificationClientAdapter>();
-            services.AddSingleton<IOrganizationServiceAdapter, OrganizationServiceAdapter>();
             services.AddSingleton<ICandidateAccessTokenService, CandidateAccessTokenService>();
-            services.AddScoped<ICrmService, CrmService>();
             services.AddSingleton<INotifyService, NotifyService>();
-            services.AddScoped<IStore, Store>();
             services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
             services.AddSingleton<IEnv, Env>();
-            services.AddScoped<DbConfiguration, DbConfiguration>();
 
             if (Env.IsDevelopment)
             {
@@ -159,7 +164,7 @@ The GIT API aims to provide:
             app.UseAuthorization();
 
             // Configure recurring jobs.
-            RecurringJob.AddOrUpdate<CrmSyncJob>("crm-sync", (x) => x.Run(), Cron.Daily());
+            RecurringJob.AddOrUpdate<CrmSyncJob>("crm-sync", (x) => x.RunAsync(), Cron.Daily());
             RecurringJob.AddOrUpdate<LocationSyncJob>("location-sync", (x) => 
                 x.RunAsync("https://www.freemaptools.com/download/full-postcodes/ukpostcodes.zip"), Cron.Weekly());
 

@@ -29,7 +29,7 @@ namespace GetIntoTeachingApiTests.Models
         public void ToEntity_WhenRegistrationAlreadyExistsForCandidate_ReturnsNull()
         {
             var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context("mock-connection-string");
+            var context = mockService.Object.Context();
             var mockCrm = new Mock<ICrmService>();
 
             var candidate = new Candidate() { Id = Guid.NewGuid() };

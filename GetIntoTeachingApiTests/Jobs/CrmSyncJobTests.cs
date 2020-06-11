@@ -19,11 +19,11 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public void Run_CallsSync()
+        public async void RunAsync_CallsSync()
         {
-            _job.Run();
+            await _job.RunAsync();
 
-            _mockStore.Verify(mock => mock.Sync(_mockCrm.Object), Times.Once);
+            _mockStore.Verify(mock => mock.SyncAsync(_mockCrm.Object), Times.Once);
         }
     }
 }

@@ -10,11 +10,11 @@ namespace GetIntoTeachingApi.Adapters
 {
     public class OrganizationServiceAdapter : IOrganizationServiceAdapter
     {
-        private readonly IDictionary<string, CdsServiceClient> _clients;
+        private readonly CdsServiceClient _client;
 
-        public OrganizationServiceAdapter()
+        public OrganizationServiceAdapter(IOrganizationService client)
         {
-            _clients = new Dictionary<string, CdsServiceClient>();
+            _client = (CdsServiceClient) client;
         }
 
         public IQueryable<Entity> CreateQuery(string entityName, OrganizationServiceContext context)
@@ -22,10 +22,9 @@ namespace GetIntoTeachingApi.Adapters
             return context.CreateQuery(entityName);
         }
 
-        public IEnumerable<Entity> RetrieveMultiple(string connectionString, QueryBase query)
+        public IEnumerable<Entity> RetrieveMultiple(QueryBase query)
         {
-            var client = RetrieveClient(connectionString);
-            var collection = client.RetrieveMultiple(query);
+            var collection = _client.RetrieveMultiple(query);
             return collection.Entities;
         }
 
@@ -50,19 +49,17 @@ namespace GetIntoTeachingApi.Adapters
         }
 
         public IEnumerable<CdsServiceClient.PickListItem> GetPickListItemsForAttribute(
-            string connectionString,
             string entityName,
             string attributeName
         )
         {
-            var client = RetrieveClient(connectionString);
-            var metaElement = client.GetPickListElementFromMetadataEntity(entityName, attributeName);
+            var metaElement = _client.GetPickListElementFromMetadataEntity(entityName, attributeName);
             return metaElement.Items;
         }
 
-        public OrganizationServiceContext Context(string connectionString)
+        public OrganizationServiceContext Context()
         {
-            return ConstructContext(connectionString);
+            return new OrganizationServiceContext(_client);
         }
 
         public Entity BlankExistingEntity(string entityName, Guid id, OrganizationServiceContext context)
@@ -88,21 +85,6 @@ namespace GetIntoTeachingApi.Adapters
         public void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context)
         {
             context.AddLink(source, relationship, target);
-        }
-
-        private OrganizationServiceContext ConstructContext(string connectionString)
-        {
-            return new OrganizationServiceContext(RetrieveClient(connectionString));
-        }
-
-        private CdsServiceClient RetrieveClient(string connectionString)
-        {
-            if (!_clients.ContainsKey(connectionString))
-            {
-                _clients[connectionString] = new CdsServiceClient(connectionString); 
-            }
-
-            return _clients[connectionString];
         }
     }
 }

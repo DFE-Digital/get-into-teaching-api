@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Utils;
@@ -24,34 +25,39 @@ namespace GetIntoTeachingApi.Services
             _dbContext = dbContext;
         }
 
-        public void Sync(ICrmService crm)
+        public async Task SyncAsync(ICrmService crm)
         {
-            SyncTeachingEvents(crm);
-            SyncPrivacyPolicies(crm);
-            SyncTypeEntities(crm);
+            var tasks = new []
+            {
+                SyncTeachingEvents(crm),
+                SyncPrivacyPolicies(crm), 
+                SyncTypeEntities(crm),
+            };
+
+            await Task.WhenAll(tasks);
         }
 
-        public IEnumerable<TypeEntity> GetLookupItems(string entityName)
+        public IQueryable<TypeEntity> GetLookupItems(string entityName)
         {
             return _dbContext.TypeEntities.Where(t => t.EntityName == entityName);
         }
 
-        public IEnumerable<TypeEntity> GetPickListItems(string entityName, string attributeName)
+        public IQueryable<TypeEntity> GetPickListItems(string entityName, string attributeName)
         {
             return _dbContext.TypeEntities.Where(t => t.EntityName == entityName && t.AttributeName == attributeName);
         }
 
-        public PrivacyPolicy GetLatestPrivacyPolicy()
+        public async Task<PrivacyPolicy> GetLatestPrivacyPolicyAsync()
         {
-            return GetPrivacyPolicies().OrderByDescending(p => p.CreatedAt).FirstOrDefault();
+            return await GetPrivacyPolicies().OrderByDescending(p => p.CreatedAt).FirstOrDefaultAsync();
         }
 
-        public IEnumerable<PrivacyPolicy> GetPrivacyPolicies()
+        public IQueryable<PrivacyPolicy> GetPrivacyPolicies()
         {
             return _dbContext.PrivacyPolicies;
         }
 
-        public IEnumerable<TeachingEvent> GetUpcomingTeachingEvents(int limit)
+        public IQueryable<TeachingEvent> GetUpcomingTeachingEvents(int limit)
         {
             return _dbContext.TeachingEvents
                 .Where((teachingEvent) => teachingEvent.StartAt > DateTime.Now)
@@ -59,9 +65,11 @@ namespace GetIntoTeachingApi.Services
                 .Take(limit);
         }
 
-        public IEnumerable<TeachingEvent> SearchTeachingEvents(TeachingEventSearchRequest request)
+        public async Task<IEnumerable<TeachingEvent>> SearchTeachingEventsAsync(TeachingEventSearchRequest request)
         {
-            IEnumerable<TeachingEvent> teachingEvents = _dbContext.TeachingEvents.Include(te => te.Building);
+            IQueryable<TeachingEvent> teachingEvents = _dbContext.TeachingEvents
+                .Include(te => te.Building)
+                .OrderBy(te => te.StartAt);
 
             if (request.TypeId != null)
                 teachingEvents = teachingEvents.Where(te => te.TypeId == request.TypeId);
@@ -72,29 +80,15 @@ namespace GetIntoTeachingApi.Services
             if (request.StartBefore != null)
                 teachingEvents = teachingEvents.Where(te => request.StartBefore > te.StartAt);
 
-            if (request.Radius != null)
-            {
-                var origin = CoordinateForPostcode(request.Postcode);
+            if (request.Radius == null)
+                return await teachingEvents.ToListAsync();
 
-                teachingEvents = teachingEvents.Where(te => te.Building != null && te.Building.Coordinate != null);
-
-                // Approximate distance filtering in the database, with a suitable error margin (treats distance as an arc degree).
-                teachingEvents = teachingEvents.Where(te => EarthCircumferenceInKm * 
-                    te.Building.Coordinate.Distance(origin) / 360 < request.RadiusInKm + ErrorMarginInKm);
-
-                // Project coordinates in-memory for additional, accurate distance filtering.
-                teachingEvents = teachingEvents.ToList().Where(te => 
-                    te.Building.Coordinate.ProjectTo(DbConfiguration.UkSrid)
-                        .IsWithinDistance(origin.ProjectTo(DbConfiguration.UkSrid), 
-                            (double) request.RadiusInKm * 1000));
-            }
-
-            return teachingEvents.OrderBy(te => te.StartAt);
+            return await FilterTeachingEventsByRadius(teachingEvents, request);
         }
 
-        public TeachingEvent GetTeachingEvent(Guid id)
+        public async Task<TeachingEvent> GetTeachingEventAsync(Guid id)
         {
-            return _dbContext.TeachingEvents.FirstOrDefault(teachingEvent => teachingEvent.Id == id);
+            return await _dbContext.TeachingEvents.FirstOrDefaultAsync(teachingEvent => teachingEvent.Id == id);
         }
 
         public bool IsValidPostcode(string postcode)
@@ -105,59 +99,80 @@ namespace GetIntoTeachingApi.Services
             return _dbContext.Locations.Any(l => l.Postcode == Location.SanitizePostcode(postcode));
         }
 
-        private void SyncTeachingEvents(ICrmService crm)
+        private async Task<IEnumerable<TeachingEvent>> FilterTeachingEventsByRadius(
+            IQueryable<TeachingEvent> teachingEvents, TeachingEventSearchRequest request)
+        {
+            var origin = await CoordinateForPostcode(request.Postcode);
+
+            // Exclude events we don't have a location for.
+            teachingEvents = teachingEvents.Where(te => te.Building != null && te.Building.Coordinate != null);
+
+            // Approximate distance filtering in the database, with a suitable error margin (treats distance as an arc degree).
+            teachingEvents = teachingEvents.Where(te => EarthCircumferenceInKm *
+                te.Building.Coordinate.Distance(origin) / 360 < request.RadiusInKm + ErrorMarginInKm);
+
+            var inMemoryTeachingEvents = await teachingEvents.ToListAsync();
+
+            // Project coordinates onto UK coordinate system for final, accurate distance filtering.
+            return inMemoryTeachingEvents.Where(te => te.Building.Coordinate.ProjectTo(DbConfiguration.UkSrid)
+                    .IsWithinDistance(origin.ProjectTo(DbConfiguration.UkSrid), (double) request.RadiusInKm * 1000));
+        }
+
+        private async Task SyncTeachingEvents(ICrmService crm)
         {
             var teachingEvents = crm.GetTeachingEvents().ToList();
-            PopulateTeachingEventCoordinates(teachingEvents);
+            await PopulateTeachingEventCoordinates(teachingEvents);
 
             var buildings = teachingEvents.Where(te => te.Building != null)
                 .Select(te => te.Building).DistinctBy(b => b.Id);
 
-            SyncModels(buildings, _dbContext.TeachingEventBuildings);
+            await SyncModels(buildings, _dbContext.TeachingEventBuildings);
 
             // Link events with buildings attached to the context prior to sync.
-            teachingEvents.Where(te => te.Building != null).ToList()
-                .ForEach(te => te.Building = _dbContext.TeachingEventBuildings.Find(te.Building.Id));
+            foreach (var te in teachingEvents.Where(te => te.Building != null))
+            {
+                te.Building = await _dbContext.TeachingEventBuildings.FindAsync(te.Building.Id);
+            }
 
-            SyncModels(teachingEvents, _dbContext.TeachingEvents);
+            await SyncModels(teachingEvents, _dbContext.TeachingEvents);
 
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
-        private void SyncPrivacyPolicies(ICrmService crm)
+        private async Task SyncPrivacyPolicies(ICrmService crm)
         {
             var policies = crm.GetPrivacyPolicies().ToList();
-            SyncModels(policies, _dbContext.PrivacyPolicies);
+            await SyncModels(policies, _dbContext.PrivacyPolicies);
         }
 
-        private void SyncTypeEntities(ICrmService crm)
+        private async Task SyncTypeEntities(ICrmService crm)
         {
-            SyncTypes(crm.GetLookupItems("dfe_country"));
-            SyncTypes(crm.GetLookupItems("dfe_teachingsubjectlist"));
-            SyncTypes(crm.GetPickListItems("contact", "dfe_ittyear"));
-            SyncTypes(crm.GetPickListItems("contact", "dfe_preferrededucationphase01"));
-            SyncTypes(crm.GetPickListItems("contact", "dfe_isinuk"));
-            SyncTypes(crm.GetPickListItems("contact", "dfe_channelcreation"));
-            SyncTypes(crm.GetPickListItems("dfe_qualification", "dfe_degreestatus"));
-            SyncTypes(crm.GetPickListItems("dfe_qualification", "dfe_category"));
-            SyncTypes(crm.GetPickListItems("dfe_qualification", "dfe_type"));
-            SyncTypes(crm.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase"));
-            SyncTypes(crm.GetPickListItems("msevtmgt_event", "dfe_event_type"));
-            SyncTypes(crm.GetPickListItems("phonecall", "dfe_channelcreation"));
+            await SyncTypes(crm.GetLookupItems("dfe_country"));
+            await SyncTypes(crm.GetLookupItems("dfe_teachingsubjectlist"));
+            await SyncTypes(crm.GetPickListItems("contact", "dfe_ittyear"));
+            await SyncTypes(crm.GetPickListItems("contact", "dfe_preferrededucationphase01"));
+            await SyncTypes(crm.GetPickListItems("contact", "dfe_isinuk"));
+            await SyncTypes(crm.GetPickListItems("contact", "dfe_channelcreation"));
+            await SyncTypes(crm.GetPickListItems("dfe_qualification", "dfe_degreestatus"));
+            await SyncTypes(crm.GetPickListItems("dfe_qualification", "dfe_category"));
+            await SyncTypes(crm.GetPickListItems("dfe_qualification", "dfe_type"));
+            await SyncTypes(crm.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase"));
+            await SyncTypes(crm.GetPickListItems("msevtmgt_event", "dfe_event_type"));
+            await SyncTypes(crm.GetPickListItems("phonecall", "dfe_channelcreation"));
         }
 
-        private void SyncModels<T>(IEnumerable<T> models, IQueryable<T> dbSet) where T : BaseModel
+        private async Task SyncModels<T>(IEnumerable<T> models, IQueryable<T> dbSet) where T : BaseModel
         {
             var existingIds = dbSet.Select(m => m.Id);
             var modelIds = models.Select(m => m.Id);
 
             _dbContext.RemoveRange(dbSet.Where(m => !modelIds.Contains(m.Id)));
             _dbContext.UpdateRange(models.Where(m => existingIds.Contains(m.Id)));
-            _dbContext.AddRange(models.Where(m => !existingIds.Contains(m.Id)));
-            _dbContext.SaveChanges();
+            await _dbContext.AddRangeAsync(models.Where(m => !existingIds.Contains(m.Id)));
+            await _dbContext.SaveChangesAsync();
         }
 
-        private void SyncTypes(IEnumerable<TypeEntity> types)
+        private async Task SyncTypes(IEnumerable<TypeEntity> types)
         {
             if (!types.Any()) return;
 
@@ -170,24 +185,24 @@ namespace GetIntoTeachingApi.Services
             _dbContext.RemoveRange(_dbContext.TypeEntities.Where(t => t.EntityName == key.EntityName 
                 && t.AttributeName == key.AttributeName && !typeIds.Contains(t.Id)));
             _dbContext.UpdateRange(types.Where(t => existingIds.Contains(t.Id)));
-            _dbContext.AddRange(types.Where(t => !existingIds.Contains(t.Id)));
-            _dbContext.SaveChanges();
+            await _dbContext.AddRangeAsync(types.Where(t => !existingIds.Contains(t.Id)));
+            await _dbContext.SaveChangesAsync();
         }
 
-        private void PopulateTeachingEventCoordinates(IEnumerable<TeachingEvent> teachingEvents)
+        private async Task PopulateTeachingEventCoordinates(IEnumerable<TeachingEvent> teachingEvents)
         {
             foreach (var teachingEvent in teachingEvents.Where(te => te.Building?.AddressPostcode != null))
             {
-                teachingEvent.Building.Coordinate = CoordinateForPostcode(teachingEvent.Building.AddressPostcode);
+                var coordinate = await CoordinateForPostcode(teachingEvent.Building.AddressPostcode);
+                teachingEvent.Building.Coordinate = coordinate;
             }
         }
 
-        private Point CoordinateForPostcode(string postcode)
+        private async Task<Point> CoordinateForPostcode(string postcode)
         {
             var sanitizedPostcode = Location.SanitizePostcode(postcode);
-            var location = _dbContext.Locations.FirstOrDefault(l => l.Postcode == sanitizedPostcode);
-
-            return location?.Coordinate;
+            return await _dbContext.Locations.Where(l => l.Postcode == sanitizedPostcode)
+                .Select(l => l.Coordinate).FirstOrDefaultAsync();
         }
     }
 }

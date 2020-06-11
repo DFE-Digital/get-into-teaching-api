@@ -5,6 +5,6 @@ namespace GetIntoTeachingApi.Adapters
 {
     public interface INotificationClientAdapter
     {
-        public Task SendEmailAsync(string apiKey, string email, string templateId, Dictionary<string, dynamic> personalisation);
+        Task SendEmailAsync(string apiKey, string email, string templateId, Dictionary<string, dynamic> personalisation);
     }
 }
