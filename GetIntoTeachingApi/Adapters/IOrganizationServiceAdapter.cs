@@ -11,11 +11,11 @@ namespace GetIntoTeachingApi.Adapters
     public interface IOrganizationServiceAdapter
     {
         public IQueryable<Entity> CreateQuery(string entityName, OrganizationServiceContext context);
-        public IEnumerable<Entity> RetrieveMultiple(string connectionString, QueryBase query);
+        public IEnumerable<Entity> RetrieveMultiple(QueryBase query);
         public void LoadProperty(Entity entity, Relationship relationship, OrganizationServiceContext context);
-        public IEnumerable<CdsServiceClient.PickListItem> GetPickListItemsForAttribute(string connectionString, string entityName, string attributeName);
+        public IEnumerable<CdsServiceClient.PickListItem> GetPickListItemsForAttribute(string entityName, string attributeName);
         public IEnumerable<Entity> RelatedEntities(Entity entity, string attributeName);
-        public OrganizationServiceContext Context(string connectionString);
+        public OrganizationServiceContext Context();
         public Entity BlankExistingEntity(string entityName, Guid id, OrganizationServiceContext context);
         public Entity NewEntity(string entityName, OrganizationServiceContext context);
         public void SaveChanges(OrganizationServiceContext context);

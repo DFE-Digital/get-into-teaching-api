@@ -67,7 +67,7 @@ namespace GetIntoTeachingApiTests.Models
         public void ToEntity_WhenPrivacyPolicyAlreadyAccepted_DoesNotCreatePrivacyPolicyEntity()
         {
             var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context("mock-connection-string");
+            var context = mockService.Object.Context();
             var mockCrm = new Mock<ICrmService>();
 
             var candidate = new Candidate()
@@ -90,7 +90,7 @@ namespace GetIntoTeachingApiTests.Models
         public void ToEntity_WhenPrivacyPolicyIsNull_DoesNotCreatePrivacyPolicyEntity()
         {
             var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context("mock-connection-string");
+            var context = mockService.Object.Context();
             var mockCrm = new Mock<ICrmService>();
             var candidate = new Candidate()  { Id = Guid.NewGuid(), PrivacyPolicy = null };
             mockService.Setup(m => m.BlankExistingEntity("candidate", (Guid)candidate.Id, context))
