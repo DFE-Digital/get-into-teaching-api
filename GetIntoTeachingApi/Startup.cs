@@ -124,7 +124,7 @@ The GIT API aims to provide:
                     .UseFilter(automaticRetry);
                 
                 if (Env.IsDevelopment)
-                    config.UseMemoryStorage().WithJobExpirationTimeout(JobConfiguration.ExpirationTimeout);
+                    config.UsePostgreSqlStorage("User ID=postgres;Password=password;Host=localhost;Port=5432;Database=dev;");
                 else
                     config.UsePostgreSqlStorage(DbConfiguration.HangfireConnectionString());
             });
@@ -160,7 +160,8 @@ The GIT API aims to provide:
 
             // Configure recurring jobs.
             RecurringJob.AddOrUpdate<CrmSyncJob>("crm-sync", (x) => x.Run(), Cron.Daily());
-            RecurringJob.RemoveIfExists("location-sync");
+            RecurringJob.AddOrUpdate<LocationSyncJob>("location-sync", (x) => 
+                x.RunAsync("https://www.freemaptools.com/download/full-postcodes/ukpostcodes.zip"), Cron.Weekly());
 
             using var serviceScope = app.ApplicationServices.CreateScope();
 
@@ -170,6 +171,11 @@ The GIT API aims to provide:
 
             // Sync with the CRM.
             RecurringJob.Trigger("crm-sync");
+
+            // Initial locations sync.
+            var dbContext = serviceScope.ServiceProvider.GetService<GetIntoTeachingDbContext>();
+            if (!dbContext.Locations.Any())
+                RecurringJob.Trigger("location-sync");
 
             app.UseEndpoints(endpoints =>
             {
