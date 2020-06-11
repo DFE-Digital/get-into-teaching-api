@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
-using GetIntoTeachingApi.Utils;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
@@ -15,14 +14,12 @@ namespace GetIntoTeachingApi.Services
         public enum PrivacyPolicyType { Web = 222750001 }
 
         private readonly IOrganizationServiceAdapter _service;
-        private readonly IEnv _env;
         private const int MaximumNumberOfCandidatesToMatch = 20;
         private const int MaximumNumberOfPrivacyPolicies = 3;
 
-        public CrmService(IOrganizationServiceAdapter service, IEnv env)
+        public CrmService(IOrganizationServiceAdapter service)
         {
             _service = service;
-            _env = env;
         }
 
         public IEnumerable<TypeEntity> GetLookupItems(string entityName)
@@ -32,7 +29,7 @@ namespace GetIntoTeachingApi.Services
 
         public IEnumerable<TypeEntity> GetPickListItems(string entityName, string attributeName)
         {
-            return _service.GetPickListItemsForAttribute(ConnectionString(), entityName, attributeName)
+            return _service.GetPickListItemsForAttribute(entityName, attributeName)
                 .Select((pickListItem) => new TypeEntity(pickListItem, entityName, attributeName));
         }
 
@@ -132,22 +129,14 @@ namespace GetIntoTeachingApi.Services
             link.Columns.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(TeachingEventBuilding)));
             link.EntityAlias = "msevtmgt_event_building";
 
-            var entities = _service.RetrieveMultiple(ConnectionString(), query);
+            var entities = _service.RetrieveMultiple(query);
 
             return entities.Select((entity) => new TeachingEvent(entity, this)).ToList();
         }
 
         private OrganizationServiceContext Context()
         {
-            return _service.Context(ConnectionString());
-        }
-
-        private string ConnectionString()
-        {
-            var instanceUrl = _env.CrmServiceUrl;
-            var clientId = _env.CrmClientId;
-            var clientSecret = _env.CrmClientSecret;
-            return $"AuthType=ClientSecret; url={instanceUrl}; ClientId={clientId}; ClientSecret={clientSecret}";
+            return _service.Context();
         }
     }
 }
