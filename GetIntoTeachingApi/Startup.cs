@@ -20,7 +20,6 @@ using Hangfire;
 using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
 using Microsoft.Data.Sqlite;
-using Microsoft.PowerPlatform.Cds.Client;
 using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi
