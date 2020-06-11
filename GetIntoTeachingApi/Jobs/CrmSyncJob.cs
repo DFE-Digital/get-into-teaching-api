@@ -1,4 +1,5 @@
-﻿using GetIntoTeachingApi.Services;
+﻿using System.Threading.Tasks;
+using GetIntoTeachingApi.Services;
 
 namespace GetIntoTeachingApi.Jobs
 {
@@ -13,9 +14,9 @@ namespace GetIntoTeachingApi.Jobs
             _store = store;
         }
 
-        public void Run()
+        public async Task RunAsync()
         {
-            _store.Sync(_crm);
+            await _store.SyncAsync(_crm);
         }
     }
 }
