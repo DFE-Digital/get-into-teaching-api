@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using FluentAssertions;
 using FluentValidation.TestHelper;
 using GetIntoTeachingApi.Models;
@@ -27,7 +28,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
             _mockStore
                 .Setup(mock => mock.GetPickListItems("msevtmgt_event", "dfe_event_type"))
-                .Returns(new[] { mockType });
+                .Returns(new[] { mockType }.AsQueryable());
 
             _mockStore.Setup(mock => mock.IsValidPostcode("KY11 9HF")).Returns(true);
 

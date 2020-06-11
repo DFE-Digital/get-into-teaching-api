@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using FluentAssertions;
 using FluentValidation.TestHelper;
 using GetIntoTeachingApi.Models;
@@ -27,7 +28,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
             _mockStore
                 .Setup(mock => mock.GetPrivacyPolicies())
-                .Returns(new[] { mockPrivacyPolicy });
+                .Returns(new[] { mockPrivacyPolicy }.AsQueryable());
 
             var policy = new CandidatePrivacyPolicy()
             {

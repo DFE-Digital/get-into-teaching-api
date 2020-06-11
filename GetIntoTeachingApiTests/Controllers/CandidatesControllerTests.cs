@@ -59,7 +59,7 @@ namespace GetIntoTeachingApiTests.Controllers
 
             response.Should().BeOfType<NoContentResult>();
             _mockNotifyService.Verify(
-                mock => mock.SendEmail(
+                mock => mock.SendEmailAsync(
                     "email@address.com",
                     NotifyService.NewPinCodeEmailTemplateId,
                     It.Is<Dictionary<string, dynamic>>(personalisation => personalisation["pin_code"] as string == "123456")
@@ -77,7 +77,7 @@ namespace GetIntoTeachingApiTests.Controllers
 
             response.Should().BeOfType<NotFoundResult>();
             _mockNotifyService.Verify(mock => 
-                mock.SendEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, dynamic>>()), 
+                mock.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, dynamic>>()), 
                 Times.Never()
             );
         }

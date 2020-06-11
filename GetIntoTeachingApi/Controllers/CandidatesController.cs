@@ -56,7 +56,8 @@ that can then be used for verification.",
 
             var token = _tokenService.GenerateToken(request);
             var personalisation = new Dictionary<string, dynamic> { { "pin_code", token } };
-            _notifyService.SendEmail(request.Email, NotifyService.NewPinCodeEmailTemplateId, personalisation);
+            // We respond immediately/assume this will be successful.
+            _notifyService.SendEmailAsync(request.Email, NotifyService.NewPinCodeEmailTemplateId, personalisation);
 
             return NoContent();
         }

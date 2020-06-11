@@ -1,4 +1,5 @@
-﻿using GetIntoTeachingApi.Models;
+﻿using System.Threading.Tasks;
+using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,9 +30,9 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Privacy Policies" }
         )]
         [ProducesResponseType(typeof(PrivacyPolicy), 200)]
-        public IActionResult GetLatest()
+        public async Task<IActionResult> GetLatest()
         {
-            var privacyPolicy = _store.GetLatestPrivacyPolicy();
+            var privacyPolicy = await _store.GetLatestPrivacyPolicyAsync();
             return Ok(privacyPolicy);
         }
     }

@@ -12,7 +12,7 @@ namespace GetIntoTeachingApi.Services
         // (VerificationWindow * StepsInSeconds) + Remaining Seconds in Current Step
         public static readonly int VerificationWindow = 2;
         public static readonly int StepInSeconds = 30;
-        private static readonly int Length = 6;
+        private const int Length = 6;
         private readonly IEnv _env;
 
         public CandidateAccessTokenService(IEnv env)

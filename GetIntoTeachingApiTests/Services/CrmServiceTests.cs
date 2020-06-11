@@ -7,7 +7,6 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GetIntoTeachingApi.Utils;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
 using Xunit;
@@ -17,7 +16,6 @@ namespace GetIntoTeachingApiTests.Services
 {
     public class CrmServiceTests
     {
-        private const string ConnectionString = "AuthType=ClientSecret; url=service_url; ClientId=client_id; ClientSecret=client_secret";
         private static readonly Guid JaneDoeGuid = new Guid("bf927e43-5650-44aa-859a-8297139b8ddd");
         private readonly Mock<IOrganizationServiceAdapter> _mockService;
         private readonly OrganizationServiceContext _context;
@@ -25,14 +23,10 @@ namespace GetIntoTeachingApiTests.Services
 
         public CrmServiceTests()
         {
-            var mockEnv = new Mock<IEnv>();
-            mockEnv.Setup(m => m.CrmServiceUrl).Returns("service_url");
-            mockEnv.Setup(m => m.CrmClientId).Returns("client_id");
-            mockEnv.Setup(m => m.CrmClientSecret).Returns("client_secret");
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _context = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
-            _mockService.Setup(mock => mock.Context(ConnectionString)).Returns(_context);
-            _crm = new CrmService(_mockService.Object, mockEnv.Object);
+            _mockService.Setup(mock => mock.Context()).Returns(_context);
+            _crm = new CrmService(_mockService.Object);
         }
 
         [Fact]
@@ -54,7 +48,7 @@ namespace GetIntoTeachingApiTests.Services
         public void GetPickListItems_ReturnsAll()
         {
             var initialTeacherTrainingYears = MockInitialTeacherTrainingYears();
-            _mockService.Setup(mock => mock.GetPickListItemsForAttribute(ConnectionString, "contact", "dfe_ittyear"))
+            _mockService.Setup(mock => mock.GetPickListItemsForAttribute("contact", "dfe_ittyear"))
                 .Returns(initialTeacherTrainingYears);
 
             var result = _crm.GetPickListItems("contact", "dfe_ittyear").ToList();
@@ -68,7 +62,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void GetTeachingEvents_ReturnsAllTeachingEvents()
         {
-            _mockService.Setup(mock => mock.RetrieveMultiple(ConnectionString, It.Is<QueryExpression>(
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
                 q => q.EntityName == "msevtmgt_event"))).Returns(MockTeachingEvents());
 
             var result = _crm.GetTeachingEvents();
