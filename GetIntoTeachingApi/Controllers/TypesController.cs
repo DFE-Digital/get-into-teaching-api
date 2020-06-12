@@ -12,7 +12,7 @@ namespace GetIntoTeachingApi.Controllers
 {
     [Route("api/types")]
     [ApiController]
-    [Authorize(Policy = "SharedSecret")]
+    [Authorize]
     public class TypesController : ControllerBase
     {
         private readonly ILogger<TypesController> _logger;

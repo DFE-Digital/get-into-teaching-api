@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Microsoft.AspNetCore.Mvc;
 using FluentAssertions;
-using GetIntoTeachingApiTests.Helpers;
 using GetIntoTeachingApi.Services;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -29,9 +29,9 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void Authorize_HasSharedSecretPolicy()
+        public void Authorize_IsPresent()
         {
-            PolicyTestHelpers.VerifyTypeIsAuthorizeWithSharedSecret(typeof(CandidatesController));
+            typeof(CandidatesController).Should().BeDecoratedWith<AuthorizeAttribute>();
         }
 
         [Fact]

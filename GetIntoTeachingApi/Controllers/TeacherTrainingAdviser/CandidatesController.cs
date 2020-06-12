@@ -12,7 +12,7 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
 {
     [Route("api/teacher_training_adviser/candidates")]
     [ApiController]
-    [Authorize(Policy = "SharedSecret")]
+    [Authorize]
     public class CandidatesController : ControllerBase
     {
         private readonly ILogger<CandidatesController> _logger;

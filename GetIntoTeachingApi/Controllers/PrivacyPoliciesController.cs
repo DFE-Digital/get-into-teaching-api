@@ -10,7 +10,7 @@ namespace GetIntoTeachingApi.Controllers
 {
     [Route("api/privacy_policies")]
     [ApiController]
-    [Authorize(Policy = "SharedSecret")]
+    [Authorize]
     public class PrivacyPoliciesController : ControllerBase
     {
         private readonly ILogger<PrivacyPoliciesController> _logger;

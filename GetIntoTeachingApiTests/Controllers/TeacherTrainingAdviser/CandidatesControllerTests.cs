@@ -8,10 +8,10 @@ using FluentAssertions;
 using GetIntoTeachingApi.Jobs;
 using Microsoft.AspNetCore.Mvc;
 using GetIntoTeachingApi.Models;
-using GetIntoTeachingApiTests.Helpers;
 using Hangfire;
 using Hangfire.Common;
 using Hangfire.States;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
 {
@@ -34,9 +34,9 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         }
 
         [Fact]
-        public void Authorize_HasSharedSecretPolicy()
+        public void Authorize_IsPresent()
         {
-            PolicyTestHelpers.VerifyTypeIsAuthorizeWithSharedSecret(typeof(CandidatesController));
+            typeof(CandidatesController).Should().BeDecoratedWith<AuthorizeAttribute>();
         }
 
         [Fact]
