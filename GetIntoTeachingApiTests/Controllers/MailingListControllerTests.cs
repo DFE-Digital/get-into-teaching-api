@@ -1,8 +1,6 @@
 ﻿using Xunit;
 using GetIntoTeachingApi.Controllers;
 using GetIntoTeachingApi.Models;
-using Microsoft.Extensions.Logging;
-using Moq;
 using Microsoft.AspNetCore.Mvc;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authorization;
@@ -21,8 +19,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void CreateCandidateAccessToken_InvalidRequest_RespondsWithValidationErrors()
         {
             var member = new ExistingCandidateRequest() { FirstName = null };
-            var mockLogger = new Mock<ILogger<MailingListController>>();
-            var controller = new MailingListController(mockLogger.Object);
+            var controller = new MailingListController();
             controller.ModelState.AddModelError("FirstName", "First name must be specified.");
 
             var response = controller.AddMember(member);

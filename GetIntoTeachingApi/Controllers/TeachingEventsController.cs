@@ -19,14 +19,11 @@ namespace GetIntoTeachingApi.Controllers
     public class TeachingEventsController : ControllerBase
     {
         private const int MaximumUpcomingRequests = 50;
-        private readonly ILogger<TeachingEventsController> _logger;
         private readonly IStore _store;
         private readonly IBackgroundJobClient _jobClient;
 
-        public TeachingEventsController(ILogger<TeachingEventsController> logger, 
-            IStore store, IBackgroundJobClient jobClient)
+        public TeachingEventsController(IStore store, IBackgroundJobClient jobClient)
         {
-            _logger = logger;
             _store = store;
             _jobClient = jobClient;
         }

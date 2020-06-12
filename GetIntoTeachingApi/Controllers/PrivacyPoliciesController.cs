@@ -13,12 +13,10 @@ namespace GetIntoTeachingApi.Controllers
     [Authorize]
     public class PrivacyPoliciesController : ControllerBase
     {
-        private readonly ILogger<PrivacyPoliciesController> _logger;
         private readonly IStore _store;
 
-        public PrivacyPoliciesController(ILogger<PrivacyPoliciesController> logger, IStore store)
+        public PrivacyPoliciesController(IStore store)
         {
-            _logger = logger;
             _store = store;
         }
 

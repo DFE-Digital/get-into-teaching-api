@@ -14,14 +14,12 @@ namespace GetIntoTeachingApiTests.Controllers
     public class PrivacyPoliciesControllerTests
     {
         private readonly Mock<IStore> _mockStore;
-        private readonly Mock<ILogger<PrivacyPoliciesController>> _mockLogger;
         private readonly PrivacyPoliciesController _controller;
 
         public PrivacyPoliciesControllerTests()
         {
             _mockStore = new Mock<IStore>();
-            _mockLogger = new Mock<ILogger<PrivacyPoliciesController>>();
-            _controller = new PrivacyPoliciesController(_mockLogger.Object, _mockStore.Object);
+            _controller = new PrivacyPoliciesController(_mockStore.Object);
         }
 
         [Fact]
