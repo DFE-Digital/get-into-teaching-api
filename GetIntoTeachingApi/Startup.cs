@@ -16,6 +16,7 @@ using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
+using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
 using Microsoft.Data.Sqlite;
 using Microsoft.Xrm.Sdk;
@@ -43,6 +44,7 @@ namespace GetIntoTeachingApi
             services.AddScoped<IStore, Store>();
             services.AddScoped<DbConfiguration, DbConfiguration>();
 
+            services.AddSingleton<IMetricService, MetricService>();
             services.AddSingleton<INotificationClientAdapter, NotificationClientAdapter>();
             services.AddSingleton<ICandidateAccessTokenService, CandidateAccessTokenService>();
             services.AddSingleton<INotifyService, NotifyService>();
@@ -121,7 +123,7 @@ The GIT API aims to provide:
                     .UseFilter(automaticRetry);
                 
                 if (Env.IsDevelopment)
-                    config.UsePostgreSqlStorage("User ID=postgres;Password=password;Host=localhost;Port=5432;Database=dev;");
+                    config.UseMemoryStorage().WithJobExpirationTimeout(JobConfiguration.ExpirationTimeout);
                 else
                     config.UsePostgreSqlStorage(DbConfiguration.HangfireConnectionString());
             });

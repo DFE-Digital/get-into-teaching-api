@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using GetIntoTeachingApi.Services;
 using Microsoft.Extensions.Logging;
+using Prometheus;
 
 namespace GetIntoTeachingApi.Jobs
 {
@@ -9,19 +10,24 @@ namespace GetIntoTeachingApi.Jobs
         private readonly ICrmService _crm;
         private readonly IStore _store;
         private readonly ILogger<CrmSyncJob> _logger;
+        private readonly IMetricService _metrics;
 
-        public CrmSyncJob(ICrmService crm, IStore store, ILogger<CrmSyncJob> logger)
+        public CrmSyncJob(ICrmService crm, IStore store, ILogger<CrmSyncJob> logger, IMetricService metrics)
         {
             _crm = crm;
             _store = store;
             _logger = logger;
+            _metrics = metrics;
         }
 
         public async Task RunAsync()
         {
-            _logger.LogInformation("CrmSyncJob - Started");
-            await _store.SyncAsync(_crm);
-            _logger.LogInformation("CrmSyncJob - Succeeded");
+            using (_metrics.CrmSyncDuration.NewTimer())
+            {
+                _logger.LogInformation("CrmSyncJob - Started");
+                await _store.SyncAsync(_crm);
+                _logger.LogInformation("CrmSyncJob - Succeeded");
+            }
         }
     }
 }
