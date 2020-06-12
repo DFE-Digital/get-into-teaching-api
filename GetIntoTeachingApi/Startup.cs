@@ -19,6 +19,7 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.Data.Sqlite;
 using Microsoft.Xrm.Sdk;
+using Prometheus;
 
 namespace GetIntoTeachingApi
 {
@@ -140,8 +141,6 @@ The GIT API aims to provide:
 
             app.UseHttpsRedirection();
 
-            app.UseRouting();
-
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
                 Authorization = new[] { new HangfireDashboardAuthorizationFilter(new Env()) }
@@ -153,6 +152,10 @@ The GIT API aims to provide:
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Get into Teaching API V1");
             });
+
+            app.UseRouting();
+            
+            app.UseHttpMetrics();
 
             app.UseAuthorization();
 
@@ -177,6 +180,7 @@ The GIT API aims to provide:
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapMetrics(); 
                 endpoints.MapControllers();
             });
         }
