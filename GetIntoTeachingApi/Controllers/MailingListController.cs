@@ -1,7 +1,6 @@
 ﻿using GetIntoTeachingApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
@@ -13,13 +12,6 @@ namespace GetIntoTeachingApi.Controllers
     [Authorize]
     public class MailingListController : ControllerBase
     {
-        private readonly ILogger<MailingListController> _logger;
-
-        public MailingListController(ILogger<MailingListController> logger)
-        {
-            _logger = logger;
-        }
-
         [HttpPost]
         [Route("members")]
         [SwaggerOperation(

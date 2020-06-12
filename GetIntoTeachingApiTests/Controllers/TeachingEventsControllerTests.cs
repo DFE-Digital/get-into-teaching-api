@@ -5,7 +5,6 @@ using Xunit;
 using GetIntoTeachingApi.Controllers;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Microsoft.AspNetCore.Mvc;
 using GetIntoTeachingApi.Services;
@@ -25,11 +24,9 @@ namespace GetIntoTeachingApiTests.Controllers
 
         public TeachingEventsControllerTests()
         {
-            var mockLogger = new Mock<ILogger<TeachingEventsController>>();
             _mockStore = new Mock<IStore>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
-            _controller = new TeachingEventsController(mockLogger.Object, 
-                _mockStore.Object, _mockJobClient.Object);
+            _controller = new TeachingEventsController(_mockStore.Object, _mockJobClient.Object);
         }
 
         [Fact]

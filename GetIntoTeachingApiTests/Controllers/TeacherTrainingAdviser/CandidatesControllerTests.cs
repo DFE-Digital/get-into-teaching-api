@@ -1,6 +1,5 @@
 ﻿using System;
 using Xunit;
-using Microsoft.Extensions.Logging;
 using Moq;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Controllers.TeacherTrainingAdviser;
@@ -29,8 +28,7 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
             _mockCrm = new Mock<ICrmService>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
             _request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
-            var mockLogger = new Mock<ILogger<CandidatesController>>();
-            _controller = new CandidatesController(mockLogger.Object, _mockTokenService.Object, _mockCrm.Object, _mockJobClient.Object);
+            _controller = new CandidatesController(_mockTokenService.Object, _mockCrm.Object, _mockJobClient.Object);
         }
 
         [Fact]

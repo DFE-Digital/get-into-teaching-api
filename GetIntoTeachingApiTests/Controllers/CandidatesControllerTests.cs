@@ -1,7 +1,6 @@
 ﻿using Xunit;
 using GetIntoTeachingApi.Controllers;
 using GetIntoTeachingApi.Models;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Microsoft.AspNetCore.Mvc;
 using FluentAssertions;
@@ -13,7 +12,6 @@ namespace GetIntoTeachingApiTests.Controllers
 {
     public class CandidatesControllerTests
     {
-        private readonly Mock<ILogger<CandidatesController>> _mockLogger;
         private readonly Mock<ICandidateAccessTokenService> _mockTokenService;
         private readonly Mock<INotifyService> _mockNotifyService;
         private readonly Mock<ICrmService> _mockCrm;
@@ -21,11 +19,10 @@ namespace GetIntoTeachingApiTests.Controllers
 
         public CandidatesControllerTests()
         {
-            _mockLogger = new Mock<ILogger<CandidatesController>>();
             _mockTokenService = new Mock<ICandidateAccessTokenService>();
             _mockNotifyService = new Mock<INotifyService>();
             _mockCrm = new Mock<ICrmService>();
-            _controller = new CandidatesController(_mockLogger.Object, _mockTokenService.Object, _mockNotifyService.Object, _mockCrm.Object);
+            _controller = new CandidatesController(_mockTokenService.Object, _mockNotifyService.Object, _mockCrm.Object);
         }
 
         [Fact]
