@@ -15,12 +15,10 @@ namespace GetIntoTeachingApi.Controllers
     [Authorize]
     public class TypesController : ControllerBase
     {
-        private readonly ILogger<TypesController> _logger;
         private readonly IStore _store;
 
-        public TypesController(ILogger<TypesController> logger, IStore store)
+        public TypesController(IStore store)
         {
-            _logger = logger;
             _store = store;
         }
 

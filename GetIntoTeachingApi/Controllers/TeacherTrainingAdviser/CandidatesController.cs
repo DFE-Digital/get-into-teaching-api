@@ -15,19 +15,16 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
     [Authorize]
     public class CandidatesController : ControllerBase
     {
-        private readonly ILogger<CandidatesController> _logger;
         private readonly ICandidateAccessTokenService _tokenService;
         private readonly ICrmService _crm;
         private readonly IBackgroundJobClient _jobClient;
 
         public CandidatesController(
-            ILogger<CandidatesController> logger, 
             ICandidateAccessTokenService tokenService,
             ICrmService crm,
             IBackgroundJobClient jobClient
         )
         {
-            _logger = logger;
             _crm = crm;
             _tokenService = tokenService;
             _jobClient = jobClient;
