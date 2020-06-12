@@ -13,6 +13,7 @@ using GetIntoTeachingApiTests.Helpers;
 using Hangfire;
 using Hangfire.Common;
 using Hangfire.States;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -32,9 +33,9 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void Authorize_HasSharedSecretPolicy()
+        public void Authorize_IsPresent()
         {
-            PolicyTestHelpers.VerifyTypeIsAuthorizeWithSharedSecret(typeof(TeachingEventsController));
+            typeof(TeachingEventsController).Should().BeDecoratedWith<AuthorizeAttribute>();
         }
 
         [Fact]

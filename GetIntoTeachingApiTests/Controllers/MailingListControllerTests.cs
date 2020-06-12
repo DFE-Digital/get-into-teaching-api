@@ -5,16 +5,16 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Microsoft.AspNetCore.Mvc;
 using FluentAssertions;
-using GetIntoTeachingApiTests.Helpers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
     public class MailingListControllerTests
     {
         [Fact]
-        public void Authorize_HasSharedSecretPolicy()
+        public void Authorize_IsPresent()
         {
-            PolicyTestHelpers.VerifyTypeIsAuthorizeWithSharedSecret(typeof(MailingListController));
+            typeof(MailingListController).Should().BeDecoratedWith<AuthorizeAttribute>();
         }
 
         [Fact]

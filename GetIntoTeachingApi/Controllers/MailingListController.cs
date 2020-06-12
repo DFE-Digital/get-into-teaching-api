@@ -10,7 +10,7 @@ namespace GetIntoTeachingApi.Controllers
 {
     [Route("api/mailing_list")]
     [ApiController]
-    [Authorize(Policy = "SharedSecret")]
+    [Authorize]
     public class MailingListController : ControllerBase
     {
         private readonly ILogger<MailingListController> _logger;
