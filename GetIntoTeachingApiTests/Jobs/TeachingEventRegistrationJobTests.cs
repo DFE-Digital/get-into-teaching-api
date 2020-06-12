@@ -76,7 +76,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockCrm.Verify(mock => mock.Save(It.IsAny<TeachingEventRegistration>()), Times.Never);
             _mockNotifyService.Verify(mock => mock.SendEmailAsync(_attendee.Email,
-                NotifyService.TeachingEventRegistrationFailedTemplateId, It.IsAny<Dictionary<string, dynamic>>()));
+                NotifyService.TeachingEventRegistrationFailedEmailTemplateId, It.IsAny<Dictionary<string, dynamic>>()));
             _mockLogger.VerifyInformationWasCalled("TeachingEventRegistrationJob - Started (24/24)");
             _mockLogger.VerifyInformationWasCalled("TeachingEventRegistrationJob - Deleted");
         }
