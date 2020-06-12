@@ -7,8 +7,18 @@ namespace GetIntoTeachingApi.Jobs
     {
         protected bool IsLastAttempt(PerformContext context, IPerformContextAdapter adapter)
         {
-            var retryCount = adapter.GetRetryCount(context);
-            return retryCount >= JobConfiguration.Attempts;
+            var currentAttempt = CurrentAttempt(context, adapter);
+            return currentAttempt >= JobConfiguration.Attempts;
+        }
+
+        protected int CurrentAttempt(PerformContext context, IPerformContextAdapter adapter)
+        {
+            return adapter.GetRetryCount(context) + 1;
+        }
+
+        protected string AttemptInfo(PerformContext context, IPerformContextAdapter adapter)
+        {
+            return $"{CurrentAttempt(context, adapter)}/{JobConfiguration.Attempts}";
         }
     }
 }
