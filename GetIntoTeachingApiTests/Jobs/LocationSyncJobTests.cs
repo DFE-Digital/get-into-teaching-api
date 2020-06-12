@@ -1,14 +1,18 @@
 ﻿using System.Collections.Generic;
+using Castle.Core.Logging;
 using GetIntoTeachingApi.Jobs;
+using GetIntoTeachingApiTests.Helpers;
 using Hangfire;
 using Hangfire.Common;
 using Hangfire.States;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using Xunit;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace GetIntoTeachingApiTests.Jobs
 {
@@ -16,11 +20,13 @@ namespace GetIntoTeachingApiTests.Jobs
     {
         private readonly LocationSyncJob _job;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
+        private readonly Mock<ILogger<LocationSyncJob>> _mockLogger;
 
         public LocationSyncJobTests()
         {
             _mockJobClient = new Mock<IBackgroundJobClient>();
-            _job = new LocationSyncJob(_mockJobClient.Object);
+            _mockLogger = new Mock<ILogger<LocationSyncJob>>();
+            _job = new LocationSyncJob(_mockJobClient.Object, _mockLogger.Object);
         }
 
         [Fact]
@@ -50,6 +56,14 @@ namespace GetIntoTeachingApiTests.Jobs
                                   job.Method.Name == "RunAsync" && 
                                   (string) job.Args[0] == JsonConvert.SerializeObject(expectedLocationBatch)),
                 It.IsAny<EnqueuedState>()));
+
+            _mockLogger.VerifyInformationWasCalled("LocationSyncJob - Started");
+            _mockLogger.VerifyInformationWasCalled("LocationSyncJob - ZIP Downloaded");
+            _mockLogger.VerifyInformationWasCalled("LocationSyncJob - CSV Extracted");
+            _mockLogger.VerifyInformationWasCalled("LocationSyncJob - ZIP Deleted");
+            _mockLogger.VerifyInformationWasCalled("LocationSyncJob - Queueing 5 Locations (1 Jobs)");
+            _mockLogger.VerifyInformationWasCalled("LocationSyncJob - CSV Deleted");
+            _mockLogger.VerifyInformationWasCalled("LocationSyncJob - Succeeded");
         }
     }
 }
