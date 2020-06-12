@@ -27,14 +27,9 @@ namespace GetIntoTeachingApi.Services
 
         public async Task SyncAsync(ICrmService crm)
         {
-            var tasks = new []
-            {
-                SyncTeachingEvents(crm),
-                SyncPrivacyPolicies(crm), 
-                SyncTypeEntities(crm),
-            };
-
-            await Task.WhenAll(tasks);
+            await SyncTeachingEvents(crm);
+            await SyncPrivacyPolicies(crm);
+            await SyncTypeEntities(crm);
         }
 
         public IQueryable<TypeEntity> GetLookupItems(string entityName)
