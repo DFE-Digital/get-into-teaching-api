@@ -1,27 +1,44 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using GetIntoTeachingApi.Utils;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace GetIntoTeachingApi.Auth
 {
-    public class SharedSecretHandler : AuthorizationHandler<SharedSecretRequirement>
-    {
-        private readonly IHttpContextAccessor _httpContextAccessor;
+    public class SharedSecretSchemeOptions : AuthenticationSchemeOptions { }
 
-        public SharedSecretHandler(IHttpContextAccessor httpContextAccessor)
+    public class SharedSecretHandler : AuthenticationHandler<SharedSecretSchemeOptions>
+    {
+        private readonly IEnv _env;
+
+        public SharedSecretHandler(IEnv env, IOptionsMonitor<SharedSecretSchemeOptions> options, ILoggerFactory logger,
+            UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
         {
-            _httpContextAccessor = httpContextAccessor;
+            _env = env;
         }
 
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, SharedSecretRequirement requirement)
+        protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            string authorizationHeader = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
-            if (authorizationHeader != null && authorizationHeader.Contains($"Bearer {requirement.SharedSecret}"))
+            if (!Request.Headers.ContainsKey("Authorization"))
             {
-                context.Succeed(requirement);
+                return Task.FromResult(AuthenticateResult.Fail("Authorization header not set."));
             }
 
-            return Task.CompletedTask;
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            if (token != _env.SharedSecret)
+            {
+                return Task.FromResult(AuthenticateResult.Fail("Token is not valid."));
+            }
+
+            var claims = new[] { new Claim("token", token) };
+            var identity = new ClaimsIdentity(claims, nameof(SharedSecretHandler));
+            var ticket = new AuthenticationTicket(new ClaimsPrincipal(identity), this.Scheme.Name);
+
+            return Task.FromResult(AuthenticateResult.Success(ticket));
         }
     }
 }

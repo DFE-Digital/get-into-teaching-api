@@ -7,7 +7,6 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authorization;
 using GetIntoTeachingApi.Auth;
 using System.Linq;
 using GetIntoTeachingApi.OperationFilters;
@@ -17,7 +16,6 @@ using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
-using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
 using Microsoft.Data.Sqlite;
 using Microsoft.Xrm.Sdk;
@@ -44,7 +42,6 @@ namespace GetIntoTeachingApi
             services.AddScoped<IStore, Store>();
             services.AddScoped<DbConfiguration, DbConfiguration>();
 
-            services.AddSingleton<IAuthorizationHandler, SharedSecretHandler>();
             services.AddSingleton<INotificationClientAdapter, NotificationClientAdapter>();
             services.AddSingleton<ICandidateAccessTokenService, CandidateAccessTokenService>();
             services.AddSingleton<INotifyService, NotifyService>();
@@ -61,14 +58,8 @@ namespace GetIntoTeachingApi
                 services.AddDbContext<GetIntoTeachingDbContext>(DbConfiguration.ConfigPostgres);
             }
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("SharedSecret", policy => 
-                    policy.Requirements.Add(
-                        new SharedSecretRequirement(new Env().SharedSecret)
-                    )
-                );
-            });
+            services.AddAuthentication("SharedSecretHandler")
+                .AddScheme<SharedSecretSchemeOptions, SharedSecretHandler>("SharedSecretHandler", op => { });
 
             services.AddControllers().AddFluentValidation(c =>
             {
@@ -144,6 +135,8 @@ The GIT API aims to provide:
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseAuthentication();
 
             app.UseHttpsRedirection();
 

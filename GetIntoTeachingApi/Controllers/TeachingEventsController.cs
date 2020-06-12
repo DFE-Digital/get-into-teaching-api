@@ -15,7 +15,7 @@ namespace GetIntoTeachingApi.Controllers
 {
     [Route("api/teaching_events")]
     [ApiController]
-    [Authorize(Policy = "SharedSecret")]
+    [Authorize]
     public class TeachingEventsController : ControllerBase
     {
         private const int MaximumUpcomingRequests = 50;
