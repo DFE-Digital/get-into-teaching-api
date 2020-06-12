@@ -40,6 +40,8 @@ namespace GetIntoTeachingApiTests.Services
                     _personalisation
                 )
             );
+
+            _mockLogger.VerifyInformationWasCalled("NotifyService - Sending Email (NewPinCodeEmail)");
         }
 
         [Fact]
