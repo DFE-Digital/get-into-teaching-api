@@ -13,25 +13,29 @@ namespace GetIntoTeachingApi.Auth
     public class SharedSecretHandler : AuthenticationHandler<SharedSecretSchemeOptions>
     {
         private readonly IEnv _env;
+        private readonly ILogger<SharedSecretHandler> _logger;
 
-        public SharedSecretHandler(IEnv env, IOptionsMonitor<SharedSecretSchemeOptions> options, ILoggerFactory logger,
-            UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
+        public SharedSecretHandler(IEnv env, IOptionsMonitor<SharedSecretSchemeOptions> options, ILoggerFactory loggerFactory,
+            UrlEncoder encoder, ISystemClock clock) : base(options, loggerFactory, encoder, clock)
         {
             _env = env;
+            _logger = loggerFactory.CreateLogger<SharedSecretHandler>();
         }
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             if (!Request.Headers.ContainsKey("Authorization"))
             {
-                return Task.FromResult(AuthenticateResult.Fail("Authorization header not set."));
+                _logger.LogWarning("SharedSecretHandler - Authorization header not set");
+                return Task.FromResult(AuthenticateResult.Fail("Authorization header not set"));
             }
 
             var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
             if (token != _env.SharedSecret)
             {
-                return Task.FromResult(AuthenticateResult.Fail("Token is not valid."));
+                _logger.LogWarning("SharedSecretHandler - Token is not valid");
+                return Task.FromResult(AuthenticateResult.Fail("Token is not valid"));
             }
 
             var claims = new[] { new Claim("token", token) };

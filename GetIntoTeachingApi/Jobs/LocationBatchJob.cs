@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using Newtonsoft.Json;
@@ -15,14 +16,18 @@ namespace GetIntoTeachingApi.Jobs
     public class LocationBatchJob : BaseJob
     {
         private readonly GetIntoTeachingDbContext _dbContext;
+        private readonly ILogger<LocationBatchJob> _logger;
 
-        public LocationBatchJob(GetIntoTeachingDbContext dbContext)
+        public LocationBatchJob(GetIntoTeachingDbContext dbContext, ILogger<LocationBatchJob> logger)
         {
             _dbContext = dbContext;
+            _logger = logger;
         }
 
         public async Task RunAsync(string batchJson)
         {
+            _logger.LogInformation($"LocationBatchJob - Started");
+
             var batchLocations = JsonConvert.DeserializeObject<List<ExpandoObject>>(
                     batchJson, new ExpandoObjectConverter()).Select(l => (dynamic) l).ToList();
             var batchPostcodes = batchLocations.Select(l => l.Postcode);
@@ -34,6 +39,8 @@ namespace GetIntoTeachingApi.Jobs
 
             await _dbContext.Locations.AddRangeAsync(newBatchLocations.Select(CreateLocation));
             await _dbContext.SaveChangesAsync();
+
+            _logger.LogInformation($"LocationBatchJob - Succeeded");
         }
 
         private static Location CreateLocation(dynamic location)

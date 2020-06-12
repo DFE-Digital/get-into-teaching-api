@@ -4,6 +4,8 @@ using FluentAssertions;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApiTests.Helpers;
+using Microsoft.Extensions.Logging;
+using Moq;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using Newtonsoft.Json;
@@ -15,10 +17,12 @@ namespace GetIntoTeachingApiTests.Jobs
     public class LocationBatchJobTests : DatabaseTests
     {
         private readonly LocationBatchJob _job;
+        private readonly Mock<ILogger<LocationBatchJob>> _mockLogger;
 
         public LocationBatchJobTests()
         {
-            _job = new LocationBatchJob(DbContext);
+            _mockLogger = new Mock<ILogger<LocationBatchJob>>();
+            _job = new LocationBatchJob(DbContext, _mockLogger.Object);
         }
 
         [Fact]
@@ -39,6 +43,9 @@ namespace GetIntoTeachingApiTests.Jobs
             DbContext.Locations.Count().Should().Be(batch.Count());
             DbContext.Locations.ToList().All(l => 
                 batch.Any(b => BatchLocationMatchesExistingLocation(b, l))).Should().BeTrue();
+
+            _mockLogger.VerifyInformationWasCalled("LocationBatchJob - Started");
+            _mockLogger.VerifyInformationWasCalled("LocationBatchJob - Succeeded");
         }
 
         private static bool BatchLocationMatchesExistingLocation(dynamic batchLocation, Location existingLocation)

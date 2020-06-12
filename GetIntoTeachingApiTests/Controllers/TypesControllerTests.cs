@@ -20,8 +20,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public TypesControllerTests()
         {
             _mockStore = new Mock<IStore>();
-            var mockLogger = new Mock<ILogger<TypesController>>();
-            _controller = new TypesController(mockLogger.Object, _mockStore.Object);
+            _controller = new TypesController(_mockStore.Object);
         }
 
         [Fact]

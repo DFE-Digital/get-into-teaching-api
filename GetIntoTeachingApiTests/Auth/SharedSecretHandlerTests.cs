@@ -2,6 +2,7 @@
 using FluentAssertions;
 using GetIntoTeachingApi.Auth;
 using GetIntoTeachingApi.Utils;
+using GetIntoTeachingApiTests.Helpers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,7 @@ namespace GetIntoTeachingApiTests.Auth
     public class SharedSecretHandlerTests
     {
         private readonly SharedSecretHandler _handler;
+        private readonly Mock<ILogger<SharedSecretHandler>> _mockLogger;
 
         public SharedSecretHandlerTests()
         {
@@ -23,9 +25,9 @@ namespace GetIntoTeachingApiTests.Auth
             var mockOptionsMonitor = new Mock<IOptionsMonitor<SharedSecretSchemeOptions>>();
             mockOptionsMonitor.Setup(m => m.Get("SharedSecretHandler")).Returns(new SharedSecretSchemeOptions());
 
-            var mockLogger = new Mock<ILogger<SharedSecretHandler>>();
+            _mockLogger = new Mock<ILogger<SharedSecretHandler>>();
             var mockLoggerFactory = new Mock<ILoggerFactory>();
-            mockLoggerFactory.Setup(x => x.CreateLogger(It.IsAny<string>())).Returns(mockLogger.Object);
+            mockLoggerFactory.Setup(x => x.CreateLogger(It.IsAny<string>())).Returns(_mockLogger.Object);
 
             _handler = new SharedSecretHandler(mockEnv.Object, mockOptionsMonitor.Object, 
                 mockLoggerFactory.Object, new Mock<UrlEncoder>().Object, new Mock<ISystemClock>().Object);
@@ -48,6 +50,31 @@ namespace GetIntoTeachingApiTests.Auth
             var result = await _handler.AuthenticateAsync();
 
             result.Succeeded.Should().Be(expected);
+        }
+
+        [Fact]
+        public async void InitializeAsync_NoAuthorizationHeader_LogsWarning()
+        {
+            var context = new DefaultHttpContext();
+            var scheme = new AuthenticationScheme("SharedSecretHandler", null, typeof(SharedSecretHandler));
+            await _handler.InitializeAsync(scheme, context);
+
+            await _handler.AuthenticateAsync();
+
+            _mockLogger.VerifyWarningWasCalled("SharedSecretHandler - Authorization header not set");
+        }
+
+        [Fact]
+        public async void InitializeAsync_IncorrectAuthorizationHeader_LogsWarning()
+        {
+            var context = new DefaultHttpContext();
+            context.Request.Headers.Add("Authorization", "incorrect_shared_secret");
+            var scheme = new AuthenticationScheme("SharedSecretHandler", null, typeof(SharedSecretHandler));
+            await _handler.InitializeAsync(scheme, context);
+
+            await _handler.AuthenticateAsync();
+
+            _mockLogger.VerifyWarningWasCalled("SharedSecretHandler - Token is not valid");
         }
     }
 }

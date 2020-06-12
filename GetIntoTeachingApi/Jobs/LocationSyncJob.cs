@@ -9,6 +9,7 @@ using CsvHelper;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace GetIntoTeachingApi.Jobs
@@ -18,14 +19,18 @@ namespace GetIntoTeachingApi.Jobs
         public const string UkPostcodeCsvFilename = "ukpostcodes.csv";
         private const int BatchInterval = 100;
         private readonly IBackgroundJobClient _jobClient;
+        private readonly ILogger<LocationSyncJob> _logger;
 
-        public LocationSyncJob(IBackgroundJobClient jobClient)
+        public LocationSyncJob(IBackgroundJobClient jobClient, ILogger<LocationSyncJob> logger)
         {
+            _logger = logger;
             _jobClient = jobClient;
         }
 
         public async Task RunAsync(string ukPostcodeCsvUrl)
         {
+            _logger.LogInformation($"LocationSyncJob - Started");
+
             var csvPath = await RetrieveCsv(ukPostcodeCsvUrl);
 
             try
@@ -35,12 +40,16 @@ namespace GetIntoTeachingApi.Jobs
             finally
             {
                 DeleteCsv(csvPath);
+                _logger.LogInformation($"LocationSyncJob - CSV Deleted");
             }
+
+            _logger.LogInformation($"LocationSyncJob - Succeeded");
         }
 
         private async Task SyncLocations(string csvPath)
         {
             var batch = new List<dynamic>();
+            var locationCount = 0;
             using var reader = new StreamReader(csvPath);
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -53,11 +62,15 @@ namespace GetIntoTeachingApi.Jobs
                 if (location == null) continue;
 
                 batch.Add(location);
+                locationCount++;
 
                 QueueBatch(batch);
             }
 
             QueueBatch(batch, true);
+
+            var batchJobCount = (int) Math.Ceiling((decimal) locationCount / BatchInterval);
+            _logger.LogInformation($"LocationSyncJob - Queueing {locationCount} Locations ({batchJobCount} Jobs)");
         }
 
         private static dynamic CreateLocation(IReaderRow csv)
@@ -83,7 +96,7 @@ namespace GetIntoTeachingApi.Jobs
             batch.Clear();
         }
 
-        private static async Task<string> RetrieveCsv(string ukPostcodeCsvUrl)
+        private async Task<string> RetrieveCsv(string ukPostcodeCsvUrl)
         {
             if (Env.IsDevelopment)
                 return "./Fixtures/ukpostcodes.dev.csv";
@@ -93,16 +106,19 @@ namespace GetIntoTeachingApi.Jobs
             var net = new System.Net.WebClient();
 
             await net.DownloadFileTaskAsync(new Uri(ukPostcodeCsvUrl), zipPath);
+            _logger.LogInformation($"LocationSyncJob - ZIP Downloaded");
 
             try
             {
                 ZipFile.ExtractToDirectory(zipPath, csvPath);
+                _logger.LogInformation($"LocationSyncJob - CSV Extracted");
             }
             finally
             {
                 File.Delete(zipPath);
+                _logger.LogInformation($"LocationSyncJob - ZIP Deleted");
             }
-            
+
             return Path.Combine(csvPath, UkPostcodeCsvFilename);
         }
 
