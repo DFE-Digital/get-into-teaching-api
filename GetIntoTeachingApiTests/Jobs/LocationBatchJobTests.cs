@@ -3,6 +3,7 @@ using System.Linq;
 using FluentAssertions;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
+using GetIntoTeachingApi.Services;
 using GetIntoTeachingApiTests.Helpers;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -17,12 +18,14 @@ namespace GetIntoTeachingApiTests.Jobs
     public class LocationBatchJobTests : DatabaseTests
     {
         private readonly LocationBatchJob _job;
+        private readonly IMetricService _metrics;
         private readonly Mock<ILogger<LocationBatchJob>> _mockLogger;
 
         public LocationBatchJobTests()
         {
             _mockLogger = new Mock<ILogger<LocationBatchJob>>();
-            _job = new LocationBatchJob(DbContext, _mockLogger.Object);
+            _metrics = new MetricService();
+            _job = new LocationBatchJob(DbContext, _mockLogger.Object, _metrics);
         }
 
         [Fact]
@@ -46,6 +49,8 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockLogger.VerifyInformationWasCalled("LocationBatchJob - Started");
             _mockLogger.VerifyInformationWasCalled("LocationBatchJob - Succeeded");
+
+            _metrics.LocationBatchDuration.Count.Should().Be(2);
         }
 
         private static bool BatchLocationMatchesExistingLocation(dynamic batchLocation, Location existingLocation)
