@@ -6,6 +6,7 @@ namespace GetIntoTeachingApi.Services
     {
         Histogram CrmSyncDuration { get; }
         Histogram LocationSyncDuration { get; }
+        Histogram LocationBatchDuration { get; }
         Gauge HangfireJobs { get; }
     }
 }
