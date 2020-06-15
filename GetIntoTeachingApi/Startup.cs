@@ -36,6 +36,8 @@ namespace GetIntoTeachingApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var env = new Env();
+
             services.AddSingleton<CdsServiceClientWrapper, CdsServiceClientWrapper>();
             services.AddTransient<IOrganizationService>(sp => sp.GetService<CdsServiceClientWrapper>().CdsServiceClient.Clone());
             services.AddTransient<IOrganizationServiceAdapter, OrganizationServiceAdapter>();
@@ -49,16 +51,16 @@ namespace GetIntoTeachingApi
             services.AddSingleton<ICandidateAccessTokenService, CandidateAccessTokenService>();
             services.AddSingleton<INotifyService, NotifyService>();
             services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
-            services.AddSingleton<IEnv, Env>();
+            services.AddSingleton<IEnv>(env);
 
-            if (new Env().IsDevelopment)
+            if (env.IsDevelopment)
             {
                 var keepAliveConnection = new SqliteConnection("DataSource=:memory:");
                 services.AddDbContext<GetIntoTeachingDbContext>(builder => DbConfiguration.ConfigSqLite(builder, keepAliveConnection));
             }
             else
             {
-                services.AddDbContext<GetIntoTeachingDbContext>(DbConfiguration.ConfigPostgres);
+                services.AddDbContext<GetIntoTeachingDbContext>(b => DbConfiguration.ConfigPostgres(env, b));
             }
 
             services.AddAuthentication("SharedSecretHandler")
@@ -111,8 +113,8 @@ The GIT API aims to provide:
             {
                 var automaticRetry = new AutomaticRetryAttribute
                 {
-                    Attempts = JobConfiguration.Attempts,
-                    DelaysInSeconds = new[] { JobConfiguration.RetryIntervalInSeconds },
+                    Attempts = JobConfiguration.Attempts(env),
+                    DelaysInSeconds = new[] { JobConfiguration.RetryIntervalInSeconds(env) },
                     OnAttemptsExceeded = AttemptsExceededAction.Delete
                 };
 
@@ -122,10 +124,10 @@ The GIT API aims to provide:
                     .UseRecommendedSerializerSettings()
                     .UseFilter(automaticRetry);
                 
-                if (new Env().IsDevelopment)
+                if (env.IsDevelopment)
                     config.UseMemoryStorage().WithJobExpirationTimeout(JobConfiguration.ExpirationTimeout);
                 else
-                    config.UsePostgreSqlStorage(DbConfiguration.HangfireConnectionString());
+                    config.UsePostgreSqlStorage(DbConfiguration.HangfireConnectionString(env));
             });
 
             services.AddHangfireServer();

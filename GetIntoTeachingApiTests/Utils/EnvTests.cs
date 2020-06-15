@@ -11,17 +11,20 @@ namespace GetIntoTeachingApiTests.Utils
     public class EnvTests : IDisposable
     {
         private readonly string _previousEnvironment;
+        private readonly string _previousCfInstanceIndex;
         private readonly IEnv _env;
 
         public EnvTests()
         {
             _env = new Env();
             _previousEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            _previousCfInstanceIndex = Environment.GetEnvironmentVariable("CF_INSTANCE_INDEX");
         }
 
         public void Dispose()
         {
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", _previousEnvironment);
+            Environment.SetEnvironmentVariable("CF_INSTANCE_INDEX", _previousCfInstanceIndex);
         }
 
         [Theory]

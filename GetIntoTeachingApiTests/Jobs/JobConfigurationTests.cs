@@ -1,55 +1,47 @@
 ﻿using System;
 using FluentAssertions;
 using GetIntoTeachingApi.Jobs;
-using GetIntoTeachingApiTests.Helpers;
+using GetIntoTeachingApi.Utils;
+using Moq;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Jobs
 {
-    // We're changing the environment in these tests.
-    [Collection(nameof(NotThreadSafeResourceCollection))]
-    public class JobConfigurationTests : IDisposable
+    public class JobConfigurationTests
     {
-        private readonly string _previousEnvironment;
+        private readonly Mock<IEnv> _mockEnv;
 
         public JobConfigurationTests()
         {
-            _previousEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        }
-        public void Dispose()
-        {
-            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", _previousEnvironment);
+            _mockEnv = new Mock<IEnv>();
         }
 
         [Theory]
-        [InlineData("Development", 5)]
-        [InlineData("Production", 24)]
-        [InlineData("Staging", 24)]
-        public void Attempts_WithEnvironment_ReturnsCorrectly(string environment, int expected)
+        [InlineData(true, 5)]
+        [InlineData(false, 24)]
+        public void Attempts_WithEnvironment_ReturnsCorrectly(bool development, int expected)
         {
-            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", environment);
+            _mockEnv.Setup(m => m.IsDevelopment).Returns(development);
 
-            JobConfiguration.Attempts.Should().Be(expected);
+            JobConfiguration.Attempts(_mockEnv.Object).Should().Be(expected);
         }
 
         [Theory]
-        [InlineData("Development", 60)]
-        [InlineData("Production", 3600)]
-        [InlineData("Staging", 3600)]
-        public void RetryIntervalInSeconds_WithEnvironment_ReturnsCorrectly(string environment, int expected)
+        [InlineData(true, 60)]
+        [InlineData(false, 3600)]
+        public void RetryIntervalInSeconds_WithEnvironment_ReturnsCorrectly(bool development, int expected)
         {
-            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", environment);
+            _mockEnv.Setup(m => m.IsDevelopment).Returns(development);
 
-            JobConfiguration.RetryIntervalInSeconds.Should().Be(expected);
+            JobConfiguration.RetryIntervalInSeconds(_mockEnv.Object).Should().Be(expected);
         }
 
         [Theory]
-        [InlineData("Development", 24)]
-        [InlineData("Production", 24)]
-        [InlineData("Staging", 24)]
-        public void ExpirationTimeout_WithEnvironment_ReturnsCorrectly(string environment, int expectedInHours)
+        [InlineData(true, 24)]
+        [InlineData(false, 24)]
+        public void ExpirationTimeout_WithEnvironment_ReturnsCorrectly(bool development, int expectedInHours)
         {
-            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", environment);
+            _mockEnv.Setup(m => m.IsDevelopment).Returns(development);
 
             JobConfiguration.ExpirationTimeout.Should().Be(TimeSpan.FromHours(expectedInHours));
         }

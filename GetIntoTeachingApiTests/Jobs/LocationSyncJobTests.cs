@@ -31,8 +31,8 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockJobClient = new Mock<IBackgroundJobClient>();
             _mockLogger = new Mock<ILogger<LocationSyncJob>>();
             _metrics = new MetricService();
-            _job = new LocationSyncJob(_mockJobClient.Object,
-                _mockLogger.Object, _metrics, mockEnv.Object);
+            _job = new LocationSyncJob(mockEnv.Object, _mockJobClient.Object,
+                _mockLogger.Object, _metrics);
         }
 
         [Fact]
