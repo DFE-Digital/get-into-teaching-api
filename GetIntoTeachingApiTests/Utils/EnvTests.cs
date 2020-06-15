@@ -11,14 +11,28 @@ namespace GetIntoTeachingApiTests.Utils
     public class EnvTests : IDisposable
     {
         private readonly string _previousEnvironment;
+        private readonly IEnv _env;
 
         public EnvTests()
         {
+            _env = new Env();
             _previousEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
         }
+
         public void Dispose()
         {
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", _previousEnvironment);
+        }
+
+        [Theory]
+        [InlineData("0", true)]
+        [InlineData("1", false)]
+        [InlineData("10", false)]
+        public void ExportHangfireToPrometheus_TrueOnlyForFirstInstance(string instance, bool expected)
+        {
+            Environment.SetEnvironmentVariable("CF_INSTANCE_INDEX", instance);
+
+            _env.ExportHangireToPrometheus.Should().Be(expected);
         }
 
         [Theory]
@@ -29,7 +43,7 @@ namespace GetIntoTeachingApiTests.Utils
         {
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", environment);
 
-            Env.IsDevelopment.Should().Be(expected);
+            _env.IsDevelopment.Should().Be(expected);
         }
 
         [Theory]
@@ -40,7 +54,7 @@ namespace GetIntoTeachingApiTests.Utils
         {
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", environment);
 
-            Env.IsProduction.Should().Be(expected);
+            _env.IsProduction.Should().Be(expected);
         }
 
         [Theory]
@@ -51,7 +65,7 @@ namespace GetIntoTeachingApiTests.Utils
         {
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", environment);
 
-            Env.IsStaging.Should().Be(expected);
+            _env.IsStaging.Should().Be(expected);
         }
     }
 }

@@ -2,6 +2,7 @@
 using FluentAssertions;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
 using Hangfire;
 using Hangfire.Common;
@@ -25,10 +26,13 @@ namespace GetIntoTeachingApiTests.Jobs
 
         public LocationSyncJobTests()
         {
+            var mockEnv = new Mock<IEnv>();
+            mockEnv.Setup(m => m.IsDevelopment).Returns(false);
             _mockJobClient = new Mock<IBackgroundJobClient>();
             _mockLogger = new Mock<ILogger<LocationSyncJob>>();
             _metrics = new MetricService();
-            _job = new LocationSyncJob(_mockJobClient.Object, _mockLogger.Object, _metrics);
+            _job = new LocationSyncJob(_mockJobClient.Object,
+                _mockLogger.Object, _metrics, mockEnv.Object);
         }
 
         [Fact]

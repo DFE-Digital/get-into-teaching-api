@@ -2,6 +2,10 @@
 {
     public interface IEnv
     {
+        bool IsDevelopment { get; }
+        bool IsStaging { get; }
+        bool IsProduction { get; }
+        bool ExportHangireToPrometheus { get; }
         string EnvironmentName { get; }
         string TotpSecretKey { get; }
         string VcapServices { get; }
