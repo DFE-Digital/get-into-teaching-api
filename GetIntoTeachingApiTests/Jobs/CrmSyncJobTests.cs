@@ -1,10 +1,10 @@
 ﻿using FluentAssertions;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Prometheus;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Jobs
@@ -23,7 +23,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockLogger = new Mock<ILogger<CrmSyncJob>>();
             _mockStore = new Mock<IStore>();
             _metrics = new MetricService();
-            _job = new CrmSyncJob(_mockCrm.Object, _mockStore.Object, _mockLogger.Object, _metrics);
+            _job = new CrmSyncJob(new Env(), _mockCrm.Object, _mockStore.Object, _mockLogger.Object, _metrics);
         }
 
         [Fact]

@@ -4,6 +4,7 @@ using FluentAssertions;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -25,7 +26,7 @@ namespace GetIntoTeachingApiTests.Jobs
         {
             _mockLogger = new Mock<ILogger<LocationBatchJob>>();
             _metrics = new MetricService();
-            _job = new LocationBatchJob(DbContext, _mockLogger.Object, _metrics);
+            _job = new LocationBatchJob(new Env(), DbContext, _mockLogger.Object, _metrics);
         }
 
         [Fact]

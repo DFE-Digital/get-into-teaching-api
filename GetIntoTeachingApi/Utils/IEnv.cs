@@ -6,6 +6,8 @@
         bool IsStaging { get; }
         bool IsProduction { get; }
         bool ExportHangireToPrometheus { get; }
+        string DatabaseInstanceName { get; }
+        string HangfireInstanceName { get; }
         string EnvironmentName { get; }
         string TotpSecretKey { get; }
         string VcapServices { get; }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NetTopologySuite;
@@ -21,8 +22,8 @@ namespace GetIntoTeachingApi.Jobs
         private readonly ILogger<LocationBatchJob> _logger;
         private readonly IMetricService _metrics;
 
-        public LocationBatchJob(GetIntoTeachingDbContext dbContext, ILogger<LocationBatchJob> logger,
-            IMetricService metrics)
+        public LocationBatchJob(IEnv env, GetIntoTeachingDbContext dbContext, 
+            ILogger<LocationBatchJob> logger, IMetricService metrics) : base(env)
         {
             _dbContext = dbContext;
             _logger = logger;

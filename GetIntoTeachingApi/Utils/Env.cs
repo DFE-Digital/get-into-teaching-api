@@ -4,10 +4,12 @@ namespace GetIntoTeachingApi.Utils
 {
     public class Env : IEnv
     {
-        public bool IsDevelopment => Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
-        public bool IsProduction => Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production";
-        public bool IsStaging => Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Staging";
+        public bool IsDevelopment => EnvironmentName == "Development";
+        public bool IsProduction => EnvironmentName  == "Production";
+        public bool IsStaging => EnvironmentName == "Staging";
         public bool ExportHangireToPrometheus => Environment.GetEnvironmentVariable("CF_INSTANCE_INDEX") == "0";
+        public string DatabaseInstanceName => Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME");
+        public string HangfireInstanceName => Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME");
         public string EnvironmentName => Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
         public string TotpSecretKey => Environment.GetEnvironmentVariable("TOTP_SECRET_KEY");
         public string VcapServices => Environment.GetEnvironmentVariable("VCAP_SERVICES");

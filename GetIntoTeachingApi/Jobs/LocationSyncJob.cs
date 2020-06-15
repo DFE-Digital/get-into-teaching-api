@@ -23,15 +23,13 @@ namespace GetIntoTeachingApi.Jobs
         private readonly IBackgroundJobClient _jobClient;
         private readonly ILogger<LocationSyncJob> _logger;
         private readonly IMetricService _metrics;
-        private readonly IEnv _env;
 
-        public LocationSyncJob(IBackgroundJobClient jobClient, ILogger<LocationSyncJob> logger,
-            IMetricService metrics, IEnv env)
+        public LocationSyncJob(IEnv env, IBackgroundJobClient jobClient, 
+            ILogger<LocationSyncJob> logger, IMetricService metrics) : base(env)
         {
             _logger = logger;
             _jobClient = jobClient;
             _metrics = metrics;
-            _env = env;
         }
 
         public async Task RunAsync(string ukPostcodeCsvUrl)
@@ -108,7 +106,7 @@ namespace GetIntoTeachingApi.Jobs
 
         private async Task<string> RetrieveCsv(string ukPostcodeCsvUrl)
         {
-            if (_env.IsDevelopment)
+            if (Env.IsDevelopment)
                 return "./Fixtures/ukpostcodes.dev.csv";
 
             var zipPath = GetTempPath();
@@ -134,7 +132,7 @@ namespace GetIntoTeachingApi.Jobs
 
         private void DeleteCsv(string csvPath)
         {
-            if (!_env.IsDevelopment)
+            if (!Env.IsDevelopment)
             {
                 File.Delete(csvPath);
             }
