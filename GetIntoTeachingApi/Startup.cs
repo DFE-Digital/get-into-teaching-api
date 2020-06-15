@@ -156,7 +156,9 @@ The GIT API aims to provide:
             });
 
             app.UseRouting();
-            
+
+            app.UsePrometheusHangfireExporter();
+
             app.UseHttpMetrics();
 
             app.UseAuthorization();
