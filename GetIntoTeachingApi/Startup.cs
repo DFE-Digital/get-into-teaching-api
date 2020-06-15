@@ -51,7 +51,7 @@ namespace GetIntoTeachingApi
             services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
             services.AddSingleton<IEnv, Env>();
 
-            if (Env.IsDevelopment)
+            if (new Env().IsDevelopment)
             {
                 var keepAliveConnection = new SqliteConnection("DataSource=:memory:");
                 services.AddDbContext<GetIntoTeachingDbContext>(builder => DbConfiguration.ConfigSqLite(builder, keepAliveConnection));
@@ -122,7 +122,7 @@ The GIT API aims to provide:
                     .UseRecommendedSerializerSettings()
                     .UseFilter(automaticRetry);
                 
-                if (Env.IsDevelopment)
+                if (new Env().IsDevelopment)
                     config.UseMemoryStorage().WithJobExpirationTimeout(JobConfiguration.ExpirationTimeout);
                 else
                     config.UsePostgreSqlStorage(DbConfiguration.HangfireConnectionString());
@@ -132,9 +132,12 @@ The GIT API aims to provide:
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment hostEnv)
         {
-            if (env.IsDevelopment())
+            using var serviceScope = app.ApplicationServices.CreateScope();
+            var env = serviceScope.ServiceProvider.GetService<IEnv>();
+
+            if (hostEnv.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -145,7 +148,7 @@ The GIT API aims to provide:
 
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
-                Authorization = new[] { new HangfireDashboardAuthorizationFilter(new Env()) }
+                Authorization = new[] { new HangfireDashboardAuthorizationFilter(env) }
             });
 
             app.UseSwagger();
@@ -157,7 +160,10 @@ The GIT API aims to provide:
 
             app.UseRouting();
 
-            app.UsePrometheusHangfireExporter();
+            if (env.ExportHangireToPrometheus)
+            {
+                app.UsePrometheusHangfireExporter();
+            }
 
             app.UseHttpMetrics();
 
@@ -167,8 +173,6 @@ The GIT API aims to provide:
             RecurringJob.AddOrUpdate<CrmSyncJob>("crm-sync", (x) => x.RunAsync(), Cron.Daily());
             RecurringJob.AddOrUpdate<LocationSyncJob>("location-sync", (x) => 
                 x.RunAsync("https://www.freemaptools.com/download/full-postcodes/ukpostcodes.zip"), Cron.Weekly());
-
-            using var serviceScope = app.ApplicationServices.CreateScope();
 
             // Configure and seed the database.
             var dbConfiguration = serviceScope.ServiceProvider.GetService<DbConfiguration>();
