@@ -24,6 +24,7 @@ resource "cloudfoundry_app" "api_application" {
          NOTIFY_API_KEY    = var.NOTIFY_API_KEY
          TOTP_SECRET_KEY   = var.TOTP_SECRET_KEY
          SHARED_SECRET     = var.SHARED_SECRET
+         SENTRY_URL        = var.SENTRY_URL
          ASPNETCORE_ENVIRONMENT = var.ASPNETCORE_ENVIRONMENT
          DATABASE_INSTANCE_NAME = cloudfoundry_service_instance.postgres2.name
          HANGFIRE_INSTANCE_NAME = cloudfoundry_service_instance.hangfire.name
