@@ -34,7 +34,8 @@ namespace GetIntoTeachingApiTests.Database
                                          "Password=password2;" +
                                          "Port=5432;" +
                                          "SSL Mode=Require;" +
-                                         "Trust Server Certificate=True");
+                                         "Trust Server Certificate=True;" +
+                                         "Maximum Pool Size=50");
         }
 
         [Fact]
@@ -48,7 +49,8 @@ namespace GetIntoTeachingApiTests.Database
                                          "Password=password1;" +
                                          "Port=5432;" +
                                          "SSL Mode=Require;" +
-                                         "Trust Server Certificate=True");
+                                         "Trust Server Certificate=True;" +
+                                         "Maximum Pool Size=50");
         }
     }
 }
