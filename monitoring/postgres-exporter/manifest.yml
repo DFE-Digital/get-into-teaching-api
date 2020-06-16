@@ -1,0 +1,8 @@
+applications:
+    - name: git-pg-exporter-1-test
+      docker:
+        image: wrouesnel/postgres_exporter
+      env:
+         DATA_SOURCE_NAME: postgres://uk71gobn755rd7d3:FFEqVv96rONkucKhg62xUCwDyoDEcOOZ@rdsbroker-402f54a9-83cd-472d-b895-9d6b3eee591d.coowcrpgh5fz.eu-west-2.rds.amazonaws.com:5432/rdsbroker_402f54a9_83cd_472d_b895_9d6b3eee591d
+      services:
+        - get-into-teaching-api-test-pg1-svc

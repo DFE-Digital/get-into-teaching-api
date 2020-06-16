@@ -10,3 +10,7 @@ scrape_configs:
   scheme: https
   static_configs:
     - targets: [get-into-teaching-api-test.london.cloudapps.digital]
+- job_name: git-hangfire
+  scheme: https
+  static_configs:
+    - targets: [git-pg-exporter-1-test.london.cloudapps.digital]
