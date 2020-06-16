@@ -110,5 +110,10 @@ Migrations are applied from code when the application starts (see `DbConfigurati
 
 Deployment is via Terraform and the key will be stored in Azure.
 
+### Logs
 
+Logs are available by loggging into [logit.io](https://logit.io).
 
+### Metrics
+
+Metrics are exposed to Prometheus on the `/metrics` endpoint; [prometheus-net](https://github.com/prometheus-net/prometheus-net) is used for collecting and exposing the metrics.

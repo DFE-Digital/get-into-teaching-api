@@ -16,9 +16,11 @@ using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
+using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
 using Microsoft.Data.Sqlite;
 using Microsoft.Xrm.Sdk;
+using Prometheus;
 
 namespace GetIntoTeachingApi
 {
@@ -34,6 +36,8 @@ namespace GetIntoTeachingApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var env = new Env();
+
             services.AddSingleton<CdsServiceClientWrapper, CdsServiceClientWrapper>();
             services.AddTransient<IOrganizationService>(sp => sp.GetService<CdsServiceClientWrapper>().CdsServiceClient.Clone());
             services.AddTransient<IOrganizationServiceAdapter, OrganizationServiceAdapter>();
@@ -42,20 +46,21 @@ namespace GetIntoTeachingApi
             services.AddScoped<IStore, Store>();
             services.AddScoped<DbConfiguration, DbConfiguration>();
 
+            services.AddSingleton<IMetricService, MetricService>();
             services.AddSingleton<INotificationClientAdapter, NotificationClientAdapter>();
             services.AddSingleton<ICandidateAccessTokenService, CandidateAccessTokenService>();
             services.AddSingleton<INotifyService, NotifyService>();
             services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
-            services.AddSingleton<IEnv, Env>();
+            services.AddSingleton<IEnv>(env);
 
-            if (Env.IsDevelopment)
+            if (env.IsDevelopment)
             {
                 var keepAliveConnection = new SqliteConnection("DataSource=:memory:");
                 services.AddDbContext<GetIntoTeachingDbContext>(builder => DbConfiguration.ConfigSqLite(builder, keepAliveConnection));
             }
             else
             {
-                services.AddDbContext<GetIntoTeachingDbContext>(DbConfiguration.ConfigPostgres);
+                services.AddDbContext<GetIntoTeachingDbContext>(b => DbConfiguration.ConfigPostgres(env, b));
             }
 
             services.AddAuthentication("SharedSecretHandler")
@@ -108,8 +113,8 @@ The GIT API aims to provide:
             {
                 var automaticRetry = new AutomaticRetryAttribute
                 {
-                    Attempts = JobConfiguration.Attempts,
-                    DelaysInSeconds = new[] { JobConfiguration.RetryIntervalInSeconds },
+                    Attempts = JobConfiguration.Attempts(env),
+                    DelaysInSeconds = new[] { JobConfiguration.RetryIntervalInSeconds(env) },
                     OnAttemptsExceeded = AttemptsExceededAction.Delete
                 };
 
@@ -119,19 +124,22 @@ The GIT API aims to provide:
                     .UseRecommendedSerializerSettings()
                     .UseFilter(automaticRetry);
                 
-                if (Env.IsDevelopment)
-                    config.UsePostgreSqlStorage("User ID=postgres;Password=password;Host=localhost;Port=5432;Database=dev;");
+                if (env.IsDevelopment)
+                    config.UseMemoryStorage().WithJobExpirationTimeout(JobConfiguration.ExpirationTimeout);
                 else
-                    config.UsePostgreSqlStorage(DbConfiguration.HangfireConnectionString());
+                    config.UsePostgreSqlStorage(DbConfiguration.HangfireConnectionString(env));
             });
 
             services.AddHangfireServer();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment hostEnv)
         {
-            if (env.IsDevelopment())
+            using var serviceScope = app.ApplicationServices.CreateScope();
+            var env = serviceScope.ServiceProvider.GetService<IEnv>();
+
+            if (hostEnv.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -140,11 +148,9 @@ The GIT API aims to provide:
 
             app.UseHttpsRedirection();
 
-            app.UseRouting();
-
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
-                Authorization = new[] { new HangfireDashboardAuthorizationFilter(new Env()) }
+                Authorization = new[] { new HangfireDashboardAuthorizationFilter(env) }
             });
 
             app.UseSwagger();
@@ -154,14 +160,21 @@ The GIT API aims to provide:
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Get into Teaching API V1");
             });
 
+            app.UseRouting();
+
+            if (env.ExportHangireToPrometheus)
+            {
+                app.UsePrometheusHangfireExporter();
+            }
+
+            app.UseHttpMetrics();
+
             app.UseAuthorization();
 
             // Configure recurring jobs.
             RecurringJob.AddOrUpdate<CrmSyncJob>("crm-sync", (x) => x.RunAsync(), Cron.Daily());
             RecurringJob.AddOrUpdate<LocationSyncJob>("location-sync", (x) => 
                 x.RunAsync("https://www.freemaptools.com/download/full-postcodes/ukpostcodes.zip"), Cron.Weekly());
-
-            using var serviceScope = app.ApplicationServices.CreateScope();
 
             // Configure and seed the database.
             var dbConfiguration = serviceScope.ServiceProvider.GetService<DbConfiguration>();
@@ -177,6 +190,7 @@ The GIT API aims to provide:
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapMetrics(); 
                 endpoints.MapControllers();
             });
         }

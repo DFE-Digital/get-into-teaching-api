@@ -2,44 +2,31 @@
 using System.IO;
 using FluentAssertions;
 using GetIntoTeachingApi.Database;
-using GetIntoTeachingApiTests.Helpers;
+using GetIntoTeachingApi.Utils;
+using Moq;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Database
 {
-    // We're changing the environment in these tests.
-    [Collection(nameof(NotThreadSafeResourceCollection))]
-    public class DbConfigurationTests : IDisposable
+    public class DbConfigurationTests
     {
-        private readonly string _previousDatabaseInstanceName;
-        private readonly string _previousHangfireInstanceName;
-        private readonly string _previousVcapServices;
+        private readonly Mock<IEnv> _mockEnv;
 
         public DbConfigurationTests()
         {
             using var reader = new StreamReader("./Fixtures/vcap_services.json");
             var json = reader.ReadToEnd();
 
-            _previousDatabaseInstanceName = Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME");
-            _previousHangfireInstanceName = Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME");
-            _previousVcapServices = Environment.GetEnvironmentVariable("VCAP_SERVICES");
-
-            Environment.SetEnvironmentVariable("DATABASE_INSTANCE_NAME", "get-into-teaching-api-dev-pg-svc-2");
-            Environment.SetEnvironmentVariable("HANGFIRE_INSTANCE_NAME", "get-into-teaching-api-dev-pg-svc");
-            Environment.SetEnvironmentVariable("VCAP_SERVICES", json);
-        }
-
-        public void Dispose()
-        {
-            Environment.SetEnvironmentVariable("DATABASE_INSTANCE_NAME", _previousDatabaseInstanceName);
-            Environment.SetEnvironmentVariable("HANGFIRE_INSTANCE_NAME", _previousHangfireInstanceName);
-            Environment.SetEnvironmentVariable("VCAP_SERVICES", _previousVcapServices);
+            _mockEnv = new Mock<IEnv>();
+            _mockEnv.Setup(m => m.DatabaseInstanceName).Returns("get-into-teaching-api-dev-pg-svc-2");
+            _mockEnv.Setup(m => m.HangfireInstanceName).Returns("get-into-teaching-api-dev-pg-svc");
+            _mockEnv.Setup(m => m.VcapServices).Returns(json);
         }
 
         [Fact]
         public void DatabaseConnectionString_ReturnsCorrectly()
         {
-            var connectionString = DbConfiguration.DatabaseConnectionString();
+            var connectionString = DbConfiguration.DatabaseConnectionString(_mockEnv.Object);
 
             connectionString.Should().Be("Host=host2.coowcrpgh5fz.eu-west-2.rds.amazonaws.com;" +
                                          "Database=rdsbroker_ce514fe0_b017_4caf_8609_c1dc1dec978d;" +
@@ -53,7 +40,7 @@ namespace GetIntoTeachingApiTests.Database
         [Fact]
         public void HangfireConnectionString_ReturnsCorrectly()
         {
-            var connectionString = DbConfiguration.HangfireConnectionString();
+            var connectionString = DbConfiguration.HangfireConnectionString(_mockEnv.Object);
 
             connectionString.Should().Be("Host=host1.coowcrpgh5fz.eu-west-2.rds.amazonaws.com;" +
                                          "Database=rdsbroker_277c8858_eb3a_427b_99ed_0f4f4171701e;" +
