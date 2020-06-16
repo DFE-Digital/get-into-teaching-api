@@ -45,6 +45,9 @@ NOTIFY_API_KEY=****
 # Postgres instance names
 DATABASE_INSTANCE_NAME=****
 HANGFIRE_INSTANCE_NAME=****
+
+# Sentry
+SENTRY_URL=****
 ```
 
 The Postgres connections (for Hangfire and our database) are setup dynamically from the `VCAP_SERVICES` environment variable provided by GOV.UK PaaS and not used in development (they are replaced by in-memory alternatives by default). If you want to connect to a Postgres instance running in PaaS, such as the test environment instance, you can do so by creating a conduit to it using Cloud Foundry:
@@ -117,3 +120,7 @@ Logs are available by loggging into [logit.io](https://logit.io).
 ### Metrics
 
 Metrics are exposed to Prometheus on the `/metrics` endpoint; [prometheus-net](https://github.com/prometheus-net/prometheus-net) is used for collecting and exposing the metrics.
+
+### Error Monitoring
+
+[Sentry](https://sentry.io) is used for error monitoring.
