@@ -67,16 +67,24 @@ namespace GetIntoTeachingApi.Services
                 .OrderBy(te => te.StartAt);
 
             if (request.TypeId != null)
+            {
                 teachingEvents = teachingEvents.Where(te => te.TypeId == request.TypeId);
+            }
 
             if (request.StartAfter != null)
+            {
                 teachingEvents = teachingEvents.Where(te => request.StartAfter < te.StartAt);
+            }
 
             if (request.StartBefore != null)
+            {
                 teachingEvents = teachingEvents.Where(te => request.StartBefore > te.StartAt);
+            }
 
             if (request.Radius == null)
+            {
                 return await teachingEvents.ToListAsync();
+            }
 
             return await FilterTeachingEventsByRadius(teachingEvents, request);
         }
@@ -89,7 +97,9 @@ namespace GetIntoTeachingApi.Services
         public bool IsValidPostcode(string postcode)
         {
             if (string.IsNullOrEmpty(postcode))
+            {
                 return false;
+            }
 
             return _dbContext.Locations.Any(l => l.Postcode == Location.SanitizePostcode(postcode));
         }
@@ -169,7 +179,10 @@ namespace GetIntoTeachingApi.Services
 
         private async Task SyncTypes(IEnumerable<TypeEntity> types)
         {
-            if (!types.Any()) return;
+            if (!types.Any())
+            {
+                return;
+            }
 
             var key = types.Select(t => new { t.EntityName, t.AttributeName }).First();
             var typeIds = types.Select(t => t.Id);

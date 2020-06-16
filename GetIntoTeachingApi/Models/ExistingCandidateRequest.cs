@@ -15,7 +15,10 @@ namespace GetIntoTeachingApi.Models
 
         public bool Match(Entity entity)
         {
-            if (entity == null) return false;
+            if (entity == null)
+            {
+                return false;
+            }
 
             return EmailMatchesCandidate(entity) && MinimumAdditionalAttributesMatch(entity);
         }

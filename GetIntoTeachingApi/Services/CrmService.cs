@@ -59,7 +59,9 @@ namespace GetIntoTeachingApi.Services
                 .FirstOrDefault(request.Match);
 
             if (entity == null)
+            {
                 return null;
+            }
 
             _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), context);
             _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), context);
@@ -91,9 +93,11 @@ namespace GetIntoTeachingApi.Services
             var relatedEntityKeys = entity.Attributes.Keys.Where(k => k.StartsWith($"{relationshipName}.")).ToList();
 
             if (!relatedEntityKeys.Any())
+            {
                 // If we used LINQ and AddProperty the related entities are already in the context
                 // and can be queried with the relationship.
                 return _service.RelatedEntities(entity, relationshipName);
+            }
 
             // If we used a QueryExpression and AddLink the related entities are left outer joined
             // into the parent entity, keyed under the relationship name.

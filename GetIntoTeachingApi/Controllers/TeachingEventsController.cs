@@ -43,7 +43,9 @@ maximum of 50 using the `limit` query parameter.",
         public async Task<IActionResult> GetUpcoming([FromQuery, SwaggerParameter("Number of results to return (maximum of 50).")] int limit = 10)
         {
             if (limit > MaximumUpcomingRequests)
+            {
                 return BadRequest();
+            }
 
             var upcomingEvents = _store.GetUpcomingTeachingEvents(limit);
             return Ok(await upcomingEvents.ToListAsync());
@@ -62,7 +64,9 @@ maximum of 50 using the `limit` query parameter.",
         public async Task<IActionResult> Search([FromQuery, SwaggerParameter("Event search criteria.", Required = true)] TeachingEventSearchRequest request)
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest(this.ModelState);
+            }
 
             var teachingEvents = await _store.SearchTeachingEventsAsync(request);
             return Ok(teachingEvents);
@@ -82,7 +86,9 @@ maximum of 50 using the `limit` query parameter.",
             var teachingEvent = await _store.GetTeachingEventAsync(id);
 
             if (teachingEvent == null)
+            {
                 return NotFound();
+            }
 
             return Ok(teachingEvent);
         }
@@ -103,12 +109,16 @@ maximum of 50 using the `limit` query parameter.",
         )
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest(this.ModelState);
+            }
 
             var teachingEvent = await _store.GetTeachingEventAsync(id);
 
             if (teachingEvent == null)
+            {
                 return NotFound();
+            }
 
             _jobClient.Enqueue<TeachingEventRegistrationJob>((x) => x.Run(attendee, id, null));
 

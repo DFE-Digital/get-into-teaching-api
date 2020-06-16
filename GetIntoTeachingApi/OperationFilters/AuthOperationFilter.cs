@@ -13,7 +13,10 @@ namespace GetIntoTeachingApi.OperationFilters
             var authRequired = context.ApiDescription.CustomAttributes()
                 .Any(attr => attr.GetType() == typeof(AuthorizeAttribute));
 
-            if (!authRequired) return;
+            if (!authRequired)
+            {
+                return;
+            }
 
             operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
             operation.Security = new List<OpenApiSecurityRequirement>

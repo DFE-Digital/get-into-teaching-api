@@ -67,7 +67,10 @@ namespace GetIntoTeachingApi.Jobs
             while (await csv.ReadAsync())
             {
                 var location = CreateLocation(csv);
-                if (location == null) continue;
+                if (location == null)
+                {
+                    continue;
+                }
 
                 batch.Add(location);
                 locationCount++;
@@ -86,7 +89,10 @@ namespace GetIntoTeachingApi.Jobs
             var latitude = csv.GetField<double?>("latitude");
             var longitude = csv.GetField<double?>("longitude");
 
-            if (latitude == null || longitude == null) return null;
+            if (latitude == null || longitude == null)
+            {
+                return null;
+            }
 
             var postcode = Location.SanitizePostcode(csv.GetField<string>("postcode"));
 
@@ -96,7 +102,9 @@ namespace GetIntoTeachingApi.Jobs
         private void QueueBatch(ICollection<dynamic> batch, bool force = false)
         {
             if (!force && batch.Count() != BatchInterval)
+            {
                 return;
+            }
 
             // Batch is serialized to pass by value.
             _jobClient.Enqueue<LocationBatchJob>(x => x.RunAsync(JsonConvert.SerializeObject(batch)));
@@ -107,7 +115,9 @@ namespace GetIntoTeachingApi.Jobs
         private async Task<string> RetrieveCsv(string ukPostcodeCsvUrl)
         {
             if (Env.IsDevelopment)
+            {
                 return "./Fixtures/ukpostcodes.dev.csv";
+            }
 
             var zipPath = GetTempPath();
             var csvPath = GetTempPath();

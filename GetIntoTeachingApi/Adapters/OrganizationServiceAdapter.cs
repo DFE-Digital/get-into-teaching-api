@@ -43,7 +43,9 @@ namespace GetIntoTeachingApi.Adapters
                 .FirstOrDefault();
 
             if (entities != null)
+            {
                 result.AddRange(entities);
+            }
 
             return result;
         }
