@@ -7,10 +7,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Prometheus;
 
 namespace GetIntoTeachingApi.Jobs
 {
@@ -20,30 +22,36 @@ namespace GetIntoTeachingApi.Jobs
         private const int BatchInterval = 100;
         private readonly IBackgroundJobClient _jobClient;
         private readonly ILogger<LocationSyncJob> _logger;
+        private readonly IMetricService _metrics;
 
-        public LocationSyncJob(IBackgroundJobClient jobClient, ILogger<LocationSyncJob> logger)
+        public LocationSyncJob(IEnv env, IBackgroundJobClient jobClient, 
+            ILogger<LocationSyncJob> logger, IMetricService metrics) : base(env)
         {
             _logger = logger;
             _jobClient = jobClient;
+            _metrics = metrics;
         }
 
         public async Task RunAsync(string ukPostcodeCsvUrl)
         {
-            _logger.LogInformation($"LocationSyncJob - Started");
-
-            var csvPath = await RetrieveCsv(ukPostcodeCsvUrl);
-
-            try
+            using (_metrics.LocationSyncDuration.NewTimer())
             {
-                await SyncLocations(csvPath);
-            }
-            finally
-            {
-                DeleteCsv(csvPath);
-                _logger.LogInformation($"LocationSyncJob - CSV Deleted");
-            }
+                _logger.LogInformation($"LocationSyncJob - Started");
 
-            _logger.LogInformation($"LocationSyncJob - Succeeded");
+                var csvPath = await RetrieveCsv(ukPostcodeCsvUrl);
+
+                try
+                {
+                    await SyncLocations(csvPath);
+                }
+                finally
+                {
+                    DeleteCsv(csvPath);
+                    _logger.LogInformation($"LocationSyncJob - CSV Deleted");
+                }
+
+                _logger.LogInformation($"LocationSyncJob - Succeeded");
+            }
         }
 
         private async Task SyncLocations(string csvPath)
@@ -122,7 +130,7 @@ namespace GetIntoTeachingApi.Jobs
             return Path.Combine(csvPath, UkPostcodeCsvFilename);
         }
 
-        private static void DeleteCsv(string csvPath)
+        private void DeleteCsv(string csvPath)
         {
             if (!Env.IsDevelopment)
             {

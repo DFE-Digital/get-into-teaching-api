@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
-using Castle.Core.Logging;
+using FluentAssertions;
 using GetIntoTeachingApi.Jobs;
+using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
 using Hangfire;
 using Hangfire.Common;
@@ -12,7 +14,6 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using Xunit;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace GetIntoTeachingApiTests.Jobs
 {
@@ -21,12 +22,17 @@ namespace GetIntoTeachingApiTests.Jobs
         private readonly LocationSyncJob _job;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly Mock<ILogger<LocationSyncJob>> _mockLogger;
+        private readonly IMetricService _metrics;
 
         public LocationSyncJobTests()
         {
+            var mockEnv = new Mock<IEnv>();
+            mockEnv.Setup(m => m.IsDevelopment).Returns(false);
             _mockJobClient = new Mock<IBackgroundJobClient>();
             _mockLogger = new Mock<ILogger<LocationSyncJob>>();
-            _job = new LocationSyncJob(_mockJobClient.Object, _mockLogger.Object);
+            _metrics = new MetricService();
+            _job = new LocationSyncJob(mockEnv.Object, _mockJobClient.Object,
+                _mockLogger.Object, _metrics);
         }
 
         [Fact]
@@ -64,6 +70,8 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockLogger.VerifyInformationWasCalled("LocationSyncJob - Queueing 5 Locations (1 Jobs)");
             _mockLogger.VerifyInformationWasCalled("LocationSyncJob - CSV Deleted");
             _mockLogger.VerifyInformationWasCalled("LocationSyncJob - Succeeded");
+
+            _metrics.LocationSyncDuration.Count.Should().Be(1);
         }
     }
 }

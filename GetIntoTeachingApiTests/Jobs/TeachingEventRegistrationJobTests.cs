@@ -5,6 +5,7 @@ using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -30,7 +31,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _teachingEventId = Guid.NewGuid();
             _mockLogger = new Mock<ILogger<TeachingEventRegistrationJob>>();
             _attendee = new ExistingCandidateRequest() { Email = "test@test.com", FirstName = "first", LastName = "last" };
-            _job = new TeachingEventRegistrationJob(_mockCrm.Object, _mockNotifyService.Object, 
+            _job = new TeachingEventRegistrationJob(new Env(), _mockCrm.Object, _mockNotifyService.Object, 
                 _mockContext.Object, _mockLogger.Object);
         }
 
@@ -70,7 +71,7 @@ namespace GetIntoTeachingApiTests.Jobs
         [Fact]
         public void Run_OnFailure_EmailsCandidate()
         {
-            _mockContext.Setup(m => m.GetRetryCount(null)).Returns(JobConfiguration.Attempts - 1);
+            _mockContext.Setup(m => m.GetRetryCount(null)).Returns(23);
 
             _job.Run(_attendee, _teachingEventId, null);
 

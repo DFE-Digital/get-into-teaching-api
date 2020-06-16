@@ -2,6 +2,7 @@
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using Hangfire.Server;
 using Microsoft.Extensions.Logging;
 
@@ -14,8 +15,8 @@ namespace GetIntoTeachingApi.Jobs
         private readonly IPerformContextAdapter _contextAdapter;
         private readonly ILogger<CandidateRegistrationJob> _logger;
 
-        public CandidateRegistrationJob(ICrmService crm, INotifyService notifyService,
-            IPerformContextAdapter contextAdapter, ILogger<CandidateRegistrationJob> logger)
+        public CandidateRegistrationJob(IEnv env, ICrmService crm, INotifyService notifyService,
+            IPerformContextAdapter contextAdapter, ILogger<CandidateRegistrationJob> logger) : base(env)
         {
             _crm = crm;
             _notifyService = notifyService;

@@ -20,15 +20,15 @@ namespace GetIntoTeachingApi.Database
             _dbContext = dbContext;
         }
 
-        public static string DatabaseConnectionString() => 
-            GenerateConnectionString(Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME"));
+        public static string DatabaseConnectionString(IEnv env) => 
+            GenerateConnectionString(env, env.DatabaseInstanceName);
 
-        public static string HangfireConnectionString() => 
-            GenerateConnectionString(Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME"));
+        public static string HangfireConnectionString(IEnv env) => 
+            GenerateConnectionString(env, env.HangfireInstanceName);
 
-        public static void ConfigPostgres(DbContextOptionsBuilder builder)
+        public static void ConfigPostgres(IEnv env, DbContextOptionsBuilder builder)
         {
-            builder.UseNpgsql(DbConfiguration.DatabaseConnectionString(), x => x.UseNetTopologySuite());
+            builder.UseNpgsql(DbConfiguration.DatabaseConnectionString(env), x => x.UseNetTopologySuite());
         }
 
         public static void ConfigSqLite(DbContextOptionsBuilder builder, SqliteConnection keepAliveConnection)
@@ -47,9 +47,9 @@ namespace GetIntoTeachingApi.Database
                 _dbContext.Database.EnsureCreated();
         }
 
-        private static string GenerateConnectionString(string instanceName)
+        private static string GenerateConnectionString(IEnv env, string instanceName)
         {
-            var vcap = JsonConvert.DeserializeObject<VcapServices>(new Env().VcapServices);
+            var vcap = JsonConvert.DeserializeObject<VcapServices>(env.VcapServices);
             var postgres = vcap.Postgres.First(p => p.InstanceName == instanceName);
 
             var builder = new NpgsqlConnectionStringBuilder
