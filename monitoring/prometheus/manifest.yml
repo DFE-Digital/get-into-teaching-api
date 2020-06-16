@@ -1,0 +1,8 @@
+applications:
+    - name: git-prometheus-test
+  
+      buildpacks:
+        - https://github.com/alphagov/prometheus-buildpack
+  
+      services:
+        - git-test-monitor
