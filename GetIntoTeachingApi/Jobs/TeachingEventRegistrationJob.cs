@@ -68,8 +68,8 @@ namespace GetIntoTeachingApi.Jobs
         {
             var candidate = new Candidate()
             {
-                Email = attendee.Email, 
-                FirstName = attendee.FirstName, 
+                Email = attendee.Email,
+                FirstName = attendee.FirstName,
                 LastName = attendee.LastName,
                 DateOfBirth = attendee.DateOfBirth
             };

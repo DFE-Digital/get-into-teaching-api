@@ -12,7 +12,7 @@ namespace GetIntoTeachingApi.Models
         public string Value { get; set; }
         [JsonIgnore]
         public string EntityName { get; set; }
-        [JsonIgnore] 
+        [JsonIgnore]
         public string AttributeName { get; set; } = "";
 
         public TypeEntity()

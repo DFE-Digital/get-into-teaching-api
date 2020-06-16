@@ -14,7 +14,7 @@ namespace GetIntoTeachingApi.Adapters
 
         public OrganizationServiceAdapter(IOrganizationService client)
         {
-            _client = (CdsServiceClient) client;
+            _client = (CdsServiceClient)client;
         }
 
         public IQueryable<Entity> CreateQuery(string entityName, OrganizationServiceContext context)
@@ -52,8 +52,7 @@ namespace GetIntoTeachingApi.Adapters
 
         public IEnumerable<CdsServiceClient.PickListItem> GetPickListItemsForAttribute(
             string entityName,
-            string attributeName
-        )
+            string attributeName)
         {
             var metaElement = _client.GetPickListElementFromMetadataEntity(entityName, attributeName);
             return metaElement.Items;

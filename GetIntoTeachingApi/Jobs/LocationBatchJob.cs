@@ -22,7 +22,7 @@ namespace GetIntoTeachingApi.Jobs
         private readonly ILogger<LocationBatchJob> _logger;
         private readonly IMetricService _metrics;
 
-        public LocationBatchJob(IEnv env, GetIntoTeachingDbContext dbContext, 
+        public LocationBatchJob(IEnv env, GetIntoTeachingDbContext dbContext,
             ILogger<LocationBatchJob> logger, IMetricService metrics)
             : base(env)
         {
@@ -38,7 +38,7 @@ namespace GetIntoTeachingApi.Jobs
                 _logger.LogInformation($"LocationBatchJob - Started");
 
                 var batchLocations = JsonConvert.DeserializeObject<List<ExpandoObject>>(
-                    batchJson, new ExpandoObjectConverter()).Select(l => (dynamic) l).ToList();
+                    batchJson, new ExpandoObjectConverter()).Select(l => (dynamic)l).ToList();
                 var batchPostcodes = batchLocations.Select(l => l.Postcode);
                 var existingPostcodes = await _dbContext.Locations
                     .Where(l => batchPostcodes.Contains(l.Postcode))

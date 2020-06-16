@@ -94,8 +94,7 @@ The GIT API aims to provide:
                             Name = "MIT License",
                             Url = new Uri("https://opensource.org/licenses/MIT")
                         }
-                    }
-                );
+                    });
 
                 c.AddSecurityDefinition("apiKey", new OpenApiSecurityScheme
                 {
@@ -103,7 +102,7 @@ The GIT API aims to provide:
                     Name = "Authorization",
                     In = ParameterLocation.Header
                 });
-                
+
                 c.OperationFilter<AuthOperationFilter>();
                 c.EnableAnnotations();
                 c.AddFluentValidationRules();
@@ -177,7 +176,7 @@ The GIT API aims to provide:
 
             // Configure recurring jobs.
             RecurringJob.AddOrUpdate<CrmSyncJob>("crm-sync", (x) => x.RunAsync(), Cron.Daily());
-            RecurringJob.AddOrUpdate<LocationSyncJob>("location-sync", (x) => 
+            RecurringJob.AddOrUpdate<LocationSyncJob>("location-sync", (x) =>
                 x.RunAsync("https://www.freemaptools.com/download/full-postcodes/ukpostcodes.zip"), Cron.Weekly());
 
             // Configure and seed the database.
@@ -196,7 +195,7 @@ The GIT API aims to provide:
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapMetrics(); 
+                endpoints.MapMetrics();
                 endpoints.MapControllers();
             });
         }

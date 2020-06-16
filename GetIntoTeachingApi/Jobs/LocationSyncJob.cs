@@ -24,7 +24,7 @@ namespace GetIntoTeachingApi.Jobs
         private readonly ILogger<LocationSyncJob> _logger;
         private readonly IMetricService _metrics;
 
-        public LocationSyncJob(IEnv env, IBackgroundJobClient jobClient, 
+        public LocationSyncJob(IEnv env, IBackgroundJobClient jobClient,
             ILogger<LocationSyncJob> logger, IMetricService metrics)
             : base(env)
         {
@@ -81,7 +81,7 @@ namespace GetIntoTeachingApi.Jobs
 
             QueueBatch(batch, true);
 
-            var batchJobCount = (int) Math.Ceiling((decimal) locationCount / BatchInterval);
+            var batchJobCount = (int)Math.Ceiling((decimal)locationCount / BatchInterval);
             _logger.LogInformation($"LocationSyncJob - Queueing {locationCount} Locations ({batchJobCount} Jobs)");
         }
 

@@ -21,7 +21,7 @@ namespace GetIntoTeachingApiTests.Services
 
         [Theory]
         [InlineData("email@address.com", "John", "Doe")]
-        [InlineData("email!@address.com", "Jane", "Smith" )]
+        [InlineData("email!@address.com", "Jane", "Smith")]
         [InlineData("e@a.com", "B", "C")]
         public void GenerateToken_ReturnsAValidToken(string email, string firstName, string lastName)
         {

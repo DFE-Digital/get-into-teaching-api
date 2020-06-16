@@ -29,7 +29,7 @@ namespace GetIntoTeachingApiTests.Auth
             var mockLoggerFactory = new Mock<ILoggerFactory>();
             mockLoggerFactory.Setup(x => x.CreateLogger(It.IsAny<string>())).Returns(_mockLogger.Object);
 
-            _handler = new SharedSecretHandler(mockEnv.Object, mockOptionsMonitor.Object, 
+            _handler = new SharedSecretHandler(mockEnv.Object, mockOptionsMonitor.Object,
                 mockLoggerFactory.Object, new Mock<UrlEncoder>().Object, new Mock<ISystemClock>().Object);
         }
 

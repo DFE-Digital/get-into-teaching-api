@@ -22,7 +22,7 @@ namespace GetIntoTeachingApi.Services
 
         public string GenerateToken(ExistingCandidateRequest request)
         {
-           var  totp = CreateTotp(request);
+            var totp = CreateTotp(request);
             return totp.ComputeTotp();
         }
 
@@ -44,8 +44,7 @@ namespace GetIntoTeachingApi.Services
                 timestamp,
                 token,
                 out _,
-                new VerificationWindow(previous: VerificationWindow, future: VerificationWindow)
-            );
+                new VerificationWindow(previous: VerificationWindow, future: VerificationWindow));
         }
 
         private Totp CreateTotp(ExistingCandidateRequest request)

@@ -20,7 +20,7 @@ namespace GetIntoTeachingApiTests.Controllers
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             var mappings = ok.Value.Should().BeOfType<List<MappingInfo>>().Subject;
             mappings.Count().Should().Be(9);
-            mappings.Any(m => m.LogicalName == "contact" && 
+            mappings.Any(m => m.LogicalName == "contact" &&
                               m.Class == "GetIntoTeachingApi.Models.Candidate"
                               ).Should().BeTrue();
         }
