@@ -28,7 +28,7 @@ namespace GetIntoTeachingApi.Controllers
             }
 
             // TODO:
-            return Ok(new Object());
+            return Ok(new object());
         }
     }
 }

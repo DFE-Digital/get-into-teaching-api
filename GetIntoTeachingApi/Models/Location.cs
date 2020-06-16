@@ -14,7 +14,7 @@ namespace GetIntoTeachingApi.Models
 
         public static string SanitizePostcode(string postcode)
         {
-            return Regex.Replace(postcode, @"\s+", "").ToLower();
+            return Regex.Replace(postcode, @"\s+", string.Empty).ToLower();
         }
     }
 }

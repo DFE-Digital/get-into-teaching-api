@@ -8,10 +8,6 @@ using Microsoft.Extensions.Options;
 
 namespace GetIntoTeachingApi.Auth
 {
-    public class SharedSecretSchemeOptions : AuthenticationSchemeOptions
-    {
-    }
-
     public class SharedSecretHandler : AuthenticationHandler<SharedSecretSchemeOptions>
     {
         private readonly IEnv _env;
@@ -37,7 +33,7 @@ namespace GetIntoTeachingApi.Auth
                 return Task.FromResult(AuthenticateResult.Fail("Authorization header not set"));
             }
 
-            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
 
             if (token != _env.SharedSecret)
             {

@@ -26,10 +26,10 @@ namespace GetIntoTeachingApi.OperationFilters
                     {
                         new OpenApiSecurityScheme
                         {
-                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "apiKey" }
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "apiKey" },
                         },
                         new List<string>()
-                    }
+                    },
                 },
             };
         }

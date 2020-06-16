@@ -27,19 +27,6 @@ namespace GetIntoTeachingApi.Models
             MapRelationshipAttributesFromEntity(entity, crm);
         }
 
-        public virtual Entity ToEntity(ICrmService crm, OrganizationServiceContext context)
-        {
-            if (!ShouldMap(crm))
-            {
-                return null;
-            }
-
-            var entity = crm.MappableEntity(LogicalName(GetType()), Id, context);
-            MapFieldAttributesToEntity(entity);
-            MapRelationshipAttributesToEntity(entity, crm, context);
-            return entity;
-        }
-
         public static string[] EntityFieldAttributeNames(Type type)
         {
             var entityAttribute = (EntityAttribute)Attribute.GetCustomAttribute(type, typeof(EntityAttribute));
@@ -67,6 +54,19 @@ namespace GetIntoTeachingApi.Models
             return attribute.LogicalName;
         }
 
+        public virtual Entity ToEntity(ICrmService crm, OrganizationServiceContext context)
+        {
+            if (!ShouldMap(crm))
+            {
+                return null;
+            }
+
+            var entity = crm.MappableEntity(LogicalName(GetType()), Id, context);
+            MapFieldAttributesToEntity(entity);
+            MapRelationshipAttributesToEntity(entity, crm, context);
+            return entity;
+        }
+
         protected virtual bool ShouldMapRelationship(string propertyName, dynamic value, ICrmService crm)
         {
             // Hook.
@@ -77,6 +77,22 @@ namespace GetIntoTeachingApi.Models
         {
             // Hook.
             return true;
+        }
+
+        private static IList NewListOfType(Type type)
+        {
+            var listType = typeof(List<>).MakeGenericType(type);
+            return (IList)Activator.CreateInstance(listType);
+        }
+
+        private static IEnumerable<BaseModel> EnumerableRelationshipModels(object relationship)
+        {
+            return relationship is BaseModel model ? new List<BaseModel> { model } : (IEnumerable<BaseModel>)relationship;
+        }
+
+        private static IEnumerable<PropertyInfo> GetProperties(object model)
+        {
+            return model.GetType().GetProperties();
         }
 
         private void MapFieldAttributesFromEntity(Entity entity)
@@ -188,24 +204,10 @@ namespace GetIntoTeachingApi.Models
                     property.SetValue(this, list);
                 }
                 else
+                {
                     property.SetValue(this, relatedModels.FirstOrDefault());
+                }
             }
-        }
-
-        private static IList NewListOfType(Type type)
-        {
-            var listType = typeof(List<>).MakeGenericType(type);
-            return (IList)Activator.CreateInstance(listType);
-        }
-
-        private static IEnumerable<BaseModel> EnumerableRelationshipModels(object relationship)
-        {
-            return relationship is BaseModel model ? new List<BaseModel> { model } : (IEnumerable<BaseModel>)relationship;
-        }
-
-        private static IEnumerable<PropertyInfo> GetProperties(object model)
-        {
-            return model.GetType().GetProperties();
         }
     }
 }

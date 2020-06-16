@@ -16,9 +16,9 @@ namespace GetIntoTeachingApi.Services
             Web = 222750001,
         }
 
-        private readonly IOrganizationServiceAdapter _service;
         private const int MaximumNumberOfCandidatesToMatch = 20;
         private const int MaximumNumberOfPrivacyPolicies = 3;
+        private readonly IOrganizationServiceAdapter _service;
 
         public CrmService(IOrganizationServiceAdapter service)
         {
@@ -52,8 +52,7 @@ namespace GetIntoTeachingApi.Services
             var context = Context();
             var entity = _service.CreateQuery("contact", context)
                 .Where(e =>
-                    // Will perform a case-insensitive comparison
-                    e.GetAttributeValue<string>("emailaddress1") == request.Email)
+                    e.GetAttributeValue<string>("emailaddress1") == request.Email) // Will perform a case-insensitive comparison
                 .OrderByDescending(e => e.GetAttributeValue<DateTime>("createdon"))
                 .Take(MaximumNumberOfCandidatesToMatch)
                 .ToList()
@@ -106,8 +105,10 @@ namespace GetIntoTeachingApi.Services
             var relatedEntity = new Entity() { Id = (Guid)id };
 
             foreach (var key in relatedEntityKeys)
-                relatedEntity.Attributes[key.Replace($"{relationshipName}.", "")] =
+            {
+                relatedEntity.Attributes[key.Replace($"{relationshipName}.", string.Empty)] =
                     entity.GetAttributeValue<AliasedValue>(key).Value;
+            }
 
             return new List<Entity>() { relatedEntity };
         }

@@ -58,6 +58,26 @@ namespace GetIntoTeachingApi.Jobs
             }
         }
 
+        private static dynamic CreateLocation(IReaderRow csv)
+        {
+            var latitude = csv.GetField<double?>("latitude");
+            var longitude = csv.GetField<double?>("longitude");
+
+            if (latitude == null || longitude == null)
+            {
+                return null;
+            }
+
+            var postcode = Location.SanitizePostcode(csv.GetField<string>("postcode"));
+
+            return new { Postcode = postcode, Latitude = latitude, Longitude = longitude };
+        }
+
+        private static string GetTempPath()
+        {
+            return Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        }
+
         private async Task SyncLocations(string csvPath)
         {
             var batch = new List<dynamic>();
@@ -86,21 +106,6 @@ namespace GetIntoTeachingApi.Jobs
 
             var batchJobCount = (int)Math.Ceiling((decimal)locationCount / BatchInterval);
             _logger.LogInformation($"LocationSyncJob - Queueing {locationCount} Locations ({batchJobCount} Jobs)");
-        }
-
-        private static dynamic CreateLocation(IReaderRow csv)
-        {
-            var latitude = csv.GetField<double?>("latitude");
-            var longitude = csv.GetField<double?>("longitude");
-
-            if (latitude == null || longitude == null)
-            {
-                return null;
-            }
-
-            var postcode = Location.SanitizePostcode(csv.GetField<string>("postcode"));
-
-            return new { Postcode = postcode, Latitude = latitude, Longitude = longitude };
         }
 
         private void QueueBatch(ICollection<dynamic> batch, bool force = false)
@@ -150,11 +155,6 @@ namespace GetIntoTeachingApi.Jobs
             {
                 File.Delete(csvPath);
             }
-        }
-
-        private static string GetTempPath()
-        {
-            return Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
         }
     }
 }

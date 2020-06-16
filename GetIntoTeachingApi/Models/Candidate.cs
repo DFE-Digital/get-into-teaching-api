@@ -48,7 +48,7 @@ namespace GetIntoTeachingApi.Models
             Type = typeof(CandidateQualification))]
         public List<CandidateQualification> Qualifications { get; set; }
         [EntityRelationship(
-            Name = "dfe_contact_dfe_candidatepastteachingposition_ContactId", 
+            Name = "dfe_contact_dfe_candidatepastteachingposition_ContactId",
             Type = typeof(CandidatePastTeachingPosition))]
         public List<CandidatePastTeachingPosition> PastTeachingPositions { get; set; }
         [SwaggerSchema("Set to schedule a phone call.", WriteOnly = true)]
@@ -56,7 +56,7 @@ namespace GetIntoTeachingApi.Models
         public PhoneCall PhoneCall { get; set; }
         [SwaggerSchema("Set to update the accepted privacy policy.", WriteOnly = true)]
         [EntityRelationship(
-            Name = "dfe_contact_dfe_candidateprivacypolicy_Candidate", 
+            Name = "dfe_contact_dfe_candidateprivacypolicy_Candidate",
             Type = typeof(CandidatePrivacyPolicy))]
         public CandidatePrivacyPolicy PrivacyPolicy { get; set; }
 
