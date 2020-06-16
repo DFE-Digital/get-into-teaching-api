@@ -123,14 +123,14 @@ The GIT API aims to provide:
                     .UseSimpleAssemblyNameTypeSerializer()
                     .UseRecommendedSerializerSettings()
                     .UseFilter(automaticRetry);
-                
+
                 if (env.IsDevelopment)
                     config.UseMemoryStorage().WithJobExpirationTimeout(JobConfiguration.ExpirationTimeout);
                 else
                     config.UsePostgreSqlStorage(DbConfiguration.HangfireConnectionString(env));
             });
 
-            services.AddHangfireServer();
+            services.AddHangfireServer(options => options.WorkerCount = 10);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
