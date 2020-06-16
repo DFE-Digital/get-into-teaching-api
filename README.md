@@ -121,6 +121,9 @@ Logs are available by loggging into [logit.io](https://logit.io).
 
 Metrics are exposed to Prometheus on the `/metrics` endpoint; [prometheus-net](https://github.com/prometheus-net/prometheus-net) is used for collecting and exposing the metrics.
 
+Prometheous and Grafana have been added to gather and display Metric information
+
 ### Error Monitoring
 
 [Sentry](https://sentry.io) is used for error monitoring.
+[Logit](https://logit.io) is used to capture log files
