@@ -13,7 +13,7 @@ namespace GetIntoTeachingApi.Services
     {
         public enum PrivacyPolicyType
         {
-            Web = 222750001
+            Web = 222750001,
         }
 
         private readonly IOrganizationServiceAdapter _service;

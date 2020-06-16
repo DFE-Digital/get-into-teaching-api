@@ -40,7 +40,7 @@ namespace GetIntoTeachingApi.Models
                 {
                     firstName,
                     lastName,
-                    dateOfBirth?.Date.ToString("MM-dd-yyyy")
+                    dateOfBirth?.Date.ToString("MM-dd-yyyy"),
                 }
                 .Where(s => s != null)
                 .ToArray();

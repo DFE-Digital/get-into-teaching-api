@@ -71,7 +71,7 @@ namespace GetIntoTeachingApi.Jobs
                 Email = attendee.Email,
                 FirstName = attendee.FirstName,
                 LastName = attendee.LastName,
-                DateOfBirth = attendee.DateOfBirth
+                DateOfBirth = attendee.DateOfBirth,
             };
 
             _crm.Save(candidate);

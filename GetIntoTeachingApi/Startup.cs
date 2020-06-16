@@ -93,14 +93,14 @@ The GIT API aims to provide:
                         {
                             Name = "MIT License",
                             Url = new Uri("https://opensource.org/licenses/MIT")
-                        }
+                        },
                     });
 
                 c.AddSecurityDefinition("apiKey", new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.ApiKey,
                     Name = "Authorization",
-                    In = ParameterLocation.Header
+                    In = ParameterLocation.Header,
                 });
 
                 c.OperationFilter<AuthOperationFilter>();
@@ -114,7 +114,7 @@ The GIT API aims to provide:
                 {
                     Attempts = JobConfiguration.Attempts(env),
                     DelaysInSeconds = new[] { JobConfiguration.RetryIntervalInSeconds(env) },
-                    OnAttemptsExceeded = AttemptsExceededAction.Delete
+                    OnAttemptsExceeded = AttemptsExceededAction.Delete,
                 };
 
                 config
@@ -153,7 +153,7 @@ The GIT API aims to provide:
 
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
-                Authorization = new[] { new HangfireDashboardAuthorizationFilter(env) }
+                Authorization = new[] { new HangfireDashboardAuthorizationFilter(env) },
             });
 
             app.UseSwagger();
