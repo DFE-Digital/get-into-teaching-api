@@ -37,7 +37,7 @@ namespace GetIntoTeachingApi.Utils
                         AUTHORITY[""EPSG"",""9001""]],
                     AXIS[""Easting"",EAST],
                     AXIS[""Northing"",NORTH],
-                    AUTHORITY[""EPSG"",""27700""]]"
+                    AUTHORITY[""EPSG"",""27700""]]",
             });
 
         public static Geometry ProjectTo(this Geometry geometry, int srid)

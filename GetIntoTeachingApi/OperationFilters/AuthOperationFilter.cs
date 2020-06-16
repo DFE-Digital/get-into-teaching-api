@@ -30,7 +30,7 @@ namespace GetIntoTeachingApi.OperationFilters
                         },
                         new List<string>()
                     }
-                }
+                },
             };
         }
     }

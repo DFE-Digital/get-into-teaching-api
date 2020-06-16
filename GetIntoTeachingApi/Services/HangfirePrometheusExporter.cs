@@ -50,7 +50,7 @@ namespace GetIntoTeachingApi.Services
                 Scheduled = hangfireStats.Scheduled,
                 Processing = hangfireStats.Processing,
                 Succeeded = hangfireStats.Succeeded,
-                Retry = retryJobs
+                Retry = retryJobs,
             };
         }
 

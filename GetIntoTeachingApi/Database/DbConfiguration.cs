@@ -65,7 +65,7 @@ namespace GetIntoTeachingApi.Database
                 Port = postgres.Credentials.Port,
                 SslMode = SslMode.Require,
                 TrustServerCertificate = true,
-                MaxPoolSize = 50
+                MaxPoolSize = 50,
             };
 
             return builder.ConnectionString;
