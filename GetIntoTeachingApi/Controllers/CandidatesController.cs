@@ -1,10 +1,10 @@
-﻿using GetIntoTeachingApi.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using System.Collections.Generic;
+using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Collections.Generic;
 
 namespace GetIntoTeachingApi.Controllers
 {

@@ -1,9 +1,9 @@
 ﻿using System;
-using GetIntoTeachingApi.Adapters;
-using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Utils;
+using Microsoft.Extensions.Logging;
 
 namespace GetIntoTeachingApi.Services
 {

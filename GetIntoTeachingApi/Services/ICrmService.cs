@@ -1,6 +1,6 @@
 ﻿using System;
-using GetIntoTeachingApi.Models;
 using System.Collections.Generic;
+using GetIntoTeachingApi.Models;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 

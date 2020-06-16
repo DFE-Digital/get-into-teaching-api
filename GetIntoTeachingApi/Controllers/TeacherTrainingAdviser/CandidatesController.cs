@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using GetIntoTeachingApi.Jobs;
-using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Services;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
 {

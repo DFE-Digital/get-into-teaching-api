@@ -1,6 +1,6 @@
-﻿using FluentValidation;
-using System;
+﻿using System;
 using System.Linq;
+using FluentValidation;
 
 namespace GetIntoTeachingApi.Models.Validators
 {

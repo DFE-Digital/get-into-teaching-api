@@ -1,8 +1,8 @@
-﻿using GetIntoTeachingApi.Models;
-using OtpNet;
-using System;
+﻿using System;
 using System.Text;
+using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Utils;
+using OtpNet;
 
 namespace GetIntoTeachingApi.Services
 {
