@@ -36,8 +36,8 @@ namespace GetIntoTeachingApiTests.Models
             var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
             var registration = new TeachingEventRegistration()
             {
-                CandidateId = (Guid) candidate.Id, 
-                EventId = (Guid) teachingEvent.Id
+                CandidateId = (Guid)candidate.Id,
+                EventId = (Guid)teachingEvent.Id
             };
 
             mockCrm.Setup(m => m.CandidateYetToRegisterForTeachingEvent((Guid)candidate.Id, (Guid)teachingEvent.Id)).Returns(false);

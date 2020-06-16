@@ -25,7 +25,7 @@ namespace GetIntoTeachingApi.Models
 
         public string Slugify()
         {
-            var attributes = new[] {Email}.Concat(AdditionalAttributeValues(FirstName, LastName, DateOfBirth));
+            var attributes = new[] { Email }.Concat(AdditionalAttributeValues(FirstName, LastName, DateOfBirth));
             return string.Join("-", attributes).ToLower();
         }
 
@@ -49,10 +49,9 @@ namespace GetIntoTeachingApi.Models
         private bool MinimumAdditionalAttributesMatch(Entity entity)
         {
             var matches = AdditionalAttributeValues(FirstName, LastName, DateOfBirth).Intersect(
-                AdditionalAttributeValues(entity.GetAttributeValue<string>("firstname"), 
-                    entity.GetAttributeValue<string>("lastname"), 
-                    entity.GetAttributeValue<DateTime>("birthdate")), StringComparer.OrdinalIgnoreCase
-            );
+                AdditionalAttributeValues(entity.GetAttributeValue<string>("firstname"),
+                    entity.GetAttributeValue<string>("lastname"),
+                    entity.GetAttributeValue<DateTime>("birthdate")), StringComparer.OrdinalIgnoreCase);
 
             return matches.Count() >= MinimumAdditionalAttributeMatches;
         }

@@ -39,7 +39,7 @@ namespace GetIntoTeachingApiTests.Services
             var result = _crm.GetLookupItems("dfe_country").ToList();
 
             result.Select(country => country.Value).Should().BeEquivalentTo(
-                new object[] { "Country 1", "Country 2", "Country 3" }, 
+                new object[] { "Country 1", "Country 2", "Country 3" },
                 options => options.WithStrictOrdering());
             result.Select(country => country.EntityName).Should().OnlyContain(name => name == "dfe_country");
         }
@@ -53,7 +53,7 @@ namespace GetIntoTeachingApiTests.Services
 
             var result = _crm.GetPickListItems("contact", "dfe_ittyear").ToList();
 
-            result.Select(year => year.Value).Should().BeEquivalentTo(new object[] { "2010", "2011", "2012" }, 
+            result.Select(year => year.Value).Should().BeEquivalentTo(new object[] { "2010", "2011", "2012" },
                 options => options.WithStrictOrdering());
             result.Select(year => year.EntityName).Should().OnlyContain(name => name == "contact");
             result.Select(year => year.AttributeName).Should().OnlyContain(name => name == "dfe_ittyear");
@@ -171,7 +171,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             var request = new ExistingCandidateRequest { Email = email, FirstName = firstName, LastName = lastName };
             _mockService.Setup(mock => mock.CreateQuery("contact", _context)).Returns(MockCandidates());
-            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(), 
+            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
                 new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), _context));
             _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
                 new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), _context));
@@ -184,7 +184,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void Save_MapsEntityAndSavesContext()
         {
-            var entity = new Entity() {Id = Guid.NewGuid()};
+            var entity = new Entity() { Id = Guid.NewGuid() };
             var mockCandidate = new Mock<Candidate>();
             // The id is actually set on SaveChanges, but mocked here for ease.
             mockCandidate.Setup(mock => mock.ToEntity(_crm, _context)).Returns(entity);

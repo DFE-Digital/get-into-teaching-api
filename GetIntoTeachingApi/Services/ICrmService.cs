@@ -13,7 +13,7 @@ namespace GetIntoTeachingApi.Services
         IEnumerable<PrivacyPolicy> GetPrivacyPolicies();
         Candidate GetCandidate(ExistingCandidateRequest request);
         IEnumerable<TeachingEvent> GetTeachingEvents();
-        bool CandidateYetToAcceptPrivacyPolicy(Guid candidateId, Guid privacyPolicyId); 
+        bool CandidateYetToAcceptPrivacyPolicy(Guid candidateId, Guid privacyPolicyId);
         bool CandidateYetToRegisterForTeachingEvent(Guid candidateId, Guid teachingEventId);
         void Save(BaseModel model);
         void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);

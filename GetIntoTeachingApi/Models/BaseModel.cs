@@ -15,7 +15,7 @@ namespace GetIntoTeachingApi.Models
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid? Id { get; set; }
-        
+
         public BaseModel()
         {
         }
@@ -42,11 +42,11 @@ namespace GetIntoTeachingApi.Models
 
         public static string[] EntityFieldAttributeNames(Type type)
         {
-            var entityAttribute = (EntityAttribute) Attribute.GetCustomAttribute(type, typeof(EntityAttribute));
+            var entityAttribute = (EntityAttribute)Attribute.GetCustomAttribute(type, typeof(EntityAttribute));
             var attributes = type.GetProperties().Select(EntityFieldAttribute).Where(a => a != null);
             var fieldNames = attributes.Select(a => a.Name);
 
-            return fieldNames.Concat(new[] {$"{entityAttribute.LogicalName}id"}).ToArray();
+            return fieldNames.Concat(new[] { $"{entityAttribute.LogicalName}id" }).ToArray();
         }
 
         public static EntityFieldAttribute EntityFieldAttribute(ICustomAttributeProvider property)
@@ -119,11 +119,11 @@ namespace GetIntoTeachingApi.Models
 
                 if (attribute.Type == typeof(EntityReference))
                 {
-                    entity[attribute.Name] = new EntityReference(attribute.Reference, (Guid) value);
+                    entity[attribute.Name] = new EntityReference(attribute.Reference, (Guid)value);
                 }
                 else if (attribute.Type == typeof(OptionSetValue))
                 {
-                    entity[attribute.Name] = new OptionSetValue((int) value);
+                    entity[attribute.Name] = new OptionSetValue((int)value);
                 }
                 else
                 {
@@ -195,7 +195,7 @@ namespace GetIntoTeachingApi.Models
         private static IList NewListOfType(Type type)
         {
             var listType = typeof(List<>).MakeGenericType(type);
-            return (IList) Activator.CreateInstance(listType);
+            return (IList)Activator.CreateInstance(listType);
         }
 
         private static IEnumerable<BaseModel> EnumerableRelationshipModels(object relationship)

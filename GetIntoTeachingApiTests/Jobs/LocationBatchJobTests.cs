@@ -45,7 +45,7 @@ namespace GetIntoTeachingApiTests.Jobs
             await _job.RunAsync(JsonConvert.SerializeObject(batch));
 
             DbContext.Locations.Count().Should().Be(batch.Count());
-            DbContext.Locations.ToList().All(l => 
+            DbContext.Locations.ToList().All(l =>
                 batch.Any(b => BatchLocationMatchesExistingLocation(b, l))).Should().BeTrue();
 
             _mockLogger.VerifyInformationWasCalled("LocationBatchJob - Started");

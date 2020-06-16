@@ -17,7 +17,7 @@ namespace GetIntoTeachingApiTests.Models
 
             type.GetProperty("ChannelId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_channelcreation" && a.Type == typeof(OptionSetValue));
-            
+
             type.GetProperty("ScheduledAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "scheduledstart");
             type.GetProperty("Telephone").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "phonenumber");
         }

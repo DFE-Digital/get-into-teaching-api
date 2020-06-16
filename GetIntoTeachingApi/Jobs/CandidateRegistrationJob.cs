@@ -33,7 +33,7 @@ namespace GetIntoTeachingApi.Jobs
             {
                 var personalisation = new Dictionary<string, dynamic>();
                 // We fire and forget the email, ensuring the job succeeds.
-                _notifyService.SendEmailAsync(candidate.Email, 
+                _notifyService.SendEmailAsync(candidate.Email,
                     NotifyService.CandidateRegistrationFailedEmailTemplateId, personalisation);
                 _logger.LogInformation("CandidateRegistrationJob - Deleted");
             }

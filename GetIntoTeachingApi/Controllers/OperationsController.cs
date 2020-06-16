@@ -17,8 +17,7 @@ namespace GetIntoTeachingApi.Controllers
             Description = "Generates the mapping information describing how the " +
                           "models in the API map to the corresponding entities in Dynamics 365.",
             OperationId = "GenerateMappingInfo",
-            Tags = new[] { "Operations" }
-        )]
+            Tags = new[] { "Operations" })]
         [ProducesResponseType(typeof(IEnumerable<MappingInfo>), 200)]
         public IActionResult GenerateMappingInfo()
         {

@@ -27,8 +27,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of countries.",
             OperationId = "GetCountryTypes",
-            Tags = new[] { "Types" }
-        )]
+            Tags = new[] { "Types" })]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetCountries()
         {
@@ -40,8 +39,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of teaching subjects.",
             OperationId = "GetTeachingSubjects",
-            Tags = new[] { "Types" }
-        )]
+            Tags = new[] { "Types" })]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetTeachingSubjects()
         {
@@ -53,8 +51,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate initial teacher training years.",
             OperationId = "GetCandidateInitialTeacherTrainingYears",
-            Tags = new[] { "Types" }
-        )]
+            Tags = new[] { "Types" })]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetCandidateInitialTeacherTrainingYears()
         {
@@ -66,8 +63,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate preferred education phases.",
             OperationId = "GetCandidatePreferredEducationPhases",
-            Tags = new[] { "Types" }
-        )]
+            Tags = new[] { "Types" })]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetCandidatePreferredEducationPhases()
         {
@@ -79,8 +75,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate locations.",
             OperationId = "GetCandidateLocations",
-            Tags = new[] { "Types" }
-        )]
+            Tags = new[] { "Types" })]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetCandidateLocations()
         {
@@ -92,8 +87,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate channels.",
             OperationId = "GetCandidateChannels",
-            Tags = new[] { "Types" }
-        )]
+            Tags = new[] { "Types" })]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetCandidateChannels()
         {
@@ -105,8 +99,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of qualification degree status.",
             OperationId = "GetQualificationDegreeStatus",
-            Tags = new[] { "Types" }
-        )]
+            Tags = new[] { "Types" })]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetQualificationDegreeStatus()
         {
@@ -118,8 +111,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of qualification categories.",
             OperationId = "GetQualificationCategories",
-            Tags = new[] { "Types" }
-        )]
+            Tags = new[] { "Types" })]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetQualificationCategories()
         {
@@ -131,8 +123,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of qualification types.",
             OperationId = "GetQualificationTypes",
-            Tags = new[] { "Types" }
-        )]
+            Tags = new[] { "Types" })]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetQualificationTypes()
         {
@@ -144,8 +135,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of past teaching position education phases.",
             OperationId = "GetPastTeachingPositionEducationPhases",
-            Tags = new[] { "Types" }
-        )]
+            Tags = new[] { "Types" })]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetPastTeachingPositionEducationPhases()
         {
@@ -157,8 +147,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of teaching event types.",
             OperationId = "GetTeachingEventTypes",
-            Tags = new[] { "Types" }
-        )]
+            Tags = new[] { "Types" })]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetTeachingEventTypes()
         {
@@ -170,8 +159,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of phone call channels.",
             OperationId = "GetPhoneCallChannels",
-            Tags = new[] { "Types" }
-        )]
+            Tags = new[] { "Types" })]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetPhoneCallChannels()
         {

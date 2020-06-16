@@ -314,10 +314,10 @@ namespace GetIntoTeachingApiTests.Services
             await SeedMockTeachingEventsAsync();
             var request = new TeachingEventSearchRequest()
             {
-                Postcode = "KY6 2NJ", 
-                Radius = 15, 
-                TypeId = 123, 
-                StartAfter = DateTime.Now, 
+                Postcode = "KY6 2NJ",
+                Radius = 15,
+                TypeId = 123,
+                StartAfter = DateTime.Now,
                 StartBefore = DateTime.Now.AddDays(3)
             };
 
@@ -393,7 +393,7 @@ namespace GetIntoTeachingApiTests.Services
             await SeedMockTeachingEventsAsync();
             var result = _store.GetUpcomingTeachingEvents(3);
 
-            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] {"Event 2", "Event 4", "Event 1"},
+            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 4", "Event 1" },
                 options => options.WithStrictOrdering());
         }
 
@@ -505,7 +505,7 @@ namespace GetIntoTeachingApiTests.Services
             var mockCrm = new Mock<ICrmService>();
 
             mockCrm.Setup(m => m.GetTeachingEvents()).Returns(teachingEvents);
-            
+
             await _store.SyncAsync(mockCrm.Object);
 
             return teachingEvents;

@@ -9,7 +9,7 @@ namespace GetIntoTeachingApiTests.Models
     public class ExistingCandidateRequestTests
     {
         private readonly ExistingCandidateRequest _request;
-        
+
         public ExistingCandidateRequestTests()
         {
             _request = new ExistingCandidateRequest

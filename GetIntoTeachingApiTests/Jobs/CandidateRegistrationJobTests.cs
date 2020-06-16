@@ -51,7 +51,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _job.Run(_candidate, null);
 
             _mockCrm.Verify(mock => mock.Save(_candidate), Times.Never);
-            _mockNotifyService.Verify(mock => mock.SendEmailAsync(_candidate.Email, 
+            _mockNotifyService.Verify(mock => mock.SendEmailAsync(_candidate.Email,
                 NotifyService.CandidateRegistrationFailedEmailTemplateId, It.IsAny<Dictionary<string, dynamic>>()));
             _mockLogger.VerifyInformationWasCalled("CandidateRegistrationJob - Started (24/24)");
             _mockLogger.VerifyInformationWasCalled("CandidateRegistrationJob - Deleted");

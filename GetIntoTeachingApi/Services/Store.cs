@@ -120,7 +120,7 @@ namespace GetIntoTeachingApi.Services
 
             // Project coordinates onto UK coordinate system for final, accurate distance filtering.
             return inMemoryTeachingEvents.Where(te => te.Building.Coordinate.ProjectTo(DbConfiguration.UkSrid)
-                    .IsWithinDistance(origin.ProjectTo(DbConfiguration.UkSrid), (double) request.RadiusInKm * 1000));
+                    .IsWithinDistance(origin.ProjectTo(DbConfiguration.UkSrid), (double)request.RadiusInKm * 1000));
         }
 
         private async Task SyncTeachingEvents(ICrmService crm)
@@ -190,7 +190,7 @@ namespace GetIntoTeachingApi.Services
                 .Where(t => t.EntityName == key.EntityName && t.AttributeName == key.AttributeName)
                 .Select(t => t.Id);
 
-            _dbContext.RemoveRange(_dbContext.TypeEntities.Where(t => t.EntityName == key.EntityName 
+            _dbContext.RemoveRange(_dbContext.TypeEntities.Where(t => t.EntityName == key.EntityName
                 && t.AttributeName == key.AttributeName && !typeIds.Contains(t.Id)));
             _dbContext.UpdateRange(types.Where(t => existingIds.Contains(t.Id)));
             await _dbContext.AddRangeAsync(types.Where(t => !existingIds.Contains(t.Id)));

@@ -35,8 +35,8 @@ namespace GetIntoTeachingApiTests.Services
             _mockNotificationClient.Verify(
                 mock => mock.SendEmailAsync(
                     "api_key",
-                    "email@address.com", 
-                    NotifyService.NewPinCodeEmailTemplateId, 
+                    "email@address.com",
+                    NotifyService.NewPinCodeEmailTemplateId,
                     _personalisation
                 )
             );
@@ -49,9 +49,9 @@ namespace GetIntoTeachingApiTests.Services
         {
             _mockNotificationClient.Setup(
                 mock => mock.SendEmailAsync(
-                    "api_key", 
-                    "email@address.com", 
-                    NotifyService.NewPinCodeEmailTemplateId, 
+                    "api_key",
+                    "email@address.com",
+                    NotifyService.NewPinCodeEmailTemplateId,
                     _personalisation
                 )
             ).ThrowsAsync(new Exception("bang"));

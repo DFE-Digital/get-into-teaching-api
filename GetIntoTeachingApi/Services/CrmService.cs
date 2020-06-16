@@ -41,8 +41,7 @@ namespace GetIntoTeachingApi.Services
             return _service.CreateQuery("dfe_privacypolicy", Context())
                 .Where((entity) =>
                     entity.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int)PrivacyPolicyType.Web &&
-                    entity.GetAttributeValue<bool>("dfe_active")
-                )
+                    entity.GetAttributeValue<bool>("dfe_active"))
                 .OrderByDescending((policy) => policy.GetAttributeValue<DateTime>("createdon"))
                 .Select((entity) => new PrivacyPolicy(entity, this))
                 .Take(MaximumNumberOfPrivacyPolicies);
@@ -54,8 +53,7 @@ namespace GetIntoTeachingApi.Services
             var entity = _service.CreateQuery("contact", context)
                 .Where(e =>
                     // Will perform a case-insensitive comparison
-                    e.GetAttributeValue<string>("emailaddress1") == request.Email
-                )
+                    e.GetAttributeValue<string>("emailaddress1") == request.Email)
                 .OrderByDescending(e => e.GetAttributeValue<DateTime>("createdon"))
                 .Take(MaximumNumberOfCandidatesToMatch)
                 .ToList()
@@ -74,8 +72,8 @@ namespace GetIntoTeachingApi.Services
 
         public bool CandidateYetToAcceptPrivacyPolicy(Guid candidateId, Guid privacyPolicyId)
         {
-            return _service.CreateQuery("dfe_candidateprivacypolicy", Context()).FirstOrDefault(entity => 
-                entity.GetAttributeValue<EntityReference>("dfe_candidate").Id == candidateId && 
+            return _service.CreateQuery("dfe_candidateprivacypolicy", Context()).FirstOrDefault(entity =>
+                entity.GetAttributeValue<EntityReference>("dfe_candidate").Id == candidateId &&
                 entity.GetAttributeValue<EntityReference>("dfe_privacypolicynumber").Id == privacyPolicyId) == null;
         }
 
@@ -105,17 +103,17 @@ namespace GetIntoTeachingApi.Services
             // If we used a QueryExpression and AddLink the related entities are left outer joined
             // into the parent entity, keyed under the relationship name.
             var id = entity.GetAttributeValue<AliasedValue>($"{relationshipName}.{logicalName}id").Value;
-            var relatedEntity = new Entity() { Id = (Guid) id };
+            var relatedEntity = new Entity() { Id = (Guid)id };
 
             foreach (var key in relatedEntityKeys)
-                relatedEntity.Attributes[key.Replace($"{relationshipName}.", "")] = 
+                relatedEntity.Attributes[key.Replace($"{relationshipName}.", "")] =
                     entity.GetAttributeValue<AliasedValue>(key).Value;
 
             return new List<Entity>() { relatedEntity };
         }
 
         public Entity MappableEntity(string entityName, Guid? id, OrganizationServiceContext context)
-        { 
+        {
             return id != null ? _service.BlankExistingEntity(entityName, (Guid)id, context) : _service.NewEntity(entityName, context);
         }
 

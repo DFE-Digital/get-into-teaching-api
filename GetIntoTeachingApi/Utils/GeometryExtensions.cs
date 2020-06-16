@@ -10,7 +10,7 @@ namespace GetIntoTeachingApi.Utils
     internal static class GeometryExtensions
     {
         private static readonly CoordinateSystemServices _coordinateSystemServices = new CoordinateSystemServices(
-            new CoordinateSystemFactory(), 
+            new CoordinateSystemFactory(),
             new CoordinateTransformationFactory(),
             new Dictionary<int, string>
             {

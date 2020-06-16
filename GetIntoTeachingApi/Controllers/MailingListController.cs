@@ -18,8 +18,7 @@ namespace GetIntoTeachingApi.Controllers
             Summary = "Adds a new member to the mailing list.",
             Description = "Adds a new member to the mailing list. A new candidate will also be created if a matching candidate can not be found.",
             OperationId = "AddMailingListMember",
-            Tags = new[] { "Mailing List" }
-        )]
+            Tags = new[] { "Mailing List" })]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
         public IActionResult AddMember([FromBody, SwaggerRequestBody("Member to add to the mailing list.", Required = true)] ExistingCandidateRequest member)
         {

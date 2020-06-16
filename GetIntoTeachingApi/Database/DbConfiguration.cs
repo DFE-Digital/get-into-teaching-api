@@ -20,10 +20,10 @@ namespace GetIntoTeachingApi.Database
             _dbContext = dbContext;
         }
 
-        public static string DatabaseConnectionString(IEnv env) => 
+        public static string DatabaseConnectionString(IEnv env) =>
             GenerateConnectionString(env, env.DatabaseInstanceName);
 
-        public static string HangfireConnectionString(IEnv env) => 
+        public static string HangfireConnectionString(IEnv env) =>
             GenerateConnectionString(env, env.HangfireInstanceName);
 
         public static void ConfigPostgres(IEnv env, DbContextOptionsBuilder builder)
