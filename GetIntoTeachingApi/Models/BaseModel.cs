@@ -16,7 +16,9 @@ namespace GetIntoTeachingApi.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid? Id { get; set; }
         
-        public BaseModel() { }
+        public BaseModel()
+        {
+        }
 
         public BaseModel(Entity entity, ICrmService crm)
         {

@@ -14,8 +14,14 @@ namespace GetIntoTeachingApi.Models
         [EntityField(Name = "dfe_degreestatus", Type = typeof(OptionSetValue))]
         public int? DegreeStatusId { get; set; }
 
-        public CandidateQualification() : base() { }
+        public CandidateQualification()
+            : base()
+        {
+        }
 
-        public CandidateQualification(Entity entity, ICrmService crm) : base(entity, crm) { }
+        public CandidateQualification(Entity entity, ICrmService crm)
+            : base(entity, crm)
+        {
+        }
     }
 }

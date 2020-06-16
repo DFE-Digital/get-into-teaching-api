@@ -11,7 +11,10 @@ namespace GetIntoTeachingApi.Services
 {
     public class CrmService : ICrmService
     {
-        public enum PrivacyPolicyType { Web = 222750001 }
+        public enum PrivacyPolicyType
+        {
+            Web = 222750001
+        }
 
         private readonly IOrganizationServiceAdapter _service;
         private const int MaximumNumberOfCandidatesToMatch = 20;

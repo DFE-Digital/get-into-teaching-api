@@ -23,7 +23,8 @@ namespace GetIntoTeachingApi.Jobs
         private readonly IMetricService _metrics;
 
         public LocationBatchJob(IEnv env, GetIntoTeachingDbContext dbContext, 
-            ILogger<LocationBatchJob> logger, IMetricService metrics) : base(env)
+            ILogger<LocationBatchJob> logger, IMetricService metrics)
+            : base(env)
         {
             _dbContext = dbContext;
             _logger = logger;

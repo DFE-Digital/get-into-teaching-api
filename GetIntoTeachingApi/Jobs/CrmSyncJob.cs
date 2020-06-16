@@ -14,7 +14,8 @@ namespace GetIntoTeachingApi.Jobs
         private readonly IMetricService _metrics;
 
         public CrmSyncJob(IEnv env, ICrmService crm, IStore store, 
-            ILogger<CrmSyncJob> logger, IMetricService metrics) : base(env)
+            ILogger<CrmSyncJob> logger, IMetricService metrics)
+            : base(env)
         {
             _crm = crm;
             _store = store;

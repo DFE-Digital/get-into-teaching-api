@@ -16,7 +16,8 @@ namespace GetIntoTeachingApi.Jobs
         private readonly ILogger<CandidateRegistrationJob> _logger;
 
         public CandidateRegistrationJob(IEnv env, ICrmService crm, INotifyService notifyService,
-            IPerformContextAdapter contextAdapter, ILogger<CandidateRegistrationJob> logger) : base(env)
+            IPerformContextAdapter contextAdapter, ILogger<CandidateRegistrationJob> logger)
+            : base(env)
         {
             _crm = crm;
             _notifyService = notifyService;
