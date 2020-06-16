@@ -32,7 +32,8 @@ namespace GetIntoTeachingApi.Services
                 email,
                 templateId,
                 personalisation)
-            .ContinueWith(task => _logger.LogWarning($"NotifyService - Failed to send email: {task.Exception?.Message}"),
+            .ContinueWith(
+                task => _logger.LogWarning($"NotifyService - Failed to send email: {task.Exception?.Message}"),
                 TaskContinuationOptions.OnlyOnFaulted);
         }
 

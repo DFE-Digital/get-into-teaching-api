@@ -24,8 +24,11 @@ namespace GetIntoTeachingApi.Jobs
         private readonly ILogger<LocationSyncJob> _logger;
         private readonly IMetricService _metrics;
 
-        public LocationSyncJob(IEnv env, IBackgroundJobClient jobClient,
-            ILogger<LocationSyncJob> logger, IMetricService metrics)
+        public LocationSyncJob(
+            IEnv env,
+            IBackgroundJobClient jobClient,
+            ILogger<LocationSyncJob> logger,
+            IMetricService metrics)
             : base(env)
         {
             _logger = logger;

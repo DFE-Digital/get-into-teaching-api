@@ -73,7 +73,8 @@ namespace GetIntoTeachingApi
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1",
+                c.SwaggerDoc(
+                    "v1",
                     new OpenApiInfo
                     {
                         Title = "Get into Teaching API - V1",
@@ -176,8 +177,10 @@ The GIT API aims to provide:
 
             // Configure recurring jobs.
             RecurringJob.AddOrUpdate<CrmSyncJob>("crm-sync", (x) => x.RunAsync(), Cron.Daily());
-            RecurringJob.AddOrUpdate<LocationSyncJob>("location-sync", (x) =>
-                x.RunAsync("https://www.freemaptools.com/download/full-postcodes/ukpostcodes.zip"), Cron.Weekly());
+            RecurringJob.AddOrUpdate<LocationSyncJob>(
+                "location-sync",
+                (x) => x.RunAsync("https://www.freemaptools.com/download/full-postcodes/ukpostcodes.zip"),
+                Cron.Weekly());
 
             // Configure and seed the database.
             var dbConfiguration = serviceScope.ServiceProvider.GetService<DbConfiguration>();
