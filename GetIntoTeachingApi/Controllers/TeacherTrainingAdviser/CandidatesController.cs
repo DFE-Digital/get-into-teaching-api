@@ -43,7 +43,9 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
         )
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest(this.ModelState);
+            }
 
             _jobClient.Enqueue<CandidateRegistrationJob>((x) => x.Run(candidate, null));
 
@@ -69,12 +71,16 @@ exchanged for your token matches the request payload here).",
         )
         { 
             if (!_tokenService.IsValid(accessToken, request))
+            {
                 return Unauthorized();
+            }
 
             var candidate = _crm.GetCandidate(request);
 
             if (candidate == null)
+            {
                 return NotFound();
+            }
 
             return Ok(candidate);
         }

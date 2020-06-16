@@ -125,9 +125,13 @@ The GIT API aims to provide:
                     .UseFilter(automaticRetry);
 
                 if (env.IsDevelopment)
+                {
                     config.UseMemoryStorage().WithJobExpirationTimeout(JobConfiguration.ExpirationTimeout);
+                }
                 else
+                {
                     config.UsePostgreSqlStorage(DbConfiguration.HangfireConnectionString(env));
+                }
             });
 
             services.AddHangfireServer(options => options.WorkerCount = 10);
@@ -186,7 +190,9 @@ The GIT API aims to provide:
             // Initial locations sync.
             var dbContext = serviceScope.ServiceProvider.GetService<GetIntoTeachingDbContext>();
             if (!dbContext.Locations.Any())
+            {
                 RecurringJob.Trigger("location-sync");
+            }
 
             app.UseEndpoints(endpoints =>
             {

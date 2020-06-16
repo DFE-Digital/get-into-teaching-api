@@ -27,7 +27,10 @@ namespace GetIntoTeachingApi.Models
 
         public virtual Entity ToEntity(ICrmService crm, OrganizationServiceContext context)
         {
-            if (!ShouldMap(crm)) return null;
+            if (!ShouldMap(crm))
+            {
+                return null;
+            }
 
             var entity = crm.MappableEntity(LogicalName(GetType()), Id, context);
             MapFieldAttributesToEntity(entity);
@@ -80,14 +83,23 @@ namespace GetIntoTeachingApi.Models
             {
                 var attribute = EntityFieldAttribute(property);
 
-                if (attribute == null) continue;
+                if (attribute == null)
+                {
+                    continue;
+                }
 
                 if (attribute.Type == typeof(EntityReference))
+                {
                     property.SetValue(this, entity.GetAttributeValue<EntityReference>(attribute.Name)?.Id);
+                }
                 else if (attribute.Type == typeof(OptionSetValue))
+                {
                     property.SetValue(this, entity.GetAttributeValue<OptionSetValue>(attribute.Name)?.Value);
+                }
                 else
+                {
                     property.SetValue(this, entity.GetAttributeValue<dynamic>(attribute.Name));
+                }
             }
         }
 
@@ -98,14 +110,23 @@ namespace GetIntoTeachingApi.Models
                 var attribute = EntityFieldAttribute(property);
                 var value = property.GetValue(this);
 
-                if (attribute == null || value == null) continue;
+                if (attribute == null || value == null)
+                {
+                    continue;
+                }
 
                 if (attribute.Type == typeof(EntityReference))
+                {
                     entity[attribute.Name] = new EntityReference(attribute.Reference, (Guid) value);
+                }
                 else if (attribute.Type == typeof(OptionSetValue))
+                {
                     entity[attribute.Name] = new OptionSetValue((int) value);
+                }
                 else
+                {
                     entity[attribute.Name] = value;
+                }
             }
         }
 
@@ -117,13 +138,18 @@ namespace GetIntoTeachingApi.Models
                 var value = property.GetValue(this);
                 var shouldMap = ShouldMapRelationship(property.Name, value, crm);
 
-                if (attribute == null || value == null || !shouldMap) continue;
+                if (attribute == null || value == null || !shouldMap)
+                {
+                    continue;
+                }
 
                 foreach (var relatedModel in EnumerableRelationshipModels(value))
                 {
                     var target = relatedModel.ToEntity(crm, context);
                     if (target?.EntityState == EntityState.Created)
+                    {
                         crm.AddLink(source, new Relationship(attribute.Name), target, context);
+                    }
                 }
             }
         }
@@ -134,19 +160,29 @@ namespace GetIntoTeachingApi.Models
             {
                 var attribute = EntityRelationshipAttribute(property);
 
-                if (attribute == null) continue;
+                if (attribute == null)
+                {
+                    continue;
+                }
 
                 var relatedEntityAttribute = (EntityAttribute)Attribute.GetCustomAttribute(attribute.Type, typeof(EntityAttribute));
                 var relatedEntities = crm.RelatedEntities(entity, attribute.Name, relatedEntityAttribute.LogicalName).ToList();
 
-                if (!relatedEntities.Any()) continue;
+                if (!relatedEntities.Any())
+                {
+                    continue;
+                }
 
                 var relatedModels = relatedEntities.Select(e => Activator.CreateInstance(attribute.Type, e, crm));
 
                 if (typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
                 {
                     var list = NewListOfType(attribute.Type);
-                    foreach (var model in relatedModels) list.Add(model);
+                    foreach (var model in relatedModels)
+                    {
+                        list.Add(model);
+                    }
+
                     property.SetValue(this, list);
                 }
                 else

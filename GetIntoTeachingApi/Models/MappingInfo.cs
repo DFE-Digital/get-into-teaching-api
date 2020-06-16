@@ -35,9 +35,13 @@ namespace GetIntoTeachingApi.Models
                 var relationship = BaseModel.EntityRelationshipAttribute(property);
 
                 if (field != null)
+                {
                     Fields.Add(property.Name, BaseModel.EntityFieldAttribute(property).ToDictionary());
+                }
                 else if (relationship != null)
+                {
                     Relationships.Add(property.Name, BaseModel.EntityRelationshipAttribute(property).ToDictionary());
+                }
             }
         }
     }

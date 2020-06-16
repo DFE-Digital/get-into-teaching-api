@@ -62,7 +62,9 @@ namespace GetIntoTeachingApi.Models
         protected override bool ShouldMapRelationship(string propertyName, dynamic value, ICrmService crm)
         {
             if (propertyName != "PrivacyPolicy" || Id == null || PrivacyPolicy == null)
+            {
                 return true;
+            }
 
             return crm.CandidateYetToAcceptPrivacyPolicy((Guid)Id, (Guid)PrivacyPolicy.AcceptedPolicyId);
         }
