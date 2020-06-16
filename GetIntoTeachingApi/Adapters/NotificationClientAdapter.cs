@@ -1,6 +1,6 @@
-﻿using Notify.Client;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Notify.Client;
 
 namespace GetIntoTeachingApi.Adapters
 {

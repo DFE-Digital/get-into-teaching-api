@@ -1,6 +1,6 @@
-﻿using Prometheus;
-using System;
+﻿using System;
 using Hangfire;
+using Prometheus;
 
 namespace GetIntoTeachingApi.Services
 {

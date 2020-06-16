@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
