@@ -16,8 +16,12 @@ namespace GetIntoTeachingApi.Jobs
         private readonly IPerformContextAdapter _contextAdapter;
         private readonly ILogger<TeachingEventRegistrationJob> _logger;
 
-        public TeachingEventRegistrationJob(IEnv env, ICrmService crm, INotifyService notifyService,
-            IPerformContextAdapter contextAdapter, ILogger<TeachingEventRegistrationJob> logger)
+        public TeachingEventRegistrationJob(
+            IEnv env,
+            ICrmService crm,
+            INotifyService notifyService,
+            IPerformContextAdapter contextAdapter,
+            ILogger<TeachingEventRegistrationJob> logger)
             : base(env)
         {
             _crm = crm;

@@ -49,7 +49,8 @@ namespace GetIntoTeachingApi.Models
         private bool MinimumAdditionalAttributesMatch(Entity entity)
         {
             var matches = AdditionalAttributeValues(FirstName, LastName, DateOfBirth).Intersect(
-                AdditionalAttributeValues(entity.GetAttributeValue<string>("firstname"),
+                AdditionalAttributeValues(
+                    entity.GetAttributeValue<string>("firstname"),
                     entity.GetAttributeValue<string>("lastname"),
                     entity.GetAttributeValue<DateTime>("birthdate")), StringComparer.OrdinalIgnoreCase);
 

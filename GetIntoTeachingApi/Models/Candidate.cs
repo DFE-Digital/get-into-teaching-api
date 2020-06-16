@@ -43,16 +43,21 @@ namespace GetIntoTeachingApi.Models
         [EntityField(Name = "address1_postalcode")]
         public string AddressPostcode { get; set; }
 
-        [EntityRelationship(Name = "dfe_contact_dfe_candidatequalification_ContactId",
+        [EntityRelationship(
+            Name = "dfe_contact_dfe_candidatequalification_ContactId",
             Type = typeof(CandidateQualification))]
         public List<CandidateQualification> Qualifications { get; set; }
-        [EntityRelationship(Name = "dfe_contact_dfe_candidatepastteachingposition_ContactId", Type = typeof(CandidatePastTeachingPosition))]
+        [EntityRelationship(
+            Name = "dfe_contact_dfe_candidatepastteachingposition_ContactId", 
+            Type = typeof(CandidatePastTeachingPosition))]
         public List<CandidatePastTeachingPosition> PastTeachingPositions { get; set; }
         [SwaggerSchema("Set to schedule a phone call.", WriteOnly = true)]
         [EntityRelationship(Name = "dfe_contact_phonecall_contactid", Type = typeof(PhoneCall))]
         public PhoneCall PhoneCall { get; set; }
         [SwaggerSchema("Set to update the accepted privacy policy.", WriteOnly = true)]
-        [EntityRelationship(Name = "dfe_contact_dfe_candidateprivacypolicy_Candidate", Type = typeof(CandidatePrivacyPolicy))]
+        [EntityRelationship(
+            Name = "dfe_contact_dfe_candidateprivacypolicy_Candidate", 
+            Type = typeof(CandidatePrivacyPolicy))]
         public CandidatePrivacyPolicy PrivacyPolicy { get; set; }
 
         public Candidate()

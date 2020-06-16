@@ -17,8 +17,12 @@ namespace GetIntoTeachingApi.Auth
         private readonly IEnv _env;
         private readonly ILogger<SharedSecretHandler> _logger;
 
-        public SharedSecretHandler(IEnv env, IOptionsMonitor<SharedSecretSchemeOptions> options, ILoggerFactory loggerFactory,
-            UrlEncoder encoder, ISystemClock clock)
+        public SharedSecretHandler(
+            IEnv env,
+            IOptionsMonitor<SharedSecretSchemeOptions> options,
+            ILoggerFactory loggerFactory,
+            UrlEncoder encoder,
+            ISystemClock clock)
             : base(options, loggerFactory, encoder, clock)
         {
             _env = env;
