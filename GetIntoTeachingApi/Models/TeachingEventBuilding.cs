@@ -26,8 +26,14 @@ namespace GetIntoTeachingApi.Models
         [Column(TypeName = "geography")]
         public Point Coordinate { get; set; }
 
-        public TeachingEventBuilding() : base() { }
+        public TeachingEventBuilding()
+            : base()
+        {
+        }
 
-        public TeachingEventBuilding(Entity entity, ICrmService crm) : base(entity, crm) { }
+        public TeachingEventBuilding(Entity entity, ICrmService crm)
+            : base(entity, crm)
+        {
+        }
     }
 }

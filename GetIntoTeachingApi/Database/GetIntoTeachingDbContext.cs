@@ -12,7 +12,9 @@ namespace GetIntoTeachingApi.Database
         public DbSet<TypeEntity> TypeEntities { get; set; }
 
         public GetIntoTeachingDbContext(DbContextOptions<GetIntoTeachingDbContext> options) 
-            : base(options) { }
+            : base(options)
+        {
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

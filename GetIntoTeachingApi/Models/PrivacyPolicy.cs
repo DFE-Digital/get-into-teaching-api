@@ -13,8 +13,14 @@ namespace GetIntoTeachingApi.Models
         [EntityField(Name = "createdon")]
         public DateTime CreatedAt { get; set; }
 
-        public PrivacyPolicy() : base() { }
+        public PrivacyPolicy()
+            : base()
+        {
+        }
 
-        public PrivacyPolicy(Entity entity, ICrmService crm) : base(entity, crm) { }
+        public PrivacyPolicy(Entity entity, ICrmService crm)
+            : base(entity, crm)
+        {
+        }
     }
 }

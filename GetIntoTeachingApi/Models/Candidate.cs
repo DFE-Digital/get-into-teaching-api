@@ -55,9 +55,15 @@ namespace GetIntoTeachingApi.Models
         [EntityRelationship(Name = "dfe_contact_dfe_candidateprivacypolicy_Candidate", Type = typeof(CandidatePrivacyPolicy))]
         public CandidatePrivacyPolicy PrivacyPolicy { get; set; }
 
-        public Candidate() : base() { }
+        public Candidate()
+            : base()
+        {
+        }
 
-        public Candidate(Entity entity, ICrmService crm) : base(entity, crm) { }
+        public Candidate(Entity entity, ICrmService crm)
+            : base(entity, crm)
+        {
+        }
 
         protected override bool ShouldMapRelationship(string propertyName, dynamic value, ICrmService crm)
         {
