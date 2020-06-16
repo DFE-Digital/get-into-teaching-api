@@ -36,14 +36,15 @@ namespace GetIntoTeachingApi.Controllers
 Retrieves the upcoming teaching events; limited to 10 by default, but this can be increased to a 
 maximum of 50 using the `limit` query parameter.",
             OperationId = "GetUpcomingTeachingEvents",
-            Tags = new[] { "Teaching Events" }
-        )]
+            Tags = new[] { "Teaching Events" })]
         [ProducesResponseType(typeof(IEnumerable<TeachingEvent>), 200)]
         [ProducesResponseType(400)]
         public async Task<IActionResult> GetUpcoming([FromQuery, SwaggerParameter("Number of results to return (maximum of 50).")] int limit = 10)
         {
             if (limit > MaximumUpcomingRequests)
+            {
                 return BadRequest();
+            }
 
             var upcomingEvents = _store.GetUpcomingTeachingEvents(limit);
             return Ok(await upcomingEvents.ToListAsync());
@@ -55,14 +56,15 @@ maximum of 50 using the `limit` query parameter.",
             Summary = "Searches for teaching events.",
             Description = @"Searches for teaching events by postcode. Optionally limit the results by distance (in miles) and the type of event.",
             OperationId = "SearchTeachingEvents",
-            Tags = new[] { "Teaching Events" }
-        )]
+            Tags = new[] { "Teaching Events" })]
         [ProducesResponseType(typeof(IEnumerable<TeachingEvent>), 200)]
         [ProducesResponseType(400)]
         public async Task<IActionResult> Search([FromQuery, SwaggerParameter("Event search criteria.", Required = true)] TeachingEventSearchRequest request)
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest(this.ModelState);
+            }
 
             var teachingEvents = await _store.SearchTeachingEventsAsync(request);
             return Ok(teachingEvents);
@@ -73,8 +75,7 @@ maximum of 50 using the `limit` query parameter.",
         [SwaggerOperation(
             Summary = "Retrieves an event.",
             OperationId = "GetTeachingEvent",
-            Tags = new[] { "Teaching Events" }
-        )]
+            Tags = new[] { "Teaching Events" })]
         [ProducesResponseType(typeof(TeachingEvent), 200)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> Get([FromRoute, SwaggerParameter("The `id` of the `TeachingEvent`.", Required = true)] Guid id)
@@ -82,7 +83,9 @@ maximum of 50 using the `limit` query parameter.",
             var teachingEvent = await _store.GetTeachingEventAsync(id);
 
             if (teachingEvent == null)
+            {
                 return NotFound();
+            }
 
             return Ok(teachingEvent);
         }
@@ -92,23 +95,25 @@ maximum of 50 using the `limit` query parameter.",
         [SwaggerOperation(
             Summary = "Adds an attendee to a teaching event.",
             OperationId = "AddTeachingEventAttendee",
-            Tags = new[] { "Teaching Events" }
-        )]
+            Tags = new[] { "Teaching Events" })]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> AddAttendee(
             [FromRoute, SwaggerParameter("The `id` of the `TeachingEvent`.", Required = true)] Guid id,
-            [FromBody, SwaggerRequestBody("Attendee to add to the teaching event.", Required = true)] ExistingCandidateRequest attendee
-        )
+            [FromBody, SwaggerRequestBody("Attendee to add to the teaching event.", Required = true)] ExistingCandidateRequest attendee)
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest(this.ModelState);
+            }
 
             var teachingEvent = await _store.GetTeachingEventAsync(id);
 
             if (teachingEvent == null)
+            {
                 return NotFound();
+            }
 
             _jobClient.Enqueue<TeachingEventRegistrationJob>((x) => x.Run(attendee, id, null));
 

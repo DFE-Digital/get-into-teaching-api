@@ -10,7 +10,7 @@ namespace GetIntoTeachingApi.Models
         public string LogicalName { get; set; }
         public IDictionary<string, IDictionary<string, string>> Fields { get; set; } =
             new Dictionary<string, IDictionary<string, string>>();
-        public IDictionary<string, IDictionary<string, string>> Relationships { get; set; } = 
+        public IDictionary<string, IDictionary<string, string>> Relationships { get; set; } =
             new Dictionary<string, IDictionary<string, string>>();
 
         public MappingInfo(Type type)
@@ -35,9 +35,13 @@ namespace GetIntoTeachingApi.Models
                 var relationship = BaseModel.EntityRelationshipAttribute(property);
 
                 if (field != null)
+                {
                     Fields.Add(property.Name, BaseModel.EntityFieldAttribute(property).ToDictionary());
+                }
                 else if (relationship != null)
+                {
                     Relationships.Add(property.Name, BaseModel.EntityRelationshipAttribute(property).ToDictionary());
+                }
             }
         }
     }

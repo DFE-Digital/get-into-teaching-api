@@ -1,9 +1,8 @@
-﻿using System;
-using GetIntoTeachingApi.Adapters;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Utils;
+using Microsoft.Extensions.Logging;
 
 namespace GetIntoTeachingApi.Services
 {
@@ -31,12 +30,11 @@ namespace GetIntoTeachingApi.Services
                 ApiKey(),
                 email,
                 templateId,
-                personalisation
-            ).ContinueWith(task => _logger.LogWarning($"NotifyService - Failed to send email: {task.Exception?.Message}"), 
+                personalisation)
+            .ContinueWith(
+                task => _logger.LogWarning($"NotifyService - Failed to send email: {task.Exception?.Message}"),
                 TaskContinuationOptions.OnlyOnFaulted);
         }
-
-        private string ApiKey() => _env.NotifyApiKey;
 
         private static string TemplateDescription(string templateId)
         {
@@ -48,5 +46,7 @@ namespace GetIntoTeachingApi.Services
                 _ => "UnknownTemplate",
             };
         }
+
+        private string ApiKey() => _env.NotifyApiKey;
     }
 }

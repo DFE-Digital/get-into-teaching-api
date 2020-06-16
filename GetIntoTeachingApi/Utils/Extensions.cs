@@ -9,8 +9,8 @@ namespace GetIntoTeachingApi.Utils
     {
         public static IApplicationBuilder UsePrometheusHangfireExporter(this IApplicationBuilder app)
         {
-            var jobStorage = (JobStorage) app.ApplicationServices.GetService(typeof(JobStorage));
-            var metrics = (IMetricService) app.ApplicationServices.GetService(typeof(IMetricService));
+            var jobStorage = (JobStorage)app.ApplicationServices.GetService(typeof(JobStorage));
+            var metrics = (IMetricService)app.ApplicationServices.GetService(typeof(IMetricService));
             var exporter = new HangfirePrometheusExporter(jobStorage, metrics);
 
             Metrics.DefaultRegistry.AddBeforeCollectCallback(() => exporter.ExportHangfireStatistics());

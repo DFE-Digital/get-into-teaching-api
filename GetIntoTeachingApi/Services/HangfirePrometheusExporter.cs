@@ -1,14 +1,14 @@
-﻿using Prometheus;
-using System;
+﻿using System;
 using Hangfire;
+using Prometheus;
 
 namespace GetIntoTeachingApi.Services
 {
     public class HangfirePrometheusExporter : IHangfirePrometheusExporter
     {
+        private const string RetrySetName = "retries";
         private readonly JobStorage _hangfireJobStorage;
         private readonly IMetricService _metrics;
-        private const string RetrySetName = "retries";
 
         public HangfirePrometheusExporter(JobStorage hangfireJobStorage, IMetricService metrics)
         {
@@ -50,7 +50,7 @@ namespace GetIntoTeachingApi.Services
                 Scheduled = hangfireStats.Scheduled,
                 Processing = hangfireStats.Processing,
                 Succeeded = hangfireStats.Succeeded,
-                Retry = retryJobs
+                Retry = retryJobs,
             };
         }
 

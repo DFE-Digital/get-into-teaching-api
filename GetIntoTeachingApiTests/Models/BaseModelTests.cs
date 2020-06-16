@@ -81,7 +81,7 @@ namespace GetIntoTeachingApiTests.Models
             foreach (var subType in subTypes)
             {
                 // Constructor is required for creating related models in BaseModel.MapRelationshipAttributesFromEntity
-                var requiredConstructor = subType.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, 
+                var requiredConstructor = subType.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null,
                     new Type[] { typeof(Entity), typeof(ICrmService) }, null);
                 requiredConstructor.Should().NotBeNull();
             }
@@ -154,21 +154,21 @@ namespace GetIntoTeachingApiTests.Models
 
             _mockService.Setup(m => m.BlankExistingEntity("mock", (Guid)mock.Id, _context))
                 .Returns(mockEntity);
-            _mockService.Setup(m => m.BlankExistingEntity("relatedMock", 
+            _mockService.Setup(m => m.BlankExistingEntity("relatedMock",
                 (Guid)mock.RelatedMock.Id, _context)).Returns(relatedMockEntity);
-            _mockService.Setup(m => m.BlankExistingEntity("relatedMock", 
+            _mockService.Setup(m => m.BlankExistingEntity("relatedMock",
                 (Guid)mock.RelatedMocks.First().Id, _context)).Returns(relatedMockEntity);
 
             mock.ToEntity(_crm, _context);
 
             mockEntity.GetAttributeValue<EntityReference>("dfe_field1").Id.Should().Be((Guid)mock.Field1);
             mockEntity.GetAttributeValue<EntityReference>("dfe_field1").LogicalName.Should().Be("dfe_list");
-            mockEntity.GetAttributeValue<OptionSetValue>("dfe_field2").Value.Should().Be(mock.Field2); 
+            mockEntity.GetAttributeValue<OptionSetValue>("dfe_field2").Value.Should().Be(mock.Field2);
             mockEntity.GetAttributeValue<string>("dfe_field3").Should().Be(mock.Field3);
 
-            _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mock"), 
+            _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mock"),
                 relatedMockEntity, _context));
-            _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mocks"), 
+            _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mocks"),
                 relatedMockEntity, _context));
         }
 
@@ -199,7 +199,7 @@ namespace GetIntoTeachingApiTests.Models
 
             _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mock"),
                 relatedMockEntity, _context));
-            _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mocks"), 
+            _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mocks"),
                 relatedMockEntity, _context));
         }
 
@@ -249,9 +249,9 @@ namespace GetIntoTeachingApiTests.Models
             mockEntity.GetAttributeValue<OptionSetValue>("dfe_field2").Value.Should().Be(mock.Field2);
             mockEntity.GetAttributeValue<string>("dfe_field3").Should().Be(mock.Field3);
 
-            _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mock"), 
+            _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mock"),
                 relatedMockEntity, _context), Times.Never());
-            _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mocks"), 
+            _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mocks"),
                 relatedMockEntity, _context), Times.Never());
         }
 
@@ -274,7 +274,7 @@ namespace GetIntoTeachingApiTests.Models
         public void EntityFieldAttributeNames_ReturnsAllNames()
         {
             var names = BaseModel.EntityFieldAttributeNames(typeof(MockModel));
-            names.Should().BeEquivalentTo(new [] { "dfe_field1", "dfe_field2", "dfe_field3", "mockid" });
+            names.Should().BeEquivalentTo(new[] { "dfe_field1", "dfe_field2", "dfe_field3", "mockid" });
         }
     }
 }

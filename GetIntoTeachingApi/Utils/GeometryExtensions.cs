@@ -10,7 +10,7 @@ namespace GetIntoTeachingApi.Utils
     internal static class GeometryExtensions
     {
         private static readonly CoordinateSystemServices _coordinateSystemServices = new CoordinateSystemServices(
-            new CoordinateSystemFactory(), 
+            new CoordinateSystemFactory(),
             new CoordinateTransformationFactory(),
             new Dictionary<int, string>
             {
@@ -37,7 +37,7 @@ namespace GetIntoTeachingApi.Utils
                         AUTHORITY[""EPSG"",""9001""]],
                     AXIS[""Easting"",EAST],
                     AXIS[""Northing"",NORTH],
-                    AUTHORITY[""EPSG"",""27700""]]"
+                    AUTHORITY[""EPSG"",""27700""]]",
             });
 
         public static Geometry ProjectTo(this Geometry geometry, int srid)

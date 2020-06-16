@@ -1,6 +1,6 @@
 ﻿using GetIntoTeachingApi.Controllers;
 using GetIntoTeachingApiTests.Helpers;
-﻿using FluentAssertions;
+using FluentAssertions;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Mvc;

@@ -13,7 +13,7 @@ namespace GetIntoTeachingApiTests.Models
         [InlineData(87, 140.0125)]
         public void RadiusInKm_ConvertsCorrectly(int miles, double km)
         {
-            new TeachingEventSearchRequest() {Radius = miles}.RadiusInKm.Should().BeApproximately(km, 4);
+            new TeachingEventSearchRequest() { Radius = miles }.RadiusInKm.Should().BeApproximately(km, 4);
         }
     }
 }

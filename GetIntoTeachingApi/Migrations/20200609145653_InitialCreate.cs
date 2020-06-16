@@ -13,7 +13,7 @@ namespace GetIntoTeachingApi.Migrations
                 columns: table => new
                 {
                     Postcode = table.Column<string>(nullable: false),
-                    Coordinate = table.Column<Point>(type: "geography", nullable: true)
+                    Coordinate = table.Column<Point>(type: "geography", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -26,7 +26,7 @@ namespace GetIntoTeachingApi.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     Text = table.Column<string>(nullable: true),
-                    CreatedAt = table.Column<DateTime>(nullable: false)
+                    CreatedAt = table.Column<DateTime>(nullable: false),
                 },
                 constraints: table =>
                 {
@@ -44,7 +44,7 @@ namespace GetIntoTeachingApi.Migrations
                     AddressCity = table.Column<string>(nullable: true),
                     AddressState = table.Column<string>(nullable: true),
                     AddressPostcode = table.Column<string>(nullable: true),
-                    Coordinate = table.Column<Point>(type: "geography", nullable: true)
+                    Coordinate = table.Column<Point>(type: "geography", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -58,7 +58,7 @@ namespace GetIntoTeachingApi.Migrations
                     Id = table.Column<string>(nullable: false),
                     EntityName = table.Column<string>(nullable: false),
                     AttributeName = table.Column<string>(nullable: false),
-                    Value = table.Column<string>(nullable: true)
+                    Value = table.Column<string>(nullable: true),
                 },
                 constraints: table =>
                 {
@@ -75,7 +75,7 @@ namespace GetIntoTeachingApi.Migrations
                     Description = table.Column<string>(nullable: true),
                     StartAt = table.Column<DateTime>(nullable: false),
                     EndAt = table.Column<DateTime>(nullable: false),
-                    BuildingId = table.Column<Guid>(nullable: true)
+                    BuildingId = table.Column<Guid>(nullable: true),
                 },
                 constraints: table =>
                 {

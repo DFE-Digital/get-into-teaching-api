@@ -21,8 +21,14 @@ namespace GetIntoTeachingApi.Models
         [EntityRelationship(Name = "msevtmgt_event_building", Type = typeof(TeachingEventBuilding))]
         public TeachingEventBuilding Building { get; set; }
 
-        public TeachingEvent() : base() { }
+        public TeachingEvent()
+            : base()
+        {
+        }
 
-        public TeachingEvent(Entity entity, ICrmService crm) : base(entity, crm) { }
+        public TeachingEvent(Entity entity, ICrmService crm)
+            : base(entity, crm)
+        {
+        }
     }
 }

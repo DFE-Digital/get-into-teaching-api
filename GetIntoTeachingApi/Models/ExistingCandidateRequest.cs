@@ -15,14 +15,17 @@ namespace GetIntoTeachingApi.Models
 
         public bool Match(Entity entity)
         {
-            if (entity == null) return false;
+            if (entity == null)
+            {
+                return false;
+            }
 
             return EmailMatchesCandidate(entity) && MinimumAdditionalAttributesMatch(entity);
         }
 
         public string Slugify()
         {
-            var attributes = new[] {Email}.Concat(AdditionalAttributeValues(FirstName, LastName, DateOfBirth));
+            var attributes = new[] { Email }.Concat(AdditionalAttributeValues(FirstName, LastName, DateOfBirth));
             return string.Join("-", attributes).ToLower();
         }
 
@@ -37,7 +40,7 @@ namespace GetIntoTeachingApi.Models
                 {
                     firstName,
                     lastName,
-                    dateOfBirth?.Date.ToString("MM-dd-yyyy")
+                    dateOfBirth?.Date.ToString("MM-dd-yyyy"),
                 }
                 .Where(s => s != null)
                 .ToArray();
@@ -46,10 +49,10 @@ namespace GetIntoTeachingApi.Models
         private bool MinimumAdditionalAttributesMatch(Entity entity)
         {
             var matches = AdditionalAttributeValues(FirstName, LastName, DateOfBirth).Intersect(
-                AdditionalAttributeValues(entity.GetAttributeValue<string>("firstname"), 
-                    entity.GetAttributeValue<string>("lastname"), 
-                    entity.GetAttributeValue<DateTime>("birthdate")), StringComparer.OrdinalIgnoreCase
-            );
+                AdditionalAttributeValues(
+                    entity.GetAttributeValue<string>("firstname"),
+                    entity.GetAttributeValue<string>("lastname"),
+                    entity.GetAttributeValue<DateTime>("birthdate")), StringComparer.OrdinalIgnoreCase);
 
             return matches.Count() >= MinimumAdditionalAttributeMatches;
         }

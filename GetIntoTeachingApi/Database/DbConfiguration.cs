@@ -20,10 +20,10 @@ namespace GetIntoTeachingApi.Database
             _dbContext = dbContext;
         }
 
-        public static string DatabaseConnectionString(IEnv env) => 
+        public static string DatabaseConnectionString(IEnv env) =>
             GenerateConnectionString(env, env.DatabaseInstanceName);
 
-        public static string HangfireConnectionString(IEnv env) => 
+        public static string HangfireConnectionString(IEnv env) =>
             GenerateConnectionString(env, env.HangfireInstanceName);
 
         public static void ConfigPostgres(IEnv env, DbContextOptionsBuilder builder)
@@ -42,9 +42,13 @@ namespace GetIntoTeachingApi.Database
             var migrationsAreSupported = _dbContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.Sqlite";
 
             if (migrationsAreSupported)
+            {
                 _dbContext.Database.Migrate();
-            else 
+            }
+            else
+            {
                 _dbContext.Database.EnsureCreated();
+            }
         }
 
         private static string GenerateConnectionString(IEnv env, string instanceName)
@@ -61,7 +65,7 @@ namespace GetIntoTeachingApi.Database
                 Port = postgres.Credentials.Port,
                 SslMode = SslMode.Require,
                 TrustServerCertificate = true,
-                MaxPoolSize = 50
+                MaxPoolSize = 50,
             };
 
             return builder.ConnectionString;

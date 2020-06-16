@@ -1,26 +1,26 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
 using System;
-using FluentValidation.AspNetCore;
-using GetIntoTeachingApi.Auth;
 using System.Linq;
-using GetIntoTeachingApi.OperationFilters;
+using FluentValidation.AspNetCore;
 using GetIntoTeachingApi.Adapters;
+using GetIntoTeachingApi.Auth;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
+using GetIntoTeachingApi.OperationFilters;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using Microsoft.Xrm.Sdk;
 using Prometheus;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace GetIntoTeachingApi
 {
@@ -73,7 +73,8 @@ namespace GetIntoTeachingApi
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1",
+                c.SwaggerDoc(
+                    "v1",
                     new OpenApiInfo
                     {
                         Title = "Get into Teaching API - V1",
@@ -92,18 +93,17 @@ The GIT API aims to provide:
                         License = new OpenApiLicense
                         {
                             Name = "MIT License",
-                            Url = new Uri("https://opensource.org/licenses/MIT")
-                        }
-                    }
-                );
+                            Url = new Uri("https://opensource.org/licenses/MIT"),
+                        },
+                    });
 
                 c.AddSecurityDefinition("apiKey", new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.ApiKey,
                     Name = "Authorization",
-                    In = ParameterLocation.Header
+                    In = ParameterLocation.Header,
                 });
-                
+
                 c.OperationFilter<AuthOperationFilter>();
                 c.EnableAnnotations();
                 c.AddFluentValidationRules();
@@ -115,7 +115,7 @@ The GIT API aims to provide:
                 {
                     Attempts = JobConfiguration.Attempts(env),
                     DelaysInSeconds = new[] { JobConfiguration.RetryIntervalInSeconds(env) },
-                    OnAttemptsExceeded = AttemptsExceededAction.Delete
+                    OnAttemptsExceeded = AttemptsExceededAction.Delete,
                 };
 
                 config
@@ -125,9 +125,13 @@ The GIT API aims to provide:
                     .UseFilter(automaticRetry);
 
                 if (env.IsDevelopment)
+                {
                     config.UseMemoryStorage().WithJobExpirationTimeout(JobConfiguration.ExpirationTimeout);
+                }
                 else
+                {
                     config.UsePostgreSqlStorage(DbConfiguration.HangfireConnectionString(env));
+                }
             });
 
             services.AddHangfireServer(options => options.WorkerCount = 10);
@@ -150,7 +154,7 @@ The GIT API aims to provide:
 
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
-                Authorization = new[] { new HangfireDashboardAuthorizationFilter(env) }
+                Authorization = new[] { new HangfireDashboardAuthorizationFilter(env) },
             });
 
             app.UseSwagger();
@@ -173,8 +177,10 @@ The GIT API aims to provide:
 
             // Configure recurring jobs.
             RecurringJob.AddOrUpdate<CrmSyncJob>("crm-sync", (x) => x.RunAsync(), Cron.Daily());
-            RecurringJob.AddOrUpdate<LocationSyncJob>("location-sync", (x) => 
-                x.RunAsync("https://www.freemaptools.com/download/full-postcodes/ukpostcodes.zip"), Cron.Weekly());
+            RecurringJob.AddOrUpdate<LocationSyncJob>(
+                "location-sync",
+                (x) => x.RunAsync("https://www.freemaptools.com/download/full-postcodes/ukpostcodes.zip"),
+                Cron.Weekly());
 
             // Configure and seed the database.
             var dbConfiguration = serviceScope.ServiceProvider.GetService<DbConfiguration>();
@@ -186,11 +192,13 @@ The GIT API aims to provide:
             // Initial locations sync.
             var dbContext = serviceScope.ServiceProvider.GetService<GetIntoTeachingDbContext>();
             if (!dbContext.Locations.Any())
+            {
                 RecurringJob.Trigger("location-sync");
+            }
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapMetrics(); 
+                endpoints.MapMetrics();
                 endpoints.MapControllers();
             });
         }

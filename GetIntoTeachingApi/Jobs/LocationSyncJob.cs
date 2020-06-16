@@ -24,8 +24,12 @@ namespace GetIntoTeachingApi.Jobs
         private readonly ILogger<LocationSyncJob> _logger;
         private readonly IMetricService _metrics;
 
-        public LocationSyncJob(IEnv env, IBackgroundJobClient jobClient, 
-            ILogger<LocationSyncJob> logger, IMetricService metrics) : base(env)
+        public LocationSyncJob(
+            IEnv env,
+            IBackgroundJobClient jobClient,
+            ILogger<LocationSyncJob> logger,
+            IMetricService metrics)
+            : base(env)
         {
             _logger = logger;
             _jobClient = jobClient;
@@ -54,6 +58,26 @@ namespace GetIntoTeachingApi.Jobs
             }
         }
 
+        private static dynamic CreateLocation(IReaderRow csv)
+        {
+            var latitude = csv.GetField<double?>("latitude");
+            var longitude = csv.GetField<double?>("longitude");
+
+            if (latitude == null || longitude == null)
+            {
+                return null;
+            }
+
+            var postcode = Location.SanitizePostcode(csv.GetField<string>("postcode"));
+
+            return new { Postcode = postcode, Latitude = latitude, Longitude = longitude };
+        }
+
+        private static string GetTempPath()
+        {
+            return Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        }
+
         private async Task SyncLocations(string csvPath)
         {
             var batch = new List<dynamic>();
@@ -67,7 +91,10 @@ namespace GetIntoTeachingApi.Jobs
             while (await csv.ReadAsync())
             {
                 var location = CreateLocation(csv);
-                if (location == null) continue;
+                if (location == null)
+                {
+                    continue;
+                }
 
                 batch.Add(location);
                 locationCount++;
@@ -77,26 +104,16 @@ namespace GetIntoTeachingApi.Jobs
 
             QueueBatch(batch, true);
 
-            var batchJobCount = (int) Math.Ceiling((decimal) locationCount / BatchInterval);
+            var batchJobCount = (int)Math.Ceiling((decimal)locationCount / BatchInterval);
             _logger.LogInformation($"LocationSyncJob - Queueing {locationCount} Locations ({batchJobCount} Jobs)");
-        }
-
-        private static dynamic CreateLocation(IReaderRow csv)
-        {
-            var latitude = csv.GetField<double?>("latitude");
-            var longitude = csv.GetField<double?>("longitude");
-
-            if (latitude == null || longitude == null) return null;
-
-            var postcode = Location.SanitizePostcode(csv.GetField<string>("postcode"));
-
-            return new { Postcode = postcode, Latitude = latitude, Longitude = longitude };
         }
 
         private void QueueBatch(ICollection<dynamic> batch, bool force = false)
         {
             if (!force && batch.Count() != BatchInterval)
+            {
                 return;
+            }
 
             // Batch is serialized to pass by value.
             _jobClient.Enqueue<LocationBatchJob>(x => x.RunAsync(JsonConvert.SerializeObject(batch)));
@@ -107,7 +124,9 @@ namespace GetIntoTeachingApi.Jobs
         private async Task<string> RetrieveCsv(string ukPostcodeCsvUrl)
         {
             if (Env.IsDevelopment)
+            {
                 return "./Fixtures/ukpostcodes.dev.csv";
+            }
 
             var zipPath = GetTempPath();
             var csvPath = GetTempPath();
@@ -136,11 +155,6 @@ namespace GetIntoTeachingApi.Jobs
             {
                 File.Delete(csvPath);
             }
-        }
-
-        private static string GetTempPath()
-        {
-            return Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
         }
     }
 }

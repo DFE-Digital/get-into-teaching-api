@@ -5,7 +5,7 @@ namespace GetIntoTeachingApi.Utils
     public class Env : IEnv
     {
         public bool IsDevelopment => EnvironmentName == "Development";
-        public bool IsProduction => EnvironmentName  == "Production";
+        public bool IsProduction => EnvironmentName == "Production";
         public bool IsStaging => EnvironmentName == "Staging";
         public bool ExportHangireToPrometheus => Environment.GetEnvironmentVariable("CF_INSTANCE_INDEX") == "0";
         public string DatabaseInstanceName => Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME");

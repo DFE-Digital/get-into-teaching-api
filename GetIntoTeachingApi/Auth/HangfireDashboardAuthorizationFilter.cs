@@ -15,7 +15,7 @@ namespace GetIntoTeachingApi.Auth
 
         public bool Authorize(DashboardContext context)
         {
-            return new[] {"Development", "Staging"}.Contains(_env.EnvironmentName);
+            return new[] { "Development", "Staging" }.Contains(_env.EnvironmentName);
         }
     }
 }

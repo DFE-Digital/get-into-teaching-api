@@ -16,8 +16,13 @@ namespace GetIntoTeachingApi.Jobs
         private readonly IPerformContextAdapter _contextAdapter;
         private readonly ILogger<TeachingEventRegistrationJob> _logger;
 
-        public TeachingEventRegistrationJob(IEnv env, ICrmService crm, INotifyService notifyService,
-            IPerformContextAdapter contextAdapter, ILogger<TeachingEventRegistrationJob> logger) : base(env)
+        public TeachingEventRegistrationJob(
+            IEnv env,
+            ICrmService crm,
+            INotifyService notifyService,
+            IPerformContextAdapter contextAdapter,
+            ILogger<TeachingEventRegistrationJob> logger)
+            : base(env)
         {
             _crm = crm;
             _logger = logger;
@@ -67,10 +72,10 @@ namespace GetIntoTeachingApi.Jobs
         {
             var candidate = new Candidate()
             {
-                Email = attendee.Email, 
-                FirstName = attendee.FirstName, 
+                Email = attendee.Email,
+                FirstName = attendee.FirstName,
                 LastName = attendee.LastName,
-                DateOfBirth = attendee.DateOfBirth
+                DateOfBirth = attendee.DateOfBirth,
             };
 
             _crm.Save(candidate);

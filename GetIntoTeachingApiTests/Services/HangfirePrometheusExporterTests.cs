@@ -35,12 +35,12 @@ namespace GetIntoTeachingApiTests.Services
         {
             var expectedStatistics = new StatisticsDto()
             {
-                Failed = 1, 
-                Deleted = 2, 
-                Enqueued = 3, 
-                Processing = 4, 
-                Recurring = 5, 
-                Scheduled = 6, 
+                Failed = 1,
+                Deleted = 2,
+                Enqueued = 3,
+                Processing = 4,
+                Recurring = 5,
+                Scheduled = 6,
                 Succeeded = 7
             };
             var expectedRetrySet = new HashSet<string> { "job1", "job2", "job3" };

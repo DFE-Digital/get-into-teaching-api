@@ -15,6 +15,7 @@ namespace GetIntoTeachingApi.Services
     public class Store : IStore
     {
         private const double EarthCircumferenceInKm = 40075.017;
+
         // We get a 16km error when approximating the distance between postcodes for
         // John O'Groats and Lands End.
         private const double ErrorMarginInKm = 25;
@@ -67,16 +68,24 @@ namespace GetIntoTeachingApi.Services
                 .OrderBy(te => te.StartAt);
 
             if (request.TypeId != null)
+            {
                 teachingEvents = teachingEvents.Where(te => te.TypeId == request.TypeId);
+            }
 
             if (request.StartAfter != null)
+            {
                 teachingEvents = teachingEvents.Where(te => request.StartAfter < te.StartAt);
+            }
 
             if (request.StartBefore != null)
+            {
                 teachingEvents = teachingEvents.Where(te => request.StartBefore > te.StartAt);
+            }
 
             if (request.Radius == null)
+            {
                 return await teachingEvents.ToListAsync();
+            }
 
             return await FilterTeachingEventsByRadius(teachingEvents, request);
         }
@@ -89,7 +98,9 @@ namespace GetIntoTeachingApi.Services
         public bool IsValidPostcode(string postcode)
         {
             if (string.IsNullOrEmpty(postcode))
+            {
                 return false;
+            }
 
             return _dbContext.Locations.Any(l => l.Postcode == Location.SanitizePostcode(postcode));
         }
@@ -110,7 +121,7 @@ namespace GetIntoTeachingApi.Services
 
             // Project coordinates onto UK coordinate system for final, accurate distance filtering.
             return inMemoryTeachingEvents.Where(te => te.Building.Coordinate.ProjectTo(DbConfiguration.UkSrid)
-                    .IsWithinDistance(origin.ProjectTo(DbConfiguration.UkSrid), (double) request.RadiusInKm * 1000));
+                    .IsWithinDistance(origin.ProjectTo(DbConfiguration.UkSrid), (double)request.RadiusInKm * 1000));
         }
 
         private async Task SyncTeachingEvents(ICrmService crm)
@@ -156,7 +167,8 @@ namespace GetIntoTeachingApi.Services
             await SyncTypes(crm.GetPickListItems("phonecall", "dfe_channelcreation"));
         }
 
-        private async Task SyncModels<T>(IEnumerable<T> models, IQueryable<T> dbSet) where T : BaseModel
+        private async Task SyncModels<T>(IEnumerable<T> models, IQueryable<T> dbSet)
+            where T : BaseModel
         {
             var existingIds = dbSet.Select(m => m.Id);
             var modelIds = models.Select(m => m.Id);
@@ -169,7 +181,10 @@ namespace GetIntoTeachingApi.Services
 
         private async Task SyncTypes(IEnumerable<TypeEntity> types)
         {
-            if (!types.Any()) return;
+            if (!types.Any())
+            {
+                return;
+            }
 
             var key = types.Select(t => new { t.EntityName, t.AttributeName }).First();
             var typeIds = types.Select(t => t.Id);
@@ -177,7 +192,7 @@ namespace GetIntoTeachingApi.Services
                 .Where(t => t.EntityName == key.EntityName && t.AttributeName == key.AttributeName)
                 .Select(t => t.Id);
 
-            _dbContext.RemoveRange(_dbContext.TypeEntities.Where(t => t.EntityName == key.EntityName 
+            _dbContext.RemoveRange(_dbContext.TypeEntities.Where(t => t.EntityName == key.EntityName
                 && t.AttributeName == key.AttributeName && !typeIds.Contains(t.Id)));
             _dbContext.UpdateRange(types.Where(t => existingIds.Contains(t.Id)));
             await _dbContext.AddRangeAsync(types.Where(t => !existingIds.Contains(t.Id)));

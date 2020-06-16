@@ -1,9 +1,9 @@
-﻿using Microsoft.PowerPlatform.Cds.Client;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.PowerPlatform.Cds.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
-using System;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace GetIntoTeachingApi.Adapters
@@ -14,7 +14,7 @@ namespace GetIntoTeachingApi.Adapters
 
         public OrganizationServiceAdapter(IOrganizationService client)
         {
-            _client = (CdsServiceClient) client;
+            _client = (CdsServiceClient)client;
         }
 
         public IQueryable<Entity> CreateQuery(string entityName, OrganizationServiceContext context)
@@ -43,15 +43,16 @@ namespace GetIntoTeachingApi.Adapters
                 .FirstOrDefault();
 
             if (entities != null)
+            {
                 result.AddRange(entities);
+            }
 
             return result;
         }
 
         public IEnumerable<CdsServiceClient.PickListItem> GetPickListItemsForAttribute(
             string entityName,
-            string attributeName
-        )
+            string attributeName)
         {
             var metaElement = _client.GetPickListElementFromMetadataEntity(entityName, attributeName);
             return metaElement.Items;

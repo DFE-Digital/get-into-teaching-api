@@ -73,14 +73,14 @@ namespace GetIntoTeachingApiTests.Controllers
             _mockJobClient.Verify(x => x.Create(
                 It.Is<Job>(job => job.Type == typeof(TeachingEventRegistrationJob) && job.Method.Name == "Run" &&
                                   ((ExistingCandidateRequest)job.Args[0]) == attendee &&
-                                  ((Guid) job.Args[1]) == teachingEvent.Id), 
+                                  ((Guid)job.Args[1]) == teachingEvent.Id),
                 It.IsAny<EnqueuedState>()));
         }
 
         [Fact]
         public async void Search_InvalidRequest_RespondsWithValidationErrors()
         {
-            var request = new TeachingEventSearchRequest() { Postcode = null};
+            var request = new TeachingEventSearchRequest() { Postcode = null };
             _controller.ModelState.AddModelError("Postcode", "Postcode must be specified.");
 
             var response = await _controller.Search(request);
@@ -93,7 +93,7 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public async void GetUpcoming_ValidRequest_ReturnsTeachingEvents()
         {
-            var request = new TeachingEventSearchRequest() {Postcode = "KY12 8FG"};
+            var request = new TeachingEventSearchRequest() { Postcode = "KY12 8FG" };
             var mockEvents = MockEvents();
             _mockStore.Setup(mock => mock.SearchTeachingEventsAsync(request)).ReturnsAsync(mockEvents);
 
@@ -107,7 +107,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetUpcoming_LimitMoreThan50_RespondsWithBadRequest()
         {
             var response = await _controller.GetUpcoming(51);
-            
+
             response.Should().BeOfType<BadRequestResult>();
         }
 
@@ -126,7 +126,7 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public async void Get_ReturnsTeachingEvents()
         {
-            var teachingEvent = new TeachingEvent() {Id = Guid.NewGuid()};
+            var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
             _mockStore.Setup(mock => mock.GetTeachingEventAsync((Guid)teachingEvent.Id)).ReturnsAsync(teachingEvent);
 
             var response = await _controller.Get((Guid)teachingEvent.Id);
@@ -151,7 +151,7 @@ namespace GetIntoTeachingApiTests.Controllers
             var event2 = new TeachingEvent() { Name = "Event 2" };
             var event3 = new TeachingEvent() { Name = "Event 3" };
 
-            return new[] {event1, event2, event3};
+            return new[] { event1, event2, event3 };
         }
     }
 }
