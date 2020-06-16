@@ -93,7 +93,7 @@ The GIT API aims to provide:
                         License = new OpenApiLicense
                         {
                             Name = "MIT License",
-                            Url = new Uri("https://opensource.org/licenses/MIT")
+                            Url = new Uri("https://opensource.org/licenses/MIT"),
                         },
                     });
 

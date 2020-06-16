@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Utils;
@@ -37,8 +36,6 @@ namespace GetIntoTeachingApi.Services
                 TaskContinuationOptions.OnlyOnFaulted);
         }
 
-        private string ApiKey() => _env.NotifyApiKey;
-
         private static string TemplateDescription(string templateId)
         {
             return templateId switch
@@ -49,5 +46,7 @@ namespace GetIntoTeachingApi.Services
                 _ => "UnknownTemplate",
             };
         }
+
+        private string ApiKey() => _env.NotifyApiKey;
     }
 }

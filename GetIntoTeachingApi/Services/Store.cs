@@ -15,6 +15,7 @@ namespace GetIntoTeachingApi.Services
     public class Store : IStore
     {
         private const double EarthCircumferenceInKm = 40075.017;
+
         // We get a 16km error when approximating the distance between postcodes for
         // John O'Groats and Lands End.
         private const double ErrorMarginInKm = 25;
@@ -166,7 +167,8 @@ namespace GetIntoTeachingApi.Services
             await SyncTypes(crm.GetPickListItems("phonecall", "dfe_channelcreation"));
         }
 
-        private async Task SyncModels<T>(IEnumerable<T> models, IQueryable<T> dbSet) where T : BaseModel
+        private async Task SyncModels<T>(IEnumerable<T> models, IQueryable<T> dbSet)
+            where T : BaseModel
         {
             var existingIds = dbSet.Select(m => m.Id);
             var modelIds = models.Select(m => m.Id);
