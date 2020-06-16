@@ -22,7 +22,7 @@ jobs:
     - name: Install dependencies
       run: sudo dotnet restore && sudo apt-get update && sudo apt-get install -y libsqlite3-mod-spatialite
     - name: Build
-      run: sudo dotnet build --configuration Release --no-restore
+      run: sudo dotnet build --configuration Release --no-restore /warnaserror
     - name: Test
       run: sudo dotnet test --no-restore --verbosity normal
   test_docker:
