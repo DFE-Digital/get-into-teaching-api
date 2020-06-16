@@ -25,8 +25,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the latest privacy policy.",
             OperationId = "GetLatestPrivacyPolicy",
-            Tags = new[] { "Privacy Policies" }
-        )]
+            Tags = new[] { "Privacy Policies" })]
         [ProducesResponseType(typeof(PrivacyPolicy), 200)]
         public async Task<IActionResult> GetLatest()
         {

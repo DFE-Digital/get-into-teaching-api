@@ -13,7 +13,10 @@ namespace GetIntoTeachingApi.Attributes
         {
             var dictionary = new Dictionary<string, string>() { { "Name", Name } };
 
-            if (Type != null) dictionary.Add("Type", Type.ToString());
+            if (Type != null)
+            {
+                dictionary.Add("Type", Type.ToString());
+            }
 
             return dictionary;
         }

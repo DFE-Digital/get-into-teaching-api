@@ -31,7 +31,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _teachingEventId = Guid.NewGuid();
             _mockLogger = new Mock<ILogger<TeachingEventRegistrationJob>>();
             _attendee = new ExistingCandidateRequest() { Email = "test@test.com", FirstName = "first", LastName = "last" };
-            _job = new TeachingEventRegistrationJob(new Env(), _mockCrm.Object, _mockNotifyService.Object, 
+            _job = new TeachingEventRegistrationJob(new Env(), _mockCrm.Object, _mockNotifyService.Object,
                 _mockContext.Object, _mockLogger.Object);
         }
 
@@ -61,8 +61,8 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _job.Run(_attendee, _teachingEventId, null);
 
-            _mockCrm.Verify(mock => mock.Save(It.Is<TeachingEventRegistration>(r => 
-                r.EventId == _teachingEventId && 
+            _mockCrm.Verify(mock => mock.Save(It.Is<TeachingEventRegistration>(r =>
+                r.EventId == _teachingEventId &&
                 r.CandidateId == candidateId)), Times.Once);
             _mockLogger.VerifyInformationWasCalled("TeachingEventRegistrationJob - Started (1/24)");
             _mockLogger.VerifyInformationWasCalled("TeachingEventRegistrationJob - Succeeded");

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Linq;
 
 namespace GetIntoTeachingApi.OperationFilters
 {
@@ -13,7 +13,10 @@ namespace GetIntoTeachingApi.OperationFilters
             var authRequired = context.ApiDescription.CustomAttributes()
                 .Any(attr => attr.GetType() == typeof(AuthorizeAttribute));
 
-            if (!authRequired) return;
+            if (!authRequired)
+            {
+                return;
+            }
 
             operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
             operation.Security = new List<OpenApiSecurityRequirement>
@@ -23,11 +26,11 @@ namespace GetIntoTeachingApi.OperationFilters
                     {
                         new OpenApiSecurityScheme
                         {
-                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "apiKey" }
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "apiKey" },
                         },
                         new List<string>()
-                    }
-                }
+                    },
+                },
             };
         }
     }

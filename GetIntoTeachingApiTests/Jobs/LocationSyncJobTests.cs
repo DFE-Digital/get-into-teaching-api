@@ -58,9 +58,9 @@ namespace GetIntoTeachingApiTests.Jobs
             };
 
             _mockJobClient.Verify(x => x.Create(
-                It.Is<Job>(job => job.Type == typeof(LocationBatchJob) && 
-                                  job.Method.Name == "RunAsync" && 
-                                  (string) job.Args[0] == JsonConvert.SerializeObject(expectedLocationBatch)),
+                It.Is<Job>(job => job.Type == typeof(LocationBatchJob) &&
+                                  job.Method.Name == "RunAsync" &&
+                                  (string)job.Args[0] == JsonConvert.SerializeObject(expectedLocationBatch)),
                 It.IsAny<EnqueuedState>()));
 
             _mockLogger.VerifyInformationWasCalled("LocationSyncJob - Started");

@@ -15,8 +15,14 @@ namespace GetIntoTeachingApi.Models
         [EntityField(Name = "phonenumber")]
         public string Telephone { get; set; }
 
-        public PhoneCall() : base() { }
+        public PhoneCall()
+            : base()
+        {
+        }
 
-        public PhoneCall(Entity entity, ICrmService crm) : base(entity, crm) { }
+        public PhoneCall(Entity entity, ICrmService crm)
+            : base(entity, crm)
+        {
+        }
     }
 }

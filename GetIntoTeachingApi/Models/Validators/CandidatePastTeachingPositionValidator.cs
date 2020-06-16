@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using FluentValidation;
 using GetIntoTeachingApi.Services;
-using System.Linq;
 
 namespace GetIntoTeachingApi.Models.Validators
 {

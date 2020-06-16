@@ -11,8 +11,10 @@ namespace GetIntoTeachingApi.Database
         public DbSet<PrivacyPolicy> PrivacyPolicies { get; set; }
         public DbSet<TypeEntity> TypeEntities { get; set; }
 
-        public GetIntoTeachingDbContext(DbContextOptions<GetIntoTeachingDbContext> options) 
-            : base(options) { }
+        public GetIntoTeachingDbContext(DbContextOptions<GetIntoTeachingDbContext> options)
+            : base(options)
+        {
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,7 +29,7 @@ namespace GetIntoTeachingApi.Database
             }
 
             modelBuilder.Entity<TeachingEvent>().HasOne(c => c.Building);
-            modelBuilder.Entity<TypeEntity>().HasKey(t => new {t.Id, t.EntityName, t.AttributeName});
+            modelBuilder.Entity<TypeEntity>().HasKey(t => new { t.Id, t.EntityName, t.AttributeName });
         }
     }
 }

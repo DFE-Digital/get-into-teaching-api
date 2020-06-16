@@ -11,8 +11,14 @@ namespace GetIntoTeachingApi.Models
         [EntityField(Name = "dfe_privacypolicynumber", Type = typeof(EntityReference), Reference = "dfe_privacypolicy")]
         public Guid AcceptedPolicyId { get; set; }
 
-        public CandidatePrivacyPolicy() : base() { }
+        public CandidatePrivacyPolicy()
+            : base()
+        {
+        }
 
-        public CandidatePrivacyPolicy(Entity entity, ICrmService crm) : base(entity, crm) { }
+        public CandidatePrivacyPolicy(Entity entity, ICrmService crm)
+            : base(entity, crm)
+        {
+        }
     }
 }

@@ -1,5 +1,5 @@
-﻿using GetIntoTeachingApi.Models;
-using System;
+﻿using System;
+using GetIntoTeachingApi.Models;
 
 namespace GetIntoTeachingApi.Services
 {

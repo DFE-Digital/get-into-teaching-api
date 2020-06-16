@@ -78,7 +78,7 @@ namespace GetIntoTeachingApiTests.Models
 
             mockService.Setup(m => m.BlankExistingEntity("candidate", (Guid)candidate.Id, context))
                 .Returns(new Entity("contact"));
-            mockCrm.Setup(m => m.CandidateYetToAcceptPrivacyPolicy((Guid)candidate.Id, 
+            mockCrm.Setup(m => m.CandidateYetToAcceptPrivacyPolicy((Guid)candidate.Id,
                 candidate.PrivacyPolicy.AcceptedPolicyId)).Returns(false);
 
             candidate.ToEntity(mockCrm.Object, context);
@@ -92,7 +92,7 @@ namespace GetIntoTeachingApiTests.Models
             var mockService = new Mock<IOrganizationServiceAdapter>();
             var context = mockService.Object.Context();
             var mockCrm = new Mock<ICrmService>();
-            var candidate = new Candidate()  { Id = Guid.NewGuid(), PrivacyPolicy = null };
+            var candidate = new Candidate() { Id = Guid.NewGuid(), PrivacyPolicy = null };
             mockService.Setup(m => m.BlankExistingEntity("candidate", (Guid)candidate.Id, context))
                 .Returns(new Entity("contact"));
 
