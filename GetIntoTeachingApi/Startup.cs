@@ -150,7 +150,7 @@ The GIT API aims to provide:
 
             app.UseHttpsRedirection();
 
-            var hangfireOptions = new BackgroundJobServerOptions() { WorkerCount = 1 };
+            var hangfireOptions = new BackgroundJobServerOptions() { WorkerCount = 20 };
             app.UseHangfireServer(hangfireOptions);
 
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
