@@ -133,8 +133,6 @@ The GIT API aims to provide:
                     config.UsePostgreSqlStorage(DbConfiguration.HangfireConnectionString(env));
                 }
             });
-
-            services.AddHangfireServer(options => options.WorkerCount = 10);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -151,6 +149,9 @@ The GIT API aims to provide:
             app.UseAuthentication();
 
             app.UseHttpsRedirection();
+
+            var hangfireOptions = new BackgroundJobServerOptions() { WorkerCount = 1 };
+            app.UseHangfireServer(hangfireOptions);
 
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
