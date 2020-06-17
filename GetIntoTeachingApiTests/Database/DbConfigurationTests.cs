@@ -48,7 +48,8 @@ namespace GetIntoTeachingApiTests.Database
                                          "Password=password1;" +
                                          "Port=5432;" +
                                          "SSL Mode=Require;" +
-                                         "Trust Server Certificate=True");
+                                         "Trust Server Certificate=True;" +
+                                         "SearchPath=hangfire");
         }
     }
 }
