@@ -24,7 +24,7 @@ namespace GetIntoTeachingApi.Database
             GenerateConnectionString(env, env.DatabaseInstanceName);
 
         public static string HangfireConnectionString(IEnv env) =>
-            GenerateConnectionString(env, env.HangfireInstanceName);
+            $"{GenerateConnectionString(env, env.HangfireInstanceName)};SearchPath=hangfire";
 
         public static void ConfigPostgres(IEnv env, DbContextOptionsBuilder builder)
         {
