@@ -28,7 +28,7 @@ namespace GetIntoTeachingApi.Database
 
         public static void ConfigPostgres(IEnv env, DbContextOptionsBuilder builder)
         {
-            builder.UseNpgsql(DbConfiguration.DatabaseConnectionString(env), x => x.UseNetTopologySuite());
+            builder.UseNpgsql(DatabaseConnectionString(env), x => x.UseNetTopologySuite());
         }
 
         public static void ConfigSqLite(DbContextOptionsBuilder builder, SqliteConnection keepAliveConnection)
@@ -65,7 +65,6 @@ namespace GetIntoTeachingApi.Database
                 Port = postgres.Credentials.Port,
                 SslMode = SslMode.Require,
                 TrustServerCertificate = true,
-                MaxPoolSize = 50,
             };
 
             return builder.ConnectionString;
