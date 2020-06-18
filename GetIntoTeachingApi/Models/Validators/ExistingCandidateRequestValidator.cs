@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using FluentValidation;
+using FluentValidation.Validators;
 
 namespace GetIntoTeachingApi.Models.Validators
 {
@@ -10,7 +11,7 @@ namespace GetIntoTeachingApi.Models.Validators
         {
             RuleFor(request => request.FirstName).MaximumLength(256);
             RuleFor(request => request.LastName).MaximumLength(256);
-            RuleFor(request => request.Email).NotEmpty().EmailAddress().MaximumLength(100);
+            RuleFor(request => request.Email).NotEmpty().EmailAddress(EmailValidationMode.AspNetCoreCompatible).MaximumLength(100);
             RuleFor(request => request.DateOfBirth).LessThan(request => DateTime.Now);
             RuleFor(request => request)
                 .Must(SpecifyTwoAdditionalRequiredAttributes)
