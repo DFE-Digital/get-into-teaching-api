@@ -72,6 +72,20 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void GetCallbackBookingQuotas_ReturnsFutureQuotasUpTo14DaysInAdvance()
+        {
+            var queryableQuotas = MockCallbackBookingQuotas();
+            _mockService.Setup(mock => mock.CreateQuery("dfe_callbackbookingquota", _context))
+                .Returns(queryableQuotas);
+
+            var result = _crm.GetCallbackBookingQuotas().ToList();
+
+            result.Select(quota => quota.NumberOfBookings).Should().BeEquivalentTo(
+                new object[] { 4, 3, 2 },
+                options => options.WithStrictOrdering());
+        }
+
+        [Fact]
         public void GetPrivacyPolicies_Returns3MostRecentActiveWebPrivacyPolicies()
         {
             var queryablePrivacyPolicies = MockPrivacyPolicies();
@@ -297,6 +311,31 @@ namespace GetIntoTeachingApiTests.Services
             candidate3["createdon"] = DateTime.Now.AddDays(-5);
 
             return new[] { candidate1, candidate2, candidate3 }.AsQueryable();
+        }
+
+        private static IQueryable<Entity> MockCallbackBookingQuotas()
+        {
+            var quota1 = new Entity("dfe_callbackbookingquota");
+            quota1["dfe_starttime"] = DateTime.Now.AddDays(-1);
+            quota1["dfe_numberofbookings"] = 1;
+
+            var quota2 = new Entity("dfe_callbackbookingquota");
+            quota2["dfe_starttime"] = DateTime.Now.AddDays(10);
+            quota2["dfe_numberofbookings"] = 2;
+
+            var quota3 = new Entity("dfe_callbackbookingquota");
+            quota3["dfe_starttime"] = DateTime.Now.AddDays(1);
+            quota3["dfe_numberofbookings"] = 3;
+
+            var quota4 = new Entity("dfe_callbackbookingquota");
+            quota4["dfe_starttime"] = DateTime.Now.AddMinutes(20);
+            quota4["dfe_numberofbookings"] = 4;
+
+            var quota5 = new Entity("dfe_callbackbookingquota");
+            quota5["dfe_starttime"] = DateTime.Now.AddDays(15);
+            quota5["dfe_numberofbookings"] = 5;
+
+            return new[] { quota1, quota2, quota3, quota4, quota5 }.AsQueryable();
         }
 
         private static IQueryable<Entity> MockPrivacyPolicies()
