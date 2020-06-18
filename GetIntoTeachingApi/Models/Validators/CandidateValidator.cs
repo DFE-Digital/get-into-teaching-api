@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
+using FluentValidation.Validators;
 using GetIntoTeachingApi.Services;
 
 namespace GetIntoTeachingApi.Models.Validators
@@ -16,7 +17,7 @@ namespace GetIntoTeachingApi.Models.Validators
 
             RuleFor(candidate => candidate.FirstName).NotEmpty().MaximumLength(256);
             RuleFor(candidate => candidate.LastName).NotEmpty().MaximumLength(256);
-            RuleFor(candidate => candidate.Email).NotEmpty().EmailAddress().MaximumLength(100);
+            RuleFor(candidate => candidate.Email).NotEmpty().EmailAddress(EmailValidationMode.AspNetCoreCompatible).MaximumLength(100);
             RuleFor(candidate => candidate.DateOfBirth).NotNull().LessThan(candidate => DateTime.Now);
             RuleFor(candidate => candidate.Telephone).NotEmpty().MaximumLength(50);
             RuleFor(candidate => candidate.AddressLine1).NotEmpty().MaximumLength(1024);
