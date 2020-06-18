@@ -158,7 +158,10 @@ The GIT API aims to provide:
                 Authorization = new[] { new HangfireDashboardAuthorizationFilter(env) },
             });
 
-            app.UseSwagger();
+            app.UseSwagger(c =>
+            {
+                c.SerializeAsV2 = true;
+            });
 
             app.UseSwaggerUI(c =>
             {
