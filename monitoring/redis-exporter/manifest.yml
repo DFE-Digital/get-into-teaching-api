@@ -1,0 +1,6 @@
+applications:
+    - name: git-redis-exporter-1-test
+      docker:
+        image: oliver006/redis_exporter
+      services:
+        - get-into-teaching-adviser-test-red-svc

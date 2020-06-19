@@ -14,3 +14,11 @@ scrape_configs:
   scheme: https
   static_configs:
     - targets: [git-pg-exporter-1-test.london.cloudapps.digital]
+- job_name: git-redis
+  scheme: https
+  static_configs:
+    - targets: [git-redis-exporter-1-test.london.cloudapps.digital]
+- job_name: git-github
+  scheme: https
+  static_configs:
+    - targets: [github-exporter.london.cloudapps.digital]
