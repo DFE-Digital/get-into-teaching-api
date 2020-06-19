@@ -1,0 +1,7 @@
+applications:
+    - name: github-exporter
+      docker:
+        image: infinityworks/github-exporter:latest
+      env:
+         REPOS: "DFE-Digital/get-into-teaching-api"
+         GITHUB_TOKEN: 251ca1899fbb1a7eee5e392e80a2efb0d630041f
