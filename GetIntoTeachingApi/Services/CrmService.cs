@@ -18,6 +18,7 @@ namespace GetIntoTeachingApi.Services
 
         private const int MaximumNumberOfCandidatesToMatch = 20;
         private const int MaximumNumberOfPrivacyPolicies = 3;
+        private const int MaximumCallbackBookingQuotaDaysInAdvance = 14;
         private readonly IOrganizationServiceAdapter _service;
 
         public CrmService(IOrganizationServiceAdapter service)
@@ -34,6 +35,16 @@ namespace GetIntoTeachingApi.Services
         {
             return _service.GetPickListItemsForAttribute(entityName, attributeName)
                 .Select((pickListItem) => new TypeEntity(pickListItem, entityName, attributeName));
+        }
+
+        public IEnumerable<CallbackBookingQuota> GetCallbackBookingQuotas()
+        {
+            return _service.CreateQuery("dfe_callbackbookingquota", Context())
+                .Where((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime") > DateTime.Now &&
+                                   entity.GetAttributeValue<DateTime>("dfe_starttime") <
+                                   DateTime.UtcNow.AddDays(MaximumCallbackBookingQuotaDaysInAdvance))
+                .OrderBy((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime"))
+                .Select((entity) => new CallbackBookingQuota(entity, this));
         }
 
         public IEnumerable<PrivacyPolicy> GetPrivacyPolicies()

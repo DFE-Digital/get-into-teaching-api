@@ -13,6 +13,7 @@ namespace GetIntoTeachingApi.Services
         IEnumerable<PrivacyPolicy> GetPrivacyPolicies();
         Candidate GetCandidate(ExistingCandidateRequest request);
         IEnumerable<TeachingEvent> GetTeachingEvents();
+        IEnumerable<CallbackBookingQuota> GetCallbackBookingQuotas();
         bool CandidateYetToAcceptPrivacyPolicy(Guid candidateId, Guid privacyPolicyId);
         bool CandidateYetToRegisterForTeachingEvent(Guid candidateId, Guid teachingEventId);
         void Save(BaseModel model);
