@@ -1,14 +1,29 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 using GetIntoTeachingApi.Controllers;
 using GetIntoTeachingApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using FluentAssertions;
+using GetIntoTeachingApi.Jobs;
+using Hangfire;
+using Hangfire.Common;
+using Hangfire.States;
 using Microsoft.AspNetCore.Authorization;
+using Moq;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
     public class MailingListControllerTests
     {
+        private readonly Mock<IBackgroundJobClient> _mockJobClient;
+        private readonly MailingListController _controller;
+
+        public MailingListControllerTests()
+        {
+            _mockJobClient = new Mock<IBackgroundJobClient>();
+            _controller = new MailingListController(_mockJobClient.Object);
+        }
+
         [Fact]
         public void Authorize_IsPresent()
         {
@@ -16,17 +31,30 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void CreateCandidateAccessToken_InvalidRequest_RespondsWithValidationErrors()
+        public void AddMember_InvalidRequest_RespondsWithValidationErrors()
         {
-            var member = new ExistingCandidateRequest() { FirstName = null };
-            var controller = new MailingListController();
-            controller.ModelState.AddModelError("FirstName", "First name must be specified.");
+            var request = new MailingListAddMemberRequest() { FirstName = null };
+            _controller.ModelState.AddModelError("FirstName", "First name must be specified.");
 
-            var response = controller.AddMember(member);
+            var response = _controller.AddMember(request);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
             errors.Should().ContainKey("FirstName").WhichValue.Should().BeOfType<string[]>().Which.Should().Contain("First name must be specified.");
+        }
+
+        [Fact]
+        public void AddMember_ValidRequest_EnqueuesJobRespondsWithNoContent()
+        {
+            var request = new MailingListAddMemberRequest() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
+
+            var response = _controller.AddMember(request);
+
+            response.Should().BeOfType<NoContentResult>();
+            _mockJobClient.Verify(x => x.Create(
+                It.Is<Job>(job => job.Type == typeof(MailingListAddMemberJob) && job.Method.Name == "Run" &&
+                                  ((MailingListAddMemberRequest)job.Args[0]) == request),
+                It.IsAny<EnqueuedState>()));
         }
     }
 }
