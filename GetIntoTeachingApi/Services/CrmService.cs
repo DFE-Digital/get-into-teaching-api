@@ -80,6 +80,14 @@ namespace GetIntoTeachingApi.Services
             return new Candidate(entity, this);
         }
 
+        public Candidate GetCandidate(Guid id)
+        {
+            var entity = _service.CreateQuery("contact", Context())
+                .FirstOrDefault(c => c.GetAttributeValue<EntityReference>("contactid").Id == id);
+
+            return entity == null ? null : new Candidate(entity, this);
+        }
+
         public bool CandidateYetToAcceptPrivacyPolicy(Guid candidateId, Guid privacyPolicyId)
         {
             return _service.CreateQuery("dfe_candidateprivacypolicy", Context()).FirstOrDefault(entity =>

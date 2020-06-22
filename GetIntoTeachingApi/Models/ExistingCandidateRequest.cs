@@ -6,7 +6,7 @@ namespace GetIntoTeachingApi.Models
 {
     public class ExistingCandidateRequest
     {
-        private static readonly int MinimumAdditionalAttributeMatches = 2;
+        private const int MinimumAdditionalAttributeMatches = 2;
 
         public string FirstName { get; set; }
         public string LastName { get; set; }

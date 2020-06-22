@@ -12,6 +12,7 @@ namespace GetIntoTeachingApi.Services
         IEnumerable<TypeEntity> GetPickListItems(string entityName, string attributeName);
         IEnumerable<PrivacyPolicy> GetPrivacyPolicies();
         Candidate GetCandidate(ExistingCandidateRequest request);
+        Candidate GetCandidate(Guid id);
         IEnumerable<TeachingEvent> GetTeachingEvents();
         IEnumerable<CallbackBookingQuota> GetCallbackBookingQuotas();
         bool CandidateYetToAcceptPrivacyPolicy(Guid candidateId, Guid privacyPolicyId);
