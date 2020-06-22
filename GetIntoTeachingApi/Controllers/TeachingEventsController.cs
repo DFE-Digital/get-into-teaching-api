@@ -8,7 +8,6 @@ using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Controllers
@@ -94,6 +93,8 @@ maximum of 50 using the `limit` query parameter.",
         [Route("{id}/attendees")]
         [SwaggerOperation(
             Summary = "Adds an attendee to a teaching event.",
+            Description = "If the `CandidateId` is specified then the existing candidate will be " +
+                          "registered for the event, otherwise a new candidate will be created.",
             OperationId = "AddTeachingEventAttendee",
             Tags = new[] { "Teaching Events" })]
         [ProducesResponseType(204)]
@@ -101,7 +102,7 @@ maximum of 50 using the `limit` query parameter.",
         [ProducesResponseType(404)]
         public async Task<IActionResult> AddAttendee(
             [FromRoute, SwaggerParameter("The `id` of the `TeachingEvent`.", Required = true)] Guid id,
-            [FromBody, SwaggerRequestBody("Attendee to add to the teaching event.", Required = true)] ExistingCandidateRequest attendee)
+            [FromBody, SwaggerRequestBody("Attendee to add to the teaching event.", Required = true)] TeachingEventRegistrationRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -115,7 +116,7 @@ maximum of 50 using the `limit` query parameter.",
                 return NotFound();
             }
 
-            _jobClient.Enqueue<TeachingEventRegistrationJob>((x) => x.Run(attendee, id, null));
+            _jobClient.Enqueue<TeachingEventRegistrationJob>((x) => x.Run(request, id, null));
 
             return NoContent();
         }

@@ -171,12 +171,31 @@ namespace GetIntoTeachingApiTests.Services
             result.Should().BeTrue();
         }
 
+        [Fact]
+        public void GetCandidate_WithId_ReturnsCorrectly()
+        {
+            _mockService.Setup(m => m.CreateQuery("contact", _context))
+                .Returns(MockCandidates);
+
+            var result = _crm.GetCandidate(JaneDoeGuid);
+
+            result.Id.Should().Be(JaneDoeGuid);
+        }
+
+        [Fact]
+        public void GetCandidate_WithNonExistentId_ReturnsNull()
+        {
+            var result = _crm.GetCandidate(Guid.NewGuid());
+
+            result.Should().BeNull();
+        }
+
         [Theory]
         [InlineData("john@doe.com", "New John", "Doe", "New John")]
         [InlineData("JOHN@doe.com", "New John", "Doe", "New John")]
         [InlineData("jane@doe.com", "Jane", "Doe", "Jane")]
         [InlineData("bob@doe.com", "Bob", "Doe", null)]
-        public void GetCandidate_MatchesOnNewestCandidateWithEmail(
+        public void GetCandidate_WithExistingCandidateRequest_MatchesOnNewestCandidateWithEmail(
             string email,
             string firstName,
             string lastName,
@@ -293,6 +312,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             var candidate1 = new Entity("contact");
             candidate1.Id = JaneDoeGuid;
+            candidate1["contactid"] = new EntityReference("contactid", JaneDoeGuid);
             candidate1["emailaddress1"] = "jane@doe.com";
             candidate1["firstname"] = "Jane";
             candidate1["lastname"] = "Doe";
