@@ -8,8 +8,6 @@ namespace GetIntoTeachingApi.Models
     [Entity(LogicalName = "msevtmgt_eventregistration")]
     public class TeachingEventRegistration : BaseModel
     {
-        [EntityField(Name = "msevtmgt_contactid", Type = typeof(EntityReference))]
-        public Guid CandidateId { get; set; }
         [EntityField(Name = "msevtmgt_eventid", Type = typeof(EntityReference))]
         public Guid EventId { get; set; }
 
@@ -21,11 +19,6 @@ namespace GetIntoTeachingApi.Models
         public TeachingEventRegistration(Entity entity, ICrmService crm)
             : base(entity, crm)
         {
-        }
-
-        protected override bool ShouldMap(ICrmService crm)
-        {
-            return crm.CandidateYetToRegisterForTeachingEvent(CandidateId, EventId);
         }
     }
 }

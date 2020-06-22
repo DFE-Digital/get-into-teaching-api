@@ -50,8 +50,20 @@ namespace GetIntoTeachingApi.Jobs
         {
             var candidate = FindOrCreateCandidate(request.CandidateId);
 
-            UpdateCandidateDetails(candidate, request);
-            CreateTeachingEventRegistration((Guid)candidate.Id, teachingEventId);
+            var registration = new TeachingEventRegistration()
+            {
+                EventId = teachingEventId,
+            };
+
+            candidate.Email = request.Email;
+            candidate.FirstName = request.FirstName;
+            candidate.LastName = request.LastName;
+            candidate.Telephone = request.Telephone ?? candidate.Telephone;
+            candidate.AddressPostcode = request.AddressPostcode;
+            candidate.PrivacyPolicy = request.PrivacyPolicy;
+            candidate.RegisteredTeachingEvents = new List<TeachingEventRegistration> { registration };
+
+            _crm.Save(candidate);
         }
 
         private void NotifyAttendeeOfFailure(TeachingEventRegistrationRequest request)
@@ -61,29 +73,6 @@ namespace GetIntoTeachingApi.Jobs
                 request.Email,
                 NotifyService.TeachingEventRegistrationFailedEmailTemplateId,
                 new Dictionary<string, dynamic>());
-        }
-
-        private void CreateTeachingEventRegistration(Guid candidateId, Guid teachingEventId)
-        {
-            var registration = new TeachingEventRegistration()
-            {
-                CandidateId = candidateId,
-                EventId = teachingEventId,
-            };
-
-            _crm.Save(registration);
-        }
-
-        private void UpdateCandidateDetails(Candidate candidate, TeachingEventRegistrationRequest request)
-        {
-            candidate.Email = request.Email;
-            candidate.FirstName = request.FirstName;
-            candidate.LastName = request.LastName;
-            candidate.Telephone = request.Telephone ?? candidate.Telephone;
-            candidate.AddressPostcode = request.AddressPostcode;
-            candidate.PrivacyPolicy = request.PrivacyPolicy;
-
-            _crm.Save(candidate);
         }
 
         private Candidate FindOrCreateCandidate(Guid? candidateId)

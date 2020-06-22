@@ -154,15 +154,20 @@ namespace GetIntoTeachingApi.Models
             {
                 var attribute = EntityRelationshipAttribute(property);
                 var value = property.GetValue(this);
-                var shouldMap = ShouldMapRelationship(property.Name, value, crm);
 
-                if (attribute == null || value == null || !shouldMap)
+                if (attribute == null || value == null)
                 {
                     continue;
                 }
 
                 foreach (var relatedModel in EnumerableRelationshipModels(value))
                 {
+                    var shouldMap = ShouldMapRelationship(property.Name, relatedModel, crm);
+                    if (!shouldMap)
+                    {
+                        continue;
+                    }
+
                     var target = relatedModel.ToEntity(crm, context);
                     if (target?.EntityState == EntityState.Created)
                     {
