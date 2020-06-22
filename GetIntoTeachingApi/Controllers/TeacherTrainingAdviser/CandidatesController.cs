@@ -70,7 +70,7 @@ exchanged for your token matches the request payload here).",
                 return Unauthorized();
             }
 
-            var candidate = _crm.GetCandidate(request);
+            var candidate = _crm.MatchCandidate(request);
 
             if (candidate == null)
             {
