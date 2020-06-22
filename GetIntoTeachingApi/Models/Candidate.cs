@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
@@ -42,7 +43,11 @@ namespace GetIntoTeachingApi.Models
         public string AddressState { get; set; }
         [EntityField(Name = "address1_postalcode")]
         public string AddressPostcode { get; set; }
-
+        [JsonIgnore]
+        [EntityRelationship(
+            Name = "msevtmgt_contact_msevtmgt_eventregistration_Contact",
+            Type = typeof(TeachingEventRegistration))]
+        public List<TeachingEventRegistration> RegisteredTeachingEvents { get; set; }
         [EntityRelationship(
             Name = "dfe_contact_dfe_candidatequalification_ContactId",
             Type = typeof(CandidateQualification))]
@@ -72,12 +77,17 @@ namespace GetIntoTeachingApi.Models
 
         protected override bool ShouldMapRelationship(string propertyName, dynamic value, ICrmService crm)
         {
-            if (propertyName != "PrivacyPolicy" || Id == null || PrivacyPolicy == null)
+            if (propertyName == "PrivacyPolicy" && Id != null)
             {
-                return true;
+                return crm.CandidateYetToAcceptPrivacyPolicy((Guid)Id, value.AcceptedPolicyId);
             }
 
-            return crm.CandidateYetToAcceptPrivacyPolicy((Guid)Id, (Guid)PrivacyPolicy.AcceptedPolicyId);
+            if (false && propertyName == "RegisteredTeachingEvents" && Id != null)
+            {
+                return crm.CandidateYetToRegisterForTeachingEvent((Guid)Id, value.EventId);
+            }
+
+            return true;
         }
     }
 }

@@ -80,7 +80,7 @@ namespace GetIntoTeachingApi.Adapters
 
         public void SaveChanges(OrganizationServiceContext context)
         {
-            context.SaveChanges();
+            var temp = context.SaveChanges();
         }
 
         public void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context)

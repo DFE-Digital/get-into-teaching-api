@@ -50,6 +50,10 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("AddressPostcode").Should()
                 .BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_postalcode");
 
+
+            type.GetProperty("RegisteredTeachingEvents").Should().BeDecoratedWith<EntityRelationshipAttribute>(
+                a => a.Name == "msevtmgt_contact_msevtmgt_eventregistration_Contact" &&
+                     a.Type == typeof(TeachingEventRegistration));
             type.GetProperty("Qualifications").Should().BeDecoratedWith<EntityRelationshipAttribute>(
                 a => a.Name == "dfe_contact_dfe_candidatequalification_ContactId" &&
                      a.Type == typeof(CandidateQualification));
