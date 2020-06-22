@@ -30,57 +30,65 @@ namespace GetIntoTeachingApi.Jobs
             _contextAdapter = contextAdapter;
         }
 
-        public void Run(ExistingCandidateRequest attendee, Guid teachingEventId, PerformContext context)
+        public void Run(TeachingEventRegistrationRequest request, Guid teachingEventId, PerformContext context)
         {
             _logger.LogInformation($"TeachingEventRegistrationJob - Started ({AttemptInfo(context, _contextAdapter)})");
 
             if (IsLastAttempt(context, _contextAdapter))
             {
-                NotifyAttendeeOfFailure(attendee);
+                NotifyAttendeeOfFailure(request);
                 _logger.LogInformation("TeachingEventRegistrationJob - Deleted");
             }
             else
             {
-                RegisterAttendeeForEvent(attendee, teachingEventId);
+                RegisterAttendeeForEvent(request, teachingEventId);
                 _logger.LogInformation("TeachingEventRegistrationJob - Succeeded");
             }
         }
 
-        private void RegisterAttendeeForEvent(ExistingCandidateRequest attendee, Guid teachingEventId)
+        private void RegisterAttendeeForEvent(TeachingEventRegistrationRequest request, Guid teachingEventId)
         {
-            var candidate = _crm.GetCandidate(attendee) ?? CreateCandidate(attendee);
+            var candidate = FindOrCreateCandidate(request.CandidateId);
 
+            UpdateCandidateDetails(candidate, request);
+            CreateTeachingEventRegistration((Guid)candidate.Id, teachingEventId);
+        }
+
+        private void NotifyAttendeeOfFailure(TeachingEventRegistrationRequest request)
+        {
+            // We fire and forget the email, ensuring the job succeeds.
+            _notifyService.SendEmailAsync(
+                request.Email,
+                NotifyService.TeachingEventRegistrationFailedEmailTemplateId,
+                new Dictionary<string, dynamic>());
+        }
+
+        private void CreateTeachingEventRegistration(Guid candidateId, Guid teachingEventId)
+        {
             var registration = new TeachingEventRegistration()
             {
-                CandidateId = (Guid)candidate.Id,
+                CandidateId = candidateId,
                 EventId = teachingEventId,
             };
 
             _crm.Save(registration);
         }
 
-        private void NotifyAttendeeOfFailure(ExistingCandidateRequest attendee)
+        private void UpdateCandidateDetails(Candidate candidate, TeachingEventRegistrationRequest request)
         {
-            // We fire and forget the email, ensuring the job succeeds.
-            _notifyService.SendEmailAsync(
-                attendee.Email,
-                NotifyService.TeachingEventRegistrationFailedEmailTemplateId,
-                new Dictionary<string, dynamic>());
-        }
-
-        private Candidate CreateCandidate(ExistingCandidateRequest attendee)
-        {
-            var candidate = new Candidate()
-            {
-                Email = attendee.Email,
-                FirstName = attendee.FirstName,
-                LastName = attendee.LastName,
-                DateOfBirth = attendee.DateOfBirth,
-            };
+            candidate.Email = request.Email;
+            candidate.FirstName = request.FirstName;
+            candidate.LastName = request.LastName;
+            candidate.Telephone = request.Telephone ?? candidate.Telephone;
+            candidate.AddressPostcode = request.AddressPostcode;
+            candidate.PrivacyPolicy = request.PrivacyPolicy;
 
             _crm.Save(candidate);
+        }
 
-            return candidate;
+        private Candidate FindOrCreateCandidate(Guid? candidateId)
+        {
+            return candidateId != null ? _crm.GetCandidate((Guid)candidateId) : new Candidate();
         }
     }
 }
