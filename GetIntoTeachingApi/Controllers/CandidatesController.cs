@@ -46,7 +46,7 @@ that can then be used for verification.",
                 return BadRequest(this.ModelState);
             }
 
-            var candidate = _crm.GetCandidate(request);
+            var candidate = _crm.MatchCandidate(request);
             if (candidate == null)
             {
                 return NotFound();

@@ -195,7 +195,7 @@ namespace GetIntoTeachingApiTests.Services
         [InlineData("JOHN@doe.com", "New John", "Doe", "New John")]
         [InlineData("jane@doe.com", "Jane", "Doe", "Jane")]
         [InlineData("bob@doe.com", "Bob", "Doe", null)]
-        public void GetCandidate_WithExistingCandidateRequest_MatchesOnNewestCandidateWithEmail(
+        public void MatchCandidate_WithExistingCandidateRequest_MatchesOnNewestCandidateWithEmail(
             string email,
             string firstName,
             string lastName,
@@ -209,7 +209,7 @@ namespace GetIntoTeachingApiTests.Services
             _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
                 new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), _context));
 
-            var result = _crm.GetCandidate(request);
+            var result = _crm.MatchCandidate(request);
 
             result?.FirstName.Should().Be(expectedFirstName);
         }

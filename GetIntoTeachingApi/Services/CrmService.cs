@@ -58,7 +58,7 @@ namespace GetIntoTeachingApi.Services
                 .Take(MaximumNumberOfPrivacyPolicies);
         }
 
-        public Candidate GetCandidate(ExistingCandidateRequest request)
+        public Candidate MatchCandidate(ExistingCandidateRequest request)
         {
             var context = Context();
             var entity = _service.CreateQuery("contact", context)
