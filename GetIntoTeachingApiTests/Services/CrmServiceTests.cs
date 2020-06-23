@@ -216,6 +216,26 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void MatchCandidate_WithMasterChildRecords_ReturnsMasterRecord()
+        {
+            var request = new ExistingCandidateRequest
+            {
+                Email = "master@record.com", 
+                LastName = "Record", 
+                DateOfBirth = new DateTime(2000, 1, 1)
+            };
+            _mockService.Setup(mock => mock.CreateQuery("contact", _context)).Returns(MockCandidates());
+            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
+                new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), _context));
+            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
+                new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), _context));
+
+            var result = _crm.MatchCandidate(request);
+
+            result?.FirstName.Should().Be("Master");
+        }
+
+        [Fact]
         public void Save_MapsEntityAndSavesContext()
         {
             var entity = new Entity() { Id = Guid.NewGuid() };
@@ -318,30 +338,52 @@ namespace GetIntoTeachingApiTests.Services
             candidate1["emailaddress1"] = "jane@doe.com";
             candidate1["firstname"] = "Jane";
             candidate1["lastname"] = "Doe";
-            candidate1["createdon"] = DateTime.Now;
+            candidate1["modifiedon"] = DateTime.Now;
+            candidate1["merged"] = false;
 
             var candidate2 = new Entity("contact");
             candidate2["statecode"] = CrmService.CandidateStatus.Active;
             candidate2["emailaddress1"] = "john@doe.com";
             candidate2["firstname"] = "New John";
             candidate2["lastname"] = "Doe";
-            candidate2["createdon"] = DateTime.Now;
+            candidate2["modifiedon"] = DateTime.Now;
+            candidate2["merged"] = false;
 
             var candidate3 = new Entity("contact");
             candidate3["statecode"] = CrmService.CandidateStatus.Active;
             candidate3["emailaddress1"] = "john@doe.com";
             candidate3["firstname"] = "Old John";
             candidate3["lastname"] = "Doe";
-            candidate3["createdon"] = DateTime.Now.AddDays(-5);
+            candidate3["modifiedon"] = DateTime.Now.AddDays(-5);
+            candidate3["merged"] = false;
 
             var candidate4 = new Entity("contact");
             candidate4["statecode"] = CrmService.CandidateStatus.Inactive;
             candidate4["emailaddress1"] = "inactive@doe.com";
             candidate4["firstname"] = "Inactive";
             candidate4["lastname"] = "Doe";
-            candidate4["createdon"] = DateTime.Now;
+            candidate4["modifiedon"] = DateTime.Now;
+            candidate4["merged"] = false;
 
-            return new[] { candidate1, candidate2, candidate3, candidate4 }.AsQueryable();
+            var candidate5 = new Entity("contact");
+            candidate5["statecode"] = CrmService.CandidateStatus.Active;
+            candidate5["emailaddress1"] = "master@record.com";
+            candidate5["firstname"] = "Child";
+            candidate5["lastname"] = "Record";
+            candidate5["modifiedon"] = DateTime.Now;
+            candidate5["birthdate"] = new DateTime(2000, 1, 1);
+            candidate5["merged"] = true;
+
+            var candidate6 = new Entity("contact");
+            candidate6["statecode"] = CrmService.CandidateStatus.Active;
+            candidate6["emailaddress1"] = "master@record.com";
+            candidate6["firstname"] = "Master";
+            candidate6["lastname"] = "Record";
+            candidate6["modifiedon"] = DateTime.Now.AddDays(-5);
+            candidate6["birthdate"] = new DateTime(2000, 1, 1);
+            candidate6["merged"] = false;
+
+            return new[] { candidate1, candidate2, candidate3, candidate4, candidate5, candidate6 }.AsQueryable();
         }
 
         private static IQueryable<Entity> MockCallbackBookingQuotas()
