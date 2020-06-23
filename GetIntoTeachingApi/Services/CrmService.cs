@@ -71,7 +71,8 @@ namespace GetIntoTeachingApi.Services
                 .Where(e =>
                     e.GetAttributeValue<int>("statecode") == (int)CandidateStatus.Active &&
                     e.GetAttributeValue<string>("emailaddress1") == request.Email) // Will perform a case-insensitive comparison
-                .OrderByDescending(e => e.GetAttributeValue<DateTime>("createdon"))
+                .OrderBy(e => e.GetAttributeValue<bool>("merged"))
+                .ThenByDescending(e => e.GetAttributeValue<DateTime>("modifiedon"))
                 .Take(MaximumNumberOfCandidatesToMatch)
                 .ToList()
                 .FirstOrDefault(request.Match);
