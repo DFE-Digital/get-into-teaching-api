@@ -16,6 +16,12 @@ namespace GetIntoTeachingApi.Services
             Web = 222750001,
         }
 
+        public enum CandidateStatus
+        {
+            Active,
+            Inactive,
+        }
+
         private const int MaximumNumberOfCandidatesToMatch = 20;
         private const int MaximumNumberOfPrivacyPolicies = 3;
         private const int MaximumCallbackBookingQuotaDaysInAdvance = 14;
@@ -58,13 +64,15 @@ namespace GetIntoTeachingApi.Services
                 .Take(MaximumNumberOfPrivacyPolicies);
         }
 
-        public Candidate GetCandidate(ExistingCandidateRequest request)
+        public Candidate MatchCandidate(ExistingCandidateRequest request)
         {
             var context = Context();
             var entity = _service.CreateQuery("contact", context)
                 .Where(e =>
+                    e.GetAttributeValue<int>("statecode") == (int)CandidateStatus.Active &&
                     e.GetAttributeValue<string>("emailaddress1") == request.Email) // Will perform a case-insensitive comparison
-                .OrderByDescending(e => e.GetAttributeValue<DateTime>("createdon"))
+                .OrderBy(e => e.GetAttributeValue<bool>("merged"))
+                .ThenByDescending(e => e.GetAttributeValue<DateTime>("modifiedon"))
                 .Take(MaximumNumberOfCandidatesToMatch)
                 .ToList()
                 .FirstOrDefault(request.Match);

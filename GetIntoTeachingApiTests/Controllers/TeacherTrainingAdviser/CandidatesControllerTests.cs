@@ -52,7 +52,7 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         {
             var candidate = new Candidate { Id = Guid.NewGuid() };
             _mockTokenService.Setup(tokenService => tokenService.IsValid("000000", _request)).Returns(true);
-            _mockCrm.Setup(mock => mock.GetCandidate(_request)).Returns(candidate);
+            _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns(candidate);
 
             var response = _controller.Get("000000", _request);
 
@@ -65,7 +65,7 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         public void Get_MissingCandidate_RespondsWithNotFound()
         {
             _mockTokenService.Setup(tokenService => tokenService.IsValid("000000", _request)).Returns(true);
-            _mockCrm.Setup(mock => mock.GetCandidate(_request)).Returns<Candidate>(null);
+            _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns<Candidate>(null);
 
             var response = _controller.Get("000000", _request);
 
