@@ -195,6 +195,7 @@ namespace GetIntoTeachingApiTests.Services
         [InlineData("JOHN@doe.com", "New John", "Doe", "New John")]
         [InlineData("jane@doe.com", "Jane", "Doe", "Jane")]
         [InlineData("bob@doe.com", "Bob", "Doe", null)]
+        [InlineData("inactive@doe.com", "Inactive", "Doe", null)]
         public void MatchCandidate_WithExistingCandidateRequest_MatchesOnNewestCandidateWithEmail(
             string email,
             string firstName,
@@ -313,24 +314,34 @@ namespace GetIntoTeachingApiTests.Services
             var candidate1 = new Entity("contact");
             candidate1.Id = JaneDoeGuid;
             candidate1["contactid"] = new EntityReference("contactid", JaneDoeGuid);
+            candidate1["statecode"] = CrmService.CandidateStatus.Active;
             candidate1["emailaddress1"] = "jane@doe.com";
             candidate1["firstname"] = "Jane";
             candidate1["lastname"] = "Doe";
             candidate1["createdon"] = DateTime.Now;
 
             var candidate2 = new Entity("contact");
+            candidate2["statecode"] = CrmService.CandidateStatus.Active;
             candidate2["emailaddress1"] = "john@doe.com";
             candidate2["firstname"] = "New John";
             candidate2["lastname"] = "Doe";
             candidate2["createdon"] = DateTime.Now;
 
             var candidate3 = new Entity("contact");
+            candidate3["statecode"] = CrmService.CandidateStatus.Active;
             candidate3["emailaddress1"] = "john@doe.com";
             candidate3["firstname"] = "Old John";
             candidate3["lastname"] = "Doe";
             candidate3["createdon"] = DateTime.Now.AddDays(-5);
 
-            return new[] { candidate1, candidate2, candidate3 }.AsQueryable();
+            var candidate4 = new Entity("contact");
+            candidate4["statecode"] = CrmService.CandidateStatus.Inactive;
+            candidate4["emailaddress1"] = "inactive@doe.com";
+            candidate4["firstname"] = "Inactive";
+            candidate4["lastname"] = "Doe";
+            candidate4["createdon"] = DateTime.Now;
+
+            return new[] { candidate1, candidate2, candidate3, candidate4 }.AsQueryable();
         }
 
         private static IQueryable<Entity> MockCallbackBookingQuotas()
