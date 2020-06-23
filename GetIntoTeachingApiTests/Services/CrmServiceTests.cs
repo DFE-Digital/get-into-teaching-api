@@ -339,7 +339,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate1["firstname"] = "Jane";
             candidate1["lastname"] = "Doe";
             candidate1["modifiedon"] = DateTime.Now;
-            candidate1["merged"] = false;
+            candidate1["dfe_duplicatescorecalculated"] = 10.0;
 
             var candidate2 = new Entity("contact");
             candidate2["statecode"] = CrmService.CandidateStatus.Active;
@@ -347,7 +347,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate2["firstname"] = "New John";
             candidate2["lastname"] = "Doe";
             candidate2["modifiedon"] = DateTime.Now;
-            candidate2["merged"] = false;
+            candidate2["dfe_duplicatescorecalculated"] = 9.5;
 
             var candidate3 = new Entity("contact");
             candidate3["statecode"] = CrmService.CandidateStatus.Active;
@@ -355,7 +355,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate3["firstname"] = "Old John";
             candidate3["lastname"] = "Doe";
             candidate3["modifiedon"] = DateTime.Now.AddDays(-5);
-            candidate3["merged"] = false;
+            candidate3["dfe_duplicatescorecalculated"] = 8.3;
 
             var candidate4 = new Entity("contact");
             candidate4["statecode"] = CrmService.CandidateStatus.Inactive;
@@ -363,7 +363,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate4["firstname"] = "Inactive";
             candidate4["lastname"] = "Doe";
             candidate4["modifiedon"] = DateTime.Now;
-            candidate4["merged"] = false;
+            candidate4["dfe_duplicatescorecalculated"] = 7.1;
 
             var candidate5 = new Entity("contact");
             candidate5["statecode"] = CrmService.CandidateStatus.Active;
@@ -372,18 +372,36 @@ namespace GetIntoTeachingApiTests.Services
             candidate5["lastname"] = "Record";
             candidate5["modifiedon"] = DateTime.Now;
             candidate5["birthdate"] = new DateTime(2000, 1, 1);
-            candidate5["merged"] = true;
+            candidate5["dfe_duplicatescorecalculated"] = 2.4;
 
             var candidate6 = new Entity("contact");
             candidate6["statecode"] = CrmService.CandidateStatus.Active;
             candidate6["emailaddress1"] = "master@record.com";
-            candidate6["firstname"] = "Master";
+            candidate6["firstname"] = "Child1";
             candidate6["lastname"] = "Record";
-            candidate6["modifiedon"] = DateTime.Now.AddDays(-5);
+            candidate6["modifiedon"] = DateTime.Now;
             candidate6["birthdate"] = new DateTime(2000, 1, 1);
-            candidate6["merged"] = false;
+            candidate6["dfe_duplicatescorecalculated"] = null;
 
-            return new[] { candidate1, candidate2, candidate3, candidate4, candidate5, candidate6 }.AsQueryable();
+            var candidate7 = new Entity("contact");
+            candidate7["statecode"] = CrmService.CandidateStatus.Active;
+            candidate7["emailaddress1"] = "master@record.com";
+            candidate7["firstname"] = "Master";
+            candidate7["lastname"] = "Record";
+            candidate7["modifiedon"] = DateTime.Now.AddDays(-5);
+            candidate7["birthdate"] = new DateTime(2000, 1, 1);
+            candidate7["dfe_duplicatescorecalculated"] = 3.7;
+
+            return new[]
+            {
+                candidate1, 
+                candidate2,
+                candidate3, 
+                candidate4, 
+                candidate5, 
+                candidate6,
+                candidate7
+            }.AsQueryable();
         }
 
         private static IQueryable<Entity> MockCallbackBookingQuotas()
