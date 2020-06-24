@@ -24,6 +24,6 @@ jobs:
         run: |
           sudo dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
           dotnet build-server shutdown
-          dotnet sonarscanner begin /k:"DFE-Digital_get-into-teaching-api" /o:"dfe-digital" /n:"get-into-teaching-api" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="GetIntoTeachingApiTests\coverage.opencover.xml" /d:sonar.coverage.exclusions="**Tests*.cs" /d:sonar.verbose=true /d:sonar.log.level="DEBUG"
+          dotnet sonarscanner begin /k:"DFE-Digital_get-into-teaching-api" /o:"dfe-digital" /n:"get-into-teaching-api" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="GetIntoTeachingApiTests/coverage.opencover.xml" /d:sonar.coverage.exclusions="GetIntoTeachingApiTests/**/*" /d:sonar.verbose=true /d:sonar.log.level="DEBUG"
           sudo dotnet build
           dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
