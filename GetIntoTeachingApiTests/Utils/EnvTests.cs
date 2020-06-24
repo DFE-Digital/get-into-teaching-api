@@ -70,5 +70,115 @@ namespace GetIntoTeachingApiTests.Utils
 
             _env.IsStaging.Should().Be(expected);
         }
+
+        [Fact]
+        public void DatabaseInstanceName_ReturnsCorrectly()
+        {
+            var previous = Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME");
+            Environment.SetEnvironmentVariable("DATABASE_INSTANCE_NAME", "db-instance-name");
+
+            _env.DatabaseInstanceName.Should().Be("db-instance-name");
+
+            Environment.SetEnvironmentVariable("DATABASE_INSTANCE_NAME", previous);
+        }
+
+        [Fact]
+        public void HangfireInstanceName_ReturnsCorrectly()
+        {
+            var previous = Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME");
+            Environment.SetEnvironmentVariable("HANGFIRE_INSTANCE_NAME", "hangfire-instance-name");
+
+            _env.HangfireInstanceName.Should().Be("hangfire-instance-name");
+
+            Environment.SetEnvironmentVariable("HANGFIRE_INSTANCE_NAME", previous);
+        }
+
+        [Fact]
+        public void SentryUrl_ReturnsCorrectly()
+        {
+            var previous = Environment.GetEnvironmentVariable("SENTRY_URL");
+            Environment.SetEnvironmentVariable("SENTRY_URL", "sentry-url");
+
+            _env.SentryUrl.Should().Be("sentry-url");
+
+            Environment.SetEnvironmentVariable("SENTRY_URL", previous);
+        }
+
+        [Fact]
+        public void TotpSecretKey_ReturnsCorrectly()
+        {
+            var previous = Environment.GetEnvironmentVariable("TOTP_SECRET_KEY");
+            Environment.SetEnvironmentVariable("TOTP_SECRET_KEY", "totp-secret-key");
+
+            _env.TotpSecretKey.Should().Be("totp-secret-key");
+
+            Environment.SetEnvironmentVariable("TOTP_SECRET_KEY", previous);
+        }
+
+        [Fact]
+        public void VcapServices_ReturnsCorrectly()
+        {
+            var previous = Environment.GetEnvironmentVariable("VCAP_SERVICES");
+            Environment.SetEnvironmentVariable("VCAP_SERVICES", "vcap-services");
+
+            _env.VcapServices.Should().Be("vcap-services");
+
+            Environment.SetEnvironmentVariable("VCAP_SERVICES", previous);
+        }
+
+        [Fact]
+        public void CrmServiceUrl_ReturnsCorrectly()
+        {
+            var previous = Environment.GetEnvironmentVariable("CRM_SERVICE_URL");
+            Environment.SetEnvironmentVariable("CRM_SERVICE_URL", "crm-service-url");
+
+            _env.CrmServiceUrl.Should().Be("crm-service-url");
+
+            Environment.SetEnvironmentVariable("CRM_SERVICE_URL", previous);
+        }
+
+        [Fact]
+        public void CrmClientId_ReturnsCorrectly()
+        {
+            var previous = Environment.GetEnvironmentVariable("CRM_CLIENT_ID");
+            Environment.SetEnvironmentVariable("CRM_CLIENT_ID", "crm-client-id");
+
+            _env.CrmClientId.Should().Be("crm-client-id");
+
+            Environment.SetEnvironmentVariable("CRM_CLIENT_ID", previous);
+        }
+
+        [Fact]
+        public void CrmClientSecret_ReturnsCorrectly()
+        {
+            var previous = Environment.GetEnvironmentVariable("CRM_CLIENT_SECRET");
+            Environment.SetEnvironmentVariable("CRM_CLIENT_SECRET", "crm-client-secret");
+
+            _env.CrmClientSecret.Should().Be("crm-client-secret");
+
+            Environment.SetEnvironmentVariable("CRM_CLIENT_SECRET", previous);
+        }
+
+        [Fact]
+        public void NotifyApiKey_ReturnsCorrectly()
+        {
+            var previous = Environment.GetEnvironmentVariable("NOTIFY_API_KEY");
+            Environment.SetEnvironmentVariable("NOTIFY_API_KEY", "notify-api-key");
+
+            _env.NotifyApiKey.Should().Be("notify-api-key");
+
+            Environment.SetEnvironmentVariable("NOTIFY_API_KEY", previous);
+        }
+
+        [Fact]
+        public void SharedSecret_ReturnsCorrectly()
+        {
+            var previous = Environment.GetEnvironmentVariable("SHARED_SECRET");
+            Environment.SetEnvironmentVariable("SHARED_SECRET", "shared-secret");
+
+            _env.SharedSecret.Should().Be("shared-secret");
+
+            Environment.SetEnvironmentVariable("SHARED_SECRET", previous);
+        }
     }
 }
