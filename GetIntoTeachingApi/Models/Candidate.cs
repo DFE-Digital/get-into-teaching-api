@@ -77,7 +77,7 @@ namespace GetIntoTeachingApi.Models
                 return true;
             }
 
-            return crm.CandidateYetToAcceptPrivacyPolicy((Guid)Id, (Guid)PrivacyPolicy.AcceptedPolicyId);
+            return crm.CandidateYetToAcceptPrivacyPolicy((Guid)Id, PrivacyPolicy.AcceptedPolicyId);
         }
     }
 }
