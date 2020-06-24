@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using GetIntoTeachingApi.Models;
@@ -110,7 +109,7 @@ namespace GetIntoTeachingApi.Jobs
 
         private void QueueBatch(ICollection<dynamic> batch, bool force = false)
         {
-            if (!force && batch.Count() != BatchInterval)
+            if (!force && batch.Count != BatchInterval)
             {
                 return;
             }
@@ -133,6 +132,8 @@ namespace GetIntoTeachingApi.Jobs
             var net = new System.Net.WebClient();
 
             await net.DownloadFileTaskAsync(new Uri(ukPostcodeCsvUrl), zipPath);
+            net.Dispose();
+
             _logger.LogInformation($"LocationSyncJob - ZIP Downloaded");
 
             try

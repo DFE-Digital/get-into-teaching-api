@@ -21,7 +21,7 @@ namespace GetIntoTeachingApi.Models.Validators
 
         private IEnumerable<Guid?> PrivacyPolicyIds()
         {
-            return _store.GetPrivacyPolicies().Select(policy => (Guid?)policy.Id);
+            return _store.GetPrivacyPolicies().Select(policy => policy.Id);
         }
     }
 }
