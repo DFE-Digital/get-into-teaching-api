@@ -84,6 +84,9 @@ namespace GetIntoTeachingApiTests.Models
                 var requiredConstructor = subType.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null,
                     new Type[] { typeof(Entity), typeof(ICrmService) }, null);
                 requiredConstructor.Should().NotBeNull();
+                // Instantiate to include in coverage reports
+                var entity = new Entity();
+                Activator.CreateInstance(subType, entity, new Mock<ICrmService>().Object);
             }
         }
 
@@ -268,6 +271,28 @@ namespace GetIntoTeachingApiTests.Models
             mock.ToEntity(_crm, _context);
 
             _mockService.Verify(m => m.AddLink(mockEntity, It.IsAny<Relationship>(), It.IsAny<Entity>(), _context), Times.Never());
+        }
+
+        [Fact]
+        public void ToEntity_RelatedModelToEntityIsNull()
+        {
+            var relatedMock = new Mock<MockRelatedModel>();
+            var mock = new MockModel()
+            {
+                RelatedMock = relatedMock.Object,
+            };
+
+            var mockEntity = new Entity("mock");
+            var relatedMockEntity = new Entity("mock");
+
+            _mockService.Setup(m => m.NewEntity("mock", _context)).Returns(mockEntity);
+            _mockService.Setup(m => m.NewEntity("relatedMock", _context)).Returns(relatedMockEntity);
+            relatedMock.Setup(m => m.ToEntity(_crm, _context)).Returns<Entity>(null);
+
+            mock.ToEntity(_crm, _context);
+
+            _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mock"),
+                relatedMockEntity, _context), Times.Never);
         }
 
         [Fact]

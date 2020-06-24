@@ -9,6 +9,9 @@ jobs:
   sonarcloud:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11'
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
@@ -35,8 +38,9 @@ jobs:
                 GetIntoTeachingApiTests/**/*,\
                 GetIntoTeachingApi/Migrations/*.cs,\
                 GetIntoTeachingApi/Adapters/*.cs,\
-                GetIntoTeachingApi/Database/GetIntoTeachingDbContextFactory.cs\
-                GetIntoTeachingApi/Startup.cs\
+                GetIntoTeachingApi/Database/GetIntoTeachingDbContextFactory.cs,\
+                GetIntoTeachingApi/OperationFilters/AuthOperationFilter.cs,\
+                GetIntoTeachingApi/Startup.cs,\
                 GetIntoTeachingApi/Program.cs\
             " \
             /d:sonar.verbose=true \
