@@ -35,8 +35,9 @@ jobs:
                 GetIntoTeachingApiTests/**/*,\
                 GetIntoTeachingApi/Migrations/*.cs,\
                 GetIntoTeachingApi/Adapters/*.cs,\
-                GetIntoTeachingApi/Database/GetIntoTeachingDbContextFactory.cs\
-                GetIntoTeachingApi/Startup.cs\
+                GetIntoTeachingApi/Database/GetIntoTeachingDbContextFactory.cs,\
+                GetIntoTeachingApi/OperationFilters/AuthOperationFilter.cs,\
+                GetIntoTeachingApi/Startup.cs,\
                 GetIntoTeachingApi/Program.cs\
             " \
             /d:sonar.verbose=true \
