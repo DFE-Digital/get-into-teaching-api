@@ -25,8 +25,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          sudo dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-          dotnet build-server shutdown
           dotnet sonarscanner begin \
             /k:"DFE-Digital_get-into-teaching-api" \
             /o:"dfe-digital" \
@@ -34,6 +32,7 @@ jobs:
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.cs.opencover.reportsPaths="GetIntoTeachingApiTests/coverage.opencover.xml" \
+            /d:sonar.cs.vstest.reportsPaths="**/*.trx" \
             /d:sonar.coverage.exclusions="\
                 GetIntoTeachingApiTests/**/*,\
                 GetIntoTeachingApi/Migrations/*.cs,\
@@ -46,4 +45,5 @@ jobs:
             /d:sonar.verbose=true \
             /d:sonar.log.level="DEBUG"
           sudo dotnet build
+            sudo dotnet test --no-build --logger:trx /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
           dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
