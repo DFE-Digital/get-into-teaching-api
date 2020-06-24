@@ -19,6 +19,8 @@ jobs:
       - name: Install dependencies
         run:  sudo dotnet restore && sudo apt-get update && sudo apt-get install -y libsqlite3-mod-spatialite
       - name: SonarCloud
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           sudo dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
           dotnet build-server shutdown
