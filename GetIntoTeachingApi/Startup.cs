@@ -19,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.Xrm.Sdk;
+using Newtonsoft.Json.Serialization;
 using Prometheus;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -69,7 +70,8 @@ namespace GetIntoTeachingApi
             services.AddControllers().AddFluentValidation(c =>
             {
                 c.RegisterValidatorsFromAssemblyContaining<Startup>();
-            });
+            }).AddJsonOptions(options =>
+                options.JsonSerializerOptions.PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance);
 
             services.AddSwaggerGen(c =>
             {
