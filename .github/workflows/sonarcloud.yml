@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Install NotifyBintray
         run:  dotnet nuget add source --name NotifyBintray https://api.bintray.com/nuget/gov-uk-notify/nuget 
       - name: Install dotnet-sonarscanner
@@ -17,9 +19,9 @@ jobs:
       - name: Install dependencies
         run:  sudo dotnet restore && sudo apt-get update && sudo apt-get install -y libsqlite3-mod-spatialite
       - name: SonarCloud
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          dotnet sonarscanner begin /k:"${{ secrets.SONAR_TOKEN }}" /o:"dfe-digital" /n:"get-into-teaching-api" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.verbose=true 
-          sudo dotnet build .
-          dotnet sonarscanner end 
+          sudo dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+          dotnet build-server shutdown
+          dotnet sonarscanner begin /k:"DFE-Digital_get-into-teaching-api" /o:"dfe-digital" /n:"get-into-teaching-api" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="GetIntoTeachingApiTests\coverage.opencover.xml" /d:sonar.coverage.exclusions="**Tests*.cs" /d:sonar.verbose=true /d:sonar.log.level="DEBUG"
+          sudo dotnet build
+          dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
