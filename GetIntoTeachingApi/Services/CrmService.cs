@@ -74,7 +74,6 @@ namespace GetIntoTeachingApi.Services
                 .OrderByDescending(e => e.GetAttributeValue<double>("dfe_duplicatescorecalculated"))
                 .ThenByDescending(e => e.GetAttributeValue<DateTime>("modifiedon"))
                 .Take(MaximumNumberOfCandidatesToMatch)
-                .ToList()
                 .FirstOrDefault(request.Match);
 
             if (entity == null)

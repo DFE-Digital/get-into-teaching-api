@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using GetIntoTeachingApi.Models;
+﻿using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
