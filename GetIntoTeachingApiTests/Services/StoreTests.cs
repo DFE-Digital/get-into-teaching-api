@@ -517,7 +517,7 @@ namespace GetIntoTeachingApiTests.Services
             var policy2 = new PrivacyPolicy() { Id = Guid.NewGuid(), Text = "Policy 2", CreatedAt = DateTime.Now };
             var policy3 = new PrivacyPolicy() { Id = Guid.NewGuid(), Text = "Policy 3", CreatedAt = DateTime.Now.AddDays(-5) };
 
-            return new PrivacyPolicy[] { policy1, policy2, policy3 };
+            return new [] { policy1, policy2, policy3 };
         }
 
         private async Task<IEnumerable<PrivacyPolicy>> SeedMockPrivacyPoliciesAsync()

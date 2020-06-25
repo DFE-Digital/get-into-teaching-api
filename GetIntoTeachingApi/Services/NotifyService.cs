@@ -44,6 +44,7 @@ namespace GetIntoTeachingApi.Services
                 NewPinCodeEmailTemplateId => "NewPinCodeEmail",
                 CandidateRegistrationFailedEmailTemplateId => "CandidateRegistrationFailedEmail",
                 TeachingEventRegistrationFailedEmailTemplateId => "TeachingEventRegistrationFailedEmail",
+                MailingListAddMemberFailedEmailTemplateId => "MailingListAddMemberFailedEmail",
                 _ => "UnknownTemplate",
             };
         }
