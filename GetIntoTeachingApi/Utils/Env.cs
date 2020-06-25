@@ -7,6 +7,7 @@ namespace GetIntoTeachingApi.Utils
         public bool IsDevelopment => EnvironmentName == "Development";
         public bool IsProduction => EnvironmentName == "Production";
         public bool IsStaging => EnvironmentName == "Staging";
+        public bool IsTest => EnvironmentName == null;
         public bool ExportHangireToPrometheus => Environment.GetEnvironmentVariable("CF_INSTANCE_INDEX") == "0";
         public string DatabaseInstanceName => Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME");
         public string HangfireInstanceName => Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME");

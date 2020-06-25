@@ -53,7 +53,7 @@ namespace GetIntoTeachingApi
             services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
             services.AddSingleton<IEnv>(env);
 
-            if (env.IsDevelopment)
+            if (env.IsDevelopment || env.IsTest)
             {
                 var keepAliveConnection = new SqliteConnection("DataSource=:memory:");
                 services.AddDbContext<GetIntoTeachingDbContext>(builder => DbConfiguration.ConfigSqLite(builder, keepAliveConnection));
@@ -124,7 +124,7 @@ The GIT API aims to provide:
                     .UseRecommendedSerializerSettings()
                     .UseFilter(automaticRetry);
 
-                if (env.IsDevelopment)
+                if (env.IsDevelopment || env.IsTest)
                 {
                     config.UseMemoryStorage().WithJobExpirationTimeout(JobConfiguration.ExpirationTimeout);
                 }
