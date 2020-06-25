@@ -13,6 +13,10 @@ namespace GetIntoTeachingApi.Models
         public IDictionary<string, IDictionary<string, string>> Relationships { get; set; } =
             new Dictionary<string, IDictionary<string, string>>();
 
+        public MappingInfo()
+        {
+        }
+
         public MappingInfo(Type type)
         {
             _type = type;
