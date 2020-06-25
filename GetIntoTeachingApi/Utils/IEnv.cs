@@ -5,6 +5,7 @@
         bool IsDevelopment { get; }
         bool IsStaging { get; }
         bool IsProduction { get; }
+        bool IsTest { get; }
         bool ExportHangireToPrometheus { get; }
         string DatabaseInstanceName { get; }
         string HangfireInstanceName { get; }

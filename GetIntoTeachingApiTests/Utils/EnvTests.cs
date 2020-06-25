@@ -42,6 +42,7 @@ namespace GetIntoTeachingApiTests.Utils
         [InlineData("Development", true)]
         [InlineData("Staging", false)]
         [InlineData("Production", false)]
+        [InlineData(null, false)]
         public void IsDevelopment_TrueOnlyForDevelopment(string environment, bool expected)
         {
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", environment);
@@ -53,6 +54,7 @@ namespace GetIntoTeachingApiTests.Utils
         [InlineData("Development", false)]
         [InlineData("Staging", false)]
         [InlineData("Production", true)]
+        [InlineData(null, false)]
         public void IsProduction_TrueOnlyForProduction(string environment, bool expected)
         {
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", environment);
@@ -64,11 +66,24 @@ namespace GetIntoTeachingApiTests.Utils
         [InlineData("Development", false)]
         [InlineData("Staging", true)]
         [InlineData("Production", false)]
+        [InlineData(null, false)]
         public void IsStaging_TrueOnlyForStaging(string environment, bool expected)
         {
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", environment);
 
             _env.IsStaging.Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData(null, true)]
+        [InlineData("Development", false)]
+        [InlineData("Staging", false)]
+        [InlineData("Production", false)]
+        public void IsTest_TrueOnlyForNull(string environment, bool expected)
+        {
+            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", environment);
+
+            _env.IsTest.Should().Be(expected);
         }
 
         [Fact]
