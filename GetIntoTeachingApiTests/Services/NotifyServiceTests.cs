@@ -27,21 +27,26 @@ namespace GetIntoTeachingApiTests.Services
             _personalisation = new Dictionary<string, dynamic> { { "pin_code", "123456" } };
         }
 
-        [Fact]
-        public void SendEmail_SendsAnEmail()
+        [Theory]
+        [InlineData(NotifyService.MailingListAddMemberFailedEmailTemplateId, "MailingListAddMemberFailedEmail")]
+        [InlineData(NotifyService.NewPinCodeEmailTemplateId, "NewPinCodeEmail")]
+        [InlineData(NotifyService.CandidateRegistrationFailedEmailTemplateId, "CandidateRegistrationFailedEmail")]
+        [InlineData(NotifyService.TeachingEventRegistrationFailedEmailTemplateId, "TeachingEventRegistrationFailedEmail")]
+        [InlineData("UnknownTemplateId", "UnknownTemplate")]
+        public void SendEmail_SendsAnEmail(string templateId, string templateDescription)
         {
-            _service.SendEmailAsync("email@address.com", NotifyService.NewPinCodeEmailTemplateId, _personalisation);
+            _service.SendEmailAsync("email@address.com", templateId, _personalisation);
 
             _mockNotificationClient.Verify(
                 mock => mock.SendEmailAsync(
                     "api_key",
                     "email@address.com",
-                    NotifyService.NewPinCodeEmailTemplateId,
+                    templateId,
                     _personalisation
                 )
             );
 
-            _mockLogger.VerifyInformationWasCalled("NotifyService - Sending Email (NewPinCodeEmail)");
+            _mockLogger.VerifyInformationWasCalled($"NotifyService - Sending Email ({templateDescription})");
         }
 
         [Fact]

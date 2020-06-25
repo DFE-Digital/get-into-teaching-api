@@ -48,7 +48,27 @@ namespace GetIntoTeachingApiTests.Jobs
             var candidateId = Guid.NewGuid();
             var candidate = new Candidate() { Id = candidateId };
             _request.CandidateId = candidateId;
-            _mockCrm.Setup(m => m.Save(It.Is<Candidate>(c => VerifyUpdatedCandidate(c))));
+            _mockCrm.Setup(m => m.Save(It.Is<Candidate>(c => VerifyUpdatedCandidate(c, _request.Telephone))));
+            _mockCrm.Setup(m => m.GetCandidate(candidateId)).Returns(candidate);
+            _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
+
+            _job.Run(_request, _teachingEventId, null);
+
+            _mockCrm.Verify(mock => mock.Save(It.Is<TeachingEventRegistration>(r =>
+                r.EventId == _teachingEventId &&
+                r.CandidateId == candidate.Id)), Times.Once);
+            _mockLogger.VerifyInformationWasCalled("TeachingEventRegistrationJob - Started (1/24)");
+            _mockLogger.VerifyInformationWasCalled("TeachingEventRegistrationJob - Succeeded");
+        }
+
+        [Fact]
+        public void Run_OnSuccessWithExistingCandidateAndNewTelephoneIsNull_DoesNotOverwriteTelephone()
+        {
+            var candidateId = Guid.NewGuid();
+            var candidate = new Candidate() { Id = candidateId, Telephone = "1234" };
+            _request.CandidateId = candidateId;
+            _request.Telephone = null;
+            _mockCrm.Setup(m => m.Save(It.Is<Candidate>(c => VerifyUpdatedCandidate(c, c.Telephone))));
             _mockCrm.Setup(m => m.GetCandidate(candidateId)).Returns(candidate);
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
 
@@ -65,7 +85,8 @@ namespace GetIntoTeachingApiTests.Jobs
         public void Run_OnSuccessWithNewCandidate_SavesRegistration()
         {
             var candidateId = Guid.NewGuid();
-            _mockCrm.Setup(m => m.Save(It.Is<Candidate>(c => VerifyUpdatedCandidate(c)))).Callback<BaseModel>(c => c.Id = candidateId);
+            _mockCrm.Setup(m => m.Save(It.Is<Candidate>(c => VerifyUpdatedCandidate(c, _request.Telephone))))
+                .Callback<BaseModel>(c => c.Id = candidateId);
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
 
             _job.Run(_request, _teachingEventId, null);
@@ -92,12 +113,12 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockLogger.VerifyInformationWasCalled("TeachingEventRegistrationJob - Deleted");
         }
 
-        private bool VerifyUpdatedCandidate(Candidate candidate)
+        private bool VerifyUpdatedCandidate(Candidate candidate, string expectedTelephone)
         {
             return candidate.FirstName == _request.FirstName && 
                    candidate.LastName == _request.LastName && 
                    candidate.Email == _request.Email && 
-                   candidate.Telephone == _request.Telephone && 
+                   candidate.Telephone == expectedTelephone && 
                    candidate.AddressPostcode == _request.AddressPostcode &&
                    candidate.PrivacyPolicy == _request.PrivacyPolicy;
         }
