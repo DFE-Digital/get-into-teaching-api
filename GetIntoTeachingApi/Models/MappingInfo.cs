@@ -8,9 +8,9 @@ namespace GetIntoTeachingApi.Models
         private readonly Type _type;
         public string Class { get; set; }
         public string LogicalName { get; set; }
-        public IDictionary<string, IDictionary<string, string>> Fields { get; set; } =
+        public IDictionary<string, IDictionary<string, string>> Fields { get; } =
             new Dictionary<string, IDictionary<string, string>>();
-        public IDictionary<string, IDictionary<string, string>> Relationships { get; set; } =
+        public IDictionary<string, IDictionary<string, string>> Relationships { get; } =
             new Dictionary<string, IDictionary<string, string>>();
 
         public MappingInfo(Type type)

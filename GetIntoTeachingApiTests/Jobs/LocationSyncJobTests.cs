@@ -22,22 +22,23 @@ namespace GetIntoTeachingApiTests.Jobs
         private readonly LocationSyncJob _job;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly Mock<ILogger<LocationSyncJob>> _mockLogger;
+        private readonly Mock<IEnv> _mockEnv;
         private readonly IMetricService _metrics;
 
         public LocationSyncJobTests()
         {
-            var mockEnv = new Mock<IEnv>();
-            mockEnv.Setup(m => m.IsDevelopment).Returns(false);
+            _mockEnv = new Mock<IEnv>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
             _mockLogger = new Mock<ILogger<LocationSyncJob>>();
             _metrics = new MetricService();
-            _job = new LocationSyncJob(mockEnv.Object, _mockJobClient.Object,
+            _job = new LocationSyncJob(_mockEnv.Object, _mockJobClient.Object,
                 _mockLogger.Object, _metrics);
         }
 
         [Fact]
         public async void RunAsync_EnqueuesLocationBatchJob()
         {
+            _mockEnv.Setup(m => m.IsDevelopment).Returns(false);
             var server = WireMockServer.Start();
             var ukPostcodeCsvUrl = $"http://localhost:{server.Ports[0]}/test";
             server
@@ -71,7 +72,26 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockLogger.VerifyInformationWasCalled("LocationSyncJob - CSV Deleted");
             _mockLogger.VerifyInformationWasCalled("LocationSyncJob - Succeeded");
 
-            _metrics.LocationSyncDuration.Count.Should().Be(1);
+            _metrics.LocationSyncDuration.Count.Should().BeGreaterOrEqualTo(1);
+        }
+
+        [Fact]
+        public async void RunAsync_InDevelopment_UsesLocalFixture()
+        {
+            _mockEnv.Setup(m => m.IsDevelopment).Returns(true);
+
+            await _job.RunAsync("http://will-be-ignored.com/test.csv");
+
+            var expectedLocationBatch = new List<dynamic>
+            {
+                new { Postcode = "ky119yu", Latitude = 56.02748, Longitude = -3.35870 },
+            };
+
+            _mockJobClient.Verify(x => x.Create(
+                It.Is<Job>(job => job.Type == typeof(LocationBatchJob) &&
+                                  job.Method.Name == "RunAsync" &&
+                                  (string)job.Args[0] == JsonConvert.SerializeObject(expectedLocationBatch)),
+                It.IsAny<EnqueuedState>()));
         }
     }
 }
