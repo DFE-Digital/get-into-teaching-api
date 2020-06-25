@@ -1,8 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using FluentAssertions;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Utils;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
 

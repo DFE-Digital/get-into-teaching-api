@@ -55,6 +55,18 @@ namespace GetIntoTeachingApiTests.Services
             ExpectedMetricStrings(expectedStatistics, expectedRetrySet)
                 .ForEach(ms => prometheusContent.Should().Contain(ms));
         }
+
+        [Fact]
+        public void ExportHangfireStatistics_OnException_ThrowsScrapeFailedException()
+        {
+            _mockMonitoringApi.Setup(x => x.GetStatistics()).Throws(new Exception());
+
+            Action action = () => _exporter.ExportHangfireStatistics();;
+
+            action.Should().Throw<ScrapeFailedException>()
+                .And.Message.Should().Be("HangfirePrometheusExporter - Scrape failed, inner exception:");
+        }
+
         private static List<string> ExpectedMetricStrings(StatisticsDto statistics, ICollection<string> retrySet)
         {
             return new List<string>
