@@ -2,8 +2,8 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /source
 ENV ASPNETCORE_URLS=http://+:8080
-ARG GIT_COMMIT_SHA
-ENV GIT_COMMIT_SHA ${GIT_COMMIT_SHA}
+ARG GITHUB_SHA
+ENV GIT_COMMIT_SHA ${GITHUB_SHA}
 
 # copy csproj and restore as distinct layers
 COPY *.sln .
