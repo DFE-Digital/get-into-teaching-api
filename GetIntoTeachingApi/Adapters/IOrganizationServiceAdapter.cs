@@ -10,6 +10,7 @@ namespace GetIntoTeachingApi.Adapters
 {
     public interface IOrganizationServiceAdapter
     {
+        string CheckStatus();
         IQueryable<Entity> CreateQuery(string entityName, OrganizationServiceContext context);
         IEnumerable<Entity> RetrieveMultiple(QueryBase query);
         void LoadProperty(Entity entity, Relationship relationship, OrganizationServiceContext context);

@@ -5,6 +5,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
+using FluentAssertions;
+using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Utils;
 using Xunit;
 
@@ -25,6 +27,22 @@ namespace GetIntoTeachingApiTests.Services
             _mockLogger = new Mock<ILogger<NotifyService>>();
             _service = new NotifyService(_mockLogger.Object, _mockNotificationClient.Object, mockEnv.Object);
             _personalisation = new Dictionary<string, dynamic> { { "pin_code", "123456" } };
+        }
+
+        [Fact]
+        public async void CheckStatusAsync_WhenHealthy_ReturnsOk()
+        {
+            _mockNotificationClient.Setup(mock => mock.CheckStatusAsync("api_key")).ReturnsAsync(HealthCheckResponse.StatusOk);
+
+            (await _service.CheckStatusAsync()).Should().Be(HealthCheckResponse.StatusOk);
+        }
+
+        [Fact]
+        public async void CheckStatusAsync_WhenUnhealthy_ReturnsError()
+        {
+            _mockNotificationClient.Setup(mock => mock.CheckStatusAsync("api_key")).ReturnsAsync("some error");
+
+            (await _service.CheckStatusAsync()).Should().Be("some error");
         }
 
         [Theory]
@@ -50,7 +68,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void SendEmail_WhenSendingFails_LogsException()
+        public void SendEmailAsync_WhenSendingFails_LogsException()
         {
             _mockNotificationClient.Setup(
                 mock => mock.SendEmailAsync(
