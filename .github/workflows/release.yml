@@ -37,9 +37,9 @@ jobs:
              cd terraform/paas && pwd
              terraform init -backend-config=test.bk.vars
          env:
-             TF_VAR_user:              "${{ secrets.GOVUKPAAS_USERNAME  }}"
-             TF_VAR_password:          "${{ secrets.GOVUKPAAS_PASSWORD  }}"
-             ARM_ACCESS_KEY:           "${{ secrets.TF_TEST_STATE_KEY   }}"
+             TF_VAR_user:              "${{ secrets.GOVUKPAAS_USERNAME   }}"
+             TF_VAR_password:          "${{ secrets.GOVUKPAAS_PASSWORD   }}"
+             ARM_ACCESS_KEY:           "${{ secrets.TEST_ARM_ACCESS_KEY  }}"
    
        - name: Terraform Plan
          run: |
