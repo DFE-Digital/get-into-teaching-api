@@ -96,7 +96,7 @@ jobs:
          env:
                TF_VAR_user:              "${{ secrets.GOVUKPAAS_USERNAME  }}"
                TF_VAR_password:          "${{ secrets.GOVUKPAAS_PASSWORD  }}"
-               ARM_ACCESS_KEY:           "${{ secrets.TF_DEV_STATE_KEY    }}"
+               ARM_ACCESS_KEY:           "${{ secrets.DEV_ARM_ACCESS_KEY    }}"
    
        - name: Terraform Plan
          run: |
