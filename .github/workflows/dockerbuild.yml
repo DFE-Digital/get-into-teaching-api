@@ -1,21 +1,14 @@
-name: Build and Deploy
+name: Build and Deploy 
 on:
   repository_dispatch:
+  pull_request:
+    types: [assigned, opened, synchronize, reopened]
   push:
     branches:
       - master
+
 env:
   DOCKERHUB_REPOSITORY:     dfedigital/get-into-teaching-api
-  TF_VAR_user:              "${{ secrets.GOVUKPAAS_USERNAME  }}"
-  TF_VAR_password:          "${{ secrets.GOVUKPAAS_PASSWORD  }}"
-  TF_VAR_CRM_SERVICE_URL:   "${{ secrets.CRM_SERVICE_URL     }}"
-  TF_VAR_CRM_CLIENT_ID:     "${{ secrets.CRM_CLIENT_ID       }}"
-  TF_VAR_CRM_CLIENT_SECRET: "${{ secrets.CRM_CLIENT_SECRET   }}"
-  TF_VAR_CRM_TENANT_ID:     "${{ secrets.CRM_TENANT_ID       }}"
-  TF_VAR_SHARED_SECRET:     "${{ secrets.SHARED_SECRET       }}"
-  TF_VAR_NOTIFY_API_KEY:    "${{ secrets.NOTIFY_API_KEY      }}"
-  TF_VAR_TOTP_SECRET_KEY:   "${{ secrets.TOTP_SECRET_KEY     }}"
-  ARM_ACCESS_KEY:           "${{ secrets.TF_STATE_KEY        }}"
   CF_PROVIDER_DIR: $HOME/.terraform.d/plugins/linux_amd64/terraform-provider-cloudfoundry
   
 jobs:
@@ -25,11 +18,14 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
+
       - name: Set Vars
         id: vars
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
       - name: Build and push to DockerHub
         uses: docker/build-push-action@v1
+        if: github.ref == 'refs/heads/master'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PERSONAL_ACCESS_TOKEN }}
@@ -41,6 +37,30 @@ jobs:
           push: true
           build_args: GIT_COMMIT_SHA=${{ steps.vars.outputs.sha_short }}
 
+      - name: Build only
+        uses: docker/build-push-action@v1
+        if: github.ref != 'refs/heads/master'
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PERSONAL_ACCESS_TOKEN }}
+          repository: ${{ env.DOCKERHUB_REPOSITORY }}
+          always_pull: true
+          add_git_labels: true
+          tag_with_ref: true
+          tag_with_sha: true
+          push: false
+          build_args: GIT_COMMIT_SHA=${{ steps.vars.outputs.sha_short }}
+
+      - name:  Send Message to Sentry.io
+        if: always()
+        uses: sfawcett123/sentry-event@v1
+        with:
+             MESSAGE: "Build Application - get-into-teaching-api"
+             STATE:  ${{job.status}}
+             ENVIRON: "Test"
+        env:
+            SENTRY_DSN: ${{secrets.DEV_OPS_SENTRY_DSN}}
+
   deploy_qa:
     name: 'Deploy to Quality Assurance'
     runs-on: ubuntu-latest
@@ -51,6 +71,8 @@ jobs:
     defaults:
       run:
         shell: bash
+
+    if: github.ref == 'refs/heads/master'
 
     steps:
 
@@ -70,17 +92,38 @@ jobs:
        - name: Terraform Init
          run: |
              cd terraform/paas && pwd
-             terraform init
+             terraform init -backend-config=dev.bk.vars
+         env:
+               TF_VAR_user:              "${{ secrets.GOVUKPAAS_USERNAME  }}"
+               TF_VAR_password:          "${{ secrets.GOVUKPAAS_PASSWORD  }}"
+               ARM_ACCESS_KEY:           "${{ secrets.TF_STATE_KEY        }}"
    
        - name: Terraform Plan
          run: |
              cd terraform/paas && pwd
-             terraform plan -var-file=test.env.tfvars -out plan
+             terraform plan -var-file=dev.env.tfvars -out plan
          env:
              TF_VAR_paas_api_docker_image: ${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
+             TF_VAR_CRM_SERVICE_URL:   "${{ secrets.CRM_SERVICE_URL     }}"
+             TF_VAR_CRM_CLIENT_ID:     "${{ secrets.CRM_CLIENT_ID       }}"
+             TF_VAR_CRM_CLIENT_SECRET: "${{ secrets.CRM_CLIENT_SECRET   }}"
+             TF_VAR_CRM_TENANT_ID:     "${{ secrets.CRM_TENANT_ID       }}"
+             TF_VAR_SHARED_SECRET:     "${{ secrets.SHARED_SECRET       }}"
+             TF_VAR_NOTIFY_API_KEY:    "${{ secrets.NOTIFY_API_KEY      }}"
+             TF_VAR_TOTP_SECRET_KEY:   "${{ secrets.TOTP_SECRET_KEY     }}"
    
        - name: Terraform Apply
          run: |
              cd terraform/paas && pwd
              terraform apply -auto-approve plan
    
+       - name:  Send Message to Sentry.io
+         if: always()
+         uses: sfawcett123/sentry-event@v1
+         with:
+             MESSAGE: "Release Application - get-into-teaching-api"
+             STATE:  ${{job.status}}
+             ENVIRON: "Development Test"
+         env:
+            SENTRY_DSN: ${{secrets.DEV_OPS_SENTRY_DSN}}
+
