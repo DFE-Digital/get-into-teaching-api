@@ -1,4 +1,4 @@
-name: Pull Request 
+name: Run Sonar scanner 
 on:
   pull_request:
     types: [assigned, opened, synchronize, reopened]

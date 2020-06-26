@@ -1,5 +1,5 @@
 ---  
-name: Release to test
+name: Release to Test
 on: 
    release:
      types:  [edited, created]
