@@ -2,8 +2,6 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /source
 ENV ASPNETCORE_URLS=http://+:8080
-ARG GITHUB_SHA
-ENV GIT_COMMIT_SHA ${GITHUB_SHA}
 
 # copy csproj and restore as distinct layers
 COPY *.sln .
@@ -24,3 +22,4 @@ WORKDIR /app
 COPY --from=build /app ./
 ENTRYPOINT ["dotnet", "GetIntoTeachingApi.dll"]
 ENV ASPNETCORE_URLS=http://+:8080
+ENV GIT_COMMIT_SHA ${GITHUB_SHA}
