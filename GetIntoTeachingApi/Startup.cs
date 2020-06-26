@@ -50,6 +50,7 @@ namespace GetIntoTeachingApi
             services.AddSingleton<INotificationClientAdapter, NotificationClientAdapter>();
             services.AddSingleton<ICandidateAccessTokenService, CandidateAccessTokenService>();
             services.AddSingleton<INotifyService, NotifyService>();
+            services.AddSingleton<IHangfireService, HangfireService>();
             services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
             services.AddSingleton<IEnv>(env);
 
@@ -186,18 +187,22 @@ The GIT API aims to provide:
                 (x) => x.RunAsync("https://www.freemaptools.com/download/full-postcodes/ukpostcodes.zip"),
                 Cron.Weekly());
 
-            // Configure and seed the database.
+            // Configure the database.
             var dbConfiguration = serviceScope.ServiceProvider.GetService<DbConfiguration>();
             dbConfiguration.Configure();
 
-            // Sync with the CRM.
-            RecurringJob.Trigger("crm-sync");
-
-            // Initial locations sync.
-            var dbContext = serviceScope.ServiceProvider.GetService<GetIntoTeachingDbContext>();
-            if (!dbContext.Locations.Any())
+            // Don't seed test environment.
+            if (!env.IsTest)
             {
-                RecurringJob.Trigger("location-sync");
+                // Sync with the CRM.
+                RecurringJob.Trigger("crm-sync");
+
+                // Initial locations sync.
+                var dbContext = serviceScope.ServiceProvider.GetService<GetIntoTeachingDbContext>();
+                if (!dbContext.Locations.Any())
+                {
+                    RecurringJob.Trigger("location-sync");
+                }
             }
 
             app.UseEndpoints(endpoints =>

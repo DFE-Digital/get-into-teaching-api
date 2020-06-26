@@ -7,6 +7,7 @@
         bool IsProduction { get; }
         bool IsTest { get; }
         bool ExportHangireToPrometheus { get; }
+        string GitCommitSha { get; }
         string DatabaseInstanceName { get; }
         string HangfireInstanceName { get; }
         string SentryUrl { get; }

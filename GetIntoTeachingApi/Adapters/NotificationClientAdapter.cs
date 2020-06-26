@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using GetIntoTeachingApi.Models;
 using Notify.Client;
 
 namespace GetIntoTeachingApi.Adapters
@@ -11,6 +13,21 @@ namespace GetIntoTeachingApi.Adapters
         public NotificationClientAdapter()
         {
             _clients = new Dictionary<string, NotificationClient>();
+        }
+
+        public async Task<string> CheckStatusAsync(string apiKey)
+        {
+            try
+            {
+                var client = Client(apiKey);
+                await client.GetAllTemplatesAsync();
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+
+            return HealthCheckResponse.StatusOk;
         }
 
         public Task SendEmailAsync(string apiKey, string email, string templateId, Dictionary<string, dynamic> personalisation)

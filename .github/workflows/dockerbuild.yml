@@ -36,6 +36,7 @@ jobs:
           tag_with_ref: true
           tag_with_sha: true
           push: true
+          build_args: GIT_COMMIT_SHA=:$(git rev-parse HEAD)
 
   deploy_qa:
     name: 'Deploy to Quality Assurance'

@@ -32,6 +32,11 @@ namespace GetIntoTeachingApi.Services
             _service = service;
         }
 
+        public string CheckStatus()
+        {
+            return _service.CheckStatus();
+        }
+
         public IEnumerable<TypeEntity> GetLookupItems(string entityName)
         {
             return _service.CreateQuery(entityName, Context()).Select((entity) => new TypeEntity(entity, entityName));

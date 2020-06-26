@@ -131,6 +131,17 @@ namespace GetIntoTeachingApiTests.Utils
         }
 
         [Fact]
+        public void GitCommitSha_ReturnsCorrectly()
+        {
+            var previous = Environment.GetEnvironmentVariable("GIT_COMMIT_SHA");
+            Environment.SetEnvironmentVariable("GIT_COMMIT_SHA", "abc123");
+
+            _env.GitCommitSha.Should().Be("abc123");
+
+            Environment.SetEnvironmentVariable("GIT_COMMIT_SHA", previous);
+        }
+
+        [Fact]
         public void VcapServices_ReturnsCorrectly()
         {
             var previous = Environment.GetEnvironmentVariable("VCAP_SERVICES");
