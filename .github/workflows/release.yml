@@ -1,0 +1,71 @@
+---  
+name: Release to test
+on: 
+   release:
+     types:  [edited, created]
+
+env:
+  DOCKERHUB_REPOSITORY:     dfedigital/get-into-teaching-api
+  CF_PROVIDER_DIR: $HOME/.terraform.d/plugins/linux_amd64/terraform-provider-cloudfoundry
+  
+jobs:
+  deploy_qa:
+    name: 'Deploy to Quality Assurance'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+
+       - name: Checkout
+         uses: actions/checkout@v2
+   
+       - name: Get Short SHA
+         id: sha
+         run: echo ::set-output name=short::$(git rev-parse --short $GITHUB_SHA)
+   
+       - name: Install Terraform CloudFoundry Provider
+         run: |
+             mkdir -p $HOME/.terraform.d/plugins/linux_amd64
+             wget -O ${{ env.CF_PROVIDER_DIR }} https://github.com/cloudfoundry-community/terraform-provider-cf/releases/latest/download/terraform-provider-cloudfoundry_linux_amd64
+             chmod +x ${{ env.CF_PROVIDER_DIR }}
+   
+       - name: Terraform Init
+         run: |
+             cd terraform/paas && pwd
+             terraform init -backend-config=test.bk.vars
+         env:
+             TF_VAR_user:              "${{ secrets.GOVUKPAAS_USERNAME  }}"
+             TF_VAR_password:          "${{ secrets.GOVUKPAAS_PASSWORD  }}"
+             ARM_ACCESS_KEY:           "${{ secrets.TF_STATE_KEY        }}"
+   
+       - name: Terraform Plan
+         run: |
+             cd terraform/paas && pwd
+             terraform plan -var-file=test.env.tfvars -out plan
+         env:
+             TF_VAR_paas_api_docker_image: ${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
+             TF_VAR_CRM_SERVICE_URL:   "${{ secrets.CRM_SERVICE_URL     }}"
+             TF_VAR_CRM_CLIENT_ID:     "${{ secrets.CRM_CLIENT_ID       }}"
+             TF_VAR_CRM_CLIENT_SECRET: "${{ secrets.CRM_CLIENT_SECRET   }}"
+             TF_VAR_CRM_TENANT_ID:     "${{ secrets.CRM_TENANT_ID       }}"
+             TF_VAR_SHARED_SECRET:     "${{ secrets.SHARED_SECRET       }}"
+             TF_VAR_NOTIFY_API_KEY:    "${{ secrets.NOTIFY_API_KEY      }}"
+             TF_VAR_TOTP_SECRET_KEY:   "${{ secrets.TOTP_SECRET_KEY     }}"
+   
+       - name: Terraform Apply
+         run: |
+             cd terraform/paas && pwd
+             terraform apply -auto-approve plan
+   
+       - name:  Send Message to Sentry.io
+         if: always()
+         uses: sfawcett123/sentry-event@v1
+         with:
+             MESSAGE: "Release Application - get-into-teaching-api"
+             STATE:  ${{job.status}}
+             ENVIRON: "Test"
+         env:
+            SENTRY_DSN: ${{secrets.DEV_OPS_SENTRY_DSN}}§
