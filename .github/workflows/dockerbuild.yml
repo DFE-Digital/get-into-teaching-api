@@ -111,6 +111,8 @@ jobs:
              TF_VAR_SHARED_SECRET:     "${{ secrets.SHARED_SECRET       }}"
              TF_VAR_NOTIFY_API_KEY:    "${{ secrets.NOTIFY_API_KEY      }}"
              TF_VAR_TOTP_SECRET_KEY:   "${{ secrets.TOTP_SECRET_KEY     }}"
+             TF_VAR_user:              "${{ secrets.GOVUKPAAS_USERNAME  }}"
+             TF_VAR_password:          "${{ secrets.GOVUKPAAS_PASSWORD  }}"
              ARM_ACCESS_KEY:           "${{ secrets.DEV_ARM_ACCESS_KEY    }}"
    
        - name: Terraform Apply
@@ -118,6 +120,8 @@ jobs:
              cd terraform/paas && pwd
              terraform apply -auto-approve plan
          env:
+             TF_VAR_user:              "${{ secrets.GOVUKPAAS_USERNAME  }}"
+             TF_VAR_password:          "${{ secrets.GOVUKPAAS_PASSWORD  }}"
              ARM_ACCESS_KEY:           "${{ secrets.DEV_ARM_ACCESS_KEY    }}"
    
        - name:  Send Message to Sentry.io
