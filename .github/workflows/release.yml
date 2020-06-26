@@ -37,15 +37,16 @@ jobs:
              cd terraform/paas && pwd
              terraform init -backend-config=test.bk.vars
          env:
+             ARM_ACCESS_KEY:           "${{ secrets.TEST_ARM_ACCESS_KEY  }}"
              TF_VAR_user:              "${{ secrets.GOVUKPAAS_USERNAME   }}"
              TF_VAR_password:          "${{ secrets.GOVUKPAAS_PASSWORD   }}"
-             ARM_ACCESS_KEY:           "${{ secrets.TEST_ARM_ACCESS_KEY  }}"
    
        - name: Terraform Plan
          run: |
              cd terraform/paas && pwd
              terraform plan -var-file=test.env.tfvars -out plan
          env:
+             ARM_ACCESS_KEY:           "${{ secrets.TEST_ARM_ACCESS_KEY  }}"
              TF_VAR_paas_api_docker_image: ${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
              TF_VAR_CRM_SERVICE_URL:   "${{ secrets.CRM_SERVICE_URL     }}"
              TF_VAR_CRM_CLIENT_ID:     "${{ secrets.CRM_CLIENT_ID       }}"
@@ -59,6 +60,8 @@ jobs:
          run: |
              cd terraform/paas && pwd
              terraform apply -auto-approve plan
+         env:
+             ARM_ACCESS_KEY:           "${{ secrets.TEST_ARM_ACCESS_KEY  }}"
    
        - name:  Send Message to Sentry.io
          if: always()
