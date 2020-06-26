@@ -25,7 +25,7 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
--     - name: Get SHA
+      - name: Get SHA
         id: vars
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
       - name: Build and push to DockerHub
