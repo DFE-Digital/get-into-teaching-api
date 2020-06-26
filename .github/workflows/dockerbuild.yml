@@ -111,11 +111,14 @@ jobs:
              TF_VAR_SHARED_SECRET:     "${{ secrets.SHARED_SECRET       }}"
              TF_VAR_NOTIFY_API_KEY:    "${{ secrets.NOTIFY_API_KEY      }}"
              TF_VAR_TOTP_SECRET_KEY:   "${{ secrets.TOTP_SECRET_KEY     }}"
+             ARM_ACCESS_KEY:           "${{ secrets.DEV_ARM_ACCESS_KEY    }}"
    
        - name: Terraform Apply
          run: |
              cd terraform/paas && pwd
              terraform apply -auto-approve plan
+         env:
+             ARM_ACCESS_KEY:           "${{ secrets.DEV_ARM_ACCESS_KEY    }}"
    
        - name:  Send Message to Sentry.io
          if: always()
