@@ -1,4 +1,4 @@
-name: Pull Request 
+name: Run .NET tests and Lint Dockerfile 
 on:
   pull_request:
     types: [assigned, opened, synchronize, reopened]
