@@ -25,6 +25,9 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
+      - name: Get Short SHA
+        id: sha
+        run: echo ::set-output name=short::$(git rev-parse --short $GITHUB_SHA)
       - name: Build and push to DockerHub
         uses: docker/build-push-action@v1
         with:
@@ -36,7 +39,7 @@ jobs:
           tag_with_ref: true
           tag_with_sha: true
           push: true
-          build_args: GIT_COMMIT_SHA=:$(git rev-parse HEAD)
+          build_args: GIT_COMMIT_SHA=${{ steps.sha.outputs.short }}
 
   deploy_qa:
     name: 'Deploy to Quality Assurance'
