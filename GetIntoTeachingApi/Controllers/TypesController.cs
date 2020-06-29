@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using GetIntoTeachingApi.Filters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -22,6 +23,7 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [CrmETag]
         [Route("countries")]
         [SwaggerOperation(
             Summary = "Retrieves the list of countries.",
@@ -34,6 +36,7 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [CrmETag]
         [Route("teaching_subjects")]
         [SwaggerOperation(
             Summary = "Retrieves the list of teaching subjects.",
@@ -46,6 +49,7 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [CrmETag]
         [Route("candidate/initial_teacher_training_years")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate initial teacher training years.",
@@ -58,6 +62,7 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [CrmETag]
         [Route("candidate/preferred_education_phases")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate preferred education phases.",
@@ -70,6 +75,7 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [CrmETag]
         [Route("candidate/locations")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate locations.",
@@ -82,6 +88,7 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [CrmETag]
         [Route("candidate/channels")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate channels.",
@@ -94,6 +101,7 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [CrmETag]
         [Route("qualification/degree_status")]
         [SwaggerOperation(
             Summary = "Retrieves the list of qualification degree status.",
@@ -106,6 +114,7 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [CrmETag]
         [Route("qualification/categories")]
         [SwaggerOperation(
             Summary = "Retrieves the list of qualification categories.",
@@ -118,6 +127,7 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [CrmETag]
         [Route("qualification/types")]
         [SwaggerOperation(
             Summary = "Retrieves the list of qualification types.",
@@ -130,6 +140,7 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [CrmETag]
         [Route("past_teaching_position/education_phases")]
         [SwaggerOperation(
             Summary = "Retrieves the list of past teaching position education phases.",
@@ -142,6 +153,7 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [CrmETag]
         [Route("teaching_event/types")]
         [SwaggerOperation(
             Summary = "Retrieves the list of teaching event types.",
@@ -154,6 +166,7 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [CrmETag]
         [Route("phone_call/channels")]
         [SwaggerOperation(
             Summary = "Retrieves the list of phone call channels.",

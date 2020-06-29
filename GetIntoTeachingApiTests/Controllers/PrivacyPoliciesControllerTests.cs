@@ -5,6 +5,8 @@ using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
+using GetIntoTeachingApi.Filters;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Xunit;
 
@@ -25,6 +27,13 @@ namespace GetIntoTeachingApiTests.Controllers
         public void Authorize_IsPresent()
         {
             typeof(PrivacyPoliciesController).Should().BeDecoratedWith<AuthorizeAttribute>();
+        }
+
+        [Fact]
+        public void CrmETag_IsPresent()
+        {
+            JobStorage.Current = new Mock<JobStorage>().Object;
+            typeof(PrivacyPoliciesController).GetMethod("GetLatest").Should().BeDecoratedWith<CrmETagAttribute>();
         }
 
         [Fact]
