@@ -10,6 +10,12 @@ namespace GetIntoTeachingApi.Models
     [Entity(LogicalName = "contact")]
     public class Candidate : BaseModel
     {
+        public enum Status
+        {
+            Active,
+            Inactive,
+        }
+
         [EntityField(Name = "dfe_preferredteachingsubject01", Type = typeof(EntityReference), Reference = "dfe_teachingsubjectlist")]
         public Guid? PreferredTeachingSubjectId { get; set; }
         [EntityField(Name = "dfe_preferrededucationphase01", Type = typeof(OptionSetValue))]

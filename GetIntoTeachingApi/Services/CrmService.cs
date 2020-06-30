@@ -11,17 +11,6 @@ namespace GetIntoTeachingApi.Services
 {
     public class CrmService : ICrmService
     {
-        public enum PrivacyPolicyType
-        {
-            Web = 222750001,
-        }
-
-        public enum CandidateStatus
-        {
-            Active,
-            Inactive,
-        }
-
         private const int MaximumNumberOfCandidatesToMatch = 20;
         private const int MaximumNumberOfPrivacyPolicies = 3;
         private const int MaximumCallbackBookingQuotaDaysInAdvance = 14;
@@ -62,7 +51,7 @@ namespace GetIntoTeachingApi.Services
         {
             return _service.CreateQuery("dfe_privacypolicy", Context())
                 .Where((entity) =>
-                    entity.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int)PrivacyPolicyType.Web &&
+                    entity.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int)PrivacyPolicy.Type.Web &&
                     entity.GetAttributeValue<bool>("dfe_active"))
                 .OrderByDescending((policy) => policy.GetAttributeValue<DateTime>("createdon"))
                 .Select((entity) => new PrivacyPolicy(entity, this))
@@ -74,7 +63,7 @@ namespace GetIntoTeachingApi.Services
             var context = Context();
             var entity = _service.CreateQuery("contact", context)
                 .Where(e =>
-                    e.GetAttributeValue<int>("statecode") == (int)CandidateStatus.Active &&
+                    e.GetAttributeValue<int>("statecode") == (int)Candidate.Status.Active &&
                     e.GetAttributeValue<string>("emailaddress1") == request.Email) // Will perform a case-insensitive comparison
                 .OrderByDescending(e => e.GetAttributeValue<double>("dfe_duplicatescorecalculated"))
                 .ThenByDescending(e => e.GetAttributeValue<DateTime>("modifiedon"))
