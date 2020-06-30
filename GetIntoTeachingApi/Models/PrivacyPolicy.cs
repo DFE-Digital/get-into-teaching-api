@@ -5,7 +5,7 @@ using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
-    [Entity(LogicalName = "dfe_privacypolicy")]
+    [Entity("dfe_privacypolicy")]
     public class PrivacyPolicy : BaseModel
     {
         public enum Type
@@ -13,9 +13,9 @@ namespace GetIntoTeachingApi.Models
             Web = 222750001,
         }
 
-        [EntityField(Name = "dfe_details")]
+        [EntityField("dfe_details")]
         public string Text { get; set; }
-        [EntityField(Name = "createdon")]
+        [EntityField("createdon")]
         public DateTime CreatedAt { get; set; }
 
         public PrivacyPolicy()
