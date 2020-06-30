@@ -350,7 +350,7 @@ namespace GetIntoTeachingApiTests.Services
             var candidate1 = new Entity("contact");
             candidate1.Id = JaneDoeGuid;
             candidate1["contactid"] = new EntityReference("contactid", JaneDoeGuid);
-            candidate1["statecode"] = CrmService.CandidateStatus.Active;
+            candidate1["statecode"] = Candidate.Status.Active;
             candidate1["emailaddress1"] = "jane@doe.com";
             candidate1["firstname"] = "Jane";
             candidate1["lastname"] = "Doe";
@@ -358,7 +358,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate1["dfe_duplicatescorecalculated"] = 10.0;
 
             var candidate2 = new Entity("contact");
-            candidate2["statecode"] = CrmService.CandidateStatus.Active;
+            candidate2["statecode"] = Candidate.Status.Active;
             candidate2["emailaddress1"] = "john@doe.com";
             candidate2["firstname"] = "New John";
             candidate2["lastname"] = "Doe";
@@ -366,7 +366,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate2["dfe_duplicatescorecalculated"] = 9.5;
 
             var candidate3 = new Entity("contact");
-            candidate3["statecode"] = CrmService.CandidateStatus.Active;
+            candidate3["statecode"] = Candidate.Status.Active;
             candidate3["emailaddress1"] = "john@doe.com";
             candidate3["firstname"] = "Old John";
             candidate3["lastname"] = "Doe";
@@ -374,7 +374,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate3["dfe_duplicatescorecalculated"] = 8.3;
 
             var candidate4 = new Entity("contact");
-            candidate4["statecode"] = CrmService.CandidateStatus.Inactive;
+            candidate4["statecode"] = Candidate.Status.Inactive;
             candidate4["emailaddress1"] = "inactive@doe.com";
             candidate4["firstname"] = "Inactive";
             candidate4["lastname"] = "Doe";
@@ -382,7 +382,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate4["dfe_duplicatescorecalculated"] = 7.1;
 
             var candidate5 = new Entity("contact");
-            candidate5["statecode"] = CrmService.CandidateStatus.Active;
+            candidate5["statecode"] = Candidate.Status.Inactive;
             candidate5["emailaddress1"] = "master@record.com";
             candidate5["firstname"] = "Child";
             candidate5["lastname"] = "Record";
@@ -391,7 +391,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate5["dfe_duplicatescorecalculated"] = 2.4;
 
             var candidate6 = new Entity("contact");
-            candidate6["statecode"] = CrmService.CandidateStatus.Active;
+            candidate6["statecode"] = Candidate.Status.Inactive;
             candidate6["emailaddress1"] = "master@record.com";
             candidate6["firstname"] = "Child1";
             candidate6["lastname"] = "Record";
@@ -400,7 +400,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate6["dfe_duplicatescorecalculated"] = null;
 
             var candidate7 = new Entity("contact");
-            candidate7["statecode"] = CrmService.CandidateStatus.Active;
+            candidate7["statecode"] = Candidate.Status.Inactive;
             candidate7["emailaddress1"] = "master@record.com";
             candidate7["firstname"] = "Master";
             candidate7["lastname"] = "Record";
@@ -449,7 +449,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             var policy1 = new Entity("dfe_privacypolicy");
             policy1["dfe_details"] = "Latest Active Web";
-            policy1["dfe_policytype"] = new OptionSetValue { Value = (int)CrmService.PrivacyPolicyType.Web };
+            policy1["dfe_policytype"] = new OptionSetValue { Value = (int)PrivacyPolicy.Type.Web };
             policy1["createdon"] = DateTime.UtcNow.AddDays(-10);
             policy1["dfe_active"] = true;
 
@@ -460,26 +460,26 @@ namespace GetIntoTeachingApiTests.Services
             policy2["dfe_active"] = true;
 
             var policy3 = new Entity("dfe_privacypolicy");
-            policy3["dfe_policytype"] = new OptionSetValue { Value = (int)CrmService.PrivacyPolicyType.Web };
+            policy3["dfe_policytype"] = new OptionSetValue { Value = (int)PrivacyPolicy.Type.Web };
             policy3["dfe_details"] = "Not Active";
             policy3["createdon"] = DateTime.UtcNow.AddDays(-3);
             policy3["dfe_active"] = false;
 
             var policy4 = new Entity("dfe_privacypolicy");
             policy4["dfe_details"] = "Not Latest 1";
-            policy4["dfe_policytype"] = new OptionSetValue { Value = (int)CrmService.PrivacyPolicyType.Web };
+            policy4["dfe_policytype"] = new OptionSetValue { Value = (int)PrivacyPolicy.Type.Web };
             policy4["createdon"] = DateTime.UtcNow.AddDays(-15);
             policy4["dfe_active"] = true;
 
             var policy5 = new Entity("dfe_privacypolicy");
             policy5["dfe_details"] = "Not Latest 2";
-            policy5["dfe_policytype"] = new OptionSetValue { Value = (int)CrmService.PrivacyPolicyType.Web };
+            policy5["dfe_policytype"] = new OptionSetValue { Value = (int)PrivacyPolicy.Type.Web };
             policy5["createdon"] = DateTime.UtcNow.AddDays(-20);
             policy5["dfe_active"] = true;
 
             var policy6 = new Entity("dfe_privacypolicy");
             policy6["dfe_details"] = "Not Latest 3";
-            policy6["dfe_policytype"] = new OptionSetValue { Value = (int)CrmService.PrivacyPolicyType.Web };
+            policy6["dfe_policytype"] = new OptionSetValue { Value = (int)PrivacyPolicy.Type.Web };
             policy6["createdon"] = DateTime.UtcNow.AddDays(-25);
             policy6["dfe_active"] = true;
 

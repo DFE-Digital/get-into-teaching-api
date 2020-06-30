@@ -8,6 +8,11 @@ namespace GetIntoTeachingApi.Models
     [Entity(LogicalName = "dfe_privacypolicy")]
     public class PrivacyPolicy : BaseModel
     {
+        public enum Type
+        {
+            Web = 222750001,
+        }
+
         [EntityField(Name = "dfe_details")]
         public string Text { get; set; }
         [EntityField(Name = "createdon")]
