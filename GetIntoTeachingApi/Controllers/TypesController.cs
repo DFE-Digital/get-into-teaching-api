@@ -110,33 +110,20 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetQualificationDegreeStatus()
         {
-            return Ok(await _store.GetPickListItems("dfe_qualification", "dfe_degreestatus").ToListAsync());
+            return Ok(await _store.GetPickListItems("dfe_candidatequalification", "dfe_degreestatus").ToListAsync());
         }
 
         [HttpGet]
         [CrmETag]
-        [Route("qualification/categories")]
+        [Route("qualification/uk_degree_grades")]
         [SwaggerOperation(
-            Summary = "Retrieves the list of qualification categories.",
-            OperationId = "GetQualificationCategories",
+            Summary = "Retrieves the list of qualification UK degree grades.",
+            OperationId = "GetQualificationUkDegreeGrades",
             Tags = new[] { "Types" })]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public async Task<IActionResult> GetQualificationCategories()
+        public async Task<IActionResult> GetQualificationUkDegreeGrades()
         {
-            return Ok(await _store.GetPickListItems("dfe_qualification", "dfe_category").ToListAsync());
-        }
-
-        [HttpGet]
-        [CrmETag]
-        [Route("qualification/types")]
-        [SwaggerOperation(
-            Summary = "Retrieves the list of qualification types.",
-            OperationId = "GetQualificationTypes",
-            Tags = new[] { "Types" })]
-        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public async Task<IActionResult> GetQualificationTypes()
-        {
-            return Ok(await _store.GetPickListItems("dfe_qualification", "dfe_type").ToListAsync());
+            return Ok(await _store.GetPickListItems("dfe_candidatequalification", "dfe_ukdegreegrade").ToListAsync());
         }
 
         [HttpGet]

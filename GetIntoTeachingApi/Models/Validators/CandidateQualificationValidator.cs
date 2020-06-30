@@ -13,27 +13,20 @@ namespace GetIntoTeachingApi.Models.Validators
         {
             _store = store;
 
-            RuleFor(qualification => qualification.TypeId)
-                .Must(id => TypeIds().Contains(id.ToString()))
-                .WithMessage("Must be a valid qualification type.");
-            RuleFor(qualification => qualification.CategoryId)
-                .Must(id => CategoryIds().Contains(id.ToString()))
-                .Unless(qualification => qualification.CategoryId == null)
-                .WithMessage("Must be a valid qualification category.");
+            RuleFor(qualification => qualification.UkDegreeGradeId)
+                .Must(id => UkDegreeGradeIds().Contains(id.ToString()))
+                .WithMessage("Must be a valid qualification uk degree grade.");
             RuleFor(qualification => qualification.DegreeStatusId)
                 .Must(id => StatusIds().Contains(id.ToString()))
                 .Unless(qualification => qualification.DegreeStatusId == null)
                 .WithMessage("Must be a valid qualification degree status.");
+
+            RuleFor(qualification => qualification.Subject).MaximumLength(600);
         }
 
-        private IEnumerable<string> CategoryIds()
+        private IEnumerable<string> UkDegreeGradeIds()
         {
-            return _store.GetPickListItems("dfe_qualification", "dfe_category").Select(category => category.Id);
-        }
-
-        private IEnumerable<string> TypeIds()
-        {
-            return _store.GetPickListItems("dfe_qualification", "dfe_type").Select(type => type.Id);
+            return _store.GetPickListItems("dfe_qualification", "dfe_ukdegreegrade").Select(grade => grade.Id);
         }
 
         private IEnumerable<string> StatusIds()
