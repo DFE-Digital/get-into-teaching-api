@@ -15,9 +15,10 @@ namespace GetIntoTeachingApiTests.Models
 
             type.Should().BeDecoratedWith<EntityAttribute>(a => a.LogicalName == "dfe_candidatequalification");
 
-            type.GetProperty("CategoryId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_category" && a.Type == typeof(OptionSetValue));
-            type.GetProperty("TypeId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_type" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("UkDegreeGradeId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_ukdegreegrade" && a.Type == typeof(OptionSetValue));
             type.GetProperty("DegreeStatusId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_degreestatus" && a.Type == typeof(OptionSetValue));
+
+            type.GetProperty("Subject").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_subject");
         }
     }
 }

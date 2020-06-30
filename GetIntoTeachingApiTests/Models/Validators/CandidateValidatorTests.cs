@@ -84,12 +84,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
             {
                 Qualifications = new List<CandidateQualification>
                 {
-                    new CandidateQualification {TypeId = 123}
+                    new CandidateQualification {UkDegreeGradeId = 123}
                 }
             };
             var result = _validator.TestValidate(candidate);
 
-            result.ShouldHaveValidationErrorFor("Qualifications[0].TypeId");
+            result.ShouldHaveValidationErrorFor("Qualifications[0].UkDegreeGradeId");
         }
 
         [Fact]
