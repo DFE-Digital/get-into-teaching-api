@@ -5,20 +5,20 @@ using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
-    [Entity(LogicalName = "msevtmgt_event")]
+    [Entity("msevtmgt_event")]
     public class TeachingEvent : BaseModel
     {
-        [EntityField(Name = "dfe_event_type", Type = typeof(OptionSetValue))]
+        [EntityField("dfe_event_type", typeof(OptionSetValue))]
         public int TypeId { get; set; }
-        [EntityField(Name = "msevtmgt_name")]
+        [EntityField("msevtmgt_name")]
         public string Name { get; set; }
-        [EntityField(Name = "msevtmgt_description")]
+        [EntityField("msevtmgt_description")]
         public string Description { get; set; }
-        [EntityField(Name = "msevtmgt_eventstartdate")]
+        [EntityField("msevtmgt_eventstartdate")]
         public DateTime StartAt { get; set; }
-        [EntityField(Name = "msevtmgt_eventenddate")]
+        [EntityField("msevtmgt_eventenddate")]
         public DateTime EndAt { get; set; }
-        [EntityRelationship(Name = "msevtmgt_event_building", Type = typeof(TeachingEventBuilding))]
+        [EntityRelationship("msevtmgt_event_building", typeof(TeachingEventBuilding))]
         public TeachingEventBuilding Building { get; set; }
 
         public TeachingEvent()

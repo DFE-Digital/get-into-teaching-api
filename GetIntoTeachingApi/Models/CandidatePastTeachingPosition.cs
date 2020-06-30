@@ -5,12 +5,12 @@ using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
-    [Entity(LogicalName = "dfe_candidatepastteachingposition")]
+    [Entity("dfe_candidatepastteachingposition")]
     public class CandidatePastTeachingPosition : BaseModel
     {
-        [EntityField(Name = "dfe_subjecttaught", Type = typeof(EntityReference), Reference = "dfe_teachingsubjectlist")]
+        [EntityField("dfe_subjecttaught", typeof(EntityReference), "dfe_teachingsubjectlist")]
         public Guid? SubjectTaughtId { get; set; }
-        [EntityField(Name = "dfe_educationphase", Type = typeof(OptionSetValue))]
+        [EntityField("dfe_educationphase", typeof(OptionSetValue))]
         public int? EducationPhaseId { get; set; }
 
         public CandidatePastTeachingPosition()

@@ -5,20 +5,20 @@ using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
-    [Entity(LogicalName = "dfe_callbackbookingquota")]
+    [Entity("dfe_callbackbookingquota")]
     public class CallbackBookingQuota : BaseModel
     {
-        [EntityField(Name = "dfe_name")]
+        [EntityField("dfe_name")]
         public string TimeSlot { get; set; }
-        [EntityField(Name = "dfe_workingdayname")]
+        [EntityField("dfe_workingdayname")]
         public string Day { get; set; }
-        [EntityField(Name = "dfe_starttime")]
+        [EntityField("dfe_starttime")]
         public DateTime StartAt { get; set; }
-        [EntityField(Name = "dfe_endtime")]
+        [EntityField("dfe_endtime")]
         public DateTime EndAt { get; set; }
-        [EntityField(Name = "dfe_numberofbookings")]
+        [EntityField("dfe_numberofbookings")]
         public int NumberOfBookings { get; set; }
-        [EntityField(Name = "dfe_quota")]
+        [EntityField("dfe_quota")]
         public int Quota { get; set; }
 
         public bool IsAvailable => NumberOfBookings < Quota;
