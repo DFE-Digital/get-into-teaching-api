@@ -30,6 +30,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var mockLocation = NewMock(222);
             var mockInitialTeacherTrainingYear = NewMock(333);
             var mockChannel = NewMock(444);
+            var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
 
             _mockStore
                 .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
@@ -46,6 +47,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_channelcreation"))
                 .Returns(new[] { mockChannel }.AsQueryable());
+            _mockStore
+                .Setup(mock => mock.GetPrivacyPolicies())
+                .Returns(new[] { mockPrivacyPolicy }.AsQueryable());
 
             var candidate = new Candidate()
             {
@@ -65,6 +69,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 LocationId = int.Parse(mockLocation.Id),
                 InitialTeacherTrainingYearId = int.Parse(mockInitialTeacherTrainingYear.Id),
                 ChannelId = int.Parse(mockChannel.Id),
+                PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id }
             };
 
             var result = _validator.TestValidate(candidate);
@@ -125,6 +130,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var result = _validator.TestValidate(candidate);
 
             result.ShouldHaveValidationErrorFor(c => c.PrivacyPolicy.AcceptedPolicyId);
+        }
+
+        [Fact]
+        public void Validate_PrivacyPolicyIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.PrivacyPolicy, null as CandidatePrivacyPolicy);
         }
 
         [Fact]
