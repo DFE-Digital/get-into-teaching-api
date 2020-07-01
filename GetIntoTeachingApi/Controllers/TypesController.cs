@@ -102,6 +102,19 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpGet]
         [CrmETag]
+        [Route("candidate/retake_gcse_status")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of candidate retake CGSE status.",
+            OperationId = "GetCandidateRetakeGcseStatus",
+            Tags = new[] { "Types" })]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public async Task<IActionResult> GetCandidateRetakeGcseStatus()
+        {
+            return Ok(await _store.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse").ToListAsync());
+        }
+
+        [HttpGet]
+        [CrmETag]
         [Route("qualification/degree_status")]
         [SwaggerOperation(
             Summary = "Retrieves the list of qualification degree status.",

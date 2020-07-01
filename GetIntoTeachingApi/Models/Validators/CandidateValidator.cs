@@ -62,6 +62,19 @@ namespace GetIntoTeachingApi.Models.Validators
                 .Must(id => GcseStatusIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.HasGcseScienceId == null)
                 .WithMessage("Must be a valid candidate GCSE status.");
+
+            RuleFor(candidate => candidate.PlanningToRetakeCgseScienceId)
+                .Must(id => RetakeGcseStatusIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.PlanningToRetakeCgseScienceId == null)
+                .WithMessage("Must be a valid candidate retake GCSE status.");
+            RuleFor(candidate => candidate.PlanningToRetakeGcseEnglishId)
+                .Must(id => RetakeGcseStatusIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.PlanningToRetakeGcseEnglishId == null)
+                .WithMessage("Must be a valid candidate retake GCSE status.");
+            RuleFor(candidate => candidate.PlanningToRetakeGcseMathsId)
+                .Must(id => RetakeGcseStatusIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.PlanningToRetakeGcseMathsId == null)
+                .WithMessage("Must be a valid candidate retake GCSE status.");
         }
 
         private IEnumerable<string> PreferredTeachingSubjectIds()
@@ -92,6 +105,11 @@ namespace GetIntoTeachingApi.Models.Validators
         private IEnumerable<string> GcseStatusIds()
         {
             return _store.GetPickListItems("contact", "dfe_hasgcseenglish").Select(status => status.Id);
+        }
+
+        private IEnumerable<string> RetakeGcseStatusIds()
+        {
+            return _store.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse").Select(status => status.Id);
         }
     }
 }
