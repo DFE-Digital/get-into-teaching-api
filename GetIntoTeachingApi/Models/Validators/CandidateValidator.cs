@@ -50,6 +50,18 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.ChannelId)
                 .Must(id => ChannelIds().Contains(id.ToString()))
                 .WithMessage("Must be a valid candidate channel.");
+            RuleFor(candidate => candidate.HasGcseEnglishId)
+                .Must(id => GcseStatusIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.HasGcseEnglishId == null)
+                .WithMessage("Must be a valid candidate GCSE status.");
+            RuleFor(candidate => candidate.HasGcseMathsId)
+                .Must(id => GcseStatusIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.HasGcseMathsId == null)
+                .WithMessage("Must be a valid candidate GCSE status.");
+            RuleFor(candidate => candidate.HasGcseScienceId)
+                .Must(id => GcseStatusIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.HasGcseScienceId == null)
+                .WithMessage("Must be a valid candidate GCSE status.");
         }
 
         private IEnumerable<string> PreferredTeachingSubjectIds()
@@ -75,6 +87,11 @@ namespace GetIntoTeachingApi.Models.Validators
         private IEnumerable<string> ChannelIds()
         {
             return _store.GetPickListItems("contact", "dfe_channelcreation").Select(channel => channel.Id);
+        }
+
+        private IEnumerable<string> GcseStatusIds()
+        {
+            return _store.GetPickListItems("contact", "dfe_hasgcseenglish").Select(status => status.Id);
         }
     }
 }

@@ -32,6 +32,12 @@ namespace GetIntoTeachingApiTests.Models
                 a => a.Name == "dfe_ittyear" && a.Type == typeof(OptionSetValue));
             type.GetProperty("ChannelId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_channelcreation" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("HasGcseEnglishId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "dfe_websitehasgcseenglish" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("HasGcseMathsId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "dfe_websitehasgcsemaths" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("HasGcseScienceId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "dfe_websitehasgcsescience" && a.Type == typeof(OptionSetValue));
 
             type.GetProperty("Email").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "emailaddress1");
             type.GetProperty("FirstName").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "firstname");
