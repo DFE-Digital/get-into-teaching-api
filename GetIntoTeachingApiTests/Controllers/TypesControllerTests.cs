@@ -127,6 +127,30 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
+        public async void GetCandidateDescribeYourselfOptions_ReturnsAllOptions()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_websitedescribeyourself")).Returns(mockEntities.AsAsyncQueryable());
+
+            var response = await _controller.GetCandidateDescribeYourselfOptions();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockEntities);
+        }
+
+        [Fact]
+        public async void GetCandidateConsiderationJourneyStages_ReturnsAllStages()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_websitewhereinconsiderationjourney")).Returns(mockEntities.AsAsyncQueryable());
+
+            var response = await _controller.GetCandidateConsiderationJourneyStages();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockEntities);
+        }
+
+        [Fact]
         public async void GetQualificationDegreeStatus_ReturnsAllStatus()
         {
             var mockEntities = MockTypeEntities();

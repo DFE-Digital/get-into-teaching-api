@@ -30,10 +30,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var mockPreferredEducationPhase = NewMock(111);
             var mockInitialTeacherTrainingYear = NewMock(333);
             var mockChannel = NewMock(444);
-            var mockGcseStatus = NewMock(444);
-            var mockRetakeGcseStatus = NewMock(444);
+            var mockGcseStatus = NewMock(555);
+            var mockRetakeGcseStatus = NewMock(666);
+            var mockDescribeYourself = NewMock(777);
+            var mockConsiderationJourneyStage = NewMock(888);
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
-
+            
             _mockStore
                 .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
                 .Returns(new[] { mockPreferredTeachingSubject }.AsQueryable());
@@ -56,6 +58,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse"))
                 .Returns(new[] { mockRetakeGcseStatus }.AsQueryable());
             _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_websitedescribeyourself"))
+                .Returns(new[] { mockDescribeYourself }.AsQueryable());
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_websitewhereinconsiderationjourney"))
+                .Returns(new[] { mockConsiderationJourneyStage }.AsQueryable());
+            _mockStore
                 .Setup(mock => mock.GetPrivacyPolicies())
                 .Returns(new[] { mockPrivacyPolicy }.AsQueryable());
 
@@ -76,6 +84,8 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 HasGcseEnglishId = int.Parse(mockGcseStatus.Id),
                 PlanningToRetakeCgseScienceId = int.Parse(mockRetakeGcseStatus.Id),
                 PlanningToRetakeGcseEnglishId = int.Parse(mockRetakeGcseStatus.Id),
+                DescribeYourselfOptionId = int.Parse(mockDescribeYourself.Id),
+                ConsiderationJourneyStageId = int.Parse(mockConsiderationJourneyStage.Id),
                 CountryId = Guid.Parse(mockCountry.Id),
                 PreferredTeachingSubjectId = Guid.Parse(mockPreferredTeachingSubject.Id),
                 PreferredEducationPhaseId = int.Parse(mockPreferredEducationPhase.Id),
@@ -412,6 +422,30 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_PlanningToRetakeGcseEnglishIdIsNull_HasNoError()
         {
             _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.PlanningToRetakeGcseEnglishId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_DescribeYourselfIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.DescribeYourselfOptionId, 123);
+        }
+
+        [Fact]
+        public void Validate_DescribeYourselfIdIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.DescribeYourselfOptionId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_ConsiderationJourneyStageIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.ConsiderationJourneyStageId, 123);
+        }
+
+        [Fact]
+        public void Validate_ConsiderationJourneyStageIdIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.ConsiderationJourneyStageId, null as int?);
         }
 
         private static TypeEntity NewMock(dynamic id)
