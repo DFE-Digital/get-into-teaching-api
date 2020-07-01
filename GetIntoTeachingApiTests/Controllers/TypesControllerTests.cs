@@ -118,7 +118,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetQualificationDegreeStatus_ReturnsAllStatus()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("dfe_qualification", "dfe_degreestatus")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_degreestatus")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetQualificationDegreeStatus();
 
@@ -127,24 +127,12 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void GetQualificationCategories_ReturnsAllCategories()
+        public async void GetQualificationUkDegreeGrades_ReturnsAllGrades()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("dfe_qualification", "dfe_category")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_ukdegreegrade")).Returns(mockEntities.AsAsyncQueryable());
 
-            var response = await _controller.GetQualificationCategories();
-
-            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
-            ok.Value.Should().BeEquivalentTo(mockEntities);
-        }
-
-        [Fact]
-        public async void GetQualificatioTypes_ReturnsAllTypes()
-        {
-            var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("dfe_qualification", "dfe_type")).Returns(mockEntities.AsAsyncQueryable());
-
-            var response = await _controller.GetQualificationTypes();
+            var response = await _controller.GetQualificationUkDegreeGrades();
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().BeEquivalentTo(mockEntities);
