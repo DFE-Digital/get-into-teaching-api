@@ -35,14 +35,16 @@ namespace GetIntoTeachingApi.Models
         public int? HasGcseMathsId { get; set; }
         [EntityField("dfe_websitehasgcsescience", typeof(OptionSetValue))]
         public int? HasGcseScienceId { get; set; }
-
         [EntityField("dfe_websiteplanningretakeenglishgcse", typeof(OptionSetValue))]
         public int? PlanningToRetakeGcseEnglishId { get; set; }
         [EntityField("dfe_websiteplanningretakemathsgcse", typeof(OptionSetValue))]
         public int? PlanningToRetakeGcseMathsId { get; set; }
         [EntityField("dfe_websiteplanningretakesciencegcse", typeof(OptionSetValue))]
         public int? PlanningToRetakeCgseScienceId { get; set; }
-
+        [EntityField("dfe_websitedescribeyourself", typeof(OptionSetValue))]
+        public int? DescribeYourselfOptionId { get; set; }
+        [EntityField("dfe_websitewhereinconsiderationjourney", typeof(OptionSetValue))]
+        public int? ConsiderationJourneyStageId { get; set; }
         [EntityField("emailaddress1")]
         public string Email { get; set; }
         [EntityField("firstname")]
