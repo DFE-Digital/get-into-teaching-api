@@ -26,6 +26,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_WhenValid_HasNoErrors()
         {
             var mockPreferredTeachingSubject = NewMock(Guid.NewGuid());
+            var mockCountry = NewMock(Guid.NewGuid());
             var mockPreferredEducationPhase = NewMock(111);
             var mockInitialTeacherTrainingYear = NewMock(333);
             var mockChannel = NewMock(444);
@@ -34,6 +35,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
             _mockStore
                 .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
                 .Returns(new[] { mockPreferredTeachingSubject }.AsQueryable());
+            _mockStore
+                .Setup(mock => mock.GetLookupItems("dfe_country"))
+                .Returns(new[] { mockCountry }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_preferrededucationphase01"))
                 .Returns(new[] { mockPreferredEducationPhase }.AsQueryable());
@@ -60,6 +64,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 AddressCity = "city",
                 AddressState = "state",
                 AddressPostcode = "postcode",
+                CountryId = Guid.Parse(mockCountry.Id),
                 PreferredTeachingSubjectId = Guid.Parse(mockPreferredTeachingSubject.Id),
                 PreferredEducationPhaseId = int.Parse(mockPreferredEducationPhase.Id),
                 InitialTeacherTrainingYearId = int.Parse(mockInitialTeacherTrainingYear.Id),
@@ -269,6 +274,18 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_PreferredTeachingSubjectIdIsInvalid_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(candidate => candidate.PreferredTeachingSubjectId, Guid.NewGuid());
+        }
+
+        [Fact]
+        public void Validate_CountryIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.CountryId, null as Guid?);
+        }
+
+        [Fact]
+        public void Validate_CountryIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.CountryId, Guid.NewGuid());
         }
 
         [Fact]

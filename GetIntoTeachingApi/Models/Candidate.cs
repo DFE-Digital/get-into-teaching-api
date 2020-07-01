@@ -21,6 +21,8 @@ namespace GetIntoTeachingApi.Models
         public string FullName => $"{this.FirstName} {this.LastName}";
         [EntityField("dfe_preferredteachingsubject01", typeof(EntityReference), "dfe_teachingsubjectlist")]
         public Guid? PreferredTeachingSubjectId { get; set; }
+        [EntityField("dfe_country", typeof(EntityReference), "dfe_country")]
+        public Guid? CountryId { get; set; }
         [EntityField("dfe_preferrededucationphase01", typeof(OptionSetValue))]
         public int? PreferredEducationPhaseId { get; set; }
         [EntityField("dfe_ittyear", typeof(OptionSetValue))]

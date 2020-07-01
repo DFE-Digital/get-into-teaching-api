@@ -36,6 +36,9 @@ namespace GetIntoTeachingApi.Models.Validators
                 .Must(id => PreferredTeachingSubjectIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.PreferredTeachingSubjectId == null)
                 .WithMessage("Must be a valid teaching subject.");
+            RuleFor(candidate => candidate.CountryId)
+                .Must(id => CountryIds().Contains(id.ToString()))
+                .WithMessage("Must be a valid country.");
             RuleFor(candidate => candidate.PreferredEducationPhaseId)
                 .Must(id => PreferredEducationPhaseIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.PreferredEducationPhaseId == null)
@@ -52,6 +55,11 @@ namespace GetIntoTeachingApi.Models.Validators
         private IEnumerable<string> PreferredTeachingSubjectIds()
         {
             return _store.GetLookupItems("dfe_teachingsubjectlist").Select(subject => subject.Id);
+        }
+
+        private IEnumerable<string> CountryIds()
+        {
+            return _store.GetLookupItems("dfe_country").Select(country => country.Id);
         }
 
         private IEnumerable<string> PreferredEducationPhaseIds()
