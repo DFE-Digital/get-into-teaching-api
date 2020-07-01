@@ -7,7 +7,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
 {
-    [Entity(LogicalName = "contact")]
+    [Entity("contact")]
     public class Candidate : BaseModel
     {
         public enum Status
@@ -16,54 +16,48 @@ namespace GetIntoTeachingApi.Models
             Inactive,
         }
 
-        [EntityField(Name = "dfe_preferredteachingsubject01", Type = typeof(EntityReference), Reference = "dfe_teachingsubjectlist")]
+        [EntityField("dfe_preferredteachingsubject01", typeof(EntityReference), "dfe_teachingsubjectlist")]
         public Guid? PreferredTeachingSubjectId { get; set; }
-        [EntityField(Name = "dfe_preferrededucationphase01", Type = typeof(OptionSetValue))]
+        [EntityField("dfe_preferrededucationphase01", typeof(OptionSetValue))]
         public int? PreferredEducationPhaseId { get; set; }
-        [EntityField(Name = "dfe_isinuk", Type = typeof(OptionSetValue))]
+        [EntityField("dfe_isinuk", typeof(OptionSetValue))]
         public int? LocationId { get; set; }
-        [EntityField(Name = "dfe_ittyear", Type = typeof(OptionSetValue))]
+        [EntityField("dfe_ittyear", typeof(OptionSetValue))]
         public int? InitialTeacherTrainingYearId { get; set; }
-        [EntityField(Name = "dfe_channelcreation", Type = typeof(OptionSetValue))]
+        [EntityField("dfe_channelcreation", typeof(OptionSetValue))]
         public int? ChannelId { get; set; }
-        [EntityField(Name = "emailaddress1")]
+        [EntityField("emailaddress1")]
         public string Email { get; set; }
-        [EntityField(Name = "firstname")]
+        [EntityField("firstname")]
         public string FirstName { get; set; }
-        [EntityField(Name = "lastname")]
+        [EntityField("lastname")]
         public string LastName { get; set; }
-        [EntityField(Name = "birthdate")]
+        [EntityField("birthdate")]
         public DateTime? DateOfBirth { get; set; }
-        [EntityField(Name = "address1_telephone1")]
+        [EntityField("address1_telephone1")]
         public string Telephone { get; set; }
-        [EntityField(Name = "address1_line1")]
+        [EntityField("address1_line1")]
         public string AddressLine1 { get; set; }
-        [EntityField(Name = "address1_line2")]
+        [EntityField("address1_line2")]
         public string AddressLine2 { get; set; }
-        [EntityField(Name = "address1_line3")]
+        [EntityField("address1_line3")]
         public string AddressLine3 { get; set; }
-        [EntityField(Name = "address1_city")]
+        [EntityField("address1_city")]
         public string AddressCity { get; set; }
-        [EntityField(Name = "address1_stateorprovince")]
+        [EntityField("address1_stateorprovince")]
         public string AddressState { get; set; }
-        [EntityField(Name = "address1_postalcode")]
+        [EntityField("address1_postalcode")]
         public string AddressPostcode { get; set; }
 
-        [EntityRelationship(
-            Name = "dfe_contact_dfe_candidatequalification_ContactId",
-            Type = typeof(CandidateQualification))]
+        [EntityRelationship("dfe_contact_dfe_candidatequalification_ContactId", typeof(CandidateQualification))]
         public List<CandidateQualification> Qualifications { get; set; }
-        [EntityRelationship(
-            Name = "dfe_contact_dfe_candidatepastteachingposition_ContactId",
-            Type = typeof(CandidatePastTeachingPosition))]
+        [EntityRelationship("dfe_contact_dfe_candidatepastteachingposition_ContactId", typeof(CandidatePastTeachingPosition))]
         public List<CandidatePastTeachingPosition> PastTeachingPositions { get; set; }
         [SwaggerSchema("Set to schedule a phone call.", WriteOnly = true)]
-        [EntityRelationship(Name = "dfe_contact_phonecall_contactid", Type = typeof(PhoneCall))]
+        [EntityRelationship("dfe_contact_phonecall_contactid", typeof(PhoneCall))]
         public PhoneCall PhoneCall { get; set; }
         [SwaggerSchema("Set to update the accepted privacy policy.", WriteOnly = true)]
-        [EntityRelationship(
-            Name = "dfe_contact_dfe_candidateprivacypolicy_Candidate",
-            Type = typeof(CandidatePrivacyPolicy))]
+        [EntityRelationship("dfe_contact_dfe_candidateprivacypolicy_Candidate", typeof(CandidatePrivacyPolicy))]
         public CandidatePrivacyPolicy PrivacyPolicy { get; set; }
 
         public Candidate()

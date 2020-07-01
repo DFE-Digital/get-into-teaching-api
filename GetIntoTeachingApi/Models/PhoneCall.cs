@@ -5,14 +5,14 @@ using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
-    [Entity(LogicalName = "phonecall")]
+    [Entity("phonecall")]
     public class PhoneCall : BaseModel
     {
-        [EntityField(Name = "dfe_channelcreation", Type = typeof(OptionSetValue))]
+        [EntityField("dfe_channelcreation", typeof(OptionSetValue))]
         public int? ChannelId { get; set; }
-        [EntityField(Name = "scheduledstart")]
+        [EntityField("scheduledstart")]
         public DateTime ScheduledAt { get; set; }
-        [EntityField(Name = "phonenumber")]
+        [EntityField("phonenumber")]
         public string Telephone { get; set; }
 
         public PhoneCall()

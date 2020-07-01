@@ -6,9 +6,16 @@ namespace GetIntoTeachingApi.Attributes
     [AttributeUsage(AttributeTargets.Property)]
     public class EntityFieldAttribute : Attribute
     {
-        public string Name { get; set; }
-        public Type Type { get; set; }
-        public string Reference { get; set; }
+        public string Name { get; }
+        public Type Type { get; }
+        public string Reference { get; }
+
+        public EntityFieldAttribute(string name, Type type = null, string reference = null)
+        {
+            Name = name;
+            Type = type;
+            Reference = reference;
+        }
 
         public IDictionary<string, string> ToDictionary()
         {
