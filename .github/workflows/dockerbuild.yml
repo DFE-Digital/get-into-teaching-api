@@ -159,7 +159,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: zap_run
-          path: ${GITHUB_WORKSPACE}/out/zap_run.html
+          path: /home/runner/work/get-into-teaching-api/get-into-teaching-api/out/zap_run.html
 
       - name:  Send Message to Sentry.io
         if: always()
