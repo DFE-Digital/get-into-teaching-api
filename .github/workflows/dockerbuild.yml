@@ -149,7 +149,7 @@ jobs:
           mkdir ${GITHUB_WORKSPACE}/out
           chmod 777 ${GITHUB_WORKSPACE}/out
           docker run -t -v ${GITHUB_WORKSPACE}/zap_rules.tsv:/zap/wrk/zap_rules.tsv  -v ${GITHUB_WORKSPACE}/out:/zap/wrk/:rw owasp/zap2docker-stable zap-api-scan.py \
-              -t  https://${{env.CONTAINER}}-dev.${{env.DOMAIN}}/swagger.json \
+              -t  https://${{env.CONTAINER}}-dev.${{env.DOMAIN}} \
               -f openapi \
               -r zap_run.html 
           ls -ail ${GITHUB_WORKSPACE}/out
