@@ -4,14 +4,14 @@ using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
-    [Entity(LogicalName = "dfe_candidatequalification")]
+    [Entity("dfe_candidatequalification")]
     public class CandidateQualification : BaseModel
     {
-        [EntityField(Name = "dfe_category", Type = typeof(OptionSetValue))]
+        [EntityField("dfe_category", typeof(OptionSetValue))]
         public int? CategoryId { get; set; }
-        [EntityField(Name = "dfe_type", Type = typeof(OptionSetValue))]
+        [EntityField("dfe_type", typeof(OptionSetValue))]
         public int? TypeId { get; set; }
-        [EntityField(Name = "dfe_degreestatus", Type = typeof(OptionSetValue))]
+        [EntityField("dfe_degreestatus", typeof(OptionSetValue))]
         public int? DegreeStatusId { get; set; }
 
         public CandidateQualification()

@@ -7,18 +7,18 @@ using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApiTests.Mocks
 {
-    [Entity(LogicalName = "mock")]
+    [Entity("mock")]
     public class MockModel : BaseModel
     {
-        [EntityField(Name = "dfe_field1", Type = typeof(EntityReference), Reference = "dfe_list")]
+        [EntityField("dfe_field1", typeof(EntityReference), "dfe_list")]
         public Guid? Field1 { get; set; }
-        [EntityField(Name = "dfe_field2", Type = typeof(OptionSetValue))]
+        [EntityField("dfe_field2", typeof(OptionSetValue))]
         public int? Field2 { get; set; }
-        [EntityField(Name = "dfe_field3")]
+        [EntityField("dfe_field3")]
         public string Field3 { get; set; }
-        [EntityRelationship(Name = "dfe_mock_dfe_relatedmock_mock", Type = typeof(MockRelatedModel))]
+        [EntityRelationship("dfe_mock_dfe_relatedmock_mock", typeof(MockRelatedModel))]
         public MockRelatedModel RelatedMock { get; set; }
-        [EntityRelationship(Name = "dfe_mock_dfe_relatedmock_mocks", Type = typeof(MockRelatedModel))]
+        [EntityRelationship("dfe_mock_dfe_relatedmock_mocks", typeof(MockRelatedModel))]
         public IEnumerable<MockRelatedModel> RelatedMocks { get; set; }
 
         public MockModel() : base() { }
@@ -26,7 +26,7 @@ namespace GetIntoTeachingApiTests.Mocks
         public MockModel(Entity entity, ICrmService crm) : base(entity, crm) { }
     }
 
-    [Entity(LogicalName = "relatedMock")]
+    [Entity("relatedMock")]
     public class MockRelatedModel : BaseModel
     {
         public MockRelatedModel() : base() { }

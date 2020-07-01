@@ -7,20 +7,20 @@ using NetTopologySuite.Geometries;
 
 namespace GetIntoTeachingApi.Models
 {
-    [Entity(LogicalName = "msevtmgt_building")]
+    [Entity("msevtmgt_building")]
     public class TeachingEventBuilding : BaseModel
     {
-        [EntityField(Name = "msevtmgt_addressline1")]
+        [EntityField("msevtmgt_addressline1")]
         public string AddressLine1 { get; set; }
-        [EntityField(Name = "msevtmgt_addressline2")]
+        [EntityField("msevtmgt_addressline2")]
         public string AddressLine2 { get; set; }
-        [EntityField(Name = "msevtmgt_addressline3")]
+        [EntityField("msevtmgt_addressline3")]
         public string AddressLine3 { get; set; }
-        [EntityField(Name = "msevtmgt_city")]
+        [EntityField("msevtmgt_city")]
         public string AddressCity { get; set; }
-        [EntityField(Name = "msevtmgt_stateprovince")]
+        [EntityField("msevtmgt_stateprovince")]
         public string AddressState { get; set; }
-        [EntityField(Name = "msevtmgt_postalcode")]
+        [EntityField("msevtmgt_postalcode")]
         public string AddressPostcode { get; set; }
         [JsonIgnore]
         [Column(TypeName = "geography")]

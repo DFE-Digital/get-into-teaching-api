@@ -6,8 +6,14 @@ namespace GetIntoTeachingApi.Attributes
     [AttributeUsage(AttributeTargets.Property)]
     public class EntityRelationshipAttribute : Attribute
     {
-        public string Name { get; set; }
-        public Type Type { get; set; }
+        public string Name { get; }
+        public Type Type { get; }
+
+        public EntityRelationshipAttribute(string name, Type type)
+        {
+            Name = name;
+            Type = type;
+        }
 
         public IDictionary<string, string> ToDictionary()
         {
