@@ -29,6 +29,12 @@ namespace GetIntoTeachingApi.Models
         public int? InitialTeacherTrainingYearId { get; set; }
         [EntityField("dfe_channelcreation", typeof(OptionSetValue))]
         public int? ChannelId { get; set; }
+        [EntityField("dfe_websitehasgcseenglish", typeof(OptionSetValue))]
+        public int? HasGcseEnglishId { get; set; }
+        [EntityField("dfe_websitehasgcsemaths", typeof(OptionSetValue))]
+        public int? HasGcseMathsId { get; set; }
+        [EntityField("dfe_websitehasgcsescience", typeof(OptionSetValue))]
+        public int? HasGcseScienceId { get; set; }
         [EntityField("emailaddress1")]
         public string Email { get; set; }
         [EntityField("firstname")]
