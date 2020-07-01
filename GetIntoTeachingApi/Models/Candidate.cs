@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
@@ -16,6 +17,8 @@ namespace GetIntoTeachingApi.Models
             Inactive,
         }
 
+        [JsonIgnore]
+        public string FullName => $"{this.FirstName} {this.LastName}";
         [EntityField("dfe_preferredteachingsubject01", typeof(EntityReference), "dfe_teachingsubjectlist")]
         public Guid? PreferredTeachingSubjectId { get; set; }
         [EntityField("dfe_preferrededucationphase01", typeof(OptionSetValue))]
@@ -72,12 +75,21 @@ namespace GetIntoTeachingApi.Models
 
         protected override bool ShouldMapRelationship(string propertyName, dynamic value, ICrmService crm)
         {
-            if (propertyName != "PrivacyPolicy" || Id == null || PrivacyPolicy == null)
+            if (value == null)
             {
-                return true;
+                return false;
             }
 
-            return crm.CandidateYetToAcceptPrivacyPolicy((Guid)Id, PrivacyPolicy.AcceptedPolicyId);
+            switch (propertyName)
+            {
+                case "PhoneCall":
+                    value.PopulateWithCandidate(this);
+                    return true;
+                case "PrivacyPolicy" when Id != null:
+                    return crm.CandidateYetToAcceptPrivacyPolicy((Guid)Id, value.AcceptedPolicyId);
+                default:
+                    return true;
+            }
         }
     }
 }

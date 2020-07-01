@@ -26,12 +26,12 @@ namespace GetIntoTeachingApi.Models.Validators
 
         private IEnumerable<string> UkDegreeGradeIds()
         {
-            return _store.GetPickListItems("dfe_qualification", "dfe_ukdegreegrade").Select(grade => grade.Id);
+            return _store.GetPickListItems("dfe_candidatequalification", "dfe_ukdegreegrade").Select(grade => grade.Id);
         }
 
         private IEnumerable<string> StatusIds()
         {
-            return _store.GetPickListItems("dfe_qualification", "dfe_degreestatus").Select(status => status.Id);
+            return _store.GetPickListItems("dfe_candidatequalification", "dfe_degreestatus").Select(status => status.Id);
         }
     }
 }
