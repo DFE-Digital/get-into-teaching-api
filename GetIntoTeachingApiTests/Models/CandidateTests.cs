@@ -50,6 +50,10 @@ namespace GetIntoTeachingApiTests.Models
                 .BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_stateorprovince");
             type.GetProperty("AddressPostcode").Should()
                 .BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_postalcode");
+            type.GetProperty("DoNotBulkEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotbulkemail");
+            type.GetProperty("DoNotBulkPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotbulkpostalmail");
+            type.GetProperty("DoNotEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotemail");
+            type.GetProperty("DoNotPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotpostalmail");
 
             type.GetProperty("Qualifications").Should().BeDecoratedWith<EntityRelationshipAttribute>(
                 a => a.Name == "dfe_contact_dfe_candidatequalification_ContactId" &&
@@ -135,6 +139,30 @@ namespace GetIntoTeachingApiTests.Models
             var candidate = new Candidate() { FirstName = "John", LastName = "Doe" };
 
             candidate.FullName.Should().Be("John Doe");
+        }
+
+        [Fact]
+        public void DoNotBulkEmail_DefaultValue_IsCorrect()
+        {
+            new Candidate().DoNotBulkEmail.Should().BeFalse();
+        }
+
+        [Fact]
+        public void DoNotEmail_DefaultValue_IsCorrect()
+        {
+            new Candidate().DoNotEmail.Should().BeFalse();
+        }
+
+        [Fact]
+        public void DoNotBulkPostalMail_DefaultValue_IsCorrect()
+        {
+            new Candidate().DoNotBulkPostalMail.Should().BeFalse();
+        }
+
+        [Fact]
+        public void DoNotPostalMail_DefaultValue_IsCorrect()
+        {
+            new Candidate().DoNotPostalMail.Should().BeFalse();
         }
     }
 }
