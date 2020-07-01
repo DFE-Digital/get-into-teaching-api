@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GetIntoTeachingApi.Filters;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
@@ -28,6 +29,7 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [CrmETag]
         [Route("upcoming")]
         [SwaggerOperation(
             Summary = "Retrieves the upcoming teaching events.",
@@ -50,6 +52,7 @@ maximum of 50 using the `limit` query parameter.",
         }
 
         [HttpGet]
+        [CrmETag]
         [Route("search")]
         [SwaggerOperation(
             Summary = "Searches for teaching events.",
@@ -70,6 +73,7 @@ maximum of 50 using the `limit` query parameter.",
         }
 
         [HttpGet]
+        [CrmETag]
         [Route("{id}")]
         [SwaggerOperation(
             Summary = "Retrieves an event.",
