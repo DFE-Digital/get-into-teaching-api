@@ -8,8 +8,10 @@ on:
       - master
 
 env:
-  DOCKERHUB_REPOSITORY:     dfedigital/get-into-teaching-api
-  CF_PROVIDER_DIR: $HOME/.terraform.d/plugins/linux_amd64/terraform-provider-cloudfoundry
+  DOCKERHUB_REPOSITORY: dfedigital/get-into-teaching-api
+  CF_PROVIDER_DIR:      $HOME/.terraform.d/plugins/linux_amd64/terraform-provider-cloudfoundry
+  CONTAINER:            get-into-teaching-api
+  DOMAIN:               london.cloudapps.digital
   
 jobs:
   build_docker:
@@ -61,7 +63,7 @@ jobs:
         env:
             SENTRY_DSN: ${{secrets.DEV_OPS_SENTRY_DSN}}
 
-  deploy_qa:
+  deploy:
     name: 'Deploy to Development'
     runs-on: ubuntu-latest
 
@@ -133,4 +135,30 @@ jobs:
              ENVIRON: "Development Test"
          env:
             SENTRY_DSN: ${{secrets.DEV_OPS_SENTRY_DSN}}
+  owasp:
+    name: OWASP Test
+    runs-on: ubuntu-latest
+    if: always()
+    needs: deploy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
+      - name: ZAP Scan
+        run: |
+          docker run -t owasp/zap2docker-stable zap-api-scan.py \
+              -t  https://${{env.CONTAINER}}-dev.${{env.DOMAIN}}/swagger.json \
+              -f openapi \
+              -r zap_run.html  \
+              -w zap_run.md    \
+              -J zap_run.json
+
+      - name:  Send Message to Sentry.io
+        if: always()
+        uses: sfawcett123/sentry-event@v1
+        with:
+             MESSAGE: "OWASP Application - get-into-teaching-api"
+             STATE:  ${{job.status}}
+             ENVIRON: "Development"
+        env:
+            SENTRY_DSN: ${{secrets.DEV_OPS_SENTRY_DSN}}
