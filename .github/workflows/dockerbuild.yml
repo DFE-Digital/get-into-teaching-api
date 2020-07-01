@@ -151,15 +151,14 @@ jobs:
           docker run -t -v ${GITHUB_WORKSPACE}/zap_rules.tsv:/zap/wrk/zap_rules.tsv  -v ${GITHUB_WORKSPACE}/out:/zap/wrk/:rw owasp/zap2docker-stable zap-api-scan.py \
               -t  https://${{env.CONTAINER}}-dev.${{env.DOMAIN}}/swagger.json \
               -f openapi \
-              -r zap_run.html  \
-              -w zap_run.md    \
-              -J zap_run.json
+              -r zap_run.html 
+          ls -ail ${GITHUB_WORKSPACE}/out
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: zap_run
-          path: ${GITHUB_WORKSPACE}/out
+          path: ${GITHUB_WORKSPACE}/out/zap_run.html
 
       - name:  Send Message to Sentry.io
         if: always()
