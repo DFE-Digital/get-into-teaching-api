@@ -146,7 +146,7 @@ jobs:
 
       - name: ZAP Scan
         run: |
-          docker run -t owasp/zap2docker-stable zap-api-scan.py \
+          docker run -t -v $(PWD)/zap_rules.tsv:/zap/wrk/zap_rules.tsv  -v $(PWD):/zap/wrk/:rw owasp/zap2docker-stable zap-api-scan.py \
               -t  https://${{env.CONTAINER}}-dev.${{env.DOMAIN}}/swagger.json \
               -f openapi \
               -r zap_run.html  \
