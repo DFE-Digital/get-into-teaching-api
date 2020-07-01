@@ -51,6 +51,18 @@ namespace GetIntoTeachingApi.Models
         public string AddressState { get; set; }
         [EntityField("address1_postalcode")]
         public string AddressPostcode { get; set; }
+        [JsonIgnore]
+        [EntityField("donotbulkemail")]
+        public bool DoNotBulkEmail { get; set; } = false;
+        [JsonIgnore]
+        [EntityField("donotbulkpostalmail")]
+        public bool DoNotBulkPostalMail { get; set; } = false;
+        [JsonIgnore]
+        [EntityField("donotemail")]
+        public bool DoNotEmail { get; set; } = false;
+        [JsonIgnore]
+        [EntityField("donotpostalmail")]
+        public bool DoNotPostalMail { get; set; } = false;
 
         [EntityRelationship("dfe_contact_dfe_candidatequalification_ContactId", typeof(CandidateQualification))]
         public List<CandidateQualification> Qualifications { get; set; }
