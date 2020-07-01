@@ -15,7 +15,6 @@ namespace GetIntoTeachingApi.Models.Validators
             _store = store;
 
             RuleFor(phoneCall => phoneCall.ScheduledAt).GreaterThan(candidate => DateTime.Now);
-            RuleFor(phoneCall => phoneCall.Telephone).NotEmpty().MaximumLength(50);
 
             RuleFor(candidate => candidate.ChannelId)
                 .Must(id => ChannelIds().Contains(id.ToString()))
