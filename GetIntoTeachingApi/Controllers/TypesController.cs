@@ -76,19 +76,6 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpGet]
         [CrmETag]
-        [Route("candidate/locations")]
-        [SwaggerOperation(
-            Summary = "Retrieves the list of candidate locations.",
-            OperationId = "GetCandidateLocations",
-            Tags = new[] { "Types" })]
-        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public async Task<IActionResult> GetCandidateLocations()
-        {
-            return Ok(await _store.GetPickListItems("contact", "dfe_isinuk").ToListAsync());
-        }
-
-        [HttpGet]
-        [CrmETag]
         [Route("candidate/channels")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate channels.",

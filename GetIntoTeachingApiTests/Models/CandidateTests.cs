@@ -25,8 +25,6 @@ namespace GetIntoTeachingApiTests.Models
 
             type.GetProperty("PreferredEducationPhaseId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_preferrededucationphase01" && a.Type == typeof(OptionSetValue));
-            type.GetProperty("LocationId").Should().BeDecoratedWith<EntityFieldAttribute>(
-                a => a.Name == "dfe_isinuk" && a.Type == typeof(OptionSetValue));
             type.GetProperty("InitialTeacherTrainingYearId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_ittyear" && a.Type == typeof(OptionSetValue));
             type.GetProperty("ChannelId").Should().BeDecoratedWith<EntityFieldAttribute>(

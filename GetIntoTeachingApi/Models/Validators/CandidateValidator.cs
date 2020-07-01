@@ -40,10 +40,6 @@ namespace GetIntoTeachingApi.Models.Validators
                 .Must(id => PreferredEducationPhaseIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.PreferredEducationPhaseId == null)
                 .WithMessage("Must be a valid candidate education phase.");
-            RuleFor(candidate => candidate.LocationId)
-                .Must(id => LocationIds().Contains(id.ToString()))
-                .Unless(candidate => candidate.LocationId == null)
-                .WithMessage("Must be a valid candidate location.");
             RuleFor(candidate => candidate.InitialTeacherTrainingYearId)
                 .Must(id => InitialTeacherTrainingYearIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.InitialTeacherTrainingYearId == null)
@@ -61,11 +57,6 @@ namespace GetIntoTeachingApi.Models.Validators
         private IEnumerable<string> PreferredEducationPhaseIds()
         {
             return _store.GetPickListItems("contact", "dfe_preferrededucationphase01").Select(phase => phase.Id);
-        }
-
-        private IEnumerable<string> LocationIds()
-        {
-            return _store.GetPickListItems("contact", "dfe_isinuk").Select(location => location.Id);
         }
 
         private IEnumerable<string> InitialTeacherTrainingYearIds()

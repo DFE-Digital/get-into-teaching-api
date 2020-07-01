@@ -27,7 +27,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var mockPreferredTeachingSubject = NewMock(Guid.NewGuid());
             var mockPreferredEducationPhase = NewMock(111);
-            var mockLocation = NewMock(222);
             var mockInitialTeacherTrainingYear = NewMock(333);
             var mockChannel = NewMock(444);
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
@@ -38,9 +37,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_preferrededucationphase01"))
                 .Returns(new[] { mockPreferredEducationPhase }.AsQueryable());
-            _mockStore
-                .Setup(mock => mock.GetPickListItems("contact", "dfe_isinuk"))
-                .Returns(new[] { mockLocation }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_ittyear"))
                 .Returns(new[] { mockInitialTeacherTrainingYear }.AsQueryable);
@@ -66,7 +62,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 AddressPostcode = "postcode",
                 PreferredTeachingSubjectId = Guid.Parse(mockPreferredTeachingSubject.Id),
                 PreferredEducationPhaseId = int.Parse(mockPreferredEducationPhase.Id),
-                LocationId = int.Parse(mockLocation.Id),
                 InitialTeacherTrainingYearId = int.Parse(mockInitialTeacherTrainingYear.Id),
                 ChannelId = int.Parse(mockChannel.Id),
                 PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id }
@@ -292,18 +287,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_PreferredEducationPhaseIdIsNull_HasNoError()
         {
             _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.PreferredEducationPhaseId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_LocationIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.LocationId, 123);
-        }
-
-        [Fact]
-        public void Validate_LocationIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.LocationId, null as int?);
         }
 
         [Fact]

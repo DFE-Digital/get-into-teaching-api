@@ -23,8 +23,6 @@ namespace GetIntoTeachingApi.Models
         public Guid? PreferredTeachingSubjectId { get; set; }
         [EntityField("dfe_preferrededucationphase01", typeof(OptionSetValue))]
         public int? PreferredEducationPhaseId { get; set; }
-        [EntityField("dfe_isinuk", typeof(OptionSetValue))]
-        public int? LocationId { get; set; }
         [EntityField("dfe_ittyear", typeof(OptionSetValue))]
         public int? InitialTeacherTrainingYearId { get; set; }
         [EntityField("dfe_channelcreation", typeof(OptionSetValue))]

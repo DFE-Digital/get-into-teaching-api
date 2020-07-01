@@ -91,18 +91,6 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void GetCandidateLocations_ReturnsAllLocations()
-        {
-            var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_isinuk")).Returns(mockEntities.AsAsyncQueryable());
-
-            var response = await _controller.GetCandidateLocations();
-
-            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
-            ok.Value.Should().BeEquivalentTo(mockEntities);
-        }
-
-        [Fact]
         public async void GetCandidateChannels_ReturnsAllChannels()
         {
             var mockEntities = MockTypeEntities();
