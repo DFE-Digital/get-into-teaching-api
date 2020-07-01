@@ -6,7 +6,11 @@ using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
+using System.Reflection;
+using GetIntoTeachingApi.Filters;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
+using MoreLinq;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Controllers
@@ -26,6 +30,15 @@ namespace GetIntoTeachingApiTests.Controllers
         public void Authorize_IsPresent()
         {
             typeof(TypesController).Should().BeDecoratedWith<AuthorizeAttribute>();
+        }
+
+        [Fact]
+        public void CrmETag_IsPresent()
+        {
+            JobStorage.Current = new Mock<JobStorage>().Object;
+            var methods = typeof(TypesController).GetMethods(BindingFlags.DeclaredOnly);
+
+            methods.ForEach(m => m.Should().BeDecoratedWith<CrmETagAttribute>());
         }
 
         [Fact]

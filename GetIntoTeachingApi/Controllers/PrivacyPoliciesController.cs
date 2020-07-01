@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using GetIntoTeachingApi.Filters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +21,7 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [CrmETag]
         [Route("latest")]
         [SwaggerOperation(
             Summary = "Retrieves the latest privacy policy.",
