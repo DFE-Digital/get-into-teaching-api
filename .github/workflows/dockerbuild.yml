@@ -146,9 +146,9 @@ jobs:
 
       - name: ZAP Scan
         run: |
-          mkdir ./out
-          chmod 777 out
-          docker run -t -v ./zap_rules.tsv:/zap/wrk/zap_rules.tsv  -v ./out:/zap/wrk/:rw owasp/zap2docker-stable zap-api-scan.py \
+          mkdir ${GITHUB_WORKSPACE}/out
+          chmod 777 ${GITHUB_WORKSPACE}/out
+          docker run -t -v ${GITHUB_WORKSPACE}/zap_rules.tsv:/zap/wrk/zap_rules.tsv  -v ${GITHUB_WORKSPACE}/out:/zap/wrk/:rw owasp/zap2docker-stable zap-api-scan.py \
               -t  https://${{env.CONTAINER}}-dev.${{env.DOMAIN}}/swagger.json \
               -f openapi \
               -r zap_run.html  \
@@ -159,7 +159,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: zap_run
-          path: ./out/
+          path: ${GITHUB_WORKSPACE}/out
 
       - name:  Send Message to Sentry.io
         if: always()
