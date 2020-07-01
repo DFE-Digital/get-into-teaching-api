@@ -31,6 +31,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var mockInitialTeacherTrainingYear = NewMock(333);
             var mockChannel = NewMock(444);
             var mockGcseStatus = NewMock(444);
+            var mockRetakeGcseStatus = NewMock(444);
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
 
             _mockStore
@@ -52,6 +53,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_hasgcseenglish"))
                 .Returns(new[] { mockGcseStatus }.AsQueryable());
             _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse"))
+                .Returns(new[] { mockRetakeGcseStatus }.AsQueryable());
+            _mockStore
                 .Setup(mock => mock.GetPrivacyPolicies())
                 .Returns(new[] { mockPrivacyPolicy }.AsQueryable());
 
@@ -70,6 +74,8 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 AddressPostcode = "postcode",
                 HasGcseMathsId = int.Parse(mockGcseStatus.Id),
                 HasGcseEnglishId = int.Parse(mockGcseStatus.Id),
+                PlanningToRetakeCgseScienceId = int.Parse(mockRetakeGcseStatus.Id),
+                PlanningToRetakeGcseEnglishId = int.Parse(mockRetakeGcseStatus.Id),
                 CountryId = Guid.Parse(mockCountry.Id),
                 PreferredTeachingSubjectId = Guid.Parse(mockPreferredTeachingSubject.Id),
                 PreferredEducationPhaseId = int.Parse(mockPreferredEducationPhase.Id),
@@ -370,6 +376,42 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_HasGcseEnglishIdIsNull_HasNoError()
         {
             _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.HasGcseEnglishId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_PlanningToRetakeGcseMathsIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.PlanningToRetakeGcseMathsId, 123);
+        }
+
+        [Fact]
+        public void Validate_PlanningToRetakeGcseMathsIdIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.PlanningToRetakeGcseMathsId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_PlanningToRetakeCgseScienceIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.PlanningToRetakeCgseScienceId, 123);
+        }
+
+        [Fact]
+        public void Validate_PlanningToRetakeCgseScienceIdIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.PlanningToRetakeCgseScienceId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_PlanningToRetakeGcseEnglishIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.PlanningToRetakeGcseEnglishId, 123);
+        }
+
+        [Fact]
+        public void Validate_PlanningToRetakeGcseEnglishIdIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.PlanningToRetakeGcseEnglishId, null as int?);
         }
 
         private static TypeEntity NewMock(dynamic id)

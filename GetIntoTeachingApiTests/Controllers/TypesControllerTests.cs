@@ -115,6 +115,18 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
+        public async void GetCandidateRetakeGcseStatus_ReturnsAllStatus()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse")).Returns(mockEntities.AsAsyncQueryable());
+
+            var response = await _controller.GetCandidateRetakeGcseStatus();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockEntities);
+        }
+
+        [Fact]
         public async void GetQualificationDegreeStatus_ReturnsAllStatus()
         {
             var mockEntities = MockTypeEntities();
