@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using FluentAssertions;
 using FluentValidation.TestHelper;
 using GetIntoTeachingApi.Models;
@@ -28,10 +27,10 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var mockDegreeStatus = NewMock(333);
 
             _mockStore
-                .Setup(mock => mock.GetPickListItems("dfe_qualification", "dfe_ukdegreegrade"))
+                .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_ukdegreegrade"))
                 .Returns(new[] { mockGrade }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetPickListItems("dfe_qualification", "dfe_degreestatus"))
+                .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_degreestatus"))
                 .Returns(new[] { mockDegreeStatus }.AsQueryable());
 
             var qualification = new CandidateQualification()
