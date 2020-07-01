@@ -153,12 +153,13 @@ jobs:
               -f openapi \
               -r zap_run.html 
           ls -ail ${GITHUB_WORKSPACE}/out
+          echo ${GITHUB_WORKSPACE}/out
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: zap_run
-          path: ${{GITHUB_WORKSPACE}}/out/zap_run.html
+          path: ${GITHUB_WORKSPACE}/out/zap_run.html
 
       - name:  Send Message to Sentry.io
         if: always()
