@@ -360,9 +360,34 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_ChannelIdIsNull_HasError()
+        public void Validate_ChannelIdIsNullWhenExistingCandidate_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.ChannelId, null as int?);
+            var candidate = new Candidate() { Id = Guid.NewGuid(), ChannelId = null};
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldNotHaveValidationErrorFor("ChannelId");
+        }
+
+        [Fact]
+        public void Validate_ChannelIdIsNullWhenNewCandidate_HasError()
+        {
+            var candidate = new Candidate() { Id = null, ChannelId = null};
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor("ChannelId");
+        }
+
+        [Fact]
+        public void Validate_ChannelIdIsNotNullWhenExistingCandidate_HasError()
+        {
+            var mockChannel = NewMock(123);
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_channelcreation"))
+                .Returns(new[] { mockChannel }.AsQueryable());
+            var candidate = new Candidate() { Id = Guid.NewGuid(), ChannelId = int.Parse(mockChannel.Id) };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor("ChannelId");
         }
 
         [Fact]
