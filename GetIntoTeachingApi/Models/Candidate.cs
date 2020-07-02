@@ -17,6 +17,16 @@ namespace GetIntoTeachingApi.Models
             Inactive,
         }
 
+        public enum PhoneNumberType
+        {
+            Home = 222750001,
+        }
+
+        public enum ContactMethod
+        {
+            Any = 1,
+        }
+
         [JsonIgnore]
         public string FullName => $"{this.FirstName} {this.LastName}";
         [EntityField("dfe_preferredteachingsubject01", typeof(EntityReference), "dfe_teachingsubjectlist")]
@@ -45,6 +55,12 @@ namespace GetIntoTeachingApi.Models
         public int? DescribeYourselfOptionId { get; set; }
         [EntityField("dfe_websitewhereinconsiderationjourney", typeof(OptionSetValue))]
         public int? ConsiderationJourneyStageId { get; set; }
+        [JsonIgnore]
+        [EntityField("dfe_preferredphonenumbertype", typeof(OptionSetValue))]
+        public int? PreferredPhoneNumberType { get; set; } = (int)PhoneNumberType.Home;
+        [JsonIgnore]
+        [EntityField("preferredcontactmethodcode", typeof(OptionSetValue))]
+        public int? PreferredContactMethod { get; set; } = (int)ContactMethod.Any;
         [EntityField("emailaddress1")]
         public string Email { get; set; }
         [EntityField("firstname")]
@@ -86,12 +102,6 @@ namespace GetIntoTeachingApi.Models
         [JsonIgnore]
         [EntityField("dfe_optoutsms")]
         public bool OptOutOfSms { get; set; } = false;
-        [JsonIgnore]
-        [EntityField("_dfe_preferredphonenumbertype_label")]
-        public string PreferredPhoneNumberType { get; set; } = "Home";
-        [JsonIgnore]
-        [EntityField("_preferredcontactmethodcode_label")]
-        public string PreferredContactMethod { get; set; } = "Any";
         [JsonIgnore]
         [EntityField("dfe_newregistrant")]
         public bool IsNewRegistrant { get; set; }
