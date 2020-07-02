@@ -141,6 +141,19 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpGet]
         [CrmETag]
+        [Route("candidate/types")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of candidate types.",
+            OperationId = "GetCandidateTypes",
+            Tags = new[] { "Types" })]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public async Task<IActionResult> GetCandidateTypes()
+        {
+            return Ok(await _store.GetPickListItems("contact", "dfe_typeofcandidate").ToListAsync());
+        }
+
+        [HttpGet]
+        [CrmETag]
         [Route("qualification/degree_status")]
         [SwaggerOperation(
             Summary = "Retrieves the list of qualification degree status.",

@@ -55,6 +55,8 @@ namespace GetIntoTeachingApi.Models
         public int? DescribeYourselfOptionId { get; set; }
         [EntityField("dfe_websitewhereinconsiderationjourney", typeof(OptionSetValue))]
         public int? ConsiderationJourneyStageId { get; set; }
+        [EntityField("dfe_typeofcandidate", typeof(OptionSetValue))]
+        public int? TypeId { get; set; }
         [JsonIgnore]
         [EntityField("dfe_preferredphonenumbertype", typeof(OptionSetValue))]
         public int? PreferredPhoneNumberType { get; set; } = (int)PhoneNumberType.Home;

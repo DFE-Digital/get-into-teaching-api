@@ -88,6 +88,9 @@ namespace GetIntoTeachingApi.Models.Validators
                 .Must(id => ConsiderationJourneyStageIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.ConsiderationJourneyStageId == null)
                 .WithMessage("Must be a valid candidate consideration journey stage.");
+            RuleFor(candidate => candidate.TypeId)
+                .Must(id => TypeIds().Contains(id.ToString()))
+                .WithMessage("Must be a valid candidate type.");
         }
 
         private IEnumerable<string> PreferredTeachingSubjectIds()
@@ -133,6 +136,11 @@ namespace GetIntoTeachingApi.Models.Validators
         private IEnumerable<string> ConsiderationJourneyStageIds()
         {
             return _store.GetPickListItems("contact", "dfe_websitewhereinconsiderationjourney").Select(describe => describe.Id);
+        }
+
+        private IEnumerable<string> TypeIds()
+        {
+            return _store.GetPickListItems("contact", "dfe_typeofcandidate").Select(type => type.Id);
         }
     }
 }
