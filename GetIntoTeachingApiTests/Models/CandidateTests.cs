@@ -52,6 +52,8 @@ namespace GetIntoTeachingApiTests.Models
                 a => a.Name == "dfe_typeofcandidate" && a.Type == typeof(OptionSetValue));
             type.GetProperty("AdviserEligibilityId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_iscandidateeligibleforadviser" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("AdviserRequiremntId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "dfe_isadvisorrequiredos" && a.Type == typeof(OptionSetValue));
 
             type.GetProperty("Email").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "emailaddress1");
             type.GetProperty("FirstName").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "firstname");
