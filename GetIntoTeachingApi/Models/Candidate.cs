@@ -83,6 +83,12 @@ namespace GetIntoTeachingApi.Models
         [JsonIgnore]
         [EntityField("donotpostalmail")]
         public bool DoNotPostalMail { get; set; } = false;
+        [JsonIgnore]
+        [EntityField("_dfe_preferredphonenumbertype_label")]
+        public string PreferredPhoneNumberType { get; set; } = "Home";
+        [JsonIgnore]
+        [EntityField("_preferredcontactmethodcode_label")]
+        public string PreferredContactMethod { get; set; } = "Any";
 
         [EntityRelationship("dfe_contact_dfe_candidatequalification_ContactId", typeof(CandidateQualification))]
         public List<CandidateQualification> Qualifications { get; set; }
