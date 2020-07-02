@@ -56,6 +56,8 @@ namespace GetIntoTeachingApiTests.Models
                 a => a.Name == "dfe_iscandidateeligibleforadviser" && a.Type == typeof(OptionSetValue));
             type.GetProperty("AdviserRequiremntId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_isadvisorrequiredos" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("GdprConsentId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "msgdpr_gdprconsent" && a.Type == typeof(OptionSetValue));
 
             type.GetProperty("Email").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "emailaddress1");
             type.GetProperty("FirstName").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "firstname");
@@ -83,10 +85,12 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("OptOutOfSms").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_optoutsms");
             type.GetProperty("CallbackInformation").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_websitecallbackdescription");
             type.GetProperty("EligibilityRulesPassed").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_eligibilityrulespassed");
-            type.GetProperty("PreferredPhoneNumberType").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_preferredphonenumbertype");
-            type.GetProperty("PreferredContactMethod").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "preferredcontactmethodcode");
+            type.GetProperty("PreferredPhoneNumberTypeId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_preferredphonenumbertype");
+            type.GetProperty("PreferredContactMethodId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "preferredcontactmethodcode");
             type.GetProperty("IsNewRegistrant").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_newregistrant");
             type.GetProperty("TeacherId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_dfesnumber");
+            type.GetProperty("StatusIsWaitingToBeAssignedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_waitingtobeassigneddate");
+            type.GetProperty("OptOutOfGdpr").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "msdyn_gdproptout");
 
             type.GetProperty("Qualifications").Should().BeDecoratedWith<EntityRelationshipAttribute>(
                 a => a.Name == "dfe_contact_dfe_candidatequalification_ContactId" &&
@@ -238,13 +242,25 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void PreferredPhoneNumberType_DefaultValue_IsCorrect()
         {
-            new Candidate().PreferredPhoneNumberType.Should().Be((int)Candidate.PhoneNumberType.Home);
+            new Candidate().PreferredPhoneNumberTypeId.Should().Be((int)Candidate.PhoneNumberType.Home);
         }
 
         [Fact]
         public void PreferredContactMethod_DefaultValue_IsCorrect()
         {
-            new Candidate().PreferredContactMethod.Should().Be((int)Candidate.ContactMethod.Any);
+            new Candidate().PreferredContactMethodId.Should().Be((int)Candidate.ContactMethod.Any);
+        }
+
+        [Fact]
+        public void GdprConsentId_DefaultValue_IsCorrect()
+        {
+            new Candidate().GdprConsentId.Should().Be((int)Candidate.GdprConsent.Consent);
+        }
+
+        [Fact]
+        public void OptOutOfGdpr_DefaultValue_IsCorrect()
+        {
+            new Candidate().OptOutOfGdpr.Should().BeFalse();
         }
     }
 }
