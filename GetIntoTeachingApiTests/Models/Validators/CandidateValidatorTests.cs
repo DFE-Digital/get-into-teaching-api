@@ -80,6 +80,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 AddressCity = "city",
                 AddressState = "state",
                 AddressPostcode = "postcode",
+                CallbackInformation = "some information",
                 HasGcseMathsId = int.Parse(mockGcseStatus.Id),
                 HasGcseEnglishId = int.Parse(mockGcseStatus.Id),
                 PlanningToRetakeCgseScienceId = int.Parse(mockRetakeGcseStatus.Id),
@@ -290,6 +291,18 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_AddressPostcodeIsTooLong_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(address => address.AddressPostcode, new string('a', 41));
+        }
+
+        [Fact]
+        public void Validate_CallbackInformationIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(address => address.CallbackInformation, null as string);
+        }
+
+        [Fact]
+        public void Validate_CallbackInformationIsTooLong_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(address => address.CallbackInformation, new string('a', 601));
         }
 
         [Fact]

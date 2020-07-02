@@ -67,6 +67,8 @@ namespace GetIntoTeachingApi.Models
         public string AddressState { get; set; }
         [EntityField("address1_postalcode")]
         public string AddressPostcode { get; set; }
+        [EntityField("dfe_websitecallbackdescription")]
+        public string CallbackInformation { get; set; }
         [JsonIgnore]
         [EntityField("donotbulkemail")]
         public bool DoNotBulkEmail { get; set; } = false;

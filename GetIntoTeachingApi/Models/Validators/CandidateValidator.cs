@@ -26,6 +26,7 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.AddressCity).NotEmpty().MaximumLength(128);
             RuleFor(candidate => candidate.AddressState).NotEmpty().MaximumLength(128);
             RuleFor(candidate => candidate.AddressPostcode).NotEmpty().MaximumLength(40);
+            RuleFor(candidate => candidate.CallbackInformation).MaximumLength(600);
 
             RuleFor(candidate => candidate.PhoneCall).SetValidator(new PhoneCallValidator(store)).Unless(candidate => candidate.PhoneCall == null);
             RuleFor(candidate => candidate.PrivacyPolicy).NotNull().SetValidator(new CandidatePrivacyPolicyValidator(store));
