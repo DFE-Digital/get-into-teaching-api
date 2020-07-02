@@ -74,6 +74,7 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("EligibilityRulesPassed").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_eligibilityrulespassed");
             type.GetProperty("PreferredPhoneNumberType").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "_dfe_preferredphonenumbertype_label");
             type.GetProperty("PreferredContactMethod").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "_preferredcontactmethodcode_label");
+            type.GetProperty("IsNewRegistrant").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_newregistrant");
 
             type.GetProperty("Qualifications").Should().BeDecoratedWith<EntityRelationshipAttribute>(
                 a => a.Name == "dfe_contact_dfe_candidatequalification_ContactId" &&
@@ -151,6 +152,36 @@ namespace GetIntoTeachingApiTests.Models
 
             phoneCallEntity.GetAttributeValue<string>("phonenumber").Should().Be(candidate.Telephone);
             phoneCallEntity.GetAttributeValue<string>("subject").Should().Be("Scheduled phone call requested by John Doe");
+        }
+
+        [Fact]
+        public void ToEntity_WithNullId_SetsIsNewRegistrantToTrue()
+        {
+            var mockService = new Mock<IOrganizationServiceAdapter>();
+            var context = mockService.Object.Context();
+            var mockCrm = new Mock<ICrmService>();
+            var candidate = new Candidate() { Id = null };
+            var candidateEntity = new Entity("contact");
+            mockCrm.Setup(m => m.MappableEntity("contact", null, context)).Returns(candidateEntity);
+
+            candidate.ToEntity(mockCrm.Object, context);
+
+            candidateEntity.GetAttributeValue<bool>("dfe_newregistrant").Should().BeTrue();
+        }
+
+        [Fact]
+        public void ToEntity_WithId_SetsIsNewRegistrantToFalse()
+        {
+            var mockService = new Mock<IOrganizationServiceAdapter>();
+            var context = mockService.Object.Context();
+            var mockCrm = new Mock<ICrmService>();
+            var candidate = new Candidate() { Id = Guid.NewGuid() };
+            var candidateEntity = new Entity("contact");
+            mockCrm.Setup(m => m.MappableEntity("contact", candidate.Id, context)).Returns(candidateEntity);
+
+            candidate.ToEntity(mockCrm.Object, context);
+
+            candidateEntity.GetAttributeValue<bool>("dfe_newregistrant").Should().BeFalse();
         }
 
         [Fact]

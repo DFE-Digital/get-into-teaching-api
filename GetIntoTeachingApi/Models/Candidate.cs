@@ -89,6 +89,9 @@ namespace GetIntoTeachingApi.Models
         [JsonIgnore]
         [EntityField("_preferredcontactmethodcode_label")]
         public string PreferredContactMethod { get; set; } = "Any";
+        [JsonIgnore]
+        [EntityField("dfe_newregistrant")]
+        public bool IsNewRegistrant { get; set; }
 
         [EntityRelationship("dfe_contact_dfe_candidatequalification_ContactId", typeof(CandidateQualification))]
         public List<CandidateQualification> Qualifications { get; set; }
@@ -109,6 +112,13 @@ namespace GetIntoTeachingApi.Models
         public Candidate(Entity entity, ICrmService crm)
             : base(entity, crm)
         {
+        }
+
+        protected override bool ShouldMap(ICrmService crm)
+        {
+            IsNewRegistrant = Id == null;
+
+            return base.ShouldMap(crm);
         }
 
         protected override bool ShouldMapRelationship(string propertyName, dynamic value, ICrmService crm)
