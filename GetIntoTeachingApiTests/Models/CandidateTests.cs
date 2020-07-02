@@ -70,6 +70,7 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("DoNotBulkPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotbulkpostalmail");
             type.GetProperty("DoNotEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotemail");
             type.GetProperty("DoNotPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotpostalmail");
+            type.GetProperty("OptOutOfSms").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_optoutsms");
             type.GetProperty("CallbackInformation").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_websitecallbackdescription");
             type.GetProperty("EligibilityRulesPassed").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_eligibilityrulespassed");
             type.GetProperty("PreferredPhoneNumberType").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "_dfe_preferredphonenumbertype_label");
@@ -214,6 +215,12 @@ namespace GetIntoTeachingApiTests.Models
         public void DoNotPostalMail_DefaultValue_IsCorrect()
         {
             new Candidate().DoNotPostalMail.Should().BeFalse();
+        }
+
+        [Fact]
+        public void OptOutOfSms_DefaultValue_IsCorrect()
+        {
+            new Candidate().OptOutOfSms.Should().BeFalse();
         }
 
         [Fact]
