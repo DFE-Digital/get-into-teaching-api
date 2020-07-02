@@ -180,6 +180,19 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpGet]
         [CrmETag]
+        [Route("candidate/status")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of candidate status.",
+            OperationId = "GetCandidateStatus",
+            Tags = new[] { "Types" })]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public async Task<IActionResult> GetCandidateStatus()
+        {
+            return Ok(await _store.GetPickListItems("contact", "dfe_candidatestatus").ToListAsync());
+        }
+
+        [HttpGet]
+        [CrmETag]
         [Route("qualification/degree_status")]
         [SwaggerOperation(
             Summary = "Retrieves the list of qualification degree status.",

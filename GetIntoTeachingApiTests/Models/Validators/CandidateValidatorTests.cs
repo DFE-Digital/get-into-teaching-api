@@ -37,6 +37,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var mockType = NewMock(999);
             var mockAdviserEligibility = NewMock(123);
             var mockAdviserRequirement = NewMock(456);
+            var mockStatus = NewMock(789);
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
             
             _mockStore
@@ -70,6 +71,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_typeofcandidate"))
                 .Returns(new[] { mockType }.AsQueryable());
             _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_candidatestatus"))
+                .Returns(new[] { mockStatus }.AsQueryable());
+            _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_iscandidateeligibleforadviser"))
                 .Returns(new[] { mockAdviserEligibility }.AsQueryable());
             _mockStore
@@ -99,6 +103,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 PlanningToRetakeCgseScienceId = int.Parse(mockRetakeGcseStatus.Id),
                 PlanningToRetakeGcseEnglishId = int.Parse(mockRetakeGcseStatus.Id),
                 TypeId = int.Parse(mockType.Id),
+                StatusId = int.Parse(mockStatus.Id),
                 DoNotPostalMail = false,
                 EligibilityRulesPassed = "true",
                 DescribeYourselfOptionId = int.Parse(mockDescribeYourself.Id),
@@ -391,6 +396,18 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_TypeIdIsNull_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(candidate => candidate.TypeId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_StatusIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.StatusId, 123);
+        }
+
+        [Fact]
+        public void Validate_StatusIdIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.StatusId, null as int?);
         }
 
         [Fact]
