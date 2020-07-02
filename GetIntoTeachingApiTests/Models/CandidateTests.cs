@@ -72,6 +72,7 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("DoNotBulkPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotbulkpostalmail");
             type.GetProperty("DoNotEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotemail");
             type.GetProperty("DoNotPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotpostalmail");
+            type.GetProperty("DoNotSendMm").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotsendmm");
             type.GetProperty("OptOutOfSms").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_optoutsms");
             type.GetProperty("CallbackInformation").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_websitecallbackdescription");
             type.GetProperty("EligibilityRulesPassed").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_eligibilityrulespassed");
@@ -194,36 +195,6 @@ namespace GetIntoTeachingApiTests.Models
             var candidate = new Candidate() { FirstName = "John", LastName = "Doe" };
 
             candidate.FullName.Should().Be("John Doe");
-        }
-
-        [Fact]
-        public void DoNotBulkEmail_DefaultValue_IsCorrect()
-        {
-            new Candidate().DoNotBulkEmail.Should().BeFalse();
-        }
-
-        [Fact]
-        public void DoNotEmail_DefaultValue_IsCorrect()
-        {
-            new Candidate().DoNotEmail.Should().BeFalse();
-        }
-
-        [Fact]
-        public void DoNotBulkPostalMail_DefaultValue_IsCorrect()
-        {
-            new Candidate().DoNotBulkPostalMail.Should().BeFalse();
-        }
-
-        [Fact]
-        public void DoNotPostalMail_DefaultValue_IsCorrect()
-        {
-            new Candidate().DoNotPostalMail.Should().BeFalse();
-        }
-
-        [Fact]
-        public void OptOutOfSms_DefaultValue_IsCorrect()
-        {
-            new Candidate().OptOutOfSms.Should().BeFalse();
         }
 
         [Fact]
