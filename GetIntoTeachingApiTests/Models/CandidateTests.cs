@@ -72,6 +72,8 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("DoNotPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotpostalmail");
             type.GetProperty("CallbackInformation").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_websitecallbackdescription");
             type.GetProperty("EligibilityRulesPassed").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_eligibilityrulespassed");
+            type.GetProperty("PreferredPhoneNumberType").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "_dfe_preferredphonenumbertype_label");
+            type.GetProperty("PreferredContactMethod").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "_preferredcontactmethodcode_label");
 
             type.GetProperty("Qualifications").Should().BeDecoratedWith<EntityRelationshipAttribute>(
                 a => a.Name == "dfe_contact_dfe_candidatequalification_ContactId" &&
@@ -181,6 +183,18 @@ namespace GetIntoTeachingApiTests.Models
         public void DoNotPostalMail_DefaultValue_IsCorrect()
         {
             new Candidate().DoNotPostalMail.Should().BeFalse();
+        }
+
+        [Fact]
+        public void PreferredPhoneNumberType_DefaultValue_IsCorrect()
+        {
+            new Candidate().PreferredPhoneNumberType.Should().Be("Home");
+        }
+
+        [Fact]
+        public void PreferredContactMethod_DefaultValue_IsCorrect()
+        {
+            new Candidate().PreferredContactMethod.Should().Be("Any");
         }
     }
 }
