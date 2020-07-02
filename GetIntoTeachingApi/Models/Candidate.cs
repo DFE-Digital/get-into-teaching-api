@@ -84,6 +84,9 @@ namespace GetIntoTeachingApi.Models
         [EntityField("donotpostalmail")]
         public bool DoNotPostalMail { get; set; } = false;
         [JsonIgnore]
+        [EntityField("dfe_optoutsms")]
+        public bool OptOutOfSms { get; set; } = false;
+        [JsonIgnore]
         [EntityField("_dfe_preferredphonenumbertype_label")]
         public string PreferredPhoneNumberType { get; set; } = "Home";
         [JsonIgnore]
