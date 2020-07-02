@@ -50,7 +50,12 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Must be a valid candidate initial teacher training year.");
             RuleFor(candidate => candidate.ChannelId)
                 .Must(id => ChannelIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.Id != null)
                 .WithMessage("Must be a valid candidate channel.");
+            RuleFor(candidate => candidate.ChannelId)
+                .Must(id => id == null)
+                .Unless(candidate => candidate.Id == null)
+                .WithMessage("You cannot change the channel of an existing candidate.");
             RuleFor(candidate => candidate.HasGcseEnglishId)
                 .Must(id => GcseStatusIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.HasGcseEnglishId == null)
