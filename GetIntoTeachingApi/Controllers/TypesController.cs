@@ -141,6 +141,19 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpGet]
         [CrmETag]
+        [Route("candidate/adviser_eligibilities")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of candidate adviser eligibilities.",
+            OperationId = "GetCandidateEligibilities",
+            Tags = new[] { "Types" })]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public async Task<IActionResult> GetCandidateAdviserEligibilities()
+        {
+            return Ok(await _store.GetPickListItems("contact", "dfe_iscandidateeligibleforadviser").ToListAsync());
+        }
+
+        [HttpGet]
+        [CrmETag]
         [Route("candidate/types")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate types.",
