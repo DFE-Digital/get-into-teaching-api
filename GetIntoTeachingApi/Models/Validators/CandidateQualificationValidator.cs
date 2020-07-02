@@ -18,8 +18,10 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Must be a valid qualification uk degree grade.");
             RuleFor(qualification => qualification.DegreeStatusId)
                 .Must(id => StatusIds().Contains(id.ToString()))
-                .Unless(qualification => qualification.DegreeStatusId == null)
                 .WithMessage("Must be a valid qualification degree status.");
+            RuleFor(qualification => qualification.TypeId)
+                .Must(id => TypeIds().Contains(id.ToString()))
+                .WithMessage("Must be a valid qualification types.");
 
             RuleFor(qualification => qualification.Subject).MaximumLength(600);
         }
@@ -32,6 +34,11 @@ namespace GetIntoTeachingApi.Models.Validators
         private IEnumerable<string> StatusIds()
         {
             return _store.GetPickListItems("dfe_candidatequalification", "dfe_degreestatus").Select(status => status.Id);
+        }
+
+        private IEnumerable<string> TypeIds()
+        {
+            return _store.GetPickListItems("dfe_candidatequalification", "dfe_type").Select(type => type.Id);
         }
     }
 }

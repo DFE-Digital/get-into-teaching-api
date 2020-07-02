@@ -206,6 +206,19 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpGet]
         [CrmETag]
+        [Route("qualification/types")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of qualification types.",
+            OperationId = "GetQualificationTypes",
+            Tags = new[] { "Types" })]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public async Task<IActionResult> GetQualificationTypes()
+        {
+            return Ok(await _store.GetPickListItems("dfe_candidatequalification", "dfe_type").ToListAsync());
+        }
+
+        [HttpGet]
+        [CrmETag]
         [Route("qualification/uk_degree_grades")]
         [SwaggerOperation(
             Summary = "Retrieves the list of qualification UK degree grades.",
