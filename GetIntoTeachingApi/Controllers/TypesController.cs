@@ -76,19 +76,6 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpGet]
         [CrmETag]
-        [Route("candidate/locations")]
-        [SwaggerOperation(
-            Summary = "Retrieves the list of candidate locations.",
-            OperationId = "GetCandidateLocations",
-            Tags = new[] { "Types" })]
-        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public async Task<IActionResult> GetCandidateLocations()
-        {
-            return Ok(await _store.GetPickListItems("contact", "dfe_isinuk").ToListAsync());
-        }
-
-        [HttpGet]
-        [CrmETag]
         [Route("candidate/channels")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate channels.",
@@ -98,6 +85,110 @@ namespace GetIntoTeachingApi.Controllers
         public async Task<IActionResult> GetCandidateChannels()
         {
             return Ok(await _store.GetPickListItems("contact", "dfe_channelcreation").ToListAsync());
+        }
+
+        [HttpGet]
+        [CrmETag]
+        [Route("candidate/gcse_status")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of candidate CGSE status.",
+            OperationId = "GetCandidateGcseStatus",
+            Tags = new[] { "Types" })]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public async Task<IActionResult> GetCandidateGcseStatus()
+        {
+            return Ok(await _store.GetPickListItems("contact", "dfe_hasgcseenglish").ToListAsync());
+        }
+
+        [HttpGet]
+        [CrmETag]
+        [Route("candidate/retake_gcse_status")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of candidate retake CGSE status.",
+            OperationId = "GetCandidateRetakeGcseStatus",
+            Tags = new[] { "Types" })]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public async Task<IActionResult> GetCandidateRetakeGcseStatus()
+        {
+            return Ok(await _store.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse").ToListAsync());
+        }
+
+        [HttpGet]
+        [CrmETag]
+        [Route("candidate/describe_yourself")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of candidate describe yourself options.",
+            OperationId = "GetCandidateDescribeYourselfOptions",
+            Tags = new[] { "Types" })]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public async Task<IActionResult> GetCandidateDescribeYourselfOptions()
+        {
+            return Ok(await _store.GetPickListItems("contact", "dfe_websitedescribeyourself").ToListAsync());
+        }
+
+        [HttpGet]
+        [CrmETag]
+        [Route("candidate/consideration_journey_stages")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of candidate consideration journey stages.",
+            OperationId = "GetCandidateDescribeYourself",
+            Tags = new[] { "Types" })]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public async Task<IActionResult> GetCandidateConsiderationJourneyStages()
+        {
+            return Ok(await _store.GetPickListItems("contact", "dfe_websitewhereinconsiderationjourney").ToListAsync());
+        }
+
+        [HttpGet]
+        [CrmETag]
+        [Route("candidate/adviser_eligibilities")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of candidate adviser eligibilities.",
+            OperationId = "GetCandidateAdviserEligibilities",
+            Tags = new[] { "Types" })]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public async Task<IActionResult> GetCandidateAdviserEligibilities()
+        {
+            return Ok(await _store.GetPickListItems("contact", "dfe_iscandidateeligibleforadviser").ToListAsync());
+        }
+
+        [HttpGet]
+        [CrmETag]
+        [Route("candidate/adviser_requirements")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of candidate adviser requirements.",
+            OperationId = "GetCandidateAdviserRequirements",
+            Tags = new[] { "Types" })]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public async Task<IActionResult> GetCandidateAdviserRequirements()
+        {
+            return Ok(await _store.GetPickListItems("contact", "dfe_isadvisorrequiredos").ToListAsync());
+        }
+
+        [HttpGet]
+        [CrmETag]
+        [Route("candidate/types")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of candidate types.",
+            OperationId = "GetCandidateTypes",
+            Tags = new[] { "Types" })]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public async Task<IActionResult> GetCandidateTypes()
+        {
+            return Ok(await _store.GetPickListItems("contact", "dfe_typeofcandidate").ToListAsync());
+        }
+
+        [HttpGet]
+        [CrmETag]
+        [Route("candidate/status")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of candidate status.",
+            OperationId = "GetCandidateStatus",
+            Tags = new[] { "Types" })]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public async Task<IActionResult> GetCandidateStatus()
+        {
+            return Ok(await _store.GetPickListItems("contact", "dfe_candidatestatus").ToListAsync());
         }
 
         [HttpGet]

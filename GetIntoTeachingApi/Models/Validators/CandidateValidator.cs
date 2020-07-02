@@ -10,6 +10,7 @@ namespace GetIntoTeachingApi.Models.Validators
     public class CandidateValidator : AbstractValidator<Candidate>
     {
         private readonly IStore _store;
+        private readonly string[] _validEligibilityRulesPassedValues = new[] { "true", "false" };
 
         public CandidateValidator(IStore store)
         {
@@ -26,6 +27,10 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.AddressCity).NotEmpty().MaximumLength(128);
             RuleFor(candidate => candidate.AddressState).NotEmpty().MaximumLength(128);
             RuleFor(candidate => candidate.AddressPostcode).NotEmpty().MaximumLength(40);
+            RuleFor(candidate => candidate.CallbackInformation).MaximumLength(600);
+            RuleFor(candidate => candidate.EligibilityRulesPassed)
+                .Must(value => _validEligibilityRulesPassedValues.Contains(value))
+                .WithMessage("Must be true or false (as string values).");
 
             RuleFor(candidate => candidate.PhoneCall).SetValidator(new PhoneCallValidator(store)).Unless(candidate => candidate.PhoneCall == null);
             RuleFor(candidate => candidate.PrivacyPolicy).NotNull().SetValidator(new CandidatePrivacyPolicyValidator(store));
@@ -36,21 +41,72 @@ namespace GetIntoTeachingApi.Models.Validators
                 .Must(id => PreferredTeachingSubjectIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.PreferredTeachingSubjectId == null)
                 .WithMessage("Must be a valid teaching subject.");
+            RuleFor(candidate => candidate.CountryId)
+                .Must(id => CountryIds().Contains(id.ToString()))
+                .WithMessage("Must be a valid country.");
             RuleFor(candidate => candidate.PreferredEducationPhaseId)
                 .Must(id => PreferredEducationPhaseIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.PreferredEducationPhaseId == null)
                 .WithMessage("Must be a valid candidate education phase.");
-            RuleFor(candidate => candidate.LocationId)
-                .Must(id => LocationIds().Contains(id.ToString()))
-                .Unless(candidate => candidate.LocationId == null)
-                .WithMessage("Must be a valid candidate location.");
             RuleFor(candidate => candidate.InitialTeacherTrainingYearId)
                 .Must(id => InitialTeacherTrainingYearIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.InitialTeacherTrainingYearId == null)
                 .WithMessage("Must be a valid candidate initial teacher training year.");
             RuleFor(candidate => candidate.ChannelId)
                 .Must(id => ChannelIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.Id != null)
                 .WithMessage("Must be a valid candidate channel.");
+            RuleFor(candidate => candidate.ChannelId)
+                .Must(id => id == null)
+                .Unless(candidate => candidate.Id == null)
+                .WithMessage("You cannot change the channel of an existing candidate.");
+            RuleFor(candidate => candidate.HasGcseEnglishId)
+                .Must(id => GcseStatusIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.HasGcseEnglishId == null)
+                .WithMessage("Must be a valid candidate GCSE status.");
+            RuleFor(candidate => candidate.HasGcseMathsId)
+                .Must(id => GcseStatusIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.HasGcseMathsId == null)
+                .WithMessage("Must be a valid candidate GCSE status.");
+            RuleFor(candidate => candidate.HasGcseScienceId)
+                .Must(id => GcseStatusIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.HasGcseScienceId == null)
+                .WithMessage("Must be a valid candidate GCSE status.");
+            RuleFor(candidate => candidate.PlanningToRetakeCgseScienceId)
+                .Must(id => RetakeGcseStatusIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.PlanningToRetakeCgseScienceId == null)
+                .WithMessage("Must be a valid candidate retake GCSE status.");
+            RuleFor(candidate => candidate.PlanningToRetakeGcseEnglishId)
+                .Must(id => RetakeGcseStatusIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.PlanningToRetakeGcseEnglishId == null)
+                .WithMessage("Must be a valid candidate retake GCSE status.");
+            RuleFor(candidate => candidate.PlanningToRetakeGcseMathsId)
+                .Must(id => RetakeGcseStatusIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.PlanningToRetakeGcseMathsId == null)
+                .WithMessage("Must be a valid candidate retake GCSE status.");
+            RuleFor(candidate => candidate.DescribeYourselfOptionId)
+                .Must(id => DescribeYourselfIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.DescribeYourselfOptionId == null)
+                .WithMessage("Must be a valid candidate describe yourself option.");
+            RuleFor(candidate => candidate.ConsiderationJourneyStageId)
+                .Must(id => ConsiderationJourneyStageIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.ConsiderationJourneyStageId == null)
+                .WithMessage("Must be a valid candidate consideration journey stage.");
+            RuleFor(candidate => candidate.TypeId)
+                .Must(id => TypeIds().Contains(id.ToString()))
+                .WithMessage("Must be a valid candidate type.");
+            RuleFor(candidate => candidate.StatusId)
+                .Must(id => StatusIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.StatusId == null)
+                .WithMessage("Must be a valid candidate status.");
+            RuleFor(candidate => candidate.AdviserEligibilityId)
+                .Must(id => AdviserEligibilityIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.AdviserEligibilityId == null)
+                .WithMessage("Must be a valid candidate adviser eligibility.");
+            RuleFor(candidate => candidate.AdviserRequiremntId)
+                .Must(id => AdviserRequirementIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.AdviserRequiremntId == null)
+                .WithMessage("Must be a valid candidate adviser requirement.");
         }
 
         private IEnumerable<string> PreferredTeachingSubjectIds()
@@ -58,14 +114,14 @@ namespace GetIntoTeachingApi.Models.Validators
             return _store.GetLookupItems("dfe_teachingsubjectlist").Select(subject => subject.Id);
         }
 
+        private IEnumerable<string> CountryIds()
+        {
+            return _store.GetLookupItems("dfe_country").Select(country => country.Id);
+        }
+
         private IEnumerable<string> PreferredEducationPhaseIds()
         {
             return _store.GetPickListItems("contact", "dfe_preferrededucationphase01").Select(phase => phase.Id);
-        }
-
-        private IEnumerable<string> LocationIds()
-        {
-            return _store.GetPickListItems("contact", "dfe_isinuk").Select(location => location.Id);
         }
 
         private IEnumerable<string> InitialTeacherTrainingYearIds()
@@ -76,6 +132,46 @@ namespace GetIntoTeachingApi.Models.Validators
         private IEnumerable<string> ChannelIds()
         {
             return _store.GetPickListItems("contact", "dfe_channelcreation").Select(channel => channel.Id);
+        }
+
+        private IEnumerable<string> GcseStatusIds()
+        {
+            return _store.GetPickListItems("contact", "dfe_hasgcseenglish").Select(status => status.Id);
+        }
+
+        private IEnumerable<string> RetakeGcseStatusIds()
+        {
+            return _store.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse").Select(status => status.Id);
+        }
+
+        private IEnumerable<string> DescribeYourselfIds()
+        {
+            return _store.GetPickListItems("contact", "dfe_websitedescribeyourself").Select(describe => describe.Id);
+        }
+
+        private IEnumerable<string> ConsiderationJourneyStageIds()
+        {
+            return _store.GetPickListItems("contact", "dfe_websitewhereinconsiderationjourney").Select(describe => describe.Id);
+        }
+
+        private IEnumerable<string> TypeIds()
+        {
+            return _store.GetPickListItems("contact", "dfe_typeofcandidate").Select(type => type.Id);
+        }
+
+        private IEnumerable<string> StatusIds()
+        {
+            return _store.GetPickListItems("contact", "dfe_candidatestatus").Select(type => type.Id);
+        }
+
+        private IEnumerable<string> AdviserEligibilityIds()
+        {
+            return _store.GetPickListItems("contact", "dfe_iscandidateeligibleforadviser").Select(eligibility => eligibility.Id);
+        }
+
+        private IEnumerable<string> AdviserRequirementIds()
+        {
+            return _store.GetPickListItems("contact", "dfe_isadvisorrequiredos").Select(requirement => requirement.Id);
         }
     }
 }

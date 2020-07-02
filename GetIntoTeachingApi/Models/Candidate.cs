@@ -17,18 +17,74 @@ namespace GetIntoTeachingApi.Models
             Inactive,
         }
 
+        public enum AssignmentStatus
+        {
+            WaitingToBeAssigned = 222750001,
+        }
+
+        public enum GdprConsent
+        {
+            Consent = 587030001,
+        }
+
+        public enum PhoneNumberType
+        {
+            Home = 222750001,
+        }
+
+        public enum ContactMethod
+        {
+            Any = 1,
+        }
+
         [JsonIgnore]
         public string FullName => $"{this.FirstName} {this.LastName}";
         [EntityField("dfe_preferredteachingsubject01", typeof(EntityReference), "dfe_teachingsubjectlist")]
         public Guid? PreferredTeachingSubjectId { get; set; }
+        [EntityField("dfe_country", typeof(EntityReference), "dfe_country")]
+        public Guid? CountryId { get; set; }
         [EntityField("dfe_preferrededucationphase01", typeof(OptionSetValue))]
         public int? PreferredEducationPhaseId { get; set; }
-        [EntityField("dfe_isinuk", typeof(OptionSetValue))]
-        public int? LocationId { get; set; }
         [EntityField("dfe_ittyear", typeof(OptionSetValue))]
         public int? InitialTeacherTrainingYearId { get; set; }
         [EntityField("dfe_channelcreation", typeof(OptionSetValue))]
         public int? ChannelId { get; set; }
+        [EntityField("dfe_websitehasgcseenglish", typeof(OptionSetValue))]
+        public int? HasGcseEnglishId { get; set; }
+        [EntityField("dfe_websitehasgcsemaths", typeof(OptionSetValue))]
+        public int? HasGcseMathsId { get; set; }
+        [EntityField("dfe_websitehasgcsescience", typeof(OptionSetValue))]
+        public int? HasGcseScienceId { get; set; }
+        [EntityField("dfe_websiteplanningretakeenglishgcse", typeof(OptionSetValue))]
+        public int? PlanningToRetakeGcseEnglishId { get; set; }
+        [EntityField("dfe_websiteplanningretakemathsgcse", typeof(OptionSetValue))]
+        public int? PlanningToRetakeGcseMathsId { get; set; }
+        [EntityField("dfe_websiteplanningretakesciencegcse", typeof(OptionSetValue))]
+        public int? PlanningToRetakeCgseScienceId { get; set; }
+        [EntityField("dfe_websitedescribeyourself", typeof(OptionSetValue))]
+        public int? DescribeYourselfOptionId { get; set; }
+        [EntityField("dfe_websitewhereinconsiderationjourney", typeof(OptionSetValue))]
+        public int? ConsiderationJourneyStageId { get; set; }
+        [EntityField("dfe_typeofcandidate", typeof(OptionSetValue))]
+        public int? TypeId { get; set; }
+        [EntityField("dfe_candidatestatus", typeof(OptionSetValue))]
+        public int? StatusId { get; set; }
+        [EntityField("dfe_iscandidateeligibleforadviser", typeof(OptionSetValue))]
+        public int? AdviserEligibilityId { get; set; }
+        [EntityField("dfe_isadvisorrequiredos", typeof(OptionSetValue))]
+        public int? AdviserRequiremntId { get; set; }
+        [JsonIgnore]
+        [EntityField("dfe_preferredphonenumbertype", typeof(OptionSetValue))]
+        public int? PreferredPhoneNumberTypeId { get; set; } = (int)PhoneNumberType.Home;
+        [JsonIgnore]
+        [EntityField("preferredcontactmethodcode", typeof(OptionSetValue))]
+        public int? PreferredContactMethodId { get; set; } = (int)ContactMethod.Any;
+        [JsonIgnore]
+        [EntityField("msgdpr_gdprconsent", typeof(OptionSetValue))]
+        public int? GdprConsentId { get; set; } = (int)GdprConsent.Consent;
+        [JsonIgnore]
+        [EntityField("dfe_waitingtobeassigneddate")]
+        public DateTime? StatusIsWaitingToBeAssignedAt { get; set; }
         [EntityField("emailaddress1")]
         public string Email { get; set; }
         [EntityField("firstname")]
@@ -51,6 +107,30 @@ namespace GetIntoTeachingApi.Models
         public string AddressState { get; set; }
         [EntityField("address1_postalcode")]
         public string AddressPostcode { get; set; }
+        [EntityField("dfe_websitecallbackdescription")]
+        public string CallbackInformation { get; set; }
+        [EntityField("dfe_dfesnumber")]
+        public string TeacherId { get; set; }
+        [EntityField("dfe_eligibilityrulespassed")]
+        public string EligibilityRulesPassed { get; set; }
+        [EntityField("donotbulkemail")]
+        public bool? DoNotBulkEmail { get; set; }
+        [EntityField("donotbulkpostalmail")]
+        public bool? DoNotBulkPostalMail { get; set; }
+        [EntityField("donotemail")]
+        public bool? DoNotEmail { get; set; }
+        [EntityField("donotpostalmail")]
+        public bool? DoNotPostalMail { get; set; }
+        [EntityField("donotsendmm")]
+        public bool? DoNotSendMm { get; set; }
+        [EntityField("dfe_optoutsms")]
+        public bool? OptOutOfSms { get; set; }
+        [JsonIgnore]
+        [EntityField("msdyn_gdproptout")]
+        public bool? OptOutOfGdpr { get; set; } = false;
+        [JsonIgnore]
+        [EntityField("dfe_newregistrant")]
+        public bool IsNewRegistrant { get; set; }
 
         [EntityRelationship("dfe_contact_dfe_candidatequalification_ContactId", typeof(CandidateQualification))]
         public List<CandidateQualification> Qualifications { get; set; }
@@ -71,6 +151,18 @@ namespace GetIntoTeachingApi.Models
         public Candidate(Entity entity, ICrmService crm)
             : base(entity, crm)
         {
+        }
+
+        protected override bool ShouldMap(ICrmService crm)
+        {
+            IsNewRegistrant = Id == null;
+
+            if (StatusId == (int)AssignmentStatus.WaitingToBeAssigned)
+            {
+                StatusIsWaitingToBeAssignedAt = DateTime.Now;
+            }
+
+            return base.ShouldMap(crm);
         }
 
         protected override bool ShouldMapRelationship(string propertyName, dynamic value, ICrmService crm)

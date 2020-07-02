@@ -26,27 +26,59 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_WhenValid_HasNoErrors()
         {
             var mockPreferredTeachingSubject = NewMock(Guid.NewGuid());
+            var mockCountry = NewMock(Guid.NewGuid());
             var mockPreferredEducationPhase = NewMock(111);
-            var mockLocation = NewMock(222);
             var mockInitialTeacherTrainingYear = NewMock(333);
             var mockChannel = NewMock(444);
+            var mockGcseStatus = NewMock(555);
+            var mockRetakeGcseStatus = NewMock(666);
+            var mockDescribeYourself = NewMock(777);
+            var mockConsiderationJourneyStage = NewMock(888);
+            var mockType = NewMock(999);
+            var mockAdviserEligibility = NewMock(123);
+            var mockAdviserRequirement = NewMock(456);
+            var mockStatus = NewMock(789);
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
-
+            
             _mockStore
                 .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
                 .Returns(new[] { mockPreferredTeachingSubject }.AsQueryable());
             _mockStore
+                .Setup(mock => mock.GetLookupItems("dfe_country"))
+                .Returns(new[] { mockCountry }.AsQueryable());
+            _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_preferrededucationphase01"))
                 .Returns(new[] { mockPreferredEducationPhase }.AsQueryable());
-            _mockStore
-                .Setup(mock => mock.GetPickListItems("contact", "dfe_isinuk"))
-                .Returns(new[] { mockLocation }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_ittyear"))
                 .Returns(new[] { mockInitialTeacherTrainingYear }.AsQueryable);
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_channelcreation"))
                 .Returns(new[] { mockChannel }.AsQueryable());
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_hasgcseenglish"))
+                .Returns(new[] { mockGcseStatus }.AsQueryable());
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse"))
+                .Returns(new[] { mockRetakeGcseStatus }.AsQueryable());
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_websitedescribeyourself"))
+                .Returns(new[] { mockDescribeYourself }.AsQueryable());
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_websitewhereinconsiderationjourney"))
+                .Returns(new[] { mockConsiderationJourneyStage }.AsQueryable());
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_typeofcandidate"))
+                .Returns(new[] { mockType }.AsQueryable());
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_candidatestatus"))
+                .Returns(new[] { mockStatus }.AsQueryable());
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_iscandidateeligibleforadviser"))
+                .Returns(new[] { mockAdviserEligibility }.AsQueryable());
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_isadvisorrequiredos"))
+                .Returns(new[] { mockAdviserRequirement }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPrivacyPolicies())
                 .Returns(new[] { mockPrivacyPolicy }.AsQueryable());
@@ -55,7 +87,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             {
                 FirstName = "first",
                 LastName = "last",
-                Email = "email@address.com",
+                Email = "email@candidate.com",
                 DateOfBirth = DateTime.Now.AddYears(-18),
                 Telephone = "07584 734 576",
                 AddressLine1 = "line1",
@@ -64,9 +96,21 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 AddressCity = "city",
                 AddressState = "state",
                 AddressPostcode = "postcode",
+                CallbackInformation = "some information",
+                HasGcseMathsId = int.Parse(mockGcseStatus.Id),
+                HasGcseEnglishId = int.Parse(mockGcseStatus.Id),
+                AdviserEligibilityId = int.Parse(mockAdviserEligibility.Id),
+                PlanningToRetakeCgseScienceId = int.Parse(mockRetakeGcseStatus.Id),
+                PlanningToRetakeGcseEnglishId = int.Parse(mockRetakeGcseStatus.Id),
+                TypeId = int.Parse(mockType.Id),
+                StatusId = int.Parse(mockStatus.Id),
+                DoNotPostalMail = false,
+                EligibilityRulesPassed = "true",
+                DescribeYourselfOptionId = int.Parse(mockDescribeYourself.Id),
+                ConsiderationJourneyStageId = int.Parse(mockConsiderationJourneyStage.Id),
+                CountryId = Guid.Parse(mockCountry.Id),
                 PreferredTeachingSubjectId = Guid.Parse(mockPreferredTeachingSubject.Id),
                 PreferredEducationPhaseId = int.Parse(mockPreferredEducationPhase.Id),
-                LocationId = int.Parse(mockLocation.Id),
                 InitialTeacherTrainingYearId = int.Parse(mockInitialTeacherTrainingYear.Id),
                 ChannelId = int.Parse(mockChannel.Id),
                 PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id }
@@ -213,67 +257,103 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_AddressLine1IsEmpty_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressLine1, "");
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressLine1, "");
         }
 
         [Fact]
         public void Validate_AddressLine1IsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressLine1, new string('a', 1025));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressLine1, new string('a', 1025));
         }
 
         [Fact]
         public void Validate_AddressLine2IsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressLine2, new string('a', 1025));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressLine2, new string('a', 1025));
         }
 
         [Fact]
         public void Validate_AddressLine3IsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressLine3, new string('a', 1025));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressLine3, new string('a', 1025));
         }
 
         [Fact]
         public void Validate_AddressCityIsEmpty_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressCity, "");
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressCity, "");
         }
 
         [Fact]
         public void Validate_AddressCityIsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressCity, new string('a', 129));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressCity, new string('a', 129));
         }
 
         [Fact]
         public void Validate_AddressStateIsEmpty_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressState, "");
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressState, "");
         }
 
         [Fact]
         public void Validate_AddressStateIsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressState, new string('a', 129));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressState, new string('a', 129));
         }
 
         [Fact]
         public void Validate_AddressPostcodeIsEmpty_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressPostcode, "");
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressPostcode, "");
         }
 
         [Fact]
         public void Validate_AddressPostcodeIsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressPostcode, new string('a', 41));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressPostcode, new string('a', 41));
+        }
+
+        [Fact]
+        public void Validate_CallbackInformationIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.CallbackInformation, null as string);
+        }
+
+        [Fact]
+        public void Validate_CallbackInformationIsTooLong_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.CallbackInformation, new string('a', 601));
+        }
+
+        [Fact]
+        public void Validate_EligibilityRulesPassedIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.EligibilityRulesPassed, null as string);
+        }
+
+        [Fact]
+        public void Validate_EligibilityRulesPassedIsNotTrueOrFalse_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.EligibilityRulesPassed, "falsy");
         }
 
         [Fact]
         public void Validate_PreferredTeachingSubjectIdIsInvalid_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(candidate => candidate.PreferredTeachingSubjectId, Guid.NewGuid());
+        }
+
+        [Fact]
+        public void Validate_CountryIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.CountryId, null as Guid?);
+        }
+
+        [Fact]
+        public void Validate_CountryIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.CountryId, Guid.NewGuid());
         }
 
         [Fact]
@@ -295,18 +375,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_LocationIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.LocationId, 123);
-        }
-
-        [Fact]
-        public void Validate_LocationIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.LocationId, null as int?);
-        }
-
-        [Fact]
         public void Validate_InitialTeacherTrainingYearIdIsInvalid_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(candidate => candidate.InitialTeacherTrainingYearId, 123);
@@ -319,15 +387,184 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
+        public void Validate_TypeIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.TypeId, 123);
+        }
+
+        [Fact]
+        public void Validate_TypeIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.TypeId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_StatusIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.StatusId, 123);
+        }
+
+        [Fact]
+        public void Validate_StatusIdIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.StatusId, null as int?);
+        }
+
+        [Fact]
         public void Validate_ChannelIdIsInvalid_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(candidate => candidate.ChannelId, 123);
         }
 
         [Fact]
-        public void Validate_ChannelIdIsNull_HasError()
+        public void Validate_ChannelIdIsNullWhenExistingCandidate_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.ChannelId, null as int?);
+            var candidate = new Candidate() { Id = Guid.NewGuid(), ChannelId = null};
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldNotHaveValidationErrorFor("ChannelId");
+        }
+
+        [Fact]
+        public void Validate_ChannelIdIsNullWhenNewCandidate_HasError()
+        {
+            var candidate = new Candidate() { Id = null, ChannelId = null};
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor("ChannelId");
+        }
+
+        [Fact]
+        public void Validate_ChannelIdIsNotNullWhenExistingCandidate_HasError()
+        {
+            var mockChannel = NewMock(123);
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_channelcreation"))
+                .Returns(new[] { mockChannel }.AsQueryable());
+            var candidate = new Candidate() { Id = Guid.NewGuid(), ChannelId = int.Parse(mockChannel.Id) };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor("ChannelId");
+        }
+
+        [Fact]
+        public void Validate_AdviserEligibilityIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AdviserEligibilityId, 123);
+        }
+
+        [Fact]
+        public void Validate_AdviserEligibilityIdIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AdviserEligibilityId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_AdviserRequirementIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AdviserRequiremntId, 123);
+        }
+
+        [Fact]
+        public void Validate_AdviserRequirementIdIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AdviserRequiremntId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_HasGcseMathsIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.HasGcseMathsId, 123);
+        }
+
+        [Fact]
+        public void Validate_HasGcseMathsIdIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.HasGcseMathsId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_HasGcseScienceIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.HasGcseScienceId, 123);
+        }
+
+        [Fact]
+        public void Validate_HasGcseScienceIdIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.HasGcseScienceId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_HasGcseEnglishIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.HasGcseEnglishId, 123);
+        }
+
+        [Fact]
+        public void Validate_HasGcseEnglishIdIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.HasGcseEnglishId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_PlanningToRetakeGcseMathsIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.PlanningToRetakeGcseMathsId, 123);
+        }
+
+        [Fact]
+        public void Validate_PlanningToRetakeGcseMathsIdIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.PlanningToRetakeGcseMathsId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_PlanningToRetakeCgseScienceIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.PlanningToRetakeCgseScienceId, 123);
+        }
+
+        [Fact]
+        public void Validate_PlanningToRetakeCgseScienceIdIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.PlanningToRetakeCgseScienceId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_PlanningToRetakeGcseEnglishIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.PlanningToRetakeGcseEnglishId, 123);
+        }
+
+        [Fact]
+        public void Validate_PlanningToRetakeGcseEnglishIdIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.PlanningToRetakeGcseEnglishId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_DescribeYourselfIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.DescribeYourselfOptionId, 123);
+        }
+
+        [Fact]
+        public void Validate_DescribeYourselfIdIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.DescribeYourselfOptionId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_ConsiderationJourneyStageIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.ConsiderationJourneyStageId, 123);
+        }
+
+        [Fact]
+        public void Validate_ConsiderationJourneyStageIdIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.ConsiderationJourneyStageId, null as int?);
         }
 
         private static TypeEntity NewMock(dynamic id)
