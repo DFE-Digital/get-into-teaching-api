@@ -211,6 +211,18 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
+        public async void GetQualificationTypes_ReturnsAllTypes()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_type")).Returns(mockEntities.AsAsyncQueryable());
+
+            var response = await _controller.GetQualificationTypes();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockEntities);
+        }
+
+        [Fact]
         public async void GetQualificationUkDegreeGrades_ReturnsAllGrades()
         {
             var mockEntities = MockTypeEntities();
