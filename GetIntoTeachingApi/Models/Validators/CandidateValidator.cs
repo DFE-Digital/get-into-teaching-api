@@ -10,6 +10,7 @@ namespace GetIntoTeachingApi.Models.Validators
     public class CandidateValidator : AbstractValidator<Candidate>
     {
         private readonly IStore _store;
+        private readonly string[] _validEligibilityRulesPassedValues = new[] { "true", "false" };
 
         public CandidateValidator(IStore store)
         {
@@ -27,6 +28,9 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.AddressState).NotEmpty().MaximumLength(128);
             RuleFor(candidate => candidate.AddressPostcode).NotEmpty().MaximumLength(40);
             RuleFor(candidate => candidate.CallbackInformation).MaximumLength(600);
+            RuleFor(candidate => candidate.EligibilityRulesPassed)
+                .Must(value => _validEligibilityRulesPassedValues.Contains(value))
+                .WithMessage("Must be true or false (as string values).");
 
             RuleFor(candidate => candidate.PhoneCall).SetValidator(new PhoneCallValidator(store)).Unless(candidate => candidate.PhoneCall == null);
             RuleFor(candidate => candidate.PrivacyPolicy).NotNull().SetValidator(new CandidatePrivacyPolicyValidator(store));

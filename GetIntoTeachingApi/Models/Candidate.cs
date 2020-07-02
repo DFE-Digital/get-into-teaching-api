@@ -87,8 +87,10 @@ namespace GetIntoTeachingApi.Models
         public string AddressPostcode { get; set; }
         [EntityField("dfe_websitecallbackdescription")]
         public string CallbackInformation { get; set; }
+        [EntityField("dfe_dfesnumber")]
+        public string TeacherId { get; set; }
         [EntityField("dfe_eligibilityrulespassed")]
-        public bool EligibilityRulesPassed { get; set; }
+        public string EligibilityRulesPassed { get; set; }
         [JsonIgnore]
         [EntityField("donotbulkemail")]
         public bool DoNotBulkEmail { get; set; } = false;

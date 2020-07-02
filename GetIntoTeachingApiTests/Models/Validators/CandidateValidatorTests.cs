@@ -91,7 +91,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 PlanningToRetakeGcseEnglishId = int.Parse(mockRetakeGcseStatus.Id),
                 TypeId = int.Parse(mockType.Id),
                 DoNotPostalMail = false,
-                EligibilityRulesPassed = true,
+                EligibilityRulesPassed = "true",
                 DescribeYourselfOptionId = int.Parse(mockDescribeYourself.Id),
                 ConsiderationJourneyStageId = int.Parse(mockConsiderationJourneyStage.Id),
                 CountryId = Guid.Parse(mockCountry.Id),
@@ -310,6 +310,18 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_CallbackInformationIsTooLong_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(candidate => candidate.CallbackInformation, new string('a', 601));
+        }
+
+        [Fact]
+        public void Validate_EligibilityRulesPassedIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.EligibilityRulesPassed, null as string);
+        }
+
+        [Fact]
+        public void Validate_EligibilityRulesPassedIsNotTrueOrFalse_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.EligibilityRulesPassed, "falsy");
         }
 
         [Fact]
