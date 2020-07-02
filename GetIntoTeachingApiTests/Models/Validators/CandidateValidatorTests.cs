@@ -36,6 +36,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var mockConsiderationJourneyStage = NewMock(888);
             var mockType = NewMock(999);
             var mockAdviserEligibility = NewMock(123);
+            var mockAdviserRequirement = NewMock(456);
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
             
             _mockStore
@@ -71,6 +72,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_iscandidateeligibleforadviser"))
                 .Returns(new[] { mockAdviserEligibility }.AsQueryable());
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_isadvisorrequiredos"))
+                .Returns(new[] { mockAdviserRequirement }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPrivacyPolicies())
                 .Returns(new[] { mockPrivacyPolicy }.AsQueryable());
@@ -436,6 +440,18 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_AdviserEligibilityIdIsNull_HasNoError()
         {
             _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AdviserEligibilityId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_AdviserRequirementIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AdviserRequiremntId, 123);
+        }
+
+        [Fact]
+        public void Validate_AdviserRequirementIdIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AdviserRequiremntId, null as int?);
         }
 
         [Fact]
