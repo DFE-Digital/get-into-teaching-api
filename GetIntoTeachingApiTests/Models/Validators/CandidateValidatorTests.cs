@@ -71,7 +71,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             {
                 FirstName = "first",
                 LastName = "last",
-                Email = "email@address.com",
+                Email = "email@candidate.com",
                 DateOfBirth = DateTime.Now.AddYears(-18),
                 Telephone = "07584 734 576",
                 AddressLine1 = "line1",
@@ -85,6 +85,8 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 HasGcseEnglishId = int.Parse(mockGcseStatus.Id),
                 PlanningToRetakeCgseScienceId = int.Parse(mockRetakeGcseStatus.Id),
                 PlanningToRetakeGcseEnglishId = int.Parse(mockRetakeGcseStatus.Id),
+                DoNotPostalMail = false,
+                EligibilityRulesPassed = true,
                 DescribeYourselfOptionId = int.Parse(mockDescribeYourself.Id),
                 ConsiderationJourneyStageId = int.Parse(mockConsiderationJourneyStage.Id),
                 CountryId = Guid.Parse(mockCountry.Id),
@@ -236,73 +238,73 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_AddressLine1IsEmpty_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressLine1, "");
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressLine1, "");
         }
 
         [Fact]
         public void Validate_AddressLine1IsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressLine1, new string('a', 1025));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressLine1, new string('a', 1025));
         }
 
         [Fact]
         public void Validate_AddressLine2IsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressLine2, new string('a', 1025));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressLine2, new string('a', 1025));
         }
 
         [Fact]
         public void Validate_AddressLine3IsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressLine3, new string('a', 1025));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressLine3, new string('a', 1025));
         }
 
         [Fact]
         public void Validate_AddressCityIsEmpty_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressCity, "");
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressCity, "");
         }
 
         [Fact]
         public void Validate_AddressCityIsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressCity, new string('a', 129));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressCity, new string('a', 129));
         }
 
         [Fact]
         public void Validate_AddressStateIsEmpty_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressState, "");
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressState, "");
         }
 
         [Fact]
         public void Validate_AddressStateIsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressState, new string('a', 129));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressState, new string('a', 129));
         }
 
         [Fact]
         public void Validate_AddressPostcodeIsEmpty_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressPostcode, "");
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressPostcode, "");
         }
 
         [Fact]
         public void Validate_AddressPostcodeIsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.AddressPostcode, new string('a', 41));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressPostcode, new string('a', 41));
         }
 
         [Fact]
         public void Validate_CallbackInformationIsNull_HasNoError()
         {
-            _validator.ShouldNotHaveValidationErrorFor(address => address.CallbackInformation, null as string);
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.CallbackInformation, null as string);
         }
 
         [Fact]
         public void Validate_CallbackInformationIsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(address => address.CallbackInformation, new string('a', 601));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.CallbackInformation, new string('a', 601));
         }
 
         [Fact]
