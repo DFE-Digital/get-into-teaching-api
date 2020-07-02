@@ -91,24 +91,108 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void GetCandidateLocations_ReturnsAllLocations()
-        {
-            var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_isinuk")).Returns(mockEntities.AsAsyncQueryable());
-
-            var response = await _controller.GetCandidateLocations();
-
-            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
-            ok.Value.Should().BeEquivalentTo(mockEntities);
-        }
-
-        [Fact]
         public async void GetCandidateChannels_ReturnsAllChannels()
         {
             var mockEntities = MockTypeEntities();
             _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_channelcreation")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetCandidateChannels();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockEntities);
+        }
+
+        [Fact]
+        public async void GetCandidateGcseStatus_ReturnsAllStatus()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_hasgcseenglish")).Returns(mockEntities.AsAsyncQueryable());
+
+            var response = await _controller.GetCandidateGcseStatus();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockEntities);
+        }
+
+        [Fact]
+        public async void GetCandidateRetakeGcseStatus_ReturnsAllStatus()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse")).Returns(mockEntities.AsAsyncQueryable());
+
+            var response = await _controller.GetCandidateRetakeGcseStatus();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockEntities);
+        }
+
+        [Fact]
+        public async void GetCandidateDescribeYourselfOptions_ReturnsAllOptions()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_websitedescribeyourself")).Returns(mockEntities.AsAsyncQueryable());
+
+            var response = await _controller.GetCandidateDescribeYourselfOptions();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockEntities);
+        }
+
+        [Fact]
+        public async void GetCandidateConsiderationJourneyStages_ReturnsAllStages()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_websitewhereinconsiderationjourney")).Returns(mockEntities.AsAsyncQueryable());
+
+            var response = await _controller.GetCandidateConsiderationJourneyStages();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockEntities);
+        }
+
+        [Fact]
+        public async void GetCandidateTypes_ReturnsAllTypes()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_typeofcandidate")).Returns(mockEntities.AsAsyncQueryable());
+
+            var response = await _controller.GetCandidateTypes();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockEntities);
+        }
+
+        [Fact]
+        public async void GetCandidateStatus_ReturnsAllStatus()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_candidatestatus")).Returns(mockEntities.AsAsyncQueryable());
+
+            var response = await _controller.GetCandidateStatus();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockEntities);
+        }
+
+        [Fact]
+        public async void GetCandidateAdviserEligibilities_ReturnsAllEligibilities()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_iscandidateeligibleforadviser")).Returns(mockEntities.AsAsyncQueryable());
+
+            var response = await _controller.GetCandidateAdviserEligibilities();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockEntities);
+        }
+
+        [Fact]
+        public async void GetCandidateAdviserRequirements_ReturnsAllEligibilities()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_isadvisorrequiredos")).Returns(mockEntities.AsAsyncQueryable());
+
+            var response = await _controller.GetCandidateAdviserRequirements();
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().BeEquivalentTo(mockEntities);

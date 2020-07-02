@@ -172,8 +172,15 @@ namespace GetIntoTeachingApi.Services
             await SyncTypes(crm.GetLookupItems("dfe_teachingsubjectlist"));
             await SyncTypes(crm.GetPickListItems("contact", "dfe_ittyear"));
             await SyncTypes(crm.GetPickListItems("contact", "dfe_preferrededucationphase01"));
-            await SyncTypes(crm.GetPickListItems("contact", "dfe_isinuk"));
             await SyncTypes(crm.GetPickListItems("contact", "dfe_channelcreation"));
+            await SyncTypes(crm.GetPickListItems("contact", "dfe_hasgcseenglish"));
+            await SyncTypes(crm.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse"));
+            await SyncTypes(crm.GetPickListItems("contact", "dfe_websitedescribeyourself"));
+            await SyncTypes(crm.GetPickListItems("contact", "dfe_websitewhereinconsiderationjourney"));
+            await SyncTypes(crm.GetPickListItems("contact", "dfe_typeofcandidate"));
+            await SyncTypes(crm.GetPickListItems("contact", "dfe_candidatestatus"));
+            await SyncTypes(crm.GetPickListItems("contact", "dfe_iscandidateeligibleforadviser"));
+            await SyncTypes(crm.GetPickListItems("contact", "dfe_isadvisorrequiredos"));
             await SyncTypes(crm.GetPickListItems("dfe_candidatequalification", "dfe_degreestatus"));
             await SyncTypes(crm.GetPickListItems("dfe_candidatequalification", "dfe_ukdegreegrade"));
             await SyncTypes(crm.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase"));
