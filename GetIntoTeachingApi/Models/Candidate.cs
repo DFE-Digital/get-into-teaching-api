@@ -91,21 +91,18 @@ namespace GetIntoTeachingApi.Models
         public string TeacherId { get; set; }
         [EntityField("dfe_eligibilityrulespassed")]
         public string EligibilityRulesPassed { get; set; }
-        [JsonIgnore]
         [EntityField("donotbulkemail")]
-        public bool DoNotBulkEmail { get; set; } = false;
-        [JsonIgnore]
+        public bool? DoNotBulkEmail { get; set; }
         [EntityField("donotbulkpostalmail")]
-        public bool DoNotBulkPostalMail { get; set; } = false;
-        [JsonIgnore]
+        public bool? DoNotBulkPostalMail { get; set; }
         [EntityField("donotemail")]
-        public bool DoNotEmail { get; set; } = false;
-        [JsonIgnore]
+        public bool? DoNotEmail { get; set; }
         [EntityField("donotpostalmail")]
-        public bool DoNotPostalMail { get; set; } = false;
-        [JsonIgnore]
+        public bool? DoNotPostalMail { get; set; }
+        [EntityField("donotsendmm")]
+        public bool? DoNotSendMm { get; set; }
         [EntityField("dfe_optoutsms")]
-        public bool OptOutOfSms { get; set; } = false;
+        public bool? OptOutOfSms { get; set; }
         [JsonIgnore]
         [EntityField("dfe_newregistrant")]
         public bool IsNewRegistrant { get; set; }
