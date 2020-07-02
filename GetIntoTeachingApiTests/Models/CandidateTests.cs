@@ -50,6 +50,8 @@ namespace GetIntoTeachingApiTests.Models
                 a => a.Name == "dfe_websitewhereinconsiderationjourney" && a.Type == typeof(OptionSetValue));
             type.GetProperty("TypeId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_typeofcandidate" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("StatusId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "dfe_candidatestatus" && a.Type == typeof(OptionSetValue));
             type.GetProperty("AdviserEligibilityId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_iscandidateeligibleforadviser" && a.Type == typeof(OptionSetValue));
             type.GetProperty("AdviserRequiremntId").Should().BeDecoratedWith<EntityFieldAttribute>(
@@ -72,6 +74,7 @@ namespace GetIntoTeachingApiTests.Models
                 .BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_stateorprovince");
             type.GetProperty("AddressPostcode").Should()
                 .BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_postalcode");
+            type.GetProperty("StatusIsWaitingToBeAssignedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_waitingtobeassigneddate");
             type.GetProperty("DoNotBulkEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotbulkemail");
             type.GetProperty("DoNotBulkPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotbulkpostalmail");
             type.GetProperty("DoNotEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotemail");
@@ -191,6 +194,37 @@ namespace GetIntoTeachingApiTests.Models
             candidate.ToEntity(mockCrm.Object, context);
 
             candidateEntity.GetAttributeValue<bool>("dfe_newregistrant").Should().BeFalse();
+        }
+
+        [Fact]
+        public void ToEntity_WithStatusIdOfWaitingToBeAssigned_SetsStatusIsWaitingToBeAssignedAtToNow()
+        {
+            var mockService = new Mock<IOrganizationServiceAdapter>();
+            var context = mockService.Object.Context();
+            var mockCrm = new Mock<ICrmService>();
+            var candidate = new Candidate() { StatusId = (int)Candidate.AssignmentStatus.WaitingToBeAssigned };
+            var candidateEntity = new Entity("contact");
+            mockCrm.Setup(m => m.MappableEntity("contact", null, context)).Returns(candidateEntity);
+
+            candidate.ToEntity(mockCrm.Object, context);
+
+            candidateEntity.GetAttributeValue<DateTime>("dfe_waitingtobeassigneddate")
+                .Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(20));
+        }
+
+        [Fact]
+        public void ToEntity_WithNullStatusId_DoesNotSetStatusIsWaitingToBeAssigned()
+        {
+            var mockService = new Mock<IOrganizationServiceAdapter>();
+            var context = mockService.Object.Context();
+            var mockCrm = new Mock<ICrmService>();
+            var candidate = new Candidate() { StatusId = null };
+            var candidateEntity = new Entity("contact");
+            mockCrm.Setup(m => m.MappableEntity("contact", null, context)).Returns(candidateEntity);
+
+            candidate.ToEntity(mockCrm.Object, context);
+
+            candidateEntity.GetAttributeValue<DateTime?>("dfe_waitingtobeassigneddate").Should().BeNull();
         }
 
         [Fact]

@@ -95,6 +95,10 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.TypeId)
                 .Must(id => TypeIds().Contains(id.ToString()))
                 .WithMessage("Must be a valid candidate type.");
+            RuleFor(candidate => candidate.StatusId)
+                .Must(id => StatusIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.StatusId == null)
+                .WithMessage("Must be a valid candidate status.");
             RuleFor(candidate => candidate.AdviserEligibilityId)
                 .Must(id => AdviserEligibilityIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.AdviserEligibilityId == null)
@@ -153,6 +157,11 @@ namespace GetIntoTeachingApi.Models.Validators
         private IEnumerable<string> TypeIds()
         {
             return _store.GetPickListItems("contact", "dfe_typeofcandidate").Select(type => type.Id);
+        }
+
+        private IEnumerable<string> StatusIds()
+        {
+            return _store.GetPickListItems("contact", "dfe_candidatestatus").Select(type => type.Id);
         }
 
         private IEnumerable<string> AdviserEligibilityIds()

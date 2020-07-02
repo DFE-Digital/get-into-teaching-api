@@ -263,6 +263,7 @@ namespace GetIntoTeachingApiTests.Services
             mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_websitedescribeyourself"));
             mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_websitewhereinconsiderationjourney"));
             mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_typeofcandidate"));
+            mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_candidatestatus"));
             mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_iscandidateeligibleforadviser"));
             mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_isadvisorrequiredos"));
             mockCrm.Verify(m => m.GetPickListItems("dfe_candidatequalification", "dfe_degreestatus"));

@@ -17,6 +17,11 @@ namespace GetIntoTeachingApi.Models
             Inactive,
         }
 
+        public enum AssignmentStatus
+        {
+            WaitingToBeAssigned = 0,
+        }
+
         public enum PhoneNumberType
         {
             Home = 222750001,
@@ -57,6 +62,8 @@ namespace GetIntoTeachingApi.Models
         public int? ConsiderationJourneyStageId { get; set; }
         [EntityField("dfe_typeofcandidate", typeof(OptionSetValue))]
         public int? TypeId { get; set; }
+        [EntityField("dfe_candidatestatus", typeof(OptionSetValue))]
+        public int? StatusId { get; set; }
         [EntityField("dfe_iscandidateeligibleforadviser", typeof(OptionSetValue))]
         public int? AdviserEligibilityId { get; set; }
         [EntityField("dfe_isadvisorrequiredos", typeof(OptionSetValue))]
@@ -67,6 +74,9 @@ namespace GetIntoTeachingApi.Models
         [JsonIgnore]
         [EntityField("preferredcontactmethodcode", typeof(OptionSetValue))]
         public int? PreferredContactMethod { get; set; } = (int)ContactMethod.Any;
+        [JsonIgnore]
+        [EntityField("dfe_waitingtobeassigneddate")]
+        public DateTime? StatusIsWaitingToBeAssignedAt { get; set; }
         [EntityField("emailaddress1")]
         public string Email { get; set; }
         [EntityField("firstname")]
@@ -135,6 +145,11 @@ namespace GetIntoTeachingApi.Models
         protected override bool ShouldMap(ICrmService crm)
         {
             IsNewRegistrant = Id == null;
+
+            if (StatusId == (int)AssignmentStatus.WaitingToBeAssigned)
+            {
+                StatusIsWaitingToBeAssignedAt = DateTime.Now;
+            }
 
             return base.ShouldMap(crm);
         }
