@@ -19,7 +19,12 @@ namespace GetIntoTeachingApi.Models
 
         public enum AssignmentStatus
         {
-            WaitingToBeAssigned = 0,
+            WaitingToBeAssigned = 222750001,
+        }
+
+        public enum GdprConsent
+        {
+            Consent = 587030001,
         }
 
         public enum PhoneNumberType
@@ -70,10 +75,13 @@ namespace GetIntoTeachingApi.Models
         public int? AdviserRequiremntId { get; set; }
         [JsonIgnore]
         [EntityField("dfe_preferredphonenumbertype", typeof(OptionSetValue))]
-        public int? PreferredPhoneNumberType { get; set; } = (int)PhoneNumberType.Home;
+        public int? PreferredPhoneNumberTypeId { get; set; } = (int)PhoneNumberType.Home;
         [JsonIgnore]
         [EntityField("preferredcontactmethodcode", typeof(OptionSetValue))]
-        public int? PreferredContactMethod { get; set; } = (int)ContactMethod.Any;
+        public int? PreferredContactMethodId { get; set; } = (int)ContactMethod.Any;
+        [JsonIgnore]
+        [EntityField("msgdpr_gdprconsent", typeof(OptionSetValue))]
+        public int? GdprConsentId { get; set; } = (int)GdprConsent.Consent;
         [JsonIgnore]
         [EntityField("dfe_waitingtobeassigneddate")]
         public DateTime? StatusIsWaitingToBeAssignedAt { get; set; }
@@ -117,6 +125,9 @@ namespace GetIntoTeachingApi.Models
         public bool? DoNotSendMm { get; set; }
         [EntityField("dfe_optoutsms")]
         public bool? OptOutOfSms { get; set; }
+        [JsonIgnore]
+        [EntityField("msdyn_gdproptout")]
+        public bool? OptOutOfGdpr { get; set; } = false;
         [JsonIgnore]
         [EntityField("dfe_newregistrant")]
         public bool IsNewRegistrant { get; set; }
