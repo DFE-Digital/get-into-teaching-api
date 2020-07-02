@@ -226,13 +226,13 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void PreferredPhoneNumberType_DefaultValue_IsCorrect()
         {
-            new Candidate().PreferredPhoneNumberType.Should().Be("Home");
+            new Candidate().PreferredPhoneNumberType.Should().Be((int)Candidate.PhoneNumberType.Home);
         }
 
         [Fact]
         public void PreferredContactMethod_DefaultValue_IsCorrect()
         {
-            new Candidate().PreferredContactMethod.Should().Be("Any");
+            new Candidate().PreferredContactMethod.Should().Be((int)Candidate.ContactMethod.Any);
         }
     }
 }
