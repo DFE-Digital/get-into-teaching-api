@@ -75,9 +75,10 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("OptOutOfSms").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_optoutsms");
             type.GetProperty("CallbackInformation").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_websitecallbackdescription");
             type.GetProperty("EligibilityRulesPassed").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_eligibilityrulespassed");
-            type.GetProperty("PreferredPhoneNumberType").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "_dfe_preferredphonenumbertype_label");
-            type.GetProperty("PreferredContactMethod").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "_preferredcontactmethodcode_label");
+            type.GetProperty("PreferredPhoneNumberType").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_preferredphonenumbertype");
+            type.GetProperty("PreferredContactMethod").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "preferredcontactmethodcode");
             type.GetProperty("IsNewRegistrant").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_newregistrant");
+            type.GetProperty("TeacherId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_dfesnumber");
 
             type.GetProperty("Qualifications").Should().BeDecoratedWith<EntityRelationshipAttribute>(
                 a => a.Name == "dfe_contact_dfe_candidatequalification_ContactId" &&
