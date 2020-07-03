@@ -127,3 +127,8 @@ Prometheous and Grafana have been added to gather and display Metric information
 
 [Sentry](https://sentry.io) is used for error monitoring.
 [Logit](https://logit.io) is used to capture log files
+
+### HTTP Caching
+
+The content that we cache in Postgres that originates from the CRM is served with HTTP ETag cache headers. There is a `CrmETag` annotation that can be added to an action to apply the appropriate cache headers to the response and check the request for the `If-None-Match` header. The ETag value changes when we sync new content from the CRM, meaning if the `If-None-Match` header matches the current `ETag` value we don't even need to fulfill the request, instead returning `304 Not Modified' immediately.
+
