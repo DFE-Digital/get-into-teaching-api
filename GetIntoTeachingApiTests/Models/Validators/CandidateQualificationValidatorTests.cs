@@ -23,26 +23,24 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var mockGrade = NewMock(111);
-            var mockDegreeStatus = NewMock(333);
-            var mockType = NewMock(333);
+            var mockPickListItem = new TypeEntity { Id = "123" };
 
             _mockStore
                 .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_ukdegreegrade"))
-                .Returns(new[] { mockGrade }.AsQueryable());
+                .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_degreestatus"))
-                .Returns(new[] { mockDegreeStatus }.AsQueryable());
+                .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_type"))
-                .Returns(new[] { mockType }.AsQueryable());
+                .Returns(new[] { mockPickListItem }.AsQueryable());
 
             var qualification = new CandidateQualification()
             {
-                UkDegreeGradeId = int.Parse(mockGrade.Id),
+                UkDegreeGradeId = int.Parse(mockPickListItem.Id),
                 Subject = "History",
-                DegreeStatusId = int.Parse(mockDegreeStatus.Id),
-                TypeId = int.Parse(mockType.Id),
+                DegreeStatusId = int.Parse(mockPickListItem.Id),
+                TypeId = int.Parse(mockPickListItem.Id),
             };
 
             var result = _validator.TestValidate(qualification);

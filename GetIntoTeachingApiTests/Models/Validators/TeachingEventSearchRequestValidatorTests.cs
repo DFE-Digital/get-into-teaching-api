@@ -24,11 +24,11 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var mockType = new TypeEntity { Id = "123" };
+            var mockPickListItem = new TypeEntity { Id = "123" };
 
             _mockStore
                 .Setup(mock => mock.GetPickListItems("msevtmgt_event", "dfe_event_type"))
-                .Returns(new[] { mockType }.AsQueryable());
+                .Returns(new[] { mockPickListItem }.AsQueryable());
 
             _mockStore.Setup(mock => mock.IsValidPostcode("KY11 9HF")).Returns(true);
 
@@ -36,7 +36,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             {
                 Postcode = "KY11 9HF",
                 Radius = 10,
-                TypeId = int.Parse(mockType.Id),
+                TypeId = int.Parse(mockPickListItem.Id),
                 StartAfter = DateTime.Now.AddDays(-1),
                 StartBefore = DateTime.Now.AddDays(1)
             };

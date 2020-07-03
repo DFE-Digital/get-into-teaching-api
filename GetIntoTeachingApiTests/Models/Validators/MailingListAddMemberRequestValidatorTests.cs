@@ -25,14 +25,14 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_WhenValid_HasNoErrors()
         {
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
-            var mockPreferredTeachingSubject = new TypeEntity { Id = Guid.NewGuid().ToString() };
+            var mockEntityReference = new TypeEntity { Id = Guid.NewGuid().ToString() };
 
             _mockStore
                 .Setup(mock => mock.GetPrivacyPolicies())
                 .Returns(new[] { mockPrivacyPolicy }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
-                .Returns(new[] { mockPreferredTeachingSubject }.AsQueryable());
+                .Returns(new[] { mockEntityReference }.AsQueryable());
 
             var request = new MailingListAddMemberRequest()
             {
@@ -41,7 +41,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 Email = "email@address.com",
                 Telephone = "07584 734 576",
                 AddressPostcode = "postcode",
-                PreferredTeachingSubjectId = Guid.Parse(mockPreferredTeachingSubject.Id),
+                PreferredTeachingSubjectId = Guid.Parse(mockEntityReference.Id),
                 PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id }
             };
 
