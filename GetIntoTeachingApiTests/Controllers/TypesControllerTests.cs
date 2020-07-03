@@ -271,6 +271,18 @@ namespace GetIntoTeachingApiTests.Controllers
             ok.Value.Should().BeEquivalentTo(mockEntities);
         }
 
+        [Fact]
+        public async void GetPhoneCallDestinations_ReturnsAllChannels()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("phonecall", "dfe_destination")).Returns(mockEntities.AsAsyncQueryable());
+
+            var response = await _controller.GetPhoneCallDestinations();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockEntities);
+        }
+
         private static TypeEntity[] MockTypeEntities()
         {
             return new[]

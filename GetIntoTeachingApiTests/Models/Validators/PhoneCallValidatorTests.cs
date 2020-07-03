@@ -24,15 +24,21 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var mockChannel = new TypeEntity { Id = "123" };
+            var mockChannel = new TypeEntity { Id = "111" };
+            var mockDestination = new TypeEntity { Id = "222" };
+
             _mockStore
                 .Setup(mock => mock.GetPickListItems("phonecall", "dfe_channelcreation"))
                 .Returns(new[] { mockChannel }.AsQueryable());
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("phonecall", "dfe_destination"))
+                .Returns(new[] { mockDestination }.AsQueryable());
 
             var phoneCall = new PhoneCall()
             {
                 ScheduledAt = DateTime.Now.AddDays(2),
                 ChannelId = int.Parse(mockChannel.Id),
+                DestinationId = int.Parse(mockDestination.Id)
             };
 
             var result = _validator.TestValidate(phoneCall);
@@ -56,6 +62,18 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_ChannelIdIsNull_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(phoneCall => phoneCall.ChannelId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_DestinationIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(phoneCall => phoneCall.DestinationId, 123);
+        }
+
+        [Fact]
+        public void Validate_DestinationIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(phoneCall => phoneCall.DestinationId, null as int?);
         }
     }
 }

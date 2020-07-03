@@ -268,5 +268,18 @@ namespace GetIntoTeachingApi.Controllers
         {
             return Ok(await _store.GetPickListItems("phonecall", "dfe_channelcreation").ToListAsync());
         }
+
+        [HttpGet]
+        [CrmETag]
+        [Route("phone_call/destinations")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of phone call destinations.",
+            OperationId = "GetPhoneCallDestinations",
+            Tags = new[] { "Types" })]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public async Task<IActionResult> GetPhoneCallDestinations()
+        {
+            return Ok(await _store.GetPickListItems("phonecall", "dfe_destination").ToListAsync());
+        }
     }
 }
