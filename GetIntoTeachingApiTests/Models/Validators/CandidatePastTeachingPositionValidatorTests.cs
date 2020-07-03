@@ -24,20 +24,20 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var mockSubject = NewMock(Guid.NewGuid());
-            var mockPhase = NewMock(123);
+            var mockPickListItem = new TypeEntity { Id = "123" };
+            var mockEntityReference = new TypeEntity { Id = Guid.NewGuid().ToString() };
 
             _mockStore
                 .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
-                .Returns(new[] { mockSubject }.AsQueryable());
+                .Returns(new[] { mockEntityReference }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase"))
-                .Returns(new[] { mockPhase }.AsQueryable());
+                .Returns(new[] { mockPickListItem }.AsQueryable());
 
             var position = new CandidatePastTeachingPosition
             {
-                SubjectTaughtId = Guid.Parse(mockSubject.Id),
-                EducationPhaseId = int.Parse(mockPhase.Id),
+                SubjectTaughtId = Guid.Parse(mockEntityReference.Id),
+                EducationPhaseId = int.Parse(mockPickListItem.Id),
             };
 
             var result = _validator.TestValidate(position);
@@ -67,11 +67,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_EducationPhaseIsNull_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(position => position.EducationPhaseId, null as int?);
-        }
-
-        private static TypeEntity NewMock(dynamic id)
-        {
-            return new TypeEntity { Id = id.ToString() };
         }
     }
 }
