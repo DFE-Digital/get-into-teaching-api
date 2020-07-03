@@ -13,6 +13,8 @@ namespace GetIntoTeachingApi.Models
         public int? ChannelId { get; set; }
         [EntityField("scheduledstart")]
         public DateTime ScheduledAt { get; set; }
+        [EntityField("dfe_destination", typeof(OptionSetValue))]
+        public int? DestinationId { get; set; }
         [JsonIgnore]
         [EntityField("phonenumber")]
         public string Telephone { get; set; }
