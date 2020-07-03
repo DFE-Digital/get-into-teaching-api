@@ -127,3 +127,106 @@ Prometheous and Grafana have been added to gather and display Metric information
 
 [Sentry](https://sentry.io) is used for error monitoring.
 [Logit](https://logit.io) is used to capture log files
+
+### HTTP Caching
+
+The content that we cache in Postgres that originates from the CRM is served with HTTP ETag cache headers. There is a `CrmETag` annotation that can be added to an action to apply the appropriate cache headers to the response and check the request for the `If-None-Match` header. The ETag value changes when we sync new content from the CRM, meaning if the `If-None-Match` header matches the current `ETag` value we don't even need to fulfill the request, instead returning `304 Not Modified' immediately.
+
+## CRM Changes
+
+The application is designed to make supporting new attribtues and entities in the CRM as easy as possible. All of the 'heavy lifting' is done in the `BaseModel` class using reflection to inspect model attributes and relevant `Entity*` annotations.
+
+### Supporting a New Entity
+
+If there is a new entity in the CRM that you want to support you need to create a corresponding model that inherits from `BaseModel`. It should have a class annotation that contains the entity `LogicalName` so that we can associate this model with a certain entity type:
+
+```
+[Entity("phonecall")]
+```
+
+It's also important that the model has an empty constructor and a constructor that accepts an instance of `Entity` and `CrmService`. These are required by the mapping logic in `BaseModel` - a test will fail if you forget to add these in:
+
+```
+public PhoneCall(): base() { }
+public PhoneCall(Entity entity, ICrmService crm): base(entity, crm) { }
+```
+
+### Adding Attributes
+
+To support mapping to/from CRM entity attributes to properties of your model you need to add a property with the `EntityField` annotation, which can be configured to support three different types of fields that the CRM uses.
+
+#### Primitive Fields
+
+You can support most primitive types using just an `EntityField` annotation and the corresponding attribute name:
+
+```
+[EntityField("phonenumber")]
+public string Telephone { get; set; }
+```
+
+This example maps the `phonenumber` attribute from this entity in the CRM to the `Telephone` property of the model.
+
+#### OptionSet/PickList Fields
+
+An `OptionSet` is a CRM type that is similar in behavior to an `enum` - a set list of values for a field. We model these by storing the `id` of the associated `OptionSetValue` in the model:
+
+```
+[EntityField("dfe_channelcreation", typeof(OptionSetValue))]
+public int? ChannelId { get; set; }
+```
+
+This example maps the `dfe_channelcreation` of the entity in the CRM to the `ChannelId` property of the model. We also specify the type of the field as `OptionSetValue`.
+
+> **If you add a new `OptionSet` type you should ensure that it is synced to the `Store` and exposed to clients via the `TypesController`.**
+
+#### EntityReference Fields
+
+An `EntityReference` is how the CRM establishes a reference to another entity from an attribute - essentially a foreign key if this were a database:
+
+```
+[EntityField("dfe_preferredteachingsubject01", typeof(EntityReference), "dfe_teachingsubjectlist")]
+public Guid? PreferredTeachingSubjectId { get; set; }
+```
+
+This example creates a reference to the preferred teaching subject, which is another entity of type `dfe_teachingsubjectlist`.
+
+> **If you add a new `EntityReference` type you should ensure that it is synced to the `Store` and exposed to clients via the `TypesController`.**
+
+#### Hidden Fields
+
+Some fields are set by the API rather than passed in as part of a client request. An example is the `Telephone` property of `PhoneCall`, which is set to whatever value is within the `Candidate` `Telephone` property. In this case we don't want to expose the property details externally, so they should be tagged with the `JsonIgnore` annotation:
+
+```
+[JsonIgnore]
+[EntityField("phonenumber")]
+public string Telephone { get; set; }
+```
+
+### Adding Relationships
+
+Relationships (unlike `EntityReference` fields) contain the attributes of the related entity or entities. 
+
+They can be established using the `EntityRelationship` annotation, passing in the CRM relationship name and the type of the model we map that related entity to:
+
+```
+[EntityRelationship("dfe_contact_phonecall_contactid", typeof(PhoneCall))]
+public PhoneCall PhoneCall { get; set; }
+```
+
+Supporting to-many relationships is as simple as making sure the property is a `List` type:
+
+```
+[EntityRelationship("dfe_contact_dfe_candidatequalification_ContactId", typeof(CandidateQualification))]
+public List<CandidateQualification> Qualifications { get; set; }
+```
+
+### Customising the Mapping Behaviour
+
+Occasionally it can be useful to hook into the mapping behaviour that is encapsulated in the `BaseModel`. An example of this may be to prevent mapping to an entity if we know that it will create a duplicate in the CRM. We do this as part of `TeachingEventRegistration` to ensure we don't register the same candidate as an attendee of the event more than once:
+
+```
+protected override bool ShouldMap(ICrmService crm)
+{
+    return crm.CandidateYetToRegisterForTeachingEvent(CandidateId, EventId);
+}
+```
