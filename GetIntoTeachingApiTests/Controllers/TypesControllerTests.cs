@@ -283,6 +283,19 @@ namespace GetIntoTeachingApiTests.Controllers
             ok.Value.Should().BeEquivalentTo(mockEntities);
         }
 
+        [Fact]
+        public async void GetServiceSubscriptionTypes_ReturnsAllTypes()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("dfe_servicesubscription", "dfe_servicesubscriptiontype"))
+                .Returns(mockEntities.AsAsyncQueryable());
+
+            var response = await _controller.GetServiceSubscriptionTypes();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockEntities);
+        }
+
         private static TypeEntity[] MockTypeEntities()
         {
             return new[]
