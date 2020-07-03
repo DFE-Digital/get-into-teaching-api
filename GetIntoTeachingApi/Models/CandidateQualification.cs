@@ -7,6 +7,8 @@ namespace GetIntoTeachingApi.Models
     [Entity("dfe_candidatequalification")]
     public class CandidateQualification : BaseModel
     {
+        [EntityField("dfe_type", typeof(OptionSetValue))]
+        public int? TypeId { get; set; }
         [EntityField("dfe_ukdegreegrade", typeof(OptionSetValue))]
         public int? UkDegreeGradeId { get; set; }
         [EntityField("dfe_degreestatus", typeof(OptionSetValue))]
