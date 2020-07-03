@@ -25,6 +25,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var mockGrade = NewMock(111);
             var mockDegreeStatus = NewMock(333);
+            var mockType = NewMock(333);
 
             _mockStore
                 .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_ukdegreegrade"))
@@ -32,12 +33,16 @@ namespace GetIntoTeachingApiTests.Models.Validators
             _mockStore
                 .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_degreestatus"))
                 .Returns(new[] { mockDegreeStatus }.AsQueryable());
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_type"))
+                .Returns(new[] { mockType }.AsQueryable());
 
             var qualification = new CandidateQualification()
             {
                 UkDegreeGradeId = int.Parse(mockGrade.Id),
                 Subject = "History",
                 DegreeStatusId = int.Parse(mockDegreeStatus.Id),
+                TypeId = int.Parse(mockType.Id),
             };
 
             var result = _validator.TestValidate(qualification);
@@ -64,9 +69,21 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_DegreeStatusIdIsNull_HasNoError()
+        public void Validate_DegreeStatusIdIsNull_HasError()
         {
-            _validator.ShouldNotHaveValidationErrorFor(qualification => qualification.DegreeStatusId, null as int?);
+            _validator.ShouldHaveValidationErrorFor(qualification => qualification.DegreeStatusId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_TypeIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(qualification => qualification.TypeId, 123);
+        }
+
+        [Fact]
+        public void Validate_TypeIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(qualification => qualification.TypeId, null as int?);
         }
 
         [Fact]
