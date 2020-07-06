@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
@@ -55,6 +58,34 @@ namespace GetIntoTeachingApiTests.Jobs
                 NotifyService.CandidateRegistrationFailedEmailTemplateId, It.IsAny<Dictionary<string, dynamic>>()));
             _mockLogger.VerifyInformationWasCalled("CandidateRegistrationJob - Started (24/24)");
             _mockLogger.VerifyInformationWasCalled("CandidateRegistrationJob - Deleted");
+        }
+
+        [Fact]
+        public void Run_WithNewSubscriber_CreatesServiceSubscription()
+        {
+            _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
+
+            _job.Run(_candidate, null);
+
+            var subscription = _candidate.ServiceSubscriptions.FirstOrDefault();
+
+            subscription.Should().NotBeNull();
+            subscription.TypeId.Should().Be((int)ServiceSubscription.ServiceType.TeacherTrainingAdviser);
+        }
+
+        [Fact]
+        public void Run_WithExistingSubscriber_DoesNotCreatesServiceSubscription()
+        {
+            _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
+            _candidate.Id = Guid.NewGuid();
+            _mockCrm.Setup(m => m.IsCandidateSubscribedToServiceOfType((Guid)_candidate.Id, 
+                (int)ServiceSubscription.ServiceType.TeacherTrainingAdviser)).Returns(true);
+
+            _job.Run(_candidate, null);
+
+            var subscription = _candidate.ServiceSubscriptions.FirstOrDefault();
+
+            subscription.Should().BeNull();
         }
     }
 }
