@@ -281,5 +281,18 @@ namespace GetIntoTeachingApi.Controllers
         {
             return Ok(await _store.GetPickListItems("phonecall", "dfe_destination").ToListAsync());
         }
+
+        [HttpGet]
+        [CrmETag]
+        [Route("service_subscription/types")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of subscription types.",
+            OperationId = "GetServiceSubscriptionTypes",
+            Tags = new[] { "Types" })]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public async Task<IActionResult> GetServiceSubscriptionTypes()
+        {
+            return Ok(await _store.GetPickListItems("dfe_servicesubscription", "dfe_servicesubscriptiontype").ToListAsync());
+        }
     }
 }

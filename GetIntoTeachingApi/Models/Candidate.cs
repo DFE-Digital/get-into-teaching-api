@@ -132,10 +132,12 @@ namespace GetIntoTeachingApi.Models
         [EntityField("dfe_newregistrant")]
         public bool IsNewRegistrant { get; set; }
 
+        [EntityRelationship("dfe_contact_dfe_servicesubscription_contact", typeof(ServiceSubscription))]
+        public List<ServiceSubscription> ServiceSubscriptions { get; set; } = new List<ServiceSubscription>();
         [EntityRelationship("dfe_contact_dfe_candidatequalification_ContactId", typeof(CandidateQualification))]
-        public List<CandidateQualification> Qualifications { get; set; }
+        public List<CandidateQualification> Qualifications { get; set; } = new List<CandidateQualification>();
         [EntityRelationship("dfe_contact_dfe_candidatepastteachingposition_ContactId", typeof(CandidatePastTeachingPosition))]
-        public List<CandidatePastTeachingPosition> PastTeachingPositions { get; set; }
+        public List<CandidatePastTeachingPosition> PastTeachingPositions { get; set; } = new List<CandidatePastTeachingPosition>();
         [SwaggerSchema("Set to schedule a phone call.", WriteOnly = true)]
         [EntityRelationship("dfe_contact_phonecall_contactid", typeof(PhoneCall))]
         public PhoneCall PhoneCall { get; set; }
