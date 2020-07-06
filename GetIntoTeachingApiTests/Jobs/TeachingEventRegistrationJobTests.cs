@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
@@ -111,6 +112,33 @@ namespace GetIntoTeachingApiTests.Jobs
                 NotifyService.TeachingEventRegistrationFailedEmailTemplateId, It.IsAny<Dictionary<string, dynamic>>()));
             _mockLogger.VerifyInformationWasCalled("TeachingEventRegistrationJob - Started (24/24)");
             _mockLogger.VerifyInformationWasCalled("TeachingEventRegistrationJob - Deleted");
+        }
+
+        [Fact]
+        public void Run_WithNewSubscriber_CreatesServiceSubscription()
+        {
+            var candidateId = Guid.NewGuid();
+            _mockCrm.Setup(m => m.Save(It.Is<Candidate>(c => c.ServiceSubscriptions.First().TypeId == (int)ServiceSubscription.ServiceType.Event)))
+                .Callback<BaseModel>(c => c.Id = candidateId);
+            _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
+
+            _job.Run(_request, _teachingEventId, null);
+        }
+
+        [Fact]
+        public void Run_WithExistingSubscriber_DoesNotCreatesServiceSubscription()
+        {
+            var candidateId = Guid.NewGuid();
+            var candidate = new Candidate() { Id = candidateId };
+            _request.CandidateId = candidateId;
+            _mockCrm.Setup(m => m.GetCandidate(candidateId)).Returns(candidate);
+            _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
+            _mockCrm.Setup(m => m.IsCandidateSubscribedToServiceOfType(candidateId,
+                (int)ServiceSubscription.ServiceType.Event)).Returns(true);
+
+            _job.Run(_request, _teachingEventId, null);
+
+            _mockCrm.Verify(m => m.Save(It.Is<Candidate>(c => c.ServiceSubscriptions.Count == 0)));
         }
 
         private bool VerifyUpdatedCandidate(Candidate candidate, string expectedTelephone)

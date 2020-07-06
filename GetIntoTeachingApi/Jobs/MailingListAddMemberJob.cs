@@ -50,6 +50,12 @@ namespace GetIntoTeachingApi.Jobs
         {
             var candidate = FindOrCreateCandidate(request.CandidateId);
 
+            AddServiceSubscription(candidate);
+            UpdateCandidateDetails(candidate, request);
+        }
+
+        private void UpdateCandidateDetails(Candidate candidate, MailingListAddMemberRequest request)
+        {
             candidate.PreferredTeachingSubjectId = request.PreferredTeachingSubjectId;
             candidate.Email = request.Email;
             candidate.FirstName = request.FirstName;
@@ -73,6 +79,24 @@ namespace GetIntoTeachingApi.Jobs
         private Candidate FindOrCreateCandidate(Guid? candidateId)
         {
             return candidateId != null ? _crm.GetCandidate((Guid)candidateId) : new Candidate();
+        }
+
+        private void AddServiceSubscription(Candidate candidate)
+        {
+            var alreadySubscribed = candidate.Id != null && _crm.IsCandidateSubscribedToServiceOfType(
+                (Guid)candidate.Id, (int)ServiceSubscription.ServiceType.MailingList);
+
+            if (alreadySubscribed)
+            {
+                return;
+            }
+
+            var subscription = new ServiceSubscription()
+            {
+                TypeId = (int)ServiceSubscription.ServiceType.MailingList,
+            };
+
+            candidate.ServiceSubscriptions.Add(subscription);
         }
     }
 }
