@@ -50,6 +50,7 @@ namespace GetIntoTeachingApi.Jobs
         {
             var candidate = FindOrCreateCandidate(request.CandidateId);
 
+            AddServiceSubscription(candidate);
             UpdateCandidateDetails(candidate, request);
             CreateTeachingEventRegistration((Guid)candidate.Id, teachingEventId);
         }
@@ -89,6 +90,24 @@ namespace GetIntoTeachingApi.Jobs
         private Candidate FindOrCreateCandidate(Guid? candidateId)
         {
             return candidateId != null ? _crm.GetCandidate((Guid)candidateId) : new Candidate();
+        }
+
+        private void AddServiceSubscription(Candidate candidate)
+        {
+            var alreadySubscribed = candidate.Id != null && _crm.IsCandidateSubscribedToServiceOfType(
+                (Guid)candidate.Id, (int)ServiceSubscription.ServiceType.Event);
+
+            if (alreadySubscribed)
+            {
+                return;
+            }
+
+            var subscription = new ServiceSubscription()
+            {
+                TypeId = (int)ServiceSubscription.ServiceType.Event,
+            };
+
+            candidate.ServiceSubscriptions.Add(subscription);
         }
     }
 }
