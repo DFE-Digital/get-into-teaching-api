@@ -287,10 +287,10 @@ namespace GetIntoTeachingApi.Controllers
         [Route("service_subscription/types")]
         [SwaggerOperation(
             Summary = "Retrieves the list of subscription types.",
-            OperationId = "GetServiceSubscriptionTypes",
+            OperationId = "GetSubscriptionTypes",
             Tags = new[] { "Types" })]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public async Task<IActionResult> GetServiceSubscriptionTypes()
+        public async Task<IActionResult> GetSubscriptionTypes()
         {
             return Ok(await _store.GetPickListItems("dfe_servicesubscription", "dfe_servicesubscriptiontype").ToListAsync());
         }

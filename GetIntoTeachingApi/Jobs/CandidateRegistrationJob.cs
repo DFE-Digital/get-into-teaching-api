@@ -47,28 +47,28 @@ namespace GetIntoTeachingApi.Jobs
             }
             else
             {
-                AddServiceSubscription(candidate);
+                AddSubscription(candidate);
                 _crm.Save(candidate);
                 _logger.LogInformation("CandidateRegistrationJob - Succeeded");
             }
         }
 
-        private void AddServiceSubscription(Candidate candidate)
+        private void AddSubscription(Candidate candidate)
         {
             var alreadySubscribed = candidate.Id != null && _crm.IsCandidateSubscribedToServiceOfType(
-                (Guid)candidate.Id, (int)ServiceSubscription.ServiceType.TeacherTrainingAdviser);
+                (Guid)candidate.Id, (int)Subscription.ServiceType.TeacherTrainingAdviser);
 
             if (alreadySubscribed)
             {
                 return;
             }
 
-            var subscription = new ServiceSubscription()
+            var subscription = new Subscription()
             {
-                TypeId = (int)ServiceSubscription.ServiceType.TeacherTrainingAdviser,
+                TypeId = (int)Subscription.ServiceType.TeacherTrainingAdviser,
             };
 
-            candidate.ServiceSubscriptions.Add(subscription);
+            candidate.Subscriptions.Add(subscription);
         }
     }
 }

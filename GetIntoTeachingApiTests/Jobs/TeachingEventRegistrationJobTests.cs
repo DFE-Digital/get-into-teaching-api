@@ -115,10 +115,10 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public void Run_WithNewSubscriber_CreatesServiceSubscription()
+        public void Run_WithNewSubscriber_CreatesSubscription()
         {
             var candidateId = Guid.NewGuid();
-            _mockCrm.Setup(m => m.Save(It.Is<Candidate>(c => c.ServiceSubscriptions.First().TypeId == (int)ServiceSubscription.ServiceType.Event)))
+            _mockCrm.Setup(m => m.Save(It.Is<Candidate>(c => c.Subscriptions.First().TypeId == (int)Subscription.ServiceType.Event)))
                 .Callback<BaseModel>(c => c.Id = candidateId);
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
 
@@ -126,7 +126,7 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public void Run_WithExistingSubscriber_DoesNotCreatesServiceSubscription()
+        public void Run_WithExistingSubscriber_DoesNotCreatesSubscription()
         {
             var candidateId = Guid.NewGuid();
             var candidate = new Candidate() { Id = candidateId };
@@ -134,11 +134,11 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockCrm.Setup(m => m.GetCandidate(candidateId)).Returns(candidate);
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
             _mockCrm.Setup(m => m.IsCandidateSubscribedToServiceOfType(candidateId,
-                (int)ServiceSubscription.ServiceType.Event)).Returns(true);
+                (int)Subscription.ServiceType.Event)).Returns(true);
 
             _job.Run(_request, _teachingEventId, null);
 
-            _mockCrm.Verify(m => m.Save(It.Is<Candidate>(c => c.ServiceSubscriptions.Count == 0)));
+            _mockCrm.Verify(m => m.Save(It.Is<Candidate>(c => c.Subscriptions.Count == 0)));
         }
 
         private bool VerifyUpdatedCandidate(Candidate candidate, string expectedTelephone)

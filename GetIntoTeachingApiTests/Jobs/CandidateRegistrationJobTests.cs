@@ -61,29 +61,29 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public void Run_WithNewSubscriber_CreatesServiceSubscription()
+        public void Run_WithNewSubscriber_CreatesSubscription()
         {
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
 
             _job.Run(_candidate, null);
 
-            var subscription = _candidate.ServiceSubscriptions.FirstOrDefault();
+            var subscription = _candidate.Subscriptions.FirstOrDefault();
 
             subscription.Should().NotBeNull();
-            subscription.TypeId.Should().Be((int)ServiceSubscription.ServiceType.TeacherTrainingAdviser);
+            subscription.TypeId.Should().Be((int)Subscription.ServiceType.TeacherTrainingAdviser);
         }
 
         [Fact]
-        public void Run_WithExistingSubscriber_DoesNotCreatesServiceSubscription()
+        public void Run_WithExistingSubscriber_DoesNotCreatesSubscription()
         {
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
             _candidate.Id = Guid.NewGuid();
             _mockCrm.Setup(m => m.IsCandidateSubscribedToServiceOfType((Guid)_candidate.Id, 
-                (int)ServiceSubscription.ServiceType.TeacherTrainingAdviser)).Returns(true);
+                (int)Subscription.ServiceType.TeacherTrainingAdviser)).Returns(true);
 
             _job.Run(_candidate, null);
 
-            var subscription = _candidate.ServiceSubscriptions.FirstOrDefault();
+            var subscription = _candidate.Subscriptions.FirstOrDefault();
 
             subscription.Should().BeNull();
         }

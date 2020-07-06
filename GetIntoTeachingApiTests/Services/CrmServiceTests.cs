@@ -175,12 +175,12 @@ namespace GetIntoTeachingApiTests.Services
             var candidate = new Candidate() { Id = Guid.NewGuid() };
             var entity = new Entity();
             entity["dfe_contact"] = new EntityReference("contact", (Guid)candidate.Id);
-            entity["dfe_servicesubscriptiontype"] = new OptionSetValue((int)ServiceSubscription.ServiceType.Event);
+            entity["dfe_servicesubscriptiontype"] = new OptionSetValue((int)Subscription.ServiceType.Event);
 
             _mockService.Setup(m => m.CreateQuery("dfe_servicesubscription", _context))
                 .Returns(new List<Entity> { entity }.AsQueryable());
 
-            var result = _crm.IsCandidateSubscribedToServiceOfType((Guid)candidate.Id, (int)ServiceSubscription.ServiceType.MailingList);
+            var result = _crm.IsCandidateSubscribedToServiceOfType((Guid)candidate.Id, (int)Subscription.ServiceType.MailingList);
 
             result.Should().BeFalse();
         }
@@ -191,12 +191,12 @@ namespace GetIntoTeachingApiTests.Services
             var candidate = new Candidate() { Id = Guid.NewGuid() };
             var entity = new Entity();
             entity["dfe_contact"] = new EntityReference("contact", (Guid)candidate.Id);
-            entity["dfe_servicesubscriptiontype"] = new OptionSetValue((int)ServiceSubscription.ServiceType.TeacherTrainingAdviser);
+            entity["dfe_servicesubscriptiontype"] = new OptionSetValue((int)Subscription.ServiceType.TeacherTrainingAdviser);
 
             _mockService.Setup(m => m.CreateQuery("dfe_servicesubscription", _context))
                 .Returns(new List<Entity> { entity }.AsQueryable());
 
-            var result = _crm.IsCandidateSubscribedToServiceOfType((Guid)candidate.Id, (int)ServiceSubscription.ServiceType.TeacherTrainingAdviser);
+            var result = _crm.IsCandidateSubscribedToServiceOfType((Guid)candidate.Id, (int)Subscription.ServiceType.TeacherTrainingAdviser);
 
             result.Should().BeTrue();
         }
