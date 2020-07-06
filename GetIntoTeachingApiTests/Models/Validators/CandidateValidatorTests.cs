@@ -25,60 +25,49 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var mockPreferredTeachingSubject = NewMock(Guid.NewGuid());
-            var mockCountry = NewMock(Guid.NewGuid());
-            var mockPreferredEducationPhase = NewMock(111);
-            var mockInitialTeacherTrainingYear = NewMock(333);
-            var mockChannel = NewMock(444);
-            var mockGcseStatus = NewMock(555);
-            var mockRetakeGcseStatus = NewMock(666);
-            var mockDescribeYourself = NewMock(777);
-            var mockConsiderationJourneyStage = NewMock(888);
-            var mockType = NewMock(999);
-            var mockAdviserEligibility = NewMock(123);
-            var mockAdviserRequirement = NewMock(456);
-            var mockStatus = NewMock(789);
+            var mockEntityReference = new TypeEntity { Id = Guid.NewGuid().ToString() };
+            var mockPickListItem = new TypeEntity { Id = "123" };
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
             
             _mockStore
                 .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
-                .Returns(new[] { mockPreferredTeachingSubject }.AsQueryable());
+                .Returns(new[] { mockEntityReference }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetLookupItems("dfe_country"))
-                .Returns(new[] { mockCountry }.AsQueryable());
+                .Returns(new[] { mockEntityReference }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_preferrededucationphase01"))
-                .Returns(new[] { mockPreferredEducationPhase }.AsQueryable());
+                .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_ittyear"))
-                .Returns(new[] { mockInitialTeacherTrainingYear }.AsQueryable);
+                .Returns(new[] { mockPickListItem }.AsQueryable);
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_channelcreation"))
-                .Returns(new[] { mockChannel }.AsQueryable());
+                .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_hasgcseenglish"))
-                .Returns(new[] { mockGcseStatus }.AsQueryable());
+                .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse"))
-                .Returns(new[] { mockRetakeGcseStatus }.AsQueryable());
+                .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_websitedescribeyourself"))
-                .Returns(new[] { mockDescribeYourself }.AsQueryable());
+                .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_websitewhereinconsiderationjourney"))
-                .Returns(new[] { mockConsiderationJourneyStage }.AsQueryable());
+                .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_typeofcandidate"))
-                .Returns(new[] { mockType }.AsQueryable());
+                .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_candidatestatus"))
-                .Returns(new[] { mockStatus }.AsQueryable());
+                .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_iscandidateeligibleforadviser"))
-                .Returns(new[] { mockAdviserEligibility }.AsQueryable());
+                .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_isadvisorrequiredos"))
-                .Returns(new[] { mockAdviserRequirement }.AsQueryable());
+                .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPrivacyPolicies())
                 .Returns(new[] { mockPrivacyPolicy }.AsQueryable());
@@ -97,22 +86,22 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 AddressState = "state",
                 AddressPostcode = "postcode",
                 CallbackInformation = "some information",
-                HasGcseMathsId = int.Parse(mockGcseStatus.Id),
-                HasGcseEnglishId = int.Parse(mockGcseStatus.Id),
-                AdviserEligibilityId = int.Parse(mockAdviserEligibility.Id),
-                PlanningToRetakeCgseScienceId = int.Parse(mockRetakeGcseStatus.Id),
-                PlanningToRetakeGcseEnglishId = int.Parse(mockRetakeGcseStatus.Id),
-                TypeId = int.Parse(mockType.Id),
-                StatusId = int.Parse(mockStatus.Id),
+                HasGcseMathsId = int.Parse(mockPickListItem.Id),
+                HasGcseEnglishId = int.Parse(mockPickListItem.Id),
+                AdviserEligibilityId = int.Parse(mockPickListItem.Id),
+                PlanningToRetakeCgseScienceId = int.Parse(mockPickListItem.Id),
+                PlanningToRetakeGcseEnglishId = int.Parse(mockPickListItem.Id),
+                TypeId = int.Parse(mockPickListItem.Id),
+                StatusId = int.Parse(mockPickListItem.Id),
                 DoNotPostalMail = false,
                 EligibilityRulesPassed = "true",
-                DescribeYourselfOptionId = int.Parse(mockDescribeYourself.Id),
-                ConsiderationJourneyStageId = int.Parse(mockConsiderationJourneyStage.Id),
-                CountryId = Guid.Parse(mockCountry.Id),
-                PreferredTeachingSubjectId = Guid.Parse(mockPreferredTeachingSubject.Id),
-                PreferredEducationPhaseId = int.Parse(mockPreferredEducationPhase.Id),
-                InitialTeacherTrainingYearId = int.Parse(mockInitialTeacherTrainingYear.Id),
-                ChannelId = int.Parse(mockChannel.Id),
+                DescribeYourselfOptionId = int.Parse(mockPickListItem.Id),
+                ConsiderationJourneyStageId = int.Parse(mockPickListItem.Id),
+                CountryId = Guid.Parse(mockEntityReference.Id),
+                PreferredTeachingSubjectId = Guid.Parse(mockEntityReference.Id),
+                PreferredEducationPhaseId = int.Parse(mockPickListItem.Id),
+                InitialTeacherTrainingYearId = int.Parse(mockPickListItem.Id),
+                ChannelId = int.Parse(mockPickListItem.Id),
                 PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id }
             };
 
