@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
@@ -46,9 +47,28 @@ namespace GetIntoTeachingApi.Jobs
             }
             else
             {
+                AddServiceSubscription(candidate);
                 _crm.Save(candidate);
                 _logger.LogInformation("CandidateRegistrationJob - Succeeded");
             }
+        }
+
+        private void AddServiceSubscription(Candidate candidate)
+        {
+            var alreadySubscribed = candidate.Id != null && _crm.IsCandidateSubscribedToServiceOfType(
+                (Guid)candidate.Id, (int)ServiceSubscription.ServiceType.TeacherTrainingAdviser);
+
+            if (alreadySubscribed)
+            {
+                return;
+            }
+
+            var subscription = new ServiceSubscription()
+            {
+                TypeId = (int)ServiceSubscription.ServiceType.TeacherTrainingAdviser,
+            };
+
+            candidate.ServiceSubscriptions.Add(subscription);
         }
     }
 }

@@ -77,6 +77,7 @@ namespace GetIntoTeachingApi.Services
 
             _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), context);
             _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), context);
+            _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_servicesubscription_contact"), context);
 
             return new Candidate(entity, this);
         }
@@ -101,6 +102,13 @@ namespace GetIntoTeachingApi.Services
             return _service.CreateQuery("msevtmgt_eventregistration", Context()).FirstOrDefault(entity =>
                 entity.GetAttributeValue<EntityReference>("msevtmgt_contactid").Id == candidateId &&
                 entity.GetAttributeValue<EntityReference>("msevtmgt_eventid").Id == teachingEventId) == null;
+        }
+
+        public bool IsCandidateSubscribedToServiceOfType(Guid candidateId, int serviceSubscriptionTypeId)
+        {
+            return _service.CreateQuery("dfe_servicesubscription", Context()).FirstOrDefault(entity =>
+                entity.GetAttributeValue<EntityReference>("dfe_contact").Id == candidateId &&
+                entity.GetAttributeValue<OptionSetValue>("dfe_servicesubscriptiontype").Value == serviceSubscriptionTypeId) != null;
         }
 
         public void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context)

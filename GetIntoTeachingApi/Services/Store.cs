@@ -188,6 +188,7 @@ namespace GetIntoTeachingApi.Services
             await SyncTypes(crm.GetPickListItems("msevtmgt_event", "dfe_event_type"));
             await SyncTypes(crm.GetPickListItems("phonecall", "dfe_channelcreation"));
             await SyncTypes(crm.GetPickListItems("phonecall", "dfe_destination"));
+            await SyncTypes(crm.GetPickListItems("dfe_servicesubscription", "dfe_servicesubscriptiontype"));
         }
 
         private async Task SyncModels<T>(IEnumerable<T> models, IQueryable<T> dbSet)
