@@ -5,11 +5,11 @@ using GetIntoTeachingApi.Services;
 
 namespace GetIntoTeachingApi.Models.Validators
 {
-    public class ServiceSubscriptionValidator : AbstractValidator<ServiceSubscription>
+    public class SubscriptionValidator : AbstractValidator<Subscription>
     {
         private readonly IStore _store;
 
-        public ServiceSubscriptionValidator(IStore store)
+        public SubscriptionValidator(IStore store)
         {
             _store = store;
 
