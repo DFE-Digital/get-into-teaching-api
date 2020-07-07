@@ -37,6 +37,11 @@ namespace GetIntoTeachingApi.Models
             Any = 1,
         }
 
+        public enum Channel
+        {
+            MailingList = 222750028,
+        }
+
         [JsonIgnore]
         public string FullName => $"{this.FirstName} {this.LastName}";
         [EntityField("dfe_preferredteachingsubject01", typeof(EntityReference), "dfe_teachingsubjectlist")]

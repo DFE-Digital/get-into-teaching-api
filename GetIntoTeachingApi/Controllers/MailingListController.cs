@@ -31,14 +31,14 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
         public IActionResult AddMember(
-            [FromBody, SwaggerRequestBody("Member to add to the mailing list.", Required = true)] Candidate candidate)
+            [FromBody, SwaggerRequestBody("Member to add to the mailing list.", Required = true)] MailingListAddMemberRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(this.ModelState);
             }
 
-            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(candidate, null));
+            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(request.Candidate, null));
 
             return NoContent();
         }
