@@ -33,10 +33,10 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void AddMember_InvalidRequest_RespondsWithValidationErrors()
         {
-            var candidate = new Candidate() { FirstName = null };
+            var request = new MailingListAddMemberRequest() { FirstName = null };
             _controller.ModelState.AddModelError("FirstName", "First name must be specified.");
 
-            var response = _controller.AddMember(candidate);
+            var response = _controller.AddMember(request);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
@@ -46,15 +46,23 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void AddMember_ValidRequest_EnqueuesJobRespondsWithNoContent()
         {
-            var candidate = new Candidate() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
+            var request = new MailingListAddMemberRequest() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
 
-            var response = _controller.AddMember(candidate);
+            var response = _controller.AddMember(request);
 
             response.Should().BeOfType<NoContentResult>();
             _mockJobClient.Verify(x => x.Create(
-                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-                                  ((Candidate)job.Args[0]) == candidate),
+                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" && 
+                IsMatch(request.Candidate, (Candidate)job.Args[0])),
                 It.IsAny<EnqueuedState>()));
+        }
+
+        private static bool IsMatch(Candidate candidateA, Candidate candidateB)
+        {
+            candidateA.Should().BeEquivalentTo(candidateB, options => options
+                .Excluding(c => c.Subscriptions[0].StartAt)
+                .Excluding(c => c.PrivacyPolicy.AcceptedAt));
+            return true;
         }
     }
 }
