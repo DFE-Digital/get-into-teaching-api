@@ -196,9 +196,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_DateOfBirthIsNull_HasError()
+        public void Validate_DateOfBirthIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.DateOfBirth, null as DateTime?);
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.DateOfBirth, null as DateTime?);
         }
 
         [Fact]
@@ -232,9 +232,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_TelephoneIsEmpty_HasError()
+        public void Validate_TelephoneIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.Telephone, "");
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.Telephone, null as string);
         }
 
         [Fact]
@@ -244,9 +244,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_AddressLine1IsEmpty_HasError()
+        public void Validate_AddressLine1IsEmpty_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressLine1, "");
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressLine1, null as string);
         }
 
         [Fact]
@@ -268,9 +268,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_AddressCityIsEmpty_HasError()
+        public void Validate_AddressCityIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressCity, "");
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressCity, null as string);
         }
 
         [Fact]
@@ -280,9 +280,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_AddressStateIsEmpty_HasError()
+        public void Validate_AddressStateIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressState, "");
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressState, null as string);
         }
 
         [Fact]
@@ -292,9 +292,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_AddressPostcodeIsEmpty_HasError()
+        public void Validate_AddressPostcodeIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressPostcode, "");
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressPostcode, null as string);
         }
 
         [Fact]
@@ -334,9 +334,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_CountryIdIsNull_HasError()
+        public void Validate_CountryIdIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.CountryId, null as Guid?);
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.CountryId, null as Guid?);
         }
 
         [Fact]
@@ -382,9 +382,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_TypeIdIsNull_HasError()
+        public void Validate_TypeIdIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.TypeId, null as int?);
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.TypeId, null as int?);
         }
 
         [Fact]
