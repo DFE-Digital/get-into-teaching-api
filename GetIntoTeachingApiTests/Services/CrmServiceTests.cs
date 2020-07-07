@@ -259,6 +259,8 @@ namespace GetIntoTeachingApiTests.Services
                 new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), _context));
             _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
                 new Relationship("dfe_contact_dfe_servicesubscription_contact"), _context));
+            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
+                new Relationship("msevtmgt_contact_msevtmgt_eventregistration_Contact"), _context));
 
             var result = _crm.MatchCandidate(request);
 
@@ -281,6 +283,8 @@ namespace GetIntoTeachingApiTests.Services
                 new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), _context));
             _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
                 new Relationship("dfe_contact_dfe_servicesubscription_contact"), _context));
+            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
+                new Relationship("msevtmgt_contact_msevtmgt_eventregistration_Contact"), _context));
 
             var result = _crm.MatchCandidate(request);
 
