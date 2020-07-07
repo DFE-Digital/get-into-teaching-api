@@ -170,7 +170,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void CandidateYetToRegisterForTeachingEvent_WhenNotYetRegistered_ReturnsTrue()
+        public void CandidateYetToSubscribeToServiceOfType_WhenNotYetSubscribed_ReturnsFalse()
         {
             var candidate = new Candidate() { Id = Guid.NewGuid() };
             var entity = new Entity();
@@ -180,13 +180,13 @@ namespace GetIntoTeachingApiTests.Services
             _mockService.Setup(m => m.CreateQuery("dfe_servicesubscription", _context))
                 .Returns(new List<Entity> { entity }.AsQueryable());
 
-            var result = _crm.IsCandidateSubscribedToServiceOfType((Guid)candidate.Id, (int)Subscription.ServiceType.MailingList);
+            var result = _crm.CandidateYetToSubscribeToServiceOfType((Guid)candidate.Id, (int)Subscription.ServiceType.MailingList);
 
-            result.Should().BeFalse();
+            result.Should().BeTrue();
         }
 
         [Fact]
-        public void IsCandidateSubscribedToServiceOfType_WhenAlreadySubscribed_ReturnsTrue()
+        public void CandidateYetToSubscribeToServiceOfType_WhenAlreadySubscribed_ReturnsFalse()
         {
             var candidate = new Candidate() { Id = Guid.NewGuid() };
             var entity = new Entity();
@@ -196,9 +196,9 @@ namespace GetIntoTeachingApiTests.Services
             _mockService.Setup(m => m.CreateQuery("dfe_servicesubscription", _context))
                 .Returns(new List<Entity> { entity }.AsQueryable());
 
-            var result = _crm.IsCandidateSubscribedToServiceOfType((Guid)candidate.Id, (int)Subscription.ServiceType.TeacherTrainingAdviser);
+            var result = _crm.CandidateYetToSubscribeToServiceOfType((Guid)candidate.Id, (int)Subscription.ServiceType.TeacherTrainingAdviser);
 
-            result.Should().BeTrue();
+            result.Should().BeFalse();
         }
 
         [Fact]

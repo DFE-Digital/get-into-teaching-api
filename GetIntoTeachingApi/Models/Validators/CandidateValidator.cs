@@ -36,6 +36,8 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.PrivacyPolicy).NotNull().SetValidator(new CandidatePrivacyPolicyValidator(store));
             RuleForEach(candidate => candidate.Qualifications).SetValidator(new CandidateQualificationValidator(store));
             RuleForEach(candidate => candidate.PastTeachingPositions).SetValidator(new CandidatePastTeachingPositionValidator(store));
+            RuleForEach(candidate => candidate.Subscriptions).SetValidator(new SubscriptionValidator(store));
+            RuleForEach(candidate => candidate.TeachingEventRegistrations).SetValidator(new TeachingEventRegistrationValidator(store));
 
             RuleFor(candidate => candidate.PreferredTeachingSubjectId)
                 .Must(id => PreferredTeachingSubjectIds().Contains(id.ToString()))
