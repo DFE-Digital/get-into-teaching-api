@@ -4,6 +4,7 @@ using System.Linq;
 using FluentValidation;
 using FluentValidation.Validators;
 using GetIntoTeachingApi.Services;
+using Microsoft.Crm.Sdk;
 
 namespace GetIntoTeachingApi.Models.Validators
 {
@@ -38,6 +39,12 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleForEach(candidate => candidate.PastTeachingPositions).SetValidator(new CandidatePastTeachingPositionValidator(store));
             RuleForEach(candidate => candidate.Subscriptions).SetValidator(new SubscriptionValidator(store));
             RuleForEach(candidate => candidate.TeachingEventRegistrations).SetValidator(new TeachingEventRegistrationValidator(store));
+            RuleFor(candidate => candidate.Subscriptions)
+                .Must(subscriptions => subscriptions.Select(s => s.TypeId).Distinct().Count() == subscriptions.Count)
+                .WithMessage("Must not contain multiple subscriptions with the same type.");
+            RuleFor(candidate => candidate.TeachingEventRegistrations)
+                .Must(registrations => registrations.Select(s => s.EventId).Distinct().Count() == registrations.Count)
+                .WithMessage("Must not contain multiple registrations for the same event.");
 
             RuleFor(candidate => candidate.PreferredTeachingSubjectId)
                 .Must(id => PreferredTeachingSubjectIds().Contains(id.ToString()))
