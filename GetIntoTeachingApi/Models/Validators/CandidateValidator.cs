@@ -19,14 +19,14 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.FirstName).NotEmpty().MaximumLength(256);
             RuleFor(candidate => candidate.LastName).NotEmpty().MaximumLength(256);
             RuleFor(candidate => candidate.Email).NotEmpty().EmailAddress(EmailValidationMode.AspNetCoreCompatible).MaximumLength(100);
-            RuleFor(candidate => candidate.DateOfBirth).NotNull().LessThan(candidate => DateTime.Now);
-            RuleFor(candidate => candidate.Telephone).NotEmpty().MaximumLength(50);
-            RuleFor(candidate => candidate.AddressLine1).NotEmpty().MaximumLength(1024);
+            RuleFor(candidate => candidate.DateOfBirth).LessThan(candidate => DateTime.Now);
+            RuleFor(candidate => candidate.Telephone).MaximumLength(50);
+            RuleFor(candidate => candidate.AddressLine1).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressLine2).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressLine3).MaximumLength(1024);
-            RuleFor(candidate => candidate.AddressCity).NotEmpty().MaximumLength(128);
-            RuleFor(candidate => candidate.AddressState).NotEmpty().MaximumLength(128);
-            RuleFor(candidate => candidate.AddressPostcode).NotEmpty().MaximumLength(40);
+            RuleFor(candidate => candidate.AddressCity).MaximumLength(128);
+            RuleFor(candidate => candidate.AddressState).MaximumLength(128);
+            RuleFor(candidate => candidate.AddressPostcode).MaximumLength(40);
             RuleFor(candidate => candidate.CallbackInformation).MaximumLength(600);
             RuleFor(candidate => candidate.EligibilityRulesPassed)
                 .Must(value => _validEligibilityRulesPassedValues.Contains(value))
@@ -43,6 +43,7 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Must be a valid teaching subject.");
             RuleFor(candidate => candidate.CountryId)
                 .Must(id => CountryIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.CountryId == null)
                 .WithMessage("Must be a valid country.");
             RuleFor(candidate => candidate.PreferredEducationPhaseId)
                 .Must(id => PreferredEducationPhaseIds().Contains(id.ToString()))
@@ -94,6 +95,7 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Must be a valid candidate consideration journey stage.");
             RuleFor(candidate => candidate.TypeId)
                 .Must(id => TypeIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.TypeId == null)
                 .WithMessage("Must be a valid candidate type.");
             RuleFor(candidate => candidate.StatusId)
                 .Must(id => StatusIds().Contains(id.ToString()))
