@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using FluentAssertions;
 using FluentValidation.TestHelper;
 using GetIntoTeachingApi.Models;
@@ -24,12 +25,20 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_WhenValid_HasNoErrors()
         {
             var mockTeachingEvent = new TeachingEvent { Id = Guid.NewGuid() };
+            var mockPickListItem = new TypeEntity { Id = "123" };
 
             _mockStore
                 .Setup(mock => mock.GetTeachingEventAsync((Guid)mockTeachingEvent.Id))
                 .ReturnsAsync(mockTeachingEvent);
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("msevtmgt_eventregistration", "dfe_channelcreation"))
+                .Returns(new[] { mockPickListItem }.AsQueryable());
 
-            var registration = new TeachingEventRegistration() { EventId = (Guid)mockTeachingEvent.Id };
+            var registration = new TeachingEventRegistration() 
+            {
+                EventId = (Guid)mockTeachingEvent.Id,
+                ChannelId = int.Parse(mockPickListItem.Id),
+            };
 
             var result = _validator.TestValidate(registration);
 
@@ -40,6 +49,21 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_EventIdIsInvalid_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(registration => registration.EventId, Guid.NewGuid());
+        }
+
+        [Fact]
+        public void Validate_ChannelIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(registration => registration.ChannelId, 123);
+        }
+
+        [Fact]
+        public void Validate_ChannelIdIsNullWhenExistingCandidate_HasNoError()
+        {
+            var registration = new TeachingEventRegistration() { Id = Guid.NewGuid(), ChannelId = null };
+            var result = _validator.TestValidate(registration);
+
+            result.ShouldNotHaveValidationErrorFor("ChannelId");
         }
     }
 }

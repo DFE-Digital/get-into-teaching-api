@@ -258,6 +258,19 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpGet]
         [CrmETag]
+        [Route("teaching_event_registration/channels")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of teaching event registration channels.",
+            OperationId = "GetTeachingEventRegistrationChannels",
+            Tags = new[] { "Types" })]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public async Task<IActionResult> GetTeachingEventRegistrationChannels()
+        {
+            return Ok(await _store.GetPickListItems("msevtmgt_eventregistration", "dfe_channelcreation").ToListAsync());
+        }
+
+        [HttpGet]
+        [CrmETag]
         [Route("phone_call/channels")]
         [SwaggerOperation(
             Summary = "Retrieves the list of phone call channels.",
