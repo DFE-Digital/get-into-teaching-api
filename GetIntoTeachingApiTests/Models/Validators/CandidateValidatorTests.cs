@@ -111,6 +111,24 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
+        public void Validate_TeachingEventRegistrationsWithDuplicateEvents_HasError()
+        {
+            var mockEvent = new TeachingEvent { Id = Guid.NewGuid() };
+
+            var candidate = new Candidate
+            {
+                TeachingEventRegistrations = new List<TeachingEventRegistration>
+                {
+                    new TeachingEventRegistration {EventId = (Guid)mockEvent.Id},
+                    new TeachingEventRegistration {EventId = (Guid)mockEvent.Id},
+                }
+            };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor("TeachingEventRegistrations");
+        }
+
+        [Fact]
         public void Validate_TechingEventRegistrationIsInvalid_HasError()
         {
             var candidate = new Candidate
@@ -123,6 +141,28 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var result = _validator.TestValidate(candidate);
 
             result.ShouldHaveValidationErrorFor("TeachingEventRegistrations[0].EventId");
+        }
+
+        [Fact]
+        public void Validate_SubscriptionsWithDuplicateTypes_HasError()
+        {
+            var mockPickListItem = new TypeEntity { Id = "123" };
+
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("dfe_servicesubscription", "dfe_servicesubscriptiontype"))
+                .Returns(new[] { mockPickListItem }.AsQueryable());
+
+            var candidate = new Candidate
+            {
+                Subscriptions = new List<Subscription>
+                {
+                    new Subscription {TypeId = int.Parse(mockPickListItem.Id)},
+                    new Subscription {TypeId = int.Parse(mockPickListItem.Id)},
+                }
+            };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor("Subscriptions");
         }
 
         [Fact]
