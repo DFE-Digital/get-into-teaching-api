@@ -10,6 +10,8 @@ namespace GetIntoTeachingApi.Models
     {
         [EntityField("msevtmgt_eventid", typeof(EntityReference))]
         public Guid EventId { get; set; }
+        [EntityField("dfe_channelcreation", typeof(OptionSetValue))]
+        public int? ChannelId { get; set; }
 
         public TeachingEventRegistration()
             : base()
