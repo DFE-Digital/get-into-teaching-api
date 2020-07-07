@@ -134,6 +134,8 @@ namespace GetIntoTeachingApi.Models
 
         [EntityRelationship("dfe_contact_dfe_servicesubscription_contact", typeof(Subscription))]
         public List<Subscription> Subscriptions { get; set; } = new List<Subscription>();
+        [EntityRelationship("msevtmgt_contact_msevtmgt_eventregistration_Contact", typeof(TeachingEventRegistration))]
+        public List<TeachingEventRegistration> TeachingEventRegistrations { get; set; } = new List<TeachingEventRegistration>();
         [EntityRelationship("dfe_contact_dfe_candidatequalification_ContactId", typeof(CandidateQualification))]
         public List<CandidateQualification> Qualifications { get; set; } = new List<CandidateQualification>();
         [EntityRelationship("dfe_contact_dfe_candidatepastteachingposition_ContactId", typeof(CandidatePastTeachingPosition))]
