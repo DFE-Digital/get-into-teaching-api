@@ -33,10 +33,10 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void AddMember_InvalidRequest_RespondsWithValidationErrors()
         {
-            var request = new MailingListAddMemberRequest() { FirstName = null };
+            var candidate = new Candidate() { FirstName = null };
             _controller.ModelState.AddModelError("FirstName", "First name must be specified.");
 
-            var response = _controller.AddMember(request);
+            var response = _controller.AddMember(candidate);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
@@ -46,14 +46,14 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void AddMember_ValidRequest_EnqueuesJobRespondsWithNoContent()
         {
-            var request = new MailingListAddMemberRequest() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
+            var candidate = new Candidate() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
 
-            var response = _controller.AddMember(request);
+            var response = _controller.AddMember(candidate);
 
             response.Should().BeOfType<NoContentResult>();
             _mockJobClient.Verify(x => x.Create(
-                It.Is<Job>(job => job.Type == typeof(MailingListAddMemberJob) && job.Method.Name == "Run" &&
-                                  ((MailingListAddMemberRequest)job.Args[0]) == request),
+                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
+                                  ((Candidate)job.Args[0]) == candidate),
                 It.IsAny<EnqueuedState>()));
         }
     }

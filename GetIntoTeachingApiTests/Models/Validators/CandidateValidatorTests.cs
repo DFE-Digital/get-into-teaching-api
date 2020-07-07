@@ -111,6 +111,36 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
+        public void Validate_TechingEventRegistrationIsInvalid_HasError()
+        {
+            var candidate = new Candidate
+            {
+                TeachingEventRegistrations = new List<TeachingEventRegistration>
+                {
+                    new TeachingEventRegistration {EventId = Guid.NewGuid()}
+                }
+            };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor("TeachingEventRegistrations[0].EventId");
+        }
+
+        [Fact]
+        public void Validate_SubscriptionIsInvalid_HasError()
+        {
+            var candidate = new Candidate
+            {
+                Subscriptions = new List<Subscription>
+                {
+                    new Subscription {TypeId = 123}
+                }
+            };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor("Subscriptions[0].TypeId");
+        }
+
+        [Fact]
         public void Validate_QualificationIsInvalid_HasError()
         {
             var candidate = new Candidate

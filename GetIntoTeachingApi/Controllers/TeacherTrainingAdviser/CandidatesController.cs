@@ -43,7 +43,7 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
                 return BadRequest(this.ModelState);
             }
 
-            _jobClient.Enqueue<CandidateRegistrationJob>((x) => x.Run(candidate, null));
+            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(candidate, null));
 
             return NoContent();
         }

@@ -9,19 +9,19 @@ using Microsoft.Extensions.Logging;
 
 namespace GetIntoTeachingApi.Jobs
 {
-    public class CandidateRegistrationJob : BaseJob
+    public class UpsertCandidateJob : BaseJob
     {
         private readonly ICrmService _crm;
         private readonly INotifyService _notifyService;
         private readonly IPerformContextAdapter _contextAdapter;
-        private readonly ILogger<CandidateRegistrationJob> _logger;
+        private readonly ILogger<UpsertCandidateJob> _logger;
 
-        public CandidateRegistrationJob(
+        public UpsertCandidateJob(
             IEnv env,
             ICrmService crm,
             INotifyService notifyService,
             IPerformContextAdapter contextAdapter,
-            ILogger<CandidateRegistrationJob> logger)
+            ILogger<UpsertCandidateJob> logger)
             : base(env)
         {
             _crm = crm;
@@ -32,7 +32,7 @@ namespace GetIntoTeachingApi.Jobs
 
         public void Run(Candidate candidate, PerformContext context)
         {
-            _logger.LogInformation($"CandidateRegistrationJob - Started ({AttemptInfo(context, _contextAdapter)})");
+            _logger.LogInformation($"UpsertCandidateJob - Started ({AttemptInfo(context, _contextAdapter)})");
 
             if (IsLastAttempt(context, _contextAdapter))
             {
@@ -43,32 +43,13 @@ namespace GetIntoTeachingApi.Jobs
                     candidate.Email,
                     NotifyService.CandidateRegistrationFailedEmailTemplateId,
                     personalisation);
-                _logger.LogInformation("CandidateRegistrationJob - Deleted");
+                _logger.LogInformation("UpsertCandidateJob - Deleted");
             }
             else
             {
-                AddSubscription(candidate);
                 _crm.Save(candidate);
-                _logger.LogInformation("CandidateRegistrationJob - Succeeded");
+                _logger.LogInformation("UpsertCandidateJob - Succeeded");
             }
-        }
-
-        private void AddSubscription(Candidate candidate)
-        {
-            var alreadySubscribed = candidate.Id != null && _crm.IsCandidateSubscribedToServiceOfType(
-                (Guid)candidate.Id, (int)Subscription.ServiceType.TeacherTrainingAdviser);
-
-            if (alreadySubscribed)
-            {
-                return;
-            }
-
-            var subscription = new Subscription()
-            {
-                TypeId = (int)Subscription.ServiceType.TeacherTrainingAdviser,
-            };
-
-            candidate.Subscriptions.Add(subscription);
         }
     }
 }

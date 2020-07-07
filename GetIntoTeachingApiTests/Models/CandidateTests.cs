@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
@@ -103,6 +104,49 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("PrivacyPolicy").Should().BeDecoratedWith<EntityRelationshipAttribute>(
                 a => a.Name == "dfe_contact_dfe_candidateprivacypolicy_Candidate" &&
                      a.Type == typeof(CandidatePrivacyPolicy));
+        }
+
+        [Fact]
+        public void ToEntity_WhenAlreadySubscribedToService_DoesNotCreateSubscriptionEntity()
+        {
+            var mockService = new Mock<IOrganizationServiceAdapter>();
+            var context = mockService.Object.Context();
+            var mockCrm = new Mock<ICrmService>();
+
+            var candidate = new Candidate()
+            {
+                Id = Guid.NewGuid(),
+                Subscriptions = new List<Subscription>() { new Subscription() { TypeId = (int)Subscription.ServiceType.Event } }
+            };
+
+            mockCrm.Setup(m => m.MappableEntity("contact", (Guid)candidate.Id, context)).Returns(new Entity("contact"));
+            mockCrm.Setup(m => m.CandidateYetToSubscribeToServiceOfType((Guid)candidate.Id, (int)Subscription.ServiceType.Event)).Returns(false);
+
+            candidate.ToEntity(mockCrm.Object, context);
+
+            mockService.Verify(m => m.NewEntity("dfe_servicesubscription", context), Times.Never);
+        }
+
+        [Fact]
+        public void ToEntity_WhenAlreadyRegisteredForEvent_DoesNotCreateTeachingEventEntity()
+        {
+            var mockService = new Mock<IOrganizationServiceAdapter>();
+            var context = mockService.Object.Context();
+            var mockCrm = new Mock<ICrmService>();
+
+            var teachingEvent = new TeachingEventRegistration() { EventId = Guid.NewGuid() };
+            var candidate = new Candidate()
+            {
+                Id = Guid.NewGuid(),
+                TeachingEventRegistrations = new List<TeachingEventRegistration>() { teachingEvent }
+            };
+
+            mockCrm.Setup(m => m.MappableEntity("contact", (Guid)candidate.Id, context)).Returns(new Entity("contact"));
+            mockCrm.Setup(m => m.CandidateYetToRegisterForTeachingEvent((Guid)candidate.Id, (Guid)teachingEvent.EventId)).Returns(false);
+
+            candidate.ToEntity(mockCrm.Object, context);
+
+            mockService.Verify(m => m.NewEntity("msevtmgt_eventregistration", context), Times.Never);
         }
 
         [Fact]

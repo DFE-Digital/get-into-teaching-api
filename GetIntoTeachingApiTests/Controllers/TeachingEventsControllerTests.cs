@@ -37,7 +37,6 @@ namespace GetIntoTeachingApiTests.Controllers
             typeof(TeachingEventsController).Should().BeDecoratedWith<AuthorizeAttribute>();
         }
 
-
         [Fact]
         public void CrmETag_IsPresent()
         {
@@ -48,12 +47,12 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void AddAttendee_InvalidRequest_RespondsWithValidationErrors()
+        public void AddAttendee_InvalidRequest_RespondsWithValidationErrors()
         {
-            var request = new TeachingEventRegistrationRequest() { FirstName = null };
+            var candidate = new Candidate() { FirstName = null };
             _controller.ModelState.AddModelError("FirstName", "First name must be specified.");
 
-            var response = await _controller.AddAttendee(Guid.NewGuid(), request);
+            var response = _controller.AddAttendee(candidate);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
@@ -61,31 +60,17 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void AddAttendee_MissingEvent_RespondsWithNotFound()
+        public void AddAttendee_ValidRequest_EnqueuesJobRespondsWithNoContent()
         {
-            var request = new TeachingEventRegistrationRequest() { FirstName = null };
-            var teachingEventId = Guid.NewGuid();
-            _mockStore.Setup(mock => mock.GetTeachingEventAsync(teachingEventId)).ReturnsAsync(null as TeachingEvent);
-
-            var response = await _controller.AddAttendee(teachingEventId, request);
-
-            response.Should().BeOfType<NotFoundResult>();
-        }
-
-        [Fact]
-        public async void AddAttendee_ValidRequest_EnqueuesJobRespondsWithNoContent()
-        {
-            var request = new TeachingEventRegistrationRequest() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
+            var candidate = new Candidate() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
             var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
-            _mockStore.Setup(mock => mock.GetTeachingEventAsync((Guid)teachingEvent.Id)).ReturnsAsync(teachingEvent);
 
-            var response = await _controller.AddAttendee((Guid)teachingEvent.Id, request);
+            var response = _controller.AddAttendee(candidate);
 
             response.Should().BeOfType<NoContentResult>();
             _mockJobClient.Verify(x => x.Create(
-                It.Is<Job>(job => job.Type == typeof(TeachingEventRegistrationJob) && job.Method.Name == "Run" &&
-                                  ((TeachingEventRegistrationRequest)job.Args[0]) == request &&
-                                  ((Guid)job.Args[1]) == teachingEvent.Id),
+                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
+                                  ((Candidate)job.Args[0]) == candidate),
                 It.IsAny<EnqueuedState>()));
         }
 
