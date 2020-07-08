@@ -18,6 +18,7 @@ namespace GetIntoTeachingApiTests.Models
             var request = new MailingListAddMemberRequest()
             {
                 CandidateId = Guid.NewGuid(),
+                QualificationId = Guid.NewGuid(),
                 PreferredTeachingSubjectId = Guid.Parse(mockEntityReference.Id),
                 AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id,
                 DescribeYourselfOptionId = int.Parse(mockPickListItem.Id),
@@ -58,6 +59,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.Subscriptions.First().TypeId.Should().Be((int)Subscription.ServiceType.MailingList);
             candidate.Subscriptions.Last().TypeId.Should().Be((int)Subscription.ServiceType.Event);
             candidate.Qualifications.First().UkDegreeGradeId.Should().Be(request.UkDegreeGradeId);
+            candidate.Qualifications.First().Id.Should().Be(request.QualificationId);
         }
 
         [Theory]
