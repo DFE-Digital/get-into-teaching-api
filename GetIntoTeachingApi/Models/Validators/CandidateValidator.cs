@@ -113,9 +113,9 @@ namespace GetIntoTeachingApi.Models.Validators
                 .Must(id => AdviserEligibilityIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.AdviserEligibilityId == null)
                 .WithMessage("Must be a valid candidate adviser eligibility.");
-            RuleFor(candidate => candidate.AdviserRequiremntId)
+            RuleFor(candidate => candidate.AdviserRequirementId)
                 .Must(id => AdviserRequirementIds().Contains(id.ToString()))
-                .Unless(candidate => candidate.AdviserRequiremntId == null)
+                .Unless(candidate => candidate.AdviserRequirementId == null)
                 .WithMessage("Must be a valid candidate adviser requirement.");
         }
 

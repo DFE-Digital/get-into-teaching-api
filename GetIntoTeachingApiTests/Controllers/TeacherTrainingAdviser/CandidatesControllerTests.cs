@@ -75,10 +75,10 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         [Fact]
         public void Upsert_InvalidRequest_RespondsWithValidationErrors()
         {
-            var candidate = new Candidate { Email = "invalid-email@" };
+            var request = new TeacherTrainingAdviserSignUpRequest { Email = "invalid-email@" };
             _controller.ModelState.AddModelError("Email", "Email is invalid.");
 
-            var response = _controller.Upsert(candidate);
+            var response = _controller.Upsert(request);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
@@ -88,14 +88,23 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         [Fact]
         public void Upsert_ValidRequest_EnqueuesJobAndRespondsWithSuccess()
         {
-            var candidate = new Candidate { FirstName = "first" };
+            var request = new TeacherTrainingAdviserSignUpRequest { FirstName = "first" };
 
-            var response = _controller.Upsert(candidate);
+            var response = _controller.Upsert(request);
 
             response.Should().BeOfType<NoContentResult>();
             _mockJobClient.Verify(x => x.Create(
-                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" && job.Args[0] == candidate),
+                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
+                IsMatch(request.Candidate, (Candidate)job.Args[0])),
                 It.IsAny<EnqueuedState>()));
+        }
+
+        private static bool IsMatch(Candidate candidateA, Candidate candidateB)
+        {
+            candidateA.Should().BeEquivalentTo(candidateB, options => options
+                .Excluding(c => c.Subscriptions[0].StartAt)
+                .Excluding(c => c.PrivacyPolicy.AcceptedAt));
+            return true;
         }
     }
 }

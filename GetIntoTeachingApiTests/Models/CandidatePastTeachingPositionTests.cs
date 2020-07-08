@@ -20,6 +20,8 @@ namespace GetIntoTeachingApiTests.Models
 
             type.GetProperty("EducationPhaseId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_educationphase" && a.Type == typeof(OptionSetValue));
+
+            type.GetProperty("CreatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "createdon");
         }
     }
 }
