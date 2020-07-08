@@ -8,6 +8,13 @@ namespace GetIntoTeachingApi.Models
     [Entity("msevtmgt_eventregistration")]
     public class TeachingEventRegistration : BaseModel
     {
+        public enum Channel
+        {
+            Event = 222750003,
+        }
+
+        [EntityField("msevtmgt_contactid", typeof(EntityReference))]
+        public Guid CandidateId { get; set; }
         [EntityField("msevtmgt_eventid", typeof(EntityReference))]
         public Guid EventId { get; set; }
         [EntityField("dfe_channelcreation", typeof(OptionSetValue))]

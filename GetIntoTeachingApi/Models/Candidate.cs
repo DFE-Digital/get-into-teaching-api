@@ -40,6 +40,7 @@ namespace GetIntoTeachingApi.Models
         public enum Channel
         {
             MailingList = 222750028,
+            Event = 222750029,
         }
 
         [JsonIgnore]

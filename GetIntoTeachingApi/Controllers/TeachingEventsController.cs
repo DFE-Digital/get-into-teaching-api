@@ -105,14 +105,14 @@ maximum of 50 using the `limit` query parameter.",
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
         [ProducesResponseType(404)]
         public IActionResult AddAttendee(
-            [FromBody, SwaggerRequestBody("Attendee with teaching event registration.", Required = true)] Candidate candidate)
+            [FromBody, SwaggerRequestBody("Attendee to add to the teaching event.", Required = true)] TeachingEventAddAttendeeRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(this.ModelState);
             }
 
-            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(candidate, null));
+            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(request.Candidate, null));
 
             return NoContent();
         }

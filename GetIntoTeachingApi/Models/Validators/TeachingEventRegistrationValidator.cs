@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using GetIntoTeachingApi.Services;
@@ -14,7 +15,7 @@ namespace GetIntoTeachingApi.Models.Validators
             _store = store;
 
             RuleFor(registration => registration.EventId)
-                .Must(id => store.GetTeachingEventAsync(id).GetAwaiter().GetResult() != null)
+                .Must(id => BeAValidTeachingEvent(id))
                 .WithMessage("Must be a valid teaching event.");
 
             RuleFor(registration => registration.ChannelId)
@@ -30,6 +31,11 @@ namespace GetIntoTeachingApi.Models.Validators
         private IEnumerable<string> ChannelIds()
         {
             return _store.GetPickListItems("msevtmgt_eventregistration", "dfe_channelcreation").Select(channel => channel.Id);
+        }
+
+        private bool BeAValidTeachingEvent(Guid id)
+        {
+            return _store.GetTeachingEventAsync(id).GetAwaiter().GetResult() != null;
         }
     }
 }

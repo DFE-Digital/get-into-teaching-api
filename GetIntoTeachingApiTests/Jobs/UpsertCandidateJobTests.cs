@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
@@ -41,6 +43,21 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockCrm.Verify(mock => mock.Save(_candidate), Times.Once);
             _mockLogger.VerifyInformationWasCalled("UpsertCandidateJob - Started (1/24)");
             _mockLogger.VerifyInformationWasCalled("UpsertCandidateJob - Succeeded");
+        }
+
+        [Fact]
+        public void Run_WithTeachingEventRegistrationsOnSuccess_SavesTeachingEventRegistrations()
+        {
+            var candidateId = Guid.NewGuid();
+            var registration = new TeachingEventRegistration() { EventId = Guid.NewGuid() };
+            _candidate.TeachingEventRegistrations.Add(registration);
+            _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
+            _mockCrm.Setup(mock => mock.Save(_candidate)).Callback(() => _candidate.Id = candidateId);
+
+            _job.Run(_candidate, null);
+
+            _mockCrm.Verify(mock => mock.Save(registration), Times.Once);
+            registration.CandidateId.Should().Be(candidateId);
         }
 
         [Fact]

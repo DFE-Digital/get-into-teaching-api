@@ -4,7 +4,6 @@ using System.Linq;
 using FluentValidation;
 using FluentValidation.Validators;
 using GetIntoTeachingApi.Services;
-using Microsoft.Crm.Sdk;
 
 namespace GetIntoTeachingApi.Models.Validators
 {
