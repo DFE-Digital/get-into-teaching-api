@@ -41,6 +41,7 @@ namespace GetIntoTeachingApi.Models
         {
             MailingList = 222750028,
             Event = 222750029,
+            TeacherTrainingAdviser = 222750027,
         }
 
         [JsonIgnore]
@@ -78,7 +79,7 @@ namespace GetIntoTeachingApi.Models
         [EntityField("dfe_iscandidateeligibleforadviser", typeof(OptionSetValue))]
         public int? AdviserEligibilityId { get; set; }
         [EntityField("dfe_isadvisorrequiredos", typeof(OptionSetValue))]
-        public int? AdviserRequiremntId { get; set; }
+        public int? AdviserRequirementId { get; set; }
         [JsonIgnore]
         [EntityField("dfe_preferredphonenumbertype", typeof(OptionSetValue))]
         public int? PreferredPhoneNumberTypeId { get; set; } = (int)PhoneNumberType.Home;
