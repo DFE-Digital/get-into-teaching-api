@@ -49,10 +49,10 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void AddAttendee_InvalidRequest_RespondsWithValidationErrors()
         {
-            var candidate = new Candidate() { FirstName = null };
+            var request = new TeachingEventAddAttendeeRequest() { EventId = Guid.NewGuid(), FirstName = null };
             _controller.ModelState.AddModelError("FirstName", "First name must be specified.");
 
-            var response = _controller.AddAttendee(candidate);
+            var response = _controller.AddAttendee(request);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
@@ -62,15 +62,15 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void AddAttendee_ValidRequest_EnqueuesJobRespondsWithNoContent()
         {
-            var candidate = new Candidate() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
             var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
+            var request = new TeachingEventAddAttendeeRequest() { EventId = (Guid)teachingEvent.Id, Email = "test@test.com", FirstName = "John", LastName = "Doe" };
 
-            var response = _controller.AddAttendee(candidate);
+            var response = _controller.AddAttendee(request);
 
             response.Should().BeOfType<NoContentResult>();
             _mockJobClient.Verify(x => x.Create(
                 It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-                                  ((Candidate)job.Args[0]) == candidate),
+                IsMatch(request.Candidate, (Candidate)job.Args[0])),
                 It.IsAny<EnqueuedState>()));
         }
 
@@ -149,6 +149,14 @@ namespace GetIntoTeachingApiTests.Controllers
             var event3 = new TeachingEvent() { Name = "Event 3" };
 
             return new[] { event1, event2, event3 };
+        }
+
+        private static bool IsMatch(Candidate candidateA, Candidate candidateB)
+        {
+            candidateA.Should().BeEquivalentTo(candidateB, options => options
+                .Excluding(c => c.Subscriptions[0].StartAt)
+                .Excluding(c => c.PrivacyPolicy.AcceptedAt));
+            return true;
         }
     }
 }

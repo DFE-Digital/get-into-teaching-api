@@ -47,8 +47,35 @@ namespace GetIntoTeachingApi.Jobs
             }
             else
             {
-                _crm.Save(candidate);
+                var registrations = ClearTeachingEventRegistrations(candidate);
+                SaveCandidate(candidate);
+                SaveTeachingEventRegistrations(registrations, candidate);
+
                 _logger.LogInformation("UpsertCandidateJob - Succeeded");
+            }
+        }
+
+        private void SaveCandidate(Candidate candidate)
+        {
+            _crm.Save(candidate);
+        }
+
+        private IEnumerable<TeachingEventRegistration> ClearTeachingEventRegistrations(Candidate candidate)
+        {
+            // Due to reasons unknown the candidate registrations relationship can't be deep-inserted
+            // in the same way we do for other relationships - we need to explicitly save them against
+            // the candidate instead.
+            var teachingEventRegistrations = new List<TeachingEventRegistration>(candidate.TeachingEventRegistrations);
+            candidate.TeachingEventRegistrations.Clear();
+            return teachingEventRegistrations;
+        }
+
+        private void SaveTeachingEventRegistrations(IEnumerable<TeachingEventRegistration> registrations, Candidate candidate)
+        {
+            foreach (var registration in registrations)
+            {
+                registration.CandidateId = (Guid)candidate.Id;
+                _crm.Save(registration);
             }
         }
     }
