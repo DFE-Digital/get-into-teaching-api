@@ -55,9 +55,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_UkDegreeGradeIdIsNull_HasError()
+        public void Validate_UkDegreeGradeIdIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(qualification => qualification.UkDegreeGradeId, null as int?);
+            _validator.ShouldNotHaveValidationErrorFor(qualification => qualification.UkDegreeGradeId, null as int?);
         }
 
         [Fact]
@@ -67,9 +67,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_DegreeStatusIdIsNull_HasError()
+        public void Validate_DegreeStatusIdIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(qualification => qualification.DegreeStatusId, null as int?);
+            _validator.ShouldNotHaveValidationErrorFor(qualification => qualification.DegreeStatusId, null as int?);
         }
 
         [Fact]
@@ -79,9 +79,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_TypeIdIsNull_HasError()
+        public void Validate_TypeIdIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(qualification => qualification.TypeId, null as int?);
+            _validator.ShouldNotHaveValidationErrorFor(qualification => qualification.TypeId, null as int?);
         }
 
         [Fact]

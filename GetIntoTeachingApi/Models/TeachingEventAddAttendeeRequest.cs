@@ -3,23 +3,19 @@ using System.Text.Json.Serialization;
 
 namespace GetIntoTeachingApi.Models
 {
-    public class MailingListAddMemberRequest
+    public class TeachingEventAddAttendeeRequest
     {
         public Guid? CandidateId { get; set; }
-        public Guid PreferredTeachingSubjectId { get; set; }
+        public Guid EventId { get; set; }
         public Guid AcceptedPolicyId { get; set; }
-
-        public int DescribeYourselfOptionId { get; set; }
-        public int ConsiderationJourneyStageId { get; set; }
-        public int UkDegreeGradeId { get; set; }
 
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string AddressPostcode { get; set; }
         public string Telephone { get; set; }
-        public string CallbackInformation { get; set; }
         public bool SubscribeToEvents { get; set; }
+        public bool SubscribeToMailingList { get; set; }
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
@@ -29,32 +25,36 @@ namespace GetIntoTeachingApi.Models
             var candidate = new Candidate()
             {
                 Id = CandidateId,
-                DescribeYourselfOptionId = DescribeYourselfOptionId,
-                ConsiderationJourneyStageId = ConsiderationJourneyStageId,
-                PreferredTeachingSubjectId = PreferredTeachingSubjectId,
                 Email = Email,
                 FirstName = FirstName,
                 LastName = LastName,
                 AddressPostcode = AddressPostcode,
                 Telephone = Telephone,
-                CallbackInformation = CallbackInformation,
                 PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = AcceptedPolicyId },
-                ChannelId = CandidateId == null ? (int?)Candidate.Channel.MailingList : null,
-                EligibilityRulesPassed = Telephone == null ? "false" : "true",
+                ChannelId = CandidateId == null ? (int?)Candidate.Channel.Event : null,
+                EligibilityRulesPassed = "false",
                 OptOutOfSms = false,
-                DoNotBulkEmail = false,
+                DoNotBulkEmail = true,
                 DoNotEmail = false,
                 DoNotBulkPostalMail = true,
                 DoNotPostalMail = true,
-                DoNotSendMm = false,
+                DoNotSendMm = true,
             };
 
-            candidate.Qualifications.Add(new CandidateQualification() { UkDegreeGradeId = UkDegreeGradeId });
-            candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.MailingList });
+            candidate.TeachingEventRegistrations.Add(new TeachingEventRegistration()
+            {
+                EventId = EventId,
+                ChannelId = (int)TeachingEventRegistration.Channel.Event,
+            });
 
             if (SubscribeToEvents)
             {
                 candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.Event });
+            }
+
+            if (SubscribeToMailingList)
+            {
+                candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.MailingList });
             }
 
             return candidate;

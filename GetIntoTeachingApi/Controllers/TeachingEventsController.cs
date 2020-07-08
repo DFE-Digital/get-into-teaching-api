@@ -94,7 +94,7 @@ maximum of 50 using the `limit` query parameter.",
         }
 
         [HttpPost]
-        [Route("{id}/attendees")]
+        [Route("attendees")]
         [SwaggerOperation(
             Summary = "Adds an attendee to a teaching event.",
             Description = "If the `CandidateId` is specified then the existing candidate will be " +
@@ -104,23 +104,15 @@ maximum of 50 using the `limit` query parameter.",
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> AddAttendee(
-            [FromRoute, SwaggerParameter("The `id` of the `TeachingEvent`.", Required = true)] Guid id,
-            [FromBody, SwaggerRequestBody("Attendee to add to the teaching event.", Required = true)] TeachingEventRegistrationRequest request)
+        public IActionResult AddAttendee(
+            [FromBody, SwaggerRequestBody("Attendee to add to the teaching event.", Required = true)] TeachingEventAddAttendeeRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(this.ModelState);
             }
 
-            var teachingEvent = await _store.GetTeachingEventAsync(id);
-
-            if (teachingEvent == null)
-            {
-                return NotFound();
-            }
-
-            _jobClient.Enqueue<TeachingEventRegistrationJob>((x) => x.Run(request, id, null));
+            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(request.Candidate, null));
 
             return NoContent();
         }

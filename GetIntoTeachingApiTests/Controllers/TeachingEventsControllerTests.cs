@@ -37,7 +37,6 @@ namespace GetIntoTeachingApiTests.Controllers
             typeof(TeachingEventsController).Should().BeDecoratedWith<AuthorizeAttribute>();
         }
 
-
         [Fact]
         public void CrmETag_IsPresent()
         {
@@ -48,12 +47,12 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void AddAttendee_InvalidRequest_RespondsWithValidationErrors()
+        public void AddAttendee_InvalidRequest_RespondsWithValidationErrors()
         {
-            var request = new TeachingEventRegistrationRequest() { FirstName = null };
+            var request = new TeachingEventAddAttendeeRequest() { EventId = Guid.NewGuid(), FirstName = null };
             _controller.ModelState.AddModelError("FirstName", "First name must be specified.");
 
-            var response = await _controller.AddAttendee(Guid.NewGuid(), request);
+            var response = _controller.AddAttendee(request);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
@@ -61,31 +60,17 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void AddAttendee_MissingEvent_RespondsWithNotFound()
+        public void AddAttendee_ValidRequest_EnqueuesJobRespondsWithNoContent()
         {
-            var request = new TeachingEventRegistrationRequest() { FirstName = null };
-            var teachingEventId = Guid.NewGuid();
-            _mockStore.Setup(mock => mock.GetTeachingEventAsync(teachingEventId)).ReturnsAsync(null as TeachingEvent);
-
-            var response = await _controller.AddAttendee(teachingEventId, request);
-
-            response.Should().BeOfType<NotFoundResult>();
-        }
-
-        [Fact]
-        public async void AddAttendee_ValidRequest_EnqueuesJobRespondsWithNoContent()
-        {
-            var request = new TeachingEventRegistrationRequest() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
             var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
-            _mockStore.Setup(mock => mock.GetTeachingEventAsync((Guid)teachingEvent.Id)).ReturnsAsync(teachingEvent);
+            var request = new TeachingEventAddAttendeeRequest() { EventId = (Guid)teachingEvent.Id, Email = "test@test.com", FirstName = "John", LastName = "Doe" };
 
-            var response = await _controller.AddAttendee((Guid)teachingEvent.Id, request);
+            var response = _controller.AddAttendee(request);
 
             response.Should().BeOfType<NoContentResult>();
             _mockJobClient.Verify(x => x.Create(
-                It.Is<Job>(job => job.Type == typeof(TeachingEventRegistrationJob) && job.Method.Name == "Run" &&
-                                  ((TeachingEventRegistrationRequest)job.Args[0]) == request &&
-                                  ((Guid)job.Args[1]) == teachingEvent.Id),
+                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
+                IsMatch(request.Candidate, (Candidate)job.Args[0])),
                 It.IsAny<EnqueuedState>()));
         }
 
@@ -164,6 +149,14 @@ namespace GetIntoTeachingApiTests.Controllers
             var event3 = new TeachingEvent() { Name = "Event 3" };
 
             return new[] { event1, event2, event3 };
+        }
+
+        private static bool IsMatch(Candidate candidateA, Candidate candidateB)
+        {
+            candidateA.Should().BeEquivalentTo(candidateB, options => options
+                .Excluding(c => c.Subscriptions[0].StartAt)
+                .Excluding(c => c.PrivacyPolicy.AcceptedAt));
+            return true;
         }
     }
 }

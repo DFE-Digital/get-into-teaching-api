@@ -9,15 +9,15 @@ using Xunit;
 
 namespace GetIntoTeachingApiTests.Models.Validators
 {
-    public class ServiceSubscriptionValidatorTests
+    public class SubscriptionValidatorTests
     {
-        private readonly ServiceSubscriptionValidator _validator;
+        private readonly SubscriptionValidator _validator;
         private readonly Mock<IStore> _mockStore;
 
-        public ServiceSubscriptionValidatorTests()
+        public SubscriptionValidatorTests()
         {
             _mockStore = new Mock<IStore>();
-            _validator = new ServiceSubscriptionValidator(_mockStore.Object);
+            _validator = new SubscriptionValidator(_mockStore.Object);
         }
 
         [Fact]
@@ -29,7 +29,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 .Setup(mock => mock.GetPickListItems("dfe_servicesubscription", "dfe_servicesubscriptiontype"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
 
-            var subscription = new ServiceSubscription()
+            var subscription = new Subscription()
             {
                 TypeId = int.Parse(mockPickListItem.Id),
                 DoNotBulkEmail = false,
