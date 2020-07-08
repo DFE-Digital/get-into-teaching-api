@@ -11,15 +11,11 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_MapsCorrectly()
         {
-            var mockPickListItem = new TypeEntity { Id = "123" };
-            var mockEntityReference = new TypeEntity { Id = Guid.NewGuid().ToString() };
-            var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
-
             var request = new TeachingEventAddAttendeeRequest()
             {
                 EventId = Guid.NewGuid(),
                 CandidateId = Guid.NewGuid(),
-                AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id,
+                AcceptedPolicyId = Guid.NewGuid(),
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
