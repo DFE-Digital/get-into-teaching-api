@@ -6,6 +6,7 @@ namespace GetIntoTeachingApi.Models
     public class MailingListAddMemberRequest
     {
         public Guid? CandidateId { get; set; }
+        public Guid? QualificationId { get; set; }
         public Guid PreferredTeachingSubjectId { get; set; }
         public Guid AcceptedPolicyId { get; set; }
 
@@ -49,7 +50,7 @@ namespace GetIntoTeachingApi.Models
                 DoNotSendMm = false,
             };
 
-            candidate.Qualifications.Add(new CandidateQualification() { UkDegreeGradeId = UkDegreeGradeId });
+            candidate.Qualifications.Add(new CandidateQualification() { Id = QualificationId, UkDegreeGradeId = UkDegreeGradeId });
             candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.MailingList });
 
             if (SubscribeToEvents)
