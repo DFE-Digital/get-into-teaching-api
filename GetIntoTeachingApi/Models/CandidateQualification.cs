@@ -1,4 +1,5 @@
-﻿using GetIntoTeachingApi.Attributes;
+﻿using System;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
 
@@ -15,6 +16,8 @@ namespace GetIntoTeachingApi.Models
         public int? DegreeStatusId { get; set; }
         [EntityField("dfe_subject")]
         public string Subject { get; set; }
+        [EntityField("createdon")]
+        public DateTime? CreatedAt { get; set; }
 
         public CandidateQualification()
             : base()

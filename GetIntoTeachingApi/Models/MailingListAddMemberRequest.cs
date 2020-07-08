@@ -41,7 +41,7 @@ namespace GetIntoTeachingApi.Models
                 CallbackInformation = CallbackInformation,
                 PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = AcceptedPolicyId },
                 ChannelId = CandidateId == null ? (int?)Candidate.Channel.MailingList : null,
-                EligibilityRulesPassed = Telephone == null ? "false" : "true",
+                EligibilityRulesPassed = "false",
                 OptOutOfSms = false,
                 DoNotBulkEmail = false,
                 DoNotEmail = false,

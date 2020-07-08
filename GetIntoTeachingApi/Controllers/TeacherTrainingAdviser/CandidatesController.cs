@@ -30,20 +30,20 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
 
         [HttpPost]
         [SwaggerOperation(
-            Summary = "Upserts a candidate for the Teacher Training Adviser service.",
+            Summary = "Sign up a candidate for the Teacher Training Adviser service.",
             OperationId = "UpsertTeacherTrainingAdviserCandidate",
             Tags = new[] { "Teacher Training Adviser" })]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
         public IActionResult Upsert(
-            [FromBody, SwaggerRequestBody("Candidate to upsert for the Teacher Training Adviser service.", Required = true)] Candidate candidate)
+            [FromBody, SwaggerRequestBody("Candidate to sign up for the Teacher Training Adviser service.", Required = true)] TeacherTrainingAdviserSignUpRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(this.ModelState);
             }
 
-            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(candidate, null));
+            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(request.Candidate, null));
 
             return NoContent();
         }

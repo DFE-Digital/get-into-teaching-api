@@ -9,6 +9,11 @@ namespace GetIntoTeachingApi.Models
     [Entity("phonecall")]
     public class PhoneCall : BaseModel
     {
+        public enum Channel
+        {
+            CallbackRequest = 222750000,
+        }
+
         [EntityField("dfe_channelcreation", typeof(OptionSetValue))]
         public int? ChannelId { get; set; }
         [EntityField("scheduledstart")]

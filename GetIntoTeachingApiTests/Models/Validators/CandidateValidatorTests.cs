@@ -521,13 +521,13 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_AdviserRequirementIdIsInvalid_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AdviserRequiremntId, 123);
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AdviserRequirementId, 123);
         }
 
         [Fact]
         public void Validate_AdviserRequirementIdIsNull_HasNoError()
         {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AdviserRequiremntId, null as int?);
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AdviserRequirementId, null as int?);
         }
 
         [Fact]

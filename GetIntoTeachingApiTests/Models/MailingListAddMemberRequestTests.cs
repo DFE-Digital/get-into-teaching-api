@@ -11,19 +11,15 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_MapsCorrectly()
         {
-            var mockPickListItem = new TypeEntity { Id = "123" };
-            var mockEntityReference = new TypeEntity { Id = Guid.NewGuid().ToString() };
-            var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
-
             var request = new MailingListAddMemberRequest()
             {
                 CandidateId = Guid.NewGuid(),
                 QualificationId = Guid.NewGuid(),
-                PreferredTeachingSubjectId = Guid.Parse(mockEntityReference.Id),
-                AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id,
-                DescribeYourselfOptionId = int.Parse(mockPickListItem.Id),
-                ConsiderationJourneyStageId = int.Parse(mockPickListItem.Id),
-                UkDegreeGradeId = int.Parse(mockPickListItem.Id),
+                PreferredTeachingSubjectId = Guid.NewGuid(),
+                AcceptedPolicyId = Guid.NewGuid(),
+                DescribeYourselfOptionId = 1,
+                ConsiderationJourneyStageId = 2,
+                UkDegreeGradeId = 3,
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
@@ -47,7 +43,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.Telephone.Should().Be(request.Telephone);
             candidate.CallbackInformation.Should().Be(request.CallbackInformation);
             candidate.ChannelId.Should().BeNull();
-            candidate.EligibilityRulesPassed.Should().Be("true");
+            candidate.EligibilityRulesPassed.Should().Be("false");
             candidate.OptOutOfSms.Should().BeFalse();
             candidate.DoNotBulkEmail.Should().BeFalse();
             candidate.DoNotEmail.Should().BeFalse();
@@ -60,16 +56,6 @@ namespace GetIntoTeachingApiTests.Models
             candidate.Subscriptions.Last().TypeId.Should().Be((int)Subscription.ServiceType.Event);
             candidate.Qualifications.First().UkDegreeGradeId.Should().Be(request.UkDegreeGradeId);
             candidate.Qualifications.First().Id.Should().Be(request.QualificationId);
-        }
-
-        [Theory]
-        [InlineData("1234567", "true")]
-        [InlineData(null, "false")]
-        public void Candidate_EligibilityRulesPassed_MapsCorrectly(string telephone, string expected)
-        {
-            var request = new MailingListAddMemberRequest() { Telephone = telephone };
-
-            request.Candidate.EligibilityRulesPassed.Should().Be(expected);
         }
 
         [Fact]

@@ -20,6 +20,7 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("DegreeStatusId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_degreestatus" && a.Type == typeof(OptionSetValue));
 
             type.GetProperty("Subject").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_subject");
+            type.GetProperty("CreatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "createdon");
         }
     }
 }
