@@ -15,12 +15,15 @@ namespace GetIntoTeachingApi.Models.Validators
 
             RuleFor(qualification => qualification.UkDegreeGradeId)
                 .Must(id => UkDegreeGradeIds().Contains(id.ToString()))
+                .Unless(qualification => qualification.UkDegreeGradeId == null)
                 .WithMessage("Must be a valid qualification uk degree grade.");
             RuleFor(qualification => qualification.DegreeStatusId)
                 .Must(id => StatusIds().Contains(id.ToString()))
+                .Unless(qualification => qualification.DegreeStatusId == null)
                 .WithMessage("Must be a valid qualification degree status.");
             RuleFor(qualification => qualification.TypeId)
                 .Must(id => TypeIds().Contains(id.ToString()))
+                .Unless(qualification => qualification.TypeId == null)
                 .WithMessage("Must be a valid qualification types.");
 
             RuleFor(qualification => qualification.Subject).MaximumLength(600);

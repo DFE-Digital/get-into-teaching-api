@@ -37,6 +37,12 @@ namespace GetIntoTeachingApi.Models
             Any = 1,
         }
 
+        public enum Channel
+        {
+            MailingList = 222750028,
+            Event = 222750029,
+        }
+
         [JsonIgnore]
         public string FullName => $"{this.FirstName} {this.LastName}";
         [EntityField("dfe_preferredteachingsubject01", typeof(EntityReference), "dfe_teachingsubjectlist")]
@@ -132,8 +138,10 @@ namespace GetIntoTeachingApi.Models
         [EntityField("dfe_newregistrant")]
         public bool IsNewRegistrant { get; set; }
 
-        [EntityRelationship("dfe_contact_dfe_servicesubscription_contact", typeof(ServiceSubscription))]
-        public List<ServiceSubscription> ServiceSubscriptions { get; set; } = new List<ServiceSubscription>();
+        [EntityRelationship("dfe_contact_dfe_servicesubscription_contact", typeof(Subscription))]
+        public List<Subscription> Subscriptions { get; set; } = new List<Subscription>();
+        [EntityRelationship("msevtmgt_contact_msevtmgt_eventregistration_Contact", typeof(TeachingEventRegistration))]
+        public List<TeachingEventRegistration> TeachingEventRegistrations { get; set; } = new List<TeachingEventRegistration>();
         [EntityRelationship("dfe_contact_dfe_candidatequalification_ContactId", typeof(CandidateQualification))]
         public List<CandidateQualification> Qualifications { get; set; } = new List<CandidateQualification>();
         [EntityRelationship("dfe_contact_dfe_candidatepastteachingposition_ContactId", typeof(CandidatePastTeachingPosition))]
@@ -181,6 +189,10 @@ namespace GetIntoTeachingApi.Models
                     return true;
                 case "PrivacyPolicy" when Id != null:
                     return crm.CandidateYetToAcceptPrivacyPolicy((Guid)Id, value.AcceptedPolicyId);
+                case "Subscriptions" when Id != null && value.Id == null:
+                    return crm.CandidateYetToSubscribeToServiceOfType((Guid)Id, value.TypeId);
+                case "TeachingEventRegistrations" when Id != null && value.Id == null:
+                    return crm.CandidateYetToRegisterForTeachingEvent((Guid)Id, value.EventId);
                 default:
                     return true;
             }

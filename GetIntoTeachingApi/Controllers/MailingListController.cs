@@ -38,7 +38,7 @@ namespace GetIntoTeachingApi.Controllers
                 return BadRequest(this.ModelState);
             }
 
-            _jobClient.Enqueue<MailingListAddMemberJob>((x) => x.Run(request, null));
+            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(request.Candidate, null));
 
             return NoContent();
         }

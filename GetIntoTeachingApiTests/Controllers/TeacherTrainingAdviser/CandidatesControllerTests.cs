@@ -94,7 +94,7 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
 
             response.Should().BeOfType<NoContentResult>();
             _mockJobClient.Verify(x => x.Create(
-                It.Is<Job>(job => job.Type == typeof(CandidateRegistrationJob) && job.Method.Name == "Run" && job.Args[0] == candidate),
+                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" && job.Args[0] == candidate),
                 It.IsAny<EnqueuedState>()));
         }
     }

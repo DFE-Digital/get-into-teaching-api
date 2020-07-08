@@ -111,6 +111,76 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
+        public void Validate_TeachingEventRegistrationsWithDuplicateEvents_HasError()
+        {
+            var mockEvent = new TeachingEvent { Id = Guid.NewGuid() };
+
+            var candidate = new Candidate
+            {
+                TeachingEventRegistrations = new List<TeachingEventRegistration>
+                {
+                    new TeachingEventRegistration {EventId = (Guid)mockEvent.Id},
+                    new TeachingEventRegistration {EventId = (Guid)mockEvent.Id},
+                }
+            };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor("TeachingEventRegistrations");
+        }
+
+        [Fact]
+        public void Validate_TechingEventRegistrationIsInvalid_HasError()
+        {
+            var candidate = new Candidate
+            {
+                TeachingEventRegistrations = new List<TeachingEventRegistration>
+                {
+                    new TeachingEventRegistration {EventId = Guid.NewGuid()}
+                }
+            };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor("TeachingEventRegistrations[0].EventId");
+        }
+
+        [Fact]
+        public void Validate_SubscriptionsWithDuplicateTypes_HasError()
+        {
+            var mockPickListItem = new TypeEntity { Id = "123" };
+
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("dfe_servicesubscription", "dfe_servicesubscriptiontype"))
+                .Returns(new[] { mockPickListItem }.AsQueryable());
+
+            var candidate = new Candidate
+            {
+                Subscriptions = new List<Subscription>
+                {
+                    new Subscription {TypeId = int.Parse(mockPickListItem.Id)},
+                    new Subscription {TypeId = int.Parse(mockPickListItem.Id)},
+                }
+            };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor("Subscriptions");
+        }
+
+        [Fact]
+        public void Validate_SubscriptionIsInvalid_HasError()
+        {
+            var candidate = new Candidate
+            {
+                Subscriptions = new List<Subscription>
+                {
+                    new Subscription {TypeId = 123}
+                }
+            };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor("Subscriptions[0].TypeId");
+        }
+
+        [Fact]
         public void Validate_QualificationIsInvalid_HasError()
         {
             var candidate = new Candidate
@@ -196,9 +266,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_DateOfBirthIsNull_HasError()
+        public void Validate_DateOfBirthIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.DateOfBirth, null as DateTime?);
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.DateOfBirth, null as DateTime?);
         }
 
         [Fact]
@@ -232,9 +302,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_TelephoneIsEmpty_HasError()
+        public void Validate_TelephoneIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.Telephone, "");
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.Telephone, null as string);
         }
 
         [Fact]
@@ -244,9 +314,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_AddressLine1IsEmpty_HasError()
+        public void Validate_AddressLine1IsEmpty_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressLine1, "");
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressLine1, null as string);
         }
 
         [Fact]
@@ -268,9 +338,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_AddressCityIsEmpty_HasError()
+        public void Validate_AddressCityIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressCity, "");
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressCity, null as string);
         }
 
         [Fact]
@@ -280,9 +350,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_AddressStateIsEmpty_HasError()
+        public void Validate_AddressStateIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressState, "");
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressState, null as string);
         }
 
         [Fact]
@@ -292,9 +362,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_AddressPostcodeIsEmpty_HasError()
+        public void Validate_AddressPostcodeIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressPostcode, "");
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressPostcode, null as string);
         }
 
         [Fact]
@@ -334,9 +404,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_CountryIdIsNull_HasError()
+        public void Validate_CountryIdIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.CountryId, null as Guid?);
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.CountryId, null as Guid?);
         }
 
         [Fact]
@@ -382,9 +452,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_TypeIdIsNull_HasError()
+        public void Validate_TypeIdIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.TypeId, null as int?);
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.TypeId, null as int?);
         }
 
         [Fact]

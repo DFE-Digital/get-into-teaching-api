@@ -52,9 +52,17 @@ namespace GetIntoTeachingApiTests.Controllers
 
             response.Should().BeOfType<NoContentResult>();
             _mockJobClient.Verify(x => x.Create(
-                It.Is<Job>(job => job.Type == typeof(MailingListAddMemberJob) && job.Method.Name == "Run" &&
-                                  ((MailingListAddMemberRequest)job.Args[0]) == request),
+                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" && 
+                IsMatch(request.Candidate, (Candidate)job.Args[0])),
                 It.IsAny<EnqueuedState>()));
+        }
+
+        private static bool IsMatch(Candidate candidateA, Candidate candidateB)
+        {
+            candidateA.Should().BeEquivalentTo(candidateB, options => options
+                .Excluding(c => c.Subscriptions[0].StartAt)
+                .Excluding(c => c.PrivacyPolicy.AcceptedAt));
+            return true;
         }
     }
 }

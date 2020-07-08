@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
@@ -106,6 +107,129 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
+        public void ToEntity_WhenRelationshipIsNull_DoesNotCreateEntity()
+        {
+            var mockService = new Mock<IOrganizationServiceAdapter>();
+            var context = mockService.Object.Context();
+            var mockCrm = new Mock<ICrmService>();
+
+            var candidate = new Candidate()
+            {
+                Subscriptions = new List<Subscription>() { null }
+            };
+
+            mockCrm.Setup(m => m.MappableEntity("contact", null, context)).Returns(new Entity("contact"));
+
+            candidate.ToEntity(mockCrm.Object, context);
+
+            mockService.Verify(m => m.NewEntity("dfe_servicesubscription", context), Times.Never);
+        }
+
+        [Fact]
+        public void ToEntity_WithPropertyUsingDefaultMappingLogic_CreatesEntity()
+        {
+            var mockService = new Mock<IOrganizationServiceAdapter>();
+            var context = mockService.Object.Context();
+            var mockCrm = new Mock<ICrmService>();
+
+            var candidate = new Candidate()
+            {
+                Qualifications = new List<CandidateQualification>() { new CandidateQualification() }
+            };
+
+            mockCrm.Setup(m => m.MappableEntity("contact", null, context)).Returns(new Entity("contact"));
+
+            candidate.ToEntity(mockCrm.Object, context);
+
+            mockCrm.Verify(m => m.MappableEntity("dfe_candidatequalification", null, context), Times.Once);
+        }
+
+        [Fact]
+        public void ToEntity_WhenAlreadySubscribedToService_DoesNotCreateSubscriptionEntity()
+        {
+            var mockService = new Mock<IOrganizationServiceAdapter>();
+            var context = mockService.Object.Context();
+            var mockCrm = new Mock<ICrmService>();
+
+            var candidate = new Candidate()
+            {
+                Id = Guid.NewGuid(),
+                Subscriptions = new List<Subscription>() { new Subscription() { TypeId = (int)Subscription.ServiceType.Event } }
+            };
+
+            mockCrm.Setup(m => m.MappableEntity("contact", (Guid)candidate.Id, context)).Returns(new Entity("contact"));
+            mockCrm.Setup(m => m.CandidateYetToSubscribeToServiceOfType((Guid)candidate.Id, (int)Subscription.ServiceType.Event)).Returns(false);
+
+            candidate.ToEntity(mockCrm.Object, context);
+
+            mockService.Verify(m => m.NewEntity("dfe_servicesubscription", context), Times.Never);
+        }
+
+        [Fact]
+        public void ToEntity_WithNewCandidateAndSubscription_CreatesSubscriptionEntity()
+        {
+            var mockService = new Mock<IOrganizationServiceAdapter>();
+            var context = mockService.Object.Context();
+            var mockCrm = new Mock<ICrmService>();
+
+            var candidate = new Candidate()
+            {
+                Subscriptions = new List<Subscription>() { new Subscription() { TypeId = (int)Subscription.ServiceType.Event } }
+            };
+
+            mockCrm.Setup(m => m.MappableEntity("contact", null, context)).Returns(new Entity("contact"));
+            mockCrm.Setup(m => m.MappableEntity("dfe_servicesubscription", null, context)).Returns(new Entity("dfe_servicesubscription"));
+
+            candidate.ToEntity(mockCrm.Object, context);
+
+            mockCrm.Verify(m => m.MappableEntity("dfe_servicesubscription", null, context), Times.Once);
+        }
+
+        [Fact]
+        public void ToEntity_WithExistingCandidateAndSubscription_CreatesSubscriptionEntity()
+        {
+            var mockService = new Mock<IOrganizationServiceAdapter>();
+            var context = mockService.Object.Context();
+            var mockCrm = new Mock<ICrmService>();
+            var subscriptionId = Guid.NewGuid();
+
+            var candidate = new Candidate()
+            {
+                Id = Guid.NewGuid(),
+                Subscriptions = new List<Subscription>() { new Subscription() { Id = subscriptionId, TypeId = (int)Subscription.ServiceType.Event } }
+            };
+
+            mockCrm.Setup(m => m.MappableEntity("contact", (Guid)candidate.Id, context)).Returns(new Entity("contact"));
+            mockCrm.Setup(m => m.MappableEntity("dfe_servicesubscription", subscriptionId, context)).Returns(new Entity("dfe_servicesubscription"));
+
+            candidate.ToEntity(mockCrm.Object, context);
+
+            mockCrm.Verify(m => m.MappableEntity("dfe_servicesubscription", subscriptionId, context), Times.Once);
+        }
+
+        [Fact]
+        public void ToEntity_WhenAlreadyRegisteredForEvent_DoesNotCreateTeachingEventEntity()
+        {
+            var mockService = new Mock<IOrganizationServiceAdapter>();
+            var context = mockService.Object.Context();
+            var mockCrm = new Mock<ICrmService>();
+
+            var teachingEvent = new TeachingEventRegistration() { EventId = Guid.NewGuid() };
+            var candidate = new Candidate()
+            {
+                Id = Guid.NewGuid(),
+                TeachingEventRegistrations = new List<TeachingEventRegistration>() { teachingEvent }
+            };
+
+            mockCrm.Setup(m => m.MappableEntity("contact", (Guid)candidate.Id, context)).Returns(new Entity("contact"));
+            mockCrm.Setup(m => m.CandidateYetToRegisterForTeachingEvent((Guid)candidate.Id, (Guid)teachingEvent.EventId)).Returns(false);
+
+            candidate.ToEntity(mockCrm.Object, context);
+
+            mockService.Verify(m => m.NewEntity("msevtmgt_eventregistration", context), Times.Never);
+        }
+
+        [Fact]
         public void ToEntity_WhenPrivacyPolicyAlreadyAccepted_DoesNotCreatePrivacyPolicyEntity()
         {
             var mockService = new Mock<IOrganizationServiceAdapter>();
@@ -125,6 +249,26 @@ namespace GetIntoTeachingApiTests.Models
             candidate.ToEntity(mockCrm.Object, context);
 
             mockService.Verify(m => m.NewEntity("dfe_candidateprivacypolicy", context), Times.Never);
+        }
+
+        [Fact]
+        public void ToEntity_WithNewCandidateAndPrivacyPolicy_CreatesPrivacyPolicyEntity()
+        {
+            var mockService = new Mock<IOrganizationServiceAdapter>();
+            var context = mockService.Object.Context();
+            var mockCrm = new Mock<ICrmService>();
+
+            var candidate = new Candidate()
+            {
+                PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = Guid.NewGuid() }
+            };
+
+            mockCrm.Setup(m => m.MappableEntity("contact", null, context)).Returns(new Entity("contact"));
+            mockCrm.Setup(m => m.MappableEntity("dfe_candidateprivacypolicy", null, context)).Returns(new Entity("dfe_candidateprivacypolicy"));
+
+            candidate.ToEntity(mockCrm.Object, context);
+
+            mockCrm.Verify(m => m.MappableEntity("dfe_candidateprivacypolicy", null, context), Times.Once);
         }
 
         [Fact]

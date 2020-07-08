@@ -7,7 +7,7 @@ using Microsoft.Xrm.Sdk;
 namespace GetIntoTeachingApi.Models
 {
     [Entity("dfe_servicesubscription")]
-    public class ServiceSubscription : BaseModel
+    public class Subscription : BaseModel
     {
         public enum SubscriptionStatus
         {
@@ -41,12 +41,12 @@ namespace GetIntoTeachingApi.Models
         [EntityField("donotsendmm")]
         public bool DoNotSendMm { get; set; }
 
-        public ServiceSubscription()
+        public Subscription()
             : base()
         {
         }
 
-        public ServiceSubscription(Entity entity, ICrmService crm)
+        public Subscription(Entity entity, ICrmService crm)
             : base(entity, crm)
         {
         }
