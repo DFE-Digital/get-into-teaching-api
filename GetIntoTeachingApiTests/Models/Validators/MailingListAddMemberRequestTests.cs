@@ -70,5 +70,35 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             _validator.ShouldHaveValidationErrorFor(request => request.AddressPostcode, null as string);
         }
+
+        [Fact]
+        public void Validate_PreferredTeachingSubjectIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.PreferredTeachingSubjectId, null as Guid?);
+        }
+
+        [Fact]
+        public void Validate_AcceptedPolicyIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.AcceptedPolicyId, null as Guid?);
+        }
+
+        [Fact]
+        public void Validate_DescribeYourselfOptionIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.DescribeYourselfOptionId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_ConsiderationJourneyStageIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.ConsiderationJourneyStageId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_UkDegreeGradeIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.UkDegreeGradeId, null as int?);
+        }
     }
 }
