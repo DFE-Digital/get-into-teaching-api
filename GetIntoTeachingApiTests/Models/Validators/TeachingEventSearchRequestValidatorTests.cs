@@ -61,6 +61,20 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
+        public void Validate_RadiusIsNotNullAndPostcodeIsNull_HasError()
+        {
+            var request = new TeachingEventSearchRequest()
+            {
+                Radius = 10,
+                Postcode = null,
+            };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldHaveValidationErrorFor(request => request.Postcode).WithErrorMessage("Must be a valid postcode.");
+        }
+
+        [Fact]
         public void Validate_TypeIdIsInvalid_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(request => request.TypeId, 123);
@@ -76,6 +90,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_PostcodeIsEmpty_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(request => request.Postcode, "");
+        }
+
+        [Fact]
+        public void Validate_PostcodeIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(request => request.Postcode, null as string);
         }
 
         [Fact]
