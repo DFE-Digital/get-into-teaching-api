@@ -49,7 +49,7 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void AddAttendee_InvalidRequest_RespondsWithValidationErrors()
         {
-            var request = new TeachingEventAddAttendeeRequest() { EventId = Guid.NewGuid(), FirstName = null };
+            var request = new TeachingEventAddAttendee() { EventId = Guid.NewGuid(), FirstName = null };
             _controller.ModelState.AddModelError("FirstName", "First name must be specified.");
 
             var response = _controller.AddAttendee(request);
@@ -63,7 +63,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void AddAttendee_ValidRequest_EnqueuesJobRespondsWithNoContent()
         {
             var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
-            var request = new TeachingEventAddAttendeeRequest() { EventId = (Guid)teachingEvent.Id, Email = "test@test.com", FirstName = "John", LastName = "Doe" };
+            var request = new TeachingEventAddAttendee() { EventId = (Guid)teachingEvent.Id, Email = "test@test.com", FirstName = "John", LastName = "Doe" };
 
             var response = _controller.AddAttendee(request);
 

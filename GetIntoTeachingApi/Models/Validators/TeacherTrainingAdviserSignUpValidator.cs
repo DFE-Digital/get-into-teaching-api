@@ -3,9 +3,9 @@ using GetIntoTeachingApi.Services;
 
 namespace GetIntoTeachingApi.Models.Validators
 {
-    public class TeachingEventAddAttendeeRequestValidator : AbstractValidator<TeachingEventAddAttendeeRequest>
+    public class TeacherTrainingAdviserSignUpValidator : AbstractValidator<TeacherTrainingAdviserSignUp>
     {
-        public TeachingEventAddAttendeeRequestValidator(IStore store)
+        public TeacherTrainingAdviserSignUpValidator(IStore store)
         {
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store));
         }

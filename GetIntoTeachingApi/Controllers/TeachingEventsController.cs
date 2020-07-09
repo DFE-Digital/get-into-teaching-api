@@ -105,7 +105,7 @@ maximum of 50 using the `limit` query parameter.",
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
         [ProducesResponseType(404)]
         public IActionResult AddAttendee(
-            [FromBody, SwaggerRequestBody("Attendee to add to the teaching event.", Required = true)] TeachingEventAddAttendeeRequest request)
+            [FromBody, SwaggerRequestBody("Attendee to add to the teaching event.", Required = true)] TeachingEventAddAttendee request)
         {
             if (!ModelState.IsValid)
             {

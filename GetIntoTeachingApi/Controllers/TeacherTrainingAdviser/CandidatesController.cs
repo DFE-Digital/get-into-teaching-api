@@ -36,7 +36,7 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
         public IActionResult Upsert(
-            [FromBody, SwaggerRequestBody("Candidate to sign up for the Teacher Training Adviser service.", Required = true)] TeacherTrainingAdviserSignUpRequest request)
+            [FromBody, SwaggerRequestBody("Candidate to sign up for the Teacher Training Adviser service.", Required = true)] TeacherTrainingAdviserSignUp request)
         {
             if (!ModelState.IsValid)
             {

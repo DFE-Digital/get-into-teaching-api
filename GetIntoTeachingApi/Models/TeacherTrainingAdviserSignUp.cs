@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace GetIntoTeachingApi.Models
 {
-    public class TeacherTrainingAdviserSignUpRequest
+    public class TeacherTrainingAdviserSignUp
     {
         public Guid? CandidateId { get; set; }
         public Guid? QualificationId { get; set; }

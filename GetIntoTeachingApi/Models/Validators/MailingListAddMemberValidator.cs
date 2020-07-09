@@ -3,9 +3,9 @@ using GetIntoTeachingApi.Services;
 
 namespace GetIntoTeachingApi.Models.Validators
 {
-    public class MailingListAddMemberRequestValidator : AbstractValidator<MailingListAddMemberRequest>
+    public class MailingListAddMemberValidator : AbstractValidator<MailingListAddMember>
     {
-        public MailingListAddMemberRequestValidator(IStore store)
+        public MailingListAddMemberValidator(IStore store)
         {
             RuleFor(request => request.AddressPostcode).NotEmpty();
 

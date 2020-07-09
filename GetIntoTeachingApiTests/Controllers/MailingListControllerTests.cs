@@ -33,7 +33,7 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void AddMember_InvalidRequest_RespondsWithValidationErrors()
         {
-            var request = new MailingListAddMemberRequest() { FirstName = null };
+            var request = new MailingListAddMember() { FirstName = null };
             _controller.ModelState.AddModelError("FirstName", "First name must be specified.");
 
             var response = _controller.AddMember(request);
@@ -46,7 +46,7 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void AddMember_ValidRequest_EnqueuesJobRespondsWithNoContent()
         {
-            var request = new MailingListAddMemberRequest() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
+            var request = new MailingListAddMember() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
 
             var response = _controller.AddMember(request);
 

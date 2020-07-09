@@ -6,12 +6,12 @@ using Xunit;
 
 namespace GetIntoTeachingApiTests.Models
 {
-    public class TeacherTrainingAdviserSignUpRequestTests
+    public class TeacherTrainingAdviserSignUpTests
     {
         [Fact]
         public void Candidate_MapsCorrectly()
         {
-            var request = new TeacherTrainingAdviserSignUpRequest()
+            var request = new TeacherTrainingAdviserSignUp()
             {
                 CandidateId = Guid.NewGuid(),
                 QualificationId = Guid.NewGuid(),
@@ -105,7 +105,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_ChannelIdWhenCandidateIdIsNull_IsTeacherTrainingAdviser()
         {
-            var request = new TeacherTrainingAdviserSignUpRequest() { CandidateId = null };
+            var request = new TeacherTrainingAdviserSignUp() { CandidateId = null };
 
             request.Candidate.ChannelId.Should().Be((int)Candidate.Channel.TeacherTrainingAdviser);
         }
@@ -113,7 +113,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_ChannelIdWhenCandidateIdIsNotNull_IsNull()
         {
-            var request = new TeacherTrainingAdviserSignUpRequest() { CandidateId = Guid.NewGuid() };
+            var request = new TeacherTrainingAdviserSignUp() { CandidateId = Guid.NewGuid() };
 
             request.Candidate.ChannelId.Should().BeNull();
         }
@@ -121,7 +121,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_PhoneCallScheduledAtIsNull_NoPhoneCallIsCreated()
         {
-            var request = new TeacherTrainingAdviserSignUpRequest() { PhoneCallScheduledAt = null };
+            var request = new TeacherTrainingAdviserSignUp() { PhoneCallScheduledAt = null };
 
             request.Candidate.PhoneCall.Should().BeNull();
         }
@@ -129,7 +129,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_SubjectTaughtIdIsNull_NoPastTeachingPositionIsCreated()
         {
-            var request = new TeacherTrainingAdviserSignUpRequest() { SubjectTaughtId = null };
+            var request = new TeacherTrainingAdviserSignUp() { SubjectTaughtId = null };
 
             request.Candidate.PastTeachingPositions.Should().BeEmpty();
         }
@@ -137,7 +137,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_QualificationFieldsAreNull_NoQualificationIsCreated()
         {
-            var request = new TeacherTrainingAdviserSignUpRequest() { UkDegreeGradeId = null, DegreeStatusId = null, DegreeSubject = null };
+            var request = new TeacherTrainingAdviserSignUp() { UkDegreeGradeId = null, DegreeStatusId = null, DegreeSubject = null };
 
             request.Candidate.Qualifications.Should().BeEmpty();
         }
@@ -145,7 +145,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_UkDegreeGradeIdIsPresent_QualificationIsCreated()
         {
-            var request = new TeacherTrainingAdviserSignUpRequest() { UkDegreeGradeId = 1, DegreeStatusId = null, DegreeSubject = null };
+            var request = new TeacherTrainingAdviserSignUp() { UkDegreeGradeId = 1, DegreeStatusId = null, DegreeSubject = null };
 
             request.Candidate.Qualifications.Count.Should().Be(1);
         }
@@ -153,7 +153,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_DegreeStatusIdIsPresent_QualificationIsCreated()
         {
-            var request = new TeacherTrainingAdviserSignUpRequest() { UkDegreeGradeId = null, DegreeStatusId = 1, DegreeSubject = null };
+            var request = new TeacherTrainingAdviserSignUp() { UkDegreeGradeId = null, DegreeStatusId = 1, DegreeSubject = null };
 
             request.Candidate.Qualifications.Count.Should().Be(1);
         }
@@ -161,7 +161,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_DegreeSubjectIdIsPresent_QualificationIsCreated()
         {
-            var request = new TeacherTrainingAdviserSignUpRequest() { UkDegreeGradeId = null, DegreeStatusId = null, DegreeSubject = "Maths" };
+            var request = new TeacherTrainingAdviserSignUp() { UkDegreeGradeId = null, DegreeStatusId = null, DegreeSubject = "Maths" };
 
             request.Candidate.Qualifications.Count.Should().Be(1);
         }

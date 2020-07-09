@@ -75,7 +75,7 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         [Fact]
         public void Upsert_InvalidRequest_RespondsWithValidationErrors()
         {
-            var request = new TeacherTrainingAdviserSignUpRequest { Email = "invalid-email@" };
+            var request = new TeacherTrainingAdviserSignUp { Email = "invalid-email@" };
             _controller.ModelState.AddModelError("Email", "Email is invalid.");
 
             var response = _controller.Upsert(request);
@@ -88,7 +88,7 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         [Fact]
         public void Upsert_ValidRequest_EnqueuesJobAndRespondsWithSuccess()
         {
-            var request = new TeacherTrainingAdviserSignUpRequest { FirstName = "first" };
+            var request = new TeacherTrainingAdviserSignUp { FirstName = "first" };
 
             var response = _controller.Upsert(request);
 

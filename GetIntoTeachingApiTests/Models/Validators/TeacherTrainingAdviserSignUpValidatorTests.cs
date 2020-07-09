@@ -10,21 +10,21 @@ using Xunit;
 
 namespace GetIntoTeachingApiTests.Models.Validators
 {
-    public class TeacherTrainingAdviserSignUpRequestValidatorTests
+    public class TeacherTrainingAdviserSignUpValidatorTests
     {
-        private readonly TeacherTrainingAdviserSignUpRequestValidator _validator;
+        private readonly TeacherTrainingAdviserSignUpValidator _validator;
         private readonly Mock<IStore> _mockStore;
 
-        public TeacherTrainingAdviserSignUpRequestValidatorTests()
+        public TeacherTrainingAdviserSignUpValidatorTests()
         {
             _mockStore = new Mock<IStore>();
-            _validator = new TeacherTrainingAdviserSignUpRequestValidator(_mockStore.Object);
+            _validator = new TeacherTrainingAdviserSignUpValidator(_mockStore.Object);
         }
 
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var request = new TeacherTrainingAdviserSignUpRequest()
+            var request = new TeacherTrainingAdviserSignUp()
             {
                 CandidateId = Guid.NewGuid(),
                 AcceptedPolicyId = Guid.NewGuid(),
@@ -70,7 +70,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_CandidateIsInvalid_HasError()
         {
-            var request = new TeacherTrainingAdviserSignUpRequest
+            var request = new TeacherTrainingAdviserSignUp
             {
                 FirstName = null,
             };
