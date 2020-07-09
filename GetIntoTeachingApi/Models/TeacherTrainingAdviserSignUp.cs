@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Text.Json.Serialization;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
 {
-    public class TeacherTrainingAdviserSignUpRequest
+    public class TeacherTrainingAdviserSignUp
     {
         public Guid? CandidateId { get; set; }
         public Guid? QualificationId { get; set; }
@@ -11,7 +13,8 @@ namespace GetIntoTeachingApi.Models
         public Guid? PastTeachingPositionId { get; set; }
         public Guid? PreferredTeachingSubjectId { get; set; }
         public Guid? CountryId { get; set; }
-        public Guid AcceptedPolicyId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public Guid? AcceptedPolicyId { get; set; }
 
         public int? UkDegreeGradeId { get; set; }
         public int? DegreeStatusId { get; set; }
@@ -37,10 +40,71 @@ namespace GetIntoTeachingApi.Models
         public string AddressCity { get; set; }
         public string AddressState { get; set; }
         public string AddressPostcode { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
         public DateTime? PhoneCallScheduledAt { get; set; }
+        [SwaggerSchema(ReadOnly = true)]
+        public bool AlreadySubscribedToTeacherTrainingAdviser { get; set; }
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
+
+        public TeacherTrainingAdviserSignUp()
+        {
+        }
+
+        public TeacherTrainingAdviserSignUp(Candidate candidate)
+        {
+            PopulateWithCandidate(candidate);
+        }
+
+        private void PopulateWithCandidate(Candidate candidate)
+        {
+            CandidateId = candidate.Id;
+            PreferredTeachingSubjectId = candidate.PreferredTeachingSubjectId;
+            CountryId = candidate.CountryId;
+
+            InitialTeacherTrainingYearId = candidate.InitialTeacherTrainingYearId;
+            PreferredEducationPhaseId = candidate.PreferredEducationPhaseId;
+            HasGcseEnglishId = candidate.HasGcseEnglishId;
+            HasGcseMathsId = candidate.HasGcseMathsId;
+            HasGcseScienceId = candidate.HasGcseScienceId;
+            PlanningToRetakeCgseScienceId = candidate.PlanningToRetakeCgseScienceId;
+            PlanningToRetakeGcseEnglishId = candidate.PlanningToRetakeGcseEnglishId;
+            PlanningToRetakeGcseMathsId = candidate.PlanningToRetakeGcseMathsId;
+
+            Email = candidate.Email;
+            FirstName = candidate.FirstName;
+            LastName = candidate.LastName;
+            DateOfBirth = candidate.DateOfBirth;
+            TeacherId = candidate.TeacherId;
+            Telephone = candidate.Telephone;
+            AddressLine1 = candidate.AddressLine1;
+            AddressLine2 = candidate.AddressLine2;
+            AddressLine3 = candidate.AddressLine3;
+            AddressCity = candidate.AddressCity;
+            AddressState = candidate.AddressState;
+            AddressPostcode = candidate.AddressPostcode;
+
+            AlreadySubscribedToTeacherTrainingAdviser = candidate.Subscriptions.Any(s => s.TypeId == (int)Subscription.ServiceType.TeacherTrainingAdviser);
+
+            var latestQualification = candidate.Qualifications.OrderByDescending(q => q.CreatedAt).FirstOrDefault();
+
+            if (latestQualification != null)
+            {
+                QualificationId = latestQualification.Id;
+                DegreeSubject = latestQualification.Subject;
+                UkDegreeGradeId = latestQualification.UkDegreeGradeId;
+                DegreeStatusId = latestQualification.DegreeStatusId;
+            }
+
+            var latestPastTeachingPosition = candidate.PastTeachingPositions.OrderByDescending(q => q.CreatedAt).FirstOrDefault();
+
+            if (latestPastTeachingPosition != null)
+            {
+                PastTeachingPositionId = latestPastTeachingPosition.Id;
+                SubjectTaughtId = latestPastTeachingPosition.SubjectTaughtId;
+            }
+        }
 
         private Candidate CreateCandidate()
         {
@@ -49,7 +113,6 @@ namespace GetIntoTeachingApi.Models
                 Id = CandidateId,
                 PreferredTeachingSubjectId = PreferredTeachingSubjectId,
                 CountryId = CountryId,
-                PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = AcceptedPolicyId },
                 Email = Email,
                 FirstName = FirstName,
                 LastName = LastName,
@@ -82,6 +145,11 @@ namespace GetIntoTeachingApi.Models
                 DoNotPostalMail = false,
                 DoNotSendMm = false,
             };
+
+            if (AcceptedPolicyId != null)
+            {
+                candidate.PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)AcceptedPolicyId };
+            }
 
             if (PhoneCallScheduledAt != null)
             {

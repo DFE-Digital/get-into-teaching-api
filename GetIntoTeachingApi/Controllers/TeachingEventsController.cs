@@ -19,13 +19,21 @@ namespace GetIntoTeachingApi.Controllers
     public class TeachingEventsController : ControllerBase
     {
         private const int MaximumUpcomingRequests = 50;
+        private readonly ICandidateAccessTokenService _tokenService;
+        private readonly ICrmService _crm;
         private readonly IStore _store;
         private readonly IBackgroundJobClient _jobClient;
 
-        public TeachingEventsController(IStore store, IBackgroundJobClient jobClient)
+        public TeachingEventsController(
+            IStore store,
+            IBackgroundJobClient jobClient,
+            ICandidateAccessTokenService tokenService,
+            ICrmService crm)
         {
             _store = store;
             _jobClient = jobClient;
+            _crm = crm;
+            _tokenService = tokenService;
         }
 
         [HttpGet]
@@ -105,7 +113,7 @@ maximum of 50 using the `limit` query parameter.",
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
         [ProducesResponseType(404)]
         public IActionResult AddAttendee(
-            [FromBody, SwaggerRequestBody("Attendee to add to the teaching event.", Required = true)] TeachingEventAddAttendeeRequest request)
+            [FromBody, SwaggerRequestBody("Attendee to add to the teaching event.", Required = true)] TeachingEventAddAttendee request)
         {
             if (!ModelState.IsValid)
             {
@@ -115,6 +123,37 @@ maximum of 50 using the `limit` query parameter.",
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(request.Candidate, null));
 
             return NoContent();
+        }
+
+        [HttpPost]
+        [Route("attendees/{accessToken}")]
+        [SwaggerOperation(
+            Summary = "Retrieves a pre-populated TeachingEventAddAttendee for the candidate.",
+            Description = @"
+Retrieves a pre-populated TeachingEventAddAttendee for the candidate. The `accessToken` is obtained from a 
+`POST /candidates/access_tokens` request (you must also ensure the `ExistingCandidateRequest` payload you 
+exchanged for your token matches the request payload here).",
+            OperationId = "GetPreFilledTeachingEventAddAttendee",
+            Tags = new[] { "Teaching Events" })]
+        [ProducesResponseType(typeof(TeachingEventAddAttendee), 200)]
+        [ProducesResponseType(404)]
+        public IActionResult GetAttendee(
+            [FromRoute, SwaggerParameter("Access token (PIN code).", Required = true)] string accessToken,
+            [FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] ExistingCandidateRequest request)
+        {
+            if (!_tokenService.IsValid(accessToken, request))
+            {
+                return Unauthorized();
+            }
+
+            var candidate = _crm.MatchCandidate(request);
+
+            if (candidate == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new TeachingEventAddAttendee(candidate));
         }
     }
 }

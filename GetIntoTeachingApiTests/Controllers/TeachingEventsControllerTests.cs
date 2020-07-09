@@ -20,15 +20,21 @@ namespace GetIntoTeachingApiTests.Controllers
 {
     public class TeachingEventsControllerTests
     {
+        private readonly Mock<ICandidateAccessTokenService> _mockTokenService;
+        private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly Mock<IStore> _mockStore;
         private readonly TeachingEventsController _controller;
+        private readonly ExistingCandidateRequest _request;
 
         public TeachingEventsControllerTests()
         {
+            _request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
+            _mockTokenService = new Mock<ICandidateAccessTokenService>();
+            _mockCrm = new Mock<ICrmService>();
             _mockStore = new Mock<IStore>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
-            _controller = new TeachingEventsController(_mockStore.Object, _mockJobClient.Object);
+            _controller = new TeachingEventsController(_mockStore.Object, _mockJobClient.Object, _mockTokenService.Object, _mockCrm.Object);
         }
 
         [Fact]
@@ -49,7 +55,7 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void AddAttendee_InvalidRequest_RespondsWithValidationErrors()
         {
-            var request = new TeachingEventAddAttendeeRequest() { EventId = Guid.NewGuid(), FirstName = null };
+            var request = new TeachingEventAddAttendee() { EventId = Guid.NewGuid(), FirstName = null };
             _controller.ModelState.AddModelError("FirstName", "First name must be specified.");
 
             var response = _controller.AddAttendee(request);
@@ -63,7 +69,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void AddAttendee_ValidRequest_EnqueuesJobRespondsWithNoContent()
         {
             var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
-            var request = new TeachingEventAddAttendeeRequest() { EventId = (Guid)teachingEvent.Id, Email = "test@test.com", FirstName = "John", LastName = "Doe" };
+            var request = new TeachingEventAddAttendee() { EventId = (Guid)teachingEvent.Id, Email = "test@test.com", FirstName = "John", LastName = "Doe" };
 
             var response = _controller.AddAttendee(request);
 
@@ -138,6 +144,41 @@ namespace GetIntoTeachingApiTests.Controllers
             _mockStore.Setup(mock => mock.GetTeachingEventAsync(It.IsAny<Guid>())).ReturnsAsync(null as TeachingEvent);
 
             var response = await _controller.Get(Guid.NewGuid());
+
+            response.Should().BeOfType<NotFoundResult>();
+        }
+
+        [Fact]
+        public void GetAttendee_InvalidAccessToken_RespondsWithUnauthorized()
+        {
+            _mockTokenService.Setup(mock => mock.IsValid("000000", _request)).Returns(false);
+
+            var response = _controller.GetAttendee("000000", _request);
+
+            response.Should().BeOfType<UnauthorizedResult>();
+        }
+
+        [Fact]
+        public void GetAttendee_ValidToken_RespondsWithTeachingEventAddAttendee()
+        {
+            var candidate = new Candidate { Id = Guid.NewGuid() };
+            _mockTokenService.Setup(tokenService => tokenService.IsValid("000000", _request)).Returns(true);
+            _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns(candidate);
+
+            var response = _controller.GetAttendee("000000", _request);
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            var responseModel = ok.Value as TeachingEventAddAttendee;
+            responseModel.CandidateId.Should().Be(candidate.Id);
+        }
+
+        [Fact]
+        public void GetAttendee_MissingCandidate_RespondsWithNotFound()
+        {
+            _mockTokenService.Setup(tokenService => tokenService.IsValid("000000", _request)).Returns(true);
+            _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns<Candidate>(null);
+
+            var response = _controller.GetAttendee("000000", _request);
 
             response.Should().BeOfType<NotFoundResult>();
         }
