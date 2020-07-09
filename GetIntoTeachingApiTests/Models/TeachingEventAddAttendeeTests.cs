@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using GetIntoTeachingApi.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -8,6 +9,35 @@ namespace GetIntoTeachingApiTests.Models
 {
     public class TeachingEventAddAttendeeTests
     {
+        [Fact]
+        public void Constructor_WithCandidate_MapsCorrectly()
+        {
+            var subscriptions = new List<Subscription>() { new Subscription() { TypeId = (int)Subscription.ServiceType.Event } };
+
+            var candidate = new Candidate()
+            {
+                Id = Guid.NewGuid(),
+                Email = "email@address.com",
+                FirstName = "John",
+                LastName = "Doe",
+                Telephone = "1234567",
+                AddressPostcode = "KY11 9YU",
+                Subscriptions = subscriptions,
+            };
+
+            var response = new TeachingEventAddAttendee(candidate);
+
+            response.CandidateId.Should().Be(candidate.Id);
+            response.Email.Should().Be(candidate.Email);
+            response.FirstName.Should().Be(candidate.FirstName);
+            response.LastName.Should().Be(candidate.LastName);
+            response.Telephone.Should().Be(candidate.Telephone);
+            response.AddressPostcode.Should().Be(candidate.AddressPostcode);
+
+            response.AlreadySubscribedToEvents.Should().BeTrue();
+            response.AlreadySubscribedToMailingList.Should().BeFalse();
+        }
+
         [Fact]
         public void Candidate_MapsCorrectly()
         {
@@ -43,7 +73,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.DoNotPostalMail.Should().BeTrue();
             candidate.DoNotSendMm.Should().BeTrue();
 
-            candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be(request.AcceptedPolicyId);
+            candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
             candidate.Subscriptions.First().TypeId.Should().Be((int)Subscription.ServiceType.Event);
             candidate.Subscriptions.Last().TypeId.Should().Be((int)Subscription.ServiceType.MailingList);
             candidate.TeachingEventRegistrations.First().EventId.Should().Equals(request.EventId);
