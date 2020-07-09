@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Text.Json.Serialization;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
 {
@@ -11,7 +13,7 @@ namespace GetIntoTeachingApi.Models
         public Guid? PastTeachingPositionId { get; set; }
         public Guid? PreferredTeachingSubjectId { get; set; }
         public Guid? CountryId { get; set; }
-        public Guid AcceptedPolicyId { get; set; }
+        public Guid? AcceptedPolicyId { get; set; }
 
         public int? UkDegreeGradeId { get; set; }
         public int? DegreeStatusId { get; set; }
@@ -42,6 +44,62 @@ namespace GetIntoTeachingApi.Models
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
 
+        public TeacherTrainingAdviserSignUp()
+        {
+        }
+
+        public TeacherTrainingAdviserSignUp(Candidate candidate)
+        {
+            PopulateWithCandidate(candidate);
+        }
+
+        private void PopulateWithCandidate(Candidate candidate)
+        {
+            CandidateId = candidate.Id;
+            PreferredTeachingSubjectId = candidate.PreferredTeachingSubjectId;
+            CountryId = candidate.CountryId;
+
+            InitialTeacherTrainingYearId = candidate.InitialTeacherTrainingYearId;
+            PreferredEducationPhaseId = candidate.PreferredEducationPhaseId;
+            HasGcseEnglishId = candidate.HasGcseEnglishId;
+            HasGcseMathsId = candidate.HasGcseMathsId;
+            HasGcseScienceId = candidate.HasGcseScienceId;
+            PlanningToRetakeCgseScienceId = candidate.PlanningToRetakeCgseScienceId;
+            PlanningToRetakeGcseEnglishId = candidate.PlanningToRetakeGcseEnglishId;
+            PlanningToRetakeGcseMathsId = candidate.PlanningToRetakeGcseMathsId;
+
+            Email = candidate.Email;
+            FirstName = candidate.FirstName;
+            LastName = candidate.LastName;
+            DateOfBirth = candidate.DateOfBirth;
+            TeacherId = candidate.TeacherId;
+            Telephone = candidate.Telephone;
+            AddressLine1 = candidate.AddressLine1;
+            AddressLine2 = candidate.AddressLine2;
+            AddressLine3 = candidate.AddressLine3;
+            AddressCity = candidate.AddressCity;
+            AddressState = candidate.AddressState;
+            AddressPostcode = candidate.AddressPostcode;
+
+            var latestQualification = candidate.Qualifications.OrderByDescending(q => q.CreatedAt).FirstOrDefault();
+
+            if (latestQualification != null)
+            {
+                QualificationId = latestQualification.Id;
+                DegreeSubject = latestQualification.Subject;
+                UkDegreeGradeId = latestQualification.UkDegreeGradeId;
+                DegreeStatusId = latestQualification.DegreeStatusId;
+            }
+
+            var latestPastTeachingPosition = candidate.PastTeachingPositions.OrderByDescending(q => q.CreatedAt).FirstOrDefault();
+
+            if (latestPastTeachingPosition != null)
+            {
+                PastTeachingPositionId = latestPastTeachingPosition.Id;
+                SubjectTaughtId = latestPastTeachingPosition.SubjectTaughtId;
+            }
+        }
+
         private Candidate CreateCandidate()
         {
             var candidate = new Candidate()
@@ -49,7 +107,6 @@ namespace GetIntoTeachingApi.Models
                 Id = CandidateId,
                 PreferredTeachingSubjectId = PreferredTeachingSubjectId,
                 CountryId = CountryId,
-                PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = AcceptedPolicyId },
                 Email = Email,
                 FirstName = FirstName,
                 LastName = LastName,
@@ -82,6 +139,11 @@ namespace GetIntoTeachingApi.Models
                 DoNotPostalMail = false,
                 DoNotSendMm = false,
             };
+
+            if (AcceptedPolicyId != null)
+            {
+                candidate.PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)AcceptedPolicyId };
+            }
 
             if (PhoneCallScheduledAt != null)
             {

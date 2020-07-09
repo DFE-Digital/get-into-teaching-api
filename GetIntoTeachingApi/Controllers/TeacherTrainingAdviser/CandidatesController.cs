@@ -31,11 +31,11 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
         [HttpPost]
         [SwaggerOperation(
             Summary = "Sign up a candidate for the Teacher Training Adviser service.",
-            OperationId = "UpsertTeacherTrainingAdviserCandidate",
+            OperationId = "SignUpTeacherTrainingAdviserCandidate",
             Tags = new[] { "Teacher Training Adviser" })]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
-        public IActionResult Upsert(
+        public IActionResult SignUp(
             [FromBody, SwaggerRequestBody("Candidate to sign up for the Teacher Training Adviser service.", Required = true)] TeacherTrainingAdviserSignUp request)
         {
             if (!ModelState.IsValid)
@@ -51,14 +51,14 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
         [HttpPost]
         [Route("{accessToken}")]
         [SwaggerOperation(
-            Summary = "Retrieves an existing candidate for the Teacher Training Adviser service.",
+            Summary = "Retrieves a pre-populated TeacherTrainingAdviserSignUp for the candidate.",
             Description = @"
-Retrieves an existing candidate for the Teacher Training Adviser service. The `accessToken` is obtained from a 
+Retrieves a pre-populated TeacherTrainingAdviserSignUp for the candidate. The `accessToken` is obtained from a 
 `POST /candidates/access_tokens` request (you must also ensure the `ExistingCandidateRequest` payload you 
 exchanged for your token matches the request payload here).",
-            OperationId = "GetExistingTeacherTrainingAdviserCandidate",
+            OperationId = "GetPreFilledTeacherTrainingAdviserSignUp",
             Tags = new[] { "Teacher Training Adviser" })]
-        [ProducesResponseType(typeof(Candidate), 200)]
+        [ProducesResponseType(typeof(TeacherTrainingAdviserSignUp), 200)]
         [ProducesResponseType(404)]
         public IActionResult Get(
             [FromRoute, SwaggerParameter("Access token (PIN code).", Required = true)] string accessToken,
@@ -76,7 +76,7 @@ exchanged for your token matches the request payload here).",
                 return NotFound();
             }
 
-            return Ok(candidate);
+            return Ok(new TeacherTrainingAdviserSignUp(candidate));
         }
     }
 }
