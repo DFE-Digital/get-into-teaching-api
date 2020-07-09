@@ -13,6 +13,7 @@ namespace GetIntoTeachingApi.Models
         public Guid? PastTeachingPositionId { get; set; }
         public Guid? PreferredTeachingSubjectId { get; set; }
         public Guid? CountryId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
         public Guid? AcceptedPolicyId { get; set; }
 
         public int? UkDegreeGradeId { get; set; }
@@ -39,7 +40,10 @@ namespace GetIntoTeachingApi.Models
         public string AddressCity { get; set; }
         public string AddressState { get; set; }
         public string AddressPostcode { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
         public DateTime? PhoneCallScheduledAt { get; set; }
+        [SwaggerSchema(ReadOnly = true)]
+        public bool AlreadySubscribedToTeacherTrainingAdviser { get; set; }
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
@@ -80,6 +84,8 @@ namespace GetIntoTeachingApi.Models
             AddressCity = candidate.AddressCity;
             AddressState = candidate.AddressState;
             AddressPostcode = candidate.AddressPostcode;
+
+            AlreadySubscribedToTeacherTrainingAdviser = candidate.Subscriptions.Any(s => s.TypeId == (int)Subscription.ServiceType.TeacherTrainingAdviser);
 
             var latestQualification = candidate.Qualifications.OrderByDescending(q => q.CreatedAt).FirstOrDefault();
 

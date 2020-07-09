@@ -12,6 +12,8 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Constructor_WithCandidate_MapsCorrectly()
         {
+            var subscriptions = new List<Subscription>() { new Subscription() { TypeId = (int)Subscription.ServiceType.TeacherTrainingAdviser } };
+
             var latestQualification = new CandidateQualification()
             {
                 Id = Guid.NewGuid(),
@@ -69,6 +71,7 @@ namespace GetIntoTeachingApiTests.Models
                 AddressPostcode = "KY11 9YU",
                 Qualifications = qualifications,
                 PastTeachingPositions = pastTeachingPositions,
+                Subscriptions = subscriptions,
             };
 
             var response = new TeacherTrainingAdviserSignUp(candidate);
