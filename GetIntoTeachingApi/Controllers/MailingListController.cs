@@ -31,7 +31,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
         public IActionResult AddMember(
-            [FromBody, SwaggerRequestBody("Member to add to the mailing list.", Required = true)] MailingListAddMemberRequest request)
+            [FromBody, SwaggerRequestBody("Member to add to the mailing list.", Required = true)] MailingListAddMember request)
         {
             if (!ModelState.IsValid)
             {

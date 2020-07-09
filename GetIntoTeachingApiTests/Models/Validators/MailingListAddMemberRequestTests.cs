@@ -1,41 +1,47 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Linq;
+using FluentAssertions;
 using FluentValidation.TestHelper;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Validators;
 using GetIntoTeachingApi.Services;
 using Moq;
-using System;
-using System.Linq;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Models.Validators
 {
-    public class TeachingEventAddAttendeeRequestValidatorTests
+    public class MailingListAddMemberRequestTests
     {
-        private readonly TeachingEventAddAttendeeRequestValidator _validator;
+        private readonly MailingListAddMemberValidator _validator;
         private readonly Mock<IStore> _mockStore;
 
-        public TeachingEventAddAttendeeRequestValidatorTests()
+        public MailingListAddMemberRequestTests()
         {
             _mockStore = new Mock<IStore>();
-            _validator = new TeachingEventAddAttendeeRequestValidator(_mockStore.Object);
+            _validator = new MailingListAddMemberValidator(_mockStore.Object);
         }
 
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
+            var mockPickListItem = new TypeEntity { Id = "123" };
+            var mockEntityReference = new TypeEntity { Id = Guid.NewGuid().ToString() };
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
 
-            var request = new TeachingEventAddAttendeeRequest()
+            var request = new MailingListAddMember()
             {
                 CandidateId = null,
-                EventId = Guid.NewGuid(),
+                PreferredTeachingSubjectId = Guid.Parse(mockEntityReference.Id),
                 AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id,
+                DescribeYourselfOptionId = int.Parse(mockPickListItem.Id),
+                ConsiderationJourneyStageId = int.Parse(mockPickListItem.Id),
+                UkDegreeGradeId = int.Parse(mockPickListItem.Id),
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
                 Telephone = "1234567",
                 AddressPostcode = "KY11 9YU",
+                CallbackInformation = "Test information",
             };
 
             var result = _validator.TestValidate(request);
@@ -49,14 +55,20 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_CandidateIsInvalid_HasError()
         {
-            var request = new TeachingEventAddAttendeeRequest
+            var request = new MailingListAddMember
             {
-                FirstName = null,
+                PreferredTeachingSubjectId = Guid.NewGuid(),
             };
 
             var result = _validator.TestValidate(request);
 
-            result.ShouldHaveValidationErrorFor("Candidate.FirstName");
+            result.ShouldHaveValidationErrorFor("Candidate.PreferredTeachingSubjectId");
+        }
+
+        [Fact]
+        public void Validate_AddressPostcodeIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.AddressPostcode, null as string);
         }
     }
 }
