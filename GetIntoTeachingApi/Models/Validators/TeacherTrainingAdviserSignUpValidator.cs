@@ -7,6 +7,8 @@ namespace GetIntoTeachingApi.Models.Validators
     {
         public TeacherTrainingAdviserSignUpValidator(IStore store)
         {
+            RuleFor(request => request.AcceptedPolicyId).NotNull();
+
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store));
         }
     }

@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using GetIntoTeachingApi.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -8,6 +9,104 @@ namespace GetIntoTeachingApiTests.Models
 {
     public class TeacherTrainingAdviserSignUpTests
     {
+        [Fact]
+        public void Constructor_WithCandidate_MapsCorrectly()
+        {
+            var latestQualification = new CandidateQualification()
+            {
+                Id = Guid.NewGuid(),
+                CreatedAt = DateTime.Now.AddDays(10),
+                DegreeStatusId = 1,
+                UkDegreeGradeId = 2,
+                Subject = "English"
+            };
+
+            var qualifications = new List<CandidateQualification>()
+            {
+                new CandidateQualification() { Id = Guid.NewGuid(), CreatedAt = DateTime.Now.AddDays(3) },
+                latestQualification,
+                new CandidateQualification() { Id = Guid.NewGuid(), CreatedAt = DateTime.Now.AddDays(5) },
+            };
+
+            var latestPastTeachingPosition = new CandidatePastTeachingPosition()
+            {
+                Id = Guid.NewGuid(),
+                CreatedAt = DateTime.Now.AddDays(10),
+                SubjectTaughtId = Guid.NewGuid(),
+            };
+
+            var pastTeachingPositions = new List<CandidatePastTeachingPosition>()
+            {
+                new CandidatePastTeachingPosition() { Id = Guid.NewGuid(), CreatedAt = DateTime.Now.AddDays(3) },
+                latestPastTeachingPosition,
+                new CandidatePastTeachingPosition() { Id = Guid.NewGuid(), CreatedAt = DateTime.Now.AddDays(5) },
+            };
+
+            var candidate = new Candidate()
+            {
+                Id = Guid.NewGuid(),
+                PreferredTeachingSubjectId = Guid.NewGuid(),
+                CountryId = Guid.NewGuid(),
+                InitialTeacherTrainingYearId = 1,
+                PreferredEducationPhaseId = 2,
+                HasGcseEnglishId = 3,
+                HasGcseMathsId = 4,
+                HasGcseScienceId = 5,
+                PlanningToRetakeGcseEnglishId = 6,
+                PlanningToRetakeGcseMathsId = 7,
+                PlanningToRetakeCgseScienceId = 8,
+                Email = "email@address.com",
+                FirstName = "John",
+                LastName = "Doe",
+                DateOfBirth = DateTime.Now,
+                Telephone = "1234567",
+                TeacherId = "abc123",
+                AddressLine1 = "Address 1",
+                AddressLine2 = "Address 2",
+                AddressLine3 = "Address 3",
+                AddressCity = "City",
+                AddressState = "State",
+                AddressPostcode = "KY11 9YU",
+                Qualifications = qualifications,
+                PastTeachingPositions = pastTeachingPositions,
+            };
+
+            var response = new TeacherTrainingAdviserSignUp(candidate);
+
+            response.CandidateId.Should().Be(candidate.Id);
+            response.PreferredTeachingSubjectId.Should().Be(candidate.PreferredTeachingSubjectId);
+            response.CountryId.Should().Be(candidate.CountryId);
+            response.InitialTeacherTrainingYearId.Should().Be(candidate.InitialTeacherTrainingYearId);
+            response.PreferredEducationPhaseId.Should().Be(candidate.PreferredEducationPhaseId);
+            response.HasGcseEnglishId.Should().Be(candidate.HasGcseEnglishId);
+            response.HasGcseMathsId.Should().Be(candidate.HasGcseMathsId);
+            response.HasGcseScienceId.Should().Be(candidate.HasGcseScienceId);
+            response.PlanningToRetakeCgseScienceId.Should().Be(candidate.PlanningToRetakeCgseScienceId);
+            response.PlanningToRetakeGcseEnglishId.Should().Be(candidate.PlanningToRetakeGcseEnglishId);
+            response.PlanningToRetakeGcseMathsId.Should().Be(candidate.PlanningToRetakeGcseMathsId);
+            response.Email.Should().Be(candidate.Email);
+            response.FirstName.Should().Be(candidate.FirstName);
+            response.LastName.Should().Be(candidate.LastName);
+            response.TeacherId.Should().Be(candidate.TeacherId);
+            response.Telephone.Should().Be(candidate.Telephone);
+            response.AddressLine1.Should().Be(candidate.AddressLine1);
+            response.AddressLine2.Should().Be(candidate.AddressLine2);
+            response.AddressLine3.Should().Be(candidate.AddressLine3);
+            response.AddressCity.Should().Be(candidate.AddressCity);
+            response.AddressState.Should().Be(candidate.AddressState);
+            response.AddressPostcode.Should().Be(candidate.AddressPostcode);
+
+            response.QualificationId.Should().Be(latestQualification.Id);
+            response.DegreeStatusId.Should().Be(latestQualification.DegreeStatusId);
+            response.UkDegreeGradeId.Should().Be(latestQualification.UkDegreeGradeId);
+            response.DegreeSubject.Should().Be(latestQualification.Subject);
+
+            response.PastTeachingPositionId.Should().Be(latestPastTeachingPosition.Id);
+            response.SubjectTaughtId.Should().Be(latestPastTeachingPosition.SubjectTaughtId);
+
+            response.AlreadySubscribedToTeacherTrainingAdviser.Should().BeTrue();
+        }
+
         [Fact]
         public void Candidate_MapsCorrectly()
         {
@@ -84,7 +183,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.DoNotPostalMail.Should().BeFalse();
             candidate.DoNotSendMm.Should().BeFalse();
 
-            candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be(request.AcceptedPolicyId);
+            candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
 
             candidate.PhoneCall.ScheduledAt.Should().Be((DateTime)request.PhoneCallScheduledAt);
             candidate.PhoneCall.Telephone.Should().Be(request.Telephone);

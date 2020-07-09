@@ -48,7 +48,7 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         }
 
         [Fact]
-        public void Get_ValidToken_RespondsWithCandidate()
+        public void Get_ValidToken_RespondsWithTeacherTrainingAdviserSignUp()
         {
             var candidate = new Candidate { Id = Guid.NewGuid() };
             _mockTokenService.Setup(tokenService => tokenService.IsValid("000000", _request)).Returns(true);
@@ -57,8 +57,8 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
             var response = _controller.Get("000000", _request);
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
-            var candidateResponse = ok.Value as Candidate;
-            candidateResponse.Should().Be(candidate);
+            var responseModel = ok.Value as TeacherTrainingAdviserSignUp;
+            responseModel.CandidateId.Should().Be(candidate.Id);
         }
 
         [Fact]
@@ -73,12 +73,12 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         }
 
         [Fact]
-        public void Upsert_InvalidRequest_RespondsWithValidationErrors()
+        public void SignUp_InvalidRequest_RespondsWithValidationErrors()
         {
             var request = new TeacherTrainingAdviserSignUp { Email = "invalid-email@" };
             _controller.ModelState.AddModelError("Email", "Email is invalid.");
 
-            var response = _controller.Upsert(request);
+            var response = _controller.SignUp(request);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
@@ -86,11 +86,11 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         }
 
         [Fact]
-        public void Upsert_ValidRequest_EnqueuesJobAndRespondsWithSuccess()
+        public void SignUp_ValidRequest_EnqueuesJobAndRespondsWithSuccess()
         {
             var request = new TeacherTrainingAdviserSignUp { FirstName = "first" };
 
-            var response = _controller.Upsert(request);
+            var response = _controller.SignUp(request);
 
             response.Should().BeOfType<NoContentResult>();
             _mockJobClient.Verify(x => x.Create(

@@ -79,5 +79,11 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
             result.ShouldHaveValidationErrorFor("Candidate.FirstName");
         }
+
+        [Fact]
+        public void Validate_AcceptedPrivacyPolicyIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.AcceptedPolicyId, null as Guid?);
+        }
     }
 }
