@@ -10,15 +10,15 @@ using Xunit;
 
 namespace GetIntoTeachingApiTests.Models.Validators
 {
-    public class MailingListAddMemberRequestValidatorTests
+    public class MailingListAddMemberRequestTests
     {
-        private readonly MailingListAddMemberRequestValidator _validator;
+        private readonly MailingListAddMemberValidator _validator;
         private readonly Mock<IStore> _mockStore;
 
-        public MailingListAddMemberRequestValidatorTests()
+        public MailingListAddMemberRequestTests()
         {
             _mockStore = new Mock<IStore>();
-            _validator = new MailingListAddMemberRequestValidator(_mockStore.Object);
+            _validator = new MailingListAddMemberValidator(_mockStore.Object);
         }
 
         [Fact]
@@ -28,7 +28,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var mockEntityReference = new TypeEntity { Id = Guid.NewGuid().ToString() };
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
 
-            var request = new MailingListAddMemberRequest()
+            var request = new MailingListAddMember()
             {
                 CandidateId = null,
                 PreferredTeachingSubjectId = Guid.Parse(mockEntityReference.Id),
@@ -55,7 +55,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_CandidateIsInvalid_HasError()
         {
-            var request = new MailingListAddMemberRequest
+            var request = new MailingListAddMember
             {
                 PreferredTeachingSubjectId = Guid.NewGuid(),
             };
@@ -69,6 +69,36 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_AddressPostcodeIsNull_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(request => request.AddressPostcode, null as string);
+        }
+
+        [Fact]
+        public void Validate_PreferredTeachingSubjectIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.PreferredTeachingSubjectId, null as Guid?);
+        }
+
+        [Fact]
+        public void Validate_AcceptedPolicyIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.AcceptedPolicyId, null as Guid?);
+        }
+
+        [Fact]
+        public void Validate_DescribeYourselfOptionIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.DescribeYourselfOptionId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_ConsiderationJourneyStageIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.ConsiderationJourneyStageId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_UkDegreeGradeIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.UkDegreeGradeId, null as int?);
         }
     }
 }

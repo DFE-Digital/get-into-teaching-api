@@ -10,15 +10,15 @@ using Xunit;
 
 namespace GetIntoTeachingApiTests.Models.Validators
 {
-    public class TeachingEventAddAttendeeRequestValidatorTests
+    public class TeachingEventAddAttendeeValidatorTests
     {
-        private readonly TeachingEventAddAttendeeRequestValidator _validator;
+        private readonly TeachingEventAddAttendeeValidator _validator;
         private readonly Mock<IStore> _mockStore;
 
-        public TeachingEventAddAttendeeRequestValidatorTests()
+        public TeachingEventAddAttendeeValidatorTests()
         {
             _mockStore = new Mock<IStore>();
-            _validator = new TeachingEventAddAttendeeRequestValidator(_mockStore.Object);
+            _validator = new TeachingEventAddAttendeeValidator(_mockStore.Object);
         }
 
         [Fact]
@@ -26,7 +26,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
 
-            var request = new TeachingEventAddAttendeeRequest()
+            var request = new TeachingEventAddAttendee()
             {
                 CandidateId = null,
                 EventId = Guid.NewGuid(),
@@ -49,7 +49,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_CandidateIsInvalid_HasError()
         {
-            var request = new TeachingEventAddAttendeeRequest
+            var request = new TeachingEventAddAttendee
             {
                 FirstName = null,
             };
@@ -57,6 +57,18 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var result = _validator.TestValidate(request);
 
             result.ShouldHaveValidationErrorFor("Candidate.FirstName");
+        }
+
+        [Fact]
+        public void Validate_AcceptedPolicyIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.AcceptedPolicyId, null as Guid?);
+        }
+
+        [Fact]
+        public void Validate_EventIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.EventId, null as Guid?);
         }
     }
 }
