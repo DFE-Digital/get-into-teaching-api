@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 using Swashbuckle.AspNetCore.Annotations;
@@ -157,6 +158,7 @@ namespace GetIntoTeachingApi.Models
                 candidate.PhoneCall = new PhoneCall()
                 {
                     Telephone = Telephone,
+                    DestinationId = DestinationForTelephone(Telephone),
                     ScheduledAt = (DateTime)PhoneCallScheduledAt,
                     ChannelId = (int)PhoneCall.Channel.CallbackRequest,
                 };
@@ -182,11 +184,30 @@ namespace GetIntoTeachingApi.Models
                     SubjectTaughtId = SubjectTaughtId,
                     EducationPhaseId = (int)CandidatePastTeachingPosition.EducationPhase.Secondary,
                 });
+
+                candidate.PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary;
             }
 
             candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.TeacherTrainingAdviser });
 
             return candidate;
+        }
+
+        private int? DestinationForTelephone(string telephone)
+        {
+            if (telephone == null)
+            {
+                return null;
+            }
+
+            var sanitizedTelephone = telephone.Replace(" ", string.Empty);
+
+            if (sanitizedTelephone.StartsWith("+") && !sanitizedTelephone.StartsWith("+44"))
+            {
+                return (int)PhoneCall.Destination.International;
+            }
+
+            return (int)PhoneCall.Destination.Uk;
         }
     }
 }

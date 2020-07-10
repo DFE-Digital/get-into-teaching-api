@@ -33,8 +33,8 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Must be set to schedule a callback.");
 
             RuleFor(request => request.PhoneCallScheduledAt).NotNull()
-                .When(request => request.DegreeStatusId == (int)CandidateQualification.DegreeStatus.HasDegreeEquivilent)
-                .WithMessage("Must be set for candidate with UK equivilent degree.");
+                .When(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent)
+                .WithMessage("Must be set for candidate with UK equivalent degree.");
 
             RuleFor(request => request.InitialTeacherTrainingYearId).NotNull()
                 .Unless(request => request.Candidate.PastTeachingPositions.Count > 0)
@@ -44,18 +44,57 @@ namespace GetIntoTeachingApi.Models.Validators
                 .Unless(request => request.Candidate.PastTeachingPositions.Count > 0)
                 .WithMessage("Must be set unless candidate has past teaching positions.");
 
+            RuleFor(request => request.DegreeTypeId).NotEmpty()
+                .Unless(request => request.Candidate.PastTeachingPositions.Count > 0)
+                .WithMessage("Must be set unless candidate has past teaching positions.");
+
+            RuleFor(request => request.DegreeTypeId)
+                .Must(type =>
+                    new List<int?>
+                    {
+                        (int)CandidateQualification.DegreeType.Degree,
+                        (int)CandidateQualification.DegreeType.DegreeEquivalent,
+                    }.Contains(type))
+                .When(request => request.DegreeStatusId == (int)CandidateQualification.DegreeStatus.HasDegree)
+                .WithMessage("Must be set degree or degree equivalent when the degree status is has a degree.");
+
+            RuleFor(request => request.DegreeTypeId)
+                .Must(type => type == (int)CandidateQualification.DegreeType.Degree)
+                .When(request =>
+                    new List<int?>
+                    {
+                        (int)CandidateQualification.DegreeStatus.FinalYear,
+                        (int)CandidateQualification.DegreeStatus.SecondYear,
+                        (int)CandidateQualification.DegreeStatus.FirstYear,
+                    }.Contains(request.DegreeStatusId))
+                .WithMessage("Must be set to degree when status is studying for a degree.");
+
+            RuleFor(request => request.DegreeTypeId)
+                .Must(type => type == (int)CandidateQualification.DegreeType.Degree)
+                .When(request => request.DegreeStatusId == (int)CandidateQualification.DegreeStatus.NoDegree)
+                .WithMessage("Must be set to degree when the degree status is no degree.");
+
             RuleFor(request => request.DegreeSubject).NotEmpty()
                 .When(request =>
                     new List<int?>
                     {
                         (int)CandidateQualification.DegreeStatus.HasDegree,
-                        (int)CandidateQualification.DegreeStatus.IsStudying,
+                        (int)CandidateQualification.DegreeStatus.FinalYear,
+                        (int)CandidateQualification.DegreeStatus.SecondYear,
+                        (int)CandidateQualification.DegreeStatus.FirstYear,
                     }.Contains(request.DegreeStatusId))
                 .WithMessage("Must be set when candidate has a degree or is studying for a degree.");
 
             RuleFor(request => request.UkDegreeGradeId).NotEmpty()
-                .When(request => request.DegreeStatusId == (int)CandidateQualification.DegreeStatus.HasDegree)
-                .WithMessage("Must be set when candidate has a degree.");
+                .When(request =>
+                    new List<int?>
+                    {
+                        (int)CandidateQualification.DegreeStatus.HasDegree,
+                        (int)CandidateQualification.DegreeStatus.FinalYear,
+                        (int)CandidateQualification.DegreeStatus.SecondYear,
+                        (int)CandidateQualification.DegreeStatus.FirstYear,
+                    }.Contains(request.DegreeStatusId))
+                .WithMessage("Must be set when candidate has a degree or is studying for a degree (predicted grade).");
 
             RuleFor(request => request.PreferredTeachingSubjectId).NotEmpty()
                 .When(request => request.Candidate.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Secondary)

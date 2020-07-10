@@ -324,10 +324,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [InlineData("123 4567", false)]
         [InlineData("  123 456 7", false)]
         [InlineData("+44 7503 483524", false)]
+        [InlineData("+44 7503.483524", false)]
+        [InlineData("+44 (7503) 483524", false)]
         [InlineData("abcgewgewgh", true)]
         [InlineData("abc2451215", true)]
         [InlineData("42154h53151", true)]
-        [InlineData("5325.56326.32", true)]
+        [InlineData("5325.56fs326.32", true)]
         public void Validate_TelephoneFormat_ValidatesCorrectly(string telephone, bool hasError)
         {
             if (hasError)
