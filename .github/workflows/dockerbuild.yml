@@ -68,21 +68,6 @@ jobs:
         env:
             SENTRY_DSN: ${{secrets.DEV_OPS_SENTRY_DSN}}
 
-  cve_scan:
-    name: Carry out CVE Scan
-    runs-on: unbuntu-latest
-    needs:
-        build_docker
-    steps:
-       - name: Checkout
-         uses: actions/checkout@v2
-
-       - name: Scan image
-         uses: anchore/scan-action@v1
-         with:
-             image-reference:  ${{needs.build_docker.outputs.image}}
-             fail-build: true
-
   deploy_qa:
     name: 'Deploy to Development'
     runs-on: ubuntu-latest
