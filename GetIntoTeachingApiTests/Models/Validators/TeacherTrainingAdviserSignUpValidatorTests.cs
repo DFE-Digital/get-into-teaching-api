@@ -43,7 +43,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 PlanningToRetakeCgseScienceId = 8,
                 PlanningToRetakeGcseEnglishId = 9,
                 PlanningToRetakeGcseMathsId = 10,
-                PhoneCallDestinationId = 11,
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
@@ -209,34 +208,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var result = _validator.TestValidate(request);
 
             result.ShouldNotHaveValidationErrorFor("Telephone");
-        }
-
-        [Fact]
-        public void Validate_PhoneCallScheduledAtIsPresentAndPhoneCallDestinationIdIsNull_HasError()
-        {
-            var request = new TeacherTrainingAdviserSignUp
-            {
-                PhoneCallScheduledAt = DateTime.Now,
-                PhoneCallDestinationId = null,
-            };
-
-            var result = _validator.TestValidate(request);
-
-            result.ShouldHaveValidationErrorFor("PhoneCallDestinationId").WithErrorMessage("Must be set to schedule a callback.");
-        }
-
-        [Fact]
-        public void Validate_PhoneCallScheduledAtIsPresentAndPhoneCallDestinationIdIsNotNull_HasNoError()
-        {
-            var request = new TeacherTrainingAdviserSignUp
-            {
-                PhoneCallScheduledAt = DateTime.Now,
-                PhoneCallDestinationId = 1,
-            };
-
-            var result = _validator.TestValidate(request);
-
-            result.ShouldNotHaveValidationErrorFor("PhoneCallDestinationId");
         }
 
         [Fact]
