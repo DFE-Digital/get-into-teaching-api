@@ -10,9 +10,17 @@ namespace GetIntoTeachingApi.Models
     {
         public enum DegreeStatus
         {
-            HasDegreeEquivilent = 222750005,
-            IsStudying = 222750001,
             HasDegree = 222750000,
+            FinalYear = 222750001,
+            SecondYear = 222750002,
+            FirstYear = 222750003,
+            NoDegree = 222750004,
+        }
+
+        public enum DegreeType
+        {
+            Degree = 222750000,
+            DegreeEquivalent = 222750007,
         }
 
         [EntityField("dfe_type", typeof(OptionSetValue))]

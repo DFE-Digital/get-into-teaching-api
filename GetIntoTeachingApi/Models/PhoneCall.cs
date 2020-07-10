@@ -15,7 +15,7 @@ namespace GetIntoTeachingApi.Models
         }
 
         public enum Destination
-        { 
+        {
             Uk = 222750000,
             International = 222750001,
         }
