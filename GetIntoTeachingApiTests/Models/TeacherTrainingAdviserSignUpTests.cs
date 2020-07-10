@@ -309,5 +309,13 @@ namespace GetIntoTeachingApiTests.Models
 
             request.Candidate.PhoneCall.DestinationId.Should().BeNull();
         }
+
+        [Fact]
+        public void Candidate_SubjectTaughtIdIsNotNull_PreferredEducationPhaseIdDefaultsToSecondary()
+        {
+            var request = new TeacherTrainingAdviserSignUp() { SubjectTaughtId = Guid.NewGuid() };
+
+            request.Candidate.PreferredEducationPhaseId.Should().Be((int)Candidate.PreferredEducationPhase.Secondary);
+        }
     }
 }
