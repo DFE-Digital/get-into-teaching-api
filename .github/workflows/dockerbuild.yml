@@ -15,6 +15,8 @@ jobs:
   build_docker:
     name: Build and push to DockerHub
     runs-on: ubuntu-latest
+    outputs:
+       image: ${{steps.docker_image.outputs.IMAGE}}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -51,6 +53,11 @@ jobs:
           push: false
           build_args: GIT_COMMIT_SHA=${{ steps.vars.outputs.sha_short }}
 
+      - name: Set DOCKER_IMAGE environment variable
+        id:  docker_image
+        run: |-
+          echo ::set-output name=IMAGE::${{ env.APP_REPOSITORY }}:sha-$(echo "${{ github.sha }}" | cut -c -7)
+
       - name:  Send Message to Sentry.io
         if: always()
         uses: sfawcett123/sentry-event@v1
@@ -60,6 +67,22 @@ jobs:
              ENVIRON: "Test"
         env:
             SENTRY_DSN: ${{secrets.DEV_OPS_SENTRY_DSN}}
+
+  cve_scan:
+    name: Carry out CVE Scan
+    runs-on: unbuntu-latest
+    needs:
+        build_docker
+    if: github.ref == 'refs/heads/master'
+    steps:
+       - name: Checkout
+         uses: actions/checkout@v2
+
+       - name: Scan image
+         uses: anchore/scan-action@v1
+         with:
+             image-reference:  ${{needs.build_docker.outputs.image}}
+             fail-build: true
 
   deploy_qa:
     name: 'Deploy to Development'
