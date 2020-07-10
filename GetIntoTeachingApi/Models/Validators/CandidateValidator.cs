@@ -9,6 +9,8 @@ namespace GetIntoTeachingApi.Models.Validators
 {
     public class CandidateValidator : AbstractValidator<Candidate>
     {
+        private const string PostcodeRegex = @"^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]
+            {1,2})|(([AZa-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9]?[A-Za-z]))))\s?[0-9][A-Za-z]{2})$";
         private readonly IStore _store;
         private readonly string[] _validEligibilityRulesPassedValues = new[] { "true", "false" };
 
@@ -20,13 +22,13 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.LastName).NotEmpty().MaximumLength(256);
             RuleFor(candidate => candidate.Email).NotEmpty().EmailAddress(EmailValidationMode.AspNetCoreCompatible).MaximumLength(100);
             RuleFor(candidate => candidate.DateOfBirth).LessThan(candidate => DateTime.Now);
-            RuleFor(candidate => candidate.Telephone).MaximumLength(50);
+            RuleFor(candidate => candidate.Telephone).MinimumLength(5).MaximumLength(20).Matches(@"^\+?[\d\s]+$");
             RuleFor(candidate => candidate.AddressLine1).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressLine2).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressLine3).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressCity).MaximumLength(128);
             RuleFor(candidate => candidate.AddressState).MaximumLength(128);
-            RuleFor(candidate => candidate.AddressPostcode).MaximumLength(40);
+            RuleFor(candidate => candidate.AddressPostcode).MaximumLength(40).Matches(PostcodeRegex);
             RuleFor(candidate => candidate.CallbackInformation).MaximumLength(600);
             RuleFor(candidate => candidate.EligibilityRulesPassed)
                 .Must(value => _validEligibilityRulesPassedValues.Contains(value))
@@ -146,7 +148,7 @@ namespace GetIntoTeachingApi.Models.Validators
 
         private IEnumerable<string> GcseStatusIds()
         {
-            return _store.GetPickListItems("contact", "dfe_hasgcseenglish").Select(status => status.Id);
+            return _store.GetPickListItems("contact", "dfe_websitehasgcseenglish").Select(status => status.Id);
         }
 
         private IEnumerable<string> RetakeGcseStatusIds()

@@ -97,7 +97,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetCandidateGcseStatus()
         {
-            return Ok(await _store.GetPickListItems("contact", "dfe_hasgcseenglish").ToListAsync());
+            return Ok(await _store.GetPickListItems("contact", "dfe_websitehasgcseenglish").ToListAsync());
         }
 
         [HttpGet]

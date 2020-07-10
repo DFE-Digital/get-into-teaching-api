@@ -15,9 +15,12 @@ namespace GetIntoTeachingApi.Models
         public Guid? CountryId { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public Guid? AcceptedPolicyId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? PhoneCallDestinationId { get; set; }
 
         public int? UkDegreeGradeId { get; set; }
         public int? DegreeStatusId { get; set; }
+        public int? DegreeTypeId { get; set; }
         public int? InitialTeacherTrainingYearId { get; set; }
         public int? PreferredEducationPhaseId { get; set; }
         public int? HasGcseEnglishId { get; set; }
@@ -95,6 +98,7 @@ namespace GetIntoTeachingApi.Models
                 DegreeSubject = latestQualification.Subject;
                 UkDegreeGradeId = latestQualification.UkDegreeGradeId;
                 DegreeStatusId = latestQualification.DegreeStatusId;
+                DegreeTypeId = latestQualification.TypeId;
             }
 
             var latestPastTeachingPosition = candidate.PastTeachingPositions.OrderByDescending(q => q.CreatedAt).FirstOrDefault();
@@ -156,12 +160,13 @@ namespace GetIntoTeachingApi.Models
                 candidate.PhoneCall = new PhoneCall()
                 {
                     Telephone = Telephone,
+                    DestinationId = PhoneCallDestinationId,
                     ScheduledAt = (DateTime)PhoneCallScheduledAt,
                     ChannelId = (int)PhoneCall.Channel.CallbackRequest,
                 };
             }
 
-            if (UkDegreeGradeId != null || DegreeStatusId != null || DegreeSubject != null)
+            if (UkDegreeGradeId != null || DegreeStatusId != null || DegreeSubject != null || DegreeTypeId != null)
             {
                 candidate.Qualifications.Add(new CandidateQualification()
                 {
@@ -169,6 +174,7 @@ namespace GetIntoTeachingApi.Models
                     UkDegreeGradeId = UkDegreeGradeId,
                     DegreeStatusId = DegreeStatusId,
                     Subject = DegreeSubject,
+                    TypeId = DegreeTypeId,
                 });
             }
 

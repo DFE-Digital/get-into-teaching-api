@@ -45,7 +45,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_channelcreation"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetPickListItems("contact", "dfe_hasgcseenglish"))
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_websitehasgcseenglish"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse"))
@@ -84,7 +84,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 AddressLine3 = "line3",
                 AddressCity = "city",
                 AddressState = "state",
-                AddressPostcode = "postcode",
+                AddressPostcode = "KY119YU",
                 CallbackInformation = "some information",
                 HasGcseMathsId = int.Parse(mockPickListItem.Id),
                 HasGcseEnglishId = int.Parse(mockPickListItem.Id),
@@ -310,7 +310,34 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_TelephoneTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.Telephone, new string('a', 51));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.Telephone, new string('1', 21));
+        }
+
+        [Fact]
+        public void Validate_TelephoneTooShort_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.Telephone, new string('1', 4));
+        }
+
+        [Theory]
+        [InlineData("1234567", false)]
+        [InlineData("123 4567", false)]
+        [InlineData("  123 456 7", false)]
+        [InlineData("+44 7503 483524", false)]
+        [InlineData("abcgewgewgh", true)]
+        [InlineData("abc2451215", true)]
+        [InlineData("42154h53151", true)]
+        [InlineData("5325.56326.32", true)]
+        public void Validate_TelephoneFormat_ValidatesCorrectly(string telephone, bool hasError)
+        {
+            if (hasError)
+            {
+                _validator.ShouldHaveValidationErrorFor(candidate => candidate.Telephone, telephone);
+            }
+            else
+            {
+                _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.Telephone, telephone);
+            }
         }
 
         [Fact]
@@ -371,6 +398,25 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_AddressPostcodeIsTooLong_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressPostcode, new string('a', 41));
+        }
+
+        [Theory]
+        [InlineData("KY119YU", false)]
+        [InlineData("KY11 9YU", false)]
+        [InlineData("CA48LE", false)]
+        [InlineData("CA4 8LE", false)]
+        [InlineData("KY999 9YU", true)]
+        [InlineData("AZ1VS1", true)]
+        public void Validate_AddressPostcodeFormat_ValidatesCorrectly(string postcode, bool hasError)
+        {
+            if (hasError)
+            {
+                _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressPostcode, postcode);
+            }
+            else
+            {
+                _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressPostcode, postcode);
+            }
         }
 
         [Fact]
