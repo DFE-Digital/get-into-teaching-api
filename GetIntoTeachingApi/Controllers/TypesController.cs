@@ -97,7 +97,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetCandidateGcseStatus()
         {
-            return Ok(await _store.GetPickListItems("contact", "dfe_hasgcseenglish").ToListAsync());
+            return Ok(await _store.GetPickListItems("contact", "dfe_websitehasgcseenglish").ToListAsync());
         }
 
         [HttpGet]
@@ -280,19 +280,6 @@ namespace GetIntoTeachingApi.Controllers
         public async Task<IActionResult> GetPhoneCallChannels()
         {
             return Ok(await _store.GetPickListItems("phonecall", "dfe_channelcreation").ToListAsync());
-        }
-
-        [HttpGet]
-        [CrmETag]
-        [Route("phone_call/destinations")]
-        [SwaggerOperation(
-            Summary = "Retrieves the list of phone call destinations.",
-            OperationId = "GetPhoneCallDestinations",
-            Tags = new[] { "Types" })]
-        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public async Task<IActionResult> GetPhoneCallDestinations()
-        {
-            return Ok(await _store.GetPickListItems("phonecall", "dfe_destination").ToListAsync());
         }
 
         [HttpGet]

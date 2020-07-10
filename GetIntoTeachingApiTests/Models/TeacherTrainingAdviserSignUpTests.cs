@@ -20,6 +20,7 @@ namespace GetIntoTeachingApiTests.Models
                 CreatedAt = DateTime.Now.AddDays(10),
                 DegreeStatusId = 1,
                 UkDegreeGradeId = 2,
+                TypeId = 3,
                 Subject = "English"
             };
 
@@ -103,6 +104,7 @@ namespace GetIntoTeachingApiTests.Models
             response.DegreeStatusId.Should().Be(latestQualification.DegreeStatusId);
             response.UkDegreeGradeId.Should().Be(latestQualification.UkDegreeGradeId);
             response.DegreeSubject.Should().Be(latestQualification.Subject);
+            response.DegreeTypeId.Should().Be(latestQualification.TypeId);
 
             response.PastTeachingPositionId.Should().Be(latestPastTeachingPosition.Id);
             response.SubjectTaughtId.Should().Be(latestPastTeachingPosition.SubjectTaughtId);
@@ -122,8 +124,9 @@ namespace GetIntoTeachingApiTests.Models
                 PreferredTeachingSubjectId = Guid.NewGuid(),
                 CountryId = Guid.NewGuid(),
                 AcceptedPolicyId = Guid.NewGuid(),
-                UkDegreeGradeId = 1,
+                UkDegreeGradeId = 0,
                 DegreeStatusId = 1,
+                DegreeTypeId = 2,
                 InitialTeacherTrainingYearId = 3,
                 PreferredEducationPhaseId = 4,
                 HasGcseEnglishId = 5,
@@ -200,6 +203,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.Qualifications.First().UkDegreeGradeId.Should().Be(request.UkDegreeGradeId);
             candidate.Qualifications.First().DegreeStatusId.Should().Be(request.DegreeStatusId);
             candidate.Qualifications.First().Subject.Should().Be(request.DegreeSubject);
+            candidate.Qualifications.First().TypeId.Should().Be(request.DegreeTypeId);
 
             candidate.Subscriptions.First().TypeId.Should().Be((int)Subscription.ServiceType.TeacherTrainingAdviser);
         }
@@ -239,7 +243,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_QualificationFieldsAreNull_NoQualificationIsCreated()
         {
-            var request = new TeacherTrainingAdviserSignUp() { UkDegreeGradeId = null, DegreeStatusId = null, DegreeSubject = null };
+            var request = new TeacherTrainingAdviserSignUp() { UkDegreeGradeId = null, DegreeStatusId = null, DegreeSubject = null, DegreeTypeId = null };
 
             request.Candidate.Qualifications.Should().BeEmpty();
         }
@@ -247,7 +251,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_UkDegreeGradeIdIsPresent_QualificationIsCreated()
         {
-            var request = new TeacherTrainingAdviserSignUp() { UkDegreeGradeId = 1, DegreeStatusId = null, DegreeSubject = null };
+            var request = new TeacherTrainingAdviserSignUp() { UkDegreeGradeId = 1, DegreeStatusId = null, DegreeSubject = null, DegreeTypeId = null };
 
             request.Candidate.Qualifications.Count.Should().Be(1);
         }
@@ -255,7 +259,15 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_DegreeStatusIdIsPresent_QualificationIsCreated()
         {
-            var request = new TeacherTrainingAdviserSignUp() { UkDegreeGradeId = null, DegreeStatusId = 1, DegreeSubject = null };
+            var request = new TeacherTrainingAdviserSignUp() { UkDegreeGradeId = null, DegreeStatusId = 1, DegreeSubject = null, DegreeTypeId = null };
+
+            request.Candidate.Qualifications.Count.Should().Be(1);
+        }
+
+        [Fact]
+        public void Candidate_TypeIdIsPresent_QualificationIsCreated()
+        {
+            var request = new TeacherTrainingAdviserSignUp() { UkDegreeGradeId = null, DegreeStatusId = null, DegreeSubject = null, DegreeTypeId = 1 };
 
             request.Candidate.Qualifications.Count.Should().Be(1);
         }
@@ -263,7 +275,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_DegreeSubjectIdIsPresent_QualificationIsCreated()
         {
-            var request = new TeacherTrainingAdviserSignUp() { UkDegreeGradeId = null, DegreeStatusId = null, DegreeSubject = "Maths" };
+            var request = new TeacherTrainingAdviserSignUp() { UkDegreeGradeId = null, DegreeStatusId = null, DegreeSubject = "Maths", DegreeTypeId = null };
 
             request.Candidate.Qualifications.Count.Should().Be(1);
         }

@@ -10,12 +10,12 @@ using Xunit;
 
 namespace GetIntoTeachingApiTests.Models.Validators
 {
-    public class MailingListAddMemberRequestTests
+    public class MailingListAddMemberValidatorTests
     {
         private readonly MailingListAddMemberValidator _validator;
         private readonly Mock<IStore> _mockStore;
 
-        public MailingListAddMemberRequestTests()
+        public MailingListAddMemberValidatorTests()
         {
             _mockStore = new Mock<IStore>();
             _validator = new MailingListAddMemberValidator(_mockStore.Object);
@@ -63,6 +63,24 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var result = _validator.TestValidate(request);
 
             result.ShouldHaveValidationErrorFor("Candidate.PreferredTeachingSubjectId");
+        }
+
+        [Fact]
+        public void Validate_FirstNameIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.FirstName, null as string);
+        }
+
+        [Fact]
+        public void Validate_LastNameIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.LastName, null as string);
+        }
+
+        [Fact]
+        public void Validate_EmailIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.Email, null as string);
         }
 
         [Fact]
