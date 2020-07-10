@@ -194,6 +194,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.PhoneCall.ScheduledAt.Should().Be((DateTime)request.PhoneCallScheduledAt);
             candidate.PhoneCall.Telephone.Should().Be(request.Telephone);
             candidate.PhoneCall.ChannelId.Should().Be((int)PhoneCall.Channel.CallbackRequest);
+            candidate.PhoneCall.DestinationId.Should().Be((int)PhoneCall.Destination.Uk);
 
             candidate.PastTeachingPositions.First().Id.Should().Be(request.PastTeachingPositionId);
             candidate.PastTeachingPositions.First().SubjectTaughtId.Should().Be(request.SubjectTaughtId);
@@ -278,6 +279,35 @@ namespace GetIntoTeachingApiTests.Models
             var request = new TeacherTrainingAdviserSignUp() { UkDegreeGradeId = null, DegreeStatusId = null, DegreeSubject = "Maths", DegreeTypeId = null };
 
             request.Candidate.Qualifications.Count.Should().Be(1);
+        }
+
+        [Theory]
+        [InlineData("07584627385")]
+        [InlineData("+44 7564 375 482")]
+        [InlineData("+447564 375 482")]
+        public void Candidate_UkTelephone_PhoneCallDestinationIsCorrect(string telephone)
+        {
+            var request = new TeacherTrainingAdviserSignUp() { Telephone = telephone, PhoneCallScheduledAt = DateTime.Now };
+
+            request.Candidate.PhoneCall.DestinationId.Should().Be((int)PhoneCall.Destination.Uk);
+        }
+
+        [Theory]
+        [InlineData("+55 7584627385")]
+        [InlineData("+57564 375 482")]
+        public void Candidate_InternationalTelephone_PhoneCallDestinationIsCorrect(string telephone)
+        {
+            var request = new TeacherTrainingAdviserSignUp() { Telephone = telephone, PhoneCallScheduledAt = DateTime.Now };
+
+            request.Candidate.PhoneCall.DestinationId.Should().Be((int)PhoneCall.Destination.International);
+        }
+
+        [Fact]
+        public void Candidate_NullTelephone_PhoneCallDestinationIsCorrect()
+        {
+            var request = new TeacherTrainingAdviserSignUp() { Telephone = null, PhoneCallScheduledAt = DateTime.Now };
+
+            request.Candidate.PhoneCall.DestinationId.Should().BeNull();
         }
     }
 }

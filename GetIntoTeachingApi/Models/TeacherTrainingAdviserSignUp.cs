@@ -157,6 +157,7 @@ namespace GetIntoTeachingApi.Models
                 candidate.PhoneCall = new PhoneCall()
                 {
                     Telephone = Telephone,
+                    DestinationId = DestinationForTelephone(Telephone),
                     ScheduledAt = (DateTime)PhoneCallScheduledAt,
                     ChannelId = (int)PhoneCall.Channel.CallbackRequest,
                 };
@@ -187,6 +188,23 @@ namespace GetIntoTeachingApi.Models
             candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.TeacherTrainingAdviser });
 
             return candidate;
+        }
+
+        private int? DestinationForTelephone(string telephone)
+        {
+            if (telephone == null)
+            {
+                return null;
+            }
+
+            var sanitizedTelephone = telephone.Replace(" ", string.Empty);
+
+            if (sanitizedTelephone.StartsWith("+") && !sanitizedTelephone.StartsWith("+44"))
+            {
+                return (int)PhoneCall.Destination.International;
+            }
+
+            return (int)PhoneCall.Destination.Uk;
         }
     }
 }

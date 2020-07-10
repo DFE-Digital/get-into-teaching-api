@@ -14,8 +14,17 @@ namespace GetIntoTeachingApi.Models
             CallbackRequest = 222750000,
         }
 
+        public enum Destination
+        { 
+            Uk = 222750000,
+            International = 222750001,
+        }
+
         [EntityField("dfe_channelcreation", typeof(OptionSetValue))]
         public int? ChannelId { get; set; }
+        [JsonIgnore]
+        [EntityField("dfe_destination", typeof(OptionSetValue))]
+        public int? DestinationId { get; set; }
         [EntityField("scheduledstart")]
         public DateTime ScheduledAt { get; set; }
         [JsonIgnore]
