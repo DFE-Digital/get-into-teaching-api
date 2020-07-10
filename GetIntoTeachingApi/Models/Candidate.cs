@@ -37,11 +37,22 @@ namespace GetIntoTeachingApi.Models
             Any = 1,
         }
 
+        public enum PreferredEducationPhase
+        {
+            Primary = 222750000,
+            Secondary = 222750001,
+        }
+
         public enum Channel
         {
             MailingList = 222750028,
             Event = 222750029,
             TeacherTrainingAdviser = 222750027,
+        }
+
+        public enum GcseStatus
+        {
+            HasOrIsPlanningOnRetaking = 222750000,
         }
 
         [JsonIgnore]

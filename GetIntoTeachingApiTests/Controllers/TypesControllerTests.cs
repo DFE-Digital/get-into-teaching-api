@@ -106,7 +106,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetCandidateGcseStatus_ReturnsAllStatus()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_hasgcseenglish")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_websitehasgcseenglish")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetCandidateGcseStatus();
 
@@ -278,18 +278,6 @@ namespace GetIntoTeachingApiTests.Controllers
             _mockStore.Setup(mock => mock.GetPickListItems("phonecall", "dfe_channelcreation")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetPhoneCallChannels();
-
-            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
-            ok.Value.Should().BeEquivalentTo(mockEntities);
-        }
-
-        [Fact]
-        public async void GetPhoneCallDestinations_ReturnsAllChannels()
-        {
-            var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("phonecall", "dfe_destination")).Returns(mockEntities.AsAsyncQueryable());
-
-            var response = await _controller.GetPhoneCallDestinations();
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().BeEquivalentTo(mockEntities);
