@@ -8,6 +8,13 @@ namespace GetIntoTeachingApi.Models
     [Entity("dfe_candidatequalification")]
     public class CandidateQualification : BaseModel
     {
+        public enum DegreeStatus
+        {
+            HasDegreeEquivilent = 222750005,
+            IsStudying = 222750001,
+            HasDegree = 222750000,
+        }
+
         [EntityField("dfe_type", typeof(OptionSetValue))]
         public int? TypeId { get; set; }
         [EntityField("dfe_ukdegreegrade", typeof(OptionSetValue))]

@@ -106,7 +106,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetCandidateGcseStatus_ReturnsAllStatus()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_hasgcseenglish")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_websitehasgcseenglish")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetCandidateGcseStatus();
 

@@ -60,6 +60,24 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
+        public void Validate_FirstNameIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.FirstName, null as string);
+        }
+
+        [Fact]
+        public void Validate_LastNameIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.LastName, null as string);
+        }
+
+        [Fact]
+        public void Validate_EmailIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.Email, null as string);
+        }
+
+        [Fact]
         public void Validate_AcceptedPolicyIdIsNull_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(request => request.AcceptedPolicyId, null as Guid?);
