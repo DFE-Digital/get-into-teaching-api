@@ -135,7 +135,6 @@ namespace GetIntoTeachingApiTests.Models
                 PlanningToRetakeGcseEnglishId = 7,
                 PlanningToRetakeGcseMathsId = 8,
                 PlanningToRetakeCgseScienceId = 9,
-                PhoneCallDestinationId = 10,
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
@@ -193,7 +192,6 @@ namespace GetIntoTeachingApiTests.Models
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
 
             candidate.PhoneCall.ScheduledAt.Should().Be((DateTime)request.PhoneCallScheduledAt);
-            candidate.PhoneCall.DestinationId.Should().Be(request.PhoneCallDestinationId);
             candidate.PhoneCall.Telephone.Should().Be(request.Telephone);
             candidate.PhoneCall.ChannelId.Should().Be((int)PhoneCall.Channel.CallbackRequest);
 

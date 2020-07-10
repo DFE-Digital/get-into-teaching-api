@@ -15,9 +15,6 @@ namespace GetIntoTeachingApi.Models
         public Guid? CountryId { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public Guid? AcceptedPolicyId { get; set; }
-        [SwaggerSchema(WriteOnly = true)]
-        public int? PhoneCallDestinationId { get; set; }
-
         public int? UkDegreeGradeId { get; set; }
         public int? DegreeStatusId { get; set; }
         public int? DegreeTypeId { get; set; }
@@ -160,7 +157,6 @@ namespace GetIntoTeachingApi.Models
                 candidate.PhoneCall = new PhoneCall()
                 {
                     Telephone = Telephone,
-                    DestinationId = PhoneCallDestinationId,
                     ScheduledAt = (DateTime)PhoneCallScheduledAt,
                     ChannelId = (int)PhoneCall.Channel.CallbackRequest,
                 };

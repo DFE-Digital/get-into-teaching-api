@@ -29,15 +29,11 @@ namespace GetIntoTeachingApiTests.Models.Validators
             _mockStore
                 .Setup(mock => mock.GetPickListItems("phonecall", "dfe_channelcreation"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
-            _mockStore
-                .Setup(mock => mock.GetPickListItems("phonecall", "dfe_destination"))
-                .Returns(new[] { mockPickListItem }.AsQueryable());
 
             var phoneCall = new PhoneCall()
             {
                 ScheduledAt = DateTime.Now.AddDays(2),
                 ChannelId = int.Parse(mockPickListItem.Id),
-                DestinationId = int.Parse(mockPickListItem.Id)
             };
 
             var result = _validator.TestValidate(phoneCall);
@@ -61,18 +57,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_ChannelIdIsNull_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(phoneCall => phoneCall.ChannelId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_DestinationIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(phoneCall => phoneCall.DestinationId, 123);
-        }
-
-        [Fact]
-        public void Validate_DestinationIdIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(phoneCall => phoneCall.DestinationId, null as int?);
         }
     }
 }
