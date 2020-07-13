@@ -239,6 +239,19 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
+        public void Validate_DegreeStatusIsNoDegree_HasError()
+        {
+            var request = new TeacherTrainingAdviserSignUp
+            {
+                DegreeStatusId = (int)CandidateQualification.DegreeStatus.NoDegree,
+            };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldHaveValidationErrorFor("DegreeStatusId").WithErrorMessage("Not eligible for service if degree status is no degree.");
+        }
+
+        [Fact]
         public void Validate_DegreeStatusIsHasDegreeAndDegreeTypeIsNull_HasError()
         {
             var request = new TeacherTrainingAdviserSignUp
