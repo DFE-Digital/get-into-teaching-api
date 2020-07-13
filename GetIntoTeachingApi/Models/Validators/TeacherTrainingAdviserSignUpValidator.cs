@@ -37,15 +37,15 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Must be set for candidate with UK equivalent degree.");
 
             RuleFor(request => request.InitialTeacherTrainingYearId).NotNull()
-                .Unless(request => request.Candidate.PastTeachingPositions.Count > 0)
+                .Unless(request => request.Candidate.IsReturningToTeaching())
                 .WithMessage("Must be set unless candidate has past teaching positions.");
 
             RuleFor(request => request.DegreeStatusId).NotEmpty()
-                .Unless(request => request.Candidate.PastTeachingPositions.Count > 0)
+                .Unless(request => request.Candidate.IsReturningToTeaching())
                 .WithMessage("Must be set unless candidate has past teaching positions.");
 
             RuleFor(request => request.DegreeTypeId).NotEmpty()
-                .Unless(request => request.Candidate.PastTeachingPositions.Count > 0)
+                .Unless(request => request.Candidate.IsReturningToTeaching())
                 .WithMessage("Must be set unless candidate has past teaching positions.");
 
             RuleFor(request => request.DegreeTypeId)
