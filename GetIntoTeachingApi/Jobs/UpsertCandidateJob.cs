@@ -48,6 +48,7 @@ namespace GetIntoTeachingApi.Jobs
             else
             {
                 var registrations = ClearTeachingEventRegistrations(candidate);
+                ReconcileActiveSubscriptions(candidate);
                 SaveCandidate(candidate);
                 SaveTeachingEventRegistrations(registrations, candidate);
 
@@ -58,6 +59,40 @@ namespace GetIntoTeachingApi.Jobs
         private void SaveCandidate(Candidate candidate)
         {
             _crm.Save(candidate);
+        }
+
+        private void ReconcileActiveSubscriptions(Candidate candidate)
+        {
+            if (candidate.Id == null)
+            {
+                return;
+            }
+
+            var existingCandidate = _crm.GetCandidate((Guid)candidate.Id);
+            DeactivateMailingListOnSubscribingToTeacherTrainingAdviser(candidate, existingCandidate);
+        }
+
+        private void DeactivateMailingListOnSubscribingToTeacherTrainingAdviser(Candidate candidate, Candidate existingCandidate)
+        {
+            var isSubscribingToTeacherTrainingAdviserService =
+                candidate.HasActiveSubscriptionToService(Subscription.ServiceType.TeacherTrainingAdviser);
+
+            if (!isSubscribingToTeacherTrainingAdviserService)
+            {
+                return;
+            }
+
+            var hasActiveMailingListServiceSubscription = existingCandidate
+                .HasActiveSubscriptionToService(Subscription.ServiceType.MailingList);
+
+            if (!hasActiveMailingListServiceSubscription)
+            {
+                return;
+            }
+
+            var existingMailingListSubscription = existingCandidate.GetActiveSubscriptionToService(Subscription.ServiceType.MailingList);
+            existingMailingListSubscription.StatusId = (int)Subscription.SubscriptionStatus.Inactive;
+            candidate.Subscriptions.Add(existingMailingListSubscription);
         }
 
         private IEnumerable<TeachingEventRegistration> ClearTeachingEventRegistrations(Candidate candidate)

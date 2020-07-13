@@ -427,5 +427,26 @@ namespace GetIntoTeachingApiTests.Models
             candidate.HasActiveSubscriptionToService(Subscription.ServiceType.MailingList).Should().BeFalse();
             candidate.HasActiveSubscriptionToService(Subscription.ServiceType.TeacherTrainingAdviser).Should().BeFalse();
         }
+
+        [Fact]
+        public void GetSubscriptionToService_ReturnsCorrectly()
+        {
+            var activeSubscription = new Subscription()
+            {
+                TypeId = (int)Subscription.ServiceType.Event,
+                StatusId = (int)Subscription.SubscriptionStatus.Active
+            };
+            var inactiveSubscription = new Subscription()
+            {
+                TypeId = (int)Subscription.ServiceType.MailingList,
+                StatusId = (int)Subscription.SubscriptionStatus.Inactive
+            };
+            var candidate = new Candidate();
+            candidate.Subscriptions.AddRange(new List<Subscription> { activeSubscription, inactiveSubscription });
+
+            candidate.GetActiveSubscriptionToService(Subscription.ServiceType.Event).Should().Be(activeSubscription);
+            candidate.GetActiveSubscriptionToService(Subscription.ServiceType.MailingList).Should().BeNull();
+            candidate.GetActiveSubscriptionToService(Subscription.ServiceType.TeacherTrainingAdviser).Should().BeNull();
+        }
     }
 }

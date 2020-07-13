@@ -180,8 +180,12 @@ namespace GetIntoTeachingApi.Models
 
         public bool HasActiveSubscriptionToService(Subscription.ServiceType service)
         {
-            return Subscriptions.Any(s => s.TypeId == (int)service && 
-                s.StatusId == (int)Subscription.SubscriptionStatus.Active);
+            return GetActiveSubscriptionToService(service) != null;
+        }
+
+        public Subscription GetActiveSubscriptionToService(Subscription.ServiceType service)
+        {
+            return Subscriptions.FirstOrDefault(s => s.StatusId == (int)Subscription.SubscriptionStatus.Active && s.TypeId == (int)service);
         }
 
         protected override bool ShouldMap(ICrmService crm)

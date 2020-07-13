@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Jobs;
@@ -7,6 +8,7 @@ using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -58,6 +60,32 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockCrm.Verify(mock => mock.Save(registration), Times.Once);
             registration.CandidateId.Should().Be(candidateId);
+        }
+
+        [Fact]
+        public void Run_WithExistingActiveMailingListSubscriptionAndNewTeacherTrainingAdviserSubscriptionOnSuccess_DeactivatesMailingListSubscription()
+        {
+            var candidateId = Guid.NewGuid();
+            var teacherTrainingAdviserSubscription = new Subscription()
+            {
+                TypeId = (int)Subscription.ServiceType.TeacherTrainingAdviser
+            };
+            var mailingListSubscription = new Subscription()
+            {
+                TypeId = (int)Subscription.ServiceType.MailingList
+            };
+            var existingCandidate = new Candidate() { Subscriptions = new List<Subscription> { mailingListSubscription } };
+            _candidate.Id = candidateId;
+            _candidate.Subscriptions = new List<Subscription>() { teacherTrainingAdviserSubscription };
+            _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
+            _mockCrm.Setup(mock => mock.Save(_candidate));
+            _mockCrm.Setup(mock => mock.GetCandidate(candidateId)).Returns(existingCandidate);
+
+            _job.Run(_candidate, null);
+
+            _mockCrm.Verify(mock => mock.Save(_candidate), Times.Once);
+            _candidate.Subscriptions.Any(s => s.TypeId == (int)Subscription.ServiceType.MailingList && 
+                s.StatusId == (int)Subscription.SubscriptionStatus.Inactive).Should().BeTrue();
         }
 
         [Fact]
