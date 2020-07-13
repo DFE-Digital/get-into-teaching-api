@@ -406,5 +406,26 @@ namespace GetIntoTeachingApiTests.Models
         {
             new Candidate().OptOutOfGdpr.Should().BeFalse();
         }
+
+        [Fact]
+        public void HasActiveSubscriptionToService_ReturnsCorrectly()
+        {
+            var activeSubscription = new Subscription()
+            {
+                TypeId = (int)Subscription.ServiceType.Event,
+                StatusId = (int)Subscription.SubscriptionStatus.Active
+            };
+            var inactiveSubscription = new Subscription()
+            {
+                TypeId = (int)Subscription.ServiceType.MailingList,
+                StatusId = (int)Subscription.SubscriptionStatus.Inactive
+            };
+            var candidate = new Candidate();
+            candidate.Subscriptions.AddRange(new List<Subscription> { activeSubscription, inactiveSubscription });
+
+            candidate.HasActiveSubscriptionToService(Subscription.ServiceType.Event).Should().BeTrue();
+            candidate.HasActiveSubscriptionToService(Subscription.ServiceType.MailingList).Should().BeFalse();
+            candidate.HasActiveSubscriptionToService(Subscription.ServiceType.TeacherTrainingAdviser).Should().BeFalse();
+        }
     }
 }

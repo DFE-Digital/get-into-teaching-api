@@ -175,7 +175,8 @@ namespace GetIntoTeachingApiTests.Services
             var candidate = new Candidate() { Id = Guid.NewGuid() };
             var entity = new Entity();
             entity["dfe_contact"] = new EntityReference("contact", (Guid)candidate.Id);
-            entity["dfe_servicesubscriptiontype"] = new OptionSetValue((int)Subscription.ServiceType.Event);
+            entity["dfe_servicesubscriptiontype"] = new OptionSetValue((int)Subscription.ServiceType.MailingList);
+            entity["statecode"] = new OptionSetValue((int)Subscription.SubscriptionStatus.Inactive);
 
             _mockService.Setup(m => m.CreateQuery("dfe_servicesubscription", _context))
                 .Returns(new List<Entity> { entity }.AsQueryable());
@@ -192,6 +193,7 @@ namespace GetIntoTeachingApiTests.Services
             var entity = new Entity();
             entity["dfe_contact"] = new EntityReference("contact", (Guid)candidate.Id);
             entity["dfe_servicesubscriptiontype"] = new OptionSetValue((int)Subscription.ServiceType.TeacherTrainingAdviser);
+            entity["statecode"] = new OptionSetValue((int)Subscription.SubscriptionStatus.Active);
 
             _mockService.Setup(m => m.CreateQuery("dfe_servicesubscription", _context))
                 .Returns(new List<Entity> { entity }.AsQueryable());

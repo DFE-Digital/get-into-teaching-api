@@ -86,7 +86,7 @@ namespace GetIntoTeachingApi.Models
             AddressState = candidate.AddressState;
             AddressPostcode = candidate.AddressPostcode;
 
-            AlreadySubscribedToTeacherTrainingAdviser = candidate.Subscriptions.Any(s => s.TypeId == (int)Subscription.ServiceType.TeacherTrainingAdviser);
+            AlreadySubscribedToTeacherTrainingAdviser = candidate.HasActiveSubscriptionToService(Subscription.ServiceType.TeacherTrainingAdviser);
 
             var latestQualification = candidate.Qualifications.OrderByDescending(q => q.CreatedAt).FirstOrDefault();
 

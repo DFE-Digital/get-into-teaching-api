@@ -12,6 +12,7 @@ namespace GetIntoTeachingApi.Models
         public enum SubscriptionStatus
         {
             Active,
+            Inactive,
         }
 
         public enum ServiceType

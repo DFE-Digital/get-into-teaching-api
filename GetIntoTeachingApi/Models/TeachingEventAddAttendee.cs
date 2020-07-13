@@ -49,8 +49,8 @@ namespace GetIntoTeachingApi.Models
             AddressPostcode = candidate.AddressPostcode;
             Telephone = candidate.Telephone;
 
-            AlreadySubscribedToMailingList = candidate.Subscriptions.Any(s => s.TypeId == (int)Subscription.ServiceType.MailingList);
-            AlreadySubscribedToEvents = candidate.Subscriptions.Any(s => s.TypeId == (int)Subscription.ServiceType.Event);
+            AlreadySubscribedToMailingList = candidate.HasActiveSubscriptionToService(Subscription.ServiceType.MailingList);
+            AlreadySubscribedToEvents = candidate.HasActiveSubscriptionToService(Subscription.ServiceType.Event);
         }
 
         private Candidate CreateCandidate()

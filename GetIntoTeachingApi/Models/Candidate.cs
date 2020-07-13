@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
+using Microsoft.Crm.Sdk;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Xrm.Sdk;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -173,6 +176,12 @@ namespace GetIntoTeachingApi.Models
         public Candidate(Entity entity, ICrmService crm)
             : base(entity, crm)
         {
+        }
+
+        public bool HasActiveSubscriptionToService(Subscription.ServiceType service)
+        {
+            return Subscriptions.Any(s => s.TypeId == (int)service && 
+                s.StatusId == (int)Subscription.SubscriptionStatus.Active);
         }
 
         protected override bool ShouldMap(ICrmService crm)
