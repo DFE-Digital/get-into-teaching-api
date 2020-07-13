@@ -92,7 +92,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 PlanningToRetakeCgseScienceId = int.Parse(mockPickListItem.Id),
                 PlanningToRetakeGcseEnglishId = int.Parse(mockPickListItem.Id),
                 TypeId = int.Parse(mockPickListItem.Id),
-                StatusId = int.Parse(mockPickListItem.Id),
+                AssignmentStatusId = int.Parse(mockPickListItem.Id),
                 DoNotPostalMail = false,
                 EligibilityRulesPassed = "true",
                 DescribeYourselfOptionId = int.Parse(mockPickListItem.Id),
@@ -506,15 +506,15 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_StatusIdIsInvalid_HasError()
+        public void Validate_AssignmentStatusIdIsInvalid_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.StatusId, 123);
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AssignmentStatusId, 123);
         }
 
         [Fact]
-        public void Validate_StatusIdIsNull_HasNoError()
+        public void Validate_AssignmentStatusIdIsNull_HasNoError()
         {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.StatusId, null as int?);
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AssignmentStatusId, null as int?);
         }
 
         [Fact]

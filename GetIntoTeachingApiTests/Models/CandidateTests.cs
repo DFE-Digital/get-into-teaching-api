@@ -51,7 +51,7 @@ namespace GetIntoTeachingApiTests.Models
                 a => a.Name == "dfe_websitewhereinconsiderationjourney" && a.Type == typeof(OptionSetValue));
             type.GetProperty("TypeId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_typeofcandidate" && a.Type == typeof(OptionSetValue));
-            type.GetProperty("StatusId").Should().BeDecoratedWith<EntityFieldAttribute>(
+            type.GetProperty("AssignmentStatusId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_candidatestatus" && a.Type == typeof(OptionSetValue));
             type.GetProperty("AdviserEligibilityId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_iscandidateeligibleforadviser" && a.Type == typeof(OptionSetValue));
@@ -350,7 +350,7 @@ namespace GetIntoTeachingApiTests.Models
             var mockService = new Mock<IOrganizationServiceAdapter>();
             var context = mockService.Object.Context();
             var mockCrm = new Mock<ICrmService>();
-            var candidate = new Candidate() { StatusId = (int)Candidate.AssignmentStatus.WaitingToBeAssigned };
+            var candidate = new Candidate() { AssignmentStatusId = (int)Candidate.AssignmentStatus.WaitingToBeAssigned };
             var candidateEntity = new Entity("contact");
             mockCrm.Setup(m => m.MappableEntity("contact", null, context)).Returns(candidateEntity);
 
@@ -366,7 +366,7 @@ namespace GetIntoTeachingApiTests.Models
             var mockService = new Mock<IOrganizationServiceAdapter>();
             var context = mockService.Object.Context();
             var mockCrm = new Mock<ICrmService>();
-            var candidate = new Candidate() { StatusId = null };
+            var candidate = new Candidate() { AssignmentStatusId = null };
             var candidateEntity = new Entity("contact");
             mockCrm.Setup(m => m.MappableEntity("contact", null, context)).Returns(candidateEntity);
 
@@ -405,6 +405,24 @@ namespace GetIntoTeachingApiTests.Models
         public void OptOutOfGdpr_DefaultValue_IsCorrect()
         {
             new Candidate().OptOutOfGdpr.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsReturningToTeaching_WhenHasPastTeachingPositions_ReturnsTrue()
+        {
+            var candidate = new Candidate();
+            candidate.PastTeachingPositions.Add(new CandidatePastTeachingPosition());
+
+            candidate.IsReturningToTeaching().Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsReturningToTeaching_WhenHasPastTeachingPositions_ReturnsFalse()
+        {
+            var candidate = new Candidate();
+            candidate.PastTeachingPositions = new List<CandidatePastTeachingPosition>();
+
+            candidate.IsReturningToTeaching().Should().BeFalse();
         }
     }
 }

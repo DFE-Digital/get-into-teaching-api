@@ -164,9 +164,9 @@ namespace GetIntoTeachingApiTests.Models
             candidate.PlanningToRetakeGcseEnglishId.Should().Equals(request.PlanningToRetakeGcseEnglishId);
             candidate.PlanningToRetakeGcseMathsId.Should().Equals(request.PlanningToRetakeGcseMathsId);
             candidate.PlanningToRetakeCgseScienceId.Should().Equals(request.PlanningToRetakeCgseScienceId);
-            candidate.AdviserRequirementId.Should().BeNull();
-            candidate.AdviserEligibilityId.Should().BeNull();
-            candidate.StatusId.Should().BeNull();
+            candidate.AdviserRequirementId.Should().Be((int)Candidate.AdviserRequirement.Yes);
+            candidate.AdviserEligibilityId.Should().Be((int)Candidate.AdviserEligibility.Yes);
+            candidate.AssignmentStatusId.Should().Be((int)Candidate.AssignmentStatus.WaitingToBeAssigned);
             candidate.Email.Should().Be(request.Email);
             candidate.FirstName.Should().Be(request.FirstName);
             candidate.LastName.Should().Be(request.LastName);
@@ -181,7 +181,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.AddressState.Should().Be(request.AddressState);
             candidate.AddressPostcode.Should().Be(request.AddressPostcode);
             candidate.ChannelId.Should().BeNull();
-            candidate.EligibilityRulesPassed.Should().Be("false");
+            candidate.EligibilityRulesPassed.Should().Be("true");
             candidate.OptOutOfSms.Should().BeFalse();
             candidate.DoNotBulkEmail.Should().BeFalse();
             candidate.DoNotEmail.Should().BeFalse();
@@ -316,6 +316,56 @@ namespace GetIntoTeachingApiTests.Models
             var request = new TeacherTrainingAdviserSignUp() { SubjectTaughtId = Guid.NewGuid() };
 
             request.Candidate.PreferredEducationPhaseId.Should().Be((int)Candidate.PreferredEducationPhase.Secondary);
+        }
+
+        [Fact]
+        public void Candidate_PhoneCallScheduledAtIsNull_EligibilityRulesPassedIsFalse()
+        {
+            var request = new TeacherTrainingAdviserSignUp() { PhoneCallScheduledAt = null };
+
+            request.Candidate.EligibilityRulesPassed.Should().Be("false");
+        }
+
+        [Fact]
+        public void Candidate_DegreeTypeDegree_IsEligibleForAdviser()
+        {
+            var request = new TeacherTrainingAdviserSignUp() { DegreeTypeId = (int)CandidateQualification.DegreeType.Degree };
+
+            request.Candidate.AssignmentStatusId.Should().Be((int)Candidate.AssignmentStatus.WaitingToBeAssigned);
+            request.Candidate.AdviserEligibilityId.Should().Be((int)Candidate.AdviserEligibility.Yes);
+            request.Candidate.AdviserRequirementId.Should().Be((int)Candidate.AdviserRequirement.Yes);
+        }
+
+        [Fact]
+        public void Candidate_DegreeTypeDegreeEquivalent_IsNotEligibleForAdviser()
+        {
+            var request = new TeacherTrainingAdviserSignUp() { DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent };
+
+            request.Candidate.AssignmentStatusId.Should().BeNull();
+            request.Candidate.AdviserEligibilityId.Should().BeNull();
+            request.Candidate.AdviserRequirementId.Should().BeNull();
+        }
+
+        [Fact]
+        public void Candidate_ReturningToTeaching_IsEligibleForAdviser()
+        {
+            var request = new TeacherTrainingAdviserSignUp() { SubjectTaughtId = Guid.NewGuid() };
+
+            request.Candidate.IsReturningToTeaching().Should().BeTrue();
+            request.Candidate.AssignmentStatusId.Should().Be((int)Candidate.AssignmentStatus.WaitingToBeAssigned);
+            request.Candidate.AdviserEligibilityId.Should().Be((int)Candidate.AdviserEligibility.Yes);
+            request.Candidate.AdviserRequirementId.Should().Be((int)Candidate.AdviserRequirement.Yes);
+        }
+
+        [Fact]
+        public void Candidate_HasNoPastTeachingPositions_IsNotEligibleForAdviser()
+        {
+            var request = new TeacherTrainingAdviserSignUp() { SubjectTaughtId = null };
+
+            request.Candidate.IsReturningToTeaching().Should().BeFalse();
+            request.Candidate.AssignmentStatusId.Should().BeNull();
+            request.Candidate.AdviserEligibilityId.Should().BeNull();
+            request.Candidate.AdviserRequirementId.Should().BeNull();
         }
     }
 }

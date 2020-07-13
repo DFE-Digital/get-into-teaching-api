@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 using Swashbuckle.AspNetCore.Annotations;
@@ -139,7 +138,7 @@ namespace GetIntoTeachingApi.Models
                 EligibilityRulesPassed = "false",
                 AdviserRequirementId = null,
                 AdviserEligibilityId = null,
-                StatusId = null,
+                AssignmentStatusId = null,
                 OptOutOfSms = false,
                 DoNotBulkEmail = false,
                 DoNotEmail = false,
@@ -155,6 +154,7 @@ namespace GetIntoTeachingApi.Models
 
             if (PhoneCallScheduledAt != null)
             {
+                candidate.EligibilityRulesPassed = "true";
                 candidate.PhoneCall = new PhoneCall()
                 {
                     Telephone = Telephone,
@@ -186,6 +186,14 @@ namespace GetIntoTeachingApi.Models
                 });
 
                 candidate.PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary;
+            }
+
+            var eligibleForAnAdviser = DegreeTypeId == (int)CandidateQualification.DegreeType.Degree || candidate.IsReturningToTeaching();
+            if (eligibleForAnAdviser)
+            {
+                candidate.AssignmentStatusId = (int)Candidate.AssignmentStatus.WaitingToBeAssigned;
+                candidate.AdviserEligibilityId = (int)Candidate.AdviserEligibility.Yes;
+                candidate.AdviserRequirementId = (int)Candidate.AdviserRequirement.Yes;
             }
 
             candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.TeacherTrainingAdviser });
