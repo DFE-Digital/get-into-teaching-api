@@ -367,5 +367,23 @@ namespace GetIntoTeachingApiTests.Models
             request.Candidate.AdviserEligibilityId.Should().BeNull();
             request.Candidate.AdviserRequirementId.Should().BeNull();
         }
+
+        [Fact]
+        public void Candidate_ReturningToTeaching_TypeIsCorrect()
+        {
+            var request = new TeacherTrainingAdviserSignUp() { SubjectTaughtId = Guid.NewGuid() };
+
+            request.Candidate.IsReturningToTeaching().Should().BeTrue();
+            request.Candidate.TypeId.Should().Be((int)Candidate.Type.ReturningToTeacherTraining);
+        }
+
+        [Fact]
+        public void Candidate_NotReturningToTeaching_TypeIsCorrect()
+        {
+            var request = new TeacherTrainingAdviserSignUp() { SubjectTaughtId = null };
+
+            request.Candidate.IsReturningToTeaching().Should().BeFalse();
+            request.Candidate.TypeId.Should().Be((int)Candidate.Type.InterestedInTeacherTraining);
+        }
     }
 }

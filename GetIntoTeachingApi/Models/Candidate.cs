@@ -32,6 +32,12 @@ namespace GetIntoTeachingApi.Models
             WaitingToBeAssigned = 222750001,
         }
 
+        public enum Type
+        {
+            InterestedInTeacherTraining = 222750000,
+            ReturningToTeacherTraining = 222750001,
+        }
+
         public enum GdprConsent
         {
             Consent = 587030001,
