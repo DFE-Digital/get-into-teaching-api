@@ -196,6 +196,15 @@ namespace GetIntoTeachingApi.Models
                 candidate.AdviserRequirementId = (int)Candidate.AdviserRequirement.Yes;
             }
 
+            if (candidate.IsReturningToTeaching())
+            {
+                candidate.TypeId = (int)Candidate.Type.ReturningToTeacherTraining;
+            }
+            else
+            {
+                candidate.TypeId = (int)Candidate.Type.InterestedInTeacherTraining;
+            }
+
             candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.TeacherTrainingAdviser });
 
             return candidate;
