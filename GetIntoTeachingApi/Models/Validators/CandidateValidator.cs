@@ -25,9 +25,7 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.Telephone).MinimumLength(5).MaximumLength(20).Matches(@"^[^a-zA-Z]+$");
             RuleFor(candidate => candidate.AddressLine1).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressLine2).MaximumLength(1024);
-            RuleFor(candidate => candidate.AddressLine3).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressCity).MaximumLength(128);
-            RuleFor(candidate => candidate.AddressState).MaximumLength(128);
             RuleFor(candidate => candidate.AddressPostcode).MaximumLength(40).Matches(PostcodeRegex);
             RuleFor(candidate => candidate.CallbackInformation).MaximumLength(600);
             RuleFor(candidate => candidate.EligibilityRulesPassed)
