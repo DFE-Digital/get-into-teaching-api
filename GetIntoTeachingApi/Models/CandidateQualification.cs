@@ -30,7 +30,7 @@ namespace GetIntoTeachingApi.Models
         [EntityField("dfe_degreestatus", typeof(OptionSetValue))]
         public int? DegreeStatusId { get; set; }
         [EntityField("dfe_subject")]
-        public string Subject { get; set; }
+        public string DegreeSubject { get; set; }
         [EntityField("createdon")]
         public DateTime? CreatedAt { get; set; }
 

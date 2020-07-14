@@ -88,7 +88,7 @@ namespace GetIntoTeachingApi.Models
             if (latestQualification != null)
             {
                 QualificationId = latestQualification.Id;
-                DegreeSubject = latestQualification.Subject;
+                DegreeSubject = latestQualification.DegreeSubject;
                 UkDegreeGradeId = latestQualification.UkDegreeGradeId;
                 DegreeStatusId = latestQualification.DegreeStatusId;
                 DegreeTypeId = latestQualification.TypeId;
@@ -165,7 +165,7 @@ namespace GetIntoTeachingApi.Models
                     Id = QualificationId,
                     UkDegreeGradeId = UkDegreeGradeId,
                     DegreeStatusId = DegreeStatusId,
-                    Subject = DegreeSubject,
+                    DegreeSubject = DegreeSubject,
                     TypeId = DegreeTypeId,
                 });
             }

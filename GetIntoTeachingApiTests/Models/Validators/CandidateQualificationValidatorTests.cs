@@ -38,7 +38,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var qualification = new CandidateQualification()
             {
                 UkDegreeGradeId = int.Parse(mockPickListItem.Id),
-                Subject = "History",
+                DegreeSubject = "History",
                 DegreeStatusId = int.Parse(mockPickListItem.Id),
                 TypeId = int.Parse(mockPickListItem.Id),
             };
@@ -87,7 +87,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_SubjectTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(qualification => qualification.Subject, new string('a', 601));
+            _validator.ShouldHaveValidationErrorFor(qualification => qualification.DegreeSubject, new string('a', 601));
         }
 
         private static TypeEntity NewMock(dynamic id)
