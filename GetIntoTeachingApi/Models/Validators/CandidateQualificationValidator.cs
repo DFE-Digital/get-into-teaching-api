@@ -26,7 +26,7 @@ namespace GetIntoTeachingApi.Models.Validators
                 .Unless(qualification => qualification.TypeId == null)
                 .WithMessage("Must be a valid qualification types.");
 
-            RuleFor(qualification => qualification.Subject).MaximumLength(600);
+            RuleFor(qualification => qualification.DegreeSubject).MaximumLength(600);
         }
 
         private IEnumerable<string> UkDegreeGradeIds()

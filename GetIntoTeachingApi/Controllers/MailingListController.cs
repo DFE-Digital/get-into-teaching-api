@@ -33,7 +33,14 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Adds a new member to the mailing list.",
             Description = "If the `CandidateId` is specified then the existing candidate will be " +
-                          "added to the mailing list, otherwise a new candidate will be created.",
+                          "added to the mailing list, otherwise a new candidate will be created." +
+                          "\n\n" +
+                          "Validation errors may be present on the `MailingListAddMember` object as " +
+                          "well as the hidden `Candidate` model that is mapped to; property names are " +
+                          "consistent, so you should check for inclusion of the field in the key " +
+                          "when linking an error message back to a property on the request model. For " +
+                          "example, an error on `UkDegreeGradeId` can return under the keys " +
+                          "`Candidate.Qualifications[0].UkDegreeGradeId` and `UkDegreeGradeId`.",
             OperationId = "AddMailingListMember",
             Tags = new[] { "Mailing List" })]
         [ProducesResponseType(204)]

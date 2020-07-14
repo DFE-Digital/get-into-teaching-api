@@ -21,7 +21,7 @@ namespace GetIntoTeachingApiTests.Models
                 DegreeStatusId = 1,
                 UkDegreeGradeId = 2,
                 TypeId = 3,
-                Subject = "English"
+                DegreeSubject = "English"
             };
 
             var qualifications = new List<CandidateQualification>()
@@ -99,7 +99,7 @@ namespace GetIntoTeachingApiTests.Models
             response.QualificationId.Should().Be(latestQualification.Id);
             response.DegreeStatusId.Should().Be(latestQualification.DegreeStatusId);
             response.UkDegreeGradeId.Should().Be(latestQualification.UkDegreeGradeId);
-            response.DegreeSubject.Should().Be(latestQualification.Subject);
+            response.DegreeSubject.Should().Be(latestQualification.DegreeSubject);
             response.DegreeTypeId.Should().Be(latestQualification.TypeId);
 
             response.PastTeachingPositionId.Should().Be(latestPastTeachingPosition.Id);
@@ -195,7 +195,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.Qualifications.First().Id.Should().Be(request.QualificationId);
             candidate.Qualifications.First().UkDegreeGradeId.Should().Be(request.UkDegreeGradeId);
             candidate.Qualifications.First().DegreeStatusId.Should().Be(request.DegreeStatusId);
-            candidate.Qualifications.First().Subject.Should().Be(request.DegreeSubject);
+            candidate.Qualifications.First().DegreeSubject.Should().Be(request.DegreeSubject);
             candidate.Qualifications.First().TypeId.Should().Be(request.DegreeTypeId);
 
             candidate.Subscriptions.First().TypeId.Should().Be((int)Subscription.ServiceType.TeacherTrainingAdviser);
