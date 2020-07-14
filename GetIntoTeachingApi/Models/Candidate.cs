@@ -17,9 +17,25 @@ namespace GetIntoTeachingApi.Models
             Inactive,
         }
 
+        public enum AdviserEligibility
+        {
+            Yes = 222750000,
+        }
+
+        public enum AdviserRequirement
+        {
+            Yes = 222750000,
+        }
+
         public enum AssignmentStatus
         {
             WaitingToBeAssigned = 222750001,
+        }
+
+        public enum Type
+        {
+            InterestedInTeacherTraining = 222750000,
+            ReturningToTeacherTraining = 222750001,
         }
 
         public enum GdprConsent
@@ -86,7 +102,7 @@ namespace GetIntoTeachingApi.Models
         [EntityField("dfe_typeofcandidate", typeof(OptionSetValue))]
         public int? TypeId { get; set; }
         [EntityField("dfe_candidatestatus", typeof(OptionSetValue))]
-        public int? StatusId { get; set; }
+        public int? AssignmentStatusId { get; set; }
         [EntityField("dfe_iscandidateeligibleforadviser", typeof(OptionSetValue))]
         public int? AdviserEligibilityId { get; set; }
         [EntityField("dfe_isadvisorrequiredos", typeof(OptionSetValue))]
@@ -175,11 +191,16 @@ namespace GetIntoTeachingApi.Models
         {
         }
 
+        public bool IsReturningToTeaching()
+        {
+            return PastTeachingPositions.Count > 0;
+        }
+
         protected override bool ShouldMap(ICrmService crm)
         {
             IsNewRegistrant = Id == null;
 
-            if (StatusId == (int)AssignmentStatus.WaitingToBeAssigned)
+            if (AssignmentStatusId == (int)AssignmentStatus.WaitingToBeAssigned)
             {
                 StatusIsWaitingToBeAssignedAt = DateTime.Now;
             }
