@@ -99,7 +99,6 @@ namespace GetIntoTeachingApiTests.Models
             candidate.Telephone.Should().Be(request.Telephone);
             candidate.CallbackInformation.Should().Be(request.CallbackInformation);
             candidate.ChannelId.Should().BeNull();
-            candidate.EligibilityRulesPassed.Should().Be("false");
             candidate.OptOutOfSms.Should().BeFalse();
             candidate.DoNotBulkEmail.Should().BeFalse();
             candidate.DoNotEmail.Should().BeFalse();
