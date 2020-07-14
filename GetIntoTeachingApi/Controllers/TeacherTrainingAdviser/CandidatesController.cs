@@ -31,6 +31,12 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
         [HttpPost]
         [SwaggerOperation(
             Summary = "Sign up a candidate for the Teacher Training Adviser service.",
+            Description = "Validation errors may be present on the `TeacherTrainingAdviserSignUp` object as " +
+                          "well as the hidden `Candidate` model that is mapped to; property names are " +
+                          "consistent, so you should check for inclusion of the field in the key " +
+                          "when linking an error message back to a property on the request model. For " +
+                          "example, an error on `DegreeSubject` can return under the keys " +
+                          "`Candidate.Qualifications[0].DegreeSubject` and `DegreeSubject`.",
             OperationId = "SignUpTeacherTrainingAdviserCandidate",
             Tags = new[] { "Teacher Training Adviser" })]
         [ProducesResponseType(204)]
