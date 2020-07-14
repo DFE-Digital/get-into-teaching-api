@@ -84,7 +84,6 @@ namespace GetIntoTeachingApi.Models
                 Telephone = Telephone,
                 CallbackInformation = CallbackInformation,
                 ChannelId = CandidateId == null ? (int?)Candidate.Channel.MailingList : null,
-                EligibilityRulesPassed = "false",
                 OptOutOfSms = false,
                 DoNotBulkEmail = false,
                 DoNotEmail = false,

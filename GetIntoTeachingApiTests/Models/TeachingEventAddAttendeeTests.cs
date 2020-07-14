@@ -65,7 +65,6 @@ namespace GetIntoTeachingApiTests.Models
             candidate.AddressPostcode.Should().Be(request.AddressPostcode);
             candidate.Telephone.Should().Be(request.Telephone);
             candidate.ChannelId.Should().BeNull();
-            candidate.EligibilityRulesPassed.Should().Be("false");
             candidate.OptOutOfSms.Should().BeFalse();
             candidate.DoNotBulkEmail.Should().BeTrue();
             candidate.DoNotEmail.Should().BeFalse();
