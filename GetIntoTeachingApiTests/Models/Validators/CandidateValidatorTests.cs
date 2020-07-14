@@ -81,9 +81,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 Telephone = "07584 734 576",
                 AddressLine1 = "line1",
                 AddressLine2 = "line2",
-                AddressLine3 = "line3",
                 AddressCity = "city",
-                AddressState = "state",
                 AddressPostcode = "KY119YU",
                 CallbackInformation = "some information",
                 HasGcseMathsId = int.Parse(mockPickListItem.Id),
@@ -361,12 +359,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_AddressLine3IsTooLong_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressLine3, new string('a', 1025));
-        }
-
-        [Fact]
         public void Validate_AddressCityIsNull_HasNoError()
         {
             _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressCity, null as string);
@@ -376,18 +368,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_AddressCityIsTooLong_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressCity, new string('a', 129));
-        }
-
-        [Fact]
-        public void Validate_AddressStateIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressState, null as string);
-        }
-
-        [Fact]
-        public void Validate_AddressStateIsTooLong_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressState, new string('a', 129));
         }
 
         [Fact]
