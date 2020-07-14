@@ -52,9 +52,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 Telephone = "1234567",
                 AddressLine1 = "Line 1",
                 AddressLine2 = "Line 2",
-                AddressLine3 = "Line 3",
                 AddressCity = "City",
-                AddressState = "State",
                 AddressPostcode = "KY11 9YU",
                 PhoneCallScheduledAt = DateTime.Now,
             };
@@ -130,7 +128,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 CountryId = new Guid("72f5c2e6-74f9-e811-a97a-000d3a2760f2"),
                 AddressLine1 = null,
                 AddressCity = null,
-                AddressState = null,
                 AddressPostcode = null,
             };
 
@@ -138,7 +135,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
             result.ShouldHaveValidationErrorFor("AddressLine1").WithErrorMessage("Must be set candidate in the UK.");
             result.ShouldHaveValidationErrorFor("AddressCity").WithErrorMessage("Must be set candidate in the UK.");
-            result.ShouldHaveValidationErrorFor("AddressState").WithErrorMessage("Must be set candidate in the UK.");
             result.ShouldHaveValidationErrorFor("AddressPostcode").WithErrorMessage("Must be set candidate in the UK.");
         }
 
@@ -150,7 +146,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 CountryId = new Guid("85f5c2e6-74f9-e811-a97a-000d3a2760f2"),
                 AddressLine1 = null,
                 AddressCity = null,
-                AddressState = null,
                 AddressPostcode = null,
             };
 
@@ -158,7 +153,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
             
             result.ShouldNotHaveValidationErrorFor("AddressLine1");
             result.ShouldNotHaveValidationErrorFor("AddressCity");
-            result.ShouldNotHaveValidationErrorFor("AddressState");
             result.ShouldNotHaveValidationErrorFor("AddressPostcode");
         }
 
@@ -170,7 +164,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 CountryId = new Guid("72f5c2e6-74f9-e811-a97a-000d3a2760f2"),
                 AddressLine1 = "Line 1",
                 AddressCity = "City",
-                AddressState = "State",
                 AddressPostcode = "KY11 9YU",
             };
 
@@ -178,7 +171,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
             result.ShouldNotHaveValidationErrorFor("AddressLine1");
             result.ShouldNotHaveValidationErrorFor("AddressCity");
-            result.ShouldNotHaveValidationErrorFor("AddressState");
             result.ShouldNotHaveValidationErrorFor("AddressPostcode");
         }
 

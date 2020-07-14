@@ -66,9 +66,7 @@ namespace GetIntoTeachingApiTests.Models
                 TeacherId = "abc123",
                 AddressLine1 = "Address 1",
                 AddressLine2 = "Address 2",
-                AddressLine3 = "Address 3",
                 AddressCity = "City",
-                AddressState = "State",
                 AddressPostcode = "KY11 9YU",
                 Qualifications = qualifications,
                 PastTeachingPositions = pastTeachingPositions,
@@ -95,9 +93,7 @@ namespace GetIntoTeachingApiTests.Models
             response.Telephone.Should().Be(candidate.Telephone);
             response.AddressLine1.Should().Be(candidate.AddressLine1);
             response.AddressLine2.Should().Be(candidate.AddressLine2);
-            response.AddressLine3.Should().Be(candidate.AddressLine3);
             response.AddressCity.Should().Be(candidate.AddressCity);
-            response.AddressState.Should().Be(candidate.AddressState);
             response.AddressPostcode.Should().Be(candidate.AddressPostcode);
 
             response.QualificationId.Should().Be(latestQualification.Id);
@@ -144,9 +140,7 @@ namespace GetIntoTeachingApiTests.Models
                 DegreeSubject = "Maths",
                 AddressLine1 = "Address 1",
                 AddressLine2 = "Address 2",
-                AddressLine3 = "Address 3",
                 AddressCity = "City",
-                AddressState = "State",
                 AddressPostcode = "KY11 9YU",
                 PhoneCallScheduledAt = DateTime.Now,
             };
@@ -176,9 +170,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.TeacherId.Should().Be(request.TeacherId);
             candidate.AddressLine1.Should().Be(request.AddressLine1);
             candidate.AddressLine2.Should().Be(request.AddressLine2);
-            candidate.AddressLine3.Should().Be(request.AddressLine3);
             candidate.AddressCity.Should().Be(request.AddressCity);
-            candidate.AddressState.Should().Be(request.AddressState);
             candidate.AddressPostcode.Should().Be(request.AddressPostcode);
             candidate.ChannelId.Should().BeNull();
             candidate.EligibilityRulesPassed.Should().Be("true");

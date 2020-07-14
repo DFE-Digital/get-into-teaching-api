@@ -69,12 +69,8 @@ namespace GetIntoTeachingApiTests.Models
                 .BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_line1");
             type.GetProperty("AddressLine2").Should()
                 .BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_line2");
-            type.GetProperty("AddressLine3").Should()
-                .BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_line3");
             type.GetProperty("AddressCity").Should()
                 .BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_city");
-            type.GetProperty("AddressState").Should()
-                .BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_stateorprovince");
             type.GetProperty("AddressPostcode").Should()
                 .BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_postalcode");
             type.GetProperty("StatusIsWaitingToBeAssignedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_waitingtobeassigneddate");

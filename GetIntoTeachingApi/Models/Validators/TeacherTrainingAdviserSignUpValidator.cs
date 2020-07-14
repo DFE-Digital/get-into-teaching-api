@@ -23,8 +23,6 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Must be set candidate in the UK.");
             RuleFor(request => request.AddressCity).NotEmpty().Unless(request => request.CountryId != unitedKingdomCountryGuid)
                 .WithMessage("Must be set candidate in the UK.");
-            RuleFor(request => request.AddressState).NotEmpty().Unless(request => request.CountryId != unitedKingdomCountryGuid)
-                .WithMessage("Must be set candidate in the UK.");
             RuleFor(request => request.AddressPostcode).NotEmpty().Unless(request => request.CountryId != unitedKingdomCountryGuid)
                 .WithMessage("Must be set candidate in the UK.");
 

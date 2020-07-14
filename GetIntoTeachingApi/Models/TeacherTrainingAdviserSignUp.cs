@@ -36,9 +36,7 @@ namespace GetIntoTeachingApi.Models
         public string Telephone { get; set; }
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
-        public string AddressLine3 { get; set; }
         public string AddressCity { get; set; }
-        public string AddressState { get; set; }
         public string AddressPostcode { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public DateTime? PhoneCallScheduledAt { get; set; }
@@ -80,9 +78,7 @@ namespace GetIntoTeachingApi.Models
             Telephone = candidate.Telephone;
             AddressLine1 = candidate.AddressLine1;
             AddressLine2 = candidate.AddressLine2;
-            AddressLine3 = candidate.AddressLine3;
             AddressCity = candidate.AddressCity;
-            AddressState = candidate.AddressState;
             AddressPostcode = candidate.AddressPostcode;
 
             AlreadySubscribedToTeacherTrainingAdviser = candidate.Subscriptions.Any(s => s.TypeId == (int)Subscription.ServiceType.TeacherTrainingAdviser);
@@ -120,8 +116,6 @@ namespace GetIntoTeachingApi.Models
                 DateOfBirth = DateOfBirth,
                 AddressLine1 = AddressLine1,
                 AddressLine2 = AddressLine2,
-                AddressLine3 = AddressLine3,
-                AddressState = AddressState,
                 AddressCity = AddressCity,
                 AddressPostcode = AddressPostcode,
                 Telephone = Telephone,
