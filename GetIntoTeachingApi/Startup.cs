@@ -182,7 +182,7 @@ The GIT API aims to provide:
             app.UseAuthorization();
 
             // Configure recurring jobs.
-            RecurringJob.AddOrUpdate<CrmSyncJob>(JobConfiguration.CrmSyncJobId, (x) => x.RunAsync(), Cron.Daily);
+            RecurringJob.AddOrUpdate<CrmSyncJob>(JobConfiguration.CrmSyncJobId, (x) => x.RunAsync(), Cron.Hourly);
             RecurringJob.AddOrUpdate<LocationSyncJob>(
                 JobConfiguration.LocationSyncJobId,
                 (x) => x.RunAsync("https://www.freemaptools.com/download/full-postcodes/ukpostcodes.zip"),
