@@ -133,12 +133,8 @@ namespace GetIntoTeachingApi.Models
         public string AddressLine1 { get; set; }
         [EntityField("address1_line2")]
         public string AddressLine2 { get; set; }
-        [EntityField("address1_line3")]
-        public string AddressLine3 { get; set; }
         [EntityField("address1_city")]
         public string AddressCity { get; set; }
-        [EntityField("address1_stateorprovince")]
-        public string AddressState { get; set; }
         [EntityField("address1_postalcode")]
         public string AddressPostcode { get; set; }
         [EntityField("dfe_websitecallbackdescription")]
