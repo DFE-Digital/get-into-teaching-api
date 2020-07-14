@@ -106,7 +106,14 @@ maximum of 50 using the `limit` query parameter.",
         [SwaggerOperation(
             Summary = "Adds an attendee to a teaching event.",
             Description = "If the `CandidateId` is specified then the existing candidate will be " +
-                          "registered for the event, otherwise a new candidate will be created.",
+                          "registered for the event, otherwise a new candidate will be created." +
+                          "\n\n" +
+                          "Validation errors may be present on the `TeachingEventAddAttendee` object as " +
+                          "well as the hidden `Candidate` model that is mapped to; property names are " +
+                          "consistent, so you should check for inclusion of the field in the key " +
+                          "when linking an error message back to a property on the request model. For " +
+                          "example, an error on `AcceptedPolicyId` can return under the keys " +
+                          "`Candidate.PrivacyPolicy.AcceptedPolicyId` and `AcceptedPolicyId`.",
             OperationId = "AddTeachingEventAttendee",
             Tags = new[] { "Teaching Events" })]
         [ProducesResponseType(204)]
