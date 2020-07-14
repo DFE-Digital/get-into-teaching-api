@@ -163,12 +163,12 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void GetCandidateStatus_ReturnsAllStatus()
+        public async void GetCandidateAssignmentStatus_ReturnsAllStatus()
         {
             var mockEntities = MockTypeEntities();
             _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_candidatestatus")).Returns(mockEntities.AsAsyncQueryable());
 
-            var response = await _controller.GetCandidateStatus();
+            var response = await _controller.GetCandidateAssignmentStatus();
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().BeEquivalentTo(mockEntities);

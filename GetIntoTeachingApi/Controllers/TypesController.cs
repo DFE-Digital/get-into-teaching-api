@@ -180,13 +180,13 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpGet]
         [CrmETag]
-        [Route("candidate/status")]
+        [Route("candidate/assignment_status")]
         [SwaggerOperation(
-            Summary = "Retrieves the list of candidate status.",
-            OperationId = "GetCandidateStatus",
+            Summary = "Retrieves the list of candidate assignment status.",
+            OperationId = "GetCandidateAssignmentStatus",
             Tags = new[] { "Types" })]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public async Task<IActionResult> GetCandidateStatus()
+        public async Task<IActionResult> GetCandidateAssignmentStatus()
         {
             return Ok(await _store.GetPickListItems("contact", "dfe_candidatestatus").ToListAsync());
         }
