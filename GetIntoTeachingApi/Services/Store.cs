@@ -130,13 +130,13 @@ namespace GetIntoTeachingApi.Services
 
             // Approximate distance filtering in the database, with a suitable error margin (treats distance as an arc degree).
             teachingEvents = teachingEvents.Where(te => EarthCircumferenceInKm *
-                te.Building.Coordinate.Distance(origin) / 360 < request.RadiusInKm + ErrorMarginInKm);
+                te.Building.Coordinate.Distance(origin) / 360 < request.RadiusInKm() + ErrorMarginInKm);
 
             var inMemoryTeachingEvents = await teachingEvents.ToListAsync();
 
             // Project coordinates onto UK coordinate system for final, accurate distance filtering.
             return inMemoryTeachingEvents.Where(te => te.Building.Coordinate.ProjectTo(DbConfiguration.UkSrid)
-                    .IsWithinDistance(origin.ProjectTo(DbConfiguration.UkSrid), (double)request.RadiusInKm * 1000));
+                    .IsWithinDistance(origin.ProjectTo(DbConfiguration.UkSrid), (double)request.RadiusInKm() * 1000));
         }
 
         private async Task SyncTeachingEvents(ICrmService crm)
