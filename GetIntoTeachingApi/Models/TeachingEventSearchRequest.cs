@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.Json.Serialization;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
@@ -16,7 +15,7 @@ namespace GetIntoTeachingApi.Models
         public DateTime? StartAfter { get; set; }
         [SwaggerSchema("Set to filter results to those that start before a given date.")]
         public DateTime? StartBefore { get; set; }
-        [JsonIgnore]
-        public double? RadiusInKm => Radius * 1.60934;
+
+        public double? RadiusInKm() => Radius * 1.60934;
     }
 }
