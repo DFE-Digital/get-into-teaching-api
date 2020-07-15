@@ -85,6 +85,7 @@ namespace GetIntoTeachingApiTests.Jobs
             var expectedLocationBatch = new List<dynamic>
             {
                 new { Postcode = "ky119yu", Latitude = 56.02748, Longitude = -3.35870 },
+                new { Postcode = "wc1b3ls", Latitude = 51.51727, Longitude = -0.12847 },
             };
 
             _mockJobClient.Verify(x => x.Create(
