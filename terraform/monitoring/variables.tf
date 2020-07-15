@@ -48,6 +48,7 @@ variable "grafana" {
         "name" = "get-into-teaching"
         "password" = "a_password"
         "dashboard_directory" = "../../monitoring/grafana/dashboards"
+        "datasource_directory" = "../../monitoring/grafana/datasources"
     }
 }
 
