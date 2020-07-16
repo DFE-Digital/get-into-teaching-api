@@ -131,7 +131,7 @@ namespace GetIntoTeachingApi.Controllers
         [Route("candidate/consideration_journey_stages")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate consideration journey stages.",
-            OperationId = "GetCandidateDescribeYourself",
+            OperationId = "GetCandidateJourneyStages",
             Tags = new[] { "Types" })]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetCandidateConsiderationJourneyStages()
