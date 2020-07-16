@@ -30,6 +30,7 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.CallbackInformation).MaximumLength(600);
             RuleFor(candidate => candidate.EligibilityRulesPassed)
                 .Must(value => _validEligibilityRulesPassedValues.Contains(value))
+                .Unless(candidate => candidate.EligibilityRulesPassed == null)
                 .WithMessage("Must be true or false (as string values).");
 
             RuleFor(candidate => candidate.PhoneCall).SetValidator(new PhoneCallValidator(store)).Unless(candidate => candidate.PhoneCall == null);
