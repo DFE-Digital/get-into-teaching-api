@@ -414,9 +414,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_EligibilityRulesPassedIsNull_HasError()
+        public void Validate_EligibilityRulesPassedIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.EligibilityRulesPassed, null as string);
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.EligibilityRulesPassed, null as string);
         }
 
         [Fact]
