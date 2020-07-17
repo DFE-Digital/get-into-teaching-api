@@ -10,6 +10,20 @@ scrape_configs:
   scheme: https
   static_configs:
     - targets: [${api}]
+- job_name: ${redis} 
+  scheme: https
+  static_configs:
+    - targets: [${redis}]
+- job_name: ${postgres-1}
+  scheme: https
+  static_configs:
+    - targets: [${postgres-1}]
+- job_name: ${postgres-2}
+  scheme: https
+  static_configs:
+    - targets: [${postgres-2}]
+
+
 
 alerting:
   alertmanagers:

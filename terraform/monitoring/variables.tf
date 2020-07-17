@@ -59,3 +59,28 @@ variable "alertmanager" {
         "config" = "../../monitoring/alertmanager/alertmanager.yml"
     }
 }
+
+variable "redis" {
+    type = map 
+    default = {
+        "name" = "get-into-teaching"
+        "service" = "get-into-teaching-adviser-dev-red-svc"
+    }
+}
+
+variable "postgres1" {
+    type = map 
+    default = {
+        "name" = "get-into-teaching-1"
+        "service" = "get-into-teaching-api-dev-pg1-svc"
+    }
+}
+
+variable "postgres2" {
+    type = map 
+    default = {
+        "name" = "get-into-teaching-2"
+        "service" = "get-into-teaching-api-dev-pg2-svc"
+    }
+}
+

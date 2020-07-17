@@ -28,7 +28,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "PrometheusExample",
+      "datasource": "Prometheus",
       "decimals": null,
       "format": "s",
       "gauge": {
@@ -110,7 +110,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "PrometheusExample",
+      "datasource": "Prometheus",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -197,7 +197,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "PrometheusExample",
+      "datasource": "Prometheus",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -306,7 +306,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "PrometheusExample",
+      "datasource": "Prometheus",
       "decimals": null,
       "format": "s",
       "gauge": {
@@ -388,7 +388,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "PrometheusExample",
+      "datasource": "Prometheus",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -476,7 +476,7 @@
       "cacheTimeout": null,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "PrometheusExample",
+      "datasource": "Prometheus",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -586,7 +586,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "PrometheusExample",
+      "datasource": "Prometheus",
       "decimals": null,
       "format": "s",
       "gauge": {
@@ -668,7 +668,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "PrometheusExample",
+      "datasource": "Prometheus",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -776,7 +776,7 @@
         "mode": "spectrum"
       },
       "dataFormat": "timeseries",
-      "datasource": "PrometheusExample",
+      "datasource": "Prometheus",
       "gridPos": {
         "h": 12,
         "w": 12,
@@ -829,7 +829,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "PrometheusExample",
+      "datasource": "Prometheus",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -925,7 +925,7 @@
           "value": "max"
         }
       ],
-      "datasource": "PrometheusExample",
+      "datasource": "Prometheus",
       "fontSize": "100%",
       "gridPos": {
         "h": 12,
@@ -983,7 +983,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "PrometheusExample",
+      "datasource": "Prometheus",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
