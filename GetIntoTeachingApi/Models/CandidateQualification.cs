@@ -15,6 +15,7 @@ namespace GetIntoTeachingApi.Models
             SecondYear = 222750002,
             FirstYear = 222750003,
             NoDegree = 222750004,
+            Other = 222750005,
         }
 
         public enum DegreeType

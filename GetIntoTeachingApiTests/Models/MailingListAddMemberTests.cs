@@ -58,7 +58,7 @@ namespace GetIntoTeachingApiTests.Models
             response.CallbackInformation.Should().Be(candidate.CallbackInformation);
 
             response.QualificationId.Should().Be(latestQualification.Id);
-            response.UkDegreeGradeId.Should().Be(latestQualification.UkDegreeGradeId);
+            response.DegreeStatusId.Should().Be(latestQualification.DegreeStatusId);
 
             response.AlreadySubscribedToEvents.Should().BeTrue();
             response.AlreadySubscribedToMailingList.Should().BeFalse();
@@ -75,7 +75,7 @@ namespace GetIntoTeachingApiTests.Models
                 AcceptedPolicyId = Guid.NewGuid(),
                 DescribeYourselfOptionId = 1,
                 ConsiderationJourneyStageId = 2,
-                UkDegreeGradeId = 3,
+                DegreeStatusId = 3,
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
@@ -109,7 +109,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
             candidate.Subscriptions.First().TypeId.Should().Be((int)Subscription.ServiceType.MailingList);
             candidate.Subscriptions.Last().TypeId.Should().Be((int)Subscription.ServiceType.Event);
-            candidate.Qualifications.First().UkDegreeGradeId.Should().Be(request.UkDegreeGradeId);
+            candidate.Qualifications.First().DegreeStatusId.Should().Be(request.DegreeStatusId);
             candidate.Qualifications.First().Id.Should().Be(request.QualificationId);
         }
 
