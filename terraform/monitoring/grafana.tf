@@ -3,10 +3,6 @@ locals {
    datasource_directory = "${path.module}/${var.grafana["datasource_directory"]}"
 }
 
-output location {
-   value = "${path.module}/${var.grafana["dashboard_directory"]}"
-}
-
 module "grafana" {
      source = "/Users/stevenfawcett/DFE/bat-platform-building-blocks/terraform/modules/grafana"
 //        source = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/grafana?ref=devops/get-into-teaching/add-postgres"
