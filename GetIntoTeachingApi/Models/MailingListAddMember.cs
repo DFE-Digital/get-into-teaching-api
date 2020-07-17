@@ -15,7 +15,7 @@ namespace GetIntoTeachingApi.Models
 
         public int? DescribeYourselfOptionId { get; set; }
         public int? ConsiderationJourneyStageId { get; set; }
-        public int? UkDegreeGradeId { get; set; }
+        public int? DegreeStatusId { get; set; }
 
         public string Email { get; set; }
         public string FirstName { get; set; }
@@ -49,7 +49,7 @@ namespace GetIntoTeachingApi.Models
             if (latestQualification != null)
             {
                 QualificationId = latestQualification.Id;
-                UkDegreeGradeId = latestQualification.UkDegreeGradeId;
+                DegreeStatusId = latestQualification.DegreeStatusId;
             }
 
             CandidateId = candidate.Id;
@@ -92,7 +92,7 @@ namespace GetIntoTeachingApi.Models
                 DoNotSendMm = false,
             };
 
-            candidate.Qualifications.Add(new CandidateQualification() { Id = QualificationId, UkDegreeGradeId = UkDegreeGradeId });
+            candidate.Qualifications.Add(new CandidateQualification() { Id = QualificationId, DegreeStatusId = DegreeStatusId });
             candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.MailingList });
 
             if (AcceptedPolicyId != null)

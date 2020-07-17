@@ -35,7 +35,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id,
                 DescribeYourselfOptionId = int.Parse(mockPickListItem.Id),
                 ConsiderationJourneyStageId = int.Parse(mockPickListItem.Id),
-                UkDegreeGradeId = int.Parse(mockPickListItem.Id),
+                DegreeStatusId = int.Parse(mockPickListItem.Id),
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
@@ -90,33 +90,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_PreferredTeachingSubjectIdIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.PreferredTeachingSubjectId, null as Guid?);
-        }
-
-        [Fact]
         public void Validate_AcceptedPolicyIdIsNull_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(request => request.AcceptedPolicyId, null as Guid?);
-        }
-
-        [Fact]
-        public void Validate_DescribeYourselfOptionIdIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.DescribeYourselfOptionId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_ConsiderationJourneyStageIdIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.ConsiderationJourneyStageId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_UkDegreeGradeIdIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.UkDegreeGradeId, null as int?);
         }
     }
 }
