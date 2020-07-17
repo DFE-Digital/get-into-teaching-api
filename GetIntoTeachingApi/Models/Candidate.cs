@@ -71,6 +71,11 @@ namespace GetIntoTeachingApi.Models
             HasOrIsPlanningOnRetaking = 222750000,
         }
 
+        public enum DescribeYourselfOptions
+        {
+            Student = 222750000,
+        }
+
         [JsonIgnore]
         public string FullName => $"{this.FirstName} {this.LastName}";
         [EntityField("dfe_preferredteachingsubject01", typeof(EntityReference), "dfe_teachingsubjectlist")]
