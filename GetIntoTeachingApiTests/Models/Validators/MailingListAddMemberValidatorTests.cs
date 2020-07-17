@@ -94,5 +94,45 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             _validator.ShouldHaveValidationErrorFor(request => request.AcceptedPolicyId, null as Guid?);
         }
+
+        [Fact]
+        public void Validate_ConsiderationJourneyStageIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.ConsiderationJourneyStageId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_DescribeYourselfOptionIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.DescribeYourselfOptionId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_CallbackInformationIsNullWhenTelephoneIsNotNull_HasError()
+        {
+            var request = new MailingListAddMember
+            {
+                CallbackInformation = null,
+                Telephone = "123456",
+            };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldHaveValidationErrorFor("CallbackInformation");
+        }
+
+        [Fact]
+        public void Validate_DegreeStatusIdIsNullWhenDescribeYourselfIsStudent_HasError()
+        {
+            var request = new MailingListAddMember
+            {
+                DegreeStatusId = null,
+                DescribeYourselfOptionId = (int)Candidate.DescribeYourselfOptions.Student,
+            };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldHaveValidationErrorFor("DegreeStatusId");
+        }
     }
 }
