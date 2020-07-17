@@ -68,6 +68,7 @@ namespace GetIntoTeachingApi.Models.Validators
                         (int)CandidateQualification.DegreeStatus.FinalYear,
                         (int)CandidateQualification.DegreeStatus.SecondYear,
                         (int)CandidateQualification.DegreeStatus.FirstYear,
+                        (int)CandidateQualification.DegreeStatus.Other,
                     }.Contains(request.DegreeStatusId))
                 .WithMessage("Must be set to degree when status is studying for a degree.");
 
@@ -84,6 +85,7 @@ namespace GetIntoTeachingApi.Models.Validators
                         (int)CandidateQualification.DegreeStatus.FinalYear,
                         (int)CandidateQualification.DegreeStatus.SecondYear,
                         (int)CandidateQualification.DegreeStatus.FirstYear,
+                        (int)CandidateQualification.DegreeStatus.Other,
                     }.Contains(request.DegreeStatusId))
                 .WithMessage("Must be set when candidate has a degree or is studying for a degree.");
 
@@ -95,6 +97,7 @@ namespace GetIntoTeachingApi.Models.Validators
                         (int)CandidateQualification.DegreeStatus.FinalYear,
                         (int)CandidateQualification.DegreeStatus.SecondYear,
                         (int)CandidateQualification.DegreeStatus.FirstYear,
+                        (int)CandidateQualification.DegreeStatus.Other,
                     }.Contains(request.DegreeStatusId))
                 .WithMessage("Must be set when candidate has a degree or is studying for a degree (predicted grade).");
 
