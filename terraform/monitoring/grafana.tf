@@ -1,6 +1,10 @@
 locals {
    dashboard_directory = "${path.module}/${var.grafana["dashboard_directory"]}"
    datasource_directory = "${path.module}/${var.grafana["datasource_directory"]}"
+   additional_variable_map = {
+    elastic_user  =  var.elasticsearch_user
+    elastic_pass  =  var.elasticsearch_password
+   }
 }
 
 module "grafana" {
@@ -14,5 +18,6 @@ module "grafana" {
      dashboard_directory = local.dashboard_directory
      datasource_directory = local.datasource_directory
      prometheus_endpoint = module.prometheus.endpoint
+     additional_variable_map = local.additional_variable_map
 }
 

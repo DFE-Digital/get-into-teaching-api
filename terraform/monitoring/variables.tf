@@ -84,3 +84,12 @@ variable "postgres2" {
     }
 }
 
+variable "docker" {
+    type = map 
+    default = {
+        "name" = "get-into-teaching"
+    }
+}
+
+variable elasticsearch_user {}
+variable elasticsearch_password {}

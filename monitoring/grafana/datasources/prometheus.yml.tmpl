@@ -18,3 +18,15 @@ datasources:
   withCredentials: false
   isDefault: false
   editable: false
+
+- name: Elasticseach
+  orgId:       1
+  type:        "elasticsearch"
+  typeLogoUrl: "public/app/plugins/datasource/elasticsearch/img/elasticsearch.svg"
+  access:      "proxy"
+  url:         "https://89d7be0f-ddcd-437e-ad3c-c8125d0bad00-es.logit.io"
+  password:    "${elastic_pass}"
+  user":       "${elastic_user}"
+  database:    "logstash-*"
+  basicAuth:   true
+  isDefault:   false
