@@ -21,7 +21,6 @@ namespace GetIntoTeachingApi.Models
         public string LastName { get; set; }
         public string AddressPostcode { get; set; }
         public string Telephone { get; set; }
-        public string CallbackInformation { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public bool SubscribeToEvents { get; set; }
         [SwaggerSchema(ReadOnly = true)]
@@ -61,7 +60,6 @@ namespace GetIntoTeachingApi.Models
             LastName = candidate.LastName;
             AddressPostcode = candidate.AddressPostcode;
             Telephone = candidate.Telephone;
-            CallbackInformation = candidate.CallbackInformation;
 
             AlreadySubscribedToMailingList = candidate.Subscriptions.Any(s => s.TypeId == (int)Subscription.ServiceType.MailingList);
             AlreadySubscribedToEvents = candidate.Subscriptions.Any(s => s.TypeId == (int)Subscription.ServiceType.Event);
@@ -79,7 +77,6 @@ namespace GetIntoTeachingApi.Models
                 LastName = LastName,
                 AddressPostcode = AddressPostcode,
                 Telephone = Telephone,
-                CallbackInformation = CallbackInformation,
                 ChannelId = CandidateId == null ? (int?)Candidate.Channel.MailingList : null,
                 OptOutOfSms = false,
                 DoNotBulkEmail = false,

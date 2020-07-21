@@ -111,34 +111,24 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Must be secondary when past teaching positions are present.");
 
             RuleFor(request => request)
-                .Must(request => HasOrIsPlanningOnRetakingEnglish(request) &&
-                HasOrIsPlanningOnRetakingMaths(request) && HasOrIsPlanningOnRetakingScience(request))
+                .Must(request => HasOrIsPlanningOnRetakingEnglishAndMaths(request) && HasOrIsPlanningOnRetakingScience(request))
                 .When(request => request.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Primary)
                 .WithMessage("Must have or be retaking all GCSEs when preferred education phase is primary.");
 
             RuleFor(request => request)
-                .Must(request => HasOrIsPlanningOnRetakingEnglish(request) && HasOrIsPlanningOnRetakingMaths(request))
+                .Must(request => HasOrIsPlanningOnRetakingEnglishAndMaths(request))
                 .When(request => request.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Secondary)
                 .WithMessage("Must have or be retaking Maths and English GCSEs when preferred education phase is secondary.");
 
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store));
         }
 
-        private static bool HasOrIsPlanningOnRetakingEnglish(TeacherTrainingAdviserSignUp request)
+        private static bool HasOrIsPlanningOnRetakingEnglishAndMaths(TeacherTrainingAdviserSignUp request)
         {
             return new[]
             {
-                request.HasGcseEnglishId,
-                request.PlanningToRetakeGcseEnglishId,
-            }.Any(value => (int?)Candidate.GcseStatus.HasOrIsPlanningOnRetaking == value);
-        }
-
-        private static bool HasOrIsPlanningOnRetakingMaths(TeacherTrainingAdviserSignUp request)
-        {
-            return new[]
-            {
-                request.HasGcseMathsId,
-                request.PlanningToRetakeGcseMathsId,
+                request.HasGcseMathsAndEnglishId,
+                request.PlanningToRetakeGcseMathsAndEnglishId,
             }.Any(value => (int?)Candidate.GcseStatus.HasOrIsPlanningOnRetaking == value);
         }
 
