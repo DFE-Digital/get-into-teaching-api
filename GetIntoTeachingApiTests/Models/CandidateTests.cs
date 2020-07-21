@@ -78,7 +78,6 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("DoNotPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotpostalmail");
             type.GetProperty("DoNotSendMm").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotsendmm");
             type.GetProperty("OptOutOfSms").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_optoutsms");
-            type.GetProperty("CallbackInformation").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_websitecallbackdescription");
             type.GetProperty("EligibilityRulesPassed").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_eligibilityrulespassed");
             type.GetProperty("PreferredPhoneNumberTypeId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_preferredphonenumbertype");
             type.GetProperty("PreferredContactMethodId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "preferredcontactmethodcode");

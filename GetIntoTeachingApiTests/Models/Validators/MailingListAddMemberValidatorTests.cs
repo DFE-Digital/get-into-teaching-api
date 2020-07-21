@@ -40,7 +40,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 LastName = "Doe",
                 Telephone = "1234567",
                 AddressPostcode = "KY11 9YU",
-                CallbackInformation = "Test information",
             };
 
             var result = _validator.TestValidate(request);
@@ -98,20 +97,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_ConsiderationJourneyStageIdIsNull_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(request => request.ConsiderationJourneyStageId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_CallbackInformationIsNullWhenTelephoneIsNotNull_HasError()
-        {
-            var request = new MailingListAddMember
-            {
-                CallbackInformation = null,
-                Telephone = "123456",
-            };
-
-            var result = _validator.TestValidate(request);
-
-            result.ShouldHaveValidationErrorFor("CallbackInformation");
         }
     }
 }

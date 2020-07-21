@@ -80,7 +80,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 AddressLine2 = "line2",
                 AddressCity = "city",
                 AddressPostcode = "KY119YU",
-                CallbackInformation = "some information",
                 HasGcseMathsId = int.Parse(mockPickListItem.Id),
                 HasGcseEnglishId = int.Parse(mockPickListItem.Id),
                 AdviserEligibilityId = int.Parse(mockPickListItem.Id),
@@ -395,18 +394,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
             {
                 _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressPostcode, postcode);
             }
-        }
-
-        [Fact]
-        public void Validate_CallbackInformationIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.CallbackInformation, null as string);
-        }
-
-        [Fact]
-        public void Validate_CallbackInformationIsTooLong_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.CallbackInformation, new string('a', 601));
         }
 
         [Fact]

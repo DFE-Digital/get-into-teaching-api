@@ -38,7 +38,6 @@ namespace GetIntoTeachingApiTests.Models
                 LastName = "Doe",
                 Telephone = "1234567",
                 AddressPostcode = "KY11 9YU",
-                CallbackInformation = "Callback info",
                 Qualifications = qualifications,
                 Subscriptions = subscriptions,
             };
@@ -53,7 +52,6 @@ namespace GetIntoTeachingApiTests.Models
             response.LastName.Should().Be(candidate.LastName);
             response.Telephone.Should().Be(candidate.Telephone);
             response.AddressPostcode.Should().Be(candidate.AddressPostcode);
-            response.CallbackInformation.Should().Be(candidate.CallbackInformation);
 
             response.QualificationId.Should().Be(latestQualification.Id);
             response.DegreeStatusId.Should().Be(latestQualification.DegreeStatusId);
@@ -78,7 +76,6 @@ namespace GetIntoTeachingApiTests.Models
                 LastName = "Doe",
                 Telephone = "1234567",
                 AddressPostcode = "KY11 9YU",
-                CallbackInformation = "Test information",
                 SubscribeToEvents = true,
             };
 
@@ -93,7 +90,6 @@ namespace GetIntoTeachingApiTests.Models
             candidate.LastName.Should().Be(request.LastName);
             candidate.AddressPostcode.Should().Be(request.AddressPostcode);
             candidate.Telephone.Should().Be(request.Telephone);
-            candidate.CallbackInformation.Should().Be(request.CallbackInformation);
             candidate.ChannelId.Should().BeNull();
             candidate.OptOutOfSms.Should().BeFalse();
             candidate.DoNotBulkEmail.Should().BeFalse();
