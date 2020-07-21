@@ -13,11 +13,8 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(request => request.AddressPostcode).NotEmpty();
             RuleFor(request => request.AcceptedPolicyId).NotEmpty();
             RuleFor(request => request.ConsiderationJourneyStageId).NotNull();
-            RuleFor(request => request.DescribeYourselfOptionId).NotNull();
             RuleFor(request => request.CallbackInformation).NotEmpty()
                 .When(request => request.Telephone != null);
-            RuleFor(request => request.DegreeStatusId).NotNull()
-                .When(request => request.DescribeYourselfOptionId == (int)Candidate.DescribeYourselfOptions.Student);
 
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store));
         }

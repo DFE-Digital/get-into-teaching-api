@@ -115,19 +115,6 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpGet]
         [CrmETag]
-        [Route("candidate/describe_yourself")]
-        [SwaggerOperation(
-            Summary = "Retrieves the list of candidate describe yourself options.",
-            OperationId = "GetCandidateDescribeYourselfOptions",
-            Tags = new[] { "Types" })]
-        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
-        public async Task<IActionResult> GetCandidateDescribeYourselfOptions()
-        {
-            return Ok(await _store.GetPickListItems("contact", "dfe_websitedescribeyourself").ToListAsync());
-        }
-
-        [HttpGet]
-        [CrmETag]
         [Route("candidate/consideration_journey_stages")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate consideration journey stages.",
