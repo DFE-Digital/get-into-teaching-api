@@ -376,6 +376,30 @@ namespace GetIntoTeachingApiTests.Models
             candidate.FullName.Should().Be("John Doe");
         }
 
+        [Theory]
+        [InlineData((int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking, (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking, true)]
+        [InlineData(-1, (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking, false)]
+        [InlineData((int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking, -1, false)]
+        [InlineData(-1, -1, false)]
+        public void HasGcseMathsAndEnglishId_ReturnsCorrectly(int hasGcseEnglishId, int hasGcseMathsId, bool expected)
+        {
+            var candidate = new Candidate() { HasGcseEnglishId = hasGcseEnglishId, HasGcseMathsId = hasGcseMathsId };
+
+            candidate.HasGcseMathsAndEnglish().Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData((int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking, (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking, true)]
+        [InlineData(-1, (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking, false)]
+        [InlineData((int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking, -1, false)]
+        [InlineData(-1, -1, false)]
+        public void IsPlanningToRetakeGcseMathsAndEnglishId_ReturnsCorrectly(int planningToRetakeGcseEnglishId, int planningToRetakeGcseMathsId, bool expected)
+        {
+            var candidate = new Candidate() { PlanningToRetakeGcseEnglishId = planningToRetakeGcseEnglishId, PlanningToRetakeGcseMathsId = planningToRetakeGcseMathsId };
+
+            candidate.IsPlanningToRetakeGcseMathsAndEnglish().Should().Be(expected);
+        }
+
         [Fact]
         public void PreferredPhoneNumberType_DefaultValue_IsCorrect()
         {
