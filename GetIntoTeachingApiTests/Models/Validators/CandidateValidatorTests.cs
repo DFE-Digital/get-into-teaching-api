@@ -51,9 +51,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetPickListItems("contact", "dfe_websitedescribeyourself"))
-                .Returns(new[] { mockPickListItem }.AsQueryable());
-            _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_websitewhereinconsiderationjourney"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
@@ -93,7 +90,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 AssignmentStatusId = int.Parse(mockPickListItem.Id),
                 DoNotPostalMail = false,
                 EligibilityRulesPassed = "true",
-                DescribeYourselfOptionId = int.Parse(mockPickListItem.Id),
                 ConsiderationJourneyStageId = int.Parse(mockPickListItem.Id),
                 CountryId = Guid.Parse(mockEntityReference.Id),
                 PreferredTeachingSubjectId = Guid.Parse(mockEntityReference.Id),
@@ -628,18 +624,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_PlanningToRetakeGcseEnglishIdIsNull_HasNoError()
         {
             _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.PlanningToRetakeGcseEnglishId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_DescribeYourselfIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.DescribeYourselfOptionId, 123);
-        }
-
-        [Fact]
-        public void Validate_DescribeYourselfIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.DescribeYourselfOptionId, null as int?);
         }
 
         [Fact]

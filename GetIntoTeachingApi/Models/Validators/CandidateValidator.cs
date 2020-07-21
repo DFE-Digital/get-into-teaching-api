@@ -94,10 +94,6 @@ namespace GetIntoTeachingApi.Models.Validators
                 .Must(id => RetakeGcseStatusIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.PlanningToRetakeGcseMathsId == null)
                 .WithMessage("Must be a valid candidate retake GCSE status.");
-            RuleFor(candidate => candidate.DescribeYourselfOptionId)
-                .Must(id => DescribeYourselfIds().Contains(id.ToString()))
-                .Unless(candidate => candidate.DescribeYourselfOptionId == null)
-                .WithMessage("Must be a valid candidate describe yourself option.");
             RuleFor(candidate => candidate.ConsiderationJourneyStageId)
                 .Must(id => ConsiderationJourneyStageIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.ConsiderationJourneyStageId == null)
@@ -153,11 +149,6 @@ namespace GetIntoTeachingApi.Models.Validators
         private IEnumerable<string> RetakeGcseStatusIds()
         {
             return _store.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse").Select(status => status.Id);
-        }
-
-        private IEnumerable<string> DescribeYourselfIds()
-        {
-            return _store.GetPickListItems("contact", "dfe_websitedescribeyourself").Select(describe => describe.Id);
         }
 
         private IEnumerable<string> ConsiderationJourneyStageIds()

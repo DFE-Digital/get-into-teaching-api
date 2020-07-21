@@ -32,8 +32,7 @@ namespace GetIntoTeachingApiTests.Models
             {
                 Id = Guid.NewGuid(),
                 PreferredTeachingSubjectId = Guid.NewGuid(),
-                DescribeYourselfOptionId = 2,
-                ConsiderationJourneyStageId = 3,
+                ConsiderationJourneyStageId = 1,
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
@@ -48,7 +47,6 @@ namespace GetIntoTeachingApiTests.Models
 
             response.CandidateId.Should().Be(candidate.Id);
             response.PreferredTeachingSubjectId.Should().Be(candidate.PreferredTeachingSubjectId);
-            response.DescribeYourselfOptionId.Should().Be(candidate.DescribeYourselfOptionId);
             response.ConsiderationJourneyStageId.Should().Be(candidate.ConsiderationJourneyStageId);
             response.Email.Should().Be(candidate.Email);
             response.FirstName.Should().Be(candidate.FirstName);
@@ -73,9 +71,8 @@ namespace GetIntoTeachingApiTests.Models
                 QualificationId = Guid.NewGuid(),
                 PreferredTeachingSubjectId = Guid.NewGuid(),
                 AcceptedPolicyId = Guid.NewGuid(),
-                DescribeYourselfOptionId = 1,
-                ConsiderationJourneyStageId = 2,
-                DegreeStatusId = 3,
+                ConsiderationJourneyStageId = 1,
+                DegreeStatusId = 2,
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
@@ -88,7 +85,6 @@ namespace GetIntoTeachingApiTests.Models
             var candidate = request.Candidate;
 
             candidate.Id.Should().Equals(request.CandidateId);
-            candidate.DescribeYourselfOptionId.Should().Be(request.DescribeYourselfOptionId);
             candidate.ConsiderationJourneyStageId.Should().Be(request.ConsiderationJourneyStageId);
             candidate.PreferredTeachingSubjectId.Should().Be(request.PreferredTeachingSubjectId);
 
