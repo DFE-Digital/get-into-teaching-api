@@ -33,7 +33,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 CandidateId = null,
                 PreferredTeachingSubjectId = Guid.Parse(mockEntityReference.Id),
                 AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id,
-                DescribeYourselfOptionId = int.Parse(mockPickListItem.Id),
                 ConsiderationJourneyStageId = int.Parse(mockPickListItem.Id),
                 DegreeStatusId = int.Parse(mockPickListItem.Id),
                 Email = "email@address.com",
@@ -102,12 +101,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_DescribeYourselfOptionIdIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.DescribeYourselfOptionId, null as int?);
-        }
-
-        [Fact]
         public void Validate_CallbackInformationIsNullWhenTelephoneIsNotNull_HasError()
         {
             var request = new MailingListAddMember
@@ -119,20 +112,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var result = _validator.TestValidate(request);
 
             result.ShouldHaveValidationErrorFor("CallbackInformation");
-        }
-
-        [Fact]
-        public void Validate_DegreeStatusIdIsNullWhenDescribeYourselfIsStudent_HasError()
-        {
-            var request = new MailingListAddMember
-            {
-                DegreeStatusId = null,
-                DescribeYourselfOptionId = (int)Candidate.DescribeYourselfOptions.Student,
-            };
-
-            var result = _validator.TestValidate(request);
-
-            result.ShouldHaveValidationErrorFor("DegreeStatusId");
         }
     }
 }

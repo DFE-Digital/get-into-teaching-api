@@ -71,11 +71,6 @@ namespace GetIntoTeachingApi.Models
             HasOrIsPlanningOnRetaking = 222750000,
         }
 
-        public enum DescribeYourselfOptions
-        {
-            Student = 222750000,
-        }
-
         [JsonIgnore]
         public string FullName => $"{this.FirstName} {this.LastName}";
         [EntityField("dfe_preferredteachingsubject01", typeof(EntityReference), "dfe_teachingsubjectlist")]
@@ -100,8 +95,6 @@ namespace GetIntoTeachingApi.Models
         public int? PlanningToRetakeGcseMathsId { get; set; }
         [EntityField("dfe_websiteplanningretakesciencegcse", typeof(OptionSetValue))]
         public int? PlanningToRetakeCgseScienceId { get; set; }
-        [EntityField("dfe_websitedescribeyourself", typeof(OptionSetValue))]
-        public int? DescribeYourselfOptionId { get; set; }
         [EntityField("dfe_websitewhereinconsiderationjourney", typeof(OptionSetValue))]
         public int? ConsiderationJourneyStageId { get; set; }
         [EntityField("dfe_typeofcandidate", typeof(OptionSetValue))]
