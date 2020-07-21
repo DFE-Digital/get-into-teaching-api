@@ -135,8 +135,6 @@ namespace GetIntoTeachingApi.Models
         public string AddressCity { get; set; }
         [EntityField("address1_postalcode")]
         public string AddressPostcode { get; set; }
-        [EntityField("dfe_websitecallbackdescription")]
-        public string CallbackInformation { get; set; }
         [EntityField("dfe_dfesnumber")]
         public string TeacherId { get; set; }
         [EntityField("dfe_eligibilityrulespassed")]
