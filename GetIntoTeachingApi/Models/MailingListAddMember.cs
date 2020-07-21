@@ -13,7 +13,6 @@ namespace GetIntoTeachingApi.Models
         [SwaggerSchema(WriteOnly = true)]
         public Guid? AcceptedPolicyId { get; set; }
 
-        public int? DescribeYourselfOptionId { get; set; }
         public int? ConsiderationJourneyStageId { get; set; }
         public int? DegreeStatusId { get; set; }
 
@@ -55,7 +54,6 @@ namespace GetIntoTeachingApi.Models
             CandidateId = candidate.Id;
             PreferredTeachingSubjectId = candidate.PreferredTeachingSubjectId;
 
-            DescribeYourselfOptionId = candidate.DescribeYourselfOptionId;
             ConsiderationJourneyStageId = candidate.ConsiderationJourneyStageId;
 
             Email = candidate.Email;
@@ -74,7 +72,6 @@ namespace GetIntoTeachingApi.Models
             var candidate = new Candidate()
             {
                 Id = CandidateId,
-                DescribeYourselfOptionId = DescribeYourselfOptionId,
                 ConsiderationJourneyStageId = ConsiderationJourneyStageId,
                 PreferredTeachingSubjectId = PreferredTeachingSubjectId,
                 Email = Email,
