@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
@@ -186,6 +187,16 @@ namespace GetIntoTeachingApi.Models
         public bool IsReturningToTeaching()
         {
             return PastTeachingPositions.Count > 0;
+        }
+
+        public bool HasGcseMathsAndEnglish()
+        {
+            return new[] { HasGcseEnglishId, HasGcseMathsId }.All(g => g == (int)GcseStatus.HasOrIsPlanningOnRetaking);
+        }
+
+        public bool IsPlanningToRetakeGcseMathsAndEnglish()
+        {
+            return new[] { PlanningToRetakeGcseMathsId, PlanningToRetakeGcseEnglishId }.All(g => g == (int)GcseStatus.HasOrIsPlanningOnRetaking);
         }
 
         protected override bool ShouldMap(ICrmService crm)
