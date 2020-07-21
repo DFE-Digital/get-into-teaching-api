@@ -37,12 +37,10 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 DegreeStatusId = 2,
                 InitialTeacherTrainingYearId = 3,
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary,
-                HasGcseEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
-                HasGcseMathsId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
+                HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 HasGcseScienceId = 7,
                 PlanningToRetakeCgseScienceId = 8,
-                PlanningToRetakeGcseEnglishId = 9,
-                PlanningToRetakeGcseMathsId = 10,
+                PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
@@ -599,8 +597,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var request = new TeacherTrainingAdviserSignUp
             {
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Primary,
-                HasGcseEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
-                HasGcseMathsId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
+                HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 HasGcseScienceId = -1,
             };
 
@@ -615,8 +612,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var request = new TeacherTrainingAdviserSignUp
             {
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Primary,
-                HasGcseEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
-                HasGcseMathsId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
+                HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 PlanningToRetakeCgseScienceId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
             };
 
@@ -631,8 +627,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var request = new TeacherTrainingAdviserSignUp
             {
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary,
-                HasGcseEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
-                HasGcseMathsId = -1,
+                HasGcseMathsAndEnglishId = -1,
             };
 
             var result = _validator.TestValidate(request);
@@ -646,8 +641,8 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var request = new TeacherTrainingAdviserSignUp
             {
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary,
-                HasGcseEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
-                PlanningToRetakeGcseMathsId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
+                HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
+                PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
             };
 
             var result = _validator.TestValidate(request);

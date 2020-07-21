@@ -20,11 +20,9 @@ namespace GetIntoTeachingApi.Models
         public int? DegreeTypeId { get; set; }
         public int? InitialTeacherTrainingYearId { get; set; }
         public int? PreferredEducationPhaseId { get; set; }
-        public int? HasGcseEnglishId { get; set; }
-        public int? HasGcseMathsId { get; set; }
+        public int? HasGcseMathsAndEnglishId { get; set; }
         public int? HasGcseScienceId { get; set; }
-        public int? PlanningToRetakeGcseEnglishId { get; set; }
-        public int? PlanningToRetakeGcseMathsId { get; set; }
+        public int? PlanningToRetakeGcseMathsAndEnglishId { get; set; }
         public int? PlanningToRetakeCgseScienceId { get; set; }
 
         public string Email { get; set; }
@@ -63,12 +61,18 @@ namespace GetIntoTeachingApi.Models
 
             InitialTeacherTrainingYearId = candidate.InitialTeacherTrainingYearId;
             PreferredEducationPhaseId = candidate.PreferredEducationPhaseId;
-            HasGcseEnglishId = candidate.HasGcseEnglishId;
-            HasGcseMathsId = candidate.HasGcseMathsId;
             HasGcseScienceId = candidate.HasGcseScienceId;
             PlanningToRetakeCgseScienceId = candidate.PlanningToRetakeCgseScienceId;
-            PlanningToRetakeGcseEnglishId = candidate.PlanningToRetakeGcseEnglishId;
-            PlanningToRetakeGcseMathsId = candidate.PlanningToRetakeGcseMathsId;
+
+            if (candidate.HasGcseMathsAndEnglish())
+            {
+                HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking;
+            }
+
+            if (candidate.IsPlanningToRetakeGcseMathsAndEnglish())
+            {
+                PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking;
+            }
 
             Email = candidate.Email;
             FirstName = candidate.FirstName;
@@ -122,11 +126,11 @@ namespace GetIntoTeachingApi.Models
                 TeacherId = TeacherId,
                 InitialTeacherTrainingYearId = InitialTeacherTrainingYearId,
                 PreferredEducationPhaseId = PreferredEducationPhaseId,
-                HasGcseEnglishId = HasGcseEnglishId,
-                HasGcseMathsId = HasGcseMathsId,
+                HasGcseEnglishId = HasGcseMathsAndEnglishId,
+                HasGcseMathsId = HasGcseMathsAndEnglishId,
                 HasGcseScienceId = HasGcseScienceId,
-                PlanningToRetakeGcseEnglishId = PlanningToRetakeGcseEnglishId,
-                PlanningToRetakeGcseMathsId = PlanningToRetakeGcseMathsId,
+                PlanningToRetakeGcseEnglishId = PlanningToRetakeGcseMathsAndEnglishId,
+                PlanningToRetakeGcseMathsId = PlanningToRetakeGcseMathsAndEnglishId,
                 PlanningToRetakeCgseScienceId = PlanningToRetakeCgseScienceId,
                 ChannelId = CandidateId == null ? (int?)Candidate.Channel.TeacherTrainingAdviser : null,
                 EligibilityRulesPassed = "false",
