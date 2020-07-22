@@ -37,6 +37,28 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
+        public async void Get_ReturnsPrivacyPolicy()
+        {
+            var policy = new PrivacyPolicy() { Id = Guid.NewGuid() };
+            _mockStore.Setup(mock => mock.GetPrivacyPolicyAsync((Guid)policy.Id)).ReturnsAsync(policy);
+
+            var response = await _controller.Get((Guid)policy.Id);
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().Be(policy);
+        }
+
+        [Fact]
+        public async void Get_WithMissingEvent_ReturnsNotFound()
+        {
+            _mockStore.Setup(mock => mock.GetTeachingEventAsync(It.IsAny<Guid>())).ReturnsAsync(null as TeachingEvent);
+
+            var response = await _controller.Get(Guid.NewGuid());
+
+            response.Should().BeOfType<NotFoundResult>();
+        }
+
+        [Fact]
         public async void GetLatest_ReturnsLatestPrivacyPolicy()
         {
             var mockPolicy = MockPrivacyPolicy();

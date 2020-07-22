@@ -127,7 +127,7 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void Get_ReturnsTeachingEvents()
+        public async void Get_ReturnsTeachingEvent()
         {
             var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
             _mockStore.Setup(mock => mock.GetTeachingEventAsync((Guid)teachingEvent.Id)).ReturnsAsync(teachingEvent);
