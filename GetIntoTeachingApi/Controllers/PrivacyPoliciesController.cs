@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using GetIntoTeachingApi.Filters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
@@ -32,6 +33,27 @@ namespace GetIntoTeachingApi.Controllers
         {
             var privacyPolicy = await _store.GetLatestPrivacyPolicyAsync();
             return Ok(privacyPolicy);
+        }
+
+        [HttpGet]
+        [CrmETag]
+        [Route("{id}")]
+        [SwaggerOperation(
+            Summary = "Retrieves a privacy policy.",
+            OperationId = "GetPrivacyPolicy",
+            Tags = new[] { "Privacy Policies" })]
+        [ProducesResponseType(typeof(PrivacyPolicy), 200)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Get([FromRoute, SwaggerParameter("The `id` of the `PrivacyPolicy`.", Required = true)] Guid id)
+        {
+            var policy = await _store.GetPrivacyPolicyAsync(id);
+
+            if (policy == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(policy);
         }
     }
 }

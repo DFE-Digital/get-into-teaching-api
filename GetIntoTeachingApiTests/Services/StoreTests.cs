@@ -316,6 +316,15 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public async void GetPrivacyPolicy_ReturnsMatchingPolicy()
+        {
+            var policies = await SeedMockPrivacyPoliciesAsync();
+            var result = await _store.GetPrivacyPolicyAsync((Guid)policies.First().Id);
+
+            result.Id.Should().Be(policies.First().Id);
+        }
+
+        [Fact]
         public async void SearchTeachingEvents_WithoutFilters_ReturnsAll()
         {
             await SeedMockTeachingEventsAsync();
@@ -400,7 +409,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void GetTeachingEvents_ReturnsMatchingEvent()
+        public async void GetTeachingEvent_ReturnsMatchingEvent()
         {
             await SeedMockTeachingEventsAsync();
             var result = await _store.GetTeachingEventAsync(FindEventGuid);
