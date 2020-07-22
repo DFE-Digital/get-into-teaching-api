@@ -1,9 +1,13 @@
 locals {
-   dashboard_directory = "${path.module}/${var.grafana["dashboard_directory"]}"
+   dashboard_directory  = "${path.module}/${var.grafana["dashboard_directory"]}"
    datasource_directory = "${path.module}/${var.grafana["datasource_directory"]}"
+   configuration_file   = "${path.module}/${var.grafana["configuration_file"]}"
+
    additional_variable_map = {
     elastic_user  =  var.elasticsearch_user
     elastic_pass  =  var.elasticsearch_password
+    google_client_id = var.google_client_id 
+    google_client_secret = var.google_client_secret
    }
 }
 
@@ -17,7 +21,9 @@ module "grafana" {
      admin_password = var.grafana[ "password" ]
      dashboard_directory = local.dashboard_directory
      datasource_directory = local.datasource_directory
+     configuration_file = local.configuration_file
      prometheus_endpoint = module.prometheus.endpoint
      additional_variable_map = local.additional_variable_map
+
 }
 
