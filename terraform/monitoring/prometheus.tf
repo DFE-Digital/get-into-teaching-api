@@ -10,9 +10,8 @@ locals  {
 
 
 module "prometheus" {
-     source = "/Users/stevenfawcett/DFE/bat-platform-building-blocks/terraform/modules/prometheus"
-//        source = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/prometheus?ref=devops/get-into-teaching/add-postgres"
-//        source = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/prometheus?ref=master"
+//     source = "/Users/stevenfawcett/DFE/bat-platform-building-blocks/terraform/modules/prometheus"
+       source = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/prometheus?ref=master"
 
      paas_prometheus_exporter_endpoint = module.paas_prometheus_exporter.endpoint  
      space_id = data.cloudfoundry_space.space.id
@@ -24,18 +23,16 @@ module "prometheus" {
 }
 
 module "influx" {
-     source = "/Users/stevenfawcett/DFE/bat-platform-building-blocks/terraform/modules/influxdb"
-//        source = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/influxdb?ref=devops/get-into-teaching/add-postgres"
-//        source = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/influxdb?ref=master"
+//     source = "/Users/stevenfawcett/DFE/bat-platform-building-blocks/terraform/modules/influxdb"
+       source = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/influxdb?ref=master"
 
      space_id = data.cloudfoundry_space.space.id
      name = "${var.environment}-${var.prometheus[ "name" ]}"
 }
 
 module "paas_prometheus_exporter" {
-     source = "/Users/stevenfawcett/DFE/bat-platform-building-blocks/terraform/modules/paas_prometheus_exporter"
-//        source = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/paas_prometheus_exporter?ref=devops/get-into-teaching/add-postgres"
-//        source = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/paas_prometheus_exporter?ref=master"
+//     source = "/Users/stevenfawcett/DFE/bat-platform-building-blocks/terraform/modules/paas_prometheus_exporter"
+       source = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/paas_prometheus_exporter?ref=master"
 
      space_id = data.cloudfoundry_space.space.id
      name = "${var.environment}-${var.prometheus[ "name" ]}"

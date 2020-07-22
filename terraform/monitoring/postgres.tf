@@ -5,9 +5,8 @@ data "cloudfoundry_space" "postgres-1-monitor" {
 }
 
 module "postgres-1" {
-     source = "/Users/stevenfawcett/DFE/bat-platform-building-blocks/terraform/modules/postgres_exporter"
-//        source = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/postgres_exporter?ref=devops/get-into-teaching/add-postgres"
-//        source = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/postgres_exporter?ref=master"
+//     source = "/Users/stevenfawcett/DFE/bat-platform-building-blocks/terraform/modules/postgres_exporter"
+        source = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/postgres_exporter?ref=master"
 
      install_space_id = data.cloudfoundry_space.space.id
      monitor_space_id = data.cloudfoundry_space.postgres-1-monitor.id
@@ -22,9 +21,8 @@ data "cloudfoundry_space" "postgres-2-monitor" {
 }
 
 module "postgres-2" {
-     source = "/Users/stevenfawcett/DFE/bat-platform-building-blocks/terraform/modules/postgres_exporter"
-//        source = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/postgres_exporter?ref=devops/get-into-teaching/add-postgres"
-//        source = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/postgres_exporter?ref=master"
+//     source = "/Users/stevenfawcett/DFE/bat-platform-building-blocks/terraform/modules/postgres_exporter"
+       source = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/postgres_exporter?ref=master"
 
      install_space_id = data.cloudfoundry_space.space.id
      monitor_space_id = data.cloudfoundry_space.postgres-2-monitor.id
