@@ -23,7 +23,7 @@ namespace GetIntoTeachingApi.Models
         public int? HasGcseMathsAndEnglishId { get; set; }
         public int? HasGcseScienceId { get; set; }
         public int? PlanningToRetakeGcseMathsAndEnglishId { get; set; }
-        public int? PlanningToRetakeCgseScienceId { get; set; }
+        public int? PlanningToRetakeGcseScienceId { get; set; }
 
         public string Email { get; set; }
         public string FirstName { get; set; }
@@ -62,7 +62,7 @@ namespace GetIntoTeachingApi.Models
             InitialTeacherTrainingYearId = candidate.InitialTeacherTrainingYearId;
             PreferredEducationPhaseId = candidate.PreferredEducationPhaseId;
             HasGcseScienceId = candidate.HasGcseScienceId;
-            PlanningToRetakeCgseScienceId = candidate.PlanningToRetakeCgseScienceId;
+            PlanningToRetakeGcseScienceId = candidate.PlanningToRetakeGcseScienceId;
 
             if (candidate.HasGcseMathsAndEnglish())
             {
@@ -131,7 +131,7 @@ namespace GetIntoTeachingApi.Models
                 HasGcseScienceId = HasGcseScienceId,
                 PlanningToRetakeGcseEnglishId = PlanningToRetakeGcseMathsAndEnglishId,
                 PlanningToRetakeGcseMathsId = PlanningToRetakeGcseMathsAndEnglishId,
-                PlanningToRetakeCgseScienceId = PlanningToRetakeCgseScienceId,
+                PlanningToRetakeGcseScienceId = PlanningToRetakeGcseScienceId,
                 ChannelId = CandidateId == null ? (int?)Candidate.Channel.TeacherTrainingAdviser : null,
                 EligibilityRulesPassed = "false",
                 AdviserRequirementId = null,

@@ -83,7 +83,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 HasGcseMathsId = int.Parse(mockPickListItem.Id),
                 HasGcseEnglishId = int.Parse(mockPickListItem.Id),
                 AdviserEligibilityId = int.Parse(mockPickListItem.Id),
-                PlanningToRetakeCgseScienceId = int.Parse(mockPickListItem.Id),
+                PlanningToRetakeGcseScienceId = int.Parse(mockPickListItem.Id),
                 PlanningToRetakeGcseEnglishId = int.Parse(mockPickListItem.Id),
                 TypeId = int.Parse(mockPickListItem.Id),
                 AssignmentStatusId = int.Parse(mockPickListItem.Id),
@@ -591,15 +591,15 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_PlanningToRetakeCgseScienceIdIsInvalid_HasError()
+        public void Validate_PlanningToRetakeGcseScienceIdIsInvalid_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.PlanningToRetakeCgseScienceId, 123);
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.PlanningToRetakeGcseScienceId, 123);
         }
 
         [Fact]
-        public void Validate_PlanningToRetakeCgseScienceIdIsNull_HasNoError()
+        public void Validate_PlanningToRetakeGcseScienceIdIsNull_HasNoError()
         {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.PlanningToRetakeCgseScienceId, null as int?);
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.PlanningToRetakeGcseScienceId, null as int?);
         }
 
         [Fact]

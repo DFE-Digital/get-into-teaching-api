@@ -81,9 +81,9 @@ namespace GetIntoTeachingApi.Models.Validators
                 .Must(id => GcseStatusIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.HasGcseScienceId == null)
                 .WithMessage("Must be a valid candidate GCSE status.");
-            RuleFor(candidate => candidate.PlanningToRetakeCgseScienceId)
+            RuleFor(candidate => candidate.PlanningToRetakeGcseScienceId)
                 .Must(id => RetakeGcseStatusIds().Contains(id.ToString()))
-                .Unless(candidate => candidate.PlanningToRetakeCgseScienceId == null)
+                .Unless(candidate => candidate.PlanningToRetakeGcseScienceId == null)
                 .WithMessage("Must be a valid candidate retake GCSE status.");
             RuleFor(candidate => candidate.PlanningToRetakeGcseEnglishId)
                 .Must(id => RetakeGcseStatusIds().Contains(id.ToString()))

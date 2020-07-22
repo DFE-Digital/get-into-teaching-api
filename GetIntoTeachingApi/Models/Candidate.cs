@@ -95,7 +95,7 @@ namespace GetIntoTeachingApi.Models
         [EntityField("dfe_websiteplanningretakemathsgcse", typeof(OptionSetValue))]
         public int? PlanningToRetakeGcseMathsId { get; set; }
         [EntityField("dfe_websiteplanningretakesciencegcse", typeof(OptionSetValue))]
-        public int? PlanningToRetakeCgseScienceId { get; set; }
+        public int? PlanningToRetakeGcseScienceId { get; set; }
         [EntityField("dfe_websitewhereinconsiderationjourney", typeof(OptionSetValue))]
         public int? ConsiderationJourneyStageId { get; set; }
         [EntityField("dfe_typeofcandidate", typeof(OptionSetValue))]
