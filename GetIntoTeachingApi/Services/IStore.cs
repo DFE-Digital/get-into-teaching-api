@@ -14,6 +14,7 @@ namespace GetIntoTeachingApi.Services
         IQueryable<TypeEntity> GetPickListItems(string entityName, string attributeName);
         Task<PrivacyPolicy> GetLatestPrivacyPolicyAsync();
         IQueryable<PrivacyPolicy> GetPrivacyPolicies();
+        Task<PrivacyPolicy> GetPrivacyPolicyAsync(Guid id);
         IQueryable<TeachingEvent> GetUpcomingTeachingEvents(int limit);
         Task<IEnumerable<TeachingEvent>> SearchTeachingEventsAsync(TeachingEventSearchRequest request);
         Task<TeachingEvent> GetTeachingEventAsync(Guid id);
