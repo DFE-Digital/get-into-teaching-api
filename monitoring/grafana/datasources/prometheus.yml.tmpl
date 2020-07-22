@@ -1,0 +1,36 @@
+# config file version
+apiVersion: 1
+
+# list of datasources that should be deleted from the database
+deleteDatasources:
+- name: Prometheus-${name}
+  orgId: 1
+
+# list of datasources to insert/update depending
+# what's available in the database
+datasources:
+- name: Prometheus
+  orgId: 1
+  type: prometheus
+  access: proxy
+  url: "https://${prometheus_endpoint}"
+  basicAuth: false
+  withCredentials: false
+  isDefault: true
+  editable: false
+
+- name: Elasticseach
+  orgId:       1
+  type:        "elasticsearch"
+  access: proxy
+  url:         "https://89d7be0f-ddcd-437e-ad3c-c8125d0bad00-es.logit.io"
+  basicAuthUser:   "${elastic_user}"
+  database:    "logstash-*"
+  basicAuth:   true
+  isDefault:   false
+  editable: false
+  secureJsonData:
+       basicAuthPassword:    "${elastic_pass}"
+  jsonData:    
+       esVersion:                 70
+       timeField:                 "@timestamp"
