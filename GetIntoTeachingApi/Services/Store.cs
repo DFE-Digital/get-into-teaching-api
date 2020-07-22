@@ -115,6 +115,11 @@ namespace GetIntoTeachingApi.Services
             return await _dbContext.TeachingEvents.FirstOrDefaultAsync(teachingEvent => teachingEvent.Id == id);
         }
 
+        public async Task<TeachingEvent> GetTeachingEventAsync(string readableId)
+        {
+            return await _dbContext.TeachingEvents.FirstOrDefaultAsync(teachingEvent => teachingEvent.ReadableId == readableId);
+        }
+
         public bool IsValidPostcode(string postcode)
         {
             if (string.IsNullOrEmpty(postcode))
