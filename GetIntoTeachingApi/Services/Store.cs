@@ -63,6 +63,11 @@ namespace GetIntoTeachingApi.Services
             return await GetPrivacyPolicies().OrderByDescending(p => p.CreatedAt).FirstOrDefaultAsync();
         }
 
+        public async Task<PrivacyPolicy> GetPrivacyPolicyAsync(Guid id)
+        {
+            return await GetPrivacyPolicies().FirstOrDefaultAsync(teachingEvent => teachingEvent.Id == id);
+        }
+
         public IQueryable<PrivacyPolicy> GetPrivacyPolicies()
         {
             return _dbContext.PrivacyPolicies;
