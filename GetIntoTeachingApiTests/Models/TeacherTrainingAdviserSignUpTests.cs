@@ -57,7 +57,7 @@ namespace GetIntoTeachingApiTests.Models
                 HasGcseScienceId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 PlanningToRetakeGcseEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 PlanningToRetakeGcseMathsId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
-                PlanningToRetakeCgseScienceId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
+                PlanningToRetakeGcseScienceId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
@@ -82,7 +82,7 @@ namespace GetIntoTeachingApiTests.Models
             response.PreferredEducationPhaseId.Should().Be(candidate.PreferredEducationPhaseId);
             response.HasGcseMathsAndEnglishId.Should().Be((int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking);
             response.HasGcseScienceId.Should().Be(candidate.HasGcseScienceId);
-            response.PlanningToRetakeCgseScienceId.Should().Be(candidate.PlanningToRetakeCgseScienceId);
+            response.PlanningToRetakeGcseScienceId.Should().Be(candidate.PlanningToRetakeGcseScienceId);
             response.PlanningToRetakeGcseMathsAndEnglishId.Should().Be((int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking);
             response.Email.Should().Be(candidate.Email);
             response.FirstName.Should().Be(candidate.FirstName);
@@ -126,7 +126,7 @@ namespace GetIntoTeachingApiTests.Models
                 HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 HasGcseScienceId = 7,
                 PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
-                PlanningToRetakeCgseScienceId = 9,
+                PlanningToRetakeGcseScienceId = 9,
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
@@ -153,7 +153,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.HasGcseScienceId.Should().Equals(request.HasGcseScienceId);
             candidate.PlanningToRetakeGcseEnglishId.Should().Equals(request.PlanningToRetakeGcseMathsAndEnglishId);
             candidate.PlanningToRetakeGcseMathsId.Should().Equals(request.PlanningToRetakeGcseMathsAndEnglishId);
-            candidate.PlanningToRetakeCgseScienceId.Should().Equals(request.PlanningToRetakeCgseScienceId);
+            candidate.PlanningToRetakeGcseScienceId.Should().Equals(request.PlanningToRetakeGcseScienceId);
             candidate.AdviserRequirementId.Should().Be((int)Candidate.AdviserRequirement.Yes);
             candidate.AdviserEligibilityId.Should().Be((int)Candidate.AdviserEligibility.Yes);
             candidate.AssignmentStatusId.Should().Be((int)Candidate.AssignmentStatus.WaitingToBeAssigned);

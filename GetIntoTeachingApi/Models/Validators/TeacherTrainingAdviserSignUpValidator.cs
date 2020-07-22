@@ -137,7 +137,7 @@ namespace GetIntoTeachingApi.Models.Validators
             return new[]
             {
                 request.HasGcseScienceId,
-                request.PlanningToRetakeCgseScienceId,
+                request.PlanningToRetakeGcseScienceId,
             }.Any(value => (int?)Candidate.GcseStatus.HasOrIsPlanningOnRetaking == value);
         }
     }
