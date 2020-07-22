@@ -409,12 +409,21 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void GetTeachingEvent_ReturnsMatchingEvent()
+        public async void GetTeachingEvent_WithId_ReturnsMatchingEvent()
         {
-            await SeedMockTeachingEventsAsync();
-            var result = await _store.GetTeachingEventAsync(FindEventGuid);
+            var events = await SeedMockTeachingEventsAsync();
+            var result = await _store.GetTeachingEventAsync((Guid)events.First().Id);
 
-            result.Id.Should().Be(FindEventGuid);
+            result.Id.Should().Be(events.First().Id);
+        }
+
+        [Fact]
+        public async void GetTeachingEvent_WithReadableId_ReturnsMatchingEvent()
+        {
+            var events = await SeedMockTeachingEventsAsync();
+            var result = await _store.GetTeachingEventAsync(events.First().ReadableId);
+
+            result.ReadableId.Should().Be(events.First().ReadableId);
         }
 
         [Fact]
@@ -457,6 +466,7 @@ namespace GetIntoTeachingApiTests.Services
             var event1 = new TeachingEvent()
             {
                 Id = Guid.NewGuid(),
+                ReadableId = "1",
                 Name = "Event 1",
                 StartAt = DateTime.Now.AddDays(5),
                 Building = new TeachingEventBuilding()
@@ -469,6 +479,7 @@ namespace GetIntoTeachingApiTests.Services
             var event2 = new TeachingEvent()
             {
                 Id = FindEventGuid,
+                ReadableId = "2",
                 Name = "Event 2",
                 StartAt = DateTime.Now.AddDays(1),
                 TypeId = 123,
@@ -483,6 +494,7 @@ namespace GetIntoTeachingApiTests.Services
             var event3 = new TeachingEvent()
             {
                 Id = Guid.NewGuid(),
+                ReadableId = "3",
                 Name = "Event 3",
                 StartAt = DateTime.Now.AddDays(10),
                 Building = new TeachingEventBuilding()
@@ -496,6 +508,7 @@ namespace GetIntoTeachingApiTests.Services
             var event4 = new TeachingEvent()
             {
                 Id = Guid.NewGuid(),
+                ReadableId = "4",
                 Name = "Event 4",
                 StartAt = DateTime.Now.AddDays(3),
                 TypeId = 123,
@@ -510,6 +523,7 @@ namespace GetIntoTeachingApiTests.Services
             var event5 = new TeachingEvent()
             {
                 Id = Guid.NewGuid(),
+                ReadableId = "5",
                 Name = "Event 5",
                 StartAt = DateTime.Now.AddDays(15),
             };
@@ -517,6 +531,7 @@ namespace GetIntoTeachingApiTests.Services
             var event6 = new TeachingEvent()
             {
                 Id = Guid.NewGuid(),
+                ReadableId = "6",
                 Name = "Event 6",
                 StartAt = DateTime.Now.AddDays(60),
                 Building = new TeachingEventBuilding()

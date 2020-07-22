@@ -10,6 +10,8 @@ namespace GetIntoTeachingApi.Models
     {
         [EntityField("dfe_event_type", typeof(OptionSetValue))]
         public int TypeId { get; set; }
+        [EntityField("msevtmgt_readableeventid")]
+        public string ReadableId { get; set; }
         [EntityField("msevtmgt_name")]
         public string Name { get; set; }
         [EntityField("msevtmgt_description")]

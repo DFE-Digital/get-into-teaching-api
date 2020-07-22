@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Filters;
 using GetIntoTeachingApi.Jobs;
@@ -82,16 +81,16 @@ maximum of 50 using the `limit` query parameter.",
 
         [HttpGet]
         [CrmETag]
-        [Route("{id}")]
+        [Route("{readableId}")]
         [SwaggerOperation(
             Summary = "Retrieves an event.",
             OperationId = "GetTeachingEvent",
             Tags = new[] { "Teaching Events" })]
         [ProducesResponseType(typeof(TeachingEvent), 200)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> Get([FromRoute, SwaggerParameter("The `id` of the `TeachingEvent`.", Required = true)] Guid id)
+        public async Task<IActionResult> Get([FromRoute, SwaggerParameter("The `readableId` of the `TeachingEvent`.", Required = true)] string readableId)
         {
-            var teachingEvent = await _store.GetTeachingEventAsync(id);
+            var teachingEvent = await _store.GetTeachingEventAsync(readableId);
 
             if (teachingEvent == null)
             {
