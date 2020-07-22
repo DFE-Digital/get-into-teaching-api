@@ -91,7 +91,7 @@ namespace GetIntoTeachingApi.Controllers
         [CrmETag]
         [Route("candidate/gcse_status")]
         [SwaggerOperation(
-            Summary = "Retrieves the list of candidate CGSE status.",
+            Summary = "Retrieves the list of candidate GCSE status.",
             OperationId = "GetCandidateGcseStatus",
             Tags = new[] { "Types" })]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
@@ -104,7 +104,7 @@ namespace GetIntoTeachingApi.Controllers
         [CrmETag]
         [Route("candidate/retake_gcse_status")]
         [SwaggerOperation(
-            Summary = "Retrieves the list of candidate retake CGSE status.",
+            Summary = "Retrieves the list of candidate retake GCSE status.",
             OperationId = "GetCandidateRetakeGcseStatus",
             Tags = new[] { "Types" })]
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]

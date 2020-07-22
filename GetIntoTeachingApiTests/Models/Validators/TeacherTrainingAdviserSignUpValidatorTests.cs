@@ -39,7 +39,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary,
                 HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 HasGcseScienceId = 7,
-                PlanningToRetakeCgseScienceId = 8,
+                PlanningToRetakeGcseScienceId = 8,
                 PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 Email = "email@address.com",
                 FirstName = "John",
@@ -613,7 +613,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             {
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Primary,
                 HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
-                PlanningToRetakeCgseScienceId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
+                PlanningToRetakeGcseScienceId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
             };
 
             var result = _validator.TestValidate(request);
