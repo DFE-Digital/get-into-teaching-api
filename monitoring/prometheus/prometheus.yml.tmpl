@@ -1,0 +1,35 @@
+global:
+  scrape_interval: 10s
+
+scrape_configs:
+- job_name: paas-prometheus-exporter-${name}
+  scheme: https
+  static_configs:
+    - targets: [${paas_prometheus_exporter_endpoint}]
+- job_name: ${api} 
+  scheme: https
+  static_configs:
+    - targets: [${api}]
+- job_name: ${redis} 
+  scheme: https
+  static_configs:
+    - targets: [${redis}]
+- job_name: ${postgres-1}
+  scheme: https
+  static_configs:
+    - targets: [${postgres-1}]
+- job_name: ${postgres-2}
+  scheme: https
+  static_configs:
+    - targets: [${postgres-2}]
+
+
+
+alerting:
+  alertmanagers:
+  - scheme: https
+    static_configs:
+    - targets: [${alertmanager_endpoint}]
+
+rule_files:
+  - alert.rules
