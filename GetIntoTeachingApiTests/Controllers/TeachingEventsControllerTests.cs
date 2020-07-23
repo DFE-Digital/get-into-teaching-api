@@ -129,10 +129,10 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public async void Get_ReturnsTeachingEvent()
         {
-            var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
-            _mockStore.Setup(mock => mock.GetTeachingEventAsync((Guid)teachingEvent.Id)).ReturnsAsync(teachingEvent);
+            var teachingEvent = new TeachingEvent() { ReadableId = "123" };
+            _mockStore.Setup(mock => mock.GetTeachingEventAsync(teachingEvent.ReadableId)).ReturnsAsync(teachingEvent);
 
-            var response = await _controller.Get((Guid)teachingEvent.Id);
+            var response = await _controller.Get(teachingEvent.ReadableId);
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().Be(teachingEvent);
@@ -143,7 +143,7 @@ namespace GetIntoTeachingApiTests.Controllers
         {
             _mockStore.Setup(mock => mock.GetTeachingEventAsync(It.IsAny<Guid>())).ReturnsAsync(null as TeachingEvent);
 
-            var response = await _controller.Get(Guid.NewGuid());
+            var response = await _controller.Get("-1");
 
             response.Should().BeOfType<NotFoundResult>();
         }
