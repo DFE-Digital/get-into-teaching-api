@@ -18,6 +18,7 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("TypeId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_event_type" && a.Type == typeof(OptionSetValue));
 
+            type.GetProperty("ReadableId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "msevtmgt_readableeventid");
             type.GetProperty("Name").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "msevtmgt_name");
             type.GetProperty("Description").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "msevtmgt_description");
             type.GetProperty("StartAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "msevtmgt_eventstartdate");
