@@ -50,12 +50,12 @@ namespace GetIntoTeachingApi.Services
 
         public IQueryable<TypeEntity> GetLookupItems(string entityName)
         {
-            return _dbContext.TypeEntities.Where(t => t.EntityName == entityName);
+            return _dbContext.TypeEntities.Where(t => t.EntityName == entityName).OrderBy(t => t.Id);
         }
 
         public IQueryable<TypeEntity> GetPickListItems(string entityName, string attributeName)
         {
-            return _dbContext.TypeEntities.Where(t => t.EntityName == entityName && t.AttributeName == attributeName);
+            return _dbContext.TypeEntities.Where(t => t.EntityName == entityName && t.AttributeName == attributeName).OrderBy(t => t.Id);
         }
 
         public async Task<PrivacyPolicy> GetLatestPrivacyPolicyAsync()
