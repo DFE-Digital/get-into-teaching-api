@@ -276,7 +276,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void GetLookupItems_ReturnsMatching()
+        public async void GetLookupItems_ReturnsMatchingOrderedByIdAscending()
         {
             await SeedMockCountriesAsync();
 
@@ -286,7 +286,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void GetPickListItems_ReturnsMatching()
+        public async void GetPickListItems_ReturnsMatchingOrderedByIdAscending()
         {
             await SeedMockInitialTeacherTrainingYearsAsync();
 
@@ -579,11 +579,11 @@ namespace GetIntoTeachingApiTests.Services
 
         private static IEnumerable<TypeEntity> MockCountries()
         {
-            var country1 = new TypeEntity() { Id = Guid.NewGuid().ToString(), Value = "Country 1", EntityName = "dfe_country" };
-            var country2 = new TypeEntity() { Id = Guid.NewGuid().ToString(), Value = "Country 2", EntityName = "dfe_country" };
-            var country3 = new TypeEntity() { Id = Guid.NewGuid().ToString(), Value = "Country 3", EntityName = "dfe_country" };
+            var country1 = new TypeEntity() { Id = "00000000-0000-0000-0000-000000000000", Value = "Country 1", EntityName = "dfe_country" };
+            var country2 = new TypeEntity() { Id = "00000000-0000-0000-0000-000000000001", Value = "Country 2", EntityName = "dfe_country" };
+            var country3 = new TypeEntity() { Id = "00000000-0000-0000-0000-000000000002", Value = "Country 3", EntityName = "dfe_country" };
 
-            return new TypeEntity[] { country1, country2, country3 };
+            return new TypeEntity[] { country2, country1, country3 };
         }
 
         private async Task<IEnumerable<TypeEntity>> SeedMockCountriesAsync()
@@ -604,7 +604,7 @@ namespace GetIntoTeachingApiTests.Services
             var year2 = new TypeEntity() { Id = "2", Value = "2010", EntityName = "contact", AttributeName = "dfe_ittyear" };
             var year3 = new TypeEntity() { Id = "3", Value = "2011", EntityName = "contact", AttributeName = "dfe_ittyear" };
 
-            return new TypeEntity[] { year1, year2, year3 };
+            return new TypeEntity[] { year2, year1, year3 };
         }
 
         private async Task<IEnumerable<TypeEntity>> SeedMockInitialTeacherTrainingYearsAsync()
