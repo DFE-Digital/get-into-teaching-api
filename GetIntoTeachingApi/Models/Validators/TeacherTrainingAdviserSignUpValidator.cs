@@ -107,7 +107,7 @@ namespace GetIntoTeachingApi.Models.Validators
 
             RuleFor(request => request.PreferredEducationPhaseId)
                 .Must(phase => phase == (int)Candidate.PreferredEducationPhase.Secondary)
-                .When(request => request.Candidate.PastTeachingPositions.Count > 0)
+                .When(request => request.Candidate.IsReturningToTeaching())
                 .WithMessage("Must be secondary when past teaching positions are present.");
 
             RuleFor(request => request)
@@ -117,7 +117,7 @@ namespace GetIntoTeachingApi.Models.Validators
 
             RuleFor(request => request)
                 .Must(request => HasOrIsPlanningOnRetakingEnglishAndMaths(request))
-                .When(request => request.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Secondary)
+                .When(request => request.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Secondary && !request.Candidate.IsReturningToTeaching())
                 .WithMessage("Must have or be retaking Maths and English GCSEs when preferred education phase is secondary.");
 
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store));

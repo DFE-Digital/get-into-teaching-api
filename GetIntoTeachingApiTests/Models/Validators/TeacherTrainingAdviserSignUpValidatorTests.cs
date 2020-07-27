@@ -622,6 +622,21 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
+        public void Validate_PreferredEducationPhaseIsSecondaryAndDoesNotHaveNorPlanningToRetakeMathsAndEnglishGcsesAndIsReturningToTeaching_HasNoError()
+        {
+            var request = new TeacherTrainingAdviserSignUp
+            {
+                PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary,
+                SubjectTaughtId = Guid.NewGuid(),
+                HasGcseMathsAndEnglishId = -1,
+            };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldNotHaveValidationErrorFor(request => request);
+        }
+
+        [Fact]
         public void Validate_PreferredEducationPhaseIsSecondaryAndDoesNotHaveNorPlanningToRetakeMathsAndEnglishGcses_HasError()
         {
             var request = new TeacherTrainingAdviserSignUp
