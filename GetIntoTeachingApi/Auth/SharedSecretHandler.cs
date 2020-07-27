@@ -29,8 +29,7 @@ namespace GetIntoTeachingApi.Auth
         {
             if (!Request.Headers.ContainsKey("Authorization"))
             {
-                _logger.LogWarning("SharedSecretHandler - Authorization header not set");
-                return Task.FromResult(AuthenticateResult.Fail("Authorization header not set"));
+                return Task.FromResult(AuthenticateResult.NoResult());
             }
 
             var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
