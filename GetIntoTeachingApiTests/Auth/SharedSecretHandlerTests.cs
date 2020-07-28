@@ -53,15 +53,15 @@ namespace GetIntoTeachingApiTests.Auth
         }
 
         [Fact]
-        public async void InitializeAsync_NoAuthorizationHeader_LogsWarning()
+        public async void InitializeAsync_NoAuthorizationHeader_ReturnsNoResult()
         {
             var context = new DefaultHttpContext();
             var scheme = new AuthenticationScheme("SharedSecretHandler", null, typeof(SharedSecretHandler));
             await _handler.InitializeAsync(scheme, context);
 
-            await _handler.AuthenticateAsync();
+            var result = await _handler.AuthenticateAsync();
 
-            _mockLogger.VerifyWarningWasCalled("SharedSecretHandler - Authorization header not set");
+            result.Should().BeEquivalentTo(AuthenticateResult.NoResult());
         }
 
         [Fact]
