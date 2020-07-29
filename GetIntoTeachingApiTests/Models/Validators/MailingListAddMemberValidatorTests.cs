@@ -98,5 +98,11 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             _validator.ShouldHaveValidationErrorFor(request => request.ConsiderationJourneyStageId, null as int?);
         }
+
+        [Fact]
+        public void Validate_DegreeStatusIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.DegreeStatusId, null as int?);
+        }
     }
 }

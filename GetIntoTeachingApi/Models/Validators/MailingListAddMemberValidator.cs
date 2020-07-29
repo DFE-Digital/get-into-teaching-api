@@ -12,6 +12,7 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(request => request.Email).NotEmpty();
             RuleFor(request => request.AcceptedPolicyId).NotEmpty();
             RuleFor(request => request.ConsiderationJourneyStageId).NotNull();
+            RuleFor(request => request.DegreeStatusId).NotNull();
 
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store));
         }

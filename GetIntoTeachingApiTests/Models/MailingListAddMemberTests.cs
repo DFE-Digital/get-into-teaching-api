@@ -102,6 +102,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.Subscriptions.First().TypeId.Should().Be((int)Subscription.ServiceType.MailingList);
             candidate.Subscriptions.Last().TypeId.Should().Be((int)Subscription.ServiceType.Event);
             candidate.Qualifications.First().DegreeStatusId.Should().Be(request.DegreeStatusId);
+            candidate.Qualifications.First().TypeId.Should().Be((int)CandidateQualification.DegreeType.Degree);
             candidate.Qualifications.First().Id.Should().Be(request.QualificationId);
         }
 
