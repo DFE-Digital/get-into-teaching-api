@@ -95,7 +95,12 @@ namespace GetIntoTeachingApi.Models
 
         private void AddQualification(Candidate candidate)
         {
-            candidate.Qualifications.Add(new CandidateQualification() { Id = QualificationId, DegreeStatusId = DegreeStatusId });
+            candidate.Qualifications.Add(new CandidateQualification()
+            {
+                Id = QualificationId, 
+                DegreeStatusId = DegreeStatusId, 
+                TypeId = (int)CandidateQualification.DegreeType.Degree,
+            });
         }
 
         private void AddSubscriptions(Candidate candidate)
