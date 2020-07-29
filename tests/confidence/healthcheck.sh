@@ -32,10 +32,10 @@ else
         status=$( echo ${json} | jq -r .status)
         if [ "${status}" == "unhealthy" ] 
         then
-        	echo "Application Status is not Healthy"
+        	echo "Application Status is Unhealthy"
         	rval=1
         else
-        	echo "Application Status is Healthy"
+        	echo "Application Status is ${status}"
         fi
 
         sha=$( echo ${json} | jq -r .gitCommitSha)
