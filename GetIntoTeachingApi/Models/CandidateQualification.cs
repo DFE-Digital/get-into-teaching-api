@@ -21,7 +21,7 @@ namespace GetIntoTeachingApi.Models
         public enum DegreeType
         {
             Degree = 222750000,
-            DegreeEquivalent = 222750007,
+            DegreeEquivalent = 222750005,
         }
 
         [EntityField("dfe_type", typeof(OptionSetValue))]
