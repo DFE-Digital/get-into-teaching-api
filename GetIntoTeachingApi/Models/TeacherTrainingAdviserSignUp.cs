@@ -145,6 +145,28 @@ namespace GetIntoTeachingApi.Models
                 DoNotSendMm = false,
             };
 
+            if (HasGcseMathsAndEnglishId == null)
+            {
+                candidate.HasGcseMathsId = (int)Candidate.GcseStatus.NotAnswered;
+                candidate.HasGcseEnglishId = (int)Candidate.GcseStatus.NotAnswered;
+            }
+
+            if (HasGcseScienceId == null)
+            {
+                candidate.HasGcseScienceId = (int)Candidate.GcseStatus.NotAnswered;
+            }
+
+            if (PlanningToRetakeGcseMathsAndEnglishId == null)
+            {
+                candidate.PlanningToRetakeGcseMathsId = (int)Candidate.GcseStatus.NotAnswered;
+                candidate.PlanningToRetakeGcseEnglishId = (int)Candidate.GcseStatus.NotAnswered;
+            }
+
+            if (PlanningToRetakeGcseScienceId == null)
+            {
+                candidate.PlanningToRetakeGcseScienceId = (int)Candidate.GcseStatus.NotAnswered;
+            }
+
             if (AcceptedPolicyId != null)
             {
                 candidate.PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)AcceptedPolicyId };
@@ -162,7 +184,7 @@ namespace GetIntoTeachingApi.Models
                 };
             }
 
-            if (UkDegreeGradeId != null || DegreeStatusId != null || DegreeSubject != null || DegreeTypeId != null)
+            if (ContainsQualification())
             {
                 candidate.Qualifications.Add(new CandidateQualification()
                 {
@@ -174,7 +196,7 @@ namespace GetIntoTeachingApi.Models
                 });
             }
 
-            if (SubjectTaughtId != null)
+            if (ContainsPastTeachingPosition())
             {
                 candidate.PastTeachingPositions.Add(new CandidatePastTeachingPosition()
                 {
@@ -223,6 +245,16 @@ namespace GetIntoTeachingApi.Models
             }
 
             return (int)PhoneCall.Destination.Uk;
+        }
+
+        private bool ContainsQualification()
+        {
+            return UkDegreeGradeId != null || DegreeStatusId != null || DegreeSubject != null || DegreeTypeId != null;
+        }
+
+        private bool ContainsPastTeachingPosition()
+        {
+            return SubjectTaughtId != null;
         }
     }
 }
