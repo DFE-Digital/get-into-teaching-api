@@ -70,6 +70,7 @@ namespace GetIntoTeachingApi.Models
         public enum GcseStatus
         {
             HasOrIsPlanningOnRetaking = 222750000,
+            NotAnswered = 222750001,
         }
 
         [JsonIgnore]

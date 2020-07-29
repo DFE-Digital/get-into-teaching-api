@@ -198,6 +198,32 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
+        public void Candidate_GcseIdIsNull_DefaultsToNotAnswered()
+        {
+            var request = new TeacherTrainingAdviserSignUp()
+            {
+                HasGcseMathsAndEnglishId = null,
+                HasGcseScienceId = null,
+                PlanningToRetakeGcseMathsAndEnglishId = null,
+                PlanningToRetakeGcseScienceId = null,
+            };
+
+            var candidate = request.Candidate;
+
+            var gcses = new int?[]
+            { 
+                candidate.HasGcseEnglishId, 
+                candidate.HasGcseMathsId, 
+                candidate.HasGcseScienceId, 
+                candidate.PlanningToRetakeGcseEnglishId, 
+                candidate.PlanningToRetakeGcseMathsId, 
+                candidate.PlanningToRetakeGcseScienceId
+            };
+
+            gcses.Should().AllBeEquivalentTo((int)Candidate.GcseStatus.NotAnswered);
+        }
+
+        [Fact]
         public void Candidate_ChannelIdWhenCandidateIdIsNull_IsTeacherTrainingAdviser()
         {
             var request = new TeacherTrainingAdviserSignUp() { CandidateId = null };
