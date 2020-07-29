@@ -97,10 +97,18 @@ namespace GetIntoTeachingApiTests.Models
             candidate.DoNotBulkPostalMail.Should().BeTrue();
             candidate.DoNotPostalMail.Should().BeTrue();
             candidate.DoNotSendMm.Should().BeFalse();
+            candidate.EligibilityRulesPassed.Should().Be("false");
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
+
             candidate.Subscriptions.First().TypeId.Should().Be((int)Subscription.ServiceType.MailingList);
+            candidate.Subscriptions.First().DoNotBulkPostalMail.Should().BeTrue();
+            candidate.Subscriptions.First().DoNotPostalMail.Should().BeTrue();
+
             candidate.Subscriptions.Last().TypeId.Should().Be((int)Subscription.ServiceType.Event);
+            candidate.Subscriptions.Last().DoNotBulkPostalMail.Should().BeTrue();
+            candidate.Subscriptions.Last().DoNotPostalMail.Should().BeTrue();
+
             candidate.Qualifications.First().DegreeStatusId.Should().Be(request.DegreeStatusId);
             candidate.Qualifications.First().TypeId.Should().Be((int)CandidateQualification.DegreeType.Degree);
             candidate.Qualifications.First().Id.Should().Be(request.QualificationId);

@@ -84,6 +84,7 @@ namespace GetIntoTeachingApi.Models
                 DoNotBulkPostalMail = true,
                 DoNotPostalMail = true,
                 DoNotSendMm = false,
+                EligibilityRulesPassed = "false",
             };
 
             AddSubscriptions(candidate);
@@ -97,19 +98,29 @@ namespace GetIntoTeachingApi.Models
         {
             candidate.Qualifications.Add(new CandidateQualification()
             {
-                Id = QualificationId, 
-                DegreeStatusId = DegreeStatusId, 
+                Id = QualificationId,
+                DegreeStatusId = DegreeStatusId,
                 TypeId = (int)CandidateQualification.DegreeType.Degree,
             });
         }
 
         private void AddSubscriptions(Candidate candidate)
         {
-            candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.MailingList });
+            candidate.Subscriptions.Add(new Subscription()
+            {
+                TypeId = (int)Subscription.ServiceType.MailingList,
+                DoNotPostalMail = true,
+                DoNotBulkPostalMail = true,
+            });
 
             if (SubscribeToEvents)
             {
-                candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.Event });
+                candidate.Subscriptions.Add(new Subscription()
+                {
+                    TypeId = (int)Subscription.ServiceType.Event,
+                    DoNotBulkPostalMail = true,
+                    DoNotPostalMail = true,
+                });
             }
         }
 
