@@ -15,8 +15,8 @@
 URL=${1}
 EXPECTED_SHA=${2}
 
-# URL="get-into-teaching-api-dev"
-# EXPECTED_SHA="730ff0a"
+#URL="get-into-teaching-api-dev"
+#EXPECTED_SHA="730ff0a"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -24,8 +24,8 @@ NC='\033[0m'
 
 rval=0
 FULL_URL="https://${URL}.london.cloudapps.digital/api/operations/health_check"
-http_status=$(curl -s -I ${FULL_URL} | head -1 | cut -d$' ' -f2)
-if [ "${http_status}" != "405" ] 
+http_status=$(curl -o /dev/null -s -w "%{http_code}"  ${FULL_URL}) 
+if [ "${http_status}" != "200" ] 
 then
 	echo "${RED}HTTP Status ${http_status}${NC}"
 	rval=1
