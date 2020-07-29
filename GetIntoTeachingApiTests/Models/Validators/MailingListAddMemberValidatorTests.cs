@@ -82,9 +82,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_AddressPostcodeIsNull_HasError()
+        public void Validate_AddressPostcodeIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.AddressPostcode, null as string);
+            _validator.ShouldNotHaveValidationErrorFor(request => request.AddressPostcode, null as string);
         }
 
         [Fact]
