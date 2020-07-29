@@ -72,20 +72,15 @@ namespace GetIntoTeachingApi.Models
                 DoNotSendMm = true,
             };
 
-            if (EventId != null)
-            {
-                candidate.TeachingEventRegistrations.Add(new TeachingEventRegistration()
-                {
-                    EventId = (Guid)EventId,
-                    ChannelId = (int)TeachingEventRegistration.Channel.Event,
-                });
-            }
+            AddTeachingEventRegistration(candidate);
+            AcceptPrivacyPolicy(candidate);
+            AddSubscriptions(candidate);
 
-            if (AcceptedPolicyId != null)
-            {
-                candidate.PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)AcceptedPolicyId };
-            }
+            return candidate;
+        }
 
+        private void AddSubscriptions(Candidate candidate)
+        {
             if (SubscribeToEvents)
             {
                 candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.Event });
@@ -95,8 +90,26 @@ namespace GetIntoTeachingApi.Models
             {
                 candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.MailingList });
             }
+        }
 
-            return candidate;
+        private void AddTeachingEventRegistration(Candidate candidate)
+        {
+            if (EventId != null)
+            {
+                candidate.TeachingEventRegistrations.Add(new TeachingEventRegistration()
+                {
+                    EventId = (Guid)EventId,
+                    ChannelId = (int)TeachingEventRegistration.Channel.Event,
+                });
+            }
+        }
+
+        private void AcceptPrivacyPolicy(Candidate candidate)
+        {
+            if (AcceptedPolicyId != null)
+            {
+                candidate.PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)AcceptedPolicyId };
+            }
         }
     }
 }
