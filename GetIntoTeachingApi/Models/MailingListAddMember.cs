@@ -86,20 +86,34 @@ namespace GetIntoTeachingApi.Models
                 DoNotSendMm = false,
             };
 
-            candidate.Qualifications.Add(new CandidateQualification() { Id = QualificationId, DegreeStatusId = DegreeStatusId });
-            candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.MailingList });
+            AddSubscriptions(candidate);
+            AddQualification(candidate);
+            AcceptPrivacyPolicy(candidate);
 
-            if (AcceptedPolicyId != null)
-            {
-                candidate.PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)AcceptedPolicyId };
-            }
+            return candidate;
+        }
+
+        private void AddQualification(Candidate candidate)
+        {
+            candidate.Qualifications.Add(new CandidateQualification() { Id = QualificationId, DegreeStatusId = DegreeStatusId });
+        }
+
+        private void AddSubscriptions(Candidate candidate)
+        {
+            candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.MailingList });
 
             if (SubscribeToEvents)
             {
                 candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.Event });
             }
+        }
 
-            return candidate;
+        private void AcceptPrivacyPolicy(Candidate candidate)
+        {
+            if (AcceptedPolicyId != null)
+            {
+                candidate.PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)AcceptedPolicyId };
+            }
         }
     }
 }

@@ -171,11 +171,11 @@ namespace GetIntoTeachingApiTests.Models
             candidate.ChannelId.Should().BeNull();
             candidate.EligibilityRulesPassed.Should().Be("true");
             candidate.OptOutOfSms.Should().BeFalse();
-            candidate.DoNotBulkEmail.Should().BeFalse();
+            candidate.DoNotBulkEmail.Should().BeTrue();
             candidate.DoNotEmail.Should().BeFalse();
-            candidate.DoNotBulkPostalMail.Should().BeFalse();
-            candidate.DoNotPostalMail.Should().BeFalse();
-            candidate.DoNotSendMm.Should().BeFalse();
+            candidate.DoNotBulkPostalMail.Should().BeTrue();
+            candidate.DoNotPostalMail.Should().BeTrue();
+            candidate.DoNotSendMm.Should().BeTrue();
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
 
@@ -195,6 +195,54 @@ namespace GetIntoTeachingApiTests.Models
             candidate.Qualifications.First().TypeId.Should().Be(request.DegreeTypeId);
 
             candidate.Subscriptions.First().TypeId.Should().Be((int)Subscription.ServiceType.TeacherTrainingAdviser);
+        }
+
+        [Fact]
+        public void Candidate_ReturningToTeaching_CorrectConsent()
+        {
+            var request = new TeacherTrainingAdviserSignUp()
+            {
+                SubjectTaughtId = Guid.NewGuid()
+            };
+
+            var candidate = request.Candidate;
+
+            candidate.DoNotBulkEmail.Should().BeTrue();
+            candidate.DoNotBulkPostalMail.Should().BeTrue();
+            candidate.DoNotPostalMail.Should().BeTrue();
+            candidate.DoNotSendMm.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Candidate_InterestedInTeaching_CorrectConsent()
+        {
+            var request = new TeacherTrainingAdviserSignUp()
+            {
+                SubjectTaughtId = null
+            };
+
+            var candidate = request.Candidate;
+
+            candidate.DoNotBulkEmail.Should().BeFalse();
+            candidate.DoNotBulkPostalMail.Should().BeFalse();
+            candidate.DoNotPostalMail.Should().BeFalse();
+            candidate.DoNotSendMm.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Candidate_ReturningToTeaching_CorrectSubscriptionOptInStatus()
+        {
+            var request = new TeacherTrainingAdviserSignUp()
+            {
+                SubjectTaughtId = Guid.NewGuid()
+            };
+
+            var subscription = request.Candidate.Subscriptions.First();
+
+            subscription.DoNotBulkEmail.Should().BeTrue();
+            subscription.DoNotBulkPostalMail.Should().BeTrue();
+            subscription.DoNotPostalMail.Should().BeTrue();
+            subscription.DoNotSendMm.Should().BeTrue();
         }
 
         [Fact]
