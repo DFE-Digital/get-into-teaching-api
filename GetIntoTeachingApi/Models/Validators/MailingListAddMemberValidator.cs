@@ -10,7 +10,6 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(request => request.FirstName).NotEmpty();
             RuleFor(request => request.LastName).NotEmpty();
             RuleFor(request => request.Email).NotEmpty();
-            RuleFor(request => request.AddressPostcode).NotEmpty();
             RuleFor(request => request.AcceptedPolicyId).NotEmpty();
             RuleFor(request => request.ConsiderationJourneyStageId).NotNull();
 
