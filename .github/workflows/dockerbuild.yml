@@ -131,6 +131,10 @@ jobs:
              TF_VAR_password:          "${{ secrets.GOVUKPAAS_PASSWORD  }}"
              ARM_ACCESS_KEY:           "${{ secrets.DEV_ARM_ACCESS_KEY    }}"
    
+       - name:  Smoke Test
+         run: |
+             tests/confidence/healthcheck.sh "get-into-teaching-api-dev"  "${{steps.sha.outputs.short}}" 
+
        - name:  Send Message to Sentry.io
          if: always()
          uses: sfawcett123/sentry-event@v1
