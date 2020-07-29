@@ -30,7 +30,7 @@ else
 
         json=$(curl -s -X GET ${FULL_URL})
         status=$( echo ${json} | jq -r .status)
-        if [ "${status}" != "healthy" ] 
+        if [ "${status}" == "unhealthy" ] 
         then
         	echo "Application Status is not Healthy"
         	rval=1
