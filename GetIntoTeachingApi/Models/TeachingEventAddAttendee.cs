@@ -64,19 +64,24 @@ namespace GetIntoTeachingApi.Models
                 AddressPostcode = AddressPostcode,
                 Telephone = Telephone,
                 ChannelId = CandidateId == null ? (int?)Candidate.Channel.Event : null,
-                OptOutOfSms = false,
-                DoNotBulkEmail = true,
-                DoNotEmail = false,
-                DoNotBulkPostalMail = true,
-                DoNotPostalMail = true,
-                DoNotSendMm = true,
             };
 
             AddTeachingEventRegistration(candidate);
             AcceptPrivacyPolicy(candidate);
             AddSubscriptions(candidate);
+            ConfigureConsent(candidate);
 
             return candidate;
+        }
+
+        private void ConfigureConsent(Candidate candidate)
+        {
+            candidate.OptOutOfSms = false;
+            candidate.DoNotBulkEmail = !SubscribeToEvents && !SubscribeToMailingList;
+            candidate.DoNotBulkPostalMail = !SubscribeToMailingList;
+            candidate.DoNotEmail = false;
+            candidate.DoNotPostalMail = !SubscribeToMailingList;
+            candidate.DoNotSendMm = !SubscribeToEvents && !SubscribeToMailingList;
         }
 
         private void AddSubscriptions(Candidate candidate)

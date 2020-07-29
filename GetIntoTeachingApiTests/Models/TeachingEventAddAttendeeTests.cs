@@ -66,16 +66,34 @@ namespace GetIntoTeachingApiTests.Models
             candidate.Telephone.Should().Be(request.Telephone);
             candidate.ChannelId.Should().BeNull();
             candidate.OptOutOfSms.Should().BeFalse();
-            candidate.DoNotBulkEmail.Should().BeTrue();
+            candidate.DoNotBulkEmail.Should().BeFalse();
             candidate.DoNotEmail.Should().BeFalse();
-            candidate.DoNotBulkPostalMail.Should().BeTrue();
-            candidate.DoNotPostalMail.Should().BeTrue();
-            candidate.DoNotSendMm.Should().BeTrue();
+            candidate.DoNotBulkPostalMail.Should().BeFalse();
+            candidate.DoNotPostalMail.Should().BeFalse();
+            candidate.DoNotSendMm.Should().BeFalse();
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
             candidate.Subscriptions.First().TypeId.Should().Be((int)Subscription.ServiceType.Event);
             candidate.Subscriptions.Last().TypeId.Should().Be((int)Subscription.ServiceType.MailingList);
             candidate.TeachingEventRegistrations.First().EventId.Should().Equals(request.EventId);
+        }
+
+        [Fact]
+        public void Candidate_SubscribeToMailingListIsFalse_ConsentIsCorrect()
+        {
+            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, SubscribeToEvents = true };
+
+            request.Candidate.DoNotBulkPostalMail.Should().BeTrue();
+            request.Candidate.DoNotPostalMail.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Candidate_SubscribeToMailingListAndEventsAreFalse_ConsentIsCorrect()
+        {
+            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, SubscribeToEvents = false };
+
+            request.Candidate.DoNotBulkEmail.Should().BeTrue();
+            request.Candidate.DoNotSendMm.Should().BeTrue();
         }
 
         [Fact]
