@@ -18,37 +18,33 @@ EXPECTED_SHA=${2}
 #URL="get-into-teaching-api-dev"
 #EXPECTED_SHA="730ff0a"
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-NC='\033[0m' 
-
 rval=0
 FULL_URL="https://${URL}.london.cloudapps.digital/api/operations/health_check"
 http_status=$(curl -o /dev/null -s -w "%{http_code}"  ${FULL_URL}) 
 if [ "${http_status}" != "200" ] 
 then
-	echo "${RED}HTTP Status ${http_status}${NC}"
+	echo "HTTP Status ${http_status}"
 	rval=1
 else
-	echo "${GREEN}HTTP Status is Healthy${NC}"
+	echo "HTTP Status is Healthy"
 
         json=$(curl -s -X GET ${FULL_URL})
         status=$( echo ${json} | jq -r .status)
-        if [ "${status}" != "healthy" ] 
+        if [ "${status}" == "unhealthy" ] 
         then
-        	echo "${RED}Application Status is not Healthy${NC}"
+        	echo "Application Status is Unhealthy"
         	rval=1
         else
-        	echo "${GREEN}Application Status is Healthy${NC}"
+        	echo "Application Status is ${status}"
         fi
 
         sha=$( echo ${json} | jq -r .gitCommitSha)
         if [ "${sha}" != "${EXPECTED_SHA}"  ] 
         then
-        	echo "${RED}SHA is not ${EXPECTED_SHA} ${NC}"
+        	echo "SHA is not ${EXPECTED_SHA}"
         	rval=1
         else
-                echo "${GREEN}SHA is correct${NC}"
+                echo "SHA is correct"
         fi
 fi
 exit ${rval}
