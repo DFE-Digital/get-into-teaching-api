@@ -88,6 +88,10 @@ namespace GetIntoTeachingApiTests.Models
             subscription.TypeId.Should().Be((int)Subscription.ServiceType.MailingList);
             subscription.DoNotBulkPostalMail.Should().BeTrue();
             subscription.DoNotPostalMail.Should().BeTrue();
+            subscription.DoNotBulkEmail.Should().BeFalse();
+            subscription.DoNotSendMm.Should().BeFalse();
+            subscription.DoNotEmail.Should().BeFalse();
+            subscription.OptOutOfSms.Should().BeFalse();
         }
 
         [Fact]
@@ -100,6 +104,10 @@ namespace GetIntoTeachingApiTests.Models
             subscription.TypeId.Should().Be((int)Subscription.ServiceType.Event);
             subscription.DoNotBulkPostalMail.Should().BeTrue();
             subscription.DoNotPostalMail.Should().BeTrue();
+            subscription.DoNotBulkEmail.Should().BeFalse();
+            subscription.DoNotSendMm.Should().BeFalse();
+            subscription.DoNotEmail.Should().BeFalse();
+            subscription.OptOutOfSms.Should().BeFalse();
         }
 
         [Fact]
@@ -114,6 +122,8 @@ namespace GetIntoTeachingApiTests.Models
             subscription.DoNotPostalMail.Should().BeTrue();
             subscription.DoNotBulkEmail.Should().BeTrue();
             subscription.DoNotSendMm.Should().BeTrue();
+            subscription.DoNotEmail.Should().BeFalse();
+            subscription.OptOutOfSms.Should().BeFalse();
         }
 
         [Fact]

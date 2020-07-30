@@ -230,6 +230,25 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
+        public void Candidate_NotReturningToTeaching_CorrectSubscriptionOptInStatus()
+        {
+            var request = new TeacherTrainingAdviserSignUp()
+            {
+                SubjectTaughtId = null
+            };
+
+            var subscription = request.Candidate.Subscriptions.First();
+
+            subscription.TypeId.Should().Be((int)Subscription.ServiceType.TeacherTrainingAdviser);
+            subscription.DoNotBulkEmail.Should().BeFalse();
+            subscription.DoNotBulkPostalMail.Should().BeFalse();
+            subscription.DoNotPostalMail.Should().BeFalse();
+            subscription.DoNotSendMm.Should().BeFalse();
+            subscription.DoNotEmail.Should().BeFalse();
+            subscription.OptOutOfSms.Should().BeFalse();
+        }
+
+        [Fact]
         public void Candidate_ReturningToTeaching_CorrectSubscriptionOptInStatus()
         {
             var request = new TeacherTrainingAdviserSignUp()
@@ -239,10 +258,13 @@ namespace GetIntoTeachingApiTests.Models
 
             var subscription = request.Candidate.Subscriptions.First();
 
+            subscription.TypeId.Should().Be((int)Subscription.ServiceType.TeacherTrainingAdviser);
             subscription.DoNotBulkEmail.Should().BeTrue();
             subscription.DoNotBulkPostalMail.Should().BeTrue();
             subscription.DoNotPostalMail.Should().BeTrue();
             subscription.DoNotSendMm.Should().BeTrue();
+            subscription.DoNotEmail.Should().BeFalse();
+            subscription.OptOutOfSms.Should().BeFalse();
         }
 
         [Fact]
