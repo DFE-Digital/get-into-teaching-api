@@ -86,14 +86,23 @@ namespace GetIntoTeachingApi.Models
 
         private void AddSubscriptions(Candidate candidate)
         {
-            if (SubscribeToEvents)
+            candidate.Subscriptions.Add(new Subscription()
             {
-                candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.Event });
-            }
+                TypeId = (int)Subscription.ServiceType.Event,
+                DoNotBulkPostalMail = true,
+                DoNotPostalMail = true,
+                DoNotBulkEmail = !SubscribeToEvents,
+                DoNotSendMm = !SubscribeToEvents,
+            });
 
             if (SubscribeToMailingList)
             {
-                candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.MailingList });
+                candidate.Subscriptions.Add(new Subscription()
+                {
+                    TypeId = (int)Subscription.ServiceType.MailingList,
+                    DoNotBulkPostalMail = true,
+                    DoNotPostalMail = true,
+                });
             }
         }
 
