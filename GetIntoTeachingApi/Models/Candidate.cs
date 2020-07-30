@@ -185,6 +185,11 @@ namespace GetIntoTeachingApi.Models
         {
         }
 
+        public bool HasActiveSubscriptionOfType(Subscription.ServiceType type)
+        {
+            return ActiveSubscriptions().Any(s => s.TypeId == (int)type);
+        }
+
         public bool IsReturningToTeaching()
         {
             return PastTeachingPositions.Count > 0;
@@ -233,6 +238,11 @@ namespace GetIntoTeachingApi.Models
                 default:
                     return true;
             }
+        }
+
+        private IEnumerable<Subscription> ActiveSubscriptions()
+        {
+            return Subscriptions.Where(s => s.StatusId == (int)Subscription.SubscriptionStatus.Active);
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Text.Json.Serialization;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -49,8 +48,8 @@ namespace GetIntoTeachingApi.Models
             AddressPostcode = candidate.AddressPostcode;
             Telephone = candidate.Telephone;
 
-            AlreadySubscribedToMailingList = candidate.Subscriptions.Any(s => s.TypeId == (int)Subscription.ServiceType.MailingList);
-            AlreadySubscribedToEvents = candidate.Subscriptions.Any(s => s.TypeId == (int)Subscription.ServiceType.Event);
+            AlreadySubscribedToMailingList = candidate.HasActiveSubscriptionOfType(Subscription.ServiceType.MailingList);
+            AlreadySubscribedToEvents = candidate.HasActiveSubscriptionOfType(Subscription.ServiceType.Event);
         }
 
         private Candidate CreateCandidate()
