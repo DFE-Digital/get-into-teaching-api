@@ -50,6 +50,9 @@ HANGFIRE_INSTANCE_NAME=****
 
 # Sentry
 SENTRY_URL=****
+
+# Google
+GOOGLE_API_KEY=****
 ```
 
 The Postgres connections (for Hangfire and our database) are setup dynamically from the `VCAP_SERVICES` environment variable provided by GOV.UK PaaS and not used in development (they are replaced by in-memory alternatives by default). If you want to connect to a Postgres instance running in PaaS, such as the test environment instance, you can do so by creating a conduit to it using Cloud Foundry:
@@ -137,6 +140,10 @@ Prometheous and Grafana have been added to gather and display Metric information
 ### HTTP Caching
 
 The content that we cache in Postgres that originates from the CRM is served with HTTP ETag cache headers. There is a `CrmETag` annotation that can be added to an action to apply the appropriate cache headers to the response and check the request for the `If-None-Match` header. The ETag value changes when we sync new content from the CRM, meaning if the `If-None-Match` header matches the current `ETag` value we don't even need to fulfill the request, instead returning `304 Not Modified' immediately.
+
+### Postcode Geocoding
+
+We use postcodes to support searching for events around a given location. The application pulls a [free CSV data set](https://www.freemaptools.com/download-uk-postcode-lat-lng.htm) weekly and caches it in Postgres; this makes geocoding 99% of postcodes very fast. For the other 1% of postcodes (recent housing developments, for example) we fallback to Google APIs for geocoding.
 
 ## CRM Changes
 

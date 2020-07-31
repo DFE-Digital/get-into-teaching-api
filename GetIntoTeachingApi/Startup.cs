@@ -48,6 +48,7 @@ namespace GetIntoTeachingApi
 
             services.AddSingleton<IMetricService, MetricService>();
             services.AddSingleton<INotificationClientAdapter, NotificationClientAdapter>();
+            services.AddSingleton<IGeocodeClientAdapter, GeocodeClientAdapter>();
             services.AddSingleton<ICandidateAccessTokenService, CandidateAccessTokenService>();
             services.AddSingleton<INotifyService, NotifyService>();
             services.AddSingleton<IHangfireService, HangfireService>();

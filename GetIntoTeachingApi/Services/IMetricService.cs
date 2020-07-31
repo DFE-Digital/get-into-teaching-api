@@ -8,5 +8,6 @@ namespace GetIntoTeachingApi.Services
         Histogram LocationSyncDuration { get; }
         Histogram LocationBatchDuration { get; }
         Gauge HangfireJobs { get; }
+        Counter GoogleApiCalls { get; }
     }
 }

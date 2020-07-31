@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Utils;
@@ -20,10 +21,12 @@ namespace GetIntoTeachingApi.Services
         // John O'Groats and Lands End.
         private const double ErrorMarginInKm = 25;
         private readonly GetIntoTeachingDbContext _dbContext;
+        private readonly IGeocodeClientAdapter _geocodeClient;
 
-        public Store(GetIntoTeachingDbContext dbContext)
+        public Store(GetIntoTeachingDbContext dbContext, IGeocodeClientAdapter geocodeClient)
         {
             _dbContext = dbContext;
+            _geocodeClient = geocodeClient;
         }
 
         public async Task<string> CheckStatusAsync()
@@ -244,8 +247,21 @@ namespace GetIntoTeachingApi.Services
         private async Task<Point> CoordinateForPostcode(string postcode)
         {
             var sanitizedPostcode = Location.SanitizePostcode(postcode);
+
+            var coordinate = await GeocodePostcodeWithLocalLookup(sanitizedPostcode);
+
+            if (coordinate != null)
+            {
+                return coordinate;
+            }
+
+            return await _geocodeClient.GeocodePostcodeAsync(sanitizedPostcode);
+        }
+
+        private async Task<Point> GeocodePostcodeWithLocalLookup(string sanitizedPostcode)
+        {
             return await _dbContext.Locations.Where(l => l.Postcode == sanitizedPostcode)
-                .Select(l => l.Coordinate).FirstOrDefaultAsync();
+                            .Select(l => l.Coordinate).FirstOrDefaultAsync();
         }
     }
 }
