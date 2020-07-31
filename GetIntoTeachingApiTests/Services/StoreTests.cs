@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
@@ -20,10 +21,12 @@ namespace GetIntoTeachingApiTests.Services
     {
         private static readonly Guid FindEventGuid = new Guid("ff927e43-5650-44aa-859a-8297139b8eee");
         private readonly IStore _store;
+        private readonly Mock<IGeocodeClientAdapter> _mockGeocodeClient;
 
         public StoreTests()
         {
-            _store = new Store(DbContext);
+            _mockGeocodeClient = new Mock<IGeocodeClientAdapter>();
+            _store = new Store(DbContext, _mockGeocodeClient.Object);
         }
 
         [Fact]
@@ -66,8 +69,8 @@ namespace GetIntoTeachingApiTests.Services
 
             var ids = DbContext.TeachingEvents.Select(te => te.Id);
             ids.Should().BeEquivalentTo(mockTeachingEvents.Select(te => te.Id));
-            DbContext.TeachingEvents.Count().Should().Be(6);
-            DbContext.TeachingEventBuildings.Count().Should().Be(4);
+            DbContext.TeachingEvents.Count().Should().Be(7);
+            DbContext.TeachingEventBuildings.Count().Should().Be(5);
         }
 
         [Fact]
@@ -88,8 +91,8 @@ namespace GetIntoTeachingApiTests.Services
             teachingEvents.Select(te => te.Name).ToList().ForEach(name => name.Should().Contain("Updated"));
             teachingEvents.Where(te => te.Building != null).Select(te => te.Building.AddressLine1).ToList()
                 .ForEach(line1 => line1.Should().Contain("Updated"));
-            DbContext.TeachingEvents.Count().Should().Be(6);
-            DbContext.TeachingEventBuildings.Count().Should().Be(4);
+            DbContext.TeachingEvents.Count().Should().Be(7);
+            DbContext.TeachingEventBuildings.Count().Should().Be(5);
         }
 
         [Fact]
@@ -117,6 +120,24 @@ namespace GetIntoTeachingApiTests.Services
 
             var teachingEvent = DbContext.TeachingEvents.Include(te => te.Building).First(te => te.Id == FindEventGuid);
             teachingEvent.Building.Coordinate.Should().Be(new Point(new Coordinate(-3.3587, 56.02748)));
+        }
+
+        [Fact]
+        public async void SyncAsync_FallbackToGeocodeClient_PopulatesTeachingEventBuildingCoordinates()
+        {
+            SeedMockLocations();
+            var mockCrm = new Mock<ICrmService>();
+            mockCrm.Setup(m => m.GetTeachingEvents()).Returns(MockTeachingEvents);
+            var postcode = "TE7 9IN";
+            var coordinate = new Point(1, 2);
+            _mockGeocodeClient.Setup(m => m.GeocodePostcodeAsync(Location.SanitizePostcode(postcode)))
+                .ReturnsAsync(coordinate);
+
+            await _store.SyncAsync(mockCrm.Object);
+
+            var teachingEvent = DbContext.TeachingEvents.Include(te => te.Building)
+                .First(te => te.Building.AddressPostcode == postcode);
+            teachingEvent.Building.Coordinate.Should().Be(coordinate);
         }
 
         [Fact]
@@ -218,7 +239,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void Sync_UpdatesExistingPickListItems()
+        public async void SyncAsync_UpdatesExistingPickListItems()
         {
             var updatedYears = (await SeedMockInitialTeacherTrainingYearsAsync()).ToList();
             updatedYears.ForEach(c => c.Value += "Updated");
@@ -333,7 +354,7 @@ namespace GetIntoTeachingApiTests.Services
             var result = await _store.SearchTeachingEventsAsync(request);
 
             result.Select(e => e.Name).Should().BeEquivalentTo(
-                new string[] { "Event 2", "Event 4", "Event 1", "Event 3", "Event 5", "Event 6" },
+                new string[] { "Event 2", "Event 4", "Event 1", "Event 3", "Event 5", "Event 6", "Event 7" },
                 options => options.WithStrictOrdering());
         }
 
@@ -392,7 +413,7 @@ namespace GetIntoTeachingApiTests.Services
 
             var result = await _store.SearchTeachingEventsAsync(request);
 
-            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 3", "Event 5", "Event 6" },
+            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 3", "Event 5", "Event 6", "Event 7" },
                 options => options.WithStrictOrdering());
         }
 
@@ -541,7 +562,20 @@ namespace GetIntoTeachingApiTests.Services
                 }
             };
 
-            return new TeachingEvent[] { event1, event2, event3, event4, event5, event6 };
+            var event7 = new TeachingEvent()
+            {
+                Id = Guid.NewGuid(),
+                ReadableId = "7",
+                Name = "Event 7",
+                StartAt = DateTime.Now.AddYears(1),
+                Building = new TeachingEventBuilding()
+                {
+                    Id = Guid.NewGuid(),
+                    AddressPostcode = "TE7 9IN"
+                }
+            };
+
+            return new TeachingEvent[] { event1, event2, event3, event4, event5, event6, event7 };
         }
 
         private async Task<IEnumerable<TeachingEvent>> SeedMockTeachingEventsAsync()
