@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using FluentValidation;
 using FluentValidation.Validators;
 using GetIntoTeachingApi.Services;
@@ -10,7 +9,6 @@ namespace GetIntoTeachingApi.Models.Validators
 {
     public class CandidateValidator : AbstractValidator<Candidate>
     {
-        private const string PostcodeRegex = @"^([A-Z][A-HJ-Y]?\d[A-Z\d]? ?\d[A-Z]{2}|GIR ?0A{2})$";
         private readonly IStore _store;
         private readonly string[] _validEligibilityRulesPassedValues = new[] { "true", "false" };
 
@@ -26,7 +24,7 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.AddressLine1).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressLine2).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressCity).MaximumLength(128);
-            RuleFor(candidate => candidate.AddressPostcode).MaximumLength(40).Matches(new Regex(PostcodeRegex, RegexOptions.IgnoreCase));
+            RuleFor(candidate => candidate.AddressPostcode).MaximumLength(40).Matches(Location.PostcodeRegex);
             RuleFor(candidate => candidate.EligibilityRulesPassed)
                 .Must(value => _validEligibilityRulesPassedValues.Contains(value))
                 .Unless(candidate => candidate.EligibilityRulesPassed == null)

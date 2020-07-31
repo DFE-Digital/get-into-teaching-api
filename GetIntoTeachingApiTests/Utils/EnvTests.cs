@@ -206,5 +206,16 @@ namespace GetIntoTeachingApiTests.Utils
 
             Environment.SetEnvironmentVariable("SHARED_SECRET", previous);
         }
+
+        [Fact]
+        public void GoogleApiKey_ReturnsCorrectly()
+        {
+            var previous = Environment.GetEnvironmentVariable("GOOGLE_API_KEY");
+            Environment.SetEnvironmentVariable("GOOGLE_API_KEY", "google-api-key");
+
+            _env.GoogleApiKey.Should().Be("google-api-key");
+
+            Environment.SetEnvironmentVariable("GOOGLE_API_KEY", previous);
+        }
     }
 }
