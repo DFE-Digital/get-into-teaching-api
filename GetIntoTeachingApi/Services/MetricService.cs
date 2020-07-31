@@ -13,7 +13,7 @@ namespace GetIntoTeachingApi.Services
         private static readonly Gauge _hangfireJobs = Metrics
             .CreateGauge("api_hangfire_jobs", "Gauge number of Hangifre jobs.", "state");
         private static readonly Counter _googleApiCalls = Metrics
-            .CreateCounter("api_google_pai_calls", "Number of Google API calls.");
+            .CreateCounter("api_google_api_calls", "Number of Google API calls.");
 
         public Histogram CrmSyncDuration => _crmSyncDuration;
         public Histogram LocationSyncDuration => _locationSyncDuration;

@@ -123,20 +123,16 @@ namespace GetIntoTeachingApi.Services
             return await _dbContext.TeachingEvents.FirstOrDefaultAsync(teachingEvent => teachingEvent.ReadableId == readableId);
         }
 
-        public bool IsValidPostcode(string postcode)
-        {
-            if (string.IsNullOrEmpty(postcode))
-            {
-                return false;
-            }
-
-            return _dbContext.Locations.Any(l => l.Postcode == Location.SanitizePostcode(postcode));
-        }
-
         private async Task<IEnumerable<TeachingEvent>> FilterTeachingEventsByRadius(
             IQueryable<TeachingEvent> teachingEvents, TeachingEventSearchRequest request)
         {
             var origin = await CoordinateForPostcode(request.Postcode);
+
+            // If we can't locate them, return no results.
+            if (origin == null)
+            {
+                return new List<TeachingEvent>();
+            }
 
             // Exclude events we don't have a location for.
             teachingEvents = teachingEvents.Where(te => te.Building != null && te.Building.Coordinate != null);

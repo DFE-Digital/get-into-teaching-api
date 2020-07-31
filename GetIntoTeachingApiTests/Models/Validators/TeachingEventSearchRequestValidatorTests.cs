@@ -30,8 +30,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 .Setup(mock => mock.GetPickListItems("msevtmgt_event", "dfe_event_type"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
 
-            _mockStore.Setup(mock => mock.IsValidPostcode("KY11 9HF")).Returns(true);
-
             var request = new TeachingEventSearchRequest()
             {
                 Postcode = "KY11 9HF",
@@ -71,7 +69,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
             var result = _validator.TestValidate(request);
 
-            result.ShouldHaveValidationErrorFor(request => request.Postcode).WithErrorMessage("Must be a valid postcode.");
+            result.ShouldHaveValidationErrorFor(request => request.Postcode);
         }
 
         [Fact]
@@ -90,6 +88,26 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_PostcodeIsEmpty_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(request => request.Postcode, "");
+        }
+
+        [Theory]
+        [InlineData("KY119YU", false)]
+        [InlineData("KY11 9YU", false)]
+        [InlineData("CA48LE", false)]
+        [InlineData("CA4 8LE", false)]
+        [InlineData("ky119yu", false)]
+        [InlineData("KY999 9YU", true)]
+        [InlineData("AZ1VS1", true)]
+        public void Validate_PostcodeFormat_ValidatesCorrectly(string postcode, bool hasError)
+        {
+            if (hasError)
+            {
+                _validator.ShouldHaveValidationErrorFor(request => request.Postcode, postcode);
+            }
+            else
+            {
+                _validator.ShouldNotHaveValidationErrorFor(request => request.Postcode, postcode);
+            }
         }
 
         [Fact]
