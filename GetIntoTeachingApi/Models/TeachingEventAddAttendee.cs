@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Text.Json.Serialization;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -49,8 +48,8 @@ namespace GetIntoTeachingApi.Models
             AddressPostcode = candidate.AddressPostcode;
             Telephone = candidate.Telephone;
 
-            AlreadySubscribedToMailingList = candidate.Subscriptions.Any(s => s.TypeId == (int)Subscription.ServiceType.MailingList);
-            AlreadySubscribedToEvents = candidate.Subscriptions.Any(s => s.TypeId == (int)Subscription.ServiceType.Event);
+            AlreadySubscribedToMailingList = candidate.HasActiveSubscriptionOfType(Subscription.ServiceType.MailingList);
+            AlreadySubscribedToEvents = candidate.HasActiveSubscriptionOfType(Subscription.ServiceType.Event);
         }
 
         private Candidate CreateCandidate()
@@ -64,14 +63,50 @@ namespace GetIntoTeachingApi.Models
                 AddressPostcode = AddressPostcode,
                 Telephone = Telephone,
                 ChannelId = CandidateId == null ? (int?)Candidate.Channel.Event : null,
-                OptOutOfSms = false,
-                DoNotBulkEmail = true,
-                DoNotEmail = false,
-                DoNotBulkPostalMail = true,
-                DoNotPostalMail = true,
-                DoNotSendMm = true,
             };
 
+            AddTeachingEventRegistration(candidate);
+            AcceptPrivacyPolicy(candidate);
+            AddSubscriptions(candidate);
+            ConfigureConsent(candidate);
+
+            return candidate;
+        }
+
+        private void ConfigureConsent(Candidate candidate)
+        {
+            candidate.OptOutOfSms = false;
+            candidate.DoNotBulkEmail = !SubscribeToEvents && !SubscribeToMailingList;
+            candidate.DoNotBulkPostalMail = !SubscribeToMailingList;
+            candidate.DoNotEmail = false;
+            candidate.DoNotPostalMail = !SubscribeToMailingList;
+            candidate.DoNotSendMm = !SubscribeToEvents && !SubscribeToMailingList;
+        }
+
+        private void AddSubscriptions(Candidate candidate)
+        {
+            candidate.Subscriptions.Add(new Subscription()
+            {
+                TypeId = (int)Subscription.ServiceType.Event,
+                DoNotBulkPostalMail = true,
+                DoNotPostalMail = true,
+                DoNotBulkEmail = !SubscribeToEvents,
+                DoNotSendMm = !SubscribeToEvents,
+            });
+
+            if (SubscribeToMailingList)
+            {
+                candidate.Subscriptions.Add(new Subscription()
+                {
+                    TypeId = (int)Subscription.ServiceType.MailingList,
+                    DoNotBulkPostalMail = true,
+                    DoNotPostalMail = true,
+                });
+            }
+        }
+
+        private void AddTeachingEventRegistration(Candidate candidate)
+        {
             if (EventId != null)
             {
                 candidate.TeachingEventRegistrations.Add(new TeachingEventRegistration()
@@ -80,23 +115,14 @@ namespace GetIntoTeachingApi.Models
                     ChannelId = (int)TeachingEventRegistration.Channel.Event,
                 });
             }
+        }
 
+        private void AcceptPrivacyPolicy(Candidate candidate)
+        {
             if (AcceptedPolicyId != null)
             {
                 candidate.PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)AcceptedPolicyId };
             }
-
-            if (SubscribeToEvents)
-            {
-                candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.Event });
-            }
-
-            if (SubscribeToMailingList)
-            {
-                candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.MailingList });
-            }
-
-            return candidate;
         }
     }
 }

@@ -61,8 +61,8 @@ namespace GetIntoTeachingApi.Models
             AddressPostcode = candidate.AddressPostcode;
             Telephone = candidate.Telephone;
 
-            AlreadySubscribedToMailingList = candidate.Subscriptions.Any(s => s.TypeId == (int)Subscription.ServiceType.MailingList);
-            AlreadySubscribedToEvents = candidate.Subscriptions.Any(s => s.TypeId == (int)Subscription.ServiceType.Event);
+            AlreadySubscribedToMailingList = candidate.HasActiveSubscriptionOfType(Subscription.ServiceType.MailingList);
+            AlreadySubscribedToEvents = candidate.HasActiveSubscriptionOfType(Subscription.ServiceType.Event);
         }
 
         private Candidate CreateCandidate()
@@ -84,22 +84,52 @@ namespace GetIntoTeachingApi.Models
                 DoNotBulkPostalMail = true,
                 DoNotPostalMail = true,
                 DoNotSendMm = false,
+                EligibilityRulesPassed = "false",
             };
 
-            candidate.Qualifications.Add(new CandidateQualification() { Id = QualificationId, DegreeStatusId = DegreeStatusId });
-            candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.MailingList });
+            AddSubscriptions(candidate);
+            AddQualification(candidate);
+            AcceptPrivacyPolicy(candidate);
 
+            return candidate;
+        }
+
+        private void AddQualification(Candidate candidate)
+        {
+            candidate.Qualifications.Add(new CandidateQualification()
+            {
+                Id = QualificationId,
+                DegreeStatusId = DegreeStatusId,
+                TypeId = (int)CandidateQualification.DegreeType.Degree,
+            });
+        }
+
+        private void AddSubscriptions(Candidate candidate)
+        {
+            candidate.Subscriptions.Add(new Subscription()
+            {
+                TypeId = (int)Subscription.ServiceType.MailingList,
+                DoNotPostalMail = true,
+                DoNotBulkPostalMail = true,
+            });
+
+            if (SubscribeToEvents)
+            {
+                candidate.Subscriptions.Add(new Subscription()
+                {
+                    TypeId = (int)Subscription.ServiceType.Event,
+                    DoNotBulkPostalMail = true,
+                    DoNotPostalMail = true,
+                });
+            }
+        }
+
+        private void AcceptPrivacyPolicy(Candidate candidate)
+        {
             if (AcceptedPolicyId != null)
             {
                 candidate.PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)AcceptedPolicyId };
             }
-
-            if (SubscribeToEvents)
-            {
-                candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.Event });
-            }
-
-            return candidate;
         }
     }
 }

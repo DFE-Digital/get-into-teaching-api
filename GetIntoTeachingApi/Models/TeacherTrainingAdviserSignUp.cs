@@ -85,7 +85,7 @@ namespace GetIntoTeachingApi.Models
             AddressCity = candidate.AddressCity;
             AddressPostcode = candidate.AddressPostcode;
 
-            AlreadySubscribedToTeacherTrainingAdviser = candidate.Subscriptions.Any(s => s.TypeId == (int)Subscription.ServiceType.TeacherTrainingAdviser);
+            AlreadySubscribedToTeacherTrainingAdviser = candidate.HasActiveSubscriptionOfType(Subscription.ServiceType.TeacherTrainingAdviser);
 
             var latestQualification = candidate.Qualifications.OrderByDescending(q => q.CreatedAt).FirstOrDefault();
 
@@ -137,19 +137,56 @@ namespace GetIntoTeachingApi.Models
                 AdviserRequirementId = null,
                 AdviserEligibilityId = null,
                 AssignmentStatusId = null,
-                OptOutOfSms = false,
-                DoNotBulkEmail = false,
-                DoNotEmail = false,
-                DoNotBulkPostalMail = false,
-                DoNotPostalMail = false,
-                DoNotSendMm = false,
             };
 
+            ConfigureGcseStatus(candidate);
+            AcceptPrivacyPolicy(candidate);
+            SchedulePhoneCall(candidate);
+            AddQualification(candidate);
+            AddPastTeachingPosition(candidate);
+            SetAdviserEligibility(candidate);
+            SetType(candidate);
+            AddSubscription(candidate);
+            ConfigureConsent(candidate);
+
+            return candidate;
+        }
+
+        private void ConfigureGcseStatus(Candidate candidate)
+        {
+            if (HasGcseMathsAndEnglishId == null)
+            {
+                candidate.HasGcseMathsId = (int)Candidate.GcseStatus.NotAnswered;
+                candidate.HasGcseEnglishId = (int)Candidate.GcseStatus.NotAnswered;
+            }
+
+            if (HasGcseScienceId == null)
+            {
+                candidate.HasGcseScienceId = (int)Candidate.GcseStatus.NotAnswered;
+            }
+
+            if (PlanningToRetakeGcseMathsAndEnglishId == null)
+            {
+                candidate.PlanningToRetakeGcseMathsId = (int)Candidate.GcseStatus.NotAnswered;
+                candidate.PlanningToRetakeGcseEnglishId = (int)Candidate.GcseStatus.NotAnswered;
+            }
+
+            if (PlanningToRetakeGcseScienceId == null)
+            {
+                candidate.PlanningToRetakeGcseScienceId = (int)Candidate.GcseStatus.NotAnswered;
+            }
+        }
+
+        private void AcceptPrivacyPolicy(Candidate candidate)
+        {
             if (AcceptedPolicyId != null)
             {
                 candidate.PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)AcceptedPolicyId };
             }
+        }
 
+        private void SchedulePhoneCall(Candidate candidate)
+        {
             if (PhoneCallScheduledAt != null)
             {
                 candidate.EligibilityRulesPassed = "true";
@@ -161,8 +198,11 @@ namespace GetIntoTeachingApi.Models
                     ChannelId = (int)PhoneCall.Channel.CallbackRequest,
                 };
             }
+        }
 
-            if (UkDegreeGradeId != null || DegreeStatusId != null || DegreeSubject != null || DegreeTypeId != null)
+        private void AddQualification(Candidate candidate)
+        {
+            if (ContainsQualification())
             {
                 candidate.Qualifications.Add(new CandidateQualification()
                 {
@@ -173,8 +213,11 @@ namespace GetIntoTeachingApi.Models
                     TypeId = DegreeTypeId,
                 });
             }
+        }
 
-            if (SubjectTaughtId != null)
+        private void AddPastTeachingPosition(Candidate candidate)
+        {
+            if (ContainsPastTeachingPosition())
             {
                 candidate.PastTeachingPositions.Add(new CandidatePastTeachingPosition()
                 {
@@ -185,7 +228,10 @@ namespace GetIntoTeachingApi.Models
 
                 candidate.PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary;
             }
+        }
 
+        private void SetAdviserEligibility(Candidate candidate)
+        {
             var eligibleForAnAdviser = DegreeTypeId == (int)CandidateQualification.DegreeType.Degree || candidate.IsReturningToTeaching();
             if (eligibleForAnAdviser)
             {
@@ -193,7 +239,10 @@ namespace GetIntoTeachingApi.Models
                 candidate.AdviserEligibilityId = (int)Candidate.AdviserEligibility.Yes;
                 candidate.AdviserRequirementId = (int)Candidate.AdviserRequirement.Yes;
             }
+        }
 
+        private void SetType(Candidate candidate)
+        {
             if (candidate.IsReturningToTeaching())
             {
                 candidate.TypeId = (int)Candidate.Type.ReturningToTeacherTraining;
@@ -202,10 +251,30 @@ namespace GetIntoTeachingApi.Models
             {
                 candidate.TypeId = (int)Candidate.Type.InterestedInTeacherTraining;
             }
+        }
 
-            candidate.Subscriptions.Add(new Subscription() { TypeId = (int)Subscription.ServiceType.TeacherTrainingAdviser });
+        private void ConfigureConsent(Candidate candidate)
+        {
+            candidate.OptOutOfSms = false;
+            candidate.DoNotBulkEmail = candidate.IsReturningToTeaching();
+            candidate.DoNotEmail = false;
+            candidate.DoNotBulkPostalMail = candidate.IsReturningToTeaching();
+            candidate.DoNotPostalMail = candidate.IsReturningToTeaching();
+            candidate.DoNotSendMm = candidate.IsReturningToTeaching();
+        }
 
-            return candidate;
+        private void AddSubscription(Candidate candidate)
+        {
+            var subscription = new Subscription()
+            {
+                TypeId = (int)Subscription.ServiceType.TeacherTrainingAdviser,
+                DoNotBulkEmail = candidate.IsReturningToTeaching(),
+                DoNotBulkPostalMail = candidate.IsReturningToTeaching(),
+                DoNotPostalMail = candidate.IsReturningToTeaching(),
+                DoNotSendMm = candidate.IsReturningToTeaching(),
+            };
+
+            candidate.Subscriptions.Add(subscription);
         }
 
         private int? DestinationForTelephone(string telephone)
@@ -223,6 +292,16 @@ namespace GetIntoTeachingApi.Models
             }
 
             return (int)PhoneCall.Destination.Uk;
+        }
+
+        private bool ContainsQualification()
+        {
+            return UkDegreeGradeId != null || DegreeStatusId != null || DegreeSubject != null || DegreeTypeId != null;
+        }
+
+        private bool ContainsPastTeachingPosition()
+        {
+            return SubjectTaughtId != null;
         }
     }
 }

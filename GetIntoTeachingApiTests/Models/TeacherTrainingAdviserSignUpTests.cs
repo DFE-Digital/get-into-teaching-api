@@ -171,11 +171,11 @@ namespace GetIntoTeachingApiTests.Models
             candidate.ChannelId.Should().BeNull();
             candidate.EligibilityRulesPassed.Should().Be("true");
             candidate.OptOutOfSms.Should().BeFalse();
-            candidate.DoNotBulkEmail.Should().BeFalse();
+            candidate.DoNotBulkEmail.Should().BeTrue();
             candidate.DoNotEmail.Should().BeFalse();
-            candidate.DoNotBulkPostalMail.Should().BeFalse();
-            candidate.DoNotPostalMail.Should().BeFalse();
-            candidate.DoNotSendMm.Should().BeFalse();
+            candidate.DoNotBulkPostalMail.Should().BeTrue();
+            candidate.DoNotPostalMail.Should().BeTrue();
+            candidate.DoNotSendMm.Should().BeTrue();
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
 
@@ -195,6 +195,102 @@ namespace GetIntoTeachingApiTests.Models
             candidate.Qualifications.First().TypeId.Should().Be(request.DegreeTypeId);
 
             candidate.Subscriptions.First().TypeId.Should().Be((int)Subscription.ServiceType.TeacherTrainingAdviser);
+        }
+
+        [Fact]
+        public void Candidate_ReturningToTeaching_CorrectConsent()
+        {
+            var request = new TeacherTrainingAdviserSignUp()
+            {
+                SubjectTaughtId = Guid.NewGuid()
+            };
+
+            var candidate = request.Candidate;
+
+            candidate.DoNotBulkEmail.Should().BeTrue();
+            candidate.DoNotBulkPostalMail.Should().BeTrue();
+            candidate.DoNotPostalMail.Should().BeTrue();
+            candidate.DoNotSendMm.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Candidate_InterestedInTeaching_CorrectConsent()
+        {
+            var request = new TeacherTrainingAdviserSignUp()
+            {
+                SubjectTaughtId = null
+            };
+
+            var candidate = request.Candidate;
+
+            candidate.DoNotBulkEmail.Should().BeFalse();
+            candidate.DoNotBulkPostalMail.Should().BeFalse();
+            candidate.DoNotPostalMail.Should().BeFalse();
+            candidate.DoNotSendMm.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Candidate_NotReturningToTeaching_CorrectSubscriptionOptInStatus()
+        {
+            var request = new TeacherTrainingAdviserSignUp()
+            {
+                SubjectTaughtId = null
+            };
+
+            var subscription = request.Candidate.Subscriptions.First();
+
+            subscription.TypeId.Should().Be((int)Subscription.ServiceType.TeacherTrainingAdviser);
+            subscription.DoNotBulkEmail.Should().BeFalse();
+            subscription.DoNotBulkPostalMail.Should().BeFalse();
+            subscription.DoNotPostalMail.Should().BeFalse();
+            subscription.DoNotSendMm.Should().BeFalse();
+            subscription.DoNotEmail.Should().BeFalse();
+            subscription.OptOutOfSms.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Candidate_ReturningToTeaching_CorrectSubscriptionOptInStatus()
+        {
+            var request = new TeacherTrainingAdviserSignUp()
+            {
+                SubjectTaughtId = Guid.NewGuid()
+            };
+
+            var subscription = request.Candidate.Subscriptions.First();
+
+            subscription.TypeId.Should().Be((int)Subscription.ServiceType.TeacherTrainingAdviser);
+            subscription.DoNotBulkEmail.Should().BeTrue();
+            subscription.DoNotBulkPostalMail.Should().BeTrue();
+            subscription.DoNotPostalMail.Should().BeTrue();
+            subscription.DoNotSendMm.Should().BeTrue();
+            subscription.DoNotEmail.Should().BeFalse();
+            subscription.OptOutOfSms.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Candidate_GcseIdIsNull_DefaultsToNotAnswered()
+        {
+            var request = new TeacherTrainingAdviserSignUp()
+            {
+                HasGcseMathsAndEnglishId = null,
+                HasGcseScienceId = null,
+                PlanningToRetakeGcseMathsAndEnglishId = null,
+                PlanningToRetakeGcseScienceId = null,
+            };
+
+            var candidate = request.Candidate;
+
+            var gcses = new int?[]
+            { 
+                candidate.HasGcseEnglishId, 
+                candidate.HasGcseMathsId, 
+                candidate.HasGcseScienceId, 
+                candidate.PlanningToRetakeGcseEnglishId, 
+                candidate.PlanningToRetakeGcseMathsId, 
+                candidate.PlanningToRetakeGcseScienceId
+            };
+
+            gcses.Should().AllBeEquivalentTo((int)Candidate.GcseStatus.NotAnswered);
         }
 
         [Fact]
