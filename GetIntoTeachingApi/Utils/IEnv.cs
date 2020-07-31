@@ -19,5 +19,6 @@
         string CrmClientSecret { get; }
         string NotifyApiKey { get; }
         string SharedSecret { get; }
+        string GoogleApiKey { get; }
     }
 }

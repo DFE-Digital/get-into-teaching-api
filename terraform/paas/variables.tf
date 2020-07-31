@@ -62,4 +62,5 @@ variable "SHARED_SECRET" {}
 variable "NOTIFY_API_KEY" {}
 variable "TOTP_SECRET_KEY" {}
 variable "SENTRY_URL" {}
+variable "GOOGLE_API_KEY" {}
 

@@ -14,9 +14,10 @@ namespace GetIntoTeachingApi.Models.Validators
             _store = store;
 
             RuleFor(request => request.Postcode)
-                .Must(store.IsValidPostcode)
-                .Unless(request => request.Postcode == null && request.Radius == null)
-                .WithMessage("Must be a valid postcode.");
+                .NotEmpty()
+                .MaximumLength(40)
+                .Matches(Location.PostcodeRegex)
+                .Unless(request => request.Postcode == null && request.Radius == null);
             RuleFor(request => request.TypeId)
                 .Must(id => TypeIds().Contains(id.ToString()))
                 .Unless(request => request.TypeId == null)
