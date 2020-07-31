@@ -19,6 +19,5 @@ namespace GetIntoTeachingApi.Services
         Task<IEnumerable<TeachingEvent>> SearchTeachingEventsAsync(TeachingEventSearchRequest request);
         Task<TeachingEvent> GetTeachingEventAsync(Guid id);
         Task<TeachingEvent> GetTeachingEventAsync(string readableId);
-        bool IsValidPostcode(string postcode);
     }
 }

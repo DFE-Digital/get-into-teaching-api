@@ -139,7 +139,7 @@ namespace GetIntoTeachingApiTests.Services
                 .First(te => te.Building.AddressPostcode == postcode);
             teachingEvent.Building.Coordinate.Should().Be(coordinate);
         }
-
+        
         [Fact]
         public async void SyncAsync_InsertsNewPrivacyPolicies()
         {
@@ -393,6 +393,18 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public async void SearchTeachingEvents_FilteredByRadiusWithFailedPostcodeGeocoding_ReturnsEmpty()
+        {
+            SeedMockLocations();
+            await SeedMockTeachingEventsAsync();
+            var request = new TeachingEventSearchRequest() { Postcode = "TE7 1NG", Radius = 15 };
+
+            var result = await _store.SearchTeachingEventsAsync(request);
+
+            result.Should().BeEmpty();
+        }
+
+        [Fact]
         public async void SearchTeachingEvents_FilteredByType_ReturnsMatching()
         {
             SeedMockLocations();
@@ -455,29 +467,6 @@ namespace GetIntoTeachingApiTests.Services
 
             result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 4", "Event 1" },
                 options => options.WithStrictOrdering());
-        }
-
-        [Theory]
-        [InlineData("KY11 9YU")]
-        [InlineData("ky11 9yu")]
-        [InlineData("ky119yu")]
-        [InlineData("k y 119 YU")]
-        public void IsValidPostcode_WithValidPostcode_ReturnsTrue(string postcode)
-        {
-            SeedMockLocations();
-            _store.IsValidPostcode(postcode).Should().BeTrue();
-        }
-
-        [Theory]
-        [InlineData("")]
-        [InlineData(null)]
-        [InlineData("KY11 9ZZ")]
-        [InlineData("KY11 9HFF")]
-        [InlineData("Non-Geographic")]
-        public void IsValidPostcode_WithInvalidPostcode_ReturnsFalse(string postcode)
-        {
-            SeedMockLocations();
-            _store.IsValidPostcode(postcode).Should().BeFalse();
         }
 
         private static IEnumerable<TeachingEvent> MockTeachingEvents()
