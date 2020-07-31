@@ -100,6 +100,26 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
+        public void HasActiveSubscriptionOfType_ReturnsTrueIfActiveSubscriptionOfTypeExists()
+        {
+            var activeSubscription = new Subscription()
+            {
+                TypeId = (int)Subscription.ServiceType.MailingList,
+                StatusId = (int)Subscription.SubscriptionStatus.Active,
+            };
+            var inActiveSubscription = new Subscription()
+            {
+                TypeId = (int)Subscription.ServiceType.Event,
+                StatusId = (int)Subscription.SubscriptionStatus.InActive
+            };
+            var subscriptions = new List<Subscription>() { activeSubscription, inActiveSubscription };
+            var candidate = new Candidate() { Subscriptions = subscriptions };
+
+            candidate.HasActiveSubscriptionOfType(Subscription.ServiceType.MailingList).Should().BeTrue();
+            candidate.HasActiveSubscriptionOfType(Subscription.ServiceType.Event).Should().BeFalse();
+        }
+
+        [Fact]
         public void ToEntity_WhenRelationshipIsNull_DoesNotCreateEntity()
         {
             var mockService = new Mock<IOrganizationServiceAdapter>();

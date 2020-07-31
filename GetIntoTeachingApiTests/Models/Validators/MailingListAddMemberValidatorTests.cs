@@ -82,9 +82,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_AddressPostcodeIsNull_HasError()
+        public void Validate_AddressPostcodeIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.AddressPostcode, null as string);
+            _validator.ShouldNotHaveValidationErrorFor(request => request.AddressPostcode, null as string);
         }
 
         [Fact]
@@ -97,6 +97,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_ConsiderationJourneyStageIdIsNull_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(request => request.ConsiderationJourneyStageId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_DegreeStatusIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.DegreeStatusId, null as int?);
         }
     }
 }
