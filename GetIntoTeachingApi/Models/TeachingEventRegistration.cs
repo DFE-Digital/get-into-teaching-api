@@ -19,6 +19,10 @@ namespace GetIntoTeachingApi.Models
         public Guid EventId { get; set; }
         [EntityField("dfe_channelcreation", typeof(OptionSetValue))]
         public int? ChannelId { get; set; }
+        [EntityField("msevtmgt_iscanceled")]
+        public bool? IsCancelled { get; set; }
+        [EntityField("msevtmgt_registrationnotificationseen")]
+        public bool? RegistrationNotificationSeen { get; set; }
 
         public TeachingEventRegistration()
             : base()
