@@ -248,6 +248,18 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
+        public async void GetTeachingEventStatus_ReturnsAllStatus()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("msevtmgt_event", "dfe_eventstatus")).Returns(mockEntities.AsAsyncQueryable());
+
+            var response = await _controller.GetTeachingEventStatus();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockEntities);
+        }
+
+        [Fact]
         public async void GetTeachingEventRegistrationChannels_ReturnsAllChannels()
         {
             var mockEntities = MockTypeEntities();

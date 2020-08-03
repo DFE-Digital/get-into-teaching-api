@@ -10,6 +10,8 @@ namespace GetIntoTeachingApi.Models
     [Entity("msevtmgt_building")]
     public class TeachingEventBuilding : BaseModel
     {
+        [EntityField("msevtmgt_name")]
+        public string Venue { get; set; }
         [EntityField("msevtmgt_addressline1")]
         public string AddressLine1 { get; set; }
         [EntityField("msevtmgt_addressline2")]
@@ -18,8 +20,6 @@ namespace GetIntoTeachingApi.Models
         public string AddressLine3 { get; set; }
         [EntityField("msevtmgt_city")]
         public string AddressCity { get; set; }
-        [EntityField("msevtmgt_stateprovince")]
-        public string AddressState { get; set; }
         [EntityField("msevtmgt_postalcode")]
         public string AddressPostcode { get; set; }
         [JsonIgnore]
