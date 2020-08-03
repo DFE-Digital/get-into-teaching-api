@@ -245,6 +245,19 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpGet]
         [CrmETag]
+        [Route("teaching_event/status")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of teaching event status.",
+            OperationId = "GetTeachingEventStatus",
+            Tags = new[] { "Types" })]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public async Task<IActionResult> GetTeachingEventStatus()
+        {
+            return Ok(await _store.GetPickListItems("msevtmgt_event", "dfe_eventstatus").ToListAsync());
+        }
+
+        [HttpGet]
+        [CrmETag]
         [Route("teaching_event_registration/channels")]
         [SwaggerOperation(
             Summary = "Retrieves the list of teaching event registration channels.",
