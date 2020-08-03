@@ -10,7 +10,7 @@ namespace GetIntoTeachingApi.Services
     {
         // The amount of time a user has to verify their access token is:
         // (VerificationWindow * StepsInSeconds) + Remaining Seconds in Current Step
-        public static readonly int VerificationWindow = 2;
+        public static readonly int VerificationWindow = 30;
         public static readonly int StepInSeconds = 30;
         private const int Length = 6;
         private readonly IEnv _env;
@@ -44,7 +44,7 @@ namespace GetIntoTeachingApi.Services
                 timestamp,
                 token,
                 out _,
-                new VerificationWindow(previous: VerificationWindow, future: VerificationWindow));
+                new VerificationWindow(previous: VerificationWindow, future: 0));
         }
 
         private Totp CreateTotp(ExistingCandidateRequest request)
