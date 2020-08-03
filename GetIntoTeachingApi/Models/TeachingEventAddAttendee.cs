@@ -113,6 +113,8 @@ namespace GetIntoTeachingApi.Models
                 {
                     EventId = (Guid)EventId,
                     ChannelId = (int)TeachingEventRegistration.Channel.Event,
+                    IsCancelled = false,
+                    RegistrationNotificationSeen = false,
                 });
             }
         }

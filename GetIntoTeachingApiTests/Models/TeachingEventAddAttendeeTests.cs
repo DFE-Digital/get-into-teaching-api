@@ -73,9 +73,14 @@ namespace GetIntoTeachingApiTests.Models
             candidate.DoNotSendMm.Should().BeFalse();
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
+            
             candidate.Subscriptions.First().TypeId.Should().Be((int)Subscription.ServiceType.Event);
             candidate.Subscriptions.Last().TypeId.Should().Be((int)Subscription.ServiceType.MailingList);
+
             candidate.TeachingEventRegistrations.First().EventId.Should().Equals(request.EventId);
+            candidate.TeachingEventRegistrations.First().ChannelId.Should().Be((int)TeachingEventRegistration.Channel.Event);
+            candidate.TeachingEventRegistrations.First().IsCancelled.Should().BeFalse();
+            candidate.TeachingEventRegistrations.First().RegistrationNotificationSeen.Should().BeFalse();
         }
 
         [Fact]
