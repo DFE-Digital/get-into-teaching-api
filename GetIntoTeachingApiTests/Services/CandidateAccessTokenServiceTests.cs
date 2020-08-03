@@ -76,7 +76,7 @@ namespace GetIntoTeachingApiTests.Services
         public void IsValid_WithExpiredToken_ReturnsFalse()
         {
             var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
-            var secondsToOutsideOfWindow = CandidateAccessTokenService.StepInSeconds * (2 * CandidateAccessTokenService.VerificationWindow);
+            var secondsToOutsideOfWindow = (CandidateAccessTokenService.StepInSeconds * CandidateAccessTokenService.VerificationWindow) + 1;
             var dateTimeOutsideOfWindow = DateTime.UtcNow.AddSeconds(-secondsToOutsideOfWindow);
             var token = _service.GenerateToken(request);
             _service.IsValid(token, request, dateTimeOutsideOfWindow).Should().BeFalse();
