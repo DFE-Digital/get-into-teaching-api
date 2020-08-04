@@ -4,6 +4,7 @@ using System.Net;
 using FluentAssertions;
 using GetIntoTeachingApi.Filters;
 using GetIntoTeachingApi.Jobs;
+using GetIntoTeachingApi.Services;
 using Hangfire;
 using Hangfire.Storage;
 using Microsoft.AspNetCore.Http;
@@ -59,7 +60,7 @@ namespace GetIntoTeachingApiTests.Filters
             var mockStorage = new Mock<JobStorage>();
             mockStorage.Setup(m => m.GetConnection()).Returns(_mockStorageConnection.Object);
 
-            _filter = new CrmETagAttribute(mockStorage.Object);
+            _filter = new CrmETagAttribute(mockStorage.Object, new MetricService());
         }
 
         [Theory]

@@ -9,5 +9,6 @@ namespace GetIntoTeachingApi.Services
         Histogram LocationBatchDuration { get; }
         Gauge HangfireJobs { get; }
         Counter GoogleApiCalls { get; }
+        Counter CacheLookups { get; }
     }
 }
