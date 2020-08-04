@@ -387,8 +387,10 @@ namespace GetIntoTeachingApiTests.Services
 
         private static IQueryable<Entity> MockCandidates()
         {
-            var candidate1 = new Entity("contact");
-            candidate1.Id = JaneDoeGuid;
+            var candidate1 = new Entity("contact")
+            {
+                Id = JaneDoeGuid
+            };
             candidate1["contactid"] = new EntityReference("contactid", JaneDoeGuid);
             candidate1["statecode"] = Candidate.Status.Active;
             candidate1["emailaddress1"] = "jane@doe.com";
