@@ -14,7 +14,7 @@ namespace GetIntoTeachingApi.Models.Validators
         {
             _store = store;
 
-            RuleFor(phoneCall => phoneCall.ScheduledAt).GreaterThan(candidate => DateTime.Now);
+            RuleFor(phoneCall => phoneCall.ScheduledAt).GreaterThan(candidate => DateTime.UtcNow);
 
             RuleFor(candidate => candidate.ChannelId)
                 .Must(id => ChannelIds().Contains(id.ToString()))

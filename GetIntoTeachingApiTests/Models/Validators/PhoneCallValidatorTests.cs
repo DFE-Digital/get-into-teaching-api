@@ -44,7 +44,13 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_ScheduledAtInPast_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(phoneCall => phoneCall.ScheduledAt, DateTime.Now.AddDays(-1));
+            _validator.ShouldHaveValidationErrorFor(phoneCall => phoneCall.ScheduledAt, DateTime.UtcNow.AddMinutes(-1));
+        }
+
+        [Fact]
+        public void Validate_ScheduledAtInFuture_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(phoneCall => phoneCall.ScheduledAt, DateTime.UtcNow.AddMinutes(1));
         }
 
         [Fact]
