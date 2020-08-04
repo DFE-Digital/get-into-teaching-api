@@ -43,5 +43,12 @@ namespace GetIntoTeachingApiTests.Services
         {
             _metrics.GoogleApiCalls.Name.Should().Be("api_google_api_calls");
         }
+
+        [Fact]
+        public void CacheLookups_ReturnsMetric()
+        {
+            _metrics.CacheLookups.Name.Should().Be("api_cache_lookups");
+            _metrics.CacheLookups.LabelNames.Should().BeEquivalentTo(new[] { "outcome" });
+        }
     }
 }

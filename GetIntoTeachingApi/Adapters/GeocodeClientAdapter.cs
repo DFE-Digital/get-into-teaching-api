@@ -20,7 +20,7 @@ namespace GetIntoTeachingApi.Adapters
 
         public async Task<Point> GeocodePostcodeAsync(string postcode)
         {
-            _metrics.GoogleApiCalls.Inc(1);
+            _metrics.GoogleApiCalls.Inc();
 
             var response = await _client.GeocodeAddress(postcode);
 
