@@ -19,6 +19,9 @@ RUN dotnet publish -c release -o /app --no-restore
 # final stage/image
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 
+# Upgrade the distrubution to clear CVE warning
+RUN apt-get update -y && apt-get dist-upgrade  -y && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 COPY --from=build /app ./
 ENTRYPOINT ["dotnet", "GetIntoTeachingApi.dll"]
