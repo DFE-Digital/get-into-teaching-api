@@ -3,6 +3,11 @@ resource "cloudfoundry_app" "api_application" {
     space = data.cloudfoundry_space.space.id
     docker_image = var.paas_api_docker_image
     stopped = var.application_stopped
+    instances = var.application_instances
+    memory = var.application_memory
+    disk_quota = var.application_disk
+    health_check_http_endpoint = "/api/operations/health_check"
+    health_check_type = "http"
     strategy = "blue-green-v2"
     service_binding  { 
             service_instance = cloudfoundry_service_instance.hangfire.id
