@@ -87,6 +87,7 @@ namespace GetIntoTeachingApi.Models.Validators
                         (int)CandidateQualification.DegreeStatus.FirstYear,
                         (int)CandidateQualification.DegreeStatus.Other,
                     }.Contains(request.DegreeStatusId))
+                .Unless(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent)
                 .WithMessage("Must be set when candidate has a degree or is studying for a degree.");
 
             RuleFor(request => request.UkDegreeGradeId).NotEmpty()
@@ -99,6 +100,7 @@ namespace GetIntoTeachingApi.Models.Validators
                         (int)CandidateQualification.DegreeStatus.FirstYear,
                         (int)CandidateQualification.DegreeStatus.Other,
                     }.Contains(request.DegreeStatusId))
+                .Unless(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent)
                 .WithMessage("Must be set when candidate has a degree or is studying for a degree (predicted grade).");
 
             RuleFor(request => request.PreferredTeachingSubjectId).NotEmpty()
@@ -113,11 +115,13 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(request => request)
                 .Must(request => HasOrIsPlanningOnRetakingEnglishAndMaths(request) && HasOrIsPlanningOnRetakingScience(request))
                 .When(request => request.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Primary)
+                .Unless(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent)
                 .WithMessage("Must have or be retaking all GCSEs when preferred education phase is primary.");
 
             RuleFor(request => request)
                 .Must(request => HasOrIsPlanningOnRetakingEnglishAndMaths(request))
-                .When(request => request.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Secondary && !request.Candidate.IsReturningToTeaching())
+                .When(request => request.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Secondary)
+                .Unless(request => request.Candidate.IsReturningToTeaching() || request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent)
                 .WithMessage("Must have or be retaking Maths and English GCSEs when preferred education phase is secondary.");
 
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store));
