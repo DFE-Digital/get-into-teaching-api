@@ -87,6 +87,7 @@ namespace GetIntoTeachingApi.Models.Validators
                         (int)CandidateQualification.DegreeStatus.FirstYear,
                         (int)CandidateQualification.DegreeStatus.Other,
                     }.Contains(request.DegreeStatusId))
+                .Unless(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent)
                 .WithMessage("Must be set when candidate has a degree or is studying for a degree.");
 
             RuleFor(request => request.UkDegreeGradeId).NotEmpty()
@@ -99,6 +100,7 @@ namespace GetIntoTeachingApi.Models.Validators
                         (int)CandidateQualification.DegreeStatus.FirstYear,
                         (int)CandidateQualification.DegreeStatus.Other,
                     }.Contains(request.DegreeStatusId))
+                .Unless(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent)
                 .WithMessage("Must be set when candidate has a degree or is studying for a degree (predicted grade).");
 
             RuleFor(request => request.PreferredTeachingSubjectId).NotEmpty()
