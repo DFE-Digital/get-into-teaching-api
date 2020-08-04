@@ -12,8 +12,20 @@ variable api_url {
 variable password {}
 
 
+variable "application_instances" {
+  default = 1
+}
+
 variable "application_stopped" {
    default = false
+}
+
+variable "application_memory" {
+   default =  "1024"
+}
+
+variable "application_disk" {
+   default =  "1024"
 }
 
 variable "paas_space" {
