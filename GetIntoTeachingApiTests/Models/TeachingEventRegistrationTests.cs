@@ -19,6 +19,14 @@ namespace GetIntoTeachingApiTests.Models
                 a => a.Name == "msevtmgt_contactid" && a.Type == typeof(EntityReference));
             type.GetProperty("EventId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "msevtmgt_eventid" && a.Type == typeof(EntityReference));
+
+            type.GetProperty("ChannelId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "dfe_channelcreation" && a.Type == typeof(OptionSetValue));
+
+            type.GetProperty("IsCancelled").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "msevtmgt_iscanceled");
+            type.GetProperty("RegistrationNotificationSeen").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "msevtmgt_registrationnotificationseen");
         }
     }
 }
