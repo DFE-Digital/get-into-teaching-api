@@ -20,6 +20,7 @@ RUN dotnet publish -c release -o /app --no-restore
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 RUN apt-get update
 RUN apt-get dist-upgrade  -y
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 COPY --from=build /app ./
