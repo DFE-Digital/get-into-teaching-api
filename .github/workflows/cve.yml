@@ -4,6 +4,7 @@ on:
     types: [assigned, opened, synchronize, reopened]
   push:
     branches: [ master ]
+  workflow_dispatch:
 
 jobs:
   cve:
@@ -22,6 +23,12 @@ jobs:
              dockerfile-path: "Dockerfile"
              image-reference:  localbuild/testimage:latest
              fail-build: true
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          name: AnchoreReports
+          path: ./anchore-reports/
 
       - name:  Send Message to Sentry.io
         if: always()
