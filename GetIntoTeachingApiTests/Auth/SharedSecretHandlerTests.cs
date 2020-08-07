@@ -21,6 +21,7 @@ namespace GetIntoTeachingApiTests.Auth
         {
             var mockEnv = new Mock<IEnv>();
             mockEnv.Setup(m => m.SharedSecret).Returns("shared_secret");
+            mockEnv.Setup(m => m.PenTestSharedSecret).Returns("pen_test_shared_secret");
 
             var mockOptionsMonitor = new Mock<IOptionsMonitor<SharedSecretSchemeOptions>>();
             mockOptionsMonitor.Setup(m => m.Get("SharedSecretHandler")).Returns(new SharedSecretSchemeOptions());
@@ -36,6 +37,8 @@ namespace GetIntoTeachingApiTests.Auth
         [Theory]
         [InlineData("Bearer shared_secret", true)]
         [InlineData("shared_secret", true)]
+        [InlineData("Bearer pen_test_shared_secret", true)]
+        [InlineData("pen_test_shared_secret", true)]
         [InlineData("Bearer incorrect_shared_secret", false)]
         [InlineData("Bearer ", false)]
         [InlineData("", false)]
