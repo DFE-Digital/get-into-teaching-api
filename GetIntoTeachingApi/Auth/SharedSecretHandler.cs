@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Linq;
+using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Utils;
@@ -34,7 +35,9 @@ namespace GetIntoTeachingApi.Auth
 
             var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
 
-            if (token != _env.SharedSecret)
+            var secrets = new[] { _env.SharedSecret, _env.PenTestSharedSecret };
+
+            if (!secrets.Contains(token))
             {
                 _logger.LogWarning("SharedSecretHandler - Token is not valid");
                 return Task.FromResult(AuthenticateResult.Fail("Token is not valid"));
