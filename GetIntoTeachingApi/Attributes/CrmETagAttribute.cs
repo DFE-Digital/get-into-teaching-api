@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -14,22 +15,26 @@ namespace GetIntoTeachingApi.Filters
     {
         private readonly JobStorage _hangfireJobStorage;
         private readonly IMetricService _metrics;
+        private readonly IEnv _env;
 
         public CrmETagAttribute()
         {
             _metrics = new MetricService();
             _hangfireJobStorage = JobStorage.Current;
+            _env = new Env();
         }
 
-        public CrmETagAttribute(JobStorage hangfireJobStorage, IMetricService metrics)
+        public CrmETagAttribute(JobStorage hangfireJobStorage, IMetricService metrics, IEnv env)
         {
             _hangfireJobStorage = hangfireJobStorage;
             _metrics = metrics;
+            _env = env;
         }
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            var canCacheRequest = context.HttpContext.Request.Method == "GET";
+            var isGetRequest = context.HttpContext.Request.Method == "GET";
+            var canCacheRequest = isGetRequest && !_env.IsDevelopment && !_env.IsTest;
 
             if (!canCacheRequest)
             {
