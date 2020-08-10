@@ -53,7 +53,7 @@ namespace GetIntoTeachingApiTests.Filters
             );
 
             _mockEnv = new Mock<IEnv>();
-            _mockEnv.Setup(m => m.IsDevelopment).Returns(false);
+            _mockEnv.Setup(m => m.IsTest).Returns(false);
 
             _mockHttpContext = new Mock<HttpContext>();
             _originalResult = new StatusCodeResult((int)HttpStatusCode.OK);
@@ -69,12 +69,14 @@ namespace GetIntoTeachingApiTests.Filters
         }
 
         [Theory]
-        [InlineData("POST", false)]
-        [InlineData("PUT", false)]
-        [InlineData("GET", true)]
-        public void OnActionExecuting_IgnoresIfNotGetOrIsDevelopmentEnv(string method, bool isDevelopment)
+        [InlineData("POST", false, false)]
+        [InlineData("PUT", false, false)]
+        [InlineData("GET", true, false)]
+        [InlineData("GET", false, true)]
+        public void OnActionExecuting_IgnoresIfNotGetOrIsDevelopmentOrTestEnv(string method, bool isDevelopment, bool isTest)
         {
             _mockEnv.Setup(m => m.IsDevelopment).Returns(isDevelopment);
+            _mockEnv.Setup(m => m.IsTest).Returns(isTest);
             _mockHttpContext.Setup(m => m.Request.Method).Returns(method);
 
             _filter.OnActionExecuting(_actionExecutingContext);
