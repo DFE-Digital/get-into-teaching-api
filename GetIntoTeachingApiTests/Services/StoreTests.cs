@@ -459,16 +459,6 @@ namespace GetIntoTeachingApiTests.Services
             result.ReadableId.Should().Be(events.First().ReadableId);
         }
 
-        [Fact]
-        public async void GetUpcomingTeachingEvents_ReturnsUpcomingEventsInOrder()
-        {
-            await SeedMockTeachingEventsAsync();
-            var result = _store.GetUpcomingTeachingEvents(3);
-
-            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 4", "Event 1" },
-                options => options.WithStrictOrdering());
-        }
-
         private static IEnumerable<TeachingEvent> MockTeachingEvents()
         {
             var sharedBuildingId = Guid.NewGuid();

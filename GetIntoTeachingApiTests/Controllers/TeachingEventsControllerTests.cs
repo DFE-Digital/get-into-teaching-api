@@ -47,7 +47,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void CrmETag_IsPresent()
         {
             JobStorage.Current = new Mock<JobStorage>().Object;
-            var methods = new [] { "GetUpcoming", "Get", "Search" };
+            var methods = new [] { "Get", "Search" };
 
             methods.ForEach(m => typeof(TeachingEventsController).GetMethod(m).Should().BeDecoratedWith<CrmETagAttribute>());
         }
@@ -94,7 +94,7 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void GetUpcoming_ValidRequest_ReturnsTeachingEvents()
+        public async void Search_ValidRequest_ReturnsTeachingEvents()
         {
             var request = new TeachingEventSearchRequest() { Postcode = "KY12 8FG" };
             var mockEvents = MockEvents();
@@ -104,26 +104,6 @@ namespace GetIntoTeachingApiTests.Controllers
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().Be(mockEvents);
-        }
-
-        [Fact]
-        public async void GetUpcoming_LimitMoreThan50_RespondsWithBadRequest()
-        {
-            var response = await _controller.GetUpcoming(51);
-
-            response.Should().BeOfType<BadRequestResult>();
-        }
-
-        [Fact]
-        public async void GetUpcoming_ReturnsUpcomingTeachingEvents()
-        {
-            var mockEvents = MockEvents();
-            _mockStore.Setup(mock => mock.GetUpcomingTeachingEvents(3)).Returns(mockEvents.AsAsyncQueryable());
-
-            var response = await _controller.GetUpcoming(3);
-
-            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
-            ok.Value.Should().BeEquivalentTo(mockEvents);
         }
 
         [Fact]

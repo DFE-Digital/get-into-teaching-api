@@ -7,7 +7,6 @@ using GetIntoTeachingApi.Services;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Controllers
@@ -17,7 +16,6 @@ namespace GetIntoTeachingApi.Controllers
     [Authorize]
     public class TeachingEventsController : ControllerBase
     {
-        private const int MaximumUpcomingRequests = 50;
         private readonly ICandidateAccessTokenService _tokenService;
         private readonly ICrmService _crm;
         private readonly IStore _store;
@@ -33,29 +31,6 @@ namespace GetIntoTeachingApi.Controllers
             _jobClient = jobClient;
             _crm = crm;
             _tokenService = tokenService;
-        }
-
-        [HttpGet]
-        [CrmETag]
-        [Route("upcoming")]
-        [SwaggerOperation(
-            Summary = "Retrieves the upcoming teaching events.",
-            Description = @"
-Retrieves the upcoming teaching events; limited to 10 by default, but this can be increased to a 
-maximum of 50 using the `limit` query parameter.",
-            OperationId = "GetUpcomingTeachingEvents",
-            Tags = new[] { "Teaching Events" })]
-        [ProducesResponseType(typeof(IEnumerable<TeachingEvent>), 200)]
-        [ProducesResponseType(400)]
-        public async Task<IActionResult> GetUpcoming([FromQuery, SwaggerParameter("Number of results to return (maximum of 50).")] int limit = 10)
-        {
-            if (limit > MaximumUpcomingRequests)
-            {
-                return BadRequest();
-            }
-
-            var upcomingEvents = _store.GetUpcomingTeachingEvents(limit);
-            return Ok(await upcomingEvents.ToListAsync());
         }
 
         [HttpGet]

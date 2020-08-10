@@ -76,14 +76,6 @@ namespace GetIntoTeachingApi.Services
             return _dbContext.PrivacyPolicies;
         }
 
-        public IQueryable<TeachingEvent> GetUpcomingTeachingEvents(int limit)
-        {
-            return _dbContext.TeachingEvents
-                .Where((teachingEvent) => teachingEvent.StartAt > DateTime.Now)
-                .OrderBy(teachingEvent => teachingEvent.StartAt)
-                .Take(limit);
-        }
-
         public async Task<IEnumerable<TeachingEvent>> SearchTeachingEventsAsync(TeachingEventSearchRequest request)
         {
             IQueryable<TeachingEvent> teachingEvents = _dbContext.TeachingEvents
