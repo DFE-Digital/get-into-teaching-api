@@ -34,7 +34,7 @@ namespace GetIntoTeachingApi.Filters
         public void OnActionExecuting(ActionExecutingContext context)
         {
             var isGetRequest = context.HttpContext.Request.Method == "GET";
-            var canCacheRequest = isGetRequest && !_env.IsDevelopment;
+            var canCacheRequest = isGetRequest && !_env.IsDevelopment && !_env.IsTest;
 
             if (!canCacheRequest)
             {
