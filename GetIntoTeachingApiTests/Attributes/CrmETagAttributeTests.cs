@@ -5,6 +5,7 @@ using FluentAssertions;
 using GetIntoTeachingApi.Filters;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Hangfire.Storage;
 using Microsoft.AspNetCore.Http;
@@ -26,6 +27,7 @@ namespace GetIntoTeachingApiTests.Filters
         private readonly ActionExecutedContext _actionExecutedContext;
         private readonly StatusCodeResult _originalResult;
         private readonly Mock<HttpContext> _mockHttpContext;
+        private readonly Mock<IEnv> _mockEnv;
         private readonly Mock<IStorageConnection> _mockStorageConnection;
 
         public CrmETagAttributeTests()
@@ -50,6 +52,9 @@ namespace GetIntoTeachingApiTests.Filters
                 Mock.Of<Controller>()
             );
 
+            _mockEnv = new Mock<IEnv>();
+            _mockEnv.Setup(m => m.IsDevelopment).Returns(false);
+
             _mockHttpContext = new Mock<HttpContext>();
             _originalResult = new StatusCodeResult((int)HttpStatusCode.OK);
             _actionExecutingContext.HttpContext = _mockHttpContext.Object;
@@ -60,20 +65,22 @@ namespace GetIntoTeachingApiTests.Filters
             var mockStorage = new Mock<JobStorage>();
             mockStorage.Setup(m => m.GetConnection()).Returns(_mockStorageConnection.Object);
 
-            _filter = new CrmETagAttribute(mockStorage.Object, new MetricService());
+            _filter = new CrmETagAttribute(mockStorage.Object, new MetricService(), _mockEnv.Object);
         }
 
         [Theory]
-        [InlineData("POST")]
-        [InlineData("PUT")]
-        public void OnActionExecuting_NoneGetRequest_IsIgnored(string method)
+        [InlineData("POST", false)]
+        [InlineData("PUT", false)]
+        [InlineData("GET", true)]
+        public void OnActionExecuting_IgnoresIfNotGetOrIsDevelopmentEnv(string method, bool isDevelopment)
         {
+            _mockEnv.Setup(m => m.IsDevelopment).Returns(isDevelopment);
             _mockHttpContext.Setup(m => m.Request.Method).Returns(method);
 
             _filter.OnActionExecuting(_actionExecutingContext);
 
             _actionExecutingContext.Result.Should().Be(_originalResult);
-            _mockHttpContext.Verify(m => m.Response.Headers.Add("ETag", It.IsAny<StringValues>()), Times.Never);
+           _mockHttpContext.Verify(m => m.Response.Headers.Add("ETag", It.IsAny<StringValues>()), Times.Never);
         }
 
         [Fact]
