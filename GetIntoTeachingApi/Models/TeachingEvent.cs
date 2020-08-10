@@ -9,6 +9,13 @@ namespace GetIntoTeachingApi.Models
     [Entity("msevtmgt_event")]
     public class TeachingEvent : BaseModel
     {
+        public enum Status
+        {
+            Open = 222750000,
+            Closed = 222750001,
+            Draft = 222750002,
+        }
+
         [EntityField("dfe_event_type", typeof(OptionSetValue))]
         public int TypeId { get; set; }
         [EntityField("dfe_eventstatus", typeof(OptionSetValue))]

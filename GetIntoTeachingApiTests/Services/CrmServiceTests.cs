@@ -11,6 +11,7 @@ using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
 using Xunit;
 using static Microsoft.PowerPlatform.Cds.Client.CdsServiceClient;
+using FluentAssertions.Common;
 
 namespace GetIntoTeachingApiTests.Services
 {
@@ -76,15 +77,28 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void GetTeachingEvents_ReturnsAllTeachingEvents()
+        public void GetTeachingEvents_ReturnsAllNonDraftFutureDatedTeachingEvents()
         {
             _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
-                q => q.EntityName == "msevtmgt_event"))).Returns(MockTeachingEvents());
+                q => VerifyTeachingEventsQueryExpression(q)))).Returns(MockTeachingEvents());
 
             var result = _crm.GetTeachingEvents();
 
             result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 1", "Event 2", "Event 3" },
                 options => options.WithStrictOrdering());
+        }
+
+        private static bool VerifyTeachingEventsQueryExpression(QueryExpression query)
+        {
+            var hasEntityName = query.EntityName == "msevtmgt_event";
+            var conditions = query.Criteria.Filters.First().Conditions;
+            var status = new HashSet<object> { (int)TeachingEvent.Status.Open, (int)TeachingEvent.Status.Closed };
+            var hasStatusCondition = conditions.Where(c => c.AttributeName == "dfe_eventstatus" &&
+                c.Operator == ConditionOperator.In && c.Values.ToHashSet().IsSubsetOf(status)).Any();
+            var hasFutureDatedCondition = conditions.Where(c => c.AttributeName == "msevtmgt_eventenddate" &&
+                c.Operator == ConditionOperator.GreaterThan).Any();
+
+            return hasEntityName && hasStatusCondition && hasFutureDatedCondition;
         }
 
         [Fact]
