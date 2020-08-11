@@ -160,6 +160,13 @@ namespace GetIntoTeachingApi.Services
             var query = new QueryExpression("msevtmgt_event");
             query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(TeachingEvent)));
 
+            var status = new[] { (int)TeachingEvent.Status.Open, (int)TeachingEvent.Status.Closed };
+            var statusCondition = new ConditionExpression("dfe_eventstatus", ConditionOperator.In, status);
+            var futureDatedCondition = new ConditionExpression("msevtmgt_eventenddate", ConditionOperator.GreaterThan, DateTime.UtcNow);
+            var filter = new FilterExpression(LogicalOperator.And);
+            filter.Conditions.AddRange(new[] { statusCondition, futureDatedCondition });
+            query.Criteria.AddFilter(filter);
+
             var link = query.AddLink("msevtmgt_building", "msevtmgt_building", "msevtmgt_buildingid", JoinOperator.LeftOuter);
             link.Columns.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(TeachingEventBuilding)));
             link.EntityAlias = "msevtmgt_event_building";
