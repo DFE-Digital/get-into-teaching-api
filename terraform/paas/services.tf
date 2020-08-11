@@ -2,6 +2,10 @@ data cloudfoundry_service postgres {
     name = "postgres"
 }
 
+data cloudfoundry_service redis {
+    name = "redis"
+}
+
 resource "cloudfoundry_service_instance" "hangfire" {
   name = var.paas_postgres_1_name
   space = data.cloudfoundry_space.space.id
