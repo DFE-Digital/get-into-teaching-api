@@ -28,7 +28,8 @@ namespace GetIntoTeachingApi.Database
                     break;
             }
 
-            modelBuilder.Entity<TeachingEvent>().HasOne(c => c.Building);
+            modelBuilder.Entity<TeachingEvent>().HasOne(c => c.Building).WithOne(b => b.TeachingEvent)
+                .HasForeignKey<TeachingEvent>(e => e.BuildingId).OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<TypeEntity>().HasKey(t => new { t.Id, t.EntityName, t.AttributeName });
         }
     }
