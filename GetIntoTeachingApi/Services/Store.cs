@@ -157,6 +157,8 @@ namespace GetIntoTeachingApi.Services
             }
 
             await SyncModels(teachingEvents, _dbContext.TeachingEvents);
+
+            await _dbContext.SaveChangesAsync();
         }
 
         private async Task SyncPrivacyPolicies(ICrmService crm)

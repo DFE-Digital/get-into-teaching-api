@@ -107,8 +107,7 @@ namespace GetIntoTeachingApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BuildingId")
-                        .IsUnique();
+                    b.HasIndex("BuildingId");
 
                     b.ToTable("TeachingEvents");
                 });
@@ -166,9 +165,8 @@ namespace GetIntoTeachingApi.Migrations
             modelBuilder.Entity("GetIntoTeachingApi.Models.TeachingEvent", b =>
                 {
                     b.HasOne("GetIntoTeachingApi.Models.TeachingEventBuilding", "Building")
-                        .WithOne("TeachingEvent")
-                        .HasForeignKey("GetIntoTeachingApi.Models.TeachingEvent", "BuildingId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .WithMany()
+                        .HasForeignKey("BuildingId");
                 });
 #pragma warning restore 612, 618
         }
