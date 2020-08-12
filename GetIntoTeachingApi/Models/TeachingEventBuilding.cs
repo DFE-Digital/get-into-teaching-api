@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
@@ -25,6 +26,8 @@ namespace GetIntoTeachingApi.Models
         [JsonIgnore]
         [Column(TypeName = "geography")]
         public Point Coordinate { get; set; }
+        [JsonIgnore]
+        public IEnumerable<TeachingEvent> TeachingEvents { get; set; }
 
         public TeachingEventBuilding()
             : base()
