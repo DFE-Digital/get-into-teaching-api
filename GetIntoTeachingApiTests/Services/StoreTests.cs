@@ -444,21 +444,23 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void GetTeachingEvent_WithId_ReturnsMatchingEvent()
+        public async void GetTeachingEventAsync_WithId_ReturnsMatchingEvent()
         {
             var events = await SeedMockTeachingEventsAsync();
             var result = await _store.GetTeachingEventAsync((Guid)events.First().Id);
 
             result.Id.Should().Be(events.First().Id);
+            result.Building.Should().NotBeNull();
         }
 
         [Fact]
-        public async void GetTeachingEvent_WithReadableId_ReturnsMatchingEvent()
+        public async void GetTeachingEventAsync_WithReadableId_ReturnsMatchingEvent()
         {
             var events = await SeedMockTeachingEventsAsync();
             var result = await _store.GetTeachingEventAsync(events.First().ReadableId);
 
             result.ReadableId.Should().Be(events.First().ReadableId);
+            result.Building.Should().NotBeNull();
         }
 
         private static IEnumerable<TeachingEvent> MockTeachingEvents()
