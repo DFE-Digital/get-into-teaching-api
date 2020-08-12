@@ -98,8 +98,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public async void SyncAsync_DeletesOrphanedTeachingEventsAndBuildings()
         {
-            await SeedMockTeachingEventsAsync();
-            var teachingEvents = MockTeachingEvents().ToList();
+            var teachingEvents = (await SeedMockTeachingEventsAsync()).ToList();
             var mockCrm = new Mock<ICrmService>();
             mockCrm.Setup(m => m.GetTeachingEvents()).Returns(teachingEvents.GetRange(0, 1));
 
