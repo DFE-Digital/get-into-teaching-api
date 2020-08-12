@@ -1,18 +1,16 @@
 ﻿using System;
+using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using Hangfire;
-using Microsoft.Extensions.Logging;
 
 namespace GetIntoTeachingApi.Services
 {
     public class HangfireService : IHangfireService
     {
-        private readonly ILogger<HangfireService> _logger;
         private readonly IBackgroundJobClient _jobClient;
 
-        public HangfireService(IBackgroundJobClient jobClient, ILogger<HangfireService> logger)
+        public HangfireService(IBackgroundJobClient jobClient)
         {
-            _logger = logger;
             _jobClient = jobClient;
         }
 
@@ -20,7 +18,7 @@ namespace GetIntoTeachingApi.Services
         {
             try
             {
-                _jobClient.Enqueue(() => _logger.LogInformation("Hangfire - Status Check"));
+                _jobClient.Enqueue<StatusCheckJob>((x) => x.Run());
             }
             catch (Exception e)
             {

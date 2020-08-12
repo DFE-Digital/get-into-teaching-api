@@ -10,18 +10,11 @@ namespace GetIntoTeachingApiTests.Services
 {
     public class HangfireServiceTests
     {
-        private readonly Mock<ILogger<HangfireService>> _mockLogger;
-
-        public HangfireServiceTests()
-        {
-            _mockLogger = new Mock<ILogger<HangfireService>>();
-        }
-
         [Fact]
         public void CheckStatus_WhenHealthy_ReturnsOk()
         {
             var mockJobClient = new Mock<IBackgroundJobClient>();
-            var hangfire = new HangfireService(mockJobClient.Object, _mockLogger.Object);
+            var hangfire = new HangfireService(mockJobClient.Object);
 
             hangfire.CheckStatus().Should().Be(HealthCheckResponse.StatusOk);
         }
@@ -29,7 +22,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void CheckStatus_WhenUnhealthy_ReturnsError()
         {
-            var hangfire = new HangfireService(null, _mockLogger.Object);
+            var hangfire = new HangfireService(null);
 
             hangfire.CheckStatus().Should().Contain("Value cannot be null");
         }
