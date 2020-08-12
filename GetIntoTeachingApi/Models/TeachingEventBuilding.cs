@@ -25,6 +25,8 @@ namespace GetIntoTeachingApi.Models
         [JsonIgnore]
         [Column(TypeName = "geography")]
         public Point Coordinate { get; set; }
+        [JsonIgnore]
+        public TeachingEvent TeachingEvent { get; set; }
 
         public TeachingEventBuilding()
             : base()

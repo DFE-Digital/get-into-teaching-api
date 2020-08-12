@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
@@ -52,6 +53,8 @@ namespace GetIntoTeachingApi.Models
         public DateTime EndAt { get; set; }
         [EntityRelationship("msevtmgt_event_building", typeof(TeachingEventBuilding))]
         public TeachingEventBuilding Building { get; set; }
+        [JsonIgnore]
+        public Guid? BuildingId { get; set; }
 
         public TeachingEvent()
             : base()
