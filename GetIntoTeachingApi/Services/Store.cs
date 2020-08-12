@@ -107,12 +107,12 @@ namespace GetIntoTeachingApi.Services
 
         public async Task<TeachingEvent> GetTeachingEventAsync(Guid id)
         {
-            return await _dbContext.TeachingEvents.FirstOrDefaultAsync(teachingEvent => teachingEvent.Id == id);
+            return await _dbContext.TeachingEvents.Include(e => e.Building).FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<TeachingEvent> GetTeachingEventAsync(string readableId)
         {
-            return await _dbContext.TeachingEvents.FirstOrDefaultAsync(teachingEvent => teachingEvent.ReadableId == readableId);
+            return await _dbContext.TeachingEvents.Include(e => e.Building).FirstOrDefaultAsync(e => e.ReadableId == readableId);
         }
 
         private async Task<IEnumerable<TeachingEvent>> FilterTeachingEventsByRadius(
