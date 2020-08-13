@@ -41,6 +41,9 @@ namespace GetIntoTeachingApi.Models
         public bool DoNotPostalMail { get; set; }
         [EntityField("donotsendmm")]
         public bool DoNotSendMm { get; set; }
+        [JsonIgnore]
+        [EntityField("dfe_name")]
+        public string Description { get; set; } = "Online subscription created via GITIS website";
 
         public Subscription()
             : base()
