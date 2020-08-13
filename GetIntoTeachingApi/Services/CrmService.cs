@@ -164,8 +164,10 @@ namespace GetIntoTeachingApi.Services
             var status = new[] { (int)TeachingEvent.Status.Open, (int)TeachingEvent.Status.Closed };
             var statusCondition = new ConditionExpression("dfe_eventstatus", ConditionOperator.In, status);
             var futureDatedCondition = new ConditionExpression("msevtmgt_eventenddate", ConditionOperator.GreaterThan, DateTime.UtcNow);
+            var types = Enum.GetValues(typeof(TeachingEvent.EventType)).Cast<int>().ToArray();
+            var typeCondition = new ConditionExpression("dfe_event_type", ConditionOperator.In, types);
             var filter = new FilterExpression(LogicalOperator.And);
-            filter.Conditions.AddRange(new[] { statusCondition, futureDatedCondition });
+            filter.Conditions.AddRange(new[] { statusCondition, futureDatedCondition, typeCondition });
             query.Criteria.AddFilter(filter);
 
             var link = query.AddLink("msevtmgt_building", "msevtmgt_building", "msevtmgt_buildingid", JoinOperator.LeftOuter);
