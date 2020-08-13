@@ -12,6 +12,7 @@ using Microsoft.Xrm.Sdk.Query;
 using Xunit;
 using static Microsoft.PowerPlatform.Cds.Client.CdsServiceClient;
 using FluentAssertions.Common;
+using System.Linq.Dynamic.Core;
 
 namespace GetIntoTeachingApiTests.Services
 {
@@ -77,7 +78,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void GetTeachingEvents_ReturnsAllNonDraftFutureDatedTeachingEvents()
+        public void GetTeachingEvents_ReturnsAllNonDraftFutureDatedTeachingEventsOfTheCorrectType()
         {
             _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
                 q => VerifyTeachingEventsQueryExpression(q)))).Returns(MockTeachingEvents());
@@ -97,8 +98,11 @@ namespace GetIntoTeachingApiTests.Services
                 c.Operator == ConditionOperator.In && c.Values.ToHashSet().IsSubsetOf(status)).Any();
             var hasFutureDatedCondition = conditions.Where(c => c.AttributeName == "msevtmgt_eventenddate" &&
                 c.Operator == ConditionOperator.GreaterThan).Any();
+            var types = new HashSet<object>(Enum.GetValues(typeof(TeachingEvent.EventType)).Cast<int>().ToArray().Cast<object>());
+            var hasTypeCondition = conditions.Where(c => c.AttributeName == "dfe_event_type" &&
+                c.Operator == ConditionOperator.In && c.Values.ToHashSet().IsSubsetOf(types)).Any();
 
-            return hasEntityName && hasStatusCondition && hasFutureDatedCondition;
+            return hasEntityName && hasStatusCondition && hasFutureDatedCondition && hasTypeCondition;
         }
 
         [Fact]

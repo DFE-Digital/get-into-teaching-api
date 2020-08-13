@@ -17,6 +17,16 @@ namespace GetIntoTeachingApi.Models
             Draft = 222750002,
         }
 
+        public enum EventType
+        {
+            ApplicationWorkshop = 222750000,
+            TrainToTeachEvent = 222750001,
+            OnlineEvent = 222750008,
+            SchoolOrUniversityEvent = 222750009,
+            EarlyYearEvent = 222750010,
+            OtherTypeOfEvent = 222750011,
+        }
+
         [EntityField("dfe_event_type", typeof(OptionSetValue))]
         public int TypeId { get; set; }
         [EntityField("dfe_eventstatus", typeof(OptionSetValue))]
