@@ -109,6 +109,7 @@ namespace GetIntoTeachingApi.Services
         {
             return _service.CreateQuery("dfe_servicesubscription", Context()).FirstOrDefault(entity =>
                 entity.GetAttributeValue<EntityReference>("dfe_contact").Id == candidateId &&
+                entity.GetAttributeValue<OptionSetValue>("statecode").Value == (int)Subscription.SubscriptionStatus.Active &&
                 entity.GetAttributeValue<OptionSetValue>("dfe_servicesubscriptiontype").Value == serviceSubscriptionTypeId) == null;
         }
 
