@@ -28,6 +28,7 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("DoNotPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotpostalmail");
             type.GetProperty("DoNotSendMm").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotsendmm");
             type.GetProperty("OptOutOfSms").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_optoutsms");
+            type.GetProperty("Description").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_name");
         }
 
         [Fact]
@@ -56,6 +57,12 @@ namespace GetIntoTeachingApiTests.Models
         {
             var subscription = new Subscription();
             subscription.DoNotBulkPostalMail.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Description_DefaultValue_IsCorrect()
+        {
+            new Subscription().Description.Should().Be("Online subscription created via GITIS website");
         }
 
         [Fact]
