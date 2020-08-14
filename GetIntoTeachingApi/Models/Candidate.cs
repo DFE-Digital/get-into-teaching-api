@@ -233,8 +233,6 @@ namespace GetIntoTeachingApi.Models
                     return crm.CandidateYetToAcceptPrivacyPolicy((Guid)Id, value.AcceptedPolicyId);
                 case "Subscriptions" when Id != null && value.Id == null:
                     return crm.CandidateYetToSubscribeToServiceOfType((Guid)Id, value.TypeId);
-                case "TeachingEventRegistrations" when Id != null && value.Id == null:
-                    return crm.CandidateYetToRegisterForTeachingEvent((Guid)Id, value.EventId);
                 default:
                     return true;
             }
