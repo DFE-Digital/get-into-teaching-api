@@ -508,23 +508,23 @@ namespace GetIntoTeachingApiTests.Services
         {
             var quota1 = new Entity("dfe_callbackbookingquota");
             quota1["dfe_starttime"] = DateTime.Now.AddDays(-1);
-            quota1["dfe_numberofbookings"] = 1;
+            quota1["dfe_websitenumberofbookings"] = 1;
 
             var quota2 = new Entity("dfe_callbackbookingquota");
             quota2["dfe_starttime"] = DateTime.Now.AddDays(10);
-            quota2["dfe_numberofbookings"] = 2;
+            quota2["dfe_websitenumberofbookings"] = 2;
 
             var quota3 = new Entity("dfe_callbackbookingquota");
             quota3["dfe_starttime"] = DateTime.Now.AddDays(1);
-            quota3["dfe_numberofbookings"] = 3;
+            quota3["dfe_websitenumberofbookings"] = 3;
 
             var quota4 = new Entity("dfe_callbackbookingquota");
             quota4["dfe_starttime"] = DateTime.Now.AddMinutes(20);
-            quota4["dfe_numberofbookings"] = 4;
+            quota4["dfe_websitenumberofbookings"] = 4;
 
             var quota5 = new Entity("dfe_callbackbookingquota");
             quota5["dfe_starttime"] = DateTime.Now.AddDays(15);
-            quota5["dfe_numberofbookings"] = 5;
+            quota5["dfe_websitenumberofbookings"] = 5;
 
             return new[] { quota1, quota2, quota3, quota4, quota5 }.AsQueryable();
         }
