@@ -18,6 +18,10 @@ namespace GetIntoTeachingApi.Models.Validators
                 .Must(id => BeAValidTeachingEvent(id))
                 .WithMessage("Must be a valid teaching event.");
 
+            RuleFor(registration => registration.EventId)
+                .Must(id => BeAvailableForOnlineRegistrations(id))
+                .WithMessage("Attendence cannot be registered for this event via the API (it has no WebFeedId).");
+
             RuleFor(registration => registration.ChannelId)
                 .Must(id => ChannelIds().Contains(id.ToString()))
                 .Unless(registration => registration.Id != null)
@@ -31,6 +35,13 @@ namespace GetIntoTeachingApi.Models.Validators
         private IEnumerable<string> ChannelIds()
         {
             return _store.GetPickListItems("msevtmgt_eventregistration", "dfe_channelcreation").Select(channel => channel.Id);
+        }
+
+        private bool BeAvailableForOnlineRegistrations(Guid id)
+        {
+            var teachingEvent = _store.GetTeachingEventAsync(id).GetAwaiter().GetResult();
+
+            return teachingEvent?.WebFeedId != null;
         }
 
         private bool BeAValidTeachingEvent(Guid id)
