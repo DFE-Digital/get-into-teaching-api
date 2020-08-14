@@ -348,6 +348,19 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void Save_WhenToEntityReturnsNull_DoesNotSaveContext()
+        {
+            var entity = new Entity() { Id = Guid.NewGuid() };
+            var mockCandidate = new Mock<Candidate>();
+            mockCandidate.Setup(m => m.ToEntity(_crm, _context)).Returns<Entity>(null);
+
+            _crm.Save(mockCandidate.Object);
+
+            _mockService.Verify(mock => mock.SaveChanges(_context), Times.Never);
+            mockCandidate.Object.Id.Should().BeNull();
+        }
+
+        [Fact]
         public void AddLink_ProxiesToService()
         {
             var source = new Entity("parent");

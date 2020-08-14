@@ -33,5 +33,17 @@ namespace GetIntoTeachingApi.Models
             : base(entity, crm)
         {
         }
+
+        protected override bool ShouldMap(ICrmService crm)
+        {
+            var alreadyRegistered = !crm.CandidateYetToRegisterForTeachingEvent(CandidateId, EventId);
+
+            if (alreadyRegistered)
+            {
+                return false;
+            }
+
+            return base.ShouldMap(crm);
+        }
     }
 }
