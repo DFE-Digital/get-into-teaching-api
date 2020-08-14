@@ -37,10 +37,8 @@ namespace GetIntoTeachingApi.Models
         public string WebFeedId { get; set; }
         [EntityField("dfe_isonlineevent")]
         public bool IsOnline { get; set; }
-        [EntityField("msevtmgt_name")]
-        public string Name { get; set; }
         [EntityField("dfe_externaleventtitle")]
-        public string ExternalName { get; set; }
+        public string Name { get; set; }
         [EntityField("dfe_eventsummary_ml")]
         public string Summary { get; set; }
         [EntityField("dfe_miscellaneousmessage_ml")]
