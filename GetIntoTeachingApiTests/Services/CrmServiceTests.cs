@@ -98,7 +98,12 @@ namespace GetIntoTeachingApiTests.Services
                 c.Operator == ConditionOperator.In && c.Values.ToHashSet().IsSubsetOf(status)).Any();
             var hasFutureDatedCondition = conditions.Where(c => c.AttributeName == "msevtmgt_eventenddate" &&
                 c.Operator == ConditionOperator.GreaterThan).Any();
-            var types = new HashSet<object>(Enum.GetValues(typeof(TeachingEvent.EventType)).Cast<int>().ToArray().Cast<object>());
+            var types = new HashSet<object>() {
+                (int)TeachingEvent.EventType.TrainToTeachEvent,
+                (int)TeachingEvent.EventType.OnlineEvent,
+                (int)TeachingEvent.EventType.ApplicationWorkshop,
+                (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
+            };
             var hasTypeCondition = conditions.Where(c => c.AttributeName == "dfe_event_type" &&
                 c.Operator == ConditionOperator.In && c.Values.ToHashSet().IsSubsetOf(types)).Any();
 
