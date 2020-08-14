@@ -16,9 +16,9 @@ namespace GetIntoTeachingApi.Models
         public DateTime StartAt { get; set; }
         [EntityField("dfe_endtime")]
         public DateTime EndAt { get; set; }
-        [EntityField("dfe_numberofbookings")]
+        [EntityField("dfe_websitenumberofbookings")]
         public int NumberOfBookings { get; set; }
-        [EntityField("dfe_quota")]
+        [EntityField("dfe_websitequota")]
         public int Quota { get; set; }
 
         public bool IsAvailable => NumberOfBookings < Quota;

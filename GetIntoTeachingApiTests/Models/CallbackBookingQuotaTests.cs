@@ -18,8 +18,8 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("Day").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_workingdayname");
             type.GetProperty("StartAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_starttime");
             type.GetProperty("EndAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_endtime");
-            type.GetProperty("Quota").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_quota");
-            type.GetProperty("NumberOfBookings").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_numberofbookings");
+            type.GetProperty("Quota").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_websitequota");
+            type.GetProperty("NumberOfBookings").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_websitenumberofbookings");
         }
 
         [Theory]
