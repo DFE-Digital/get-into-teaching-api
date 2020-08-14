@@ -416,13 +416,13 @@ namespace GetIntoTeachingApiTests.Services
         private static IQueryable<Entity> MockTeachingEvents()
         {
             var event1 = new Entity("msevtmgt_event");
-            event1["msevtmgt_name"] = "Event 1";
+            event1["dfe_externaleventtitle"] = "Event 1";
 
             var event2 = new Entity("msevtmgt_event");
-            event2["msevtmgt_name"] = "Event 2";
+            event2["dfe_externaleventtitle"] = "Event 2";
 
             var event3 = new Entity("msevtmgt_event");
-            event3["msevtmgt_name"] = "Event 3";
+            event3["dfe_externaleventtitle"] = "Event 3";
 
             return new[] { event1, event2, event3 }.AsQueryable();
         }
