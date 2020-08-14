@@ -17,3 +17,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1602:Enumeration items should be documented", Justification = "Not necessary.")]
 [assembly: SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1601:Partial elements should be documented", Justification = "Auto-generated migrations.", Scope = "type", Target = "~T:GetIntoTeachingApi.Migrations.InitialCreate")]
 [assembly: SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1601:Partial elements should be documented", Justification = "Auto-generated migrations.", Scope = "type", Target = "~T:GetIntoTeachingApi.Migrations.TeachingEventBuildingOnDeleteNullify")]
+[assembly: SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1601:Partial elements should be documented", Justification = "Auto-generated migrations.", Scope = "type", Target = "~T:GetIntoTeachingApi.Migrations.AddWebFeedIdToTeachingEvent")]

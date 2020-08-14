@@ -31,6 +31,10 @@ namespace GetIntoTeachingApi.Models
         public int StatusId { get; set; }
         [EntityField("msevtmgt_readableeventid")]
         public string ReadableId { get; set; }
+        [EntityField("dfe_eventwebfeedid")]
+        [SwaggerSchema("If set, the API will accept new attendees for " +
+            "this event (an external sign up should be used if this value is nil).")]
+        public string WebFeedId { get; set; }
         [EntityField("dfe_isonlineevent")]
         public bool IsOnline { get; set; }
         [EntityField("msevtmgt_name")]
