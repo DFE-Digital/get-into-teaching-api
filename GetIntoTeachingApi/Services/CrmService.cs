@@ -152,6 +152,12 @@ namespace GetIntoTeachingApi.Services
         {
             using var context = Context();
             var entity = model.ToEntity(this, context);
+
+            if (entity == null)
+            {
+                return;
+            }
+
             _service.SaveChanges(context);
             model.Id = entity.Id;
         }

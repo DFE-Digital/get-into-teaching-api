@@ -221,28 +221,6 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void ToEntity_WhenAlreadyRegisteredForEvent_DoesNotCreateTeachingEventEntity()
-        {
-            var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context();
-            var mockCrm = new Mock<ICrmService>();
-
-            var teachingEvent = new TeachingEventRegistration() { EventId = Guid.NewGuid() };
-            var candidate = new Candidate()
-            {
-                Id = Guid.NewGuid(),
-                TeachingEventRegistrations = new List<TeachingEventRegistration>() { teachingEvent }
-            };
-
-            mockCrm.Setup(m => m.MappableEntity("contact", (Guid)candidate.Id, context)).Returns(new Entity("contact"));
-            mockCrm.Setup(m => m.CandidateYetToRegisterForTeachingEvent((Guid)candidate.Id, (Guid)teachingEvent.EventId)).Returns(false);
-
-            candidate.ToEntity(mockCrm.Object, context);
-
-            mockService.Verify(m => m.NewEntity("msevtmgt_eventregistration", context), Times.Never);
-        }
-
-        [Fact]
         public void ToEntity_WhenPrivacyPolicyAlreadyAccepted_DoesNotCreatePrivacyPolicyEntity()
         {
             var mockService = new Mock<IOrganizationServiceAdapter>();
