@@ -12,29 +12,39 @@ jobs:
   test_dot_net:
     runs-on: ubuntu-latest
     steps:
+
     - uses: actions/checkout@v2
+
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.200
+
     - name: Install NotifyBintray
       run:  dotnet nuget add source --name NotifyBintray https://api.bintray.com/nuget/gov-uk-notify/nuget 
+
     - name: Install dependencies
       run: sudo dotnet restore && sudo apt-get update && sudo apt-get install -y libsqlite3-mod-spatialite
+
     - name: Build
       run: sudo dotnet build --configuration Release --no-restore /warnaserror
+
     - name: Test
       run: sudo dotnet test --no-restore --verbosity normal
+
     - name: Lint Dockerfile
       uses: brpaz/hadolint-action@master
       with:
         dockerfile: "Dockerfile"
-    - name:  Send Message to Sentry.io
-      if: always()
-      uses: sfawcett123/sentry-event@v1
-      with:
-             MESSAGE: "Test Application - get-into-teaching-api"
-             STATE:  ${{job.status}}
-             ENVIRON: "Development"
+
+    - name: Slack Notification
+      if: failure()
+      uses: rtCamp/action-slack-notify@master
       env:
-           SENTRY_DSN: ${{secrets.DEV_OPS_SENTRY_DSN}}
+           SLACK_CHANNEL: getintoteaching_tech
+           SLACK_COLOR: '#3278BD'
+           SLACK_ICON: https://github.com/rtCamp.png?size=48
+           SLACK_MESSAGE: ':disappointed_relieved: Pipeline Failure carrying out job ${{github.job}} :disappointed_relieved:'
+           SLACK_TITLE: 'Failure: ${{ github.workflow }}'
+           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
