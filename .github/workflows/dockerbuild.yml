@@ -58,16 +58,6 @@ jobs:
         run: |-
           echo ::set-output name=IMAGE::${{ env.APP_REPOSITORY }}:sha-$(echo "${{ github.sha }}" | cut -c -7)
 
-      - name:  Send Message to Sentry.io
-        if: always()
-        uses: sfawcett123/sentry-event@v1
-        with:
-             MESSAGE: "Build Application - get-into-teaching-api"
-             STATE:  ${{job.status}}
-             ENVIRON: "Test"
-        env:
-            SENTRY_DSN: ${{secrets.DEV_OPS_SENTRY_DSN}}
-
   deploy_qa:
     name: 'Deploy to Development'
     runs-on: ubuntu-latest
@@ -135,13 +125,4 @@ jobs:
          run: |
              tests/confidence/healthcheck.sh "get-into-teaching-api-dev"  "${{steps.sha.outputs.short}}" 
 
-       - name:  Send Message to Sentry.io
-         if: always()
-         uses: sfawcett123/sentry-event@v1
-         with:
-             MESSAGE: "Release Application - get-into-teaching-api"
-             STATE:  ${{job.status}}
-             ENVIRON: "Development Test"
-         env:
-            SENTRY_DSN: ${{secrets.DEV_OPS_SENTRY_DSN}}
 

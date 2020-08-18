@@ -51,6 +51,10 @@ variable "paas_postgres_2_name" {
    default = "dfe-teacher-services-sb-pg-svc"
 }
 
+variable "paas_redis_1_name" {
+   default = "dfe-teacher-services-sb-redis-svc"
+}
+
 variable "paas_api_application_name" {
    default = "dfe-teacher-services-api"
 }
