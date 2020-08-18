@@ -12,15 +12,20 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: '11'
+
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
       - name: Install NotifyBintray
         run:  dotnet nuget add source --name NotifyBintray https://api.bintray.com/nuget/gov-uk-notify/nuget 
+
       - name: Install dotnet-sonarscanner
         run:  dotnet tool install --global dotnet-sonarscanner --version 4.8.0
+
       - name: Install dependencies
         run:  sudo dotnet restore && sudo apt-get update && sudo apt-get install -y libsqlite3-mod-spatialite
+
       - name: SonarCloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -49,12 +54,13 @@ jobs:
             sudo dotnet test --no-build --logger:trx /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
           dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
-      - name:  Send Message to Sentry.io
-        if: always()
-        uses: sfawcett123/sentry-event@v1
-        with:
-             MESSAGE: "Test Application - get-into-teaching-api"
-             STATE:  ${{job.status}}
-             ENVIRON: "Development"
+      - name: Slack Notification
+        if: failure()
+        uses: rtCamp/action-slack-notify@master
         env:
-            SENTRY_DSN: ${{secrets.DEV_OPS_SENTRY_DSN}}
+           SLACK_CHANNEL: getintoteaching_tech
+           SLACK_COLOR: '#3278BD'
+           SLACK_ICON: https://github.com/rtCamp.png?size=48
+           SLACK_MESSAGE: ':disappointed_relieved: Pipeline Failure carrying out job ${{github.job}} :disappointed_relieved:'
+           SLACK_TITLE: 'Failure: ${{ github.workflow }}'
+           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
