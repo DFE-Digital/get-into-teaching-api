@@ -28,6 +28,7 @@ namespace GetIntoTeachingApi.Models
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        [SwaggerSchema(Format = "date")]
         public DateTime? DateOfBirth { get; set; }
         public string TeacherId { get; set; }
         public string DegreeSubject { get; set; }
