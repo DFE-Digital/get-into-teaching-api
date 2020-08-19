@@ -79,19 +79,19 @@ jobs:
        - name: Get Short SHA
          id: sha
          run: echo ::set-output name=short::$(git rev-parse --short $GITHUB_SHA)
-   
-       - name: Install Terraform CloudFoundry Provider
-         run: |
-             mkdir -p $HOME/.terraform.d/plugins/linux_amd64
-             wget -O ${{ env.CF_PROVIDER_DIR }} https://github.com/cloudfoundry-community/terraform-provider-cf/releases/latest/download/terraform-provider-cloudfoundry_linux_amd64
-             chmod +x ${{ env.CF_PROVIDER_DIR }}
-   
+
        - name: Wait for any previous runs to complete
          uses: softprops/turnstyle@v1
          env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
          with:
            continue-after-seconds: 180
+           
+       - name: Install Terraform CloudFoundry Provider
+         run: |
+             mkdir -p $HOME/.terraform.d/plugins/linux_amd64
+             wget -O ${{ env.CF_PROVIDER_DIR }} https://github.com/cloudfoundry-community/terraform-provider-cf/releases/latest/download/terraform-provider-cloudfoundry_linux_amd64
+             chmod +x ${{ env.CF_PROVIDER_DIR }}
 
        - name: Terraform Init
          run: |
