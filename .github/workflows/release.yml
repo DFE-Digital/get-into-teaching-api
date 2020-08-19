@@ -26,6 +26,10 @@ jobs:
          id: sha
          run: echo ::set-output name=short::$(git rev-parse --short $GITHUB_SHA)
    
+       - uses: hashicorp/setup-terraform@v1
+         with:
+           terraform_version: 0.12.28
+
        - name: Install Terraform CloudFoundry Provider
          run: |
              mkdir -p $HOME/.terraform.d/plugins/linux_amd64
