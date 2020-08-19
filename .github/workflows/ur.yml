@@ -38,6 +38,10 @@ jobs:
          with:
            continue-after-seconds: 180
 
+       - uses: hashicorp/setup-terraform@v1
+         with:
+           terraform_version: 0.12.29
+
        - name: Terraform Init
          run: |
              cd terraform/paas && pwd
