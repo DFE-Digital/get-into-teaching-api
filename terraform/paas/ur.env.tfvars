@@ -1,4 +1,4 @@
-paas_space="get-into-teaching-ur"
+paas_space="get-into-teaching-test"
 paas_postgres_1_name="get-into-teaching-api-test-pg1-ur"
 paas_postgres_2_name="get-into-teaching-api-test-pg2-ur"
 paas_redis_1_name   ="get-into-teaching-api-test-redis-ur"
