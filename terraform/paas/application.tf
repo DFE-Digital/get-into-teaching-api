@@ -18,9 +18,12 @@ resource "cloudfoundry_app" "api_application" {
     service_binding  { 
             service_instance = cloudfoundry_service_instance.redis.id
     } 
-    service_binding  { 
-            service_instance = cloudfoundry_user_provided_service.logging.id
-    } 
+    dynamic "service_binding" {
+      for_each = cloudfoundry_user_provided_service.logging
+      content {
+        service_instance = service_binding.value["id"]
+      }
+    }
     routes {
         route = cloudfoundry_route.api_route.id
     }    
