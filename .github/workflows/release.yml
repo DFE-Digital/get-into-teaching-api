@@ -32,6 +32,13 @@ jobs:
              wget -O ${{ env.CF_PROVIDER_DIR }} https://github.com/cloudfoundry-community/terraform-provider-cf/releases/latest/download/terraform-provider-cloudfoundry_linux_amd64
              chmod +x ${{ env.CF_PROVIDER_DIR }}
    
+       - name: Wait for any previous runs to complete
+         uses: softprops/turnstyle@v1
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         with:
+           continue-after-seconds: 180
+
        - name: Terraform Init
          run: |
              cd terraform/paas && pwd
@@ -72,6 +79,7 @@ jobs:
              tests/confidence/healthcheck.sh "get-into-teaching-api-test"  "${{ steps.sha.outputs.short}}" 
 
        - name: Create Sentry release
+         if: success()
          uses: getsentry/action-release@v1.0.0
          env:
            SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
@@ -79,3 +87,15 @@ jobs:
            SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
          with:
            environment: qa
+
+       - name: Slack Notification
+         if: failure()
+         uses: rtCamp/action-slack-notify@master
+         env:
+           SLACK_CHANNEL: getintoteaching_tech
+           SLACK_COLOR: '#3278BD'
+           SLACK_ICON: https://github.com/rtCamp.png?size=48
+           SLACK_MESSAGE: ':disappointed_relieved: Pipeline Failure carrying out job ${{github.job}} :disappointed_relieved:'
+           SLACK_TITLE: 'Failure: ${{ github.workflow }}'
+           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
