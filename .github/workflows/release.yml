@@ -28,7 +28,7 @@ jobs:
    
        - uses: hashicorp/setup-terraform@v1
          with:
-           terraform_version: 0.12.28
+           terraform_version: 0.12.29
 
        - name: Install Terraform CloudFoundry Provider
          run: |
