@@ -12,6 +12,10 @@ variable api_url {
 variable password {}
 
 
+variable "logging" {
+  default = 1
+}
+
 variable "application_instances" {
   default = 1
 }
