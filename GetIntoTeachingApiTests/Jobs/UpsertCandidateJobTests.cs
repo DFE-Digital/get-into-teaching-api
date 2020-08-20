@@ -33,6 +33,7 @@ namespace GetIntoTeachingApiTests.Jobs
                 _mockContext.Object, _mockLogger.Object);
         }
 
+        /* TODO: temporarily disabled to avoid collecting PII in a UR session.
         [Fact]
         public void Run_OnSuccess_SavesCandidate()
         {
@@ -58,7 +59,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockCrm.Verify(mock => mock.Save(registration), Times.Once);
             registration.CandidateId.Should().Be(candidateId);
-        }
+        }*/
 
         [Fact]
         public void Run_OnFailure_EmailsCandidate()
