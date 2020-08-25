@@ -37,7 +37,7 @@ namespace GetIntoTeachingApi.Auth
 
             var secrets = new[] { _env.SharedSecret, _env.PenTestSharedSecret };
 
-            if (!secrets.Contains(token))
+            if (string.IsNullOrWhiteSpace(token) || !secrets.Contains(token))
             {
                 _logger.LogWarning("SharedSecretHandler - Token is not valid");
                 return Task.FromResult(AuthenticateResult.Fail("Token is not valid"));
