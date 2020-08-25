@@ -117,6 +117,7 @@ jobs:
              TF_VAR_CRM_CLIENT_SECRET: "${{ secrets.CRM_CLIENT_SECRET   }}"
              TF_VAR_CRM_TENANT_ID:     "${{ secrets.CRM_TENANT_ID       }}"
              TF_VAR_SHARED_SECRET:     "${{ secrets.SHARED_SECRET       }}"
+             TF_VAR_PEN_TEST_SHARED_SECRET:     "${{ secrets.PEN_TEST_SHARED_SECRET       }}"
              TF_VAR_NOTIFY_API_KEY:    "${{ secrets.NOTIFY_API_KEY      }}"
              TF_VAR_TOTP_SECRET_KEY:   "${{ secrets.TOTP_SECRET_KEY     }}"
              TF_VAR_user:              "${{ secrets.GOVUKPAAS_USERNAME  }}"
