@@ -16,12 +16,13 @@ namespace GetIntoTeachingApiTests.Auth
     {
         private readonly SharedSecretHandler _handler;
         private readonly Mock<ILogger<SharedSecretHandler>> _mockLogger;
+        private readonly Mock<IEnv> _mockEnv;
 
         public SharedSecretHandlerTests()
         {
-            var mockEnv = new Mock<IEnv>();
-            mockEnv.Setup(m => m.SharedSecret).Returns("shared_secret");
-            mockEnv.Setup(m => m.PenTestSharedSecret).Returns("pen_test_shared_secret");
+            _mockEnv = new Mock<IEnv>();
+            _mockEnv.Setup(m => m.SharedSecret).Returns("shared_secret");
+            _mockEnv.Setup(m => m.PenTestSharedSecret).Returns("pen_test_shared_secret");
 
             var mockOptionsMonitor = new Mock<IOptionsMonitor<SharedSecretSchemeOptions>>();
             mockOptionsMonitor.Setup(m => m.Get("SharedSecretHandler")).Returns(new SharedSecretSchemeOptions());
@@ -30,7 +31,7 @@ namespace GetIntoTeachingApiTests.Auth
             var mockLoggerFactory = new Mock<ILoggerFactory>();
             mockLoggerFactory.Setup(x => x.CreateLogger(It.IsAny<string>())).Returns(_mockLogger.Object);
 
-            _handler = new SharedSecretHandler(mockEnv.Object, mockOptionsMonitor.Object,
+            _handler = new SharedSecretHandler(_mockEnv.Object, mockOptionsMonitor.Object,
                 mockLoggerFactory.Object, new Mock<UrlEncoder>().Object, new Mock<ISystemClock>().Object);
         }
 
@@ -53,6 +54,34 @@ namespace GetIntoTeachingApiTests.Auth
             var result = await _handler.AuthenticateAsync();
 
             result.Succeeded.Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData("Bearer ", "")]
+        [InlineData("Bearer ", null)]
+        [InlineData("Bearer ", " ")]
+        [InlineData("Bearer  ", " ")]
+        [InlineData("Bearer", "")]
+        [InlineData("Bearer", null)]
+        [InlineData("Bearer", " ")]
+        [InlineData("", "")]
+        [InlineData("", null)]
+        [InlineData(" ", " ")]
+        [InlineData(" ", "")]
+        [InlineData(" ", null)]
+        public async void InitializeAsync_EmptyOrNullSecretAndToken_ReturnsUnauthorized(string authHeaderValue, string secret)
+        {
+            _mockEnv.Setup(m => m.SharedSecret).Returns(secret);
+            _mockEnv.Setup(m => m.PenTestSharedSecret).Returns(secret);
+
+            var context = new DefaultHttpContext();
+            context.Request.Headers.Add("Authorization", authHeaderValue);
+            var scheme = new AuthenticationScheme("SharedSecretHandler", null, typeof(SharedSecretHandler));
+            await _handler.InitializeAsync(scheme, context);
+
+            var result = await _handler.AuthenticateAsync();
+
+            result.Succeeded.Should().BeFalse();
         }
 
         [Fact]
