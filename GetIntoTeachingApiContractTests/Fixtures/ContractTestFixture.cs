@@ -12,7 +12,7 @@ namespace GetIntoTeachingApiContractTests.Fixtures
     public class ContractTestFixture<TStartup> : IDisposable
     {
         private const string SHARED_SECRET = "shared_secret";
-        private const string CRM_SERVICE_URL = "https://localhost:8080/Test";
+        private const string CRM_SERVICE_URL = "https://localhost:8080";
         private const string CRM_CLIENT_ID = "123456";
         private const string CRM_CLIENT_SECRET = "123456";
 
@@ -24,7 +24,7 @@ namespace GetIntoTeachingApiContractTests.Fixtures
 
         private ContractTestFixture(string relativeTargetProjectParentDir)
         {
-            ContractTestEnvironment.Setup(SHARED_SECRET, CRM_SERVICE_URL, CRM_CLIENT_ID, CRM_CLIENT_SECRET);
+            ContractTestEnvironment.Setup(SHARED_SECRET, $"{CRM_SERVICE_URL}/Test", CRM_CLIENT_ID, CRM_CLIENT_SECRET);
             
             CrmServer = new MockCrmServer(CRM_SERVICE_URL);
             Server = new ServerUnderTest<TStartup>(relativeTargetProjectParentDir);
