@@ -38,7 +38,7 @@ namespace GetIntoTeachingApiContractTests
         [Fact]
         public async Task CanCheckHealth()
         {
-            var url = "/api/operations/health_check";
+            const string url = "/api/operations/health_check";
             
 
             // Act
