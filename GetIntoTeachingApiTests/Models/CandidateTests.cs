@@ -86,6 +86,36 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("StatusIsWaitingToBeAssignedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_waitingtobeassigneddate");
             type.GetProperty("OptOutOfGdpr").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "msdyn_gdproptout");
 
+            type.GetProperty("TeacherTrainingAdviserSubscriptionChannelId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "dfe_GITISTTAServiceSubscriptionChannel" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("HasTeacherTrainingAdviserSubscription").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISTTAServiceIsSubscriber");
+            type.GetProperty("TeacherTrainingAdviserSubscriptionStartAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISTTAServiceStartDate");
+            type.GetProperty("TeacherTrainingAdviserSubscriptionDoNotBulkEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISTTAServiceDoNotBulkEmail");
+            type.GetProperty("TeacherTrainingAdviserSubscriptionDoNotBulkPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISTTAServiceDoNotBulkPostalMail");
+            type.GetProperty("TeacherTrainingAdviserSubscriptionDoNotEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISTTAServiceDoNotEmail");
+            type.GetProperty("TeacherTrainingAdviserSubscriptionDoNotPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISTTAServiceDoNotPostalMail");
+            type.GetProperty("TeacherTrainingAdviserSubscriptionDoNotSendMm").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISTTAServiceDoNotSendMM");
+
+            type.GetProperty("MailingListSubscriptionChannelId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "dfe_GITISMailingListServiceSubscriptionChannel" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("HasMailingListSubscription").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISMailingListServiceIsSubscriber");
+            type.GetProperty("MailingListSubscriptionStartAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISMailingListServiceStartDate");
+            type.GetProperty("MailingListSubscriptionDoNotBulkEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISMailingListServiceDoNotBulkEmail");
+            type.GetProperty("MailingListSubscriptionDoNotBulkPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISMailingListServiceDoNotBulkPostalMail");
+            type.GetProperty("MailingListSubscriptionDoNotEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISMailingListServiceDoNotEmail");
+            type.GetProperty("MailingListSubscriptionDoNotPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISMailingListServiceDoNotPostalMail");
+            type.GetProperty("MailingListSubscriptionDoNotSendMm").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISMailingListServiceDoNotSendMM");
+
+            type.GetProperty("EventsSubscriptionChannelId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "dfe_GITISEventsServiceSubscriptionChannel" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("HasEventsSubscription").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISEventsServiceIsSubscriber");
+            type.GetProperty("EventsSubscriptionStartAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISEventsServiceStartDate");
+            type.GetProperty("EventsSubscriptionDoNotBulkEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISEventsServiceDoNotBulkEmail");
+            type.GetProperty("EventsSubscriptionDoNotBulkPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISEventsServiceDoNotBulkPostalMail");
+            type.GetProperty("EventsSubscriptionDoNotEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISEventsServiceDoNotEmail");
+            type.GetProperty("EventsSubscriptionDoNotPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISEventsServiceDoNotPostalMail");
+            type.GetProperty("EventsSubscriptionDoNotSendMm").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISEventsServiceDoNotSendMM");
+
             type.GetProperty("Qualifications").Should().BeDecoratedWith<EntityRelationshipAttribute>(
                 a => a.Name == "dfe_contact_dfe_candidatequalification_ContactId" &&
                      a.Type == typeof(CandidateQualification));
@@ -100,26 +130,6 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void HasActiveSubscriptionOfType_ReturnsTrueIfActiveSubscriptionOfTypeExists()
-        {
-            var activeSubscription = new Subscription()
-            {
-                TypeId = (int)Subscription.ServiceType.MailingList,
-                StatusId = (int)Subscription.SubscriptionStatus.Active,
-            };
-            var inActiveSubscription = new Subscription()
-            {
-                TypeId = (int)Subscription.ServiceType.Event,
-                StatusId = (int)Subscription.SubscriptionStatus.InActive
-            };
-            var subscriptions = new List<Subscription>() { activeSubscription, inActiveSubscription };
-            var candidate = new Candidate() { Subscriptions = subscriptions };
-
-            candidate.HasActiveSubscriptionOfType(Subscription.ServiceType.MailingList).Should().BeTrue();
-            candidate.HasActiveSubscriptionOfType(Subscription.ServiceType.Event).Should().BeFalse();
-        }
-
-        [Fact]
         public void ToEntity_WhenRelationshipIsNull_DoesNotCreateEntity()
         {
             var mockService = new Mock<IOrganizationServiceAdapter>();
@@ -128,14 +138,14 @@ namespace GetIntoTeachingApiTests.Models
 
             var candidate = new Candidate()
             {
-                Subscriptions = new List<Subscription>() { null }
+                Qualifications = new List<CandidateQualification>() { null }
             };
 
             mockCrm.Setup(m => m.MappableEntity("contact", null, context)).Returns(new Entity("contact"));
 
             candidate.ToEntity(mockCrm.Object, context);
 
-            mockService.Verify(m => m.NewEntity("dfe_servicesubscription", context), Times.Never);
+            mockService.Verify(m => m.NewEntity("dfe_candidatequalification", context), Times.Never);
         }
 
         [Fact]
@@ -155,69 +165,6 @@ namespace GetIntoTeachingApiTests.Models
             candidate.ToEntity(mockCrm.Object, context);
 
             mockCrm.Verify(m => m.MappableEntity("dfe_candidatequalification", null, context), Times.Once);
-        }
-
-        [Fact]
-        public void ToEntity_WhenAlreadySubscribedToService_DoesNotCreateSubscriptionEntity()
-        {
-            var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context();
-            var mockCrm = new Mock<ICrmService>();
-
-            var candidate = new Candidate()
-            {
-                Id = Guid.NewGuid(),
-                Subscriptions = new List<Subscription>() { new Subscription() { TypeId = (int)Subscription.ServiceType.Event } }
-            };
-
-            mockCrm.Setup(m => m.MappableEntity("contact", (Guid)candidate.Id, context)).Returns(new Entity("contact"));
-            mockCrm.Setup(m => m.CandidateYetToSubscribeToServiceOfType((Guid)candidate.Id, (int)Subscription.ServiceType.Event)).Returns(false);
-
-            candidate.ToEntity(mockCrm.Object, context);
-
-            mockService.Verify(m => m.NewEntity("dfe_servicesubscription", context), Times.Never);
-        }
-
-        [Fact]
-        public void ToEntity_WithNewCandidateAndSubscription_CreatesSubscriptionEntity()
-        {
-            var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context();
-            var mockCrm = new Mock<ICrmService>();
-
-            var candidate = new Candidate()
-            {
-                Subscriptions = new List<Subscription>() { new Subscription() { TypeId = (int)Subscription.ServiceType.Event } }
-            };
-
-            mockCrm.Setup(m => m.MappableEntity("contact", null, context)).Returns(new Entity("contact"));
-            mockCrm.Setup(m => m.MappableEntity("dfe_servicesubscription", null, context)).Returns(new Entity("dfe_servicesubscription"));
-
-            candidate.ToEntity(mockCrm.Object, context);
-
-            mockCrm.Verify(m => m.MappableEntity("dfe_servicesubscription", null, context), Times.Once);
-        }
-
-        [Fact]
-        public void ToEntity_WithExistingCandidateAndSubscription_CreatesSubscriptionEntity()
-        {
-            var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context();
-            var mockCrm = new Mock<ICrmService>();
-            var subscriptionId = Guid.NewGuid();
-
-            var candidate = new Candidate()
-            {
-                Id = Guid.NewGuid(),
-                Subscriptions = new List<Subscription>() { new Subscription() { Id = subscriptionId, TypeId = (int)Subscription.ServiceType.Event } }
-            };
-
-            mockCrm.Setup(m => m.MappableEntity("contact", (Guid)candidate.Id, context)).Returns(new Entity("contact"));
-            mockCrm.Setup(m => m.MappableEntity("dfe_servicesubscription", subscriptionId, context)).Returns(new Entity("dfe_servicesubscription"));
-
-            candidate.ToEntity(mockCrm.Object, context);
-
-            mockCrm.Verify(m => m.MappableEntity("dfe_servicesubscription", subscriptionId, context), Times.Once);
         }
 
         [Fact]

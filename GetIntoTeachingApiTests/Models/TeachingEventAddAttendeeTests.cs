@@ -12,8 +12,6 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Constructor_WithCandidate_MapsCorrectly()
         {
-            var subscriptions = new List<Subscription>() { new Subscription() { TypeId = (int)Subscription.ServiceType.Event } };
-
             var candidate = new Candidate()
             {
                 Id = Guid.NewGuid(),
@@ -22,7 +20,7 @@ namespace GetIntoTeachingApiTests.Models
                 LastName = "Doe",
                 Telephone = "1234567",
                 AddressPostcode = "KY11 9YU",
-                Subscriptions = subscriptions,
+                HasEventsSubscription = true,
             };
 
             var response = new TeachingEventAddAttendee(candidate);
@@ -73,9 +71,9 @@ namespace GetIntoTeachingApiTests.Models
             candidate.DoNotSendMm.Should().BeFalse();
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
-            
-            candidate.Subscriptions.First().TypeId.Should().Be((int)Subscription.ServiceType.Event);
-            candidate.Subscriptions.Last().TypeId.Should().Be((int)Subscription.ServiceType.MailingList);
+
+            candidate.HasEventsSubscription.Should().BeTrue();
+            candidate.HasMailingListSubscription.Should().BeTrue();
 
             candidate.TeachingEventRegistrations.First().EventId.Should().Equals(request.EventId);
             candidate.TeachingEventRegistrations.First().ChannelId.Should().Be((int)TeachingEventRegistration.Channel.Event);
@@ -88,15 +86,16 @@ namespace GetIntoTeachingApiTests.Models
         {
             var request = new TeachingEventAddAttendee() { SubscribeToMailingList = true, SubscribeToEvents = false };
 
-            var subscription = request.Candidate.Subscriptions.Last();
+            var candidate = request.Candidate;
 
-            subscription.TypeId.Should().Be((int)Subscription.ServiceType.MailingList);
-            subscription.DoNotBulkPostalMail.Should().BeTrue();
-            subscription.DoNotPostalMail.Should().BeTrue();
-            subscription.DoNotBulkEmail.Should().BeFalse();
-            subscription.DoNotSendMm.Should().BeFalse();
-            subscription.DoNotEmail.Should().BeFalse();
-            subscription.OptOutOfSms.Should().BeFalse();
+            candidate.HasMailingListSubscription.Should().BeTrue();
+            candidate.MailingListSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.MailingList);
+            candidate.MailingListSubscriptionStartAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
+            candidate.MailingListSubscriptionDoNotBulkEmail.Should().BeFalse();
+            candidate.MailingListSubscriptionDoNotBulkPostalMail.Should().BeTrue();
+            candidate.MailingListSubscriptionDoNotPostalMail.Should().BeTrue();
+            candidate.MailingListSubscriptionDoNotSendMm.Should().BeFalse();
+            candidate.MailingListSubscriptionDoNotEmail.Should().BeFalse();
         }
 
         [Fact]
@@ -104,15 +103,16 @@ namespace GetIntoTeachingApiTests.Models
         {
             var request = new TeachingEventAddAttendee() { SubscribeToEvents = true, SubscribeToMailingList = false };
 
-            var subscription = request.Candidate.Subscriptions.First();
+            var candidate = request.Candidate;
 
-            subscription.TypeId.Should().Be((int)Subscription.ServiceType.Event);
-            subscription.DoNotBulkPostalMail.Should().BeTrue();
-            subscription.DoNotPostalMail.Should().BeTrue();
-            subscription.DoNotBulkEmail.Should().BeFalse();
-            subscription.DoNotSendMm.Should().BeFalse();
-            subscription.DoNotEmail.Should().BeFalse();
-            subscription.OptOutOfSms.Should().BeFalse();
+            candidate.HasEventsSubscription.Should().BeTrue();
+            candidate.EventsSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Events);
+            candidate.EventsSubscriptionStartAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
+            candidate.EventsSubscriptionDoNotBulkEmail.Should().BeFalse();
+            candidate.EventsSubscriptionDoNotBulkPostalMail.Should().BeTrue();
+            candidate.EventsSubscriptionDoNotPostalMail.Should().BeTrue();
+            candidate.EventsSubscriptionDoNotSendMm.Should().BeFalse();
+            candidate.EventsSubscriptionDoNotEmail.Should().BeFalse();
         }
 
         [Fact]
@@ -120,15 +120,16 @@ namespace GetIntoTeachingApiTests.Models
         {
             var request = new TeachingEventAddAttendee() { SubscribeToEvents = false, SubscribeToMailingList = false };
 
-            var subscription = request.Candidate.Subscriptions.First();
+            var candidate = request.Candidate;
 
-            subscription.TypeId.Should().Be((int)Subscription.ServiceType.Event);
-            subscription.DoNotBulkPostalMail.Should().BeTrue();
-            subscription.DoNotPostalMail.Should().BeTrue();
-            subscription.DoNotBulkEmail.Should().BeTrue();
-            subscription.DoNotSendMm.Should().BeTrue();
-            subscription.DoNotEmail.Should().BeFalse();
-            subscription.OptOutOfSms.Should().BeFalse();
+            candidate.HasEventsSubscription.Should().BeTrue();
+            candidate.EventsSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Events);
+            candidate.EventsSubscriptionStartAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
+            candidate.EventsSubscriptionDoNotBulkEmail.Should().BeTrue();
+            candidate.EventsSubscriptionDoNotBulkPostalMail.Should().BeTrue();
+            candidate.EventsSubscriptionDoNotPostalMail.Should().BeTrue();
+            candidate.EventsSubscriptionDoNotSendMm.Should().BeTrue();
+            candidate.EventsSubscriptionDoNotEmail.Should().BeFalse();
         }
 
         [Fact]
@@ -170,15 +171,15 @@ namespace GetIntoTeachingApiTests.Models
         {
             var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false };
 
-            request.Candidate.Subscriptions.Any(s => s.TypeId == (int)Subscription.ServiceType.MailingList).Should().BeFalse();
+            request.Candidate.HasMailingListSubscription.Should().BeNull();
         }
 
         [Fact]
-        public void Candidate_SubscribeToEventsIsFalse_StillCreatesSubscription()
+        public void Candidate_SubscribeToEventsIsFalse_StillCreatesEventsSubscription()
         {
             var request = new TeachingEventAddAttendee() { SubscribeToEvents = false };
 
-            request.Candidate.Subscriptions.Any(s => s.TypeId == (int)Subscription.ServiceType.Event).Should().BeTrue();
+            request.Candidate.HasEventsSubscription.Should().BeTrue();
         }
     }
 }

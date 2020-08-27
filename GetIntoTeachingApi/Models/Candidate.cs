@@ -54,6 +54,13 @@ namespace GetIntoTeachingApi.Models
             Any = 1,
         }
 
+        public enum SubscriptionChannel
+        {
+            TeacherTrainingAdviser = 222750000,
+            MailingList = 222750000,
+            Events = 222750000,
+        }
+
         public enum PreferredEducationPhase
         {
             Primary = 222750000,
@@ -160,8 +167,60 @@ namespace GetIntoTeachingApi.Models
         [EntityField("dfe_newregistrant")]
         public bool IsNewRegistrant { get; set; }
 
-        [EntityRelationship("dfe_contact_dfe_servicesubscription_contact", typeof(Subscription))]
-        public List<Subscription> Subscriptions { get; set; } = new List<Subscription>();
+        [EntityField("dfe_GITISTTAServiceIsSubscriber")]
+        public bool? HasTeacherTrainingAdviserSubscription { get; set; }
+        [JsonIgnore]
+        [EntityField("dfe_GITISTTAServiceSubscriptionChannel", typeof(OptionSetValue))]
+        public int? TeacherTrainingAdviserSubscriptionChannelId { get; set; }
+        [EntityField("dfe_GITISTTAServiceStartDate")]
+        public DateTime? TeacherTrainingAdviserSubscriptionStartAt { get; set; }
+        [EntityField("dfe_GITISTTAServiceDoNotBulkEmail")]
+        public bool? TeacherTrainingAdviserSubscriptionDoNotBulkEmail { get; set; }
+        [EntityField("dfe_GITISTTAServiceDoNotBulkPostalMail")]
+        public bool? TeacherTrainingAdviserSubscriptionDoNotBulkPostalMail { get; set; }
+        [EntityField("dfe_GITISTTAServiceDoNotEmail")]
+        public bool? TeacherTrainingAdviserSubscriptionDoNotEmail { get; set; }
+        [EntityField("dfe_GITISTTAServiceDoNotPostalMail")]
+        public bool? TeacherTrainingAdviserSubscriptionDoNotPostalMail { get; set; }
+        [EntityField("dfe_GITISTTAServiceDoNotSendMM")]
+        public bool? TeacherTrainingAdviserSubscriptionDoNotSendMm { get; set; }
+
+        [EntityField("dfe_GITISMailingListServiceIsSubscriber")]
+        public bool? HasMailingListSubscription { get; set; }
+        [JsonIgnore]
+        [EntityField("dfe_GITISMailingListServiceSubscriptionChannel", typeof(OptionSetValue))]
+        public int? MailingListSubscriptionChannelId { get; set; }
+        [EntityField("dfe_GITISMailingListServiceStartDate")]
+        public DateTime? MailingListSubscriptionStartAt { get; set; }
+        [EntityField("dfe_GITISMailingListServiceDoNotBulkEmail")]
+        public bool? MailingListSubscriptionDoNotBulkEmail { get; set; }
+        [EntityField("dfe_GITISMailingListServiceDoNotBulkPostalMail")]
+        public bool? MailingListSubscriptionDoNotBulkPostalMail { get; set; }
+        [EntityField("dfe_GITISMailingListServiceDoNotEmail")]
+        public bool? MailingListSubscriptionDoNotEmail { get; set; }
+        [EntityField("dfe_GITISMailingListServiceDoNotPostalMail")]
+        public bool? MailingListSubscriptionDoNotPostalMail { get; set; }
+        [EntityField("dfe_GITISMailingListServiceDoNotSendMM")]
+        public bool? MailingListSubscriptionDoNotSendMm { get; set; }
+
+        [EntityField("dfe_GITISEventsServiceIsSubscriber")]
+        public bool? HasEventsSubscription { get; set; }
+        [JsonIgnore]
+        [EntityField("dfe_GITISEventsServiceSubscriptionChannel", typeof(OptionSetValue))]
+        public int? EventsSubscriptionChannelId { get; set; }
+        [EntityField("dfe_GITISEventsServiceStartDate")]
+        public DateTime? EventsSubscriptionStartAt { get; set; }
+        [EntityField("dfe_GITISEventsServiceDoNotBulkEmail")]
+        public bool? EventsSubscriptionDoNotBulkEmail { get; set; }
+        [EntityField("dfe_GITISEventsServiceDoNotBulkPostalMail")]
+        public bool? EventsSubscriptionDoNotBulkPostalMail { get; set; }
+        [EntityField("dfe_GITISEventsServiceDoNotEmail")]
+        public bool? EventsSubscriptionDoNotEmail { get; set; }
+        [EntityField("dfe_GITISEventsServiceDoNotPostalMail")]
+        public bool? EventsSubscriptionDoNotPostalMail { get; set; }
+        [EntityField("dfe_GITISEventsServiceDoNotSendMM")]
+        public bool? EventsSubscriptionDoNotSendMm { get; set; }
+
         [EntityRelationship("msevtmgt_contact_msevtmgt_eventregistration_Contact", typeof(TeachingEventRegistration))]
         public List<TeachingEventRegistration> TeachingEventRegistrations { get; set; } = new List<TeachingEventRegistration>();
         [EntityRelationship("dfe_contact_dfe_candidatequalification_ContactId", typeof(CandidateQualification))]
@@ -183,11 +242,6 @@ namespace GetIntoTeachingApi.Models
         public Candidate(Entity entity, ICrmService crm)
             : base(entity, crm)
         {
-        }
-
-        public bool HasActiveSubscriptionOfType(Subscription.ServiceType type)
-        {
-            return ActiveSubscriptions().Any(s => s.TypeId == (int)type);
         }
 
         public bool IsReturningToTeaching()
@@ -231,16 +285,9 @@ namespace GetIntoTeachingApi.Models
                     return true;
                 case "PrivacyPolicy" when Id != null:
                     return crm.CandidateYetToAcceptPrivacyPolicy((Guid)Id, value.AcceptedPolicyId);
-                case "Subscriptions" when Id != null && value.Id == null:
-                    return crm.CandidateYetToSubscribeToServiceOfType((Guid)Id, value.TypeId);
                 default:
                     return true;
             }
-        }
-
-        private IEnumerable<Subscription> ActiveSubscriptions()
-        {
-            return Subscriptions.Where(s => s.StatusId == (int)Subscription.SubscriptionStatus.Active);
         }
     }
 }

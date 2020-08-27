@@ -193,58 +193,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void CandidateYetToSubscribeToServiceOfType_WhenNotYetSubscribed_ReturnsTrue()
-        {
-            var candidate = new Candidate() { Id = Guid.NewGuid() };
-            var entity = new Entity();
-            entity["dfe_contact"] = new EntityReference("contact", (Guid)candidate.Id);
-            entity["dfe_servicesubscriptiontype"] = new OptionSetValue((int)Subscription.ServiceType.Event);
-            entity["statecode"] = new OptionSetValue((int)Subscription.SubscriptionStatus.Active);
-
-            _mockService.Setup(m => m.CreateQuery("dfe_servicesubscription", _context))
-                .Returns(new List<Entity> { entity }.AsQueryable());
-
-            var result = _crm.CandidateYetToSubscribeToServiceOfType((Guid)candidate.Id, (int)Subscription.ServiceType.MailingList);
-
-            result.Should().BeTrue();
-        }
-
-        [Fact]
-        public void CandidateYetToSubscribeToServiceOfType_WhenExistingSubscriptionIsInactive_ReturnsTrue()
-        {
-            var candidate = new Candidate() { Id = Guid.NewGuid() };
-            var entity = new Entity();
-            entity["dfe_contact"] = new EntityReference("contact", (Guid)candidate.Id);
-            entity["dfe_servicesubscriptiontype"] = new OptionSetValue((int)Subscription.ServiceType.MailingList);
-            entity["statecode"] = new OptionSetValue((int)Subscription.SubscriptionStatus.InActive);
-
-            _mockService.Setup(m => m.CreateQuery("dfe_servicesubscription", _context))
-                .Returns(new List<Entity> { entity }.AsQueryable());
-
-            var result = _crm.CandidateYetToSubscribeToServiceOfType((Guid)candidate.Id, (int)Subscription.ServiceType.MailingList);
-
-            result.Should().BeTrue();
-        }
-
-        [Fact]
-        public void CandidateYetToSubscribeToServiceOfType_WhenAlreadySubscribed_ReturnsFalse()
-        {
-            var candidate = new Candidate() { Id = Guid.NewGuid() };
-            var entity = new Entity();
-            entity["dfe_contact"] = new EntityReference("contact", (Guid)candidate.Id);
-            entity["dfe_servicesubscriptiontype"] = new OptionSetValue((int)Subscription.ServiceType.TeacherTrainingAdviser);
-            entity["statecode"] = new OptionSetValue((int)Subscription.SubscriptionStatus.Active);
-
-            _mockService.Setup(m => m.CreateQuery("dfe_servicesubscription", _context))
-                .Returns(new List<Entity> { entity }.AsQueryable());
-
-            var result = _crm.CandidateYetToSubscribeToServiceOfType((Guid)candidate.Id, (int)Subscription.ServiceType.TeacherTrainingAdviser);
-
-            result.Should().BeFalse();
-        }
-
-        [Fact]
-        public void IsCandidateSubscribedToServiceOfType_WhenNotYetSubscribed_ReturnsFalse()
+        public void CandidateYetToRegisterForTeachingEvent_WhenNotYetRegistered_ReturnsTrue()
         {
             var candidate = new Candidate() { Id = Guid.NewGuid() };
             var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };

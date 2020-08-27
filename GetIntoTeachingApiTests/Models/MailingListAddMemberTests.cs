@@ -26,8 +26,6 @@ namespace GetIntoTeachingApiTests.Models
                 new CandidateQualification() { Id = Guid.NewGuid(), CreatedAt = DateTime.Now.AddDays(5) },
             };
 
-            var subscriptions = new List<Subscription>() { new Subscription() { TypeId = (int)Subscription.ServiceType.Event } };
-
             var candidate = new Candidate()
             {
                 Id = Guid.NewGuid(),
@@ -39,7 +37,7 @@ namespace GetIntoTeachingApiTests.Models
                 Telephone = "1234567",
                 AddressPostcode = "KY11 9YU",
                 Qualifications = qualifications,
-                Subscriptions = subscriptions,
+                HasEventsSubscription = true,
             };
 
             var response = new MailingListAddMember(candidate);
@@ -101,21 +99,23 @@ namespace GetIntoTeachingApiTests.Models
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
 
-            candidate.Subscriptions.First().TypeId.Should().Be((int)Subscription.ServiceType.MailingList);
-            candidate.Subscriptions.First().DoNotBulkPostalMail.Should().BeTrue();
-            candidate.Subscriptions.First().DoNotPostalMail.Should().BeTrue();
-            candidate.Subscriptions.First().DoNotEmail.Should().BeFalse();
-            candidate.Subscriptions.First().DoNotBulkEmail.Should().BeFalse();
-            candidate.Subscriptions.First().DoNotSendMm.Should().BeFalse(); 
-            candidate.Subscriptions.First().OptOutOfSms.Should().BeFalse(); 
+            candidate.HasMailingListSubscription.Should().BeTrue();
+            candidate.MailingListSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.MailingList);
+            candidate.MailingListSubscriptionStartAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
+            candidate.MailingListSubscriptionDoNotBulkEmail.Should().BeFalse();
+            candidate.MailingListSubscriptionDoNotBulkPostalMail.Should().BeTrue();
+            candidate.MailingListSubscriptionDoNotPostalMail.Should().BeTrue();
+            candidate.MailingListSubscriptionDoNotSendMm.Should().BeFalse();
+            candidate.MailingListSubscriptionDoNotEmail.Should().BeFalse();
 
-            candidate.Subscriptions.Last().TypeId.Should().Be((int)Subscription.ServiceType.Event);
-            candidate.Subscriptions.Last().DoNotBulkPostalMail.Should().BeTrue();
-            candidate.Subscriptions.Last().DoNotPostalMail.Should().BeTrue();
-            candidate.Subscriptions.Last().DoNotEmail.Should().BeFalse();
-            candidate.Subscriptions.Last().DoNotBulkEmail.Should().BeFalse();
-            candidate.Subscriptions.Last().DoNotSendMm.Should().BeFalse();
-            candidate.Subscriptions.Last().OptOutOfSms.Should().BeFalse();
+            candidate.HasEventsSubscription.Should().BeTrue();
+            candidate.EventsSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Events);
+            candidate.EventsSubscriptionStartAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
+            candidate.EventsSubscriptionDoNotBulkEmail.Should().BeFalse();
+            candidate.EventsSubscriptionDoNotBulkPostalMail.Should().BeTrue();
+            candidate.EventsSubscriptionDoNotPostalMail.Should().BeTrue();
+            candidate.EventsSubscriptionDoNotSendMm.Should().BeFalse();
+            candidate.EventsSubscriptionDoNotEmail.Should().BeFalse();
 
             candidate.Qualifications.First().DegreeStatusId.Should().Be(request.DegreeStatusId);
             candidate.Qualifications.First().TypeId.Should().Be((int)CandidateQualification.DegreeType.Degree);
@@ -143,8 +143,7 @@ namespace GetIntoTeachingApiTests.Models
         {
             var request = new MailingListAddMember() { SubscribeToEvents = false };
 
-            request.Candidate.Subscriptions.Count.Should().Be(1);
-            request.Candidate.Subscriptions.Where(s => s.TypeId == (int)Subscription.ServiceType.Event).Count().Should().Be(0);
+            request.Candidate.HasEventsSubscription.Should().BeNull();
         }
     }
 }
