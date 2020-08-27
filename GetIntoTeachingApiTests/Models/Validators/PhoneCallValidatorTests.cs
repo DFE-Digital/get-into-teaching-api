@@ -32,7 +32,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
             var phoneCall = new PhoneCall()
             {
-                ScheduledAt = DateTime.Now.AddDays(2),
+                ScheduledAt = DateTime.UtcNow.AddDays(2),
                 ChannelId = int.Parse(mockPickListItem.Id),
             };
 

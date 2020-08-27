@@ -24,7 +24,7 @@ namespace GetIntoTeachingApi.Models
         public string Description { get; set; } = "Online consent as part of web registration";
         [JsonIgnore]
         [EntityField("dfe_timeofconsent")]
-        public DateTime AcceptedAt { get; set; } = DateTime.Now;
+        public DateTime AcceptedAt { get; set; } = DateTime.UtcNow;
 
         public CandidatePrivacyPolicy()
             : base()

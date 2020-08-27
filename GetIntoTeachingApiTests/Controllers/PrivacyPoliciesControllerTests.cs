@@ -72,7 +72,7 @@ namespace GetIntoTeachingApiTests.Controllers
 
         private static PrivacyPolicy MockPrivacyPolicy()
         {
-            return new PrivacyPolicy { Id = Guid.NewGuid(), Text = "Example text", CreatedAt = DateTime.Now };
+            return new PrivacyPolicy { Id = Guid.NewGuid(), Text = "Example text", CreatedAt = DateTime.UtcNow };
         }
     }
 }
