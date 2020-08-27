@@ -12,8 +12,6 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Constructor_WithCandidate_MapsCorrectly()
         {
-            var subscriptions = new List<Subscription>() { new Subscription() { TypeId = (int)Subscription.ServiceType.TeacherTrainingAdviser } };
-
             var latestQualification = new CandidateQualification()
             {
                 Id = Guid.NewGuid(),
@@ -70,7 +68,7 @@ namespace GetIntoTeachingApiTests.Models
                 AddressPostcode = "KY11 9YU",
                 Qualifications = qualifications,
                 PastTeachingPositions = pastTeachingPositions,
-                Subscriptions = subscriptions,
+                HasTeacherTrainingAdviserSubscription = true,
             };
 
             var response = new TeacherTrainingAdviserSignUp(candidate);
@@ -194,7 +192,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.Qualifications.First().DegreeSubject.Should().Be(request.DegreeSubject);
             candidate.Qualifications.First().TypeId.Should().Be(request.DegreeTypeId);
 
-            candidate.Subscriptions.First().TypeId.Should().Be((int)Subscription.ServiceType.TeacherTrainingAdviser);
+            candidate.HasTeacherTrainingAdviserSubscription.Should().BeTrue();
         }
 
         [Fact]
@@ -237,15 +235,16 @@ namespace GetIntoTeachingApiTests.Models
                 SubjectTaughtId = null
             };
 
-            var subscription = request.Candidate.Subscriptions.First();
+            var candidate = request.Candidate;
 
-            subscription.TypeId.Should().Be((int)Subscription.ServiceType.TeacherTrainingAdviser);
-            subscription.DoNotBulkEmail.Should().BeFalse();
-            subscription.DoNotBulkPostalMail.Should().BeFalse();
-            subscription.DoNotPostalMail.Should().BeFalse();
-            subscription.DoNotSendMm.Should().BeFalse();
-            subscription.DoNotEmail.Should().BeFalse();
-            subscription.OptOutOfSms.Should().BeFalse();
+            candidate.HasTeacherTrainingAdviserSubscription.Should().BeTrue();
+            candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.TeacherTrainingAdviser);
+            candidate.TeacherTrainingAdviserSubscriptionStartAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
+            candidate.TeacherTrainingAdviserSubscriptionDoNotBulkEmail.Should().BeFalse();
+            candidate.TeacherTrainingAdviserSubscriptionDoNotBulkPostalMail.Should().BeFalse();
+            candidate.TeacherTrainingAdviserSubscriptionDoNotPostalMail.Should().BeFalse();
+            candidate.TeacherTrainingAdviserSubscriptionDoNotSendMm.Should().BeFalse();
+            candidate.TeacherTrainingAdviserSubscriptionDoNotEmail.Should().BeFalse();
         }
 
         [Fact]
@@ -256,15 +255,16 @@ namespace GetIntoTeachingApiTests.Models
                 SubjectTaughtId = Guid.NewGuid()
             };
 
-            var subscription = request.Candidate.Subscriptions.First();
+            var candidate = request.Candidate;
 
-            subscription.TypeId.Should().Be((int)Subscription.ServiceType.TeacherTrainingAdviser);
-            subscription.DoNotBulkEmail.Should().BeTrue();
-            subscription.DoNotBulkPostalMail.Should().BeTrue();
-            subscription.DoNotPostalMail.Should().BeTrue();
-            subscription.DoNotSendMm.Should().BeTrue();
-            subscription.DoNotEmail.Should().BeFalse();
-            subscription.OptOutOfSms.Should().BeFalse();
+            candidate.HasTeacherTrainingAdviserSubscription.Should().BeTrue();
+            candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.TeacherTrainingAdviser);
+            candidate.TeacherTrainingAdviserSubscriptionStartAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
+            candidate.TeacherTrainingAdviserSubscriptionDoNotBulkEmail.Should().BeTrue();
+            candidate.TeacherTrainingAdviserSubscriptionDoNotBulkPostalMail.Should().BeTrue();
+            candidate.TeacherTrainingAdviserSubscriptionDoNotPostalMail.Should().BeTrue();
+            candidate.TeacherTrainingAdviserSubscriptionDoNotSendMm.Should().BeTrue();
+            candidate.TeacherTrainingAdviserSubscriptionDoNotEmail.Should().BeFalse();
         }
 
         [Fact]
