@@ -105,14 +105,6 @@ namespace GetIntoTeachingApi.Services
                 entity.GetAttributeValue<EntityReference>("msevtmgt_eventid").Id == teachingEventId) == null;
         }
 
-        public bool CandidateYetToSubscribeToServiceOfType(Guid candidateId, int serviceSubscriptionTypeId)
-        {
-            return _service.CreateQuery("dfe_servicesubscription", Context()).FirstOrDefault(entity =>
-                entity.GetAttributeValue<EntityReference>("dfe_contact").Id == candidateId &&
-                entity.GetAttributeValue<OptionSetValue>("statecode").Value == (int)Subscription.SubscriptionStatus.Active &&
-                entity.GetAttributeValue<OptionSetValue>("dfe_servicesubscriptiontype").Value == serviceSubscriptionTypeId) == null;
-        }
-
         public void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context)
         {
             _service.AddLink(source, relationship, target, context);

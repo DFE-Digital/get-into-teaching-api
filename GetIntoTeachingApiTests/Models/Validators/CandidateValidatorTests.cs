@@ -137,43 +137,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_SubscriptionsWithDuplicateTypes_HasError()
-        {
-            var mockPickListItem = new TypeEntity { Id = "123" };
-
-            _mockStore
-                .Setup(mock => mock.GetPickListItems("dfe_servicesubscription", "dfe_servicesubscriptiontype"))
-                .Returns(new[] { mockPickListItem }.AsQueryable());
-
-            var candidate = new Candidate
-            {
-                Subscriptions = new List<Subscription>
-                {
-                    new Subscription {TypeId = int.Parse(mockPickListItem.Id)},
-                    new Subscription {TypeId = int.Parse(mockPickListItem.Id)},
-                }
-            };
-            var result = _validator.TestValidate(candidate);
-
-            result.ShouldHaveValidationErrorFor("Subscriptions");
-        }
-
-        [Fact]
-        public void Validate_SubscriptionIsInvalid_HasError()
-        {
-            var candidate = new Candidate
-            {
-                Subscriptions = new List<Subscription>
-                {
-                    new Subscription {TypeId = 123}
-                }
-            };
-            var result = _validator.TestValidate(candidate);
-
-            result.ShouldHaveValidationErrorFor("Subscriptions[0].TypeId");
-        }
-
-        [Fact]
         public void Validate_QualificationIsInvalid_HasError()
         {
             var candidate = new Candidate

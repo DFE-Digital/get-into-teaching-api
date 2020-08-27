@@ -86,7 +86,7 @@ namespace GetIntoTeachingApi.Models
             AddressCity = candidate.AddressCity;
             AddressPostcode = candidate.AddressPostcode;
 
-            AlreadySubscribedToTeacherTrainingAdviser = candidate.HasActiveSubscriptionOfType(Subscription.ServiceType.TeacherTrainingAdviser);
+            AlreadySubscribedToTeacherTrainingAdviser = candidate.HasTeacherTrainingAdviserSubscription == true;
 
             var latestQualification = candidate.Qualifications.OrderByDescending(q => q.CreatedAt).FirstOrDefault();
 
@@ -147,7 +147,7 @@ namespace GetIntoTeachingApi.Models
             AddPastTeachingPosition(candidate);
             SetAdviserEligibility(candidate);
             SetType(candidate);
-            AddSubscription(candidate);
+            ConfigureSubscription(candidate);
             ConfigureConsent(candidate);
 
             return candidate;
@@ -264,18 +264,16 @@ namespace GetIntoTeachingApi.Models
             candidate.DoNotSendMm = candidate.IsReturningToTeaching();
         }
 
-        private void AddSubscription(Candidate candidate)
+        private void ConfigureSubscription(Candidate candidate)
         {
-            var subscription = new Subscription()
-            {
-                TypeId = (int)Subscription.ServiceType.TeacherTrainingAdviser,
-                DoNotBulkEmail = candidate.IsReturningToTeaching(),
-                DoNotBulkPostalMail = candidate.IsReturningToTeaching(),
-                DoNotPostalMail = candidate.IsReturningToTeaching(),
-                DoNotSendMm = candidate.IsReturningToTeaching(),
-            };
-
-            candidate.Subscriptions.Add(subscription);
+            candidate.HasTeacherTrainingAdviserSubscription = true;
+            candidate.TeacherTrainingAdviserSubscriptionChannelId = (int)Candidate.SubscriptionChannel.TeacherTrainingAdviser;
+            candidate.TeacherTrainingAdviserSubscriptionStartAt = DateTime.UtcNow;
+            candidate.TeacherTrainingAdviserSubscriptionDoNotEmail = false;
+            candidate.TeacherTrainingAdviserSubscriptionDoNotBulkEmail = candidate.IsReturningToTeaching();
+            candidate.TeacherTrainingAdviserSubscriptionDoNotBulkPostalMail = candidate.IsReturningToTeaching();
+            candidate.TeacherTrainingAdviserSubscriptionDoNotPostalMail = candidate.IsReturningToTeaching();
+            candidate.TeacherTrainingAdviserSubscriptionDoNotSendMm = candidate.IsReturningToTeaching();
         }
 
         private int? DestinationForTelephone(string telephone)
