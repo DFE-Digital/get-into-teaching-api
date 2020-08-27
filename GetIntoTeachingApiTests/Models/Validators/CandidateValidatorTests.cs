@@ -74,7 +74,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 FirstName = "first",
                 LastName = "last",
                 Email = "email@candidate.com",
-                DateOfBirth = DateTime.Now.AddYears(-18),
+                DateOfBirth = DateTime.UtcNow.AddYears(-18),
                 Telephone = "07584 734 576",
                 AddressLine1 = "line1",
                 AddressLine2 = "line2",
@@ -172,7 +172,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var candidate = new Candidate
             {
-                PhoneCall = new PhoneCall() { ScheduledAt = DateTime.Now.AddDays(-10) }
+                PhoneCall = new PhoneCall() { ScheduledAt = DateTime.UtcNow.AddDays(-10) }
             };
             var result = _validator.TestValidate(candidate);
 
@@ -230,7 +230,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_DateOfBirthInFuture_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.DateOfBirth, DateTime.Now.AddDays(1));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.DateOfBirth, DateTime.UtcNow.AddDays(1));
         }
 
         [Fact]

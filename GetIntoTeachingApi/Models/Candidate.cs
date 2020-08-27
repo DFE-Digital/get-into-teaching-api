@@ -265,7 +265,7 @@ namespace GetIntoTeachingApi.Models
 
             if (AssignmentStatusId == (int)AssignmentStatus.WaitingToBeAssigned)
             {
-                StatusIsWaitingToBeAssignedAt = DateTime.Now;
+                StatusIsWaitingToBeAssignedAt = DateTime.UtcNow;
             }
 
             return base.ShouldMap(crm);

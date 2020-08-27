@@ -41,7 +41,7 @@ namespace GetIntoTeachingApiTests.Controllers
 
         private static CallbackBookingQuota MockQuota()
         {
-            return new CallbackBookingQuota() { Id = Guid.NewGuid(), StartAt = DateTime.Now, NumberOfBookings = 4 };
+            return new CallbackBookingQuota() { Id = Guid.NewGuid(), StartAt = DateTime.UtcNow, NumberOfBookings = 4 };
         }
     }
 }

@@ -400,7 +400,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate1["emailaddress1"] = "jane@doe.com";
             candidate1["firstname"] = "Jane";
             candidate1["lastname"] = "Doe";
-            candidate1["modifiedon"] = DateTime.Now;
+            candidate1["modifiedon"] = DateTime.UtcNow;
             candidate1["dfe_duplicatescorecalculated"] = 10.0;
 
             var candidate2 = new Entity("contact");
@@ -408,7 +408,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate2["emailaddress1"] = "john@doe.com";
             candidate2["firstname"] = "New John";
             candidate2["lastname"] = "Doe";
-            candidate2["modifiedon"] = DateTime.Now;
+            candidate2["modifiedon"] = DateTime.UtcNow;
             candidate2["dfe_duplicatescorecalculated"] = 9.5;
 
             var candidate3 = new Entity("contact");
@@ -416,7 +416,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate3["emailaddress1"] = "john@doe.com";
             candidate3["firstname"] = "Old John";
             candidate3["lastname"] = "Doe";
-            candidate3["modifiedon"] = DateTime.Now.AddDays(-5);
+            candidate3["modifiedon"] = DateTime.UtcNow.AddDays(-5);
             candidate3["dfe_duplicatescorecalculated"] = 8.3;
 
             var candidate4 = new Entity("contact");
@@ -424,7 +424,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate4["emailaddress1"] = "inactive@doe.com";
             candidate4["firstname"] = "Inactive";
             candidate4["lastname"] = "Doe";
-            candidate4["modifiedon"] = DateTime.Now;
+            candidate4["modifiedon"] = DateTime.UtcNow;
             candidate4["dfe_duplicatescorecalculated"] = 7.1;
 
             var candidate5 = new Entity("contact");
@@ -432,7 +432,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate5["emailaddress1"] = "master@record.com";
             candidate5["firstname"] = "Child";
             candidate5["lastname"] = "Record";
-            candidate5["modifiedon"] = DateTime.Now;
+            candidate5["modifiedon"] = DateTime.UtcNow;
             candidate5["birthdate"] = new DateTime(2000, 1, 1);
             candidate5["dfe_duplicatescorecalculated"] = 2.4;
 
@@ -441,7 +441,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate6["emailaddress1"] = "master@record.com";
             candidate6["firstname"] = "Child1";
             candidate6["lastname"] = "Record";
-            candidate6["modifiedon"] = DateTime.Now;
+            candidate6["modifiedon"] = DateTime.UtcNow;
             candidate6["birthdate"] = new DateTime(2000, 1, 1);
             candidate6["dfe_duplicatescorecalculated"] = null;
 
@@ -450,7 +450,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate7["emailaddress1"] = "master@record.com";
             candidate7["firstname"] = "Master";
             candidate7["lastname"] = "Record";
-            candidate7["modifiedon"] = DateTime.Now.AddDays(-5);
+            candidate7["modifiedon"] = DateTime.UtcNow.AddDays(-5);
             candidate7["birthdate"] = new DateTime(2000, 1, 1);
             candidate7["dfe_duplicatescorecalculated"] = 3.7;
 
@@ -469,23 +469,23 @@ namespace GetIntoTeachingApiTests.Services
         private static IQueryable<Entity> MockCallbackBookingQuotas()
         {
             var quota1 = new Entity("dfe_callbackbookingquota");
-            quota1["dfe_starttime"] = DateTime.Now.AddDays(-1);
+            quota1["dfe_starttime"] = DateTime.UtcNow.AddDays(-1);
             quota1["dfe_websitenumberofbookings"] = 1;
 
             var quota2 = new Entity("dfe_callbackbookingquota");
-            quota2["dfe_starttime"] = DateTime.Now.AddDays(10);
+            quota2["dfe_starttime"] = DateTime.UtcNow.AddDays(10);
             quota2["dfe_websitenumberofbookings"] = 2;
 
             var quota3 = new Entity("dfe_callbackbookingquota");
-            quota3["dfe_starttime"] = DateTime.Now.AddDays(1);
+            quota3["dfe_starttime"] = DateTime.UtcNow.AddDays(1);
             quota3["dfe_websitenumberofbookings"] = 3;
 
             var quota4 = new Entity("dfe_callbackbookingquota");
-            quota4["dfe_starttime"] = DateTime.Now.AddMinutes(20);
+            quota4["dfe_starttime"] = DateTime.UtcNow.AddMinutes(20);
             quota4["dfe_websitenumberofbookings"] = 4;
 
             var quota5 = new Entity("dfe_callbackbookingquota");
-            quota5["dfe_starttime"] = DateTime.Now.AddDays(15);
+            quota5["dfe_starttime"] = DateTime.UtcNow.AddDays(15);
             quota5["dfe_websitenumberofbookings"] = 5;
 
             return new[] { quota1, quota2, quota3, quota4, quota5 }.AsQueryable();

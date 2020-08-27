@@ -12,7 +12,7 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(request => request.FirstName).MaximumLength(256);
             RuleFor(request => request.LastName).MaximumLength(256);
             RuleFor(request => request.Email).NotEmpty().EmailAddress(EmailValidationMode.AspNetCoreCompatible).MaximumLength(100);
-            RuleFor(request => request.DateOfBirth).LessThan(request => DateTime.Now);
+            RuleFor(request => request.DateOfBirth).LessThan(request => DateTime.UtcNow);
             RuleFor(request => request)
                 .Must(SpecifyTwoAdditionalRequiredAttributes)
                 .WithMessage("You must specify values for 2 additional attributes (from birthdate, firstname and lastname).");
