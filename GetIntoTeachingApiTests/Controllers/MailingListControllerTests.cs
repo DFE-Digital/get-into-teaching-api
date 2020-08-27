@@ -101,8 +101,10 @@ namespace GetIntoTeachingApiTests.Controllers
 
         private static bool IsMatch(Candidate candidateA, Candidate candidateB)
         {
+            // Compares ignoring date attributes that are dynamic.
             candidateA.Should().BeEquivalentTo(candidateB, options => options
-                .Excluding(c => c.Subscriptions[0].StartAt)
+                .Excluding(c => c.MailingListSubscriptionStartAt)
+                .Excluding(c => c.EventsSubscriptionStartAt)
                 .Excluding(c => c.PrivacyPolicy.AcceptedAt));
             return true;
         }

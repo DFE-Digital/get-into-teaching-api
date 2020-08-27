@@ -61,8 +61,8 @@ namespace GetIntoTeachingApi.Models
             AddressPostcode = candidate.AddressPostcode;
             Telephone = candidate.Telephone;
 
-            AlreadySubscribedToMailingList = candidate.HasActiveSubscriptionOfType(Subscription.ServiceType.MailingList);
-            AlreadySubscribedToEvents = candidate.HasActiveSubscriptionOfType(Subscription.ServiceType.Event);
+            AlreadySubscribedToMailingList = candidate.HasMailingListSubscription == true;
+            AlreadySubscribedToEvents = candidate.HasEventsSubscription == true;
         }
 
         private Candidate CreateCandidate()
@@ -87,7 +87,7 @@ namespace GetIntoTeachingApi.Models
                 EligibilityRulesPassed = "false",
             };
 
-            AddSubscriptions(candidate);
+            ConfigureSubscriptions(candidate);
             AddQualification(candidate);
             AcceptPrivacyPolicy(candidate);
 
@@ -104,24 +104,30 @@ namespace GetIntoTeachingApi.Models
             });
         }
 
-        private void AddSubscriptions(Candidate candidate)
+        private void ConfigureSubscriptions(Candidate candidate)
         {
-            candidate.Subscriptions.Add(new Subscription()
-            {
-                TypeId = (int)Subscription.ServiceType.MailingList,
-                DoNotPostalMail = true,
-                DoNotBulkPostalMail = true,
-            });
+            candidate.HasMailingListSubscription = true;
+            candidate.MailingListSubscriptionChannelId = (int)Candidate.SubscriptionChannel.MailingList;
+            candidate.MailingListSubscriptionStartAt = DateTime.UtcNow;
+            candidate.MailingListSubscriptionDoNotEmail = false;
+            candidate.MailingListSubscriptionDoNotBulkEmail = false;
+            candidate.MailingListSubscriptionDoNotBulkPostalMail = true;
+            candidate.MailingListSubscriptionDoNotPostalMail = true;
+            candidate.MailingListSubscriptionDoNotSendMm = false;
 
-            if (SubscribeToEvents)
+            if (!SubscribeToEvents)
             {
-                candidate.Subscriptions.Add(new Subscription()
-                {
-                    TypeId = (int)Subscription.ServiceType.Event,
-                    DoNotBulkPostalMail = true,
-                    DoNotPostalMail = true,
-                });
+                return;
             }
+
+            candidate.HasEventsSubscription = true;
+            candidate.EventsSubscriptionChannelId = (int)Candidate.SubscriptionChannel.Events;
+            candidate.EventsSubscriptionStartAt = DateTime.UtcNow;
+            candidate.EventsSubscriptionDoNotEmail = false;
+            candidate.EventsSubscriptionDoNotBulkEmail = false;
+            candidate.EventsSubscriptionDoNotBulkPostalMail = true;
+            candidate.EventsSubscriptionDoNotPostalMail = true;
+            candidate.EventsSubscriptionDoNotSendMm = false;
         }
 
         private void AcceptPrivacyPolicy(Candidate candidate)

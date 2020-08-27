@@ -18,7 +18,6 @@ namespace GetIntoTeachingApi.Services
         IEnumerable<CallbackBookingQuota> GetCallbackBookingQuotas();
         bool CandidateYetToAcceptPrivacyPolicy(Guid candidateId, Guid privacyPolicyId);
         bool CandidateYetToRegisterForTeachingEvent(Guid candidateId, Guid teachingEventId);
-        bool CandidateYetToSubscribeToServiceOfType(Guid candidateId, int serviceSubscriptionTypeId);
         void Save(BaseModel model);
         void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);
         IEnumerable<Entity> RelatedEntities(Entity entity, string relationshipName, string logicalName);
