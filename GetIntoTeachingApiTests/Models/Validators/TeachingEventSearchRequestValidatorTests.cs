@@ -35,8 +35,8 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 Postcode = "KY11 9HF",
                 Radius = 10,
                 TypeId = int.Parse(mockPickListItem.Id),
-                StartAfter = DateTime.Now.AddDays(-1),
-                StartBefore = DateTime.Now.AddDays(1)
+                StartAfter = DateTime.UtcNow.AddDays(-1),
+                StartBefore = DateTime.UtcNow.AddDays(1)
             };
 
             var result = _validator.TestValidate(request);
@@ -49,8 +49,8 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeachingEventSearchRequest()
             {
-                StartAfter = DateTime.Now.AddDays(1),
-                StartBefore = DateTime.Now
+                StartAfter = DateTime.UtcNow.AddDays(1),
+                StartBefore = DateTime.UtcNow
             };
 
             var result = _validator.TestValidate(request);

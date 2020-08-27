@@ -15,7 +15,7 @@ namespace GetIntoTeachingApiTests.Models
             var latestQualification = new CandidateQualification()
             {
                 Id = Guid.NewGuid(),
-                CreatedAt = DateTime.Now.AddDays(10),
+                CreatedAt = DateTime.UtcNow.AddDays(10),
                 DegreeStatusId = 1,
                 UkDegreeGradeId = 2,
                 TypeId = 3,
@@ -24,23 +24,23 @@ namespace GetIntoTeachingApiTests.Models
 
             var qualifications = new List<CandidateQualification>()
             {
-                new CandidateQualification() { Id = Guid.NewGuid(), CreatedAt = DateTime.Now.AddDays(3) },
+                new CandidateQualification() { Id = Guid.NewGuid(), CreatedAt = DateTime.UtcNow.AddDays(3) },
                 latestQualification,
-                new CandidateQualification() { Id = Guid.NewGuid(), CreatedAt = DateTime.Now.AddDays(5) },
+                new CandidateQualification() { Id = Guid.NewGuid(), CreatedAt = DateTime.UtcNow.AddDays(5) },
             };
 
             var latestPastTeachingPosition = new CandidatePastTeachingPosition()
             {
                 Id = Guid.NewGuid(),
-                CreatedAt = DateTime.Now.AddDays(10),
+                CreatedAt = DateTime.UtcNow.AddDays(10),
                 SubjectTaughtId = Guid.NewGuid(),
             };
 
             var pastTeachingPositions = new List<CandidatePastTeachingPosition>()
             {
-                new CandidatePastTeachingPosition() { Id = Guid.NewGuid(), CreatedAt = DateTime.Now.AddDays(3) },
+                new CandidatePastTeachingPosition() { Id = Guid.NewGuid(), CreatedAt = DateTime.UtcNow.AddDays(3) },
                 latestPastTeachingPosition,
-                new CandidatePastTeachingPosition() { Id = Guid.NewGuid(), CreatedAt = DateTime.Now.AddDays(5) },
+                new CandidatePastTeachingPosition() { Id = Guid.NewGuid(), CreatedAt = DateTime.UtcNow.AddDays(5) },
             };
 
             var candidate = new Candidate()
@@ -59,7 +59,7 @@ namespace GetIntoTeachingApiTests.Models
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
-                DateOfBirth = DateTime.Now,
+                DateOfBirth = DateTime.UtcNow,
                 Telephone = "1234567",
                 TeacherId = "abc123",
                 AddressLine1 = "Address 1",
@@ -128,7 +128,7 @@ namespace GetIntoTeachingApiTests.Models
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
-                DateOfBirth = DateTime.Now,
+                DateOfBirth = DateTime.UtcNow,
                 Telephone = "1234567",
                 TeacherId = "abc123",
                 DegreeSubject = "Maths",
@@ -136,7 +136,7 @@ namespace GetIntoTeachingApiTests.Models
                 AddressLine2 = "Address 2",
                 AddressCity = "City",
                 AddressPostcode = "KY11 9YU",
-                PhoneCallScheduledAt = DateTime.Now,
+                PhoneCallScheduledAt = DateTime.UtcNow,
             };
 
             var candidate = request.Candidate;
@@ -371,7 +371,7 @@ namespace GetIntoTeachingApiTests.Models
         [InlineData("+447564 375 482")]
         public void Candidate_UkTelephone_PhoneCallDestinationIsCorrect(string telephone)
         {
-            var request = new TeacherTrainingAdviserSignUp() { Telephone = telephone, PhoneCallScheduledAt = DateTime.Now };
+            var request = new TeacherTrainingAdviserSignUp() { Telephone = telephone, PhoneCallScheduledAt = DateTime.UtcNow };
 
             request.Candidate.PhoneCall.DestinationId.Should().Be((int)PhoneCall.Destination.Uk);
         }
@@ -381,7 +381,7 @@ namespace GetIntoTeachingApiTests.Models
         [InlineData("+57564 375 482")]
         public void Candidate_InternationalTelephone_PhoneCallDestinationIsCorrect(string telephone)
         {
-            var request = new TeacherTrainingAdviserSignUp() { Telephone = telephone, PhoneCallScheduledAt = DateTime.Now };
+            var request = new TeacherTrainingAdviserSignUp() { Telephone = telephone, PhoneCallScheduledAt = DateTime.UtcNow };
 
             request.Candidate.PhoneCall.DestinationId.Should().Be((int)PhoneCall.Destination.International);
         }
@@ -389,7 +389,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_NullTelephone_PhoneCallDestinationIsCorrect()
         {
-            var request = new TeacherTrainingAdviserSignUp() { Telephone = null, PhoneCallScheduledAt = DateTime.Now };
+            var request = new TeacherTrainingAdviserSignUp() { Telephone = null, PhoneCallScheduledAt = DateTime.UtcNow };
 
             request.Candidate.PhoneCall.DestinationId.Should().BeNull();
         }

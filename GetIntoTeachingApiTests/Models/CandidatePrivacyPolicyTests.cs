@@ -47,7 +47,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void AcceptedAt_DefaultValue_IsNow()
         {
-            new CandidatePrivacyPolicy().AcceptedAt.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(10));
+            new CandidatePrivacyPolicy().AcceptedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
         }
     }
 }
