@@ -44,7 +44,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
-                DateOfBirth = DateTime.Now,
+                DateOfBirth = DateTime.UtcNow,
                 TeacherId = "abc123",
                 DegreeSubject = "Maths",
                 Telephone = "1234567",
@@ -52,7 +52,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 AddressLine2 = "Line 2",
                 AddressCity = "City",
                 AddressPostcode = "KY11 9YU",
-                PhoneCallScheduledAt = DateTime.Now,
+                PhoneCallScheduledAt = DateTime.UtcNow,
             };
 
             var result = _validator.TestValidate(request);
@@ -177,7 +177,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
-                PhoneCallScheduledAt = DateTime.Now,
+                PhoneCallScheduledAt = DateTime.UtcNow,
                 Telephone = null,
             };
 
@@ -191,7 +191,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
-                PhoneCallScheduledAt = DateTime.Now,
+                PhoneCallScheduledAt = DateTime.UtcNow,
                 Telephone = "123456",
             };
 
@@ -220,7 +220,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var request = new TeacherTrainingAdviserSignUp
             {
                 DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent,
-                PhoneCallScheduledAt = DateTime.Now,
+                PhoneCallScheduledAt = DateTime.UtcNow,
             };
 
             var result = _validator.TestValidate(request);

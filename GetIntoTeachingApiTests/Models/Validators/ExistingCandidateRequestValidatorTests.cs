@@ -19,7 +19,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "first", DateOfBirth = DateTime.Now.AddDays(-18) };
+            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "first", DateOfBirth = DateTime.UtcNow.AddDays(-18) };
 
             var result = _validator.TestValidate(request);
 
@@ -53,7 +53,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_DateOfBirthInFuture_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.DateOfBirth, DateTime.Now.AddDays(1));
+            _validator.ShouldHaveValidationErrorFor(request => request.DateOfBirth, DateTime.UtcNow.AddDays(1));
         }
 
         [Fact]
@@ -101,7 +101,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_SpecifyThreeAdditionalRequiredAttributes_HasNoError()
         {
-            var request = new ExistingCandidateRequest { FirstName = "first", LastName = "last", DateOfBirth = DateTime.Now.AddDays(-18) };
+            var request = new ExistingCandidateRequest { FirstName = "first", LastName = "last", DateOfBirth = DateTime.UtcNow.AddDays(-18) };
 
             var result = _validator.TestValidate(request);
 

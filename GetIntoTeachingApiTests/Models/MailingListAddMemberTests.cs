@@ -15,15 +15,15 @@ namespace GetIntoTeachingApiTests.Models
             var latestQualification = new CandidateQualification()
             {
                 Id = Guid.NewGuid(),
-                CreatedAt = DateTime.Now.AddDays(10),
+                CreatedAt = DateTime.UtcNow.AddDays(10),
                 UkDegreeGradeId = 1,
             };
 
             var qualifications = new List<CandidateQualification>()
             {
-                new CandidateQualification() { Id = Guid.NewGuid(), CreatedAt = DateTime.Now.AddDays(3) },
+                new CandidateQualification() { Id = Guid.NewGuid(), CreatedAt = DateTime.UtcNow.AddDays(3) },
                 latestQualification,
-                new CandidateQualification() { Id = Guid.NewGuid(), CreatedAt = DateTime.Now.AddDays(5) },
+                new CandidateQualification() { Id = Guid.NewGuid(), CreatedAt = DateTime.UtcNow.AddDays(5) },
             };
 
             var candidate = new Candidate()

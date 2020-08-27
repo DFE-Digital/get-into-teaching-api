@@ -238,7 +238,7 @@ namespace GetIntoTeachingApiTests.Models
                 FirstName = "John",
                 LastName = "Doe",
                 Telephone = "123456789",
-                PhoneCall = new PhoneCall() { ScheduledAt = DateTime.Now }
+                PhoneCall = new PhoneCall() { ScheduledAt = DateTime.UtcNow }
             };
 
             var phoneCallEntity = new Entity("phonecall");
@@ -295,7 +295,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.ToEntity(mockCrm.Object, context);
 
             candidateEntity.GetAttributeValue<DateTime>("dfe_waitingtobeassigneddate")
-                .Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(20));
+                .Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(20));
         }
 
         [Fact]

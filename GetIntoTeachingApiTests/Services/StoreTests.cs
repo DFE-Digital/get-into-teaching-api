@@ -370,8 +370,8 @@ namespace GetIntoTeachingApiTests.Services
                 Postcode = "KY6 2NJ",
                 Radius = 15,
                 TypeId = 123,
-                StartAfter = DateTime.Now,
-                StartBefore = DateTime.Now.AddDays(3)
+                StartAfter = DateTime.UtcNow,
+                StartBefore = DateTime.UtcNow.AddDays(3)
             };
 
             var result = await _store.SearchTeachingEventsAsync(request);
@@ -423,7 +423,7 @@ namespace GetIntoTeachingApiTests.Services
         public async void SearchTeachingEvents_FilteredByStartAfter_ReturnsMatching()
         {
             await SeedMockTeachingEventsAsync();
-            var request = new TeachingEventSearchRequest() { StartAfter = DateTime.Now.AddDays(6) };
+            var request = new TeachingEventSearchRequest() { StartAfter = DateTime.UtcNow.AddDays(6) };
 
             var result = await _store.SearchTeachingEventsAsync(request);
 
@@ -435,7 +435,7 @@ namespace GetIntoTeachingApiTests.Services
         public async void SearchTeachingEvents_FilteredByStartBefore_ReturnsMatching()
         {
             await SeedMockTeachingEventsAsync();
-            var request = new TeachingEventSearchRequest() { StartBefore = DateTime.Now.AddDays(6) };
+            var request = new TeachingEventSearchRequest() { StartBefore = DateTime.UtcNow.AddDays(6) };
 
             var result = await _store.SearchTeachingEventsAsync(request);
 
@@ -472,7 +472,7 @@ namespace GetIntoTeachingApiTests.Services
                 Id = Guid.NewGuid(),
                 ReadableId = "1",
                 Name = "Event 1",
-                StartAt = DateTime.Now.AddDays(5),
+                StartAt = DateTime.UtcNow.AddDays(5),
                 Building = new TeachingEventBuilding()
                 {
                     Id = sharedBuildingId,
@@ -485,7 +485,7 @@ namespace GetIntoTeachingApiTests.Services
                 Id = FindEventGuid,
                 ReadableId = "2",
                 Name = "Event 2",
-                StartAt = DateTime.Now.AddDays(1),
+                StartAt = DateTime.UtcNow.AddDays(1),
                 TypeId = 123,
                 Building = new TeachingEventBuilding()
                 {
@@ -500,7 +500,7 @@ namespace GetIntoTeachingApiTests.Services
                 Id = Guid.NewGuid(),
                 ReadableId = "3",
                 Name = "Event 3",
-                StartAt = DateTime.Now.AddDays(10),
+                StartAt = DateTime.UtcNow.AddDays(10),
                 Building = new TeachingEventBuilding()
                 {
                     Id = Guid.NewGuid(),
@@ -514,7 +514,7 @@ namespace GetIntoTeachingApiTests.Services
                 Id = Guid.NewGuid(),
                 ReadableId = "4",
                 Name = "Event 4",
-                StartAt = DateTime.Now.AddDays(3),
+                StartAt = DateTime.UtcNow.AddDays(3),
                 TypeId = 123,
                 Building = new TeachingEventBuilding()
                 {
@@ -529,7 +529,7 @@ namespace GetIntoTeachingApiTests.Services
                 Id = Guid.NewGuid(),
                 ReadableId = "5",
                 Name = "Event 5",
-                StartAt = DateTime.Now.AddDays(15),
+                StartAt = DateTime.UtcNow.AddDays(15),
             };
 
             var event6 = new TeachingEvent()
@@ -537,7 +537,7 @@ namespace GetIntoTeachingApiTests.Services
                 Id = Guid.NewGuid(),
                 ReadableId = "6",
                 Name = "Event 6",
-                StartAt = DateTime.Now.AddDays(60),
+                StartAt = DateTime.UtcNow.AddDays(60),
                 Building = new TeachingEventBuilding()
                 {
                     Id = sharedBuildingId,
@@ -550,7 +550,7 @@ namespace GetIntoTeachingApiTests.Services
                 Id = Guid.NewGuid(),
                 ReadableId = "7",
                 Name = "Event 7",
-                StartAt = DateTime.Now.AddYears(1),
+                StartAt = DateTime.UtcNow.AddYears(1),
                 Building = new TeachingEventBuilding()
                 {
                     Id = Guid.NewGuid(),
@@ -575,9 +575,9 @@ namespace GetIntoTeachingApiTests.Services
 
         private static IEnumerable<PrivacyPolicy> MockPrivacyPolicies()
         {
-            var policy1 = new PrivacyPolicy() { Id = Guid.NewGuid(), Text = "Policy 1", CreatedAt = DateTime.Now.AddDays(-10) };
-            var policy2 = new PrivacyPolicy() { Id = Guid.NewGuid(), Text = "Policy 2", CreatedAt = DateTime.Now };
-            var policy3 = new PrivacyPolicy() { Id = Guid.NewGuid(), Text = "Policy 3", CreatedAt = DateTime.Now.AddDays(-5) };
+            var policy1 = new PrivacyPolicy() { Id = Guid.NewGuid(), Text = "Policy 1", CreatedAt = DateTime.UtcNow.AddDays(-10) };
+            var policy2 = new PrivacyPolicy() { Id = Guid.NewGuid(), Text = "Policy 2", CreatedAt = DateTime.UtcNow };
+            var policy3 = new PrivacyPolicy() { Id = Guid.NewGuid(), Text = "Policy 3", CreatedAt = DateTime.UtcNow.AddDays(-5) };
 
             return new [] { policy1, policy2, policy3 };
         }

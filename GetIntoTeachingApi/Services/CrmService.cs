@@ -40,7 +40,7 @@ namespace GetIntoTeachingApi.Services
         public IEnumerable<CallbackBookingQuota> GetCallbackBookingQuotas()
         {
             return _service.CreateQuery("dfe_callbackbookingquota", Context())
-                .Where((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime") > DateTime.Now &&
+                .Where((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime") > DateTime.UtcNow &&
                                    entity.GetAttributeValue<DateTime>("dfe_starttime") <
                                    DateTime.UtcNow.AddDays(MaximumCallbackBookingQuotaDaysInAdvance))
                 .OrderBy((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime"))
