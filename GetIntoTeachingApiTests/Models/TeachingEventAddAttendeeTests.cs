@@ -12,25 +12,47 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Constructor_WithCandidate_MapsCorrectly()
         {
+            var latestQualification = new CandidateQualification()
+            {
+                Id = Guid.NewGuid(),
+                CreatedAt = DateTime.UtcNow.AddDays(10),
+                UkDegreeGradeId = 1,
+            };
+
+            var qualifications = new List<CandidateQualification>()
+            {
+                new CandidateQualification() { Id = Guid.NewGuid(), CreatedAt = DateTime.UtcNow.AddDays(3) },
+                latestQualification,
+                new CandidateQualification() { Id = Guid.NewGuid(), CreatedAt = DateTime.UtcNow.AddDays(5) },
+            };
+
             var candidate = new Candidate()
             {
                 Id = Guid.NewGuid(),
+                PreferredTeachingSubjectId = Guid.NewGuid(),
+                ConsiderationJourneyStageId = 1,
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
                 Telephone = "1234567",
                 AddressPostcode = "KY11 9YU",
+                Qualifications = qualifications,
                 HasEventsSubscription = true,
             };
 
             var response = new TeachingEventAddAttendee(candidate);
 
             response.CandidateId.Should().Be(candidate.Id);
+            response.PreferredTeachingSubjectId.Should().Be(candidate.PreferredTeachingSubjectId);
+            response.ConsiderationJourneyStageId.Should().Be(candidate.ConsiderationJourneyStageId);
             response.Email.Should().Be(candidate.Email);
             response.FirstName.Should().Be(candidate.FirstName);
             response.LastName.Should().Be(candidate.LastName);
             response.Telephone.Should().Be(candidate.Telephone);
             response.AddressPostcode.Should().Be(candidate.AddressPostcode);
+
+            response.QualificationId.Should().Be(latestQualification.Id);
+            response.DegreeStatusId.Should().Be(latestQualification.DegreeStatusId);
 
             response.AlreadySubscribedToEvents.Should().BeTrue();
             response.AlreadySubscribedToMailingList.Should().BeFalse();
@@ -43,7 +65,10 @@ namespace GetIntoTeachingApiTests.Models
             {
                 EventId = Guid.NewGuid(),
                 CandidateId = Guid.NewGuid(),
+                QualificationId = Guid.NewGuid(),
+                PreferredTeachingSubjectId = Guid.NewGuid(),
                 AcceptedPolicyId = Guid.NewGuid(),
+                ConsiderationJourneyStageId = 1,
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
@@ -56,6 +81,8 @@ namespace GetIntoTeachingApiTests.Models
             var candidate = request.Candidate;
 
             candidate.Id.Should().Equals(request.CandidateId);
+            candidate.ConsiderationJourneyStageId.Should().Be(request.ConsiderationJourneyStageId);
+            candidate.PreferredTeachingSubjectId.Should().Be(request.PreferredTeachingSubjectId);
 
             candidate.Email.Should().Be(request.Email);
             candidate.FirstName.Should().Be(request.FirstName);
@@ -79,6 +106,10 @@ namespace GetIntoTeachingApiTests.Models
             candidate.TeachingEventRegistrations.First().ChannelId.Should().Be((int)TeachingEventRegistration.Channel.Event);
             candidate.TeachingEventRegistrations.First().IsCancelled.Should().BeFalse();
             candidate.TeachingEventRegistrations.First().RegistrationNotificationSeen.Should().BeFalse();
+
+            candidate.Qualifications.First().DegreeStatusId.Should().Be(request.DegreeStatusId);
+            candidate.Qualifications.First().TypeId.Should().Be((int)CandidateQualification.DegreeType.Degree);
+            candidate.Qualifications.First().Id.Should().Be(request.QualificationId);
         }
 
         [Fact]
