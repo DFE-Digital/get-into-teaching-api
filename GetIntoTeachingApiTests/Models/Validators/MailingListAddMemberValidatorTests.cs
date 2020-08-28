@@ -104,5 +104,11 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             _validator.ShouldHaveValidationErrorFor(request => request.DegreeStatusId, null as int?);
         }
+
+        [Fact]
+        public void Validate_PreferredTeachingSubjectIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.PreferredTeachingSubjectId, null as Guid?);
+        }
     }
 }
