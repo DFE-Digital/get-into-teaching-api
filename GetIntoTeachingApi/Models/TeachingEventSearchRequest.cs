@@ -3,7 +3,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
 {
-    public class TeachingEventSearchRequest
+    public class TeachingEventSearchRequest : ICloneable
     {
         [SwaggerSchema("Postcode to center search around.")]
         public string Postcode { get; set; }
@@ -17,5 +17,17 @@ namespace GetIntoTeachingApi.Models
         public DateTime? StartBefore { get; set; }
 
         public double? RadiusInKm() => Radius * 1.60934;
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
+
+        public TeachingEventSearchRequest Clone(Action<TeachingEventSearchRequest> block)
+        {
+            var clone = (TeachingEventSearchRequest)Clone();
+            block.Invoke(clone);
+            return clone;
+        }
     }
 }
