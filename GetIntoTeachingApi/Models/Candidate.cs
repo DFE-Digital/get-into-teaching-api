@@ -60,6 +60,11 @@ namespace GetIntoTeachingApi.Models
             Events = 222750000,
         }
 
+        public enum SubscriptionType
+        {
+            SingleEvent = 222750001,
+        }
+
         public enum PreferredEducationPhase
         {
             Primary = 222750000,
@@ -197,6 +202,8 @@ namespace GetIntoTeachingApi.Models
         public bool? HasEventsSubscription { get; set; }
         [EntityField("dfe_GITISEventsServiceSubscriptionChannel", typeof(OptionSetValue))]
         public int? EventsSubscriptionChannelId { get; set; }
+        [EntityField("GITISEventsServiceSubscriptionType", typeof(OptionSetValue))]
+        public int? EventsSubscriptionTypeId { get; set; }
         [EntityField("dfe_GITISEventsServiceStartDate")]
         public DateTime? EventsSubscriptionStartAt { get; set; }
         [EntityField("dfe_GITISEventsServiceDoNotBulkEmail")]

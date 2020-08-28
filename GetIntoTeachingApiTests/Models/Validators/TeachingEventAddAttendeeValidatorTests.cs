@@ -24,13 +24,18 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
+            var mockPickListItem = new TypeEntity { Id = "123" };
+            var mockEntityReference = new TypeEntity { Id = Guid.NewGuid().ToString() };
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
 
             var request = new TeachingEventAddAttendee()
             {
                 CandidateId = null,
                 EventId = Guid.NewGuid(),
+                PreferredTeachingSubjectId = Guid.Parse(mockEntityReference.Id),
                 AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id,
+                ConsiderationJourneyStageId = int.Parse(mockPickListItem.Id),
+                DegreeStatusId = int.Parse(mockPickListItem.Id),
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
@@ -87,6 +92,66 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_EventIdIsNull_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(request => request.EventId, null as Guid?);
+        }
+
+        [Fact]
+        public void Validate_ConsiderationJourneyStageIdIsNullWhenSigningUpToMailingList_HasError()
+        {
+            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = true, ConsiderationJourneyStageId = null };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldHaveValidationErrorFor(request => request.ConsiderationJourneyStageId);
+        }
+
+        [Fact]
+        public void Validate_ConsiderationJourneyStageIdIsNullWhenNotSigningUpToMailingList_HasNoError()
+        {
+            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, ConsiderationJourneyStageId = null };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldNotHaveValidationErrorFor(request => request.ConsiderationJourneyStageId);
+        }
+
+        [Fact]
+        public void Validate_DegreeStatusIdIsNullWhenSigningUpToMailingList_HasError()
+        { 
+            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = true, DegreeStatusId = null };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldHaveValidationErrorFor(request => request.DegreeStatusId);
+        }
+
+        [Fact]
+        public void Validate_DegreeStatusIdIsNullWhenNotSigningUpToMailingList_HasNoError()
+        {
+            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, DegreeStatusId = null };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldNotHaveValidationErrorFor(request => request.DegreeStatusId);
+        }
+
+        [Fact]
+        public void Validate_PreferredTeachingSubjectIdIsNullWhenSigningUpToMailingList_HasError()
+        {
+            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = true, PreferredTeachingSubjectId = null };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldHaveValidationErrorFor(request => request.PreferredTeachingSubjectId);
+        }
+
+        [Fact]
+        public void Validate_PreferredTeachingSubjectIdIsNullWhenNotSigningUpToMailingList_HasNoError()
+        {
+            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, PreferredTeachingSubjectId = null };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldNotHaveValidationErrorFor(request => request.PreferredTeachingSubjectId);
         }
     }
 }
