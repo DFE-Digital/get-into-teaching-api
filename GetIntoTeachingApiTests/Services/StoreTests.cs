@@ -369,7 +369,7 @@ namespace GetIntoTeachingApiTests.Services
             {
                 Postcode = "KY6 2NJ",
                 Radius = 15,
-                TypeId = 123,
+                TypeId = (int)TeachingEvent.EventType.ApplicationWorkshop,
                 StartAfter = DateTime.UtcNow,
                 StartBefore = DateTime.UtcNow.AddDays(3)
             };
@@ -382,7 +382,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEvents_FilteredByRadius_ReturnsMatching()
+        public async void SearchTeachingEvents_FilteredByRadius_ReturnsMatchingAndOnlineEvents()
         {
             SeedMockLocations();
             await SeedMockTeachingEventsAsync();
@@ -390,7 +390,7 @@ namespace GetIntoTeachingApiTests.Services
 
             var result = await _store.SearchTeachingEventsAsync(request);
 
-            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 3" },
+            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 3", "Event 5" },
                 options => options.WithStrictOrdering());
         }
 
@@ -411,7 +411,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             SeedMockLocations();
             await SeedMockTeachingEventsAsync();
-            var request = new TeachingEventSearchRequest() { TypeId = 123 };
+            var request = new TeachingEventSearchRequest() { TypeId = (int)TeachingEvent.EventType.ApplicationWorkshop };
 
             var result = await _store.SearchTeachingEventsAsync(request);
 
@@ -472,6 +472,7 @@ namespace GetIntoTeachingApiTests.Services
                 Id = Guid.NewGuid(),
                 ReadableId = "1",
                 Name = "Event 1",
+                TypeId = (int)TeachingEvent.EventType.TrainToTeachEvent,
                 StartAt = DateTime.UtcNow.AddDays(5),
                 Building = new TeachingEventBuilding()
                 {
@@ -486,7 +487,7 @@ namespace GetIntoTeachingApiTests.Services
                 ReadableId = "2",
                 Name = "Event 2",
                 StartAt = DateTime.UtcNow.AddDays(1),
-                TypeId = 123,
+                TypeId = (int)TeachingEvent.EventType.ApplicationWorkshop,
                 Building = new TeachingEventBuilding()
                 {
                     Id = Guid.NewGuid(),
@@ -501,6 +502,7 @@ namespace GetIntoTeachingApiTests.Services
                 ReadableId = "3",
                 Name = "Event 3",
                 StartAt = DateTime.UtcNow.AddDays(10),
+                TypeId = (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
                 Building = new TeachingEventBuilding()
                 {
                     Id = Guid.NewGuid(),
@@ -515,7 +517,7 @@ namespace GetIntoTeachingApiTests.Services
                 ReadableId = "4",
                 Name = "Event 4",
                 StartAt = DateTime.UtcNow.AddDays(3),
-                TypeId = 123,
+                TypeId = (int)TeachingEvent.EventType.ApplicationWorkshop,
                 Building = new TeachingEventBuilding()
                 {
                     Id = Guid.NewGuid(),
@@ -529,6 +531,7 @@ namespace GetIntoTeachingApiTests.Services
                 Id = Guid.NewGuid(),
                 ReadableId = "5",
                 Name = "Event 5",
+                TypeId = (int)TeachingEvent.EventType.OnlineEvent,
                 StartAt = DateTime.UtcNow.AddDays(15),
             };
 
@@ -538,6 +541,7 @@ namespace GetIntoTeachingApiTests.Services
                 ReadableId = "6",
                 Name = "Event 6",
                 StartAt = DateTime.UtcNow.AddDays(60),
+                TypeId = (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
                 Building = new TeachingEventBuilding()
                 {
                     Id = sharedBuildingId,
@@ -551,6 +555,7 @@ namespace GetIntoTeachingApiTests.Services
                 ReadableId = "7",
                 Name = "Event 7",
                 StartAt = DateTime.UtcNow.AddYears(1),
+                TypeId = (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
                 Building = new TeachingEventBuilding()
                 {
                     Id = Guid.NewGuid(),
