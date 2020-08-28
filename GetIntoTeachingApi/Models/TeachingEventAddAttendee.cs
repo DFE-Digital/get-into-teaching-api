@@ -24,8 +24,8 @@ namespace GetIntoTeachingApi.Models
         public string LastName { get; set; }
         public string AddressPostcode { get; set; }
         public string Telephone { get; set; }
-        [SwaggerSchema(WriteOnly = true)]
-        public bool SubscribeToEvents { get; set; }
+        [SwaggerSchema(ReadOnly = true)]
+        public bool SubscribeToEvents => AddressPostcode != null && SubscribeToMailingList;
         [SwaggerSchema(WriteOnly = true)]
         public bool SubscribeToMailingList { get; set; }
         [SwaggerSchema(ReadOnly = true)]
@@ -124,6 +124,7 @@ namespace GetIntoTeachingApi.Models
             candidate.EventsSubscriptionDoNotBulkPostalMail = true;
             candidate.EventsSubscriptionDoNotPostalMail = true;
             candidate.EventsSubscriptionDoNotSendMm = !SubscribeToEvents;
+            candidate.EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.SingleEvent;
 
             if (!SubscribeToMailingList)
             {
