@@ -136,8 +136,23 @@ namespace GetIntoTeachingApi.Services
             var inMemoryTeachingEvents = await teachingEvents.ToListAsync();
 
             // Project coordinates onto UK coordinate system for final, accurate distance filtering.
-            return inMemoryTeachingEvents.Where(te => te.Building.Coordinate.ProjectTo(DbConfiguration.UkSrid)
+            var result = inMemoryTeachingEvents.Where(te => te.Building.Coordinate.ProjectTo(DbConfiguration.UkSrid)
                     .IsWithinDistance(origin.ProjectTo(DbConfiguration.UkSrid), (double)request.RadiusInKm() * 1000));
+
+            // We need to include online events in distance-based searches (unless explicitly filtered out by the request).
+            var includeOnlineEvents = request.TypeId == null || request.TypeId == (int)TeachingEvent.EventType.OnlineEvent;
+            if (includeOnlineEvents)
+            {
+                var onlineEventsRequest = request.Clone(te =>
+                {
+                    te.TypeId = (int)TeachingEvent.EventType.OnlineEvent;
+                    te.Radius = null;
+                });
+
+                result = result.Concat(await SearchTeachingEventsAsync(onlineEventsRequest));
+            }
+
+            return result;
         }
 
         private async Task SyncTeachingEvents(ICrmService crm)

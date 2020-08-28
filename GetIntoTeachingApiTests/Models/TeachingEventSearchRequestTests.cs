@@ -16,5 +16,15 @@ namespace GetIntoTeachingApiTests.Models
         {
             new TeachingEventSearchRequest() { Radius = miles }.RadiusInKm().Should().BeApproximately(km, 4);
         }
+
+        [Fact]
+        public void Clone_WithBlock_ClonesAndCallsBlock()
+        {
+            var request = new TeachingEventSearchRequest() { Radius = 10, TypeId = 123 };
+            var clone = request.Clone((te) => te.Radius = 100);
+
+            clone.Radius.Should().Be(100);
+            clone.TypeId.Should().Be(request.TypeId);
+        }
     }
 }
