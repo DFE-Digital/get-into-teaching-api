@@ -74,7 +74,6 @@ namespace GetIntoTeachingApiTests.Models
                 LastName = "Doe",
                 Telephone = "1234567",
                 AddressPostcode = "KY11 9YU",
-                SubscribeToEvents = true,
                 SubscribeToMailingList = true,
             };
 
@@ -113,9 +112,9 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void Candidate_SubscribeToMailingListIsTrue_CorrectOptInStatus()
+        public void Candidate_SubscribeToMailingListIsTrueAndProvidesPersonalInformation_CorrectSubscription()
         {
-            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = true, SubscribeToEvents = false };
+            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = true, AddressPostcode = "TE7 8KJ" };
 
             var candidate = request.Candidate;
 
@@ -127,14 +126,6 @@ namespace GetIntoTeachingApiTests.Models
             candidate.MailingListSubscriptionDoNotPostalMail.Should().BeTrue();
             candidate.MailingListSubscriptionDoNotSendMm.Should().BeFalse();
             candidate.MailingListSubscriptionDoNotEmail.Should().BeFalse();
-        }
-
-        [Fact]
-        public void Candidate_SubscribeToEventsIsTrue_CorrectOptInStatus()
-        {
-            var request = new TeachingEventAddAttendee() { SubscribeToEvents = true, SubscribeToMailingList = false };
-
-            var candidate = request.Candidate;
 
             candidate.HasEventsSubscription.Should().BeTrue();
             candidate.EventsSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Events);
@@ -144,12 +135,13 @@ namespace GetIntoTeachingApiTests.Models
             candidate.EventsSubscriptionDoNotPostalMail.Should().BeTrue();
             candidate.EventsSubscriptionDoNotSendMm.Should().BeFalse();
             candidate.EventsSubscriptionDoNotEmail.Should().BeFalse();
+            candidate.EventsSubscriptionTypeId.Should().Be((int)Candidate.SubscriptionType.SingleEvent);
         }
 
         [Fact]
-        public void Candidate_SubscribeToEventsIsFalse_CorrectOptInStatus()
+        public void Candidate_SubscribeToMailingListIsFalseAndDoesNotProvidePersonalInformation_CorrectSubscription()
         {
-            var request = new TeachingEventAddAttendee() { SubscribeToEvents = false, SubscribeToMailingList = false };
+            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, AddressPostcode = null };
 
             var candidate = request.Candidate;
 
@@ -161,12 +153,40 @@ namespace GetIntoTeachingApiTests.Models
             candidate.EventsSubscriptionDoNotPostalMail.Should().BeTrue();
             candidate.EventsSubscriptionDoNotSendMm.Should().BeTrue();
             candidate.EventsSubscriptionDoNotEmail.Should().BeFalse();
+            candidate.EventsSubscriptionTypeId.Should().Be((int)Candidate.SubscriptionType.SingleEvent);
+        }
+
+        [Fact]
+        public void Candidate_SubscribeToMailingListIsTrueAndDoesNotProvidePersonalInformation_CorrectSubscription()
+        {
+            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = true, AddressPostcode = null };
+
+            var candidate = request.Candidate;
+
+            candidate.HasMailingListSubscription.Should().BeTrue();
+            candidate.MailingListSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.MailingList);
+            candidate.MailingListSubscriptionStartAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
+            candidate.MailingListSubscriptionDoNotBulkEmail.Should().BeFalse();
+            candidate.MailingListSubscriptionDoNotBulkPostalMail.Should().BeTrue();
+            candidate.MailingListSubscriptionDoNotPostalMail.Should().BeTrue();
+            candidate.MailingListSubscriptionDoNotSendMm.Should().BeFalse();
+            candidate.MailingListSubscriptionDoNotEmail.Should().BeFalse();
+
+            candidate.HasEventsSubscription.Should().BeTrue();
+            candidate.EventsSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Events);
+            candidate.EventsSubscriptionStartAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
+            candidate.EventsSubscriptionDoNotBulkEmail.Should().BeTrue();
+            candidate.EventsSubscriptionDoNotBulkPostalMail.Should().BeTrue();
+            candidate.EventsSubscriptionDoNotPostalMail.Should().BeTrue();
+            candidate.EventsSubscriptionDoNotSendMm.Should().BeTrue();
+            candidate.EventsSubscriptionDoNotEmail.Should().BeFalse();
+            candidate.EventsSubscriptionTypeId.Should().Be((int)Candidate.SubscriptionType.SingleEvent);
         }
 
         [Fact]
         public void Candidate_SubscribeToMailingListIsFalse_ConsentIsCorrect()
         {
-            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, SubscribeToEvents = true };
+            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, AddressPostcode = "TE7 8KJ" };
 
             request.Candidate.DoNotBulkPostalMail.Should().BeTrue();
             request.Candidate.DoNotPostalMail.Should().BeTrue();
@@ -175,7 +195,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_SubscribeToMailingListAndEventsAreFalse_ConsentIsCorrect()
         {
-            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, SubscribeToEvents = false };
+            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, AddressPostcode = null };
 
             request.Candidate.DoNotBulkEmail.Should().BeTrue();
             request.Candidate.DoNotSendMm.Should().BeTrue();
@@ -206,11 +226,23 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void Candidate_SubscribeToEventsIsFalse_StillCreatesEventsSubscription()
+        public void Candidate_DoesNotProvidePostcode_StillCreatesEventsSubscription()
         {
-            var request = new TeachingEventAddAttendee() { SubscribeToEvents = false };
+            var request = new TeachingEventAddAttendee() { AddressPostcode = null };
 
             request.Candidate.HasEventsSubscription.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(false, null, false)]
+        [InlineData(false, "TE7 8JR", false)]
+        [InlineData(true, null, false)]
+        [InlineData(true, "TE7 8JR", true)]
+        public void SubscribeToEvents_ReturnsCorrectly(bool SubscribeToMailingList, string AddressPostcode, bool expectedOutcome)
+        {
+            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = SubscribeToMailingList, AddressPostcode = AddressPostcode };
+
+            request.SubscribeToEvents.Should().Be(expectedOutcome);
         }
     }
 }
