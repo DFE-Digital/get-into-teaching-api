@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
@@ -22,24 +21,18 @@ namespace GetIntoTeachingApi.Models
 
         [EntityField("dfe_channelcreation", typeof(OptionSetValue))]
         public int? ChannelId { get; set; }
-        [JsonIgnore]
         [EntityField("dfe_destination", typeof(OptionSetValue))]
         public int? DestinationId { get; set; }
         [EntityField("scheduledstart")]
         public DateTime ScheduledAt { get; set; }
-        [JsonIgnore]
         [EntityField("phonenumber")]
         public string Telephone { get; set; }
-        [JsonIgnore]
         [EntityField("subject")]
         public string Subject { get; set; }
-        [JsonIgnore]
         [EntityField("dfe_appointmentflag")]
         public bool IsAppointment { get; set; } = false;
-        [JsonIgnore]
         [EntityField("dfe_appointmentrequired")]
         public bool AppointmentRequired { get; set; } = false;
-        [JsonIgnore]
         [EntityField("directioncode")]
         public bool IsDirectionCode { get; set; } = true;
 
