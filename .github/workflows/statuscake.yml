@@ -15,8 +15,8 @@ jobs:
            terraform_version: 0.12.29
 
       - name: Get Short SHA
-         id: sha
-         run: echo ::set-output name=short::$(git rev-parse --short $GITHUB_SHA)
+        id: sha
+        run: echo ::set-output name=short::$(git rev-parse --short $GITHUB_SHA)
 
       - name:  Smoke Test
         run: |
