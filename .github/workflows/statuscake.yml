@@ -1,0 +1,53 @@
+name: Deploy Status Cake (Beta Test)
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Status Cake Configuration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - uses: hashicorp/setup-terraform@v1
+        with:
+           terraform_version: 0.12.29
+
+      - name: Terraform Init
+        run: |
+            cd terraform/statuscake && pwd
+            terraform init -backend-config=test.bk.vars
+        env:
+              ARM_ACCESS_KEY:           "${{ secrets.TEST_ARM_ACCESS_KEY  }}"
+              TF_VAR_sc_username:       "DfEStatusCake"
+              TF_VAR_sc_api_key:        "${{ secrets.STATUS_CAKE_API  }}"
+
+      - name: Terraform Plan
+        run: |
+            cd terraform/statuscake && pwd
+            terraform plan -var-file=test.env.tfvars -out plan
+        env:
+              ARM_ACCESS_KEY:           "${{ secrets.TEST_ARM_ACCESS_KEY  }}"
+              TF_VAR_sc_username:       "DfEStatusCake"
+              TF_VAR_sc_api_key:        "${{ secrets.STATUS_CAKE_API  }}"
+
+      - name: Terraform Apply
+        run: |
+            cd terraform/statuscake && pwd
+            terraform apply -auto-approve plan
+        env:
+              ARM_ACCESS_KEY:           "${{ secrets.TEST_ARM_ACCESS_KEY  }}"
+              TF_VAR_sc_username:       "DfEStatusCake"
+              TF_VAR_sc_api_key:        "${{ secrets.STATUS_CAKE_API  }}"
+
+      - name: Slack Notification
+        if: failure()
+        uses: rtCamp/action-slack-notify@master
+        env:
+           SLACK_CHANNEL: getintoteaching_tech
+           SLACK_COLOR: '#3278BD'
+           SLACK_ICON: https://github.com/rtCamp.png?size=48
+           SLACK_MESSAGE: ':disappointed_relieved: Get-Into-Teaching-API Pipeline Failed Configuring Status Cake ${{github.job}} :disappointed_relieved:'
+           SLACK_TITLE: 'Failure: ${{ github.workflow }}'
+           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
