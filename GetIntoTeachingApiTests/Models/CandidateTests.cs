@@ -108,6 +108,8 @@ namespace GetIntoTeachingApiTests.Models
 
             type.GetProperty("EventsSubscriptionChannelId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_GITISEventsServiceSubscriptionChannel" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("EventsSubscriptionTypeId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "GITISEventsServiceSubscriptionType" && a.Type == typeof(OptionSetValue));
             type.GetProperty("HasEventsSubscription").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISEventsServiceIsSubscriber");
             type.GetProperty("EventsSubscriptionStartAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISEventsServiceStartDate");
             type.GetProperty("EventsSubscriptionDoNotBulkEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISEventsServiceDoNotBulkEmail");

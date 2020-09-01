@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.Json.Serialization;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -7,18 +8,24 @@ namespace GetIntoTeachingApi.Models
     public class TeachingEventAddAttendee
     {
         public Guid? CandidateId { get; set; }
+        public Guid? QualificationId { get; set; }
+
         [SwaggerSchema(WriteOnly = true)]
         public Guid? EventId { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public Guid? AcceptedPolicyId { get; set; }
+        public Guid? PreferredTeachingSubjectId { get; set; }
+
+        public int? ConsiderationJourneyStageId { get; set; }
+        public int? DegreeStatusId { get; set; }
 
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string AddressPostcode { get; set; }
         public string Telephone { get; set; }
-        [SwaggerSchema(WriteOnly = true)]
-        public bool SubscribeToEvents { get; set; }
+        [SwaggerSchema(ReadOnly = true)]
+        public bool SubscribeToEvents => AddressPostcode != null && SubscribeToMailingList;
         [SwaggerSchema(WriteOnly = true)]
         public bool SubscribeToMailingList { get; set; }
         [SwaggerSchema(ReadOnly = true)]
@@ -40,7 +47,18 @@ namespace GetIntoTeachingApi.Models
 
         private void PopulateWithCandidate(Candidate candidate)
         {
+            var latestQualification = candidate.Qualifications.OrderByDescending(q => q.CreatedAt).FirstOrDefault();
+
+            if (latestQualification != null)
+            {
+                QualificationId = latestQualification.Id;
+                DegreeStatusId = latestQualification.DegreeStatusId;
+            }
+
             CandidateId = candidate.Id;
+            PreferredTeachingSubjectId = candidate.PreferredTeachingSubjectId;
+
+            ConsiderationJourneyStageId = candidate.ConsiderationJourneyStageId;
 
             Email = candidate.Email;
             FirstName = candidate.FirstName;
@@ -57,6 +75,8 @@ namespace GetIntoTeachingApi.Models
             var candidate = new Candidate()
             {
                 Id = CandidateId,
+                ConsiderationJourneyStageId = ConsiderationJourneyStageId,
+                PreferredTeachingSubjectId = PreferredTeachingSubjectId,
                 Email = Email,
                 FirstName = FirstName,
                 LastName = LastName,
@@ -66,11 +86,22 @@ namespace GetIntoTeachingApi.Models
             };
 
             AddTeachingEventRegistration(candidate);
+            AddQualification(candidate);
             AcceptPrivacyPolicy(candidate);
             ConfigureSubscriptions(candidate);
             ConfigureConsent(candidate);
 
             return candidate;
+        }
+
+        private void AddQualification(Candidate candidate)
+        {
+            candidate.Qualifications.Add(new CandidateQualification()
+            {
+                Id = QualificationId,
+                DegreeStatusId = DegreeStatusId,
+                TypeId = (int)CandidateQualification.DegreeType.Degree,
+            });
         }
 
         private void ConfigureConsent(Candidate candidate)
@@ -93,6 +124,15 @@ namespace GetIntoTeachingApi.Models
             candidate.EventsSubscriptionDoNotBulkPostalMail = true;
             candidate.EventsSubscriptionDoNotPostalMail = true;
             candidate.EventsSubscriptionDoNotSendMm = !SubscribeToEvents;
+
+            if (string.IsNullOrWhiteSpace(AddressPostcode))
+            {
+                candidate.EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.SingleEvent;
+            }
+            else
+            {
+                candidate.EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.LocalEvent;
+            }
 
             if (!SubscribeToMailingList)
             {

@@ -74,7 +74,6 @@ namespace GetIntoTeachingApiTests.Models
                 LastName = "Doe",
                 Telephone = "1234567",
                 AddressPostcode = "KY11 9YU",
-                SubscribeToEvents = true,
             };
 
             var candidate = request.Candidate;
@@ -116,10 +115,22 @@ namespace GetIntoTeachingApiTests.Models
             candidate.EventsSubscriptionDoNotPostalMail.Should().BeTrue();
             candidate.EventsSubscriptionDoNotSendMm.Should().BeFalse();
             candidate.EventsSubscriptionDoNotEmail.Should().BeFalse();
+            candidate.EventsSubscriptionTypeId.Should().Be((int)Candidate.SubscriptionType.LocalEvent);
 
             candidate.Qualifications.First().DegreeStatusId.Should().Be(request.DegreeStatusId);
             candidate.Qualifications.First().TypeId.Should().Be((int)CandidateQualification.DegreeType.Degree);
             candidate.Qualifications.First().Id.Should().Be(request.QualificationId);
+        }
+
+        [Fact]
+        public void Candidate_AddressPostcodeNotProvided_EventsSubscriptionTypeIsSingleEvent()
+        {
+            var request = new MailingListAddMember()
+            {
+                AddressPostcode = null,
+            };
+
+            request.Candidate.EventsSubscriptionTypeId.Should().Be((int)Candidate.SubscriptionType.SingleEvent);
         }
 
         [Fact]
@@ -136,14 +147,6 @@ namespace GetIntoTeachingApiTests.Models
             var request = new MailingListAddMember() { CandidateId = Guid.NewGuid() };
 
             request.Candidate.ChannelId.Should().BeNull();
-        }
-
-        [Fact]
-        public void Candidate_SubscribeToEventsIsFalse_DoesNotCreateSubscription()
-        {
-            var request = new MailingListAddMember() { SubscribeToEvents = false };
-
-            request.Candidate.HasEventsSubscription.Should().BeNull();
         }
     }
 }

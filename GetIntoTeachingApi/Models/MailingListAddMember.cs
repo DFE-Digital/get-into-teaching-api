@@ -21,8 +21,6 @@ namespace GetIntoTeachingApi.Models
         public string LastName { get; set; }
         public string AddressPostcode { get; set; }
         public string Telephone { get; set; }
-        [SwaggerSchema(WriteOnly = true)]
-        public bool SubscribeToEvents { get; set; }
         [SwaggerSchema(ReadOnly = true)]
         public bool AlreadySubscribedToEvents { get; set; }
         [SwaggerSchema(ReadOnly = true)]
@@ -115,11 +113,6 @@ namespace GetIntoTeachingApi.Models
             candidate.MailingListSubscriptionDoNotPostalMail = true;
             candidate.MailingListSubscriptionDoNotSendMm = false;
 
-            if (!SubscribeToEvents)
-            {
-                return;
-            }
-
             candidate.HasEventsSubscription = true;
             candidate.EventsSubscriptionChannelId = (int)Candidate.SubscriptionChannel.Events;
             candidate.EventsSubscriptionStartAt = DateTime.UtcNow;
@@ -128,6 +121,15 @@ namespace GetIntoTeachingApi.Models
             candidate.EventsSubscriptionDoNotBulkPostalMail = true;
             candidate.EventsSubscriptionDoNotPostalMail = true;
             candidate.EventsSubscriptionDoNotSendMm = false;
+
+            if (string.IsNullOrWhiteSpace(AddressPostcode))
+            {
+                candidate.EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.SingleEvent;
+            }
+            else
+            {
+                candidate.EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.LocalEvent;
+            }
         }
 
         private void AcceptPrivacyPolicy(Candidate candidate)
