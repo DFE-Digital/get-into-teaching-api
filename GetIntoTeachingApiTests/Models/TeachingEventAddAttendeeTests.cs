@@ -112,7 +112,7 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void Candidate_SubscribeToMailingListIsTrueAndProvidesPersonalInformation_CorrectSubscription()
+        public void Candidate_SubscribeToMailingListIsTrueAndProvidesAddressPostCode_CorrectSubscription()
         {
             var request = new TeachingEventAddAttendee() { SubscribeToMailingList = true, AddressPostcode = "TE7 8KJ" };
 
@@ -135,11 +135,11 @@ namespace GetIntoTeachingApiTests.Models
             candidate.EventsSubscriptionDoNotPostalMail.Should().BeTrue();
             candidate.EventsSubscriptionDoNotSendMm.Should().BeFalse();
             candidate.EventsSubscriptionDoNotEmail.Should().BeFalse();
-            candidate.EventsSubscriptionTypeId.Should().Be((int)Candidate.SubscriptionType.SingleEvent);
+            candidate.EventsSubscriptionTypeId.Should().Be((int)Candidate.SubscriptionType.LocalEvent);
         }
 
         [Fact]
-        public void Candidate_SubscribeToMailingListIsFalseAndDoesNotProvidePersonalInformation_CorrectSubscription()
+        public void Candidate_SubscribeToMailingListIsFalseAndDoesNotProvideAddressPostCode_CorrectSubscription()
         {
             var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, AddressPostcode = null };
 
@@ -157,7 +157,7 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void Candidate_SubscribeToMailingListIsTrueAndDoesNotProvidePersonalInformation_CorrectSubscription()
+        public void Candidate_SubscribeToMailingListIsTrueAndDoesNotProvideAddressPostCode_CorrectSubscription()
         {
             var request = new TeachingEventAddAttendee() { SubscribeToMailingList = true, AddressPostcode = null };
 
