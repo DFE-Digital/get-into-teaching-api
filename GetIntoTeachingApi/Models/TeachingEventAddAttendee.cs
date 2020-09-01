@@ -124,7 +124,15 @@ namespace GetIntoTeachingApi.Models
             candidate.EventsSubscriptionDoNotBulkPostalMail = true;
             candidate.EventsSubscriptionDoNotPostalMail = true;
             candidate.EventsSubscriptionDoNotSendMm = !SubscribeToEvents;
-            candidate.EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.SingleEvent;
+
+            if (string.IsNullOrWhiteSpace(AddressPostcode))
+            {
+                candidate.EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.SingleEvent;
+            }
+            else
+            {
+                candidate.EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.LocalEvent;
+            }
 
             if (!SubscribeToMailingList)
             {

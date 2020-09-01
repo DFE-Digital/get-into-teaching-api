@@ -63,6 +63,7 @@ namespace GetIntoTeachingApi.Models
         public enum SubscriptionType
         {
             SingleEvent = 222750001,
+            LocalEvent = 222750000,
         }
 
         public enum PreferredEducationPhase
