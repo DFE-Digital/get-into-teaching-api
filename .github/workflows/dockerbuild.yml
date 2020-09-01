@@ -10,6 +10,7 @@ on:
 env:
   DOCKERHUB_REPOSITORY:     dfedigital/get-into-teaching-api
   CF_PROVIDER_DIR: $HOME/.terraform.d/plugins/linux_amd64/terraform-provider-cloudfoundry
+  CF_PROVIDER_URL: https://github.com/cloudfoundry-community/terraform-provider-cloudfoundry/releases/download/v0.12.3/terraform-provider-cloudfoundry_v0.12.3_linux_amd64
   
 jobs:
   build_docker:
@@ -94,7 +95,7 @@ jobs:
        - name: Install Terraform CloudFoundry Provider
          run: |
              mkdir -p $HOME/.terraform.d/plugins/linux_amd64
-             wget -O ${{ env.CF_PROVIDER_DIR }} https://github.com/cloudfoundry-community/terraform-provider-cf/releases/latest/download/terraform-provider-cloudfoundry_linux_amd64
+             wget -O ${{ env.CF_PROVIDER_DIR }} ${{ env.CF_PROVIDER_URL}}
              chmod +x ${{ env.CF_PROVIDER_DIR }}
 
        - name: Terraform Init
