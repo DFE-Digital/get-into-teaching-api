@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
@@ -80,7 +79,6 @@ namespace GetIntoTeachingApi.Models
             NotAnswered = 222750001,
         }
 
-        [JsonIgnore]
         public string FullName => $"{this.FirstName} {this.LastName}";
         [EntityField("dfe_preferredteachingsubject01", typeof(EntityReference), "dfe_teachingsubjectlist")]
         public Guid? PreferredTeachingSubjectId { get; set; }
@@ -114,16 +112,12 @@ namespace GetIntoTeachingApi.Models
         public int? AdviserEligibilityId { get; set; }
         [EntityField("dfe_isadvisorrequiredos", typeof(OptionSetValue))]
         public int? AdviserRequirementId { get; set; }
-        [JsonIgnore]
         [EntityField("dfe_preferredphonenumbertype", typeof(OptionSetValue))]
         public int? PreferredPhoneNumberTypeId { get; set; } = (int)PhoneNumberType.Home;
-        [JsonIgnore]
         [EntityField("preferredcontactmethodcode", typeof(OptionSetValue))]
         public int? PreferredContactMethodId { get; set; } = (int)ContactMethod.Any;
-        [JsonIgnore]
         [EntityField("msgdpr_gdprconsent", typeof(OptionSetValue))]
         public int? GdprConsentId { get; set; } = (int)GdprConsent.Consent;
-        [JsonIgnore]
         [EntityField("dfe_waitingtobeassigneddate")]
         public DateTime? StatusIsWaitingToBeAssignedAt { get; set; }
         [EntityField("emailaddress1")]
@@ -160,16 +154,13 @@ namespace GetIntoTeachingApi.Models
         public bool? DoNotSendMm { get; set; }
         [EntityField("dfe_optoutsms")]
         public bool? OptOutOfSms { get; set; }
-        [JsonIgnore]
         [EntityField("msdyn_gdproptout")]
         public bool? OptOutOfGdpr { get; set; } = false;
-        [JsonIgnore]
         [EntityField("dfe_newregistrant")]
         public bool IsNewRegistrant { get; set; }
 
         [EntityField("dfe_GITISTTAServiceIsSubscriber")]
         public bool? HasTeacherTrainingAdviserSubscription { get; set; }
-        [JsonIgnore]
         [EntityField("dfe_GITISTTAServiceSubscriptionChannel", typeof(OptionSetValue))]
         public int? TeacherTrainingAdviserSubscriptionChannelId { get; set; }
         [EntityField("dfe_GITISTTAServiceStartDate")]
@@ -187,7 +178,6 @@ namespace GetIntoTeachingApi.Models
 
         [EntityField("dfe_GITISMailingListServiceIsSubscriber")]
         public bool? HasMailingListSubscription { get; set; }
-        [JsonIgnore]
         [EntityField("dfe_GITISMailingListServiceSubscriptionChannel", typeof(OptionSetValue))]
         public int? MailingListSubscriptionChannelId { get; set; }
         [EntityField("dfe_GITISMailingListServiceStartDate")]
@@ -205,7 +195,6 @@ namespace GetIntoTeachingApi.Models
 
         [EntityField("dfe_GITISEventsServiceIsSubscriber")]
         public bool? HasEventsSubscription { get; set; }
-        [JsonIgnore]
         [EntityField("dfe_GITISEventsServiceSubscriptionChannel", typeof(OptionSetValue))]
         public int? EventsSubscriptionChannelId { get; set; }
         [EntityField("dfe_GITISEventsServiceStartDate")]
