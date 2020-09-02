@@ -166,10 +166,13 @@ The GIT API aims to provide:
                 c.SerializeAsV2 = !env.IsDevelopment;
             });
 
-            app.UseSwaggerUI(c =>
+            if (!env.IsProduction)
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Get into Teaching API V1");
-            });
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Get into Teaching API V1");
+                });
+            }
 
             app.UseRouting();
 
