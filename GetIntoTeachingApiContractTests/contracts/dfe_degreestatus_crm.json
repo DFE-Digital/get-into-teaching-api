@@ -1,0 +1,26 @@
+[
+  {
+    "DisplayLabel": "I don't have a degree and am not studying for one",
+    "PickListItemId": 222750004
+  },
+  {
+    "DisplayLabel": "Graduate or postgraduate",
+    "PickListItemId": 222750000
+  },
+  {
+    "DisplayLabel": "Final year",
+    "PickListItemId": 222750001
+  },
+  {
+    "DisplayLabel": "Second year",
+    "PickListItemId": 222750002
+  },
+  {
+    "DisplayLabel": "First year",
+    "PickListItemId": 222750003
+  },
+  {
+    "DisplayLabel": "Other",
+    "PickListItemId": 222750005
+  }
+]

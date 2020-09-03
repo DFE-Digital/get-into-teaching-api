@@ -1,0 +1,26 @@
+[
+  {
+    "DisplayLabel": "First class",
+    "PickListItemId": 222750001
+  },
+  {
+    "DisplayLabel": "2:1",
+    "PickListItemId": 222750002
+  },
+  {
+    "DisplayLabel": "2:2",
+    "PickListItemId": 222750003
+  },
+  {
+    "DisplayLabel": "Third class or below",
+    "PickListItemId": 222750004
+  },
+  {
+    "DisplayLabel": "Pass (grade unknown)",
+    "PickListItemId": 222750005
+  },
+  {
+    "DisplayLabel": "Not applicable",
+    "PickListItemId": 222750000
+  }
+]
