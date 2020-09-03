@@ -1,13 +1,9 @@
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using GetIntoTeachingApi;
 using GetIntoTeachingApiContractTests.Fixtures;
 using GetIntoTeachingApiContractTests.Helpers;
-using Microsoft.AspNetCore.TestHost;
-using RestSharp;
-using WireMock.Logging;
-using WireMock.Server;
+using GetIntoTeachingApiContractTests.Servers;
 using Xunit;
 
 namespace GetIntoTeachingApiContractTests
@@ -15,24 +11,12 @@ namespace GetIntoTeachingApiContractTests
     public class ContractTests : IClassFixture<ContractTestFixture<Startup>>
     {
         private readonly HttpClient _client;
-        private readonly TestServer _server;
-        private readonly WireMockServer _crmServer;
+        private readonly ServerUnderTest _server;
 
         public ContractTests(ContractTestFixture<Startup> fixture)
         {
             _client = fixture.Client;
             _server = fixture.Server;
-            _crmServer = fixture.CrmServer;
-        }
-
-        [Fact]
-        public void WithRestClient()
-        {
-            var client = new RestClient("https://www.bbc.co.uk");
-            var clientRequest = new RestRequest("/");
-            var clientResponse = client.Get(clientRequest);
-
-            Assert.True(clientResponse.IsSuccessful, "Response should be successful");
         }
 
         [Fact]
@@ -40,7 +24,6 @@ namespace GetIntoTeachingApiContractTests
         {
             const string url = "/api/operations/health_check";
             
-
             // Act
             var response = await _client.GetAsync(url);
             var message = await response.Content.ReadAsStringAsync();
@@ -76,26 +59,14 @@ namespace GetIntoTeachingApiContractTests
                 }
             };
 
-            /*_crmServer
-                .Given(Request.Create()
-                    .WithPath("/XRMServices/2011/Organization.svc/web")
-                    .UsingPost()
-                    .WithHeader()
-                    .WithBody(new XPathMatcher("/")));*/
-
             // Act
             var response = await _client.PostAsync(request.Url, ContentHelper.GetStringContent(request.Body));
-            var message = await response.Content.ReadAsStringAsync();
-
-            LogEntry crmRequest = null;
-            do
-            {
-                crmRequest = _crmServer.LogEntries
-                    .FirstOrDefault(entry =>entry.RequestMessage.Body.Contains("Candidate"));
-            } while (crmRequest == null);
-
+            
             // Assert
             response.EnsureSuccessStatusCode();
+            var crmRequest = await ServerUnderTest.CrmServiceAdapter.GetCandidateRequestDetails();
+            
+            Assert.IsType<bool>(crmRequest);
         }
     }
 }

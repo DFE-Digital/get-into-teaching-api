@@ -1,0 +1,38 @@
+[
+  {
+    "DisplayLabel": "Degree",
+    "PickListItemId": 222750000
+  },
+  {
+    "DisplayLabel": "Undergraduate",
+    "PickListItemId": 222750003
+  },
+  {
+    "DisplayLabel": "Postgraduate",
+    "PickListItemId": 222750006
+  },
+  {
+    "DisplayLabel": "Professional/vocational",
+    "PickListItemId": 222750001
+  },
+  {
+    "DisplayLabel": "A level or equivalent",
+    "PickListItemId": 222750007
+  },
+  {
+    "DisplayLabel": "GCSE or equivalent",
+    "PickListItemId": 222750008
+  },
+  {
+    "DisplayLabel": "Teaching qualification",
+    "PickListItemId": 222750002
+  },
+  {
+    "DisplayLabel": "Other",
+    "PickListItemId": 222750004
+  },
+  {
+    "DisplayLabel": "Degree Equivalent",
+    "PickListItemId": 222750005
+  }
+]

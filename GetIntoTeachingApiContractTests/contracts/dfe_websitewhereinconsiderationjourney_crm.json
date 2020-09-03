@@ -1,0 +1,18 @@
+[
+  {
+    "DisplayLabel": "It’s just an idea",
+    "PickListItemId": 222750000
+  },
+  {
+    "DisplayLabel": "I’m not sure and finding out more",
+    "PickListItemId": 222750001
+  },
+  {
+    "DisplayLabel": "I’m fairly sure and exploring my options",
+    "PickListItemId": 222750002
+  },
+  {
+    "DisplayLabel": "I’m very sure and think I’ll apply",
+    "PickListItemId": 222750003
+  }
+]

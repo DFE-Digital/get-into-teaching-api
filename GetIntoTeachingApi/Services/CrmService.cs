@@ -60,6 +60,7 @@ namespace GetIntoTeachingApi.Services
         {
             return _service.CreateQuery("dfe_privacypolicy", Context())
                 .Where((entity) =>
+                    entity.GetAttributeValue<OptionSetValue>("dfe_policytype") != null &&
                     entity.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int)PrivacyPolicy.Type.Web &&
                     entity.GetAttributeValue<bool>("dfe_active"))
                 .OrderByDescending((policy) => policy.GetAttributeValue<DateTime>("createdon"))

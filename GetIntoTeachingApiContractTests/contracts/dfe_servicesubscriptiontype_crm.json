@@ -1,0 +1,18 @@
+[
+  {
+    "DisplayLabel": "EVENT",
+    "PickListItemId": 222750000
+  },
+  {
+    "DisplayLabel": "Marketing",
+    "PickListItemId": 222750001
+  },
+  {
+    "DisplayLabel": "TTA Registration",
+    "PickListItemId": 222750002
+  },
+  {
+    "DisplayLabel": "Single Event",
+    "PickListItemId": 222750003
+  }
+]
