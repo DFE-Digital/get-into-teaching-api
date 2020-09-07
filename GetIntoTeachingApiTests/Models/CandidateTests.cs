@@ -87,36 +87,36 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("OptOutOfGdpr").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "msdyn_gdproptout");
 
             type.GetProperty("TeacherTrainingAdviserSubscriptionChannelId").Should().BeDecoratedWith<EntityFieldAttribute>(
-                a => a.Name == "dfe_GITISTTAServiceSubscriptionChannel" && a.Type == typeof(OptionSetValue));
-            type.GetProperty("HasTeacherTrainingAdviserSubscription").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISTTAServiceIsSubscriber");
-            type.GetProperty("TeacherTrainingAdviserSubscriptionStartAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISTTAServiceStartDate");
-            type.GetProperty("TeacherTrainingAdviserSubscriptionDoNotBulkEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISTTAServiceDoNotBulkEmail");
-            type.GetProperty("TeacherTrainingAdviserSubscriptionDoNotBulkPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISTTAServiceDoNotBulkPostalMail");
-            type.GetProperty("TeacherTrainingAdviserSubscriptionDoNotEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISTTAServiceDoNotEmail");
-            type.GetProperty("TeacherTrainingAdviserSubscriptionDoNotPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISTTAServiceDoNotPostalMail");
-            type.GetProperty("TeacherTrainingAdviserSubscriptionDoNotSendMm").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISTTAServiceDoNotSendMM");
+                a => a.Name == "dfe_gitisttaservicesubscriptionchannel" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("HasTeacherTrainingAdviserSubscription").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitisttaserviceissubscriber");
+            type.GetProperty("TeacherTrainingAdviserSubscriptionStartAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitisttaservicestartdate");
+            type.GetProperty("TeacherTrainingAdviserSubscriptionDoNotBulkEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitisttaservicedonotbulkemail");
+            type.GetProperty("TeacherTrainingAdviserSubscriptionDoNotBulkPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitisttaservicedonotbulkpostalmail");
+            type.GetProperty("TeacherTrainingAdviserSubscriptionDoNotEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitisttaservicedonotemail");
+            type.GetProperty("TeacherTrainingAdviserSubscriptionDoNotPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitisttaservicedonotpostalmail");
+            type.GetProperty("TeacherTrainingAdviserSubscriptionDoNotSendMm").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitisttaservicedonotsendmm");
 
             type.GetProperty("MailingListSubscriptionChannelId").Should().BeDecoratedWith<EntityFieldAttribute>(
-                a => a.Name == "dfe_GITISMailingListServiceSubscriptionChannel" && a.Type == typeof(OptionSetValue));
-            type.GetProperty("HasMailingListSubscription").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISMailingListServiceIsSubscriber");
-            type.GetProperty("MailingListSubscriptionStartAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISMailingListServiceStartDate");
-            type.GetProperty("MailingListSubscriptionDoNotBulkEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISMailingListServiceDoNotBulkEmail");
-            type.GetProperty("MailingListSubscriptionDoNotBulkPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISMailingListServiceDoNotBulkPostalMail");
-            type.GetProperty("MailingListSubscriptionDoNotEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISMailingListServiceDoNotEmail");
-            type.GetProperty("MailingListSubscriptionDoNotPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISMailingListServiceDoNotPostalMail");
-            type.GetProperty("MailingListSubscriptionDoNotSendMm").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISMailingListServiceDoNotSendMM");
+                a => a.Name == "dfe_gitismlservicesubscriptionchannel" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("HasMailingListSubscription").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitismailinglistserviceissubscriber");
+            type.GetProperty("MailingListSubscriptionStartAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitismailinglistservicestartdate");
+            type.GetProperty("MailingListSubscriptionDoNotBulkEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitismailinglistservicedonotbulkemail");
+            type.GetProperty("MailingListSubscriptionDoNotBulkPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitismlservicedonotbulkpostalmail");
+            type.GetProperty("MailingListSubscriptionDoNotEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitismailinglistservicedonotemail");
+            type.GetProperty("MailingListSubscriptionDoNotPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitismailinglistservicedonotpostalmail");
+            type.GetProperty("MailingListSubscriptionDoNotSendMm").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitismailinglistservicedonotsendmm");
 
             type.GetProperty("EventsSubscriptionChannelId").Should().BeDecoratedWith<EntityFieldAttribute>(
-                a => a.Name == "dfe_GITISEventsServiceSubscriptionChannel" && a.Type == typeof(OptionSetValue));
+                a => a.Name == "dfe_gitiseventsservicesubscriptionchannel" && a.Type == typeof(OptionSetValue));
             type.GetProperty("EventsSubscriptionTypeId").Should().BeDecoratedWith<EntityFieldAttribute>(
-                a => a.Name == "GITISEventsServiceSubscriptionType" && a.Type == typeof(OptionSetValue));
-            type.GetProperty("HasEventsSubscription").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISEventsServiceIsSubscriber");
-            type.GetProperty("EventsSubscriptionStartAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISEventsServiceStartDate");
-            type.GetProperty("EventsSubscriptionDoNotBulkEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISEventsServiceDoNotBulkEmail");
-            type.GetProperty("EventsSubscriptionDoNotBulkPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISEventsServiceDoNotBulkPostalMail");
-            type.GetProperty("EventsSubscriptionDoNotEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISEventsServiceDoNotEmail");
-            type.GetProperty("EventsSubscriptionDoNotPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISEventsServiceDoNotPostalMail");
-            type.GetProperty("EventsSubscriptionDoNotSendMm").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_GITISEventsServiceDoNotSendMM");
+                a => a.Name == "dfe_gitiseventsservicesubscriptiontype" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("HasEventsSubscription").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitiseventsserviceissubscriber");
+            type.GetProperty("EventsSubscriptionStartAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitiseventsservicestartdate");
+            type.GetProperty("EventsSubscriptionDoNotBulkEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitiseventsservicedonotbulkemail");
+            type.GetProperty("EventsSubscriptionDoNotBulkPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitiseventsservicedonotbulkpostalmail");
+            type.GetProperty("EventsSubscriptionDoNotEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitiseventsservicedonotemail");
+            type.GetProperty("EventsSubscriptionDoNotPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitiseventsservicedonotpostalmail");
+            type.GetProperty("EventsSubscriptionDoNotSendMm").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_gitiseventsservicedonotsendmm");
 
             type.GetProperty("Qualifications").Should().BeDecoratedWith<EntityRelationshipAttribute>(
                 a => a.Name == "dfe_contact_dfe_candidatequalification_ContactId" &&
