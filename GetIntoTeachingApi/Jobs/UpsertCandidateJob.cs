@@ -57,8 +57,7 @@ namespace GetIntoTeachingApi.Jobs
 
         private void SaveCandidate(Candidate candidate)
         {
-            // TODO: temporarily disabled to avoid collecting PII in a UR session.
-            // _crm.Save(candidate);
+            _crm.Save(candidate);
         }
 
         private IEnumerable<TeachingEventRegistration> ClearTeachingEventRegistrations(Candidate candidate)
