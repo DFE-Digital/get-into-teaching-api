@@ -10,7 +10,7 @@ namespace GetIntoTeachingApi.Models
     {
         public enum Channel
         {
-            CallbackRequest = 222750000,
+            CallbackRequest = 222750003,
         }
 
         public enum Destination
