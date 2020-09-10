@@ -48,8 +48,10 @@ namespace GetIntoTeachingApi.Jobs
             else
             {
                 var registrations = ClearTeachingEventRegistrations(candidate);
+                var phoneCall = ClearPhoneCall(candidate);
                 SaveCandidate(candidate);
                 SaveTeachingEventRegistrations(registrations, candidate);
+                SavePhoneCall(phoneCall, candidate);
 
                 _logger.LogInformation("UpsertCandidateJob - Succeeded");
             }
@@ -62,12 +64,22 @@ namespace GetIntoTeachingApi.Jobs
 
         private IEnumerable<TeachingEventRegistration> ClearTeachingEventRegistrations(Candidate candidate)
         {
-            // Due to reasons unknown the candidate registrations relationship can't be deep-inserted
+            // Due to reasons unknown the event registrations relationship can't be deep-inserted
             // in the same way we do for other relationships - we need to explicitly save them against
             // the candidate instead.
             var teachingEventRegistrations = new List<TeachingEventRegistration>(candidate.TeachingEventRegistrations);
             candidate.TeachingEventRegistrations.Clear();
             return teachingEventRegistrations;
+        }
+
+        private PhoneCall ClearPhoneCall(Candidate candidate)
+        {
+            // Due to reasons unknown the phone call relationship can't be deep-inserted
+            // in the same way we do for other relationships - we need to explicitly save them against
+            // the candidate instead.
+            var phoneCall = candidate.PhoneCall;
+            candidate.PhoneCall = null;
+            return phoneCall;
         }
 
         private void SaveTeachingEventRegistrations(IEnumerable<TeachingEventRegistration> registrations, Candidate candidate)
@@ -77,6 +89,17 @@ namespace GetIntoTeachingApi.Jobs
                 registration.CandidateId = (Guid)candidate.Id;
                 _crm.Save(registration);
             }
+        }
+
+        private void SavePhoneCall(PhoneCall phoneCall, Candidate candidate)
+        {
+            if (phoneCall == null)
+            {
+                return;
+            }
+
+            phoneCall.CandidateId = candidate.Id.ToString();
+            _crm.Save(phoneCall);
         }
     }
 }

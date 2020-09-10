@@ -20,6 +20,7 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("DestinationId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_destination" && a.Type == typeof(OptionSetValue));
 
+            type.GetProperty("CandidateId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_tocontactguid");
             type.GetProperty("ScheduledAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "scheduledstart");
             type.GetProperty("Telephone").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "phonenumber");
             type.GetProperty("Subject").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "subject");

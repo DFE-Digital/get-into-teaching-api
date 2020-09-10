@@ -10,7 +10,7 @@ namespace GetIntoTeachingApi.Models
     {
         public enum Channel
         {
-            CallbackRequest = 222750000,
+            CallbackRequest = 222750003,
         }
 
         public enum Destination
@@ -19,6 +19,8 @@ namespace GetIntoTeachingApi.Models
             International = 222750001,
         }
 
+        [EntityField("dfe_tocontactguid")]
+        public string CandidateId { get; set; }
         [EntityField("dfe_channelcreation", typeof(OptionSetValue))]
         public int? ChannelId { get; set; }
         [EntityField("dfe_destination", typeof(OptionSetValue))]

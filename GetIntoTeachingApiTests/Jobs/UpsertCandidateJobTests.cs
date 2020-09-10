@@ -61,6 +61,21 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
+        public void Run_WithPhoneCallOnSuccess_SavesPhoneCall()
+        {
+            var candidateId = Guid.NewGuid();
+            var phoneCall = new PhoneCall();
+            _candidate.PhoneCall = phoneCall;
+            _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
+            _mockCrm.Setup(mock => mock.Save(_candidate)).Callback(() => _candidate.Id = candidateId);
+
+            _job.Run(_candidate, null);
+
+            _mockCrm.Verify(mock => mock.Save(phoneCall), Times.Once);
+            phoneCall.CandidateId.Should().Be(candidateId.ToString());
+        }
+
+        [Fact]
         public void Run_OnFailure_EmailsCandidate()
         {
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(23);
