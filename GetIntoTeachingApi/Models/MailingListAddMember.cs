@@ -15,6 +15,8 @@ namespace GetIntoTeachingApi.Models
 
         public int? ConsiderationJourneyStageId { get; set; }
         public int? DegreeStatusId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? ChannelId { get; set; }
 
         public string Email { get; set; }
         public string FirstName { get; set; }
@@ -78,7 +80,7 @@ namespace GetIntoTeachingApi.Models
                 LastName = LastName,
                 AddressPostcode = AddressPostcode,
                 Telephone = Telephone,
-                ChannelId = CandidateId == null ? (int?)Candidate.Channel.MailingList : null,
+                ChannelId = CandidateId == null ? ChannelId ?? (int?)Candidate.Channel.MailingList : null,
                 OptOutOfSms = false,
                 DoNotBulkEmail = false,
                 DoNotEmail = false,
@@ -108,7 +110,7 @@ namespace GetIntoTeachingApi.Models
         private void ConfigureSubscriptions(Candidate candidate)
         {
             candidate.HasMailingListSubscription = true;
-            candidate.MailingListSubscriptionChannelId = (int)Candidate.SubscriptionChannel.MailingList;
+            candidate.MailingListSubscriptionChannelId = ChannelId ?? (int)Candidate.SubscriptionChannel.MailingList;
             candidate.MailingListSubscriptionStartAt = DateTime.UtcNow;
             candidate.MailingListSubscriptionDoNotEmail = false;
             candidate.MailingListSubscriptionDoNotBulkEmail = false;
@@ -117,7 +119,7 @@ namespace GetIntoTeachingApi.Models
             candidate.MailingListSubscriptionDoNotSendMm = false;
 
             candidate.HasEventsSubscription = true;
-            candidate.EventsSubscriptionChannelId = (int)Candidate.SubscriptionChannel.Events;
+            candidate.EventsSubscriptionChannelId = ChannelId ?? (int)Candidate.SubscriptionChannel.Events;
             candidate.EventsSubscriptionStartAt = DateTime.UtcNow;
             candidate.EventsSubscriptionDoNotEmail = false;
             candidate.EventsSubscriptionDoNotBulkEmail = false;

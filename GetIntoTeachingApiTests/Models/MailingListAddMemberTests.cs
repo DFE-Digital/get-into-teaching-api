@@ -150,5 +150,15 @@ namespace GetIntoTeachingApiTests.Models
 
             request.Candidate.ChannelId.Should().BeNull();
         }
+
+        [Fact]
+        public void Candidate_WhenChannelIsProvided_SetsOnAllModels()
+        {
+            var request = new MailingListAddMember() { ChannelId = 123 };
+
+            request.Candidate.ChannelId.Should().Be(123);
+            request.Candidate.MailingListSubscriptionChannelId.Should().Be(123);
+            request.Candidate.EventsSubscriptionChannelId.Should().Be(123);
+        }
     }
 }
