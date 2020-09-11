@@ -103,6 +103,30 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
+        public async void GetCandidateMailingListSubscriptionChannels_ReturnsAllChannels()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_gitismlservicesubscriptionchannel")).Returns(mockEntities.AsAsyncQueryable());
+
+            var response = await _controller.GetCandidateMailingListSubscriptionChannels();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockEntities);
+        }
+
+        [Fact]
+        public async void GetCandidateEventSubscriptionChannels_ReturnsAllChannels()
+        {
+            var mockEntities = MockTypeEntities();
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_gitiseventsservicesubscriptionchannel")).Returns(mockEntities.AsAsyncQueryable());
+
+            var response = await _controller.GetCandidateEventSubscriptionChannels();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockEntities);
+        }
+
+        [Fact]
         public async void GetCandidateGcseStatus_ReturnsAllStatus()
         {
             var mockEntities = MockTypeEntities();
