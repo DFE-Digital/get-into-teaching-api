@@ -89,6 +89,32 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpGet]
         [CrmETag]
+        [Route("candidate/mailing_list_subscription_channels")]
+        [SwaggerOperation(
+    Summary = "Retrieves the list of candidate mailing list subscription channels.",
+    OperationId = "GetCandidateMailingListSubscriptionChannels",
+    Tags = new[] { "Types" })]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public async Task<IActionResult> GetCandidateMailingListSubscriptionChannels()
+        {
+            return Ok(await _store.GetPickListItems("contact", "dfe_gitismlservicesubscriptionchannel").ToListAsync());
+        }
+
+        [HttpGet]
+        [CrmETag]
+        [Route("candidate/event_subscription_channels")]
+        [SwaggerOperation(
+  Summary = "Retrieves the list of candidate event subscription channels.",
+  OperationId = "GetCandidateEventSubscriptionChannels",
+  Tags = new[] { "Types" })]
+        [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
+        public async Task<IActionResult> GetCandidateEventSubscriptionChannels()
+        {
+            return Ok(await _store.GetPickListItems("contact", "dfe_gitiseventsservicesubscriptionchannel").ToListAsync());
+        }
+
+        [HttpGet]
+        [CrmETag]
         [Route("candidate/gcse_status")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate GCSE status.",
