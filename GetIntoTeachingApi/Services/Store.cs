@@ -194,6 +194,8 @@ namespace GetIntoTeachingApi.Services
             await SyncTypes(crm.GetPickListItems("contact", "dfe_candidatestatus"));
             await SyncTypes(crm.GetPickListItems("contact", "dfe_iscandidateeligibleforadviser"));
             await SyncTypes(crm.GetPickListItems("contact", "dfe_isadvisorrequiredos"));
+            await SyncTypes(crm.GetPickListItems("contact", "dfe_gitismlservicesubscriptionchannel"));
+            await SyncTypes(crm.GetPickListItems("contact", "dfe_gitiseventsservicesubscriptionchannel"));
             await SyncTypes(crm.GetPickListItems("dfe_candidatequalification", "dfe_degreestatus"));
             await SyncTypes(crm.GetPickListItems("dfe_candidatequalification", "dfe_ukdegreegrade"));
             await SyncTypes(crm.GetPickListItems("dfe_candidatequalification", "dfe_type"));

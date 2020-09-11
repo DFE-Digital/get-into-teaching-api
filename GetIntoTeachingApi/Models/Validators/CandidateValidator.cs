@@ -107,6 +107,14 @@ namespace GetIntoTeachingApi.Models.Validators
                 .Must(id => AdviserRequirementIds().Contains(id.ToString()))
                 .Unless(candidate => candidate.AdviserRequirementId == null)
                 .WithMessage("Must be a valid candidate adviser requirement.");
+            RuleFor(candidate => candidate.EventsSubscriptionChannelId)
+                .Must(id => EventSubscriptionChannelIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.EventsSubscriptionChannelId == null)
+                .WithMessage("Must be a valid event subscription channel.");
+            RuleFor(candidate => candidate.MailingListSubscriptionChannelId)
+                .Must(id => MailingListSubscriptionChannelIds().Contains(id.ToString()))
+                .Unless(candidate => candidate.MailingListSubscriptionChannelId == null)
+                .WithMessage("Must be a valid mailing list subscription channel.");
         }
 
         private IEnumerable<string> PreferredTeachingSubjectIds()
@@ -132,6 +140,16 @@ namespace GetIntoTeachingApi.Models.Validators
         private IEnumerable<string> ChannelIds()
         {
             return _store.GetPickListItems("contact", "dfe_channelcreation").Select(channel => channel.Id);
+        }
+
+        private IEnumerable<string> MailingListSubscriptionChannelIds()
+        {
+            return _store.GetPickListItems("contact", "dfe_gitismlservicesubscriptionchannel").Select(channel => channel.Id);
+        }
+
+        private IEnumerable<string> EventSubscriptionChannelIds()
+        {
+            return _store.GetPickListItems("contact", "dfe_gitiseventsservicesubscriptionchannel").Select(channel => channel.Id);
         }
 
         private IEnumerable<string> GcseStatusIds()

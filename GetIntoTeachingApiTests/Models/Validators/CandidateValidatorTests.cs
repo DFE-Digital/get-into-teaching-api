@@ -45,6 +45,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_channelcreation"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_gitismlservicesubscriptionchannel"))
+                .Returns(new[] { mockPickListItem }.AsQueryable());
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_gitiseventsservicesubscriptionchannel"))
+                .Returns(new[] { mockPickListItem }.AsQueryable());
+            _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_websitehasgcseenglish"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
@@ -95,6 +101,8 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 PreferredEducationPhaseId = int.Parse(mockPickListItem.Id),
                 InitialTeacherTrainingYearId = int.Parse(mockPickListItem.Id),
                 ChannelId = int.Parse(mockPickListItem.Id),
+                MailingListSubscriptionChannelId = int.Parse(mockPickListItem.Id),
+                EventsSubscriptionChannelId = int.Parse(mockPickListItem.Id),
                 PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id }
             };
 
@@ -442,6 +450,18 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_AssignmentStatusIdIsNull_HasNoError()
         {
             _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AssignmentStatusId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_MailingListSubscriptionChannelIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.MailingListSubscriptionChannelId, 123);
+        }
+
+        [Fact]
+        public void Validate_EventSubscriptionChannelIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.EventsSubscriptionChannelId, 123);
         }
 
         [Fact]
