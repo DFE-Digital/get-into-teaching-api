@@ -32,6 +32,8 @@ namespace GetIntoTeachingApi.Models
         public bool AlreadySubscribedToEvents { get; set; }
         [SwaggerSchema(ReadOnly = true)]
         public bool AlreadySubscribedToMailingList { get; set; }
+        [SwaggerSchema(ReadOnly = true)]
+        public bool AlreadySubscribedToTeacherTrainingAdviser { get; set; }
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
@@ -68,6 +70,7 @@ namespace GetIntoTeachingApi.Models
 
             AlreadySubscribedToMailingList = candidate.HasMailingListSubscription == true;
             AlreadySubscribedToEvents = candidate.HasEventsSubscription == true;
+            AlreadySubscribedToTeacherTrainingAdviser = candidate.HasTeacherTrainingAdviserSubscription == true;
         }
 
         private Candidate CreateCandidate()

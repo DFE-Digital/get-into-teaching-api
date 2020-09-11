@@ -38,6 +38,7 @@ namespace GetIntoTeachingApiTests.Models
                 AddressPostcode = "KY11 9YU",
                 Qualifications = qualifications,
                 HasEventsSubscription = true,
+                HasTeacherTrainingAdviserSubscription = true,
             };
 
             var response = new MailingListAddMember(candidate);
@@ -56,6 +57,7 @@ namespace GetIntoTeachingApiTests.Models
 
             response.AlreadySubscribedToEvents.Should().BeTrue();
             response.AlreadySubscribedToMailingList.Should().BeFalse();
+            response.AlreadySubscribedToTeacherTrainingAdviser.Should().BeTrue();
         }
 
         [Fact]
