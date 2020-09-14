@@ -118,7 +118,13 @@ namespace GetIntoTeachingApi.Models
             candidate.MailingListSubscriptionDoNotPostalMail = true;
             candidate.MailingListSubscriptionDoNotSendMm = false;
 
+            if (string.IsNullOrWhiteSpace(AddressPostcode))
+            {
+                return;
+            }
+
             candidate.HasEventsSubscription = true;
+            candidate.EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.LocalEvent;
             candidate.EventsSubscriptionChannelId = ChannelId ?? (int)Candidate.SubscriptionChannel.Events;
             candidate.EventsSubscriptionStartAt = DateTime.UtcNow;
             candidate.EventsSubscriptionDoNotEmail = false;
@@ -126,15 +132,6 @@ namespace GetIntoTeachingApi.Models
             candidate.EventsSubscriptionDoNotBulkPostalMail = true;
             candidate.EventsSubscriptionDoNotPostalMail = true;
             candidate.EventsSubscriptionDoNotSendMm = false;
-
-            if (string.IsNullOrWhiteSpace(AddressPostcode))
-            {
-                candidate.EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.SingleEvent;
-            }
-            else
-            {
-                candidate.EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.LocalEvent;
-            }
         }
 
         private void AcceptPrivacyPolicy(Candidate candidate)
