@@ -125,14 +125,14 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void Candidate_AddressPostcodeNotProvided_EventsSubscriptionTypeIsSingleEvent()
+        public void Candidate_AddressPostcodeNotProvided_EventsSubscriptionIsNotCreated()
         {
             var request = new MailingListAddMember()
             {
                 AddressPostcode = null,
             };
 
-            request.Candidate.EventsSubscriptionTypeId.Should().Be((int)Candidate.SubscriptionType.SingleEvent);
+            request.Candidate.HasEventsSubscription.Should().BeNull();
         }
 
         [Fact]
@@ -154,7 +154,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_WhenChannelIsProvided_SetsOnAllModels()
         {
-            var request = new MailingListAddMember() { ChannelId = 123 };
+            var request = new MailingListAddMember() { ChannelId = 123, AddressPostcode = "TE7 8KE" };
 
             request.Candidate.ChannelId.Should().Be(123);
             request.Candidate.MailingListSubscriptionChannelId.Should().Be(123);
