@@ -197,6 +197,7 @@ namespace GetIntoTeachingApi.Models
                     DestinationId = DestinationForTelephone(Telephone),
                     ScheduledAt = (DateTime)PhoneCallScheduledAt,
                     ChannelId = (int)PhoneCall.Channel.CallbackRequest,
+                    Subject = $"Scheduled phone call requested by {candidate.FullName}",
                 };
             }
         }
