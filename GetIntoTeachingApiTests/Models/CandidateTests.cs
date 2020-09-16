@@ -26,6 +26,9 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("CountryId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_country" && a.Type == typeof(EntityReference) &&
                      a.Reference == "dfe_country");
+            type.GetProperty("OwningBusinessUnitId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "owningbusinessunit" && a.Type == typeof(EntityReference) &&
+                     a.Reference == "businessunit");
 
             type.GetProperty("PreferredEducationPhaseId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_preferrededucationphase01" && a.Type == typeof(OptionSetValue));
@@ -129,6 +132,33 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("PrivacyPolicy").Should().BeDecoratedWith<EntityRelationshipAttribute>(
                 a => a.Name == "dfe_contact_dfe_candidateprivacypolicy_Candidate" &&
                      a.Type == typeof(CandidatePrivacyPolicy));
+        }
+
+        [Theory]
+        [InlineData(true, null, true)]
+        [InlineData(null, "1A61F629-F502-E911-A972-000D3A23443B", true)]
+        [InlineData(true, "1A61F629-F502-E911-A972-000D3A23443B", true)]
+        [InlineData(false, "1A61F629-F502-E911-A972-000D3A23443B", true)]
+        [InlineData(true, "2A61F629-F502-E911-A972-000D3A23443C", true)]
+        [InlineData(false, null, false)]
+        [InlineData(false, "2A61F629-F502-E911-A972-000D3A23443C", false)]
+        [InlineData(null, "2A61F629-F502-E911-A972-000D3A23443C", false)]
+        [InlineData(null, null, false)]
+        public void HasTeacherTrainingAdviser_WithSubscription_ReturnsCorrectly(bool? hasSubscription, string owningBusinessUnitId, bool expectedOutcome)
+        {
+            Guid? id = null;
+            
+            if (owningBusinessUnitId != null)
+            {
+                id = new Guid(owningBusinessUnitId);
+            }
+
+            var candidate = new Candidate() { 
+                HasTeacherTrainingAdviserSubscription = hasSubscription, 
+                OwningBusinessUnitId = id,
+            };
+
+            candidate.HasTeacherTrainingAdviser().Should().Be(expectedOutcome);
         }
 
         [Fact]
