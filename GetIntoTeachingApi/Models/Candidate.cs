@@ -277,9 +277,6 @@ namespace GetIntoTeachingApi.Models
 
             switch (propertyName)
             {
-                case "PhoneCall":
-                    value.PopulateWithCandidate(this);
-                    return true;
                 case "PrivacyPolicy" when Id != null:
                     return crm.CandidateYetToAcceptPrivacyPolicy((Guid)Id, value.AcceptedPolicyId);
                 default:

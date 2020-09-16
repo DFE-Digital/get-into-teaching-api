@@ -229,32 +229,6 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void ToEntity_WithPhoneCall_PopulatesFromCandidate()
-        {
-            var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context();
-            var mockCrm = new Mock<ICrmService>();
-
-            var candidate = new Candidate()
-            {
-                FirstName = "John",
-                LastName = "Doe",
-                Telephone = "123456789",
-                PhoneCall = new PhoneCall() { ScheduledAt = DateTime.UtcNow }
-            };
-
-            var phoneCallEntity = new Entity("phonecall");
-
-            mockCrm.Setup(m => m.MappableEntity("contact", null, context)).Returns(new Entity("contact"));
-            mockCrm.Setup(m => m.MappableEntity("phonecall", null, context)).Returns(phoneCallEntity);
-
-            candidate.ToEntity(mockCrm.Object, context);
-
-            phoneCallEntity.GetAttributeValue<string>("phonenumber").Should().Be(candidate.Telephone);
-            phoneCallEntity.GetAttributeValue<string>("subject").Should().Be("Scheduled phone call requested by John Doe");
-        }
-
-        [Fact]
         public void ToEntity_WithNullId_SetsIsNewRegistrantToTrue()
         {
             var mockService = new Mock<IOrganizationServiceAdapter>();
