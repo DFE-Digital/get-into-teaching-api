@@ -65,7 +65,7 @@ namespace GetIntoTeachingApi.Models
 
             AlreadySubscribedToMailingList = candidate.HasMailingListSubscription == true;
             AlreadySubscribedToEvents = candidate.HasEventsSubscription == true;
-            AlreadySubscribedToTeacherTrainingAdviser = candidate.HasTeacherTrainingAdviserSubscription == true;
+            AlreadySubscribedToTeacherTrainingAdviser = candidate.HasTeacherTrainingAdviser();
         }
 
         private Candidate CreateCandidate()

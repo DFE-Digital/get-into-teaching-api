@@ -11,6 +11,8 @@ namespace GetIntoTeachingApi.Models
     [Entity("contact")]
     public class Candidate : BaseModel
     {
+        public static readonly Guid AdviserBusinessUnitId = new Guid("1A61F629-F502-E911-A972-000D3A23443B");
+
         public enum Status
         {
             Active,
@@ -90,6 +92,8 @@ namespace GetIntoTeachingApi.Models
         public Guid? PreferredTeachingSubjectId { get; set; }
         [EntityField("dfe_country", typeof(EntityReference), "dfe_country")]
         public Guid? CountryId { get; set; }
+        [EntityField("owningbusinessunit", typeof(EntityReference), "businessunit")]
+        public Guid? OwningBusinessUnitId { get; set; }
         [EntityField("dfe_preferrededucationphase01", typeof(OptionSetValue))]
         public int? PreferredEducationPhaseId { get; set; }
         [EntityField("dfe_ittyear", typeof(OptionSetValue))]
@@ -239,6 +243,11 @@ namespace GetIntoTeachingApi.Models
         public Candidate(Entity entity, ICrmService crm)
             : base(entity, crm)
         {
+        }
+
+        public bool HasTeacherTrainingAdviser()
+        {
+            return HasTeacherTrainingAdviserSubscription == true || OwningBusinessUnitId == AdviserBusinessUnitId;
         }
 
         public bool IsReturningToTeaching()
