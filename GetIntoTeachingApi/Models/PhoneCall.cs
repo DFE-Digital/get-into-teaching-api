@@ -47,11 +47,5 @@ namespace GetIntoTeachingApi.Models
             : base(entity, crm)
         {
         }
-
-        public void PopulateWithCandidate(Candidate candidate)
-        {
-            Telephone = candidate.Telephone;
-            Subject = $"Scheduled phone call requested by {candidate.FullName}";
-        }
     }
 }

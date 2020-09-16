@@ -30,18 +30,6 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void PopulateWithCandidate_SetsTelephoneAndSubject()
-        {
-            var phoneCall = new PhoneCall();
-            var candidate = new Candidate() { FirstName = "John", LastName = "Doe", Telephone = "123456789" };
-
-            phoneCall.PopulateWithCandidate(candidate);
-
-            phoneCall.Telephone.Should().Be(candidate.Telephone);
-            phoneCall.Subject.Should().Be("Scheduled phone call requested by John Doe");
-        }
-
-        [Fact]
         public void IsAppointment_DefaultValue_IsCorrect()
         {
             new PhoneCall().IsAppointment.Should().BeFalse();
