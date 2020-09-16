@@ -41,8 +41,8 @@ namespace GetIntoTeachingApi.Services
         {
             return _service.CreateQuery("dfe_callbackbookingquota", Context())
                 .Where((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime") > DateTime.UtcNow &&
-                                   entity.GetAttributeValue<DateTime>("dfe_starttime") <
-                                   DateTime.UtcNow.AddDays(MaximumCallbackBookingQuotaDaysInAdvance))
+                                   entity.GetAttributeValue<DateTime>("dfe_starttime") < DateTime.UtcNow.AddDays(MaximumCallbackBookingQuotaDaysInAdvance) &&
+                                   entity.GetAttributeValue<int>("dfe_websitenumberofbookings") < entity.GetAttributeValue<int>("dfe_websitequota"))
                 .OrderBy((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime"))
                 .Select((entity) => new CallbackBookingQuota(entity, this));
         }

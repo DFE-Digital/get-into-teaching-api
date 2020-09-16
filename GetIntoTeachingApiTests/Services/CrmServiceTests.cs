@@ -11,7 +11,6 @@ using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
 using Xunit;
 using static Microsoft.PowerPlatform.Cds.Client.CdsServiceClient;
-using FluentAssertions.Common;
 using System.Linq.Dynamic.Core;
 
 namespace GetIntoTeachingApiTests.Services
@@ -111,7 +110,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void GetCallbackBookingQuotas_ReturnsFutureQuotasUpTo14DaysInAdvance()
+        public void GetCallbackBookingQuotas_ReturnsFutureQuotasUpTo14DaysInAdvanceExcludingFullyBooked()
         {
             var queryableQuotas = MockCallbackBookingQuotas();
             _mockService.Setup(mock => mock.CreateQuery("dfe_callbackbookingquota", _context))
@@ -471,24 +470,34 @@ namespace GetIntoTeachingApiTests.Services
             var quota1 = new Entity("dfe_callbackbookingquota");
             quota1["dfe_starttime"] = DateTime.UtcNow.AddDays(-1);
             quota1["dfe_websitenumberofbookings"] = 1;
+            quota1["dfe_websitequota"] = 10;
 
             var quota2 = new Entity("dfe_callbackbookingquota");
             quota2["dfe_starttime"] = DateTime.UtcNow.AddDays(10);
             quota2["dfe_websitenumberofbookings"] = 2;
+            quota2["dfe_websitequota"] = 10;
 
             var quota3 = new Entity("dfe_callbackbookingquota");
             quota3["dfe_starttime"] = DateTime.UtcNow.AddDays(1);
             quota3["dfe_websitenumberofbookings"] = 3;
+            quota3["dfe_websitequota"] = 10;
 
             var quota4 = new Entity("dfe_callbackbookingquota");
             quota4["dfe_starttime"] = DateTime.UtcNow.AddMinutes(20);
             quota4["dfe_websitenumberofbookings"] = 4;
+            quota4["dfe_websitequota"] = 10;
 
             var quota5 = new Entity("dfe_callbackbookingquota");
             quota5["dfe_starttime"] = DateTime.UtcNow.AddDays(15);
             quota5["dfe_websitenumberofbookings"] = 5;
+            quota5["dfe_websitequota"] = 10;
 
-            return new[] { quota1, quota2, quota3, quota4, quota5 }.AsQueryable();
+            var quota6 = new Entity("dfe_callbackbookingquota");
+            quota5["dfe_starttime"] = DateTime.UtcNow.AddDays(3);
+            quota5["dfe_websitenumberofbookings"] = 10;
+            quota5["dfe_websitequota"] = 10;
+
+            return new[] { quota1, quota2, quota3, quota4, quota5, quota6 }.AsQueryable();
         }
 
         private static IQueryable<Entity> MockPrivacyPolicies()
