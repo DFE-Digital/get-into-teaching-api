@@ -181,6 +181,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.PhoneCall.Telephone.Should().Be(request.Telephone);
             candidate.PhoneCall.ChannelId.Should().Be((int)PhoneCall.Channel.CallbackRequest);
             candidate.PhoneCall.DestinationId.Should().Be((int)PhoneCall.Destination.Uk);
+            candidate.PhoneCall.Subject.Should().Be("Scheduled phone call requested by John Doe");
 
             candidate.PastTeachingPositions.First().Id.Should().Be(request.PastTeachingPositionId);
             candidate.PastTeachingPositions.First().SubjectTaughtId.Should().Be(request.SubjectTaughtId);
