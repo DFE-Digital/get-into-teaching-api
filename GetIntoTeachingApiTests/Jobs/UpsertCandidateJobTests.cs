@@ -76,6 +76,42 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
+        public void Run_WithPhoneCallOnSuccess_IncrementsCallbackBookingQuotaNumberOfBookings()
+        {
+            var candidateId = Guid.NewGuid();
+            var scheduledAt = DateTime.UtcNow.AddDays(3);
+            var phoneCall = new PhoneCall() { ScheduledAt = scheduledAt };
+            var quota = new CallbackBookingQuota() { StartAt = scheduledAt, NumberOfBookings = 5, Quota = 10 };
+            _candidate.PhoneCall = phoneCall;
+            _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
+            _mockCrm.Setup(mock => mock.Save(_candidate)).Callback(() => _candidate.Id = candidateId);
+            _mockCrm.Setup(mock => mock.GetCallbackBookingQuota(scheduledAt)).Returns(quota);
+
+            _job.Run(_candidate, null);
+
+            _mockCrm.Verify(mock => mock.Save(quota), Times.Once);
+            quota.NumberOfBookings.Should().Be(6);
+        }
+
+        [Fact]
+        public void Run_WithPhoneCallOnSuccessButMatchingQuotaIsAlreadyFull_DoesNotIncrementsCallbackBookingQuotaNumberOfBookings()
+        {
+            var candidateId = Guid.NewGuid();
+            var scheduledAt = DateTime.UtcNow.AddDays(3);
+            var phoneCall = new PhoneCall() { ScheduledAt = scheduledAt };
+            var quota = new CallbackBookingQuota() { StartAt = scheduledAt, NumberOfBookings = 5, Quota = 5 };
+            _candidate.PhoneCall = phoneCall;
+            _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
+            _mockCrm.Setup(mock => mock.Save(_candidate)).Callback(() => _candidate.Id = candidateId);
+            _mockCrm.Setup(mock => mock.GetCallbackBookingQuota(scheduledAt)).Returns(quota);
+
+            _job.Run(_candidate, null);
+
+            _mockCrm.Verify(mock => mock.Save(quota), Times.Never);
+            quota.NumberOfBookings.Should().Be(5);
+        }
+
+        [Fact]
         public void Run_OnFailure_EmailsCandidate()
         {
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(23);
