@@ -45,7 +45,15 @@ namespace GetIntoTeachingApi.Services
                 .OrderBy((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime"))
                 .Select((entity) => new CallbackBookingQuota(entity, this))
                 .ToList()
-                .Where((quota) => quota.NumberOfBookings < quota.Quota); // Doing this in the Dynamics query throws an exception, though I'm not sure why.
+                .Where((quota) => quota.IsAvailable); // Doing this in the Dynamics query throws an exception, though I'm not sure why.
+        }
+
+        public CallbackBookingQuota GetCallbackBookingQuota(DateTime scheduledAt)
+        {
+            return _service.CreateQuery("dfe_callbackbookingquota", Context())
+                .Where((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime") == scheduledAt)
+                .Select((entity) => new CallbackBookingQuota(entity, this))
+                .FirstOrDefault();
         }
 
         public IEnumerable<PrivacyPolicy> GetPrivacyPolicies()
