@@ -41,10 +41,11 @@ namespace GetIntoTeachingApi.Services
         {
             return _service.CreateQuery("dfe_callbackbookingquota", Context())
                 .Where((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime") > DateTime.UtcNow &&
-                                   entity.GetAttributeValue<DateTime>("dfe_starttime") < DateTime.UtcNow.AddDays(MaximumCallbackBookingQuotaDaysInAdvance) &&
-                                   entity.GetAttributeValue<int>("dfe_websitenumberofbookings") < entity.GetAttributeValue<int>("dfe_websitequota"))
+                                   entity.GetAttributeValue<DateTime>("dfe_starttime") < DateTime.UtcNow.AddDays(MaximumCallbackBookingQuotaDaysInAdvance))
                 .OrderBy((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime"))
-                .Select((entity) => new CallbackBookingQuota(entity, this));
+                .Select((entity) => new CallbackBookingQuota(entity, this))
+                .ToList()
+                .Where((quota) => quota.NumberOfBookings < quota.Quota); // Doing this in the Dynamics query throws an exception, though I'm not sure why.
         }
 
         public IEnumerable<PrivacyPolicy> GetPrivacyPolicies()
