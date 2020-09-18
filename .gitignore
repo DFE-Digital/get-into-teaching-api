@@ -44,8 +44,8 @@ msbuild.wrn
 TestResults
 .gitsecret-dev/keys/random_seed
 !*.secret
-GetIntoTeachingApi/credentials/development.yml
+GetIntoTeachingApi/Credentials/development.yml
 .gitsecret-staging/keys/random_seed
-GetIntoTeachingApi/credentials/staging.yml
+GetIntoTeachingApi/Credentials/staging.yml
 .gitsecret-production/keys/random_seed
-GetIntoTeachingApi/credentials/production.yml
+GetIntoTeachingApi/Credentials/production.yml
