@@ -124,6 +124,20 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void GetCallbackBookingQuota_ReturnsQuotaMatchingScheduledAt()
+        {
+            var queryableQuotas = MockCallbackBookingQuotas();
+            _mockService.Setup(mock => mock.CreateQuery("dfe_callbackbookingquota", _context))
+                .Returns(queryableQuotas);
+            var quota = queryableQuotas.ToArray()[3];
+            var startAt = quota.GetAttributeValue<DateTime>("dfe_starttime");
+
+            var result = _crm.GetCallbackBookingQuota(startAt);
+
+            result.StartAt.Should().Be(startAt);
+        }
+
+        [Fact]
         public void GetPrivacyPolicies_Returns3MostRecentActiveWebPrivacyPolicies()
         {
             var queryablePrivacyPolicies = MockPrivacyPolicies();

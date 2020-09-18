@@ -52,6 +52,7 @@ namespace GetIntoTeachingApi.Jobs
                 SaveCandidate(candidate);
                 SaveTeachingEventRegistrations(registrations, candidate);
                 SavePhoneCall(phoneCall, candidate);
+                IncrementCallbackBookingQuotaNumberOfBookings(phoneCall);
 
                 _logger.LogInformation("UpsertCandidateJob - Succeeded");
             }
@@ -89,6 +90,25 @@ namespace GetIntoTeachingApi.Jobs
                 registration.CandidateId = (Guid)candidate.Id;
                 _crm.Save(registration);
             }
+        }
+
+        private void IncrementCallbackBookingQuotaNumberOfBookings(PhoneCall phoneCall)
+        {
+            if (phoneCall == null)
+            {
+                return;
+            }
+
+            var quota = _crm.GetCallbackBookingQuota(phoneCall.ScheduledAt);
+
+            if (quota == null || !quota.IsAvailable)
+            {
+                return;
+            }
+
+            quota.NumberOfBookings += 1;
+
+            _crm.Save(quota);
         }
 
         private void SavePhoneCall(PhoneCall phoneCall, Candidate candidate)
