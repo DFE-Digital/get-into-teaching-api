@@ -45,3 +45,5 @@ TestResults
 .gitsecret-dev/keys/random_seed
 !*.secret
 GetIntoTeachingApi/credentials/development.yml
+.gitsecret-staging/keys/random_seed
+GetIntoTeachingApi/credentials/staging.yml
