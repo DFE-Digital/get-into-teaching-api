@@ -1,13 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using YamlDotNet.Serialization;
 
 namespace GetIntoTeachingApi.Utils
 {
     public class Env : IEnv
     {
+        private static readonly string[] _credentials = new string[]
+        {
+            "./Credentials/test.yml",
+            "./Credentials/development.yml",
+            "./Credentials/staging.yml",
+            "./Credentials/production.yml",
+        };
+
         public bool IsDevelopment => EnvironmentName == "Development";
         public bool IsProduction => EnvironmentName == "Production";
         public bool IsStaging => EnvironmentName == "Staging";
-        public bool IsTest => EnvironmentName == null;
+        public bool IsTest => EnvironmentName == "Test";
         public string GitCommitSha => Environment.GetEnvironmentVariable("GIT_COMMIT_SHA");
         public bool ExportHangireToPrometheus => Environment.GetEnvironmentVariable("CF_INSTANCE_INDEX") == "0";
         public string DatabaseInstanceName => Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME");
@@ -23,5 +35,30 @@ namespace GetIntoTeachingApi.Utils
         public string SharedSecret => Environment.GetEnvironmentVariable("SHARED_SECRET");
         public string PenTestSharedSecret => Environment.GetEnvironmentVariable("PEN_TEST_SHARED_SECRET");
         public string GoogleApiKey => Environment.GetEnvironmentVariable("GOOGLE_API_KEY");
+
+        public Env()
+        {
+            LoadCredentials();
+        }
+
+        private static void LoadCredentials()
+        {
+            var yaml = File.ReadAllText(CredentialsFile());
+            var deserializer = new DeserializerBuilder().Build();
+            var credentials = deserializer.Deserialize<Dictionary<string, object>>(yaml);
+
+            foreach (dynamic entry in credentials)
+            {
+                if (Environment.GetEnvironmentVariable(entry.Key) == null)
+                {
+                    Environment.SetEnvironmentVariable(entry.Key, entry.Value);
+                }
+            }
+        }
+
+        private static string CredentialsFile()
+        {
+            return _credentials.First(c => File.Exists(c));
+        }
     }
 }

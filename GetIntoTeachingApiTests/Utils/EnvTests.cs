@@ -75,7 +75,7 @@ namespace GetIntoTeachingApiTests.Utils
         }
 
         [Theory]
-        [InlineData(null, true)]
+        [InlineData("Test", true)]
         [InlineData("Development", false)]
         [InlineData("Staging", false)]
         [InlineData("Production", false)]
