@@ -31,8 +31,8 @@ If you want to run the API locally end-to-end you will need to set some environm
 
 ```
 cd GetIntoTeachingApi
-SECRETS_DIR=.gitsecret-dev git-secret tell my@email.com
-SECRETS_DIR=.gitsecret-dev git-secret reveal
+SECRETS_DIR=.gitsecret-development git-secret tell my@email.com
+SECRETS_DIR=.gitsecret-development git-secret reveal
 ```
 
 The Postgres connections (for Hangfire and our database) are setup dynamically from the `VCAP_SERVICES` environment variable provided by GOV.UK PaaS and not used in development (they are replaced by in-memory alternatives by default). If you want to connect to a Postgres instance running in PaaS, such as the test environment instance, you can do so by creating a conduit to it using Cloud Foundry:
