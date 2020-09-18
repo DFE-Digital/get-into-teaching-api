@@ -42,3 +42,6 @@ msbuild.wrn
 
 # Coverage
 TestResults
+.gitsecret-dev/keys/random_seed
+!*.secret
+GetIntoTeachingApi/credentials/development.yml
