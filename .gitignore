@@ -47,3 +47,5 @@ TestResults
 GetIntoTeachingApi/credentials/development.yml
 .gitsecret-staging/keys/random_seed
 GetIntoTeachingApi/credentials/staging.yml
+.gitsecret-production/keys/random_seed
+GetIntoTeachingApi/credentials/production.yml
