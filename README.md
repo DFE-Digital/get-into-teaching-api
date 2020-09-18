@@ -27,32 +27,12 @@ When the application runs in development it will open the Swagger documentation 
 
 ### Environment
 
-If you want to run the API locally end-to-end you will need to set some environment variables:
+If you want to run the API locally end-to-end you will need to set some environment variables. We use [git-secret](https://github.com/sobolevn/git-secret) to encrypt and commit the environment variables to the repository. We use a different folder to manage the credentials for each environment, so you need to set `SECRETS_DIR` before executing any of the commands:
 
 ```
-# Secret shared between the API and client.
-SHARED_SECRET=****
-
-# Secret used when generating Timed One Time Passwords
-TOTP_SECRET_KEY=****
-
-# CRM credentials
-CRM_SERVICE_URL=****
-CRM_CLIENT_ID=****
-CRM_CLIENT_SECRET=****
-
-# GOV.UK Notify Service credentials
-NOTIFY_API_KEY=****
-
-# Postgres instance names
-DATABASE_INSTANCE_NAME=****
-HANGFIRE_INSTANCE_NAME=****
-
-# Sentry
-SENTRY_URL=****
-
-# Google
-GOOGLE_API_KEY=****
+cd GetIntoTeachingApi
+SECRETS_DIR=.gitsecret-dev git-secret tell my@email.com
+SECRETS_DIR=.gitsecret-dev git-secret reveal
 ```
 
 The Postgres connections (for Hangfire and our database) are setup dynamically from the `VCAP_SERVICES` environment variable provided by GOV.UK PaaS and not used in development (they are replaced by in-memory alternatives by default). If you want to connect to a Postgres instance running in PaaS, such as the test environment instance, you can do so by creating a conduit to it using Cloud Foundry:
