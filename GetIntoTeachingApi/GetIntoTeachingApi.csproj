@@ -41,6 +41,7 @@
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="5.4.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="5.4.1" />
 		<PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
+		<PackageReference Include="YamlDotNet" Version="8.1.2" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -48,6 +49,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="Credentials\development.yml">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Credentials\production.yml">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Credentials\staging.yml">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="Fixtures\ukpostcodes.dev.csv">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>

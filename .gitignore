@@ -13,7 +13,7 @@ nupkg/
 
 # Terraform
 request.json
-test.yml
+terraform/**/test.yml
 
 # User-specific files
 *.suo
