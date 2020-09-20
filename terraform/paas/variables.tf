@@ -16,6 +16,10 @@ variable "logging" {
   default = 1
 }
 
+variable "cdn_naming" {
+  default = 0
+}
+
 variable "application_instances" {
   default = 1
 }
@@ -62,6 +66,14 @@ variable "paas_redis_1_name" {
 
 variable "paas_api_application_name" {
    default = "dfe-teacher-services-api"
+}
+
+variable "paas_cdn_name" {
+  default = "cdn-education_development"
+}
+
+variable "cdn_params" {
+  default = ""
 }
 
 variable "paas_api_docker_image" {
