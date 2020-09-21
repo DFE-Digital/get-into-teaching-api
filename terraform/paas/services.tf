@@ -6,6 +6,10 @@ data cloudfoundry_service redis {
     name = "redis"
 }
 
+data cloudfoundry_service cdn {
+    name = "cdn-route"
+}
+
 resource "cloudfoundry_service_instance" "hangfire" {
   name = var.paas_postgres_1_name
   space = data.cloudfoundry_space.space.id
