@@ -61,13 +61,14 @@ jobs:
              TF_VAR_user:              "${{ secrets.GOVUKPAAS_USERNAME   }}"
              TF_VAR_password:          "${{ secrets.GOVUKPAAS_PASSWORD   }}"
              TF_VAR_paas_api_docker_image: ${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
-             TF_VAR_CRM_SERVICE_URL:   "${{ secrets.CRM_SERVICE_URL     }}"
-             TF_VAR_CRM_CLIENT_ID:     "${{ secrets.CRM_CLIENT_ID       }}"
-             TF_VAR_CRM_CLIENT_SECRET: "${{ secrets.CRM_CLIENT_SECRET   }}"
-             TF_VAR_CRM_TENANT_ID:     "${{ secrets.CRM_TENANT_ID       }}"
-             TF_VAR_SHARED_SECRET:     "${{ secrets.SHARED_SECRET       }}"
-             TF_VAR_NOTIFY_API_KEY:    "${{ secrets.NOTIFY_API_KEY      }}"
-             TF_VAR_TOTP_SECRET_KEY:   "${{ secrets.TOTP_SECRET_KEY     }}"
+             TF_VAR_CRM_SERVICE_URL:   "${{ secrets.PROD_CRM_SERVICE_URL     }}"
+             TF_VAR_CRM_CLIENT_ID:     "${{ secrets.PROD_CRM_CLIENT_ID       }}"
+             TF_VAR_CRM_CLIENT_SECRET: "${{ secrets.PROD_CRM_CLIENT_SECRET   }}"
+             TF_VAR_CRM_TENANT_ID:     "${{ secrets.PROD_CRM_TENANT_ID       }}"
+             TF_VAR_SHARED_SECRET:     "${{ secrets.PROD_SHARED_SECRET       }}"
+             TF_VAR_NOTIFY_API_KEY:    "${{ secrets.PROD_NOTIFY_API_KEY      }}"
+             TF_VAR_TOTP_SECRET_KEY:   "${{ secrets.PROD_TOTP_SECRET_KEY     }}"
+             TF_VAR_GOOGLE_API_KEY:    "${{ secrets.PROD_GOOGLE_API_KEY      }}"
    
        - name: Terraform Apply
          run: |
