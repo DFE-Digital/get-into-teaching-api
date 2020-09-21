@@ -31,10 +31,3 @@ resource "cloudfoundry_user_provided_service" "logging" {
   syslog_drain_url = var.paas_logging_endpoint_port 
 }
 
-resource "cloudfoundry_service_instance" "cdn-name" {
-  count= var.cdn_naming
-  name =  var.paas_cdn_name
-  space = data.cloudfoundry_space.space.id
-  service_plan = data.cloudfoundry_service.cdn.service_plans["cdn-route"]
-  json_params =  var.cdn_params
-}
