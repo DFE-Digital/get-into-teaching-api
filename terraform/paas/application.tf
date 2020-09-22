@@ -13,7 +13,7 @@ resource "cloudfoundry_app" "api_application" {
             service_instance = cloudfoundry_service_instance.hangfire.id
     } 
     service_binding  { 
-            service_instance = cloudfoundry_service_instance.crm_cache.id
+            service_instance = cloudfoundry_service_instance.postgres2.id
     } 
     dynamic "service_binding" {
       for_each = cloudfoundry_user_provided_service.logging
@@ -36,7 +36,7 @@ resource "cloudfoundry_app" "api_application" {
          SENTRY_URL             = var.SENTRY_URL
          GOOGLE_API_KEY         = var.GOOGLE_API_KEY
          ASPNETCORE_ENVIRONMENT = var.ASPNETCORE_ENVIRONMENT
-         DATABASE_INSTANCE_NAME = cloudfoundry_service_instance.crm_cache.name
+         DATABASE_INSTANCE_NAME = cloudfoundry_service_instance.postgres2.name
          HANGFIRE_INSTANCE_NAME = cloudfoundry_service_instance.hangfire.name
     }    
 }
