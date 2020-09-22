@@ -17,7 +17,7 @@ resource "cloudfoundry_service_instance" "hangfire" {
   service_plan = data.cloudfoundry_service.postgres.service_plans["small-11"]
 }
 
-resource "cloudfoundry_service_instance" "crm_cache" {
+resource "cloudfoundry_service_instance" "postgres2" {
   name = var.paas_database_2_name
   space = data.cloudfoundry_space.space.id
   service_plan = data.cloudfoundry_service.postgres.service_plans["small-11"]
