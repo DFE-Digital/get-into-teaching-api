@@ -6,21 +6,17 @@ data cloudfoundry_service redis {
     name = "redis"
 }
 
-data cloudfoundry_service cdn {
-    name = "cdn-route"
-}
-
 resource "cloudfoundry_service_instance" "hangfire" {
   name = var.paas_postgres_1_name
   space = data.cloudfoundry_space.space.id
-  service_plan = data.cloudfoundry_service.postgres.service_plans["small-11"]
+  service_plan = data.cloudfoundry_service.postgres.service_plans["small-10"]
   json_params = "{\"enable_extensions\": [\"postgis\"] }" 
 }
 
 resource "cloudfoundry_service_instance" "postgres2" {
   name = var.paas_postgres_2_name
   space = data.cloudfoundry_space.space.id
-  service_plan = data.cloudfoundry_service.postgres.service_plans["small-11"]
+  service_plan = data.cloudfoundry_service.postgres.service_plans["small-10"]
   json_params = "{\"enable_extensions\": [\"postgis\"] }" 
 }
 

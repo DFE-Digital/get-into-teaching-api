@@ -9,7 +9,7 @@ env:
   CF_PROVIDER_URL: https://github.com/cloudfoundry-community/terraform-provider-cloudfoundry/releases/download/v0.12.3/terraform-provider-cloudfoundry_v0.12.3_linux_amd64
   
 jobs:
-  deploy_qa:
+  deploy_production:
     name: 'Deploy to Production '
     runs-on: ubuntu-latest
 

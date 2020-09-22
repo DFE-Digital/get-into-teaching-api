@@ -6,9 +6,9 @@ resource "cloudfoundry_app" "api_application" {
     instances = var.application_instances
     memory = var.application_memory
     disk_quota = var.application_disk
+    strategy = var.strategy
     health_check_http_endpoint = "/api/operations/health_check"
     health_check_type = "http"
-    strategy = "blue-green-v2"
     service_binding  { 
             service_instance = cloudfoundry_service_instance.hangfire.id
     } 
