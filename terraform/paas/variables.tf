@@ -16,6 +16,10 @@ variable "logging" {
   default = 1
 }
 
+variable "strategy" {
+   default = "blue-green-v2"
+}
+
 variable "application_instances" {
   default = 1
 }
