@@ -81,7 +81,7 @@ jobs:
    
        - name:  Smoke Test
          run: |
-             tests/confidence/healthcheck.sh "get-into-teaching-api-production"  "${{ steps.sha.outputs.short}}" 
+             tests/confidence/healthcheck.sh "get-into-teaching-api-prod"  "${{ steps.sha.outputs.short}}" 
 
        - name: Create Sentry release
          if: success()
