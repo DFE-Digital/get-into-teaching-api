@@ -52,11 +52,11 @@ variable "paas_logging_endpoint_port" {
   default = ""
 }
 
-variable "paas_postgres_1_name" {
-   default = "dfe-teacher-services-sb-pg-svc"
+variable "paas_database_1_name" {
+   default = "dfe-teacher-services-sb-ms-svc"
 }
 
-variable "paas_postgres_2_name" {
+variable "paas_database_2_name" {
    default = "dfe-teacher-services-sb-pg-svc"
 }
 

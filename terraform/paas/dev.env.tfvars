@@ -1,6 +1,6 @@
 paas_space="get-into-teaching"
-paas_postgres_1_name="get-into-teaching-api-dev-pg1-svc"
-paas_postgres_2_name="get-into-teaching-api-dev-pg2-svc"
+paas_database_1_name="get-into-teaching-api-dev-ms1-svc"
+paas_database_2_name="get-into-teaching-api-dev-pg2-svc"
 paas_redis_1_name=   "get-into-teaching-dev-redis-svc"
 paas_api_application_name="get-into-teaching-api"
 paas_api_route_name="get-into-teaching-api-dev"
