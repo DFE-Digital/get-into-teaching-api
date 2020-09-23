@@ -1,4 +1,4 @@
-name: Deploy Status Cake (Beta Test)
+name: Deploy Status Cake 
 on:
   workflow_dispatch:
 
