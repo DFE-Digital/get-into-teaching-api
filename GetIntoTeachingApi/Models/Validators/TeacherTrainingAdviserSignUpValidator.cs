@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using GetIntoTeachingApi.Services;
@@ -18,12 +17,11 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(request => request.CountryId).NotNull();
             RuleFor(request => request.PreferredEducationPhaseId).NotNull();
 
-            var unitedKingdomCountryGuid = new Guid("72f5c2e6-74f9-e811-a97a-000d3a2760f2");
-            RuleFor(request => request.AddressLine1).NotEmpty().Unless(request => request.CountryId != unitedKingdomCountryGuid)
+            RuleFor(request => request.AddressLine1).NotEmpty().Unless(request => request.CountryId != TypeEntity.UnitedKingdomCountryId)
                 .WithMessage("Must be set candidate in the UK.");
-            RuleFor(request => request.AddressCity).NotEmpty().Unless(request => request.CountryId != unitedKingdomCountryGuid)
+            RuleFor(request => request.AddressCity).NotEmpty().Unless(request => request.CountryId != TypeEntity.UnitedKingdomCountryId)
                 .WithMessage("Must be set candidate in the UK.");
-            RuleFor(request => request.AddressPostcode).NotEmpty().Unless(request => request.CountryId != unitedKingdomCountryGuid)
+            RuleFor(request => request.AddressPostcode).NotEmpty().Unless(request => request.CountryId != TypeEntity.UnitedKingdomCountryId)
                 .WithMessage("Must be set candidate in the UK.");
 
             RuleFor(request => request.Telephone).NotEmpty()
@@ -31,8 +29,11 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Must be set to schedule a callback.");
 
             RuleFor(request => request.PhoneCallScheduledAt).NotNull()
-                .When(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent)
+                .When(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent && request.CountryId == TypeEntity.UnitedKingdomCountryId)
                 .WithMessage("Must be set for candidate with UK equivalent degree.");
+            RuleFor(request => request.PhoneCallScheduledAt).Null()
+                .When(request => request.CountryId != TypeEntity.UnitedKingdomCountryId)
+                .WithMessage("Cannot be set for overseas candidates.");
 
             RuleFor(request => request.InitialTeacherTrainingYearId).NotNull()
                 .Unless(request => request.Candidate.IsReturningToTeaching())
