@@ -32,7 +32,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 SubjectTaughtId = Guid.NewGuid(),
                 PastTeachingPositionId = Guid.NewGuid(),
                 PreferredTeachingSubjectId = Guid.NewGuid(),
-                CountryId = Guid.NewGuid(),
+                CountryId = TypeEntity.UnitedKingdomCountryId,
                 UkDegreeGradeId = 1,
                 DegreeStatusId = 2,
                 InitialTeacherTrainingYearId = 3,
@@ -123,7 +123,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
-                CountryId = new Guid("72f5c2e6-74f9-e811-a97a-000d3a2760f2"),
+                CountryId = TypeEntity.UnitedKingdomCountryId,
                 AddressLine1 = null,
                 AddressCity = null,
                 AddressPostcode = null,
@@ -159,7 +159,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
-                CountryId = new Guid("72f5c2e6-74f9-e811-a97a-000d3a2760f2"),
+                CountryId = TypeEntity.UnitedKingdomCountryId,
                 AddressLine1 = "Line 1",
                 AddressCity = "City",
                 AddressPostcode = "KY11 9YU",
@@ -201,11 +201,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_DegreeTypeIsEquivalentAndPhoneCallScheduledAtIsNull_HasError()
+        public void Validate_DegreeTypeIsEquivalentAndCountryIsUkAndPhoneCallScheduledAtIsNull_HasError()
         {
             var request = new TeacherTrainingAdviserSignUp
             {
                 DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent,
+                CountryId = TypeEntity.UnitedKingdomCountryId,
                 PhoneCallScheduledAt = null,
             };
 
@@ -215,11 +216,26 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_DegreeTypeIsEquivalentAndPhoneCallScheduledAtIsNotNull_HasNoError()
+        public void Validate_CountryIsNotUkAndPhoneCallScheduledAtIsNotNull_HasError()
+        {
+            var request = new TeacherTrainingAdviserSignUp
+            {
+                CountryId = Guid.NewGuid(),
+                PhoneCallScheduledAt = DateTime.UtcNow,
+            };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldHaveValidationErrorFor("PhoneCallScheduledAt").WithErrorMessage("Cannot be set for overseas candidates.");
+        }
+
+        [Fact]
+        public void Validate_DegreeTypeIsEquivalentAndCountryIsUkAndPhoneCallScheduledAtIsNotNull_HasNorror()
         {
             var request = new TeacherTrainingAdviserSignUp
             {
                 DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent,
+                CountryId = TypeEntity.UnitedKingdomCountryId,
                 PhoneCallScheduledAt = DateTime.UtcNow,
             };
 
