@@ -41,7 +41,8 @@ namespace GetIntoTeachingApiContractTests
             
             SaveData(filepath, crmContact);
             
-            crmContact.Should().Match(contact);
+            crmContact.Should()
+                .Match(contact, "Someone can sign up for a Teacher Training Advisor with profile defined by [" + filename + "]");
         }
 
         private static void SaveData(string filename, Entity data)
