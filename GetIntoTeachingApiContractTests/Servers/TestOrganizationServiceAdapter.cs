@@ -74,38 +74,45 @@ namespace GetIntoTeachingApiContractTests.Servers
 
         public string CheckStatus()
         {
-            return _client.CheckStatus();
+            throw new NotImplementedException();
+            // return _client.CheckStatus();
         }
 
         public IQueryable<Entity> CreateQuery(string entityName, OrganizationServiceContext context)
         {
-            return CachingEntityFacade(entityName, () => _client.CreateQuery(entityName, Context()));
+            return CachingEntityFacade(entityName, () => 
+                _client.CreateQuery(entityName, Context()));
         }
 
         public IEnumerable<Entity> RetrieveMultiple(QueryBase query)
         {
-            return (query as QueryExpression)?.EntityName switch
+            if (query is QueryExpression qe && qe.EntityName == "msevtmgt_event")
             {
-                "msevtmgt_event" => Enumerable.Empty<Entity>(),
-                _ => _client.RetrieveMultiple(query)
-            };
+                return Enumerable.Empty<Entity>();
+            }
+            
+            throw new NotImplementedException();
+            //_client.RetrieveMultiple(query)
         }
 
         public void LoadProperty(Entity entity, Relationship relationship, OrganizationServiceContext context)
         {
-            _client.LoadProperty(entity, relationship, context);
+            throw new NotImplementedException();
+            //_client.LoadProperty(entity, relationship, context);
         }
 
         public IEnumerable<Entity> RelatedEntities(Entity entity, string attributeName)
         {
-            return _client.RelatedEntities(entity, attributeName);
+            throw new NotImplementedException();
+            //return _client.RelatedEntities(entity, attributeName);
         }
 
         public IEnumerable<CdsServiceClient.PickListItem> GetPickListItemsForAttribute(
             string entityName,
             string attributeName)
         {
-            return CachingPickListItemFacade(attributeName, () => _client.GetPickListItemsForAttribute(entityName, attributeName));
+            return CachingPickListItemFacade(attributeName, () => 
+                _client.GetPickListItemsForAttribute(entityName, attributeName));
         }
 
         private OrganizationServiceContext _mockContext;
@@ -118,8 +125,8 @@ namespace GetIntoTeachingApiContractTests.Servers
 
         public Entity BlankExistingEntity(string entityName, Guid id, OrganizationServiceContext context)
         {
-            var blankExistingEntity = _client.BlankExistingEntity(entityName, id, context);
-            return blankExistingEntity;
+            throw new NotImplementedException();
+            //return _client.BlankExistingEntity(entityName, id, context);
         }
 
         public Entity NewEntity(string entityName, OrganizationServiceContext context)
@@ -131,6 +138,7 @@ namespace GetIntoTeachingApiContractTests.Servers
 
         public void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context)
         {
+            // TODO: override this function so it creates a link
             _client.AddLink(source, relationship, target, context);
         }
 

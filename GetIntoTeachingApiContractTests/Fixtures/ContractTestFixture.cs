@@ -11,6 +11,7 @@ namespace GetIntoTeachingApiContractTests.Fixtures
     public class ContractTestFixture<TStartup> : IDisposable
     {
         private const string SHARED_SECRET = "shared_secret";
+        
         private const string CRM_SERVICE_HOST = "https://gitis-mock.api.crm4.dynamics.com";
         private const string CRM_CLIENT_ID = "123456";
         private const string CRM_CLIENT_SECRET = "123456";
