@@ -284,13 +284,11 @@ namespace GetIntoTeachingApi.Models
                 return false;
             }
 
-            switch (propertyName)
+            return propertyName switch
             {
-                case "PrivacyPolicy" when Id != null:
-                    return crm.CandidateYetToAcceptPrivacyPolicy((Guid)Id, value.AcceptedPolicyId);
-                default:
-                    return true;
-            }
+                "PrivacyPolicy" when Id != null => crm.CandidateYetToAcceptPrivacyPolicy((Guid)Id, value.AcceptedPolicyId),
+                _ => true,
+            };
         }
     }
 }
