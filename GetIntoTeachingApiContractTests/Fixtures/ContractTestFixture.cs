@@ -11,11 +11,11 @@ namespace GetIntoTeachingApiContractTests.Fixtures
     public class ContractTestFixture<TStartup> : IDisposable
     {
         private const string SHARED_SECRET = "shared_secret";
-        private const string CRM_SERVICE_HOST = "https://gitis-dev.api.crm4.dynamics.com";
-        // private const string CRM_CLIENT_ID = "123456";
-        private const string CRM_CLIENT_ID = "965b7a3a-dc0a-4f4f-b75c-14ad6dbc57f2";
-        // private const string CRM_CLIENT_SECRET = "123456";
-        private const string CRM_CLIENT_SECRET = "3Q_bZ0epYn8oB._QtLYshtPUX5M8~Zhe-~";
+        private const string CRM_SERVICE_HOST = "https://gitis-mock.api.crm4.dynamics.com";
+        private const string CRM_CLIENT_ID = "123456";
+        private const string CRM_CLIENT_SECRET = "123456";
+        
+        private const bool ALLOW_PASSTHROUGH_TO_CRM = true;
 
         private readonly string _crmServiceUrl = $"{CRM_SERVICE_HOST}";
 
@@ -29,12 +29,15 @@ namespace GetIntoTeachingApiContractTests.Fixtures
         {
             ContractTestEnvironment.Setup(SHARED_SECRET, _crmServiceUrl, CRM_CLIENT_ID, CRM_CLIENT_SECRET);
             
-            Server = new ServerUnderTest<TStartup>(relativeTargetProjectParentDir);
+            Server = new ServerUnderTest<TStartup>(relativeTargetProjectParentDir, ALLOW_PASSTHROUGH_TO_CRM);
             Client = CreateHttpClientForTestServer(Server);
+            ContractDataPath = Path.Combine(ServerUnderTest.ContentRoot, "../GetIntoTeachingApiContractTests/contracts/");
+
         }
 
         public ServerUnderTest Server { get; }
         public HttpClient Client { get; }
+        public string ContractDataPath { get; }
 
         public void Dispose()
         {

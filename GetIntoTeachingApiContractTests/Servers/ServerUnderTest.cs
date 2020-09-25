@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using GetIntoTeachingApi.Adapters;
+using GetIntoTeachingApiContractTests.Fixtures;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -10,12 +11,14 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk;
+using Moq;
 
 namespace GetIntoTeachingApiContractTests.Servers
 {
     public class ServerUnderTest : TestServer
     {
         public static TestOrganizationServiceAdapter CrmServiceAdapter { get; protected set; }
+        public static string ContentRoot { get; protected set; }
 
         protected ServerUnderTest(IWebHostBuilder builder)
             : base(builder)
@@ -27,36 +30,44 @@ namespace GetIntoTeachingApiContractTests.Servers
     public class ServerUnderTest<TStartup> : ServerUnderTest
     {
         private static readonly Assembly STARTUP_ASSEMBLY = typeof(TStartup).GetTypeInfo().Assembly;
-        
-        public ServerUnderTest(string relativeTargetProjectParentDir)
-            : base(Setup(relativeTargetProjectParentDir))
+
+        public ServerUnderTest(string relativeTargetProjectParentDir, bool allowPassthroughToCrm)
+            : base(Setup(relativeTargetProjectParentDir, allowPassthroughToCrm))
         {
-            
         }
         
-        private static IWebHostBuilder Setup(string relativeTargetProjectParentDir)
+        private static IWebHostBuilder Setup(string relativeTargetProjectParentDir, bool allowPassthroughToCrm)
         {
-            var contentRoot = GetProjectPath(relativeTargetProjectParentDir, STARTUP_ASSEMBLY);
+            ContentRoot = GetProjectPath(relativeTargetProjectParentDir, STARTUP_ASSEMBLY);
 
             var configurationBuilder = new ConfigurationBuilder()
-                    .SetBasePath(contentRoot)
+                    .SetBasePath(ContentRoot)
                     .AddJsonFile("appsettings.json")
                 ;
 
             var webHostBuilder = new WebHostBuilder()
-                    .UseContentRoot(contentRoot)
+                    .UseContentRoot(ContentRoot)
                     .ConfigureServices(InitializeServices) 
                     .ConfigureTestServices(services =>
                     {
                         services.AddTransient<IOrganizationServiceAdapter>(sp =>
                         {
-                            CrmServiceAdapter = new TestOrganizationServiceAdapter(sp.GetService<IOrganizationService>(), contentRoot);
+                            if (CrmServiceAdapter != null)
+                                return CrmServiceAdapter;
+                            
+                            var organizationService = allowPassthroughToCrm
+                                ? sp.GetService<IOrganizationService>()
+                                : new Mock<IOrganizationService>().Object;
+
+                            CrmServiceAdapter = new TestOrganizationServiceAdapter(organizationService, ContentRoot,
+                                allowPassthroughToCrm);
+
                             return CrmServiceAdapter;
                         });
                     })
                     .UseConfiguration(configurationBuilder.Build())
                     .UseEnvironment("Test")
-                    .UseStartup(typeof(TestStartup))
+                    .UseStartup(typeof(ContractTestStartup))
                 ;
 
             // Create instance of test server

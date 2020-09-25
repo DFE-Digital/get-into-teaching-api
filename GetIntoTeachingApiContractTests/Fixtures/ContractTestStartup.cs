@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace GetIntoTeachingApiContractTests
+namespace GetIntoTeachingApiContractTests.Fixtures
 {
-    public class TestStartup : GetIntoTeachingApi.Startup
+    public class ContractTestStartup : GetIntoTeachingApi.Startup
     {
-        public TestStartup(IConfiguration configuration)
+        public ContractTestStartup(IConfiguration configuration)
             :base(configuration)
         {
         }
@@ -23,6 +23,7 @@ namespace GetIntoTeachingApiContractTests
             var store = serviceScope.ServiceProvider.GetService<IStore>();
             var crmService = serviceScope.ServiceProvider.GetService<ICrmService>();
             
+            // force this process to run synchronously before the tests begin
             AsyncHelper.RunSync(() => store.SyncAsync(crmService));
         }
 
