@@ -1,9 +1,16 @@
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FluentAssertions;
 using GetIntoTeachingApi;
+using GetIntoTeachingApiContractTests.Assertions;
+using GetIntoTeachingApiContractTests.Attributes;
 using GetIntoTeachingApiContractTests.Fixtures;
-using GetIntoTeachingApiContractTests.Helpers;
 using GetIntoTeachingApiContractTests.Servers;
+using Microsoft.Xrm.Sdk;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace GetIntoTeachingApiContractTests
@@ -11,62 +18,38 @@ namespace GetIntoTeachingApiContractTests
     public class ContractTests : IClassFixture<ContractTestFixture<Startup>>
     {
         private readonly HttpClient _client;
-        private readonly ServerUnderTest _server;
 
         public ContractTests(ContractTestFixture<Startup> fixture)
         {
             _client = fixture.Client;
-            _server = fixture.Server;
         }
 
-        [Fact]
-        public async Task CanCheckHealth()
+        [Theory]
+        [JsonContractTestData("./contracts")]
+        public async Task ThroughApiService(string filename, StringContent requestBody, Entity contact, string filepath)
         {
-            const string url = "/api/operations/health_check";
-            
             // Act
-            var response = await _client.GetAsync(url);
-            var message = await response.Content.ReadAsStringAsync();
+            var response = await _client.PostAsync("/api/teacher_training_adviser/candidates", requestBody);
+            var responseBody = await response.Content.ReadAsStringAsync();
 
-            // Assert
             response.EnsureSuccessStatusCode();
+            
+            // if ((int)response.StatusCode > 299) return;
+            
+            // Assert
+            var crmContact = await ServerUnderTest.CrmServiceAdapter.GetCandidateRequests();
+            
+            SaveData(filepath, crmContact);
+            
+            crmContact.Should().Match(contact);
         }
 
-        [Fact]
-        public async Task ThroughApiService()
+        private static void SaveData(string filename, Entity data)
         {
-            // Arrange
-            var request = new
-            {
-                Url = "/api/teacher_training_adviser/candidates",
-                Body = new
-                {
-                    countryId = "0df4c2e6-74f9-e811-a97a-000d3a2760f2",
-                    preferredEducationPhaseId = 222750001,
-                    firstName = "Lino",
-                    lastName = "Hayes",
-                    email = "scottie.towne@example.net",
-                    teacherId = "123456",
-                    subjectTaughtId = "942655a1-2afa-e811-a981-000d3a276620",
-                    preferredTeachingSubjectId = "ac2655a1-2afa-e811-a981-000d3a276620",
-                    dateOfBirth = "1990-03-26T00:00:00.000+00:00",
-                    addressLine1 = "3702 Stephaine Roads",
-                    addressLine2 = "Suite 141",
-                    addressCity = "Reichelmouth",
-                    addressPostcode = "YN0 1BP",
-                    telephone = "0119 608 9170",
-                    acceptedPolicyId = "0a203956-e935-ea11-a813-000d3a44a8e9"
-                }
-            };
-
-            // Act
-            var response = await _client.PostAsync(request.Url, ContentHelper.GetStringContent(request.Body));
+            var outFileName = filename.Replace(".json", "_crm.json");
+            var json = JsonConvert.SerializeObject(data, Formatting.Indented);
             
-            // Assert
-            response.EnsureSuccessStatusCode();
-            var crmRequest = await ServerUnderTest.CrmServiceAdapter.GetCandidateRequestDetails();
-            
-            Assert.IsType<bool>(crmRequest);
+            File.WriteAllText(outFileName, json);
         }
     }
 }
