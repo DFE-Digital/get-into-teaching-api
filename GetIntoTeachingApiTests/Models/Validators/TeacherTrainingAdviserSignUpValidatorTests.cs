@@ -187,6 +187,20 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
+        public void Validate_DegreeTypeIdIsEquivalentAndTelephoneIsNull_HasError()
+        {
+            var request = new TeacherTrainingAdviserSignUp
+            {
+                DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent,
+                Telephone = null,
+            };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldHaveValidationErrorFor("Telephone").WithErrorMessage("Must be set for candidates with an equivalent degree.");
+        }
+
+        [Fact]
         public void Validate_PhoneCallScheduledAtIsPresentAndTelephoneIsNotNull_HasNoError()
         {
             var request = new TeacherTrainingAdviserSignUp

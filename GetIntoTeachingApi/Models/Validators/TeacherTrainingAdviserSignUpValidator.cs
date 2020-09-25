@@ -28,6 +28,10 @@ namespace GetIntoTeachingApi.Models.Validators
                 .When(request => request.PhoneCallScheduledAt != null)
                 .WithMessage("Must be set to schedule a callback.");
 
+            RuleFor(request => request.Telephone).NotEmpty()
+                .When(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent)
+                .WithMessage("Must be set for candidates with an equivalent degree.");
+
             RuleFor(request => request.PhoneCallScheduledAt).NotNull()
                 .When(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent && request.CountryId == TypeEntity.UnitedKingdomCountryId)
                 .WithMessage("Must be set for candidate with UK equivalent degree.");
