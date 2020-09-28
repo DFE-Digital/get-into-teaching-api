@@ -123,7 +123,7 @@ namespace GetIntoTeachingApiTests.Filters
         public void OnActionExecuting_AfterCrmSyncJobHasRan_RespondsWithNewETag()
         {
             const string eTag = "03AC2E21CC0F0298899728A7648684A16B08DF1EA22AAD296AC916B50D6A9FE1";
-            var jobDetails = new Dictionary<string, string>() { { "NextExecution", "2020-01-01 19:52:44" } };
+            var jobDetails = new Dictionary<string, string>() { { "LastExecution", "2020-01-01 19:52:44" } };
             _mockStorageConnection.Setup(m => m.GetAllEntriesFromHash(
                 $"recurring-job:{JobConfiguration.CrmSyncJobId}")).Returns(jobDetails);
             _mockHttpContext.Setup(m => m.Request.Headers["If-None-Match"]).Returns<string>(null);
@@ -141,7 +141,7 @@ namespace GetIntoTeachingApiTests.Filters
         public void OnActionExecuting_WithMatchingIfNoneMatch_Responds304NotModified()
         {
             const string eTag = "03AC2E21CC0F0298899728A7648684A16B08DF1EA22AAD296AC916B50D6A9FE1";
-            var jobDetails = new Dictionary<string, string>() { { "NextExecution", "2020-01-01 19:52:44" } };
+            var jobDetails = new Dictionary<string, string>() { { "LastExecution", "2020-01-01 19:52:44" } };
             _mockStorageConnection.Setup(m => m.GetAllEntriesFromHash(
                 $"recurring-job:{JobConfiguration.CrmSyncJobId}")).Returns(jobDetails);
             _mockHttpContext.Setup(m => m.Request.Headers["If-None-Match"]).Returns(eTag);
@@ -161,7 +161,7 @@ namespace GetIntoTeachingApiTests.Filters
         public void OnActionExecuting_WithDifferentIfNoneMatch_RespondsWithResultAndETag()
         {
             const string eTag = "03AC2E21CC0F0298899728A7648684A16B08DF1EA22AAD296AC916B50D6A9FE1";
-            var jobDetails = new Dictionary<string, string>() { { "NextExecution", "2020-01-01 19:52:44" } };
+            var jobDetails = new Dictionary<string, string>() { { "LastExecution", "2020-01-01 19:52:44" } };
             _mockStorageConnection.Setup(m => m.GetAllEntriesFromHash(
                 $"recurring-job:{JobConfiguration.CrmSyncJobId}")).Returns(jobDetails);
             _mockHttpContext.Setup(m => m.Request.Headers["If-None-Match"]).Returns("wrong-etag");
