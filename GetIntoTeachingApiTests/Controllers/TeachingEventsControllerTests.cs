@@ -9,7 +9,6 @@ using GetIntoTeachingApi.Models;
 using Moq;
 using Microsoft.AspNetCore.Mvc;
 using GetIntoTeachingApi.Services;
-using GetIntoTeachingApiTests.Helpers;
 using Hangfire;
 using Hangfire.Common;
 using Hangfire.States;
@@ -47,7 +46,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void CrmETag_IsPresent()
         {
             JobStorage.Current = new Mock<JobStorage>().Object;
-            var methods = new [] { "Get" };
+            var methods = new [] { "Get", "Search" };
 
             methods.ForEach(m => typeof(TeachingEventsController).GetMethod(m).Should().BeDecoratedWith<CrmETagAttribute>());
         }
