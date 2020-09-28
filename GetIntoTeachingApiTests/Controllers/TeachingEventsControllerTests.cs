@@ -47,7 +47,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void CrmETag_IsPresent()
         {
             JobStorage.Current = new Mock<JobStorage>().Object;
-            var methods = new [] { "Get", "Search" };
+            var methods = new [] { "Get" };
 
             methods.ForEach(m => typeof(TeachingEventsController).GetMethod(m).Should().BeDecoratedWith<CrmETagAttribute>());
         }
