@@ -34,6 +34,7 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [CrmETag]
         [Route("search")]
         [SwaggerOperation(
             Summary = "Searches for teaching events.",
