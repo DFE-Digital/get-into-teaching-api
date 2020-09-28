@@ -15,11 +15,6 @@ namespace GetIntoTeachingApi.Services
 {
     public class Store : IStore
     {
-        private const double EarthCircumferenceInKm = 40075.017;
-
-        // We get a 16km error when approximating the distance between postcodes for
-        // John O'Groats and Lands End.
-        private const double ErrorMarginInKm = 25;
         private readonly GetIntoTeachingDbContext _dbContext;
         private readonly IGeocodeClientAdapter _geocodeClient;
 
@@ -128,10 +123,6 @@ namespace GetIntoTeachingApi.Services
 
             // Exclude events we don't have a location for.
             teachingEvents = teachingEvents.Where(te => te.Building != null && te.Building.Coordinate != null);
-
-            // Approximate distance filtering in the database, with a suitable error margin (treats distance as an arc degree).
-            teachingEvents = teachingEvents.Where(te => EarthCircumferenceInKm *
-                te.Building.Coordinate.Distance(origin) / 360 < request.RadiusInKm() + ErrorMarginInKm);
 
             var inMemoryTeachingEvents = await teachingEvents.ToListAsync();
 
