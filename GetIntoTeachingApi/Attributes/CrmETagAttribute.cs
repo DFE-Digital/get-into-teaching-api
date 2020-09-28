@@ -87,7 +87,7 @@ namespace GetIntoTeachingApi.Filters
             var recurringJob = connection.GetAllEntriesFromHash(
                 $"recurring-job:{JobConfiguration.CrmSyncJobId}");
 
-            return recurringJob?["NextExecution"];
+            return recurringJob?["LastExecution"];
         }
     }
 }
