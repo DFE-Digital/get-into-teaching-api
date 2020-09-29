@@ -20,7 +20,7 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("StatusId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_eventstatus" && a.Type == typeof(OptionSetValue));
 
-            type.GetProperty("ReadableId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "msevtmgt_readableeventid");
+            type.GetProperty("ReadableId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_websiteeventpartialurl");
             type.GetProperty("WebFeedId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_eventwebfeedid");
             type.GetProperty("IsOnline").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_isonlineevent");
             type.GetProperty("Name").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_externaleventtitle");
