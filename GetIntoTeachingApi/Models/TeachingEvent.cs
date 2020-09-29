@@ -29,7 +29,7 @@ namespace GetIntoTeachingApi.Models
         public int TypeId { get; set; }
         [EntityField("dfe_eventstatus", typeof(OptionSetValue))]
         public int StatusId { get; set; }
-        [EntityField("msevtmgt_readableeventid")]
+        [EntityField("dfe_websiteeventpartialurl")]
         public string ReadableId { get; set; }
         [EntityField("dfe_eventwebfeedid")]
         [SwaggerSchema("If set, the API will accept new attendees for " +

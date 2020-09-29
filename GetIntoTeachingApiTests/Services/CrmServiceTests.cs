@@ -105,8 +105,10 @@ namespace GetIntoTeachingApiTests.Services
             };
             var hasTypeCondition = conditions.Where(c => c.AttributeName == "dfe_event_type" &&
                 c.Operator == ConditionOperator.In && c.Values.ToHashSet().IsSubsetOf(types)).Any();
+            var hasReadabaleIdCondition = conditions.Where(c => c.AttributeName == "dfe_websiteeventpartialurl" &&
+                c.Operator == ConditionOperator.NotNull).Any();
 
-            return hasEntityName && hasStatusCondition && hasFutureDatedCondition && hasTypeCondition;
+            return hasEntityName && hasStatusCondition && hasFutureDatedCondition && hasTypeCondition && hasReadabaleIdCondition;
         }
 
         [Fact]
