@@ -7,6 +7,7 @@ using FluentAssertions;
 using GetIntoTeachingApi.Services;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
+using GetIntoTeachingApi.Attributes;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -29,6 +30,12 @@ namespace GetIntoTeachingApiTests.Controllers
         public void Authorize_IsPresent()
         {
             typeof(CandidatesController).Should().BeDecoratedWith<AuthorizeAttribute>();
+        }
+
+        [Fact]
+        public void LogRequests_IsPresent()
+        {
+            typeof(CandidatesController).Should().BeDecoratedWith<LogRequestsAttribute>();
         }
 
         [Fact]
