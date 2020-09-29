@@ -5,10 +5,10 @@ using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
-using GetIntoTeachingApi.Filters;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Xunit;
+using GetIntoTeachingApi.Attributes;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -27,6 +27,12 @@ namespace GetIntoTeachingApiTests.Controllers
         public void Authorize_IsPresent()
         {
             typeof(PrivacyPoliciesController).Should().BeDecoratedWith<AuthorizeAttribute>();
+        }
+
+        [Fact]
+        public void LogRequests_IsPresent()
+        {
+            typeof(PrivacyPoliciesController).Should().BeDecoratedWith<LogRequestsAttribute>();
         }
 
         [Fact]

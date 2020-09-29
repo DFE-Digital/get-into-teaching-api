@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
@@ -11,6 +12,7 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
 {
     [Route("api/teacher_training_adviser/candidates")]
     [ApiController]
+    [LogRequests]
     [Authorize]
     public class CandidatesController : ControllerBase
     {

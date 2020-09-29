@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
@@ -12,6 +12,7 @@ namespace GetIntoTeachingApi.Controllers
 {
     [Route("api/operations")]
     [ApiController]
+    [LogRequests]
     public class OperationsController : ControllerBase
     {
         private readonly IStore _store;

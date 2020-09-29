@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using FluentAssertions;
 using Xunit;
 using GetIntoTeachingApi.Controllers;
-using GetIntoTeachingApi.Filters;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using Moq;
@@ -14,6 +13,7 @@ using Hangfire.Common;
 using Hangfire.States;
 using Microsoft.AspNetCore.Authorization;
 using MoreLinq;
+using GetIntoTeachingApi.Attributes;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -40,6 +40,12 @@ namespace GetIntoTeachingApiTests.Controllers
         public void Authorize_IsPresent()
         {
             typeof(TeachingEventsController).Should().BeDecoratedWith<AuthorizeAttribute>();
+        }
+
+        [Fact]
+        public void LogRequests_IsPresent()
+        {
+            typeof(TeachingEventsController).Should().BeDecoratedWith<LogRequestsAttribute>();
         }
 
         [Fact]

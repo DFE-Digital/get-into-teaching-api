@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using GetIntoTeachingApi.Filters;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +11,7 @@ namespace GetIntoTeachingApi.Controllers
 {
     [Route("api/privacy_policies")]
     [ApiController]
+    [LogRequests]
     [Authorize]
     public class PrivacyPoliciesController : ControllerBase
     {
