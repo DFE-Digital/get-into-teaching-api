@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Net;
 using FluentAssertions;
-using GetIntoTeachingApi.Filters;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;

@@ -5,6 +5,7 @@ using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
+    [Loggable]
     [Entity("dfe_callbackbookingquota")]
     public class CallbackBookingQuota : BaseModel
     {

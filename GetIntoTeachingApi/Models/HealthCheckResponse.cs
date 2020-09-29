@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
+using GetIntoTeachingApi.Attributes;
 
 namespace GetIntoTeachingApi.Models
 {
+    [Loggable]
     public class HealthCheckResponse
     {
         public const string StatusOk = "ok";

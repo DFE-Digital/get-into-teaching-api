@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using GetIntoTeachingApi.Filters;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
@@ -13,6 +13,7 @@ namespace GetIntoTeachingApi.Controllers
 {
     [Route("api/teaching_events")]
     [ApiController]
+    [LogRequests]
     [Authorize]
     public class TeachingEventsController : ControllerBase
     {

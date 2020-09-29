@@ -9,7 +9,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace GetIntoTeachingApi.Filters
+namespace GetIntoTeachingApi.Attributes
 {
     public class CrmETagAttribute : Attribute, IActionFilter
     {

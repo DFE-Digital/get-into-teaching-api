@@ -8,6 +8,7 @@ using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Moq;
 using Xunit;
+using GetIntoTeachingApi.Attributes;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -88,6 +89,12 @@ namespace GetIntoTeachingApiTests.Controllers
             health.Notify.Should().Be(notifyStatus);
             health.Hangfire.Should().Be(hangfireStatus);
             health.Status.Should().Be(expectedStatus);
+        }
+
+        [Fact]
+        public void LogRequests_IsPresent()
+        {
+            typeof(OperationsController).Should().BeDecoratedWith<LogRequestsAttribute>();
         }
     }
 }

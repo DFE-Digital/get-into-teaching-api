@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using GetIntoTeachingApi.Filters;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +12,7 @@ namespace GetIntoTeachingApi.Controllers
 {
     [Route("api/types")]
     [ApiController]
+    [LogRequests]
     [Authorize]
     public class TypesController : ControllerBase
     {
