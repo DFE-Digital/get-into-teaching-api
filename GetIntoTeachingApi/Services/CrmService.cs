@@ -173,8 +173,9 @@ namespace GetIntoTeachingApi.Services
             var futureDatedCondition = new ConditionExpression("msevtmgt_eventenddate", ConditionOperator.GreaterThan, DateTime.UtcNow);
             var types = Enum.GetValues(typeof(TeachingEvent.EventType)).Cast<int>().ToArray();
             var typeCondition = new ConditionExpression("dfe_event_type", ConditionOperator.In, types);
+            var readableIdCondition = new ConditionExpression("dfe_websiteeventpartialurl", ConditionOperator.NotNull);
             var filter = new FilterExpression(LogicalOperator.And);
-            filter.Conditions.AddRange(new[] { statusCondition, futureDatedCondition, typeCondition });
+            filter.Conditions.AddRange(new[] { statusCondition, futureDatedCondition, typeCondition, readableIdCondition });
             query.Criteria.AddFilter(filter);
 
             var link = query.AddLink("msevtmgt_building", "msevtmgt_building", "msevtmgt_buildingid", JoinOperator.LeftOuter);
