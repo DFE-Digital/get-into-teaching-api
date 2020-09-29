@@ -7,6 +7,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
 {
+    [Loggable]
     [Entity("msevtmgt_event")]
     public class TeachingEvent : BaseModel
     {
