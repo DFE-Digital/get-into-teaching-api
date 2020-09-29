@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using GetIntoTeachingApi.Attributes;
 
 namespace GetIntoTeachingApi.Models
 {
+    [Loggable]
     public class MappingInfo
     {
         private readonly Type _type;

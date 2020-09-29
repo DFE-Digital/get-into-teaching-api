@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,20 @@ namespace GetIntoTeachingApiTests.Models
 {
     public class TeachingEventAddAttendeeTests
     {
+        [Fact]
+        public void Loggable_IsPresent()
+        {
+            var type = typeof(TeachingEventAddAttendee);
+
+            type.Should().BeDecoratedWith<LoggableAttribute>();
+
+            type.GetProperty("Email").Should().BeDecoratedWith<SensitiveDataAttribute>();
+            type.GetProperty("FirstName").Should().BeDecoratedWith<SensitiveDataAttribute>();
+            type.GetProperty("LastName").Should().BeDecoratedWith<SensitiveDataAttribute>();
+            type.GetProperty("Telephone").Should().BeDecoratedWith<SensitiveDataAttribute>();
+            type.GetProperty("AddressPostcode").Should().BeDecoratedWith<SensitiveDataAttribute>();
+        }
+
         [Fact]
         public void Constructor_WithCandidate_MapsCorrectly()
         {

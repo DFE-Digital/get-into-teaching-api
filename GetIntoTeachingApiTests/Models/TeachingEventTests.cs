@@ -9,6 +9,12 @@ namespace GetIntoTeachingApiTests.Models
     public class TeachingEventTests
     {
         [Fact]
+        public void Loggable_IsPresent()
+        {
+            typeof(TeachingEvent).Should().BeDecoratedWith<LoggableAttribute>();
+        }
+
+        [Fact]
         public void EntityAttributes()
         {
             var type = typeof(TeachingEvent);

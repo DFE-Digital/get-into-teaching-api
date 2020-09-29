@@ -8,6 +8,12 @@ namespace GetIntoTeachingApiTests.Models
     public class CallbackBookingQuotaTests
     {
         [Fact]
+        public void Loggable_IsPresent()
+        {
+            typeof(CallbackBookingQuota).Should().BeDecoratedWith<LoggableAttribute>();
+        }
+
+        [Fact]
         public void EntityAttributes()
         {
             var type = typeof(CallbackBookingQuota);

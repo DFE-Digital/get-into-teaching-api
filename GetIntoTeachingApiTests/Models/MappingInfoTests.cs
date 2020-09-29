@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using FluentAssertions;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApiTests.Mocks;
 using Xunit;
@@ -14,6 +15,12 @@ namespace GetIntoTeachingApiTests.Models
         public MappingInfoTests()
         {
             _mappingInfo = new MappingInfo(typeof(MockModel));
+        }
+
+        [Fact]
+        public void Loggable_IsPresent()
+        {
+            typeof(MappingInfo).Should().BeDecoratedWith<LoggableAttribute>();
         }
 
         [Fact]

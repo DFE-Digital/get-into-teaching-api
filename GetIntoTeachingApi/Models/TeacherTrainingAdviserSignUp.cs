@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Text.Json.Serialization;
+using GetIntoTeachingApi.Attributes;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
 {
+    [Loggable]
     public class TeacherTrainingAdviserSignUp
     {
         public Guid? CandidateId { get; set; }
@@ -25,17 +27,26 @@ namespace GetIntoTeachingApi.Models
         public int? PlanningToRetakeGcseMathsAndEnglishId { get; set; }
         public int? PlanningToRetakeGcseScienceId { get; set; }
 
+        [SensitiveData]
         public string Email { get; set; }
+        [SensitiveData]
         public string FirstName { get; set; }
+        [SensitiveData]
         public string LastName { get; set; }
         [SwaggerSchema(Format = "date")]
+        [SensitiveData]
         public DateTime? DateOfBirth { get; set; }
+        [SensitiveData]
         public string TeacherId { get; set; }
         public string DegreeSubject { get; set; }
+        [SensitiveData]
         public string Telephone { get; set; }
+        [SensitiveData]
         public string AddressLine1 { get; set; }
+        [SensitiveData]
         public string AddressLine2 { get; set; }
         public string AddressCity { get; set; }
+        [SensitiveData]
         public string AddressPostcode { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public DateTime? PhoneCallScheduledAt { get; set; }
