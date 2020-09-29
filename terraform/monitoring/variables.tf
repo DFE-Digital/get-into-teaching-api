@@ -24,9 +24,9 @@ variable "domain" {
    default = "london.cloudapps.digital"
 }
  
-variable "api_application_name" {
-    default = "get-into-teaching-api"
-}
+variable "api_application_name" { }
+variable "app_application_name" { }
+variable "tta_application_name" { }
 
 variable "paas_exporter_username" { }
 variable "paas_exporter_password" { }
@@ -70,7 +70,7 @@ variable "redis" {
     default = {
         "name" = "get-into-teaching"
         "space" = "get-into-teaching"
-        "service" = "get-into-teaching-adviser-dev-red-svc"
+        "service" = "get-into-teaching-dev-redis-svc"
     }
 }
 
@@ -79,7 +79,7 @@ variable "postgres1" {
     default = {
         "name" = "get-into-teaching-1"
         "space" = "get-into-teaching"
-        "service" = "get-into-teaching-api-dev-pg1-svc"
+        "service" = "get-into-teaching-api-dev-ms1-svc"
     }
 }
 
