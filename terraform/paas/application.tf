@@ -21,9 +21,6 @@ resource "cloudfoundry_app" "api_application" {
         service_instance = service_binding.value["id"]
       }
     }
-    routes {
-        route = cloudfoundry_route.api_route.id
-    }    
     environment = {
          CRM_CLIENT_ID          = var.CRM_CLIENT_ID
          CRM_CLIENT_SECRET      = var.CRM_CLIENT_SECRET
@@ -41,11 +38,6 @@ resource "cloudfoundry_app" "api_application" {
     }    
 }
 
-resource "cloudfoundry_route" "api_route" {
-    domain = data.cloudfoundry_domain.cloudapps.id
-    space = data.cloudfoundry_space.space.id
-    hostname =  var.paas_api_route_name
-}
 
 
 
