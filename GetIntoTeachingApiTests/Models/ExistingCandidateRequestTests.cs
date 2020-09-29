@@ -3,6 +3,7 @@ using GetIntoTeachingApi.Models;
 using System;
 using Microsoft.Xrm.Sdk;
 using Xunit;
+using GetIntoTeachingApi.Attributes;
 
 namespace GetIntoTeachingApiTests.Models
 {

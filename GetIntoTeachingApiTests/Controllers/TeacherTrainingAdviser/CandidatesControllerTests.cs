@@ -11,6 +11,7 @@ using Hangfire;
 using Hangfire.Common;
 using Hangfire.States;
 using Microsoft.AspNetCore.Authorization;
+using GetIntoTeachingApi.Attributes;
 
 namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
 {
@@ -35,6 +36,12 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         public void Authorize_IsPresent()
         {
             typeof(CandidatesController).Should().BeDecoratedWith<AuthorizeAttribute>();
+        }
+
+        [Fact]
+        public void LogRequests_IsPresent()
+        {
+            typeof(CandidatesController).Should().BeDecoratedWith<LogRequestsAttribute>();
         }
 
         [Fact]

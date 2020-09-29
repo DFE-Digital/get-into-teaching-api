@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using FluentAssertions;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using Microsoft.PowerPlatform.Cds.Client;
 using Microsoft.Xrm.Sdk;
@@ -10,6 +11,12 @@ namespace GetIntoTeachingApiTests.Models
 {
     public class TypeEntityTests
     {
+        [Fact]
+        public void Loggable_IsPresent()
+        {
+            typeof(TypeEntity).Should().BeDecoratedWith<LoggableAttribute>();
+        }
+
         [Fact]
         public void EntityAttributes()
         {
@@ -22,8 +29,10 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Constructor_WithEntity()
         {
-            var entity = new Entity();
-            entity.Id = Guid.NewGuid();
+            var entity = new Entity
+            {
+                Id = Guid.NewGuid()
+            };
             entity["dfe_name"] = "name";
 
             var typeEntity = new TypeEntity(entity, "entityName");

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using GetIntoTeachingApi.Attributes;
 using Microsoft.PowerPlatform.Cds.Client;
 using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
+    [Loggable]
     public class TypeEntity
     {
         public static readonly Guid UnitedKingdomCountryId = new Guid("72f5c2e6-74f9-e811-a97a-000d3a2760f2");

@@ -7,6 +7,7 @@ using Moq;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using Xunit;
+using GetIntoTeachingApi.Attributes;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -25,6 +26,12 @@ namespace GetIntoTeachingApiTests.Controllers
         public void Authorize_IsPresent()
         {
             typeof(CallbackBookingQuotasController).Should().BeDecoratedWith<AuthorizeAttribute>();
+        }
+
+        [Fact]
+        public void LogRequests_IsPresent()
+        {
+            typeof(CallbackBookingQuotasController).Should().BeDecoratedWith<LogRequestsAttribute>();
         }
 
         [Fact]
