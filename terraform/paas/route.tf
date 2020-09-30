@@ -3,7 +3,7 @@ resource "cloudfoundry_route" "api_route_cloud" {
     hostname =  var.paas_api_route_name
     space = data.cloudfoundry_space.space.id
     target {
-          app = cloudfoundry_app.api_application.id
+          app = cloudfoundry_app.api_application.id_bg
     }
 
 }
@@ -13,6 +13,6 @@ resource "cloudfoundry_route" "api_route_internal" {
     hostname =  "${var.paas_api_route_name}-internal"
     space = data.cloudfoundry_space.space.id
     target {
-          app = cloudfoundry_app.api_application.id
+          app = cloudfoundry_app.api_application.id_bg
     }
 }
