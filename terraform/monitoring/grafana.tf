@@ -6,8 +6,6 @@ locals {
   additional_variable_map = {
     elastic_user         = var.elasticsearch_user
     elastic_pass         = var.elasticsearch_password
-    google_client_id     = var.google_client_id
-    google_client_secret = var.google_client_secret
   }
 }
 
