@@ -35,9 +35,6 @@ variable "api_application_name" {}
 variable "paas_exporter_username" {}
 variable "paas_exporter_password" {}
 
-variable "google_client_id" {}
-variable "google_client_secret" {}
-
 
 variable "prometheus" {
   type = map
