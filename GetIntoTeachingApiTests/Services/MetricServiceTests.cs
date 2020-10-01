@@ -42,6 +42,7 @@ namespace GetIntoTeachingApiTests.Services
         public void GoogleApiCalls_ReturnsMetric()
         {
             _metrics.GoogleApiCalls.Name.Should().Be("api_google_api_calls");
+            _metrics.GoogleApiCalls.LabelNames.Should().BeEquivalentTo(new[] { "postcode", "result" });
         }
 
         [Fact]

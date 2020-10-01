@@ -13,7 +13,10 @@ namespace GetIntoTeachingApi.Services
         private static readonly Gauge _hangfireJobs = Metrics
             .CreateGauge("api_hangfire_jobs", "Gauge number of Hangifre jobs.", "state");
         private static readonly Counter _googleApiCalls = Metrics
-            .CreateCounter("api_google_api_calls", "Number of Google API calls.");
+            .CreateCounter("api_google_api_calls", "Number of Google API calls.", new CounterConfiguration
+            {
+                LabelNames = new[] { "postcode", "result" },
+            });
         private static readonly Counter _cacheLookups = Metrics
             .CreateCounter("api_cache_lookups", "Number of cache lookups.", new CounterConfiguration
             {
