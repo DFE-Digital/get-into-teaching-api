@@ -6,10 +6,6 @@ scrape_configs:
   scheme: https
   static_configs:
     - targets: [${paas_prometheus_exporter_endpoint}]
-- job_name: ${api} 
-  scheme: https
-  static_configs:
-    - targets: [${api}]
 - job_name: ${redis} 
   scheme: https
   static_configs:
@@ -22,8 +18,14 @@ scrape_configs:
   scheme: https
   static_configs:
     - targets: [${postgres-2}]
-
-
+- job_name: Application
+  dns_sd_configs:
+    - names: 
+       - get-into-teaching-app-dev-internal.apps.internal
+       - get-into-teaching-api-dev-internal.apps.internal
+       - get-teacher-training-adviser-service-dev-internal.apps.internal
+      type: 'A'
+      port: 8080
 
 alerting:
   alertmanagers:
