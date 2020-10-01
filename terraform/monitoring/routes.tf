@@ -6,3 +6,5 @@ data "cloudfoundry_route" "api_endpoint" {
 locals {
     api_endpoint = "${data.cloudfoundry_route.api_endpoint.hostname}.${data.cloudfoundry_domain.education.name}" 
 }
+
+
