@@ -93,6 +93,7 @@ variable "postgres2" {
   }
 }
 
-
+variable "google_client_id" {}	
+variable "google_client_secret" {}
 variable elasticsearch_user {}
 variable elasticsearch_password {}
