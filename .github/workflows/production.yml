@@ -69,6 +69,8 @@ jobs:
              TF_VAR_NOTIFY_API_KEY:    "${{ secrets.PROD_NOTIFY_API_KEY      }}"
              TF_VAR_TOTP_SECRET_KEY:   "${{ secrets.PROD_TOTP_SECRET_KEY     }}"
              TF_VAR_GOOGLE_API_KEY:    "${{ secrets.PROD_GOOGLE_API_KEY      }}"
+             TF_VAR_SENTRY_URL:        "${{ secrets.SENTRY_URL }}"
+
    
        - name: Terraform Apply
          run: |
