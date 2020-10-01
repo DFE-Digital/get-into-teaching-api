@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1601479620320,
+  "iteration": 1601536905828,
   "links": [],
   "panels": [
     {
@@ -87,10 +87,10 @@
         }
       ],
       "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "fillColor": "rgba(255, 255, 255, 0.18)",
         "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false,
+        "lineColor": "rgb(255, 255, 255)",
+        "show": true,
         "ymax": null,
         "ymin": null
       },
@@ -191,10 +191,10 @@
         }
       ],
       "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "fillColor": "rgba(255, 255, 255, 0.18)",
         "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false,
+        "lineColor": "rgb(255, 255, 255)",
+        "show": true,
         "ymax": null,
         "ymin": null
       },
@@ -295,10 +295,10 @@
         }
       ],
       "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "fillColor": "rgba(255, 255, 255, 0.18)",
         "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false,
+        "lineColor": "rgb(255, 255, 255)",
+        "show": true,
         "ymax": null,
         "ymin": null
       },
@@ -448,6 +448,103 @@
       "type": "row"
     },
     {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "description": "4xx and 5xx status codes",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 11
+      },
+      "hiddenSeries": false,
+      "id": 52,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_received_total{code =~ \"5\\\\d\\\\d|4\\\\d\\\\d\"}[3m])) by (controller)",
+          "legendFormat": "{{controller}}",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(http_requests_received_total{code =~ \"5\\\\d\\\\d|4\\\\d\\\\d\"}[3m])) by (controller)",
+          "legendFormat": "(None)",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Error Rate by Controller",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "reqps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
       "aliasColors": {
         "Count": "red",
         "Unavailable": "red",
@@ -461,8 +558,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
-        "w": 24,
-        "x": 0,
+        "w": 12,
+        "x": 12,
         "y": 11
       },
       "hiddenSeries": false,
@@ -605,7 +702,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Health",
+      "title": "Status",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -951,6 +1048,176 @@
     },
     {
       "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "Prometheus",
+      "description": "Across ALL controllers globally!",
+      "format": "short",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 0,
+        "y": 47
+      },
+      "id": 50,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": " requests",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": true,
+        "ymax": null,
+        "ymin": 0
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "expr": "sum(http_requests_in_progress)",
+          "instant": false,
+          "refId": "A"
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Requests in Progress",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "Prometheus",
+      "description": "",
+      "format": "reqps",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 6,
+        "y": 47
+      },
+      "id": 48,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": true,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_received_total[3m]))",
+          "instant": false,
+          "refId": "A"
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Total req/s",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
       "colorBackground": true,
       "colorPrefix": false,
       "colorValue": false,
@@ -970,9 +1237,9 @@
         "thresholdMarkers": true
       },
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 4,
-        "x": 0,
+        "x": 12,
         "y": 47
       },
       "id": 6,
@@ -1057,9 +1324,9 @@
         "thresholdMarkers": true
       },
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 4,
-        "x": 4,
+        "x": 16,
         "y": 47
       },
       "id": 7,
@@ -1144,9 +1411,9 @@
         "thresholdMarkers": true
       },
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 4,
-        "x": 8,
+        "x": 20,
         "y": 47
       },
       "id": 21,
@@ -1212,122 +1479,6 @@
     },
     {
       "aliasColors": {},
-      "breakPoint": "50%",
-      "cacheTimeout": null,
-      "combine": {
-        "label": "Others",
-        "threshold": 0
-      },
-      "datasource": "Prometheus",
-      "fontSize": "80%",
-      "format": "short",
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 12,
-        "y": 47
-      },
-      "id": 25,
-      "interval": null,
-      "legend": {
-        "show": true,
-        "values": true
-      },
-      "legendType": "Under graph",
-      "links": [],
-      "nullPointMode": "connected",
-      "options": {},
-      "pieType": "pie",
-      "pluginVersion": "6.5.1",
-      "strokeWidth": 1,
-      "targets": [
-        {
-          "expr": "sum(increase(api_cache_lookups{outcome=\"hit\"}[$__interval]))",
-          "format": "time_series",
-          "hide": false,
-          "instant": false,
-          "intervalFactor": 1,
-          "legendFormat": "Hit",
-          "refId": "A"
-        },
-        {
-          "expr": "sum(increase(api_cache_lookups[$__interval]))",
-          "hide": false,
-          "legendFormat": "Miss",
-          "refId": "B"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Cache Hit Ratio",
-      "type": "grafana-piechart-panel",
-      "valueName": "total"
-    },
-    {
-      "aliasColors": {},
-      "breakPoint": "50%",
-      "cacheTimeout": null,
-      "combine": {
-        "label": "Others",
-        "threshold": 0
-      },
-      "datasource": "Prometheus",
-      "fontSize": "80%",
-      "format": "short",
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 18,
-        "y": 47
-      },
-      "id": 14,
-      "interval": null,
-      "legend": {
-        "show": true,
-        "values": true
-      },
-      "legendType": "Under graph",
-      "links": [],
-      "maxDataPoints": 1,
-      "nullPointMode": "connected",
-      "options": {},
-      "pieType": "pie",
-      "pluginVersion": "6.5.1",
-      "strokeWidth": 1,
-      "targets": [
-        {
-          "expr": "sum(http_requests_received_total{controller=~\".+\",action=~\".+\",code=~\"2..\"})",
-          "instant": true,
-          "legendFormat": "2xx",
-          "refId": "A"
-        },
-        {
-          "expr": "sum(http_requests_received_total{controller=~\".+\",action=~\".+\",code=~\"4..\"})",
-          "instant": true,
-          "legendFormat": "4xx",
-          "refId": "B"
-        },
-        {
-          "expr": "sum(http_requests_received_total{controller=~\".+\",action=~\".+\",code=~\"5..\"})",
-          "instant": true,
-          "legendFormat": "5xx",
-          "refId": "C"
-        },
-        {
-          "expr": "sum(http_requests_received_total{controller=~\".+\",action=~\".+\",code=~\"3..\"})",
-          "instant": true,
-          "legendFormat": "3xx",
-          "refId": "D"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "HTTP Status Codes",
-      "type": "grafana-piechart-panel",
-      "valueName": "total"
-    },
-    {
-      "aliasColors": {},
       "bars": false,
       "dashLength": 10,
       "dashes": false,
@@ -1338,7 +1489,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 55
+        "y": 57
       },
       "hiddenSeries": false,
       "id": 10,
@@ -1426,6 +1577,340 @@
     },
     {
       "aliasColors": {},
+      "breakPoint": "50%",
+      "cacheTimeout": null,
+      "combine": {
+        "label": "Others",
+        "threshold": 0
+      },
+      "datasource": "Prometheus",
+      "fontSize": "80%",
+      "format": "short",
+      "gridPos": {
+        "h": 12,
+        "w": 6,
+        "x": 12,
+        "y": 57
+      },
+      "id": 25,
+      "interval": null,
+      "legend": {
+        "show": true,
+        "values": true
+      },
+      "legendType": "Under graph",
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {},
+      "pieType": "pie",
+      "pluginVersion": "6.5.1",
+      "strokeWidth": 1,
+      "targets": [
+        {
+          "expr": "sum(increase(api_cache_lookups{outcome=\"hit\"}[$__interval]))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "intervalFactor": 1,
+          "legendFormat": "Hit",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(increase(api_cache_lookups[$__interval]))",
+          "hide": false,
+          "legendFormat": "Miss",
+          "refId": "B"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Cache Hit Ratio",
+      "type": "grafana-piechart-panel",
+      "valueName": "total"
+    },
+    {
+      "aliasColors": {},
+      "breakPoint": "50%",
+      "cacheTimeout": null,
+      "combine": {
+        "label": "Others",
+        "threshold": 0
+      },
+      "datasource": "Prometheus",
+      "fontSize": "80%",
+      "format": "short",
+      "gridPos": {
+        "h": 12,
+        "w": 6,
+        "x": 18,
+        "y": 57
+      },
+      "id": 14,
+      "interval": null,
+      "legend": {
+        "show": true,
+        "values": true
+      },
+      "legendType": "Under graph",
+      "links": [],
+      "maxDataPoints": 1,
+      "nullPointMode": "connected",
+      "options": {},
+      "pieType": "pie",
+      "pluginVersion": "6.5.1",
+      "strokeWidth": 1,
+      "targets": [
+        {
+          "expr": "sum(http_requests_received_total{controller=~\".+\",action=~\".+\",code=~\"2..\"})",
+          "instant": true,
+          "legendFormat": "2xx",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(http_requests_received_total{controller=~\".+\",action=~\".+\",code=~\"4..\"})",
+          "instant": true,
+          "legendFormat": "4xx",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(http_requests_received_total{controller=~\".+\",action=~\".+\",code=~\"5..\"})",
+          "instant": true,
+          "legendFormat": "5xx",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(http_requests_received_total{controller=~\".+\",action=~\".+\",code=~\"3..\"})",
+          "instant": true,
+          "legendFormat": "3xx",
+          "refId": "D"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "HTTP Status Codes",
+      "type": "grafana-piechart-panel",
+      "valueName": "total"
+    },
+    {
+      "columns": [
+        {
+          "text": "Avg",
+          "value": "avg"
+        },
+        {
+          "text": "Min",
+          "value": "min"
+        },
+        {
+          "text": "Max",
+          "value": "max"
+        }
+      ],
+      "datasource": "Prometheus",
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 69
+      },
+      "id": 16,
+      "options": {},
+      "pageSize": null,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "",
+          "colorMode": "cell",
+          "colors": [
+            "rgba(50, 172, 45, 0.97)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(245, 54, 54, 0.9)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [
+            "0.1",
+            "0.30"
+          ],
+          "type": "number",
+          "unit": "s"
+        }
+      ],
+      "targets": [
+        {
+          "expr": "http_request_duration_seconds_sum{controller=~\".+\",action=~\".+\",code=~\"2..\"} / http_request_duration_seconds_count{controller=~\".+\",action=~\".+\",code=~\"2..\"}",
+          "legendFormat": "{{method}} - {{controller}} - {{action}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Response Time by Action",
+      "transform": "timeseries_aggregations",
+      "type": "table"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "description": "Counts all requests, both successful and failed",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 69
+      },
+      "hiddenSeries": false,
+      "id": 54,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_received_total[3m])) by (controller)",
+          "legendFormat": "{{controller}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Requests Received by Controller",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "reqps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "cards": {
+        "cardPadding": null,
+        "cardRound": null
+      },
+      "color": {
+        "cardColor": "#b4ff00",
+        "colorScale": "sqrt",
+        "colorScheme": "interpolateGnBu",
+        "exponent": 0.5,
+        "max": null,
+        "min": null,
+        "mode": "spectrum"
+      },
+      "dataFormat": "timeseries",
+      "datasource": "Prometheus",
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 0,
+        "y": 79
+      },
+      "heatmap": {},
+      "hideZeroBuckets": false,
+      "highlightCards": true,
+      "id": 20,
+      "legend": {
+        "show": true
+      },
+      "options": {},
+      "reverseYBuckets": false,
+      "targets": [
+        {
+          "expr": "sum(increase(http_request_duration_seconds_bucket[$__interval])) by (le) ",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Response Time",
+      "tooltip": {
+        "show": true,
+        "showHistogram": false
+      },
+      "type": "heatmap",
+      "xAxis": {
+        "show": true
+      },
+      "xBucketNumber": null,
+      "xBucketSize": null,
+      "yAxis": {
+        "decimals": null,
+        "format": "ms",
+        "logBase": 1,
+        "max": null,
+        "min": null,
+        "show": true,
+        "splitFactor": null
+      },
+      "yBucketBound": "auto",
+      "yBucketNumber": null,
+      "yBucketSize": null
+    },
+    {
+      "aliasColors": {},
       "bars": false,
       "dashLength": 10,
       "dashes": false,
@@ -1436,7 +1921,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 55
+        "y": 79
       },
       "hiddenSeries": false,
       "id": 18,
@@ -1511,139 +1996,13 @@
       }
     },
     {
-      "columns": [
-        {
-          "text": "Avg",
-          "value": "avg"
-        },
-        {
-          "text": "Min",
-          "value": "min"
-        },
-        {
-          "text": "Max",
-          "value": "max"
-        }
-      ],
-      "datasource": "Prometheus",
-      "fontSize": "100%",
-      "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 0,
-        "y": 67
-      },
-      "id": 16,
-      "options": {},
-      "pageSize": null,
-      "showHeader": true,
-      "sort": {
-        "col": 0,
-        "desc": true
-      },
-      "styles": [
-        {
-          "alias": "",
-          "colorMode": "cell",
-          "colors": [
-            "rgba(50, 172, 45, 0.97)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(245, 54, 54, 0.9)"
-          ],
-          "decimals": 2,
-          "pattern": "/.*/",
-          "thresholds": [
-            "0.1",
-            "0.30"
-          ],
-          "type": "number",
-          "unit": "s"
-        }
-      ],
-      "targets": [
-        {
-          "expr": "http_request_duration_seconds_sum{controller=~\".+\",action=~\".+\",code=~\"2..\"} / http_request_duration_seconds_count{controller=~\".+\",action=~\".+\",code=~\"2..\"}",
-          "legendFormat": "{{method}} - {{controller}} - {{action}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Response Time by Action",
-      "transform": "timeseries_aggregations",
-      "type": "table"
-    },
-    {
-      "cards": {
-        "cardPadding": null,
-        "cardRound": null
-      },
-      "color": {
-        "cardColor": "#b4ff00",
-        "colorScale": "sqrt",
-        "colorScheme": "interpolateGnBu",
-        "exponent": 0.5,
-        "max": null,
-        "min": null,
-        "mode": "spectrum"
-      },
-      "dataFormat": "timeseries",
-      "datasource": "Prometheus",
-      "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 12,
-        "y": 67
-      },
-      "heatmap": {},
-      "hideZeroBuckets": false,
-      "highlightCards": true,
-      "id": 20,
-      "legend": {
-        "show": true
-      },
-      "options": {},
-      "reverseYBuckets": false,
-      "targets": [
-        {
-          "expr": "sum(increase(http_request_duration_seconds_bucket[$__interval])) by (le) ",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Response Time",
-      "tooltip": {
-        "show": true,
-        "showHistogram": false
-      },
-      "type": "heatmap",
-      "xAxis": {
-        "show": true
-      },
-      "xBucketNumber": null,
-      "xBucketSize": null,
-      "yAxis": {
-        "decimals": null,
-        "format": "ms",
-        "logBase": 1,
-        "max": null,
-        "min": null,
-        "show": true,
-        "splitFactor": null
-      },
-      "yBucketBound": "auto",
-      "yBucketNumber": null,
-      "yBucketSize": null
-    },
-    {
       "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 79
+        "y": 91
       },
       "id": 34,
       "panels": [],
@@ -1668,7 +2027,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 80
+        "y": 92
       },
       "hiddenSeries": false,
       "id": 2,
@@ -1753,7 +2112,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 92
+        "y": 104
       },
       "id": 42,
       "panels": [],
@@ -1779,10 +2138,10 @@
         "thresholdMarkers": true
       },
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 4,
         "x": 0,
-        "y": 93
+        "y": 105
       },
       "id": 27,
       "interval": null,
@@ -1843,6 +2202,284 @@
         }
       ],
       "valueName": "total"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "Elasticseach",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 4,
+        "x": 4,
+        "y": 105
+      },
+      "id": 55,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "pluginVersion": "6.5.1",
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": true,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "field": "@timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "field": "select field",
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "\"NotifyService - Sending Email\" AND cf.app:\"$App\"",
+          "refId": "A",
+          "timeField": "@timestamp"
+        }
+      ],
+      "thresholds": "30,100",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Notify Service API Calls",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "total"
+    },
+    {
+      "columns": [
+        {
+          "text": "Total",
+          "value": "total"
+        }
+      ],
+      "datasource": "Prometheus",
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": 8,
+        "y": 105
+      },
+      "id": 57,
+      "options": {},
+      "pageSize": null,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(50, 172, 45, 0.97)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(245, 54, 54, 0.9)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [
+            "0.1",
+            "0.30"
+          ],
+          "type": "number",
+          "unit": "none"
+        }
+      ],
+      "targets": [
+        {
+          "expr": "sum(rate(api_google_api_calls[3m])) by (postcode)",
+          "legendFormat": "{{postcode}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Geocode Requests by Postcode",
+      "transform": "timeseries_aggregations",
+      "type": "table"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "-- Mixed --",
+      "description": "",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": 16,
+        "y": 105
+      },
+      "hiddenSeries": false,
+      "id": 58,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "NotifyService",
+          "bucketAggs": [
+            {
+              "field": "@timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "datasource": "Elasticseach",
+          "metrics": [
+            {
+              "field": "select field",
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "\"NotifyService - Failed to send email\" AND cf.app:\"$App\"",
+          "refId": "A",
+          "timeField": "@timestamp"
+        },
+        {
+          "datasource": "Prometheus",
+          "expr": "sum(rate(api_google_api_calls{result != \"success\"}[3m])) by (result)",
+          "legendFormat": "Google Geocoder - {result}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Error Rate by External Provider",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "reqps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     }
   ],
   "refresh": false,
@@ -1855,7 +2492,6 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "tags": [],
           "text": "get-into-teaching-api-test",
           "value": "get-into-teaching-api-test"
         },
@@ -1903,5 +2539,5 @@
   "timezone": "",
   "title": "Get into Teaching API",
   "uid": "28EURzZGz",
-  "version": 3
+  "version": 4
 }
