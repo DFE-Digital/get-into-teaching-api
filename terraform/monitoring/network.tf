@@ -1,14 +1,21 @@
 resource "cloudfoundry_network_policy" "my-policy" {
 
-    policy {
-        source_app = data.cloudfoundry_app.app.id
-        destination_app = data.cloudfoundry_app.api.id
-        port = 8080
-    }
+  policy {
+    destination_app = data.cloudfoundry_app.app.id
+    source_app      = module.prometheus.app_id
+    port            = var.port
+  }
 
-    policy {
-        source_app = data.cloudfoundry_app.tta.id
-        destination_app = data.cloudfoundry_app.api.id
-        port = 8080
-    }
+  policy {
+    destination_app = data.cloudfoundry_app.tta.id
+    source_app      = module.prometheus.app_id
+    port            = var.port
+  }
+
+  policy {
+    destination_app = data.cloudfoundry_app.api.id
+    source_app      = module.prometheus.app_id
+    port            = var.port
+  }
 }
+
