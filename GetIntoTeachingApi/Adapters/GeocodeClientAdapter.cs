@@ -20,12 +20,11 @@ namespace GetIntoTeachingApi.Adapters
 
         public async Task<Point> GeocodePostcodeAsync(string postcode)
         {
-            _metrics.GoogleApiCalls.Inc();
-
             var response = await _client.GeocodeAddress(postcode);
 
             if (response.Status != GeocodeStatus.Ok)
             {
+                _metrics.GoogleApiCalls.WithLabels(postcode, "error").Inc();
                 return null;
             }
 
@@ -33,8 +32,11 @@ namespace GetIntoTeachingApi.Adapters
 
             if (result == null)
             {
+                _metrics.GoogleApiCalls.WithLabels(postcode, "fail").Inc();
                 return null;
             }
+
+            _metrics.GoogleApiCalls.WithLabels(postcode, "success").Inc();
 
             var location = result.Geometry.Location;
             return new Point(new Coordinate(location.Longitude, location.Latitude));
