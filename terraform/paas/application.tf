@@ -9,6 +9,15 @@ resource "cloudfoundry_app" "api_application" {
     strategy = var.strategy
     health_check_http_endpoint = "/api/operations/health_check"
     health_check_type = "http"
+
+    routes {
+        route = cloudfoundry_route.api_route_cloud.id
+    }
+
+    routes {
+        route = cloudfoundry_route.api_route_internal.id
+    }
+
     service_binding  { 
             service_instance = cloudfoundry_service_instance.hangfire.id
     } 
