@@ -59,6 +59,8 @@ jobs:
              TF_VAR_paas_exporter_password:  "${{ secrets.GOVUKPAAS_PASSWORD   }}"
              TF_VAR_elasticsearch_user:      "${{ secrets.LOGIT_USERID     }}"
              TF_VAR_elasticsearch_password:  "${{ secrets.LOGIT_PASSWORD   }}"
+             TF_VAR_google_client_id:        "${{ secerts.GOOGLE_CLIENT_ID }}"
+             TF_VAR_google_client_secret:    "${{ secrets.GOOGLE_CLIENT_SECRET }}"
    
        - name: Terraform Apply
          run: |
