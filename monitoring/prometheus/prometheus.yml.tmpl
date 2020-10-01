@@ -21,11 +21,11 @@ scrape_configs:
 - job_name: Application
   dns_sd_configs:
     - names: 
-       - get-into-teaching-app-dev-internal.apps.internal
-       - get-into-teaching-api-dev-internal.apps.internal
-       - get-teacher-training-adviser-service-dev-internal.apps.internal
+       - ${git_app}
+       - ${git_api}
+       - ${git_tta}
       type: 'A'
-      port: 8080
+      port: ${port}
 
 alerting:
   alertmanagers:

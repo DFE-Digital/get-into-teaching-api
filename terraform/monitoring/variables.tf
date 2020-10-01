@@ -24,9 +24,13 @@ variable "domain" {
   default = "london.cloudapps.digital"
 }
 
-variable "api_application_name" {}
-variable "app_application_name" {}
+variable "port" {
+  default = "8080"
+}
+
 variable "tta_application_name" {}
+variable "app_application_name" {}
+variable "api_application_name" {}
 
 variable "paas_exporter_username" {}
 variable "paas_exporter_password" {}
