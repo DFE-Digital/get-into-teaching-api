@@ -6,10 +6,6 @@ scrape_configs:
   scheme: https
   static_configs:
     - targets: [${paas_prometheus_exporter_endpoint}]
-- job_name: ${api} 
-  scheme: https
-  static_configs:
-    - targets: [${api}]
 - job_name: ${redis} 
   scheme: https
   static_configs:
@@ -22,8 +18,14 @@ scrape_configs:
   scheme: https
   static_configs:
     - targets: [${postgres-2}]
-
-
+- job_name: Application
+  dns_sd_configs:
+    - names: 
+       - ${git_app}
+       - ${git_api}
+       - ${git_tta}
+      type: 'A'
+      port: ${port}
 
 alerting:
   alertmanagers:
