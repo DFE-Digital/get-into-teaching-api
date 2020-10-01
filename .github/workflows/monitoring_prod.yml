@@ -1,5 +1,5 @@
 ---  
-name: Release Monitoring ( Development )
+name: Release Monitoring ( Production )
 on: 
   workflow_dispatch:
 
@@ -24,18 +24,18 @@ jobs:
        - name: Terraform Init
          run: |
              cd terraform/monitoring && pwd
-             terraform init -backend-config=dev.bk.vars
+             terraform init -backend-config=prod.bk.vars
          env:
-             ARM_ACCESS_KEY:           "${{ secrets.DEV_ARM_ACCESS_KEY  }}"
+             ARM_ACCESS_KEY:           "${{ secrets.PROD_ARM_ACCESS_KEY  }}"
              TF_VAR_user:              "${{ secrets.GOVUKPAAS_USERNAME   }}"
              TF_VAR_password:          "${{ secrets.GOVUKPAAS_PASSWORD   }}"
    
        - name: Terraform Plan
          run: |
              cd terraform/monitoring && pwd
-             terraform plan -var-file=dev.env.tfvars -out plan
+             terraform plan -var-file=prod.env.tfvars -out plan
          env:
-             ARM_ACCESS_KEY:           "${{ secrets.DEV_ARM_ACCESS_KEY  }}"
+             ARM_ACCESS_KEY:           "${{ secrets.PROD_ARM_ACCESS_KEY  }}"
              TF_VAR_user:              "${{ secrets.GOVUKPAAS_USERNAME   }}"
              TF_VAR_password:          "${{ secrets.GOVUKPAAS_PASSWORD   }}"
    
@@ -44,7 +44,7 @@ jobs:
              cd terraform/monitoring && pwd
              terraform apply -auto-approve plan
          env:
-             ARM_ACCESS_KEY:           "${{ secrets.DEV_ARM_ACCESS_KEY  }}"
+             ARM_ACCESS_KEY:           "${{ secrets.PROD_ARM_ACCESS_KEY  }}"
 
        - name: Slack Notification
          if: failure()
@@ -53,7 +53,7 @@ jobs:
            SLACK_CHANNEL: getintoteaching_tech
            SLACK_COLOR: '#3278BD'
            SLACK_ICON: https://github.com/rtCamp.png?size=48
-           SLACK_MESSAGE: 'Release Monitoring (Development) FAILED carrying out  ${{github.job}}'
+           SLACK_MESSAGE: 'Release Monitoring (Production) FAILED carrying out  ${{github.job}}'
            SLACK_TITLE: 'Failure: ${{ github.workflow }}'
            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
                
