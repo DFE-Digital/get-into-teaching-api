@@ -50,6 +50,8 @@ namespace GetIntoTeachingApi.Models
         public string Description { get; set; }
         [EntityField("dfe_videolink")]
         public string VideoUrl { get; set; }
+        [EntityField("dfe_scribbleurl")]
+        public string ScribbleId { get; set; }
         [EntityField("dfe_providerwebsite")]
         public string ProviderWebsiteUrl { get; set; }
         [EntityField("dfe_providertargetaudience_ml")]

@@ -33,6 +33,7 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("Description").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "msevtmgt_description");
             type.GetProperty("Summary").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_eventsummary_ml");
             type.GetProperty("VideoUrl").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_videolink");
+            type.GetProperty("ScribbleId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_scribbleurl");
             type.GetProperty("ProviderWebsiteUrl").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_providerwebsite");
             type.GetProperty("ProviderTargetAudience").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_providertargetaudience_ml");
             type.GetProperty("ProviderOrganiser").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_providerorganiser");
