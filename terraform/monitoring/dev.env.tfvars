@@ -1,5 +1,7 @@
-paas_space           = "get-into-teaching"
+delivery_space       = "get-into-teaching"
+application_space    = "get-into-teaching"
 api_application_name = "get-into-teaching-api-dev"
 app_application_name = "get-into-teaching-app-dev"
 tta_application_name = "get-teacher-training-adviser-service-dev"
+var.grafana_password = "a_password"
 environment          = "dev"
