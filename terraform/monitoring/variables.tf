@@ -38,7 +38,7 @@ variable "api_application_name" {}
 
 variable "paas_exporter_username" {}
 variable "paas_exporter_password" {}
-
+variable "grafana_password" {}
 
 variable "prometheus" {
   type = map
@@ -55,7 +55,6 @@ variable "grafana" {
   type = map
   default = {
     "name"                 = "get-into-teaching"
-    "password"             = "a_password"
     "dashboard_directory"  = "../../monitoring/grafana/dashboards"
     "datasource_directory" = "../../monitoring/grafana/datasources"
     "configuration_file"   = "../../monitoring/grafana/grafana.ini"
