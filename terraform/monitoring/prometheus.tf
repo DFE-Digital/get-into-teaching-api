@@ -2,9 +2,6 @@ locals {
   alert_rules = file("${path.module}/${var.prometheus["alert_rules"]}")
   template_variable_map = {
     api        = local.api_endpoint
-    redis      = module.redis.endpoint
-    postgres-1 = module.postgres-1.endpoint
-    postgres-2 = module.postgres-2.endpoint
     git_app    = "${data.cloudfoundry_route.app_internal.hostname}.${data.cloudfoundry_domain.internal.name}"
     git_api    = "${data.cloudfoundry_route.api_internal.hostname}.${data.cloudfoundry_domain.internal.name}"
     git_tta    = "${data.cloudfoundry_route.tta_internal.hostname}.${data.cloudfoundry_domain.internal.name}"

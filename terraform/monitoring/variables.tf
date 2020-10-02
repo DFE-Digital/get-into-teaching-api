@@ -12,7 +12,11 @@ variable "environment" {
   default = "sb"
 }
 
-variable "paas_space" {
+variable "delivery_space"  {
+  default = "sandbox"
+}
+
+variable "application_space" {
   default = "sandbox"
 }
 
@@ -34,7 +38,7 @@ variable "api_application_name" {}
 
 variable "paas_exporter_username" {}
 variable "paas_exporter_password" {}
-
+variable "grafana_password" {}
 
 variable "prometheus" {
   type = map
@@ -51,7 +55,6 @@ variable "grafana" {
   type = map
   default = {
     "name"                 = "get-into-teaching"
-    "password"             = "a_password"
     "dashboard_directory"  = "../../monitoring/grafana/dashboards"
     "datasource_directory" = "../../monitoring/grafana/datasources"
     "configuration_file"   = "../../monitoring/grafana/grafana.ini"
@@ -63,33 +66,6 @@ variable "alertmanager" {
   default = {
     "name"   = "get-into-teaching"
     "config" = "../../monitoring/alertmanager/alertmanager.yml"
-  }
-}
-
-variable "redis" {
-  type = map
-  default = {
-    "name"    = "get-into-teaching"
-    "space"   = "get-into-teaching"
-    "service" = "get-into-teaching-dev-redis-svc"
-  }
-}
-
-variable "postgres1" {
-  type = map
-  default = {
-    "name"    = "get-into-teaching-1"
-    "space"   = "get-into-teaching"
-    "service" = "get-into-teaching-api-dev-ms1-svc"
-  }
-}
-
-variable "postgres2" {
-  type = map
-  default = {
-    "name"    = "get-into-teaching-2"
-    "space"   = "get-into-teaching"
-    "service" = "get-into-teaching-api-dev-pg2-svc"
   }
 }
 
