@@ -17,7 +17,7 @@ module "grafana" {
 
   space_id                = data.cloudfoundry_space.space.id
   name                    = "${var.environment}-${var.grafana["name"]}"
-  admin_password          = var.grafana["password"]
+  admin_password          = var.grafana_password
   dashboard_directory     = local.dashboard_directory
   datasource_directory    = local.datasource_directory
   configuration_file      = local.configuration_file
