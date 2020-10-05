@@ -89,7 +89,7 @@ variable "PEN_TEST_SHARED_SECRET" {
 }
 variable "NOTIFY_API_KEY" {}
 variable "TOTP_SECRET_KEY" {}
-variable "Sentry__Dsn" {
+variable "SENTRY_DSN" {
   default = ""
 }
 variable "GOOGLE_API_KEY" {
