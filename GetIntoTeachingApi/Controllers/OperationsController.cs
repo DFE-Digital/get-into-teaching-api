@@ -74,5 +74,19 @@ namespace GetIntoTeachingApi.Controllers
 
             return Ok(response);
         }
+
+        [HttpGet]
+        [Route("simulate_error")]
+        [SwaggerOperation(
+            Summary = "Simulates a 500 error to test the Sentry integration.",
+            OperationId = "SimulateError",
+            Tags = new[] { "Operations" })]
+        [ProducesResponseType(typeof(HealthCheckResponse), 200)]
+        public void SimulateError()
+        {
+            System.Text.StringBuilder builder = null;
+
+            builder.Append("throw error");
+        }
     }
 }

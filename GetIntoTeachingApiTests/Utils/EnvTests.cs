@@ -109,17 +109,6 @@ namespace GetIntoTeachingApiTests.Utils
         }
 
         [Fact]
-        public void SentryUrl_ReturnsCorrectly()
-        {
-            var previous = Environment.GetEnvironmentVariable("SENTRY_URL");
-            Environment.SetEnvironmentVariable("SENTRY_URL", "sentry-url");
-
-            _env.SentryUrl.Should().Be("sentry-url");
-
-            Environment.SetEnvironmentVariable("SENTRY_URL", previous);
-        }
-
-        [Fact]
         public void TotpSecretKey_ReturnsCorrectly()
         {
             var previous = Environment.GetEnvironmentVariable("TOTP_SECRET_KEY");
