@@ -26,7 +26,7 @@ jobs:
 
        - name: Check Tag is a Release
          run: |
-               rval=$(curl -s -X GET https://api.github.com/repos/DFE-Digital/get-into-teaching-content/releases/tags/${{ github.event.inputs.tags }} | jq -r ".message")
+               rval=$(curl -s -X GET https://api.github.com/repos/DFE-Digital/get-into-teaching-api/releases/tags/${{ github.event.inputs.tags }} | jq -r ".message")
                if [ "${rval}" = "Not Found" ]
                then
                    echo "Tag ${{ github.event.inputs.tags }} cannot be found in releases"
