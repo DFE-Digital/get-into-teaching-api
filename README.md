@@ -49,7 +49,7 @@ DATABASE_INSTANCE_NAME=****
 HANGFIRE_INSTANCE_NAME=****
 
 # Sentry
-SENTRY_URL=****
+Sentry__Dsn=****
 
 # Google
 GOOGLE_API_KEY=****
