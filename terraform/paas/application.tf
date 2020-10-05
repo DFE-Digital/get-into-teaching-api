@@ -39,7 +39,7 @@ resource "cloudfoundry_app" "api_application" {
          TOTP_SECRET_KEY        = var.TOTP_SECRET_KEY
          SHARED_SECRET          = var.SHARED_SECRET
          PEN_TEST_SHARED_SECRET = var.PEN_TEST_SHARED_SECRET
-         SENTRY_URL             = var.SENTRY_URL
+         Sentry__Dsn            = var.SENTRY_DSN
          GOOGLE_API_KEY         = var.GOOGLE_API_KEY
          ASPNETCORE_ENVIRONMENT = var.ASPNETCORE_ENVIRONMENT
          DATABASE_INSTANCE_NAME = cloudfoundry_service_instance.postgres2.name
