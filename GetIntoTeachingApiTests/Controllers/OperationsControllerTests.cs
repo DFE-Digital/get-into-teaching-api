@@ -9,6 +9,7 @@ using GetIntoTeachingApi.Utils;
 using Moq;
 using Xunit;
 using GetIntoTeachingApi.Attributes;
+using System;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -48,6 +49,12 @@ namespace GetIntoTeachingApiTests.Controllers
             mappings.Any(m => m.LogicalName == "contact" &&
                               m.Class == "GetIntoTeachingApi.Models.Candidate"
             ).Should().BeTrue();
+        }
+
+        [Fact]
+        public void SimulateError_ThrowsNullReferenceException()
+        {
+            _controller.Invoking(c => c.SimulateError()).Should().Throw<NullReferenceException>();
         }
 
         [Theory]
