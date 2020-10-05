@@ -32,7 +32,7 @@ jobs:
    
        - name: Get Short SHA
          id: sha
-         run: echo ::set-output name=short::$(git rev-parse --short $GITHUB_SHA)
+         run: echo ::set-output name=short::$(git rev-parse --short HEAD )
    
        - name: Install Terraform CloudFoundry Provider
          run: |
