@@ -13,6 +13,7 @@ using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -71,6 +72,13 @@ namespace GetIntoTeachingApi
             services.AddControllers().AddFluentValidation(c =>
             {
                 c.RegisterValidatorsFromAssemblyContaining<Startup>();
+            });
+
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                // Workaround for https://github.com/dotnet/aspnetcore/issues/8302
+                // caused by Prometheus.HttpMetrics.HttpRequestDurationMiddleware
+                options.AllowSynchronousIO = true;
             });
 
             services.AddSwaggerGen(c =>
