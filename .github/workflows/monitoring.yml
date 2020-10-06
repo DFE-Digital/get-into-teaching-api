@@ -2,6 +2,10 @@
 name: Release Monitoring ( Development )
 on: 
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Build and Deploy"]
+    types:
+      - completed
 
 env:
   CF_PROVIDER_DIR: $HOME/.terraform.d/plugins/linux_amd64/terraform-provider-cloudfoundry

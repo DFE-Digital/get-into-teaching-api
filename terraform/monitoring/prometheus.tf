@@ -5,7 +5,6 @@ locals {
     git_app    = "${data.cloudfoundry_route.app_internal.hostname}.${data.cloudfoundry_domain.internal.name}"
     git_api    = "${data.cloudfoundry_route.api_internal.hostname}.${data.cloudfoundry_domain.internal.name}"
     git_tta    = "${data.cloudfoundry_route.tta_internal.hostname}.${data.cloudfoundry_domain.internal.name}"
-    port       = var.port
   }
 }
 

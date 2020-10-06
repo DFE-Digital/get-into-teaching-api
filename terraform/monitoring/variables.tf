@@ -28,9 +28,6 @@ variable "domain" {
   default = "london.cloudapps.digital"
 }
 
-variable "port" {
-  default = "8080"
-}
 
 variable "tta_application_name" {}
 variable "app_application_name" {}
