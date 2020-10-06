@@ -10,10 +10,20 @@ scrape_configs:
   dns_sd_configs:
     - names: 
        - ${git_app}
-       - ${git_api}
+      type: 'A'
+      port: 3000
+- job_name: TTA
+  dns_sd_configs:
+    - names: 
        - ${git_tta}
       type: 'A'
-      port: ${port}
+      port: 3000
+- job_name: API
+  dns_sd_configs:
+    - names: 
+       - ${git_api}
+      type: 'A'
+      port: 8080
 
 alerting:
   alertmanagers:
