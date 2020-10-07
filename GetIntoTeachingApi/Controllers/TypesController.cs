@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
@@ -33,7 +34,9 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetCountries()
         {
-            return Ok(await _store.GetLookupItems("dfe_country").ToListAsync());
+            var countries = await _store.GetLookupItems("dfe_country").ToListAsync();
+
+            return Ok(countries.OrderBy(c => c.Value));
         }
 
         [HttpGet]
@@ -46,7 +49,9 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<TypeEntity>), 200)]
         public async Task<IActionResult> GetTeachingSubjects()
         {
-            return Ok(await _store.GetLookupItems("dfe_teachingsubjectlist").ToListAsync());
+            var subjects = await _store.GetLookupItems("dfe_teachingsubjectlist").ToListAsync();
+
+            return Ok(subjects.OrderBy(c => c.Value));
         }
 
         [HttpGet]
