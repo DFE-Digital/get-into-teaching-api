@@ -1,4 +1,5 @@
-﻿using GetIntoTeachingApi.Utils;
+﻿using System;
+using GetIntoTeachingApi.Utils;
 using Microsoft.PowerPlatform.Cds.Client;
 
 namespace GetIntoTeachingApi.Adapters
@@ -10,6 +11,7 @@ namespace GetIntoTeachingApi.Adapters
         public CdsServiceClientWrapper(IEnv env)
         {
             CdsServiceClient = new CdsServiceClient(ConnectionString(env));
+            CdsServiceClient.MaxConnectionTimeout = TimeSpan.FromSeconds(30);
         }
 
         private static string ConnectionString(IEnv env)
