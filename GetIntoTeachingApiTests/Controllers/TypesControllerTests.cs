@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 using MoreLinq;
 using Xunit;
 using GetIntoTeachingApi.Attributes;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -48,7 +50,7 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void GetCountries_ReturnsAllCountries()
+        public async void GetCountries_ReturnsAllCountriesSortedByCountryName()
         {
             var mockEntities = MockTypeEntities();
             _mockStore.Setup(mock => mock.GetLookupItems("dfe_country")).Returns(mockEntities.AsAsyncQueryable());
@@ -56,11 +58,12 @@ namespace GetIntoTeachingApiTests.Controllers
             var response = await _controller.GetCountries();
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
-            ok.Value.Should().BeEquivalentTo(mockEntities);
+            var countries = (IEnumerable<TypeEntity>)ok.Value;
+            countries.Select(c => c.Value).Should().BeEquivalentTo(new[] { "Type 1", "Type 2", "Type 3" });
         }
 
         [Fact]
-        public async void GetTeachingSubjects_ReturnsAllSubjects()
+        public async void GetTeachingSubjects_ReturnsAllSubjectsSortedBySubjectName()
         {
             var mockEntities = MockTypeEntities();
             _mockStore.Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist")).Returns(mockEntities.AsAsyncQueryable());
@@ -68,7 +71,8 @@ namespace GetIntoTeachingApiTests.Controllers
             var response = await _controller.GetTeachingSubjects();
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
-            ok.Value.Should().BeEquivalentTo(mockEntities);
+            var subjects = (IEnumerable<TypeEntity>)ok.Value;
+            subjects.Select(c => c.Value).Should().BeEquivalentTo(new[] { "Type 1", "Type 2", "Type 3" });
         }
 
         [Fact]
@@ -330,8 +334,9 @@ namespace GetIntoTeachingApiTests.Controllers
         {
             return new[]
             {
-                new TypeEntity {Id = Guid.NewGuid().ToString(), Value = "Type 1"},
                 new TypeEntity {Id = Guid.NewGuid().ToString(), Value = "Type 2"},
+                new TypeEntity {Id = Guid.NewGuid().ToString(), Value = "Type 3"},
+                new TypeEntity {Id = Guid.NewGuid().ToString(), Value = "Type 1"},
             };
         }
     }
