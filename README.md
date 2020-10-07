@@ -27,7 +27,7 @@ When the application runs in development it will open the Swagger documentation 
 
 ### Environment
 
-If you want to run the API locally end-to-end you will need to set some environment variables:
+If you want to run the API locally end-to-end you will need to set some environment variables (you can specify these in `GetIntoTeachingApi/Properties/launchSettings.json` under `environmentVariables`):
 
 ```
 # Secret shared between the API and client.
