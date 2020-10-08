@@ -7,8 +7,6 @@ resource "cloudfoundry_app" "api_application" {
     memory = var.application_memory
     disk_quota = var.application_disk
     strategy = var.strategy
-    health_check_http_endpoint = "/api/operations/health_check"
-    health_check_type = "http"
 
     routes {
         route = cloudfoundry_route.api_route_cloud.id
