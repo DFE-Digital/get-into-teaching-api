@@ -1,6 +1,6 @@
 resource statuscake_test alert {
-  for_each =  var.alerts
-    
+  for_each = var.alerts
+
   website_name  = each.value.website_name
   website_url   = each.value.website_url
   test_type     = each.value.test_type
@@ -9,6 +9,6 @@ resource statuscake_test alert {
   trigger_rate  = each.value.trigger_rate
   custom_header = each.value.custom_header
   status_codes  = each.value.status_codes
-  test_tags     = [ "GIT" , "BETA" ]
+  test_tags     = ["GIT", "BETA"]
   timeout       = each.value.timeout
 }
