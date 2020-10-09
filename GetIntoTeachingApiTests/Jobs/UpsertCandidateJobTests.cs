@@ -28,7 +28,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockCrm = new Mock<ICrmService>();
             _mockNotifyService = new Mock<INotifyService>();
             _mockLogger = new Mock<ILogger<UpsertCandidateJob>>();
-            _candidate = new Candidate() { Email = "test@test.com" };
+            _candidate = new Candidate() { Id = Guid.NewGuid(), Email = "test@test.com" };
             _job = new UpsertCandidateJob(new Env(), _mockCrm.Object, _mockNotifyService.Object,
                 _mockContext.Object, _mockLogger.Object);
         }
@@ -42,7 +42,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockCrm.Verify(mock => mock.Save(_candidate), Times.Once);
             _mockLogger.VerifyInformationWasCalled("UpsertCandidateJob - Started (1/24)");
-            _mockLogger.VerifyInformationWasCalled("UpsertCandidateJob - Succeeded");
+            _mockLogger.VerifyInformationWasCalled($"UpsertCandidateJob - Succeeded - {_candidate.Id}");
         }
 
         [Fact]

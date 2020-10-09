@@ -54,7 +54,7 @@ namespace GetIntoTeachingApi.Jobs
                 SavePhoneCall(phoneCall, candidate);
                 IncrementCallbackBookingQuotaNumberOfBookings(phoneCall);
 
-                _logger.LogInformation("UpsertCandidateJob - Succeeded");
+                _logger.LogInformation($"UpsertCandidateJob - Succeeded - {candidate.Id}");
             }
         }
 
