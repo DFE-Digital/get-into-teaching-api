@@ -117,7 +117,7 @@ namespace GetIntoTeachingApi.Models
         private void ConfigureConsent(Candidate candidate)
         {
             candidate.OptOutOfSms = false;
-            candidate.DoNotBulkEmail = !SubscribeToEvents && !SubscribeToMailingList;
+            candidate.DoNotBulkEmail = false;
             candidate.DoNotBulkPostalMail = !SubscribeToMailingList;
             candidate.DoNotEmail = false;
             candidate.DoNotPostalMail = !SubscribeToMailingList;
