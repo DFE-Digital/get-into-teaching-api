@@ -259,6 +259,25 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
+        public void ToEntity_WhenChangingEventSubscriptionFromSingleToLocal_RetainsLocalSubscription()
+        {
+            var mockService = new Mock<IOrganizationServiceAdapter>();
+            var context = mockService.Object.Context();
+            var mockCrm = new Mock<ICrmService>();
+            var candidate = new Candidate() { Id = Guid.NewGuid(), EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.SingleEvent };
+            var candidateEntity = new Entity("contact");
+            mockCrm.Setup(m => m.MappableEntity("contact", candidate.Id, context)).Returns(candidateEntity);
+            mockCrm.Setup(m => m.CandidateAlreadyHasLocalEventSubscriptionType((Guid)candidate.Id)).Returns(true);
+
+            candidate.ToEntity(mockCrm.Object, context);
+
+            candidateEntity.GetAttributeValue<bool>("dfe_newregistrant").Should().BeFalse();
+
+            candidateEntity.GetAttributeValue<OptionSetValue>("dfe_gitiseventsservicesubscriptiontype")
+                .Value.Should().Be((int)Candidate.SubscriptionType.LocalEvent);
+        }
+
+        [Fact]
         public void ToEntity_WithNullId_SetsIsNewRegistrantToTrue()
         {
             var mockService = new Mock<IOrganizationServiceAdapter>();

@@ -100,6 +100,11 @@ namespace GetIntoTeachingApi.Services
             return entity == null ? null : new Candidate(entity, this);
         }
 
+        public bool CandidateAlreadyHasLocalEventSubscriptionType(Guid candidateId)
+        {
+            return GetCandidate(candidateId).EventsSubscriptionTypeId == (int)Candidate.SubscriptionType.LocalEvent;
+        }
+
         public bool CandidateYetToAcceptPrivacyPolicy(Guid candidateId, Guid privacyPolicyId)
         {
             return _service.CreateQuery("dfe_candidateprivacypolicy", Context()).FirstOrDefault(entity =>
