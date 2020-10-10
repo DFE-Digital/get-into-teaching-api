@@ -274,6 +274,15 @@ namespace GetIntoTeachingApi.Models
                 StatusIsWaitingToBeAssignedAt = DateTime.UtcNow;
             }
 
+            var changingEventSubscriptionType = !IsNewRegistrant && EventsSubscriptionTypeId != null;
+
+            if (changingEventSubscriptionType && crm.CandidateAlreadyHasLocalEventSubscriptionType((Guid)Id))
+            {
+                // Never down-grade to a 'single event' subscription type from
+                // a 'local event' subscription type.
+                EventsSubscriptionTypeId = (int)SubscriptionType.LocalEvent;
+            }
+
             return base.ShouldMap(crm);
         }
 
