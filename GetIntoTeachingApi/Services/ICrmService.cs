@@ -17,6 +17,7 @@ namespace GetIntoTeachingApi.Services
         IEnumerable<TeachingEvent> GetTeachingEvents();
         IEnumerable<CallbackBookingQuota> GetCallbackBookingQuotas();
         CallbackBookingQuota GetCallbackBookingQuota(DateTime scheduledAt);
+        bool CandidateAlreadyHasLocalEventSubscriptionType(Guid candidateId);
         bool CandidateYetToAcceptPrivacyPolicy(Guid candidateId, Guid privacyPolicyId);
         bool CandidateYetToRegisterForTeachingEvent(Guid candidateId, Guid teachingEventId);
         void Save(BaseModel model);

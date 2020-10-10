@@ -156,24 +156,6 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void Candidate_SubscribeToMailingListIsFalseAndDoesNotProvideAddressPostCode_CorrectSubscription()
-        {
-            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, AddressPostcode = null };
-
-            var candidate = request.Candidate;
-
-            candidate.HasEventsSubscription.Should().BeTrue();
-            candidate.EventsSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Events);
-            candidate.EventsSubscriptionStartAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
-            candidate.EventsSubscriptionDoNotBulkEmail.Should().BeTrue();
-            candidate.EventsSubscriptionDoNotBulkPostalMail.Should().BeTrue();
-            candidate.EventsSubscriptionDoNotPostalMail.Should().BeTrue();
-            candidate.EventsSubscriptionDoNotSendMm.Should().BeTrue();
-            candidate.EventsSubscriptionDoNotEmail.Should().BeFalse();
-            candidate.EventsSubscriptionTypeId.Should().Be((int)Candidate.SubscriptionType.SingleEvent);
-        }
-
-        [Fact]
         public void Candidate_SubscribeToMailingListIsTrueAndDoesNotProvideAddressPostCode_CorrectSubscription()
         {
             var request = new TeachingEventAddAttendee() { SubscribeToMailingList = true, AddressPostcode = null };
@@ -192,10 +174,10 @@ namespace GetIntoTeachingApiTests.Models
             candidate.HasEventsSubscription.Should().BeTrue();
             candidate.EventsSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Events);
             candidate.EventsSubscriptionStartAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
-            candidate.EventsSubscriptionDoNotBulkEmail.Should().BeTrue();
+            candidate.EventsSubscriptionDoNotBulkEmail.Should().BeFalse();
             candidate.EventsSubscriptionDoNotBulkPostalMail.Should().BeTrue();
             candidate.EventsSubscriptionDoNotPostalMail.Should().BeTrue();
-            candidate.EventsSubscriptionDoNotSendMm.Should().BeTrue();
+            candidate.EventsSubscriptionDoNotSendMm.Should().BeFalse();
             candidate.EventsSubscriptionDoNotEmail.Should().BeFalse();
             candidate.EventsSubscriptionTypeId.Should().Be((int)Candidate.SubscriptionType.SingleEvent);
         }

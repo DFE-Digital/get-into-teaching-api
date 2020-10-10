@@ -18,6 +18,7 @@ namespace GetIntoTeachingApiTests.Services
     public class CrmServiceTests
     {
         private static readonly Guid JaneDoeGuid = new Guid("bf927e43-5650-44aa-859a-8297139b8ddd");
+        private static readonly Guid JohnDoeGuid = new Guid("cf927e43-5650-44aa-859a-8297139b8eee");
         private readonly Mock<IOrganizationServiceAdapter> _mockService;
         private readonly OrganizationServiceContext _context;
         private readonly ICrmService _crm;
@@ -151,6 +152,28 @@ namespace GetIntoTeachingApiTests.Services
             result.Select(policy => policy.Text).Should().BeEquivalentTo(
                 new object[] { "Latest Active Web", "Not Latest 1", "Not Latest 2" },
                 options => options.WithStrictOrdering());
+        }
+
+        [Fact]
+        public void CandidateAlreadyHasLocalEventSubscriptionType_WhenHasLocalEventSubscription_ReturnsTrue()
+        {
+            _mockService.Setup(m => m.CreateQuery("contact", _context))
+                .Returns(MockCandidates);
+
+            var result = _crm.CandidateAlreadyHasLocalEventSubscriptionType(JaneDoeGuid);
+
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void CandidateAlreadyHasLocalEventSubscriptionType_WhenHasSingleEventSubscription_ReturnsFalse()
+        {
+            _mockService.Setup(m => m.CreateQuery("contact", _context))
+                .Returns(MockCandidates);
+
+            var result = _crm.CandidateAlreadyHasLocalEventSubscriptionType(JohnDoeGuid);
+
+            result.Should().BeFalse();
         }
 
         [Fact]
@@ -417,14 +440,20 @@ namespace GetIntoTeachingApiTests.Services
             candidate1["lastname"] = "Doe";
             candidate1["modifiedon"] = DateTime.UtcNow;
             candidate1["dfe_duplicatescorecalculated"] = 10.0;
+            candidate1["dfe_gitiseventsservicesubscriptiontype"] = new OptionSetValue((int)Candidate.SubscriptionType.LocalEvent);
 
-            var candidate2 = new Entity("contact");
+            var candidate2 = new Entity("contact")
+            {
+                Id = JohnDoeGuid
+            };
+            candidate2["contactid"] = new EntityReference("contactid", JohnDoeGuid);
             candidate2["statecode"] = Candidate.Status.Active;
             candidate2["emailaddress1"] = "john@doe.com";
             candidate2["firstname"] = "New John";
             candidate2["lastname"] = "Doe";
             candidate2["modifiedon"] = DateTime.UtcNow;
             candidate2["dfe_duplicatescorecalculated"] = 9.5;
+            candidate2["dfe_gitiseventsservicesubscriptiontype"] = new OptionSetValue((int)Candidate.SubscriptionType.SingleEvent);
 
             var candidate3 = new Entity("contact");
             candidate3["statecode"] = Candidate.Status.Active;
