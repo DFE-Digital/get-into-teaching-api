@@ -196,7 +196,6 @@ namespace GetIntoTeachingApiTests.Models
         {
             var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, AddressPostcode = null };
 
-            request.Candidate.DoNotBulkEmail.Should().BeTrue();
             request.Candidate.DoNotSendMm.Should().BeTrue();
         }
 
