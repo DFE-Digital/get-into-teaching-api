@@ -130,10 +130,10 @@ namespace GetIntoTeachingApi.Models
             candidate.EventsSubscriptionChannelId = (int)Candidate.SubscriptionChannel.Events;
             candidate.EventsSubscriptionStartAt = DateTime.UtcNow;
             candidate.EventsSubscriptionDoNotEmail = false;
-            candidate.EventsSubscriptionDoNotBulkEmail = !SubscribeToEvents;
+            candidate.EventsSubscriptionDoNotBulkEmail = false;
             candidate.EventsSubscriptionDoNotBulkPostalMail = true;
             candidate.EventsSubscriptionDoNotPostalMail = true;
-            candidate.EventsSubscriptionDoNotSendMm = !SubscribeToEvents;
+            candidate.EventsSubscriptionDoNotSendMm = false;
 
             if (string.IsNullOrWhiteSpace(AddressPostcode))
             {
