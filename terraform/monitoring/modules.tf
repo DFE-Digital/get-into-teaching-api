@@ -3,6 +3,7 @@ locals {
   datasource_directory = "${path.module}/${var.grafana["datasource_directory"]}"
   configuration_file   = "${path.module}/${var.grafana["configuration_file"]}"
   alert_rules          = file("${path.module}/${var.prometheus["alert_rules"]}")
+  monitoring_org_name  = "${var.environment}-${var.prometheus["name"]}"
   template_variable_map = {
     api                  = local.api_endpoint
     git_app              = "${data.cloudfoundry_route.app_internal.hostname}.${data.cloudfoundry_domain.internal.name}"
@@ -22,7 +23,7 @@ module "prometheus" {
   source                            = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/prometheus?ref=monitoring-terraform-0_13"
   paas_prometheus_exporter_endpoint = module.paas_prometheus_exporter.endpoint
   monitoring_space_id               = data.cloudfoundry_space.space.id
-  monitoring_org_name               = "${var.environment}-${var.prometheus["name"]}"
+  monitoring_org_name               = local.monitoring_org_name
   alertmanager_endpoint             = ""
   additional_variable_map           = local.template_variable_map
   config_file                       = var.prometheus["config_file"]
@@ -33,13 +34,13 @@ module "prometheus" {
 module "influx" {
   source              = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/influxdb?ref=monitoring-terraform-0_13"
   monitoring_space_id = data.cloudfoundry_space.space.id
-  monitoring_org_name = "${var.environment}-${var.prometheus["name"]}"
+  monitoring_org_name = local.monitoring_org_name
 }
 
 module "paas_prometheus_exporter" {
   source                   = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/paas_prometheus_exporter?ref=monitoring-terraform-0_13"
   monitoring_space_id      = data.cloudfoundry_space.space.id
-  monitoring_org_name      = "${var.environment}-${var.prometheus["name"]}"
+  monitoring_org_name      = local.monitoring_org_name
   environment_variable_map = local.template_variable_map
 }
 
