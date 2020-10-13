@@ -12,7 +12,7 @@ variable "environment" {
   default = "sb"
 }
 
-variable "delivery_space"  {
+variable "delivery_space" {
   default = "sandbox"
 }
 
@@ -66,7 +66,7 @@ variable "alertmanager" {
   }
 }
 
-variable "google_client_id" {}	
+variable "google_client_id" {}
 variable "google_client_secret" {}
 variable elasticsearch_user {}
 variable elasticsearch_password {}
