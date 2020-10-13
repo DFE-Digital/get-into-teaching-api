@@ -4,6 +4,6 @@ api_application_name = "get-into-teaching-api-prod"
 app_application_name = "get-into-teaching-app-prod"
 tta_application_name = "get-teacher-training-adviser-service-prod"
 
-environment          = "prod"
+environment = "prod"
 
 
