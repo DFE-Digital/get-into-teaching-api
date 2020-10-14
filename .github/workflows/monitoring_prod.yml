@@ -23,13 +23,7 @@ jobs:
    
        - uses: hashicorp/setup-terraform@v1
          with:
-           terraform_version: 0.12.29
-
-       - name: Install Terraform CloudFoundry Provider
-         run: |
-             mkdir -p $HOME/.terraform.d/plugins/linux_amd64
-             wget -O ${{ env.CF_PROVIDER_DIR }} ${{ env.CF_PROVIDER_URL }}
-             chmod +x ${{ env.CF_PROVIDER_DIR }}
+           terraform_version: 0.13.4
 
        - name: Wait for any previous runs to complete
          uses: softprops/turnstyle@v1
