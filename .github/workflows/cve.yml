@@ -23,12 +23,14 @@ jobs:
              dockerfile-path: "Dockerfile"
              image-reference:  localbuild/testimage:latest
              fail-build: true
+             severity-cutoff: high
+             acs-report-enable: true
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v1.0.0
+      - name: upload Anchore scan SARIF report
+        if: always()
+        uses: github/codeql-action/upload-sarif@v1
         with:
-          name: AnchoreReports
-          path: ./anchore-reports/
+          sarif_file: results.sarif
 
       - name: Slack Notification
         if: failure()
