@@ -29,7 +29,7 @@ jobs:
       - name: Get Short SHA
         id: vars
         run: |
-             echo ::set-output name=short::$(echo $GITHUB_SHA | cut -c -7)
+             echo ::set-output name=sha_short::$(echo $GITHUB_SHA | cut -c -7)
              if [ ${{github.ref}} == 'refs/heads/master' ]
              then
                  echo ::set-output push=true
@@ -62,12 +62,8 @@ jobs:
                  ${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.vars.outputs.sha_short }}
           build-args: GIT_COMMIT_SHA=${{ steps.vars.outputs.sha_short }}
 
-      - name: Set DOCKER_IMAGE environment variable
-        id:  docker_image
-        run: |-
-          echo ::set-output name=IMAGE::${{ env.APP_REPOSITORY }}:sha-$(echo "${{ github.sha }}" | cut -c -7)
 
-  deploy_qa:
+  deploy_dev:
     name: 'Deploy to Development'
     runs-on: ubuntu-latest
 
@@ -154,8 +150,8 @@ jobs:
            SLACK_CHANNEL: getintoteaching_tech
            SLACK_COLOR: '#3278BD'
            SLACK_ICON: https://github.com/rtCamp.png?size=48
-           SLACK_MESSAGE: ':disappointed_relieved: Pipeline Failure carrying out job ${{github.job}} :disappointed_relieved:'
-           SLACK_TITLE: 'Failure: ${{ github.workflow }}'
+           SLACK_MESSAGE: 'The pipeline has failed to deploy the API to the development environment'
+           SLACK_TITLE: 'Failure to Deploy API (DEV)'
            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
 
