@@ -32,9 +32,9 @@ jobs:
              echo ::set-output name=sha_short::$(echo $GITHUB_SHA | cut -c -7)
              if [ ${{github.ref}} == 'refs/heads/master' ]
              then
-                 echo ::set-output push=true
+             echo ::set-output name=push::true
              else
-                 echo ::set-output push=true
+             echo ::set-output name=push::true
              fi
 
       - name: Cache Docker layers
