@@ -34,7 +34,7 @@ jobs:
              then
                  echo ::set-output push=true
              else
-                 echo ::set-output push=false
+                 echo ::set-output push=true
              fi
 
       - name: Cache Docker layers
@@ -74,7 +74,7 @@ jobs:
       run:
         shell: bash
 
-    if: github.ref == 'refs/heads/master'
+#    if: github.ref == 'refs/heads/master'
 
     steps:
 
