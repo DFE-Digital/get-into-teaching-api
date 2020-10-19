@@ -216,6 +216,19 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
+        public void Candidate_EducationPhaseIsPrimary_SetsPreferredTeachingSubjectIdToPrimary()
+        {
+            var request = new TeacherTrainingAdviserSignUp()
+            {
+                PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Primary,
+            };
+
+            var candidate = request.Candidate;
+
+            candidate.PreferredTeachingSubjectId.Should().Be(TypeEntity.PrimaryTeachingSubjectId);
+        }
+
+        [Fact]
         public void Candidate_ReturningToTeaching_CorrectConsent()
         {
             var request = new TeacherTrainingAdviserSignUp()
