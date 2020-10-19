@@ -158,10 +158,21 @@ namespace GetIntoTeachingApi.Models
             AddPastTeachingPosition(candidate);
             SetAdviserEligibility(candidate);
             SetType(candidate);
+            DefaultPreferredTeachingSubjectId(candidate);
             ConfigureSubscription(candidate);
             ConfigureConsent(candidate);
 
             return candidate;
+        }
+
+        private void DefaultPreferredTeachingSubjectId(Candidate candidate)
+        {
+            if (candidate.PreferredEducationPhaseId != (int)Candidate.PreferredEducationPhase.Primary)
+            {
+                return;
+            }
+
+            candidate.PreferredTeachingSubjectId = TypeEntity.PrimaryTeachingSubjectId;
         }
 
         private void ConfigureGcseStatus(Candidate candidate)
