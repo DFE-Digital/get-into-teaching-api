@@ -5,6 +5,7 @@ using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Auth;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
+using GetIntoTeachingApi.ModelBinders;
 using GetIntoTeachingApi.OperationFilters;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
@@ -69,7 +70,11 @@ namespace GetIntoTeachingApi
             services.AddAuthentication("SharedSecretHandler")
                 .AddScheme<SharedSecretSchemeOptions, SharedSecretHandler>("SharedSecretHandler", op => { });
 
-            services.AddControllers().AddFluentValidation(c =>
+            services.AddControllers(o =>
+            {
+                o.ModelBinderProviders.Insert(0, new TrimStringModelBinderProvider());
+            })
+            .AddFluentValidation(c =>
             {
                 c.RegisterValidatorsFromAssemblyContaining<Startup>();
             });
