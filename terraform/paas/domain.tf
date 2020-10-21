@@ -1,7 +1,7 @@
 data "cloudfoundry_domain" "cloudapps" {
-    name = "london.cloudapps.digital"
+  name = "london.cloudapps.digital"
 }
 
 data "cloudfoundry_domain" "internal" {
-    name = "apps.internal"
+  name = "apps.internal"
 }

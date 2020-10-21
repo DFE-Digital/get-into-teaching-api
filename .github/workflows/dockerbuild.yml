@@ -9,8 +9,6 @@ on:
 
 env:
   DOCKERHUB_REPOSITORY:     dfedigital/get-into-teaching-api
-  CF_PROVIDER_DIR: $HOME/.terraform.d/plugins/linux_amd64/terraform-provider-cloudfoundry
-  CF_PROVIDER_URL: https://github.com/cloudfoundry-community/terraform-provider-cloudfoundry/releases/download/v0.12.3/terraform-provider-cloudfoundry_v0.12.3_linux_amd64
   
 jobs:
   build_docker:
@@ -83,7 +81,7 @@ jobs:
    
        - uses: hashicorp/setup-terraform@v1
          with:
-              terraform_version: 0.12.29
+              terraform_version: 0.13.4
 
        - name: Get Short SHA
          id: sha
@@ -96,12 +94,6 @@ jobs:
          with:
            continue-after-seconds: 180
            
-       - name: Install Terraform CloudFoundry Provider
-         run: |
-             mkdir -p $HOME/.terraform.d/plugins/linux_amd64
-             wget -O ${{ env.CF_PROVIDER_DIR }} ${{ env.CF_PROVIDER_URL}}
-             chmod +x ${{ env.CF_PROVIDER_DIR }}
-
        - name: Terraform Init
          run: |
              cd terraform/paas && pwd
