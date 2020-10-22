@@ -120,6 +120,7 @@ The GIT API aims to provide:
                 });
 
                 c.OperationFilter<AuthOperationFilter>();
+                c.OperationFilter<ClientIpOperationFilter>();
                 c.EnableAnnotations();
                 c.AddFluentValidationRules();
             });
