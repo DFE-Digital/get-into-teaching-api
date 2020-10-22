@@ -46,7 +46,7 @@ module "paas_prometheus_exporter" {
 
 
 module "grafana" {
-  source                  = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/grafana?ref=monitoring-terraform-0_13"
+  source                  = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/grafana?ref=grafana/version_parameter"
   monitoring_space_id     = data.cloudfoundry_space.space.id
   monitoring_org_name     = "${var.environment}-${var.grafana["name"]}"
   graphana_admin_password = var.grafana_password
@@ -55,6 +55,6 @@ module "grafana" {
   configuration_file      = local.configuration_file
   prometheus_endpoint     = module.prometheus.endpoint
   additional_variable_map = local.template_variable_map
-
+  runtime_version         = "7.2.2"
 }
 
