@@ -12,7 +12,7 @@ jobs:
 
       - uses: hashicorp/setup-terraform@v1
         with:
-           terraform_version: 0.12.29
+           terraform_version: 0.13.4
 
       - name: Get Short SHA
         id: sha
@@ -56,6 +56,6 @@ jobs:
            SLACK_CHANNEL: getintoteaching_tech
            SLACK_COLOR: '#3278BD'
            SLACK_ICON: https://github.com/rtCamp.png?size=48
-           SLACK_MESSAGE: ':disappointed_relieved: Get-Into-Teaching-API Pipeline Failed Configuring Status Cake ${{github.job}} :disappointed_relieved:'
-           SLACK_TITLE: 'Failure: ${{ github.workflow }}'
+           SLACK_MESSAGE: 'Failed Configuring Status Cake'
+           SLACK_TITLE: 'Failure to Deploy Statuscake'
            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
