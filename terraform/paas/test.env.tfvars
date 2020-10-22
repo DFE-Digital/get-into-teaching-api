@@ -8,3 +8,4 @@ paas_api_application_name  = "get-into-teaching-api-test"
 paas_api_route_name        = "get-into-teaching-api-test"
 paas_logging_endpoint_port = "syslog-tls://89d7be0f-ddcd-437e-ad3c-c8125d0bad00-ls.logit.io:18190"
 ASPNETCORE_ENVIRONMENT     = "Staging"
+application_instances      = 2
