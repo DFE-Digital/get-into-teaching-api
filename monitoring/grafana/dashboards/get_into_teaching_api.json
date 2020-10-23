@@ -15,7 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1601536905828,
+  "id": 6,
+  "iteration": 1603453250555,
   "links": [],
   "panels": [
     {
@@ -34,22 +35,40 @@
     },
     {
       "cacheTimeout": null,
-      "colorBackground": true,
-      "colorValue": false,
-      "colors": [
-        "#FF9830",
-        "#FF9830",
-        "#299c46"
-      ],
       "datasource": "Elasticseach",
-      "decimals": null,
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#FF9830",
+                "value": null
+              },
+              {
+                "color": "#FF9830",
+                "value": 0
+              },
+              {
+                "color": "#299c46",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 9,
@@ -60,41 +79,22 @@
       "id": 29,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "options": {},
-      "postfix": "",
-      "postfixFontSize": "70%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(255, 255, 255, 0.18)",
-        "full": false,
-        "lineColor": "rgb(255, 255, 255)",
-        "show": true,
-        "ymax": null,
-        "ymin": null
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "7.2.2",
       "targets": [
         {
           "bucketAggs": [
@@ -121,39 +121,47 @@
           "timeField": "@timestamp"
         }
       ],
-      "thresholds": "0,1",
       "timeFrom": null,
       "timeShift": null,
       "title": "Teacher Training Adviser Sign Ups",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "total"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
-      "colorBackground": true,
-      "colorValue": false,
-      "colors": [
-        "#FF9830",
-        "#FF9830",
-        "#299c46"
-      ],
       "datasource": "Elasticseach",
-      "decimals": null,
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#FF9830",
+                "value": null
+              },
+              {
+                "color": "#FF9830",
+                "value": 0
+              },
+              {
+                "color": "#299c46",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 9,
@@ -164,41 +172,22 @@
       "id": 30,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "options": {},
-      "postfix": "",
-      "postfixFontSize": "70%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(255, 255, 255, 0.18)",
-        "full": false,
-        "lineColor": "rgb(255, 255, 255)",
-        "show": true,
-        "ymax": null,
-        "ymin": null
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "7.2.2",
       "targets": [
         {
           "bucketAggs": [
@@ -225,39 +214,47 @@
           "timeField": "@timestamp"
         }
       ],
-      "thresholds": "0,1",
       "timeFrom": null,
       "timeShift": null,
       "title": "Teaching Event Sign Ups",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "total"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
-      "colorBackground": true,
-      "colorValue": false,
-      "colors": [
-        "#FF9830",
-        "#FF9830",
-        "#299c46"
-      ],
       "datasource": "Elasticseach",
-      "decimals": null,
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#FF9830",
+                "value": null
+              },
+              {
+                "color": "#FF9830",
+                "value": 0
+              },
+              {
+                "color": "#299c46",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 9,
@@ -268,41 +265,22 @@
       "id": 31,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "options": {},
-      "postfix": "",
-      "postfixFontSize": "70%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(255, 255, 255, 0.18)",
-        "full": false,
-        "lineColor": "rgb(255, 255, 255)",
-        "show": true,
-        "ymax": null,
-        "ymin": null
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "7.2.2",
       "targets": [
         {
           "bucketAggs": [
@@ -329,20 +307,10 @@
           "timeField": "@timestamp"
         }
       ],
-      "thresholds": "0,1",
       "timeFrom": null,
       "timeShift": null,
       "title": "Mailing List Sign Ups",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "total"
+      "type": "stat"
     },
     {
       "aliasColors": {
@@ -355,6 +323,12 @@
         "threshold": 0
       },
       "datasource": "Elasticseach",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fontSize": "80%",
       "format": "short",
       "gridPos": {
@@ -372,35 +346,9 @@
       "legendType": "Under graph",
       "links": [],
       "nullPointMode": "connected",
-      "options": {},
       "pieType": "pie",
       "strokeWidth": 1,
       "targets": [
-        {
-          "alias": "Hit",
-          "bucketAggs": [
-            {
-              "field": "@timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": 0,
-                "trimEdges": 0
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "metrics": [
-            {
-              "field": "select field",
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "\"api/candidates/access_tokens\" AND access.method: POST AND access.response_code: 200 AND cf.app:\"$App\"",
-          "refId": "A",
-          "timeField": "@timestamp"
-        },
         {
           "alias": "Miss",
           "bucketAggs": [
@@ -423,7 +371,82 @@
             }
           ],
           "query": "\"api/candidates/access_tokens\" AND access.method: POST AND access.response_code: 404 AND cf.app:\"$App\"",
+          "refId": "A",
+          "timeField": "@timestamp"
+        },
+        {
+          "alias": "TTA",
+          "bucketAggs": [
+            {
+              "field": "@timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "field": "select field",
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "\"api/teacher_training_adviser/candidates/\" AND access.method: POST AND access.response_code: 200 AND cf.app:\"$App\"",
           "refId": "B",
+          "timeField": "@timestamp"
+        },
+        {
+          "alias": "Mailing List",
+          "bucketAggs": [
+            {
+              "field": "@timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "field": "select field",
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "\"api/mailing_list/members/\" AND access.method: POST AND access.response_code: 200 AND cf.app:\"$App\"",
+          "refId": "C",
+          "timeField": "@timestamp"
+        },
+        {
+          "alias": "Teaching Event",
+          "bucketAggs": [
+            {
+              "field": "@timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "field": "select field",
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "\"api/teaching_events/attendees/\" AND access.method: POST AND access.response_code: 200 AND cf.app:\"$App\"",
+          "refId": "D",
           "timeField": "@timestamp"
         }
       ],
@@ -454,6 +477,13 @@
       "dashes": false,
       "datasource": "Prometheus",
       "description": "4xx and 5xx status codes",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -481,9 +511,10 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.2.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -493,14 +524,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(http_requests_received_total{code =~ \"5\\\\d\\\\d|4\\\\d\\\\d\"}[3m])) by (controller)",
+          "expr": "sum(rate(http_requests_received_total{code =~ \"5\\\\d\\\\d|400\"}[3m])) by (controller)",
+          "interval": "",
           "legendFormat": "{{controller}}",
           "refId": "A"
-        },
-        {
-          "expr": "sum(rate(http_requests_received_total{code =~ \"5\\\\d\\\\d|4\\\\d\\\\d\"}[3m])) by (controller)",
-          "legendFormat": "(None)",
-          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -554,6 +581,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "-- Mixed --",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -578,9 +612,10 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.2.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -760,6 +795,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -783,9 +825,10 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.2.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -847,6 +890,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -870,9 +920,10 @@
       "linewidth": 1,
       "nullPointMode": "null as zero",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.2.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -934,6 +985,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -957,9 +1015,10 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.2.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1048,22 +1107,33 @@
     },
     {
       "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
       "datasource": "Prometheus",
       "description": "Across ALL controllers globally!",
-      "format": "short",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 10,
@@ -1074,41 +1144,22 @@
       "id": 50,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "options": {},
-      "postfix": " requests",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": true,
-        "ymax": null,
-        "ymin": 0
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "7.2.2",
       "targets": [
         {
           "expr": "sum(http_requests_in_progress)",
@@ -1116,39 +1167,40 @@
           "refId": "A"
         }
       ],
-      "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
       "title": "Requests in Progress",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
       "datasource": "Prometheus",
       "description": "",
-      "format": "reqps",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 10,
@@ -1159,41 +1211,22 @@
       "id": 48,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "options": {},
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": true,
-        "ymax": null,
-        "ymin": null
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "7.2.2",
       "targets": [
         {
           "expr": "sum(rate(http_requests_received_total[3m]))",
@@ -1201,40 +1234,47 @@
           "refId": "A"
         }
       ],
-      "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
       "title": "Total req/s",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
-      "colorBackground": true,
-      "colorPrefix": false,
-      "colorValue": false,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
       "datasource": "Prometheus",
-      "decimals": null,
-      "format": "s",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#299c46",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 10
+              },
+              {
+                "color": "#d44a3a",
+                "value": 20
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 10,
@@ -1245,83 +1285,72 @@
       "id": 6,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "options": {},
-      "postfix": "",
-      "postfixFontSize": "70%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false,
-        "ymax": null,
-        "ymin": null
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "7.2.2",
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, rate(api_crm_sync_duration_seconds_bucket[$__interval]))",
+          "expr": "avg(rate(api_crm_sync_duration_seconds_sum[$__range]) / rate(api_crm_sync_duration_seconds_count[$__range]))",
           "instant": false,
+          "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "thresholds": "10,20",
       "timeFrom": null,
       "timeShift": null,
       "title": "CRM Sync Duration",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "avg"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
-      "colorBackground": true,
-      "colorPrefix": false,
-      "colorValue": false,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
       "datasource": "Prometheus",
-      "decimals": null,
-      "format": "s",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#299c46",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 1
+              },
+              {
+                "color": "#d44a3a",
+                "value": 2
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 10,
@@ -1332,83 +1361,72 @@
       "id": 7,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "options": {},
-      "postfix": "",
-      "postfixFontSize": "70%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false,
-        "ymax": null,
-        "ymin": null
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "7.2.2",
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, rate(api_location_batch_duration_seconds_bucket[$__interval]))",
+          "expr": "avg(rate(api_location_batch_duration_seconds_sum[$__range]) / rate(api_location_batch_duration_seconds_sum[$__range]))",
           "instant": false,
+          "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "thresholds": "20,40",
       "timeFrom": null,
       "timeShift": null,
       "title": "Location Batch Duration",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "total"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
-      "colorBackground": true,
-      "colorPrefix": false,
-      "colorValue": false,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
       "datasource": "Prometheus",
-      "decimals": null,
-      "format": "s",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#299c46",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 300
+              },
+              {
+                "color": "#d44a3a",
+                "value": 600
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 10,
@@ -1419,63 +1437,35 @@
       "id": 21,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "options": {},
-      "postfix": "",
-      "postfixFontSize": "70%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false,
-        "ymax": null,
-        "ymin": null
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "7.2.2",
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, rate(api_location_sync_duration_seconds_bucket[$__interval]))",
-          "instant": false,
+          "expr": "avg(rate(api_location_sync_duration_seconds_sum[$__range]) / rate(api_location_sync_duration_seconds_count[$__range]) > 0)",
+          "instant": true,
+          "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "thresholds": "30,60",
       "timeFrom": null,
       "timeShift": null,
       "title": "Location Sync Duration",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "total"
+      "type": "stat"
     },
     {
       "aliasColors": {},
@@ -1483,6 +1473,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -1506,9 +1503,10 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.2.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1519,6 +1517,8 @@
       "targets": [
         {
           "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[$__interval])) by (le))",
+          "instant": false,
+          "interval": "",
           "legendFormat": "95p",
           "refId": "A"
         },
@@ -1584,6 +1584,12 @@
         "threshold": 0
       },
       "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fontSize": "80%",
       "format": "short",
       "gridPos": {
@@ -1601,23 +1607,24 @@
       "legendType": "Under graph",
       "links": [],
       "nullPointMode": "connected",
-      "options": {},
       "pieType": "pie",
       "pluginVersion": "6.5.1",
       "strokeWidth": 1,
       "targets": [
         {
-          "expr": "sum(increase(api_cache_lookups{outcome=\"hit\"}[$__interval]))",
+          "expr": "sum(increase(api_cache_lookups{outcome=\"hit\"}[$__range]))",
           "format": "time_series",
           "hide": false,
           "instant": false,
+          "interval": "",
           "intervalFactor": 1,
           "legendFormat": "Hit",
           "refId": "A"
         },
         {
-          "expr": "sum(increase(api_cache_lookups[$__interval]))",
+          "expr": "sum(increase(api_cache_lookups{outcome=\"miss\"}[$__range]))",
           "hide": false,
+          "interval": "",
           "legendFormat": "Miss",
           "refId": "B"
         }
@@ -1637,6 +1644,12 @@
         "threshold": 0
       },
       "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fontSize": "80%",
       "format": "short",
       "gridPos": {
@@ -1655,32 +1668,35 @@
       "links": [],
       "maxDataPoints": 1,
       "nullPointMode": "connected",
-      "options": {},
       "pieType": "pie",
       "pluginVersion": "6.5.1",
       "strokeWidth": 1,
       "targets": [
         {
-          "expr": "sum(http_requests_received_total{controller=~\".+\",action=~\".+\",code=~\"2..\"})",
+          "expr": "sum(increase(http_requests_received_total{controller=~\".+\",action=~\".+\",code=~\"2..\"}[$__range]))",
           "instant": true,
+          "interval": "",
           "legendFormat": "2xx",
           "refId": "A"
         },
         {
-          "expr": "sum(http_requests_received_total{controller=~\".+\",action=~\".+\",code=~\"4..\"})",
+          "expr": "sum(increase(http_requests_received_total{controller=~\".+\",action=~\".+\",code=~\"4..\"}[$__range]))",
           "instant": true,
+          "interval": "",
           "legendFormat": "4xx",
           "refId": "B"
         },
         {
-          "expr": "sum(http_requests_received_total{controller=~\".+\",action=~\".+\",code=~\"5..\"})",
+          "expr": "sum(increase(http_requests_received_total{controller=~\".+\",action=~\".+\",code=~\"5..\"}[$__range]))",
           "instant": true,
+          "interval": "",
           "legendFormat": "5xx",
           "refId": "C"
         },
         {
-          "expr": "sum(http_requests_received_total{controller=~\".+\",action=~\".+\",code=~\"3..\"})",
+          "expr": "sum(increase(http_requests_received_total{controller=~\".+\",action=~\".+\",code=~\"3..\"}[$__range]))",
           "instant": true,
+          "interval": "",
           "legendFormat": "3xx",
           "refId": "D"
         }
@@ -1707,6 +1723,12 @@
         }
       ],
       "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fontSize": "100%",
       "gridPos": {
         "h": 10,
@@ -1715,16 +1737,16 @@
         "y": 69
       },
       "id": 16,
-      "options": {},
       "pageSize": null,
       "showHeader": true,
       "sort": {
-        "col": 0,
+        "col": 1,
         "desc": true
       },
       "styles": [
         {
           "alias": "",
+          "align": "auto",
           "colorMode": "cell",
           "colors": [
             "rgba(50, 172, 45, 0.97)",
@@ -1743,7 +1765,8 @@
       ],
       "targets": [
         {
-          "expr": "http_request_duration_seconds_sum{controller=~\".+\",action=~\".+\",code=~\"2..\"} / http_request_duration_seconds_count{controller=~\".+\",action=~\".+\",code=~\"2..\"}",
+          "expr": "sum(http_request_duration_seconds_sum{controller=~\".+\",action=~\".+\",code=~\"2..\"}) by (method, controller, action) / sum(http_request_duration_seconds_count{controller=~\".+\",action=~\".+\",code=~\"2..\"}) by (method, controller, action) ",
+          "interval": "",
           "legendFormat": "{{method}} - {{controller}} - {{action}}",
           "refId": "A"
         }
@@ -1752,7 +1775,7 @@
       "timeShift": null,
       "title": "Response Time by Action",
       "transform": "timeseries_aggregations",
-      "type": "table"
+      "type": "table-old"
     },
     {
       "aliasColors": {},
@@ -1761,6 +1784,13 @@
       "dashes": false,
       "datasource": "Prometheus",
       "description": "Counts all requests, both successful and failed",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -1788,9 +1818,10 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.2.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1862,6 +1893,12 @@
       },
       "dataFormat": "timeseries",
       "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 12,
         "w": 12,
@@ -1875,11 +1912,12 @@
       "legend": {
         "show": true
       },
-      "options": {},
       "reverseYBuckets": false,
       "targets": [
         {
           "expr": "sum(increase(http_request_duration_seconds_bucket[$__interval])) by (le) ",
+          "interval": "",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -1915,6 +1953,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -1938,9 +1983,10 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.2.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2021,6 +2067,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -2044,9 +2097,10 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.2.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2056,9 +2110,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "api_hangfire_jobs{state=~\"succeeded|deleted|failed|enqueued|processing|retry|scheduled\"}",
+          "expr": "increase(api_hangfire_jobs{state=~\"succeeded|deleted|failed|enqueued|processing|retry|scheduled\"}[10m]) ",
           "format": "time_series",
           "instant": false,
+          "interval": "",
           "legendFormat": "{{state}}",
           "refId": "A"
         }
@@ -2083,7 +2138,7 @@
       },
       "yaxes": [
         {
-          "decimals": 0,
+          "decimals": null,
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -2121,21 +2176,40 @@
     },
     {
       "cacheTimeout": null,
-      "colorBackground": true,
-      "colorValue": false,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
       "datasource": null,
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#299c46",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 30
+              },
+              {
+                "color": "#d44a3a",
+                "value": 100
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 10,
@@ -2146,80 +2220,71 @@
       "id": 27,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "options": {},
-      "pluginVersion": "6.5.1",
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false,
-        "ymax": null,
-        "ymin": null
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "7.2.2",
       "targets": [
         {
-          "expr": "api_google_api_calls",
+          "expr": "sum(increase(api_google_api_calls{result!=\"error\"}[$__range]))",
+          "interval": "",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
-      "thresholds": "30,100",
       "timeFrom": null,
       "timeShift": null,
       "title": "Google API Calls",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "total"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
       "datasource": "Elasticseach",
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 30
+              },
+              {
+                "color": "#d44a3a",
+                "value": 100
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 10,
@@ -2230,42 +2295,22 @@
       "id": 55,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "options": {},
-      "pluginVersion": "6.5.1",
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": true,
-        "ymax": null,
-        "ymin": null
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "7.2.2",
       "targets": [
         {
           "bucketAggs": [
@@ -2292,20 +2337,10 @@
           "timeField": "@timestamp"
         }
       ],
-      "thresholds": "30,100",
       "timeFrom": null,
       "timeShift": null,
       "title": "Notify Service API Calls",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "total"
+      "type": "stat"
     },
     {
       "columns": [
@@ -2315,6 +2350,12 @@
         }
       ],
       "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fontSize": "100%",
       "gridPos": {
         "h": 10,
@@ -2323,16 +2364,16 @@
         "y": 105
       },
       "id": 57,
-      "options": {},
       "pageSize": null,
       "showHeader": true,
       "sort": {
-        "col": 0,
+        "col": 1,
         "desc": true
       },
       "styles": [
         {
           "alias": "",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(50, 172, 45, 0.97)",
@@ -2346,12 +2387,13 @@
             "0.30"
           ],
           "type": "number",
-          "unit": "none"
+          "unit": "short"
         }
       ],
       "targets": [
         {
-          "expr": "sum(rate(api_google_api_calls[3m])) by (postcode)",
+          "expr": "sum(increase(api_google_api_calls[$__range])) by (postcode)",
+          "interval": "",
           "legendFormat": "{{postcode}}",
           "refId": "A"
         }
@@ -2360,7 +2402,7 @@
       "timeShift": null,
       "title": "Geocode Requests by Postcode",
       "transform": "timeseries_aggregations",
-      "type": "table"
+      "type": "table-old"
     },
     {
       "aliasColors": {},
@@ -2369,6 +2411,13 @@
       "dashes": false,
       "datasource": "-- Mixed --",
       "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -2396,9 +2445,10 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.2.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2436,6 +2486,7 @@
         {
           "datasource": "Prometheus",
           "expr": "sum(rate(api_google_api_calls{result != \"success\"}[3m])) by (result)",
+          "interval": "",
           "legendFormat": "Google Geocoder - {result}",
           "refId": "B"
         }
@@ -2483,7 +2534,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 21,
+  "schemaVersion": 26,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -2492,8 +2543,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "get-into-teaching-api-test",
-          "value": "get-into-teaching-api-test"
+          "text": "get-into-teaching-api-prod",
+          "value": "get-into-teaching-api-prod"
         },
         "hide": 0,
         "includeAll": false,
@@ -2502,17 +2553,18 @@
         "name": "App",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "get-into-teaching-api-prod",
             "value": "get-into-teaching-api-prod"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "get-into-teaching-api-test",
             "value": "get-into-teaching-api-test"
           }
         ],
         "query": "get-into-teaching-api-prod,get-into-teaching-api-test",
+        "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
       }
@@ -2539,5 +2591,5 @@
   "timezone": "",
   "title": "Get into Teaching API",
   "uid": "28EURzZGz",
-  "version": 4
+  "version": 1
 }
