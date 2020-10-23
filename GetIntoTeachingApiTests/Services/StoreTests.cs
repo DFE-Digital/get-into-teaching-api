@@ -124,21 +124,24 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_FallbackToGeocodeClient_PopulatesTeachingEventBuildingCoordinates()
+        public async void SyncAsync_FallbackToGeocodeClient_PopulatesTeachingEventBuildingCoordinatesAndCachesLocation()
         {
             SeedMockLocations();
             var mockCrm = new Mock<ICrmService>();
             mockCrm.Setup(m => m.GetTeachingEvents()).Returns(MockTeachingEvents);
             var postcode = "TE7 9IN";
             var coordinate = new Point(1, 2);
-            _mockGeocodeClient.Setup(m => m.GeocodePostcodeAsync(Location.SanitizePostcode(postcode)))
+            var sanitizedPostcode = Location.SanitizePostcode(postcode);
+            _mockGeocodeClient.Setup(m => m.GeocodePostcodeAsync(sanitizedPostcode))
                 .ReturnsAsync(coordinate);
+            DbContext.Locations.FirstOrDefault(l => l.Postcode == sanitizedPostcode).Should().BeNull();
 
             await _store.SyncAsync(mockCrm.Object);
 
             var teachingEvent = DbContext.TeachingEvents.Include(te => te.Building)
                 .First(te => te.Building.AddressPostcode == postcode);
             teachingEvent.Building.Coordinate.Should().Be(coordinate);
+            DbContext.Locations.FirstOrDefault(l => l.Postcode == sanitizedPostcode).Should().NotBeNull();
         }
         
         [Fact]
