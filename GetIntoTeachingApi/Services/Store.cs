@@ -250,7 +250,21 @@ namespace GetIntoTeachingApi.Services
                 return coordinate;
             }
 
-            return await _geocodeClient.GeocodePostcodeAsync(sanitizedPostcode);
+            coordinate = await _geocodeClient.GeocodePostcodeAsync(sanitizedPostcode);
+
+            if (coordinate != null)
+            {
+                await CacheLocation(postcode, coordinate);
+            }
+
+            return coordinate;
+        }
+
+        private async Task CacheLocation(string postcode, Point coordinate)
+        {
+            var location = new Location(postcode, coordinate);
+            await _dbContext.Locations.AddAsync(location);
+            await _dbContext.SaveChangesAsync();
         }
 
         private async Task<Point> GeocodePostcodeWithLocalLookup(string sanitizedPostcode)

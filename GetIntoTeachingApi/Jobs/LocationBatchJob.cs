@@ -7,8 +7,6 @@ using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using NetTopologySuite;
-using NetTopologySuite.Geometries;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Prometheus;
@@ -58,10 +56,7 @@ namespace GetIntoTeachingApi.Jobs
 
         private static Location CreateLocation(dynamic location)
         {
-            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: DbConfiguration.Wgs84Srid);
-            var coordinate = geometryFactory.CreatePoint(new Coordinate(location.Longitude, location.Latitude));
-
-            return new Location() { Postcode = location.Postcode, Coordinate = coordinate };
+            return new Location(location.Postcode, location.Latitude, location.Longitude);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.RegularExpressions;
+using GetIntoTeachingApi.Database;
+using NetTopologySuite;
 using NetTopologySuite.Geometries;
 
 namespace GetIntoTeachingApi.Models
@@ -18,6 +20,29 @@ namespace GetIntoTeachingApi.Models
         public static string SanitizePostcode(string postcode)
         {
             return Regex.Replace(postcode, @"\s+", string.Empty).ToLower();
+        }
+
+        public Location()
+        {
+        }
+
+        public Location(string postcode)
+            : this()
+        {
+            Postcode = SanitizePostcode(postcode);
+        }
+
+        public Location(string postcode, double latitude, double longitude)
+            : this(postcode)
+        {
+            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: DbConfiguration.Wgs84Srid);
+            Coordinate = geometryFactory.CreatePoint(new Coordinate(longitude, latitude));
+        }
+
+        public Location(string postcode, Point coordinate)
+            : this(postcode)
+        {
+            Coordinate = coordinate;
         }
     }
 }
