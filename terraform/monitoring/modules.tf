@@ -30,6 +30,7 @@ module "prometheus" {
   alert_rules                       = local.alert_rules
   influxdb_service_instance_id      = module.influx.service_instance_id
   memory                            = 5120
+  disk_quota                        = 5120
 }
 
 module "influx" {
