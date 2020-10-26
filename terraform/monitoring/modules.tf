@@ -24,11 +24,12 @@ module "prometheus" {
   paas_prometheus_exporter_endpoint = module.paas_prometheus_exporter.endpoint
   monitoring_space_id               = data.cloudfoundry_space.space.id
   monitoring_org_name               = local.monitoring_org_name
-  alertmanager_endpoint             = ""
+  alertmanager_endpoint             = module.alertmanager.endpoint
   additional_variable_map           = local.template_variable_map
   config_file                       = var.prometheus["config_file"]
   alert_rules                       = local.alert_rules
   influxdb_service_instance_id      = module.influx.service_instance_id
+  memory                            = 5120
 }
 
 module "influx" {
@@ -46,7 +47,7 @@ module "paas_prometheus_exporter" {
 
 
 module "grafana" {
-  source                  = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/grafana?ref=grafana/version_parameter"
+  source                  = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/grafana?ref=monitoring-terraform-0_13"
   monitoring_space_id     = data.cloudfoundry_space.space.id
   monitoring_org_name     = "${var.environment}-${var.grafana["name"]}"
   graphana_admin_password = var.grafana_password
@@ -58,3 +59,9 @@ module "grafana" {
   runtime_version         = "7.2.2"
 }
 
+module "alertmanager" {
+   source              = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/alertmanager?ref=monitoring-terraform-0_13"
+   monitoring_space_id = data.cloudfoundry_space.space.id
+   monitoring_org_name = "${var.environment}-${var.alertmanager["name"]}"
+   config              = file( var.alertmanager["config"] )
+}
