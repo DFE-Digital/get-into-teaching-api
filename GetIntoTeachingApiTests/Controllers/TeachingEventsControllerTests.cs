@@ -14,6 +14,7 @@ using Hangfire.States;
 using Microsoft.AspNetCore.Authorization;
 using MoreLinq;
 using GetIntoTeachingApi.Attributes;
+using System.Linq;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -112,6 +113,34 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
+        public async void SearchIndexedByType_InvalidRequest_RespondsWithValidationErrors()
+        {
+            var request = new TeachingEventSearchRequest() { Postcode = null };
+            _controller.ModelState.AddModelError("Postcode", "Postcode must be specified.");
+
+            var response = await _controller.SearchIndexedByType(request);
+
+            var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
+            var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
+            errors.Should().ContainKey("Postcode").WhichValue.Should().BeOfType<string[]>().Which.Should().Contain("Postcode must be specified.");
+        }
+
+        [Fact]
+        public async void SearchIndexedByType_ValidRequest_ReturnsTeachingEventsByType()
+        {
+            var request = new TeachingEventSearchRequest() { Postcode = "KY12 8FG" };
+            var mockEvents = MockEvents();
+            _mockStore.Setup(mock => mock.SearchTeachingEventsAsync(request)).ReturnsAsync(mockEvents);
+
+            var response = await _controller.SearchIndexedByType(request);
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            var result = (IDictionary<string, IEnumerable<TeachingEvent>>)ok.Value;
+            result["123"].Count().Should().Be(3);
+            result["456"].Count().Should().Be(1);
+        }
+
+        [Fact]
         public async void Get_ReturnsTeachingEvent()
         {
             var teachingEvent = new TeachingEvent() { ReadableId = "123" };
@@ -131,6 +160,20 @@ namespace GetIntoTeachingApiTests.Controllers
             var response = await _controller.Get("-1");
 
             response.Should().BeOfType<NotFoundResult>();
+        }
+
+        [Fact]
+        public void UpcomingIndexedByType_ReturnsUpcomingEventsByType()
+        {
+            var mockEvents = MockEvents();
+            _mockStore.Setup(mock => mock.GetUpcomingTeachingEvents()).Returns(mockEvents.AsQueryable());
+
+            var response = _controller.UpcomingIndexedByType(3);
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            var result = (IDictionary<string, IEnumerable<TeachingEvent>>) ok.Value;
+            result["123"].Count().Should().Be(3);
+            result["456"].Count().Should().Be(1);
         }
 
         [Fact]
@@ -170,11 +213,13 @@ namespace GetIntoTeachingApiTests.Controllers
 
         private static IEnumerable<TeachingEvent> MockEvents()
         {
-            var event1 = new TeachingEvent() { Name = "Event 1" };
-            var event2 = new TeachingEvent() { Name = "Event 2" };
-            var event3 = new TeachingEvent() { Name = "Event 3" };
+            var event1 = new TeachingEvent() { Name = "Event 1", TypeId = 123 };
+            var event2 = new TeachingEvent() { Name = "Event 2", TypeId = 123 };
+            var event3 = new TeachingEvent() { Name = "Event 3", TypeId = 123 };
+            var event4 = new TeachingEvent() { Name = "Event 4", TypeId = 123 };
+            var event5 = new TeachingEvent() { Name = "Event 5", TypeId = 456 };
 
-            return new[] { event1, event2, event3 };
+            return new[] { event1, event2, event3, event4, event5 };
         }
 
         private static bool IsMatch(Candidate candidateA, Candidate candidateB)
