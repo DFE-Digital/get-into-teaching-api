@@ -361,7 +361,7 @@ namespace GetIntoTeachingApiTests.Services
             var result = await _store.SearchTeachingEventsAsync(request);
 
             result.Select(e => e.Name).Should().BeEquivalentTo(
-                new string[] { "Event 2", "Event 4", "Event 1", "Event 3", "Event 5", "Event 6", "Event 7" },
+                new string[] { "Event 7", "Event 2", "Event 4", "Event 1", "Event 3", "Event 5", "Event 6" },
                 options => options.WithStrictOrdering());
         }
 
@@ -420,7 +420,7 @@ namespace GetIntoTeachingApiTests.Services
 
             var result = await _store.SearchTeachingEventsAsync(request);
 
-            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 4" },
+            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2" },
                 options => options.WithStrictOrdering());
         }
 
@@ -432,7 +432,7 @@ namespace GetIntoTeachingApiTests.Services
 
             var result = await _store.SearchTeachingEventsAsync(request);
 
-            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 3", "Event 5", "Event 6", "Event 7" },
+            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 3", "Event 5", "Event 6" },
                 options => options.WithStrictOrdering());
         }
 
@@ -444,7 +444,7 @@ namespace GetIntoTeachingApiTests.Services
 
             var result = await _store.SearchTeachingEventsAsync(request);
 
-            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 4", "Event 1" },
+            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 7", "Event 2", "Event 4", "Event 1" },
                 options => options.WithStrictOrdering());
         }
 
@@ -466,6 +466,18 @@ namespace GetIntoTeachingApiTests.Services
 
             result.ReadableId.Should().Be(events.First().ReadableId);
             result.Building.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async void GetUpcomingTeachingEventsByTypeAsync_ReturnsUpcomingEventsGroupedByType()
+        {
+            await SeedMockTeachingEventsAsync();
+
+            var result = _store.GetUpcomingTeachingEvents();
+
+            var dates = result.Select(e => e.StartAt);
+            dates.Should().BeEquivalentTo(dates.OrderBy(d => d), options => options.WithStrictOrdering());
+            dates.Should().OnlyContain(d => d >= DateTime.UtcNow);
         }
 
         private static IEnumerable<TeachingEvent> MockTeachingEvents()
@@ -522,7 +534,7 @@ namespace GetIntoTeachingApiTests.Services
                 ReadableId = "4",
                 Name = "Event 4",
                 StartAt = DateTime.UtcNow.AddDays(3),
-                TypeId = (int)TeachingEvent.EventType.ApplicationWorkshop,
+                TypeId = (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
                 Building = new TeachingEventBuilding()
                 {
                     Id = Guid.NewGuid(),
@@ -559,7 +571,7 @@ namespace GetIntoTeachingApiTests.Services
                 Id = Guid.NewGuid(),
                 ReadableId = "7",
                 Name = "Event 7",
-                StartAt = DateTime.UtcNow.AddYears(1),
+                StartAt = DateTime.UtcNow.AddYears(-1),
                 TypeId = (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
                 Building = new TeachingEventBuilding()
                 {
