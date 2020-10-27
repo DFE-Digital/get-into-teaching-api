@@ -68,7 +68,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> SearchIndexedByType(
             [FromQuery, SwaggerParameter("Event search criteria.", Required = true)] TeachingEventSearchRequest request,
-            [FromQuery, SwaggerParameter("Quantity to return (per type).")] int quantityPerCategory = 3)
+            [FromQuery, SwaggerParameter("Quantity to return (per type).")] int quantityPerType = 3)
         {
             if (!ModelState.IsValid)
             {
@@ -76,7 +76,7 @@ namespace GetIntoTeachingApi.Controllers
             }
 
             var teachingEvents = await _store.SearchTeachingEventsAsync(request);
-            return Ok(IndexTeachingEventsByType(teachingEvents, quantityPerCategory));
+            return Ok(IndexTeachingEventsByType(teachingEvents, quantityPerType));
         }
 
         [HttpGet]
@@ -88,10 +88,10 @@ namespace GetIntoTeachingApi.Controllers
             OperationId = "UpcomingTeachingEventsIndexedByType",
             Tags = new[] { "Teaching Events" })]
         [ProducesResponseType(typeof(IDictionary<string, IEnumerable<TeachingEvent>>), 200)]
-        public IActionResult UpcomingIndexedByType([FromQuery, SwaggerParameter("Quantity to return (per type).")] int quantityPerCategory = 3)
+        public IActionResult UpcomingIndexedByType([FromQuery, SwaggerParameter("Quantity to return (per type).")] int quantityPerType = 3)
         {
             var teachingEventsByType = _store.GetUpcomingTeachingEvents();
-            return Ok(IndexTeachingEventsByType(teachingEventsByType, quantityPerCategory));
+            return Ok(IndexTeachingEventsByType(teachingEventsByType, quantityPerType));
         }
 
         [HttpGet]
