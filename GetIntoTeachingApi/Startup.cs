@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using AspNetCoreRateLimit;
 using FluentValidation.AspNetCore;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Auth;
@@ -14,6 +15,7 @@ using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
@@ -38,6 +40,8 @@ namespace GetIntoTeachingApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            ConfigureRateLimiting(services);
+
             var env = new Env();
 
             services.AddSingleton<CdsServiceClientWrapper, CdsServiceClientWrapper>();
@@ -153,6 +157,8 @@ The GIT API aims to provide:
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment hostEnv)
         {
+            app.UseClientRateLimiting();
+
             using var serviceScope = app.ApplicationServices.CreateScope();
             var env = serviceScope.ServiceProvider.GetService<IEnv>();
 
@@ -229,6 +235,31 @@ The GIT API aims to provide:
                 endpoints.MapMetrics();
                 endpoints.MapControllers();
             });
+        }
+
+        private void ConfigureRateLimiting(IServiceCollection services)
+        {
+            // Load appsettings.json.
+            services.AddOptions();
+
+            // Stores counters/IP rules.
+            services.AddMemoryCache();
+
+            // Load configuration/client settings from appsettings.json
+            services.Configure<ClientRateLimitOptions>(Configuration.GetSection("ClientRateLimiting"));
+            services.Configure<ClientRateLimitPolicies>(Configuration.GetSection("ClientRateLimitPolicies"));
+
+            // Inject counter and rules stores.
+            services.AddSingleton<IClientPolicyStore, MemoryCacheClientPolicyStore>();
+            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+
+            // https://github.com/aspnet/Hosting/issues/793
+            // The IHttpContextAccessor service is not registered by default.
+            // The clientId/clientIp resolvers use it.
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            // Configuration (resolvers, counter key builders).
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
         }
     }
 }
