@@ -37,27 +37,6 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpGet]
         [CrmETag]
-        [Route("search")]
-        [SwaggerOperation(
-            Summary = "Searches for teaching events.",
-            Description = @"Searches for teaching events by postcode. Optionally limit the results by distance (in miles) and the type of event.",
-            OperationId = "SearchTeachingEvents",
-            Tags = new[] { "Teaching Events" })]
-        [ProducesResponseType(typeof(IEnumerable<TeachingEvent>), 200)]
-        [ProducesResponseType(400)]
-        public async Task<IActionResult> Search([FromQuery, SwaggerParameter("Event search criteria.", Required = true)] TeachingEventSearchRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(this.ModelState);
-            }
-
-            var teachingEvents = await _store.SearchTeachingEventsAsync(request);
-            return Ok(teachingEvents);
-        }
-
-        [HttpGet]
-        [CrmETag]
         [Route("search_indexed_by_type")]
         [SwaggerOperation(
             Summary = "Searches for teaching events, returning grouped by type.",
