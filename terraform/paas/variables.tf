@@ -72,6 +72,9 @@ variable "paas_api_docker_image" {
   default = "dfedigital/get-into-teaching-api:latest"
 }
 
+variable "docker_username" {}
+variable "docker_password" {}
+
 variable "paas_api_route_name" {
   default = "dfe-teacher-services-sb-api"
 }
