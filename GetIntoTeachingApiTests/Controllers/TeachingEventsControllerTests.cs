@@ -53,7 +53,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void CrmETag_IsPresent()
         {
             JobStorage.Current = new Mock<JobStorage>().Object;
-            var methods = new [] { "Get", "Search" };
+            var methods = new [] { "Get", "SearchIndexedByType", "UpcomingIndexedByType" };
 
             methods.ForEach(m => typeof(TeachingEventsController).GetMethod(m).Should().BeDecoratedWith<CrmETagAttribute>());
         }
@@ -84,32 +84,6 @@ namespace GetIntoTeachingApiTests.Controllers
                 It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
                 IsMatch(request.Candidate, (Candidate)job.Args[0])),
                 It.IsAny<EnqueuedState>()));
-        }
-
-        [Fact]
-        public async void Search_InvalidRequest_RespondsWithValidationErrors()
-        {
-            var request = new TeachingEventSearchRequest() { Postcode = null };
-            _controller.ModelState.AddModelError("Postcode", "Postcode must be specified.");
-
-            var response = await _controller.Search(request);
-
-            var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
-            var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
-            errors.Should().ContainKey("Postcode").WhichValue.Should().BeOfType<string[]>().Which.Should().Contain("Postcode must be specified.");
-        }
-
-        [Fact]
-        public async void Search_ValidRequest_ReturnsTeachingEvents()
-        {
-            var request = new TeachingEventSearchRequest() { Postcode = "KY12 8FG" };
-            var mockEvents = MockEvents();
-            _mockStore.Setup(mock => mock.SearchTeachingEventsAsync(request)).ReturnsAsync(mockEvents);
-
-            var response = await _controller.Search(request);
-
-            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
-            ok.Value.Should().Be(mockEvents);
         }
 
         [Fact]
