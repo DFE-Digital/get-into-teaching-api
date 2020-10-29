@@ -16,6 +16,11 @@ resource "cloudfoundry_app" "api_application" {
     route = cloudfoundry_route.api_route_internal.id
   }
 
+  docker_credentials = {
+      username = var.docker_username
+      password = var.docker_password
+  }
+
   service_binding {
     service_instance = cloudfoundry_service_instance.hangfire.id
   }
