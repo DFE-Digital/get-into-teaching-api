@@ -25,21 +25,21 @@ jobs:
 
     steps:
 
-      - uses: softprops/turnstyle@v1
-        name: Wait for other inprogress deployment runs
-        with:
-           continue-after-seconds: 180
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+       - uses: softprops/turnstyle@v1
+         name: Wait for other inprogress deployment runs
+         with:
+            continue-after-seconds: 180
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Start ${{ github.event.inputs.environment }} Deployment
-        uses: bobheadxi/deployments@v0.4.2
-        id: deployment
-        with:
-          step: start
-          token: ${{ secrets.GITHUB_TOKEN }}
-          env: ${{ github.event.inputs.environment }}
-          ref: ${{ github.event.inputs.sha }}
+       - name: Start ${{ github.event.inputs.environment }} Deployment
+         uses: bobheadxi/deployments@v0.4.2
+         id: deployment
+         with:
+           step: start
+           token: ${{ secrets.GITHUB_TOKEN }}
+           env: ${{ github.event.inputs.environment }}
+           ref: ${{ github.event.inputs.sha }}
 
        - name: Checkout
          uses: actions/checkout@v2
