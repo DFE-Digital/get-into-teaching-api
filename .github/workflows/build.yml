@@ -64,7 +64,7 @@ jobs:
         uses: benc-uk/workflow-dispatch@v1.1
         with:
           workflow: Deploy to PaaS
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN }}
           inputs: '{"environment": "Development", "sha": "${{ github.sha }}"}'
 
       - name: Slack Notification

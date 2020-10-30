@@ -104,7 +104,7 @@ jobs:
          uses: benc-uk/workflow-dispatch@v1.1
          with:
            workflow: Deploy to PaaS
-           token: ${{ secrets.GITHUB_TOKEN }}
+           token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN }}
            inputs: '{"environment": "${{ env.NEXT_ENV }}", "sha": "${{ github.event.inputs.sha }}"}'
 
 
