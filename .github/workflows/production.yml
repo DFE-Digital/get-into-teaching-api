@@ -79,6 +79,8 @@ jobs:
              TF_VAR_TOTP_SECRET_KEY:   "${{ secrets.PROD_TOTP_SECRET_KEY     }}"
              TF_VAR_GOOGLE_API_KEY:    "${{ secrets.PROD_GOOGLE_API_KEY      }}"
              TF_VAR_SENTRY_DSN:        "${{ secrets.SENTRY_DSN }}"
+             TF_VAR_docker_username:   "${{ secrets.DOCKERHUB_USERNAME }}"
+             TF_VAR_docker_password:   "${{ secrets.DOCKERHUB_PERSONAL_ACCESS_TOKEN }}"
 
                 
        - name: Terraform Apply
