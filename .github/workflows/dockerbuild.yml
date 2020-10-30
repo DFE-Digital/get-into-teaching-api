@@ -121,6 +121,8 @@ jobs:
              TF_VAR_password:          "${{ secrets.GOVUKPAAS_PASSWORD  }}"
              ARM_ACCESS_KEY:           "${{ secrets.DEV_ARM_ACCESS_KEY    }}"
              TF_VAR_SENTRY_DSN:        "${{ secrets.SENTRY_DSN }}"
+             TF_VAR_docker_username:   "${{ secrets.DOCKERHUB_USERNAME }}"
+             TF_VAR_docker_password:   "${{ secrets.DOCKERHUB_PERSONAL_ACCESS_TOKEN }}"
    
        - name: Terraform Apply
          run: |
