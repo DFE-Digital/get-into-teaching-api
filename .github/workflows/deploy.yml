@@ -100,12 +100,10 @@ jobs:
             SLACK_MESSAGE: 'Pipeline Failure carrying out job ${{github.job}}'
 
        - name: Trigger ${{ env.NEXT_ENV }} Deployment
-         if: env.NEXT_ENV != '' && github.ref == 'refs/heads/master' }}
+         if: env.NEXT_ENV != '' && github.ref == 'refs/heads/master' 
          uses: benc-uk/workflow-dispatch@v1.1
          with:
            workflow: Deploy to PaaS
            token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN }}
            inputs: '{"environment": "${{ env.NEXT_ENV }}", "sha": "${{ github.event.inputs.sha }}"}'
-
-
 
