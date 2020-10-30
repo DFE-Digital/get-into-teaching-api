@@ -1,15 +1,22 @@
 ---  
-name: Release to Test
-on: 
-   release:
-     types:  [edited, created]
+name: Deploy to PaaS
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'The environment to deploy to eg: qa, staging, production etc'
+        required: true
+      sha:
+        description: Commit sha to be deployed
+        required: true
 
 env:
   DOCKERHUB_REPOSITORY:     dfedigital/get-into-teaching-api
   
 jobs:
-  deploy_qa:
-    name: 'Deploy to Quality Assurance'
+  deploy:
+    name: Deploy ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
 
     defaults:
@@ -18,61 +25,51 @@ jobs:
 
     steps:
 
+      - uses: softprops/turnstyle@v1
+        name: Wait for other inprogress deployment runs
+        with:
+           continue-after-seconds: 180
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Start ${{ github.event.inputs.environment }} Deployment
+        uses: bobheadxi/deployments@v0.4.2
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: ${{ github.event.inputs.environment }}
+          ref: ${{ github.event.inputs.sha }}
+
        - name: Checkout
          uses: actions/checkout@v2
    
-       - name: Get Short SHA
+       - name: Set Variables
          id: sha
-         run: echo ::set-output name=short::$(git rev-parse --short $GITHUB_SHA)
-   
+         run: |
+          echo ::set-output name=short::$(git rev-parse --short $GITHUB_SHA)
+          cat .github/workflows/environments/${DEPLOY_ENV}.env >> $GITHUB_ENV 
+         env:
+            DEPLOY_ENV: ${{ github.event.inputs.environment }}
+
        - uses: hashicorp/setup-terraform@v1
          with:
            terraform_version: 0.13.4
 
-       - name: Wait for any previous runs to complete
-         uses: softprops/turnstyle@v1
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-         with:
-           continue-after-seconds: 180
-
        - name: Terraform Init
          run: |
              cd terraform/paas && pwd
-             terraform init -backend-config=test.bk.vars
-         env:
-             ARM_ACCESS_KEY:           "${{ secrets.TEST_ARM_ACCESS_KEY  }}"
-             TF_VAR_user:              "${{ secrets.GOVUKPAAS_USERNAME   }}"
-             TF_VAR_password:          "${{ secrets.GOVUKPAAS_PASSWORD   }}"
+             terraform init -backend-config=${{env.TERRAFORM_BACKEND}}
    
        - name: Terraform Plan
          run: |
              cd terraform/paas && pwd
-             terraform plan -var-file=test.env.tfvars -out plan
-         env:
-             ARM_ACCESS_KEY:           "${{ secrets.TEST_ARM_ACCESS_KEY  }}"
-             TF_VAR_user:              "${{ secrets.GOVUKPAAS_USERNAME   }}"
-             TF_VAR_password:          "${{ secrets.GOVUKPAAS_PASSWORD   }}"
-             TF_VAR_paas_api_docker_image: ${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}} 
-             TF_VAR_CRM_SERVICE_URL:   "${{ secrets.TEST_CRM_SERVICE_URL     }}"
-             TF_VAR_CRM_CLIENT_ID:     "${{ secrets.TEST_CRM_CLIENT_ID       }}"
-             TF_VAR_CRM_CLIENT_SECRET: "${{ secrets.TEST_CRM_CLIENT_SECRET   }}"
-             TF_VAR_CRM_TENANT_ID:     "${{ secrets.TEST_CRM_TENANT_ID       }}"
-             TF_VAR_SHARED_SECRET:     "${{ secrets.SHARED_SECRET       }}"
-             TF_VAR_NOTIFY_API_KEY:    "${{ secrets.NOTIFY_API_KEY      }}"
-             TF_VAR_TOTP_SECRET_KEY:   "${{ secrets.TOTP_SECRET_KEY     }}"
-             TF_VAR_SENTRY_DSN:        "${{ secrets.SENTRY_DSN }}"
-             TF_VAR_docker_username:   "${{ secrets.DOCKERHUB_USERNAME }}"
-             TF_VAR_docker_password:   "${{ secrets.DOCKERHUB_PERSONAL_ACCESS_TOKEN }}"
+             terraform plan -var-file=${{env.TERRAFORM_TFVARS}} -out plan
    
        - name: Terraform Apply
          run: |
              cd terraform/paas && pwd
              terraform apply -auto-approve plan
-         env:
-             ARM_ACCESS_KEY:           "${{ secrets.TEST_ARM_ACCESS_KEY  }}"
-             TF_VAR_user:              "${{ secrets.GOVUKPAAS_USERNAME   }}"
-             TF_VAR_password:          "${{ secrets.GOVUKPAAS_PASSWORD   }}"
    
        - name:  Smoke Test
          run: |
@@ -81,21 +78,34 @@ jobs:
        - name: Create Sentry release
          if: success()
          uses: getsentry/action-release@v1.1.1
-         env:
-           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
          with:
-           environment: qa
+           environment: ${{ github.event.inputs.environment }}
+
+       - name: Update ${{ github.event.inputs.environment }} status
+         if: always() 
+         uses: bobheadxi/deployments@v0.4.2
+         with:
+           step: finish
+           token: ${{ secrets.GITHUB_TOKEN }}
+           env: ${{ github.event.inputs.environment }}
+           status: ${{ job.status }}
+           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+           ref: ${{ github.event.inputs.sha }}
 
        - name: Slack Notification
          if: failure()
          uses: rtCamp/action-slack-notify@master
          env:
-           SLACK_CHANNEL: getintoteaching_tech
-           SLACK_COLOR: '#3278BD'
-           SLACK_ICON: https://github.com/rtCamp.png?size=48
-           SLACK_MESSAGE: ':disappointed_relieved: Pipeline Failure carrying out job ${{github.job}} :disappointed_relieved:'
-           SLACK_TITLE: 'Failure: ${{ github.workflow }}'
-           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+            SLACK_TITLE: 'API Failure to Deploy to ${{ github.event.inputs.environment }}' 
+            SLACK_MESSAGE: 'Pipeline Failure carrying out job ${{github.job}}'
+
+       - name: Trigger ${{ env.NEXT_ENV }} Deployment
+         if: env.NEXT_ENV != '' && github.ref == 'refs/heads/master' }}
+         uses: benc-uk/workflow-dispatch@v1.1
+         with:
+           workflow: Deploy to PaaS
+           token: ${{ secrets.GITHUB_TOKEN }}
+           inputs: '{"environment": "${{ env.NEXT_ENV }}", "sha": "${{ github.event.inputs.sha }}"}'
+
+
 
