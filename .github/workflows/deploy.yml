@@ -48,7 +48,7 @@ jobs:
          id: sha
          run: |
           echo ::set-output name=short::$(git rev-parse --short $GITHUB_SHA)
-          $( cat github/workflows/environments/${DEPLOY_ENV}.env )
+          $( cat .github/workflows/environments/${DEPLOY_ENV}.env )
          env:
             DEPLOY_ENV: ${{ github.event.inputs.environment }}
 
