@@ -65,7 +65,8 @@ jobs:
         with:
           workflow: Deploy to PaaS
           token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN }}
-          inputs: '{"environment": "Development", "sha": "${{ github.sha }}"}'
+          inputs: '{"environment": "Development", "sha": "${{ github.event.pull_request.head.ref }}"}'
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Slack Notification
         if: failure() && github.ref == 'refs/heads/master'
