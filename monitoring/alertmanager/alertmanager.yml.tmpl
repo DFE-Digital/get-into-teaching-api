@@ -10,3 +10,8 @@ receivers:
   slack_configs:
   - channel: '${slack_channel}'
     send_resolved: true
+    title: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
+    title_link: 'https://alertmanager-dev-get-into-teaching.london.cloudapps.digital/#/alerts'
+    pretext: 'An alert has been raised by AlertManager'
+    text: 'https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2120941584/Alerts/{{ .GroupLabels.app }}/{{ .GroupLabels.alertname }}'
+    icon_url: 'https://beta-getintoteaching.education.gov.uk/packs/media/images/getintoteachinglogo-be08cb9f14ade16ed1967b5a655c7e13.svg'
