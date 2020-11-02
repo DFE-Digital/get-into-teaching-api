@@ -48,7 +48,7 @@ jobs:
          with:
            continue-after-seconds: 180
 
-       - uses: hashicorp/setup-terraform@v1
+       - uses: hashicorp/setup-terraform@v1.2.1
          with:
            terraform_version: 0.13.4
 
