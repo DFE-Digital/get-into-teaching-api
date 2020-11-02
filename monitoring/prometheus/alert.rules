@@ -1,9 +1,9 @@
 groups:
   - name: App
     rules:
-    - alert: TooManyRequests
-      expr: avg by (space) (cpu{space=~"get-into-teaching"}) > 0
-      labels:
-        severity: page
-      annotations:
-        summary: Alert when any user hits a rate limit.
+      - alert: HighNotFound
+        expr: 'sum(increase(app_requests_total{path=~".+",status=~"404"}[10m])) > 15'
+        labels:
+          severity: page
+        annotations:
+          summary: Alert when any user hits a rate limit.
