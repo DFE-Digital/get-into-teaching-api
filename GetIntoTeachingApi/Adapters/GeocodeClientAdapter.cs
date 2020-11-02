@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using GeocodeSharp.Google;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
+using Microsoft.Extensions.Logging;
 using NetTopologySuite.Geometries;
 
 namespace GetIntoTeachingApi.Adapters
@@ -11,16 +12,20 @@ namespace GetIntoTeachingApi.Adapters
     {
         private readonly IMetricService _metrics;
         private readonly GeocodeClient _client;
+        private readonly ILogger<IGeocodeClientAdapter> _logger;
 
-        public GeocodeClientAdapter(IEnv env, IMetricService metrics)
+        public GeocodeClientAdapter(IEnv env, IMetricService metrics, ILogger<IGeocodeClientAdapter> logger)
         {
             _metrics = metrics;
             _client = new GeocodeClient(env.GoogleApiKey);
+            _logger = logger;
         }
 
         public async Task<Point> GeocodePostcodeAsync(string postcode)
         {
             var response = await _client.GeocodeAddress(postcode);
+
+            _logger.LogInformation($"Google API Status: {response.StatusText}");
 
             if (response.Status != GeocodeStatus.Ok)
             {
