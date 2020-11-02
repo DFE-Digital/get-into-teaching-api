@@ -2,7 +2,7 @@ groups:
   - name: App
     rules:
       - alert: HighNotFound
-        expr: 'sum(increase(app_requests_total{path=~".+",status=~"404"}[10m])) > 15'
+        expr: 'sum by (space) (increase(app_requests_total{path=~".+",status=~"200"}[10m])) > 15'
         labels:
           severity: page
         annotations:
