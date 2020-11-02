@@ -52,7 +52,7 @@ jobs:
          env:
             DEPLOY_ENV: ${{ github.event.inputs.environment }}
 
-       - uses: hashicorp/setup-terraform@v1
+       - uses: hashicorp/setup-terraform@v1.2.1
          with:
            terraform_version: 0.13.4
 
