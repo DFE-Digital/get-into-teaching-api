@@ -2,8 +2,9 @@ groups:
   - name: App
     rules:
       - alert: HighNotFound
-        expr: 'sum by (space) (increase(app_requests_total{path=~".+",status=~"200"}[10m])) > 15'
+        expr: 'sum by (space) (app_requests_total{path=~".+",status=~"404"}) > 0'
         labels:
           severity: page
         annotations:
           summary: Alert when any user hits a rate limit.
+          
