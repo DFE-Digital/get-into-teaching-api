@@ -2,31 +2,31 @@ groups:
   - name: App
     rules:
       - alert: TooManyRequests
-        expr: 'sum(increase(app_requests_total{path=~".+",status=~"429"}[1m])) > 0'
+        expr: 'sum(increase(app_requests_total{path!~"csp_reports",status=~"429"}[1m])) > 0'
         labels:
           severity: high
         annotations:
-          summary: Alert when any user hits a rate limit.
+          summary: Alert when any user hits a rate limit (excluding the /csp_reports endpoint).
       - alert: HighNotFound
         expr: 'sum(increase(app_requests_total{path=~".+",status=~"404"}[10m])) > 15'
         labels:
           severity: medium
         annotations:
-          summary: Alert when any user hits a rate limit.
+          summary: Alert when a high number of 404 response codes are returned (>15 in a 10m period).
   - name: TTA
     rules:
       - alert: TooManyRequests
-        expr: 'sum(increase(tta_requests_total{path=~".+",status=~"429"}[1m])) > 0'
+        expr: 'sum(increase(tta_requests_total{path!~"csp_reports",status=~"429"}[1m])) > 0'
         labels:
           severity: high
         annotations:
-          summary: Alert when any user hits a rate limit.
+          summary: Alert when any user hits a rate limit (excluding the /csp_reports endpoint).
       - alert: HighNotFound
         expr: 'sum(increase(tta_requests_total{path=~".+",status=~"404"}[10m])) > 15'
         labels:
           severity: medium
         annotations:
-          summary: Alert when any user hits a rate limit.
+          summary: Alert when a high number of 404 response codes are returned (>15 in a 10m period).
   - name: API
     rules:
       - alert: TooManyRequests
