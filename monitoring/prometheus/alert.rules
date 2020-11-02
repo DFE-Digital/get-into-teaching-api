@@ -68,11 +68,11 @@ groups:
         annotations:
           summary: Alert when max CPU utilization is over 70%.
       - alert: HighMemory
-        expr: 'dotnet_total_memory_bytes > 256000000'
+        expr: 'dotnet_total_memory_bytes > 768000000'
         labels:
           severity: medium
         annotations:
-          summary: Alert when max memory utilization is over 256MB.
+          summary: Alert when max memory utilization is over 768MB.
       - alert: HighDatabaseConnections
         expr: 'max(connections) > 75'
         labels:
