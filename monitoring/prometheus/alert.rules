@@ -1,45 +1,10 @@
 groups:
   - name: example
     rules:
-    - alert: DevHighCPU
+    - alert: DevHighCPUExample
       expr: avg by (space) (cpu{space=~"get-into-teaching"}) > 0
       labels:
         severity: page
       annotations:
         summary: Development High CPU
-  - name: App
-    rules:
-    - alert: TooManyRequests
-      expr: sum(increase(app_requests_total{path=~".+",status=~"2.."}[1m])) > 0
-      labels:
-        severity: page
-      annotations:
-        summary: Alert when any user hits a rate limit.
-    - alert: HighNotFound
-      expr: sum(increase(app_requests_total{path=~".+",status=~"404"}[10m])) > 15
-      labels:
-        severity: page
-      annotations:
-        summary: Alert when any user hits a rate limit.
-  - name: TTA
-    rules:
-    - alert: TooManyRequests
-      expr: sum(increase(tta_requests_total{path=~".+",status=~"2.."}[1m])) > 0
-      labels:
-        severity: page
-      annotations:
-        summary: Alert when any user hits a rate limit.
-    - alert: HighNotFound
-      expr: sum(increase(tta_requests_total{path=~".+",status=~"404"}[10m])) > 15
-      labels:
-        severity: page
-      annotations:
-        summary: Alert when any user hits a rate limit.
-  - name: API
-    rules:
-    - alert: TooManyRequests
-      expr: sum(increase(http_requests_received_total{controller=~".+",action=~".+",code=~"429"}[1m])) > 0
-      labels:
-        severity: page
-      annotations:
-        summary: Alert when any client hits a rate limit.
+  
