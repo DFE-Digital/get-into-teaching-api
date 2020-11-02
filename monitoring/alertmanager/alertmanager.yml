@@ -1,5 +1,12 @@
+global:
+ resolve_timeout: 1m
+ slack_api_url: 'https://hooks.slack.com/services/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'
+
 route:
-  receiver: dummy
+ receiver: 'slack-notifications'
 
 receivers:
-  - name: dummy
+- name: 'slack-notifications'
+ slack_configs:
+ - channel: '#getintoteaching_tech'
+   send_resolved: true
