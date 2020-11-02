@@ -1,12 +1,4 @@
 groups:
-  - name: example
-    rules:
-    - alert: DevHighCPU
-      expr: avg by (space) (cpu{space=~"get-into-teaching"}) > 0
-      labels:
-        severity: page
-      annotations:
-        summary: Development High CPU
   - name: App
     rules:
     - alert: TooManyRequests
