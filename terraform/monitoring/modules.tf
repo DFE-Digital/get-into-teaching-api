@@ -16,6 +16,8 @@ locals {
     USERNAME             = var.paas_exporter_username
     PASSWORD             = var.paas_exporter_password
     API_ENDPOINT         = var.api_url
+    slack_channel        = var.alertmanager_slack_channel
+    slack_url            = var.alertmanager_slack_url
   }
 }
 
@@ -64,5 +66,5 @@ module "alertmanager" {
    source              = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/alertmanager?ref=monitoring-terraform-0_13"
    monitoring_space_id = data.cloudfoundry_space.space.id
    monitoring_org_name = "${var.environment}-${var.alertmanager["name"]}"
-   config              = file( var.alertmanager["config"] )
+   config              = templatefile( var.alertmanager["config"] , local.template_variable_map )
 }
