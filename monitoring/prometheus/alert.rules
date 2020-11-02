@@ -37,3 +37,47 @@ groups:
           severity: high
         annotations:
           summary: Alert when any client hits a rate limit.
+      - alert: FailedJobs
+        expr: 'sum(increase(api_hangfire_jobs{state="failed"}[1m])) > 0'
+        labels:
+          severity: high
+        annotations:
+          summary: Alert when any job fails.
+      - alert: HighGoogleApiCalls
+        expr: 'sum(increase(api_google_api_calls[10m])) > 5'
+        labels:
+          severity: high
+        annotations:
+          summary: Alert when a high number of Google API calls are made (>5 in a 10m period).
+      - alert: GoogleApiErrors
+        expr: 'sum(rate(api_google_api_calls{result != "success"}[1m])) > 0'
+        labels:
+          severity: medium
+        annotations:
+          summary: Alert when the Google API returns a non-success response.
+      - alert: ClientApproachingRateLimit
+        expr: 'sum(increase(http_request_duration_seconds_sum{controller=~"Candidates|MailingList|TeachingEvents",action=~"CreateAccessToken|AddMember|AddAttendee|SignUp",code=~".+"}[1m])) by (controller, action) > 15'
+        labels:
+          severity: medium
+        annotations:
+          summary: Alert when a client is approaching the rate limit threshold (15rpm out of an available 30rpm).
+      - alert: HighCpu
+        expr: 'max(cpu_percent) > 70'
+        labels:
+          severity: medium
+        annotations:
+          summary: Alert when max CPU utilization is over 70%.
+      - alert: HighMemory
+        expr: 'dotnet_total_memory_bytes > 256000000'
+        labels:
+          severity: medium
+        annotations:
+          summary: Alert when max memory utilization is over 256MB.
+      - alert: HighDatabaseConnections
+        expr: 'max(connections) > 75'
+        labels:
+          severity: medium
+        annotations:
+          summary: Alert when max database connections exceeds 75 (out of an available 100).
+          
+          
