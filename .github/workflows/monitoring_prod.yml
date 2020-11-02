@@ -56,6 +56,8 @@ jobs:
              TF_VAR_google_client_id:        "${{ secrets.GOOGLE_CLIENT_ID }}"
              TF_VAR_google_client_secret:    "${{ secrets.GOOGLE_CLIENT_SECRET }}"
              TF_VAR_grafana_password:        "${{ secrets.GRAFANA_PASSWORD }}"
+             TF_VAR_alertmanager_slack_url:  "${{ secrets.SLACK_WEBHOOK }}"
+             TF_VAR_alertmanager_slack_channel: "#getintoteaching_tech"
    
        - name: Terraform Apply
          run: |
