@@ -3,7 +3,6 @@ using GetIntoTeachingApi.Models;
 using System;
 using Microsoft.Xrm.Sdk;
 using Xunit;
-using GetIntoTeachingApi.Attributes;
 
 namespace GetIntoTeachingApiTests.Models
 {
@@ -54,6 +53,17 @@ namespace GetIntoTeachingApiTests.Models
             entity["emailaddress1"] = _request.Email;
             entity["firstname"] = _request.FirstName;
             entity["lastname"] = _request.LastName;
+
+            _request.Match(entity).Should().BeTrue();
+        }
+
+        [Fact]
+        public void Match_WithEmailAndTwoAdditionalAttributesContainingWhitespace_ReturnsTrue()
+        {
+            var entity = new Entity();
+            entity["emailaddress1"] = $" {_request.Email} ";
+            entity["firstname"] = $" {_request.FirstName} ";
+            entity["lastname"] = $" {_request.LastName} ";
 
             _request.Match(entity).Should().BeTrue();
         }

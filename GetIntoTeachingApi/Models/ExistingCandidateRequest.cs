@@ -31,7 +31,7 @@ namespace GetIntoTeachingApi.Models
 
         private bool EmailMatchesCandidate(Entity entity)
         {
-            return entity.GetAttributeValue<string>("emailaddress1").Equals(Email, StringComparison.OrdinalIgnoreCase);
+            return entity.GetAttributeValue<string>("emailaddress1").Trim().Equals(Email, StringComparison.OrdinalIgnoreCase);
         }
 
         private string[] AdditionalAttributeValues(string firstName, string lastName, DateTime? dateOfBirth)
@@ -50,8 +50,8 @@ namespace GetIntoTeachingApi.Models
         {
             var matches = AdditionalAttributeValues(FirstName, LastName, DateOfBirth).Intersect(
                 AdditionalAttributeValues(
-                    entity.GetAttributeValue<string>("firstname"),
-                    entity.GetAttributeValue<string>("lastname"),
+                    entity.GetAttributeValue<string>("firstname")?.Trim(),
+                    entity.GetAttributeValue<string>("lastname")?.Trim(),
                     entity.GetAttributeValue<DateTime>("birthdate")), StringComparer.OrdinalIgnoreCase);
 
             return matches.Count() >= MinimumAdditionalAttributeMatches;

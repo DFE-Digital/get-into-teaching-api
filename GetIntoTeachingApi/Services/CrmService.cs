@@ -73,7 +73,10 @@ namespace GetIntoTeachingApi.Services
             var entity = _service.CreateQuery("contact", context)
                 .Where(e =>
                     e.GetAttributeValue<int>("statecode") == (int)Candidate.Status.Active &&
-                    e.GetAttributeValue<string>("emailaddress1") == request.Email) // Will perform a case-insensitive comparison
+
+                    // Will perform a case-insensitive comparison.
+                    // Contains is used to ensure we match emails with white space (request.Match does an exact match in-memory).
+                    e.GetAttributeValue<string>("emailaddress1").Contains(request.Email))
                 .OrderByDescending(e => e.GetAttributeValue<double>("dfe_duplicatescorecalculated"))
                 .ThenByDescending(e => e.GetAttributeValue<DateTime>("modifiedon"))
                 .Take(MaximumNumberOfCandidatesToMatch)
