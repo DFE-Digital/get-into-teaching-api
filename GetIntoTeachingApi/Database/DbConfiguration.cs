@@ -40,11 +40,7 @@ namespace GetIntoTeachingApi.Database
         {
             var migrationsAreSupported = _dbContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.Sqlite";
 
-            if (migrationsAreSupported)
-            {
-                _dbContext.Database.Migrate();
-            }
-            else
+            if (!migrationsAreSupported)
             {
                 _dbContext.Database.EnsureCreated();
             }
