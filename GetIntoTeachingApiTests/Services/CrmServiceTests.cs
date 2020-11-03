@@ -271,6 +271,7 @@ namespace GetIntoTeachingApiTests.Services
         [InlineData("john@doe.com", "New John", "Doe", "New John")]
         [InlineData("JOHN@doe.com", "New John", "Doe", "New John")]
         [InlineData("jane@doe.com", "Jane", "Doe", "Jane")]
+        [InlineData(" jane@doe.com ", " Jane ", " Doe ", "Jane")]
         [InlineData("bob@doe.com", "Bob", "Doe", null)]
         [InlineData("inactive@doe.com", "Inactive", "Doe", null)]
         public void MatchCandidate_WithExistingCandidateRequest_MatchesOnNewestCandidateWithEmail(
