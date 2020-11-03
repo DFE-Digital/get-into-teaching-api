@@ -118,6 +118,16 @@ We run Entity Framework Core in order to persist models/data to a Postgres datab
 
 Migrations are applied from code when the application starts (see `DbConfiguration.cs`). You can add a migration by modifying the models and running `Add-Migration MyNewMigration` from the package manager console. As we run SQLite in development and Postgres in production we need to tell EF Core which provider to use at design-time; the `GetIntoTeachingDbContextFactory` takes care of this.
 
+### Rate Limiting
+
+We use [AspNetCoreRateLimit](https://github.com/stefanprodan/AspNetCoreRateLimit) to rate limit clients based on their access token (the value passed in the `Authorization` header). Currently both our clients share the same access token, but we envisage splitting that up in the future.
+
+It is the responsibility of the API client to rate limit on a per-user basis to ensure the global rate limiting of their access token is not exceeded.
+
+We apply the same rate limits irrespective of client at the moment, but going forward we could offer per-client rate limiting using the library.
+
+The rate limit counters are currently stored in memory, but we will change this going forward to use Redis so that they are shared between instances.
+
 ### Deployment
 
 Deployment is via Terraform and the key will be stored in Azure.
