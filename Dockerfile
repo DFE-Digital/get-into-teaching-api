@@ -20,20 +20,10 @@ RUN dotnet publish -c release -o /app --no-restore
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 
 # Upgrade the distrubution to clear CVE warning
-# and install .net core SDK
 RUN apt-get update -y && \
 	apt-get dist-upgrade -y && \
-	apt-get install --no-install-recommends wget=1.20.1-1.1 -y && \
-	wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
-	dpkg -i packages-microsoft-prod.deb && \
-	apt-get install -y --no-install-recommends apt-transport-https=1.8.2.1 && \
-	apt-get update && \
-	apt-get install -y --no-install-recommends dotnet-sdk-3.1=3.1.403-1 && \
     apt-get clean && \
 	rm -rf /var/lib/apt/lists/*
-
-# Install dotnet-ef for running migrations
-RUN dotnet tool install --global dotnet-ef
 
 WORKDIR /app
 COPY --from=build /app ./
