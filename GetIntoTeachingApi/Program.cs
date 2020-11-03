@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using AspNetCoreRateLimit;
+using GetIntoTeachingApi.Database;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,6 +20,10 @@ namespace GetIntoTeachingApi
 
             // Seed client data from appsettings.
             await clientPolicyStore.SeedAsync();
+
+            // Configure the database.
+            var dbConfiguration = scope.ServiceProvider.GetRequiredService<DbConfiguration>();
+            await dbConfiguration.ConfigureAsync();
 
             await webHost.RunAsync();
         }

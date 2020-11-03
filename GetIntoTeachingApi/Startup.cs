@@ -212,10 +212,6 @@ The GIT API aims to provide:
                 (x) => x.RunAsync("https://www.freemaptools.com/download/full-postcodes/ukpostcodes.zip"),
                 Cron.Weekly());
 
-            // Configure the database.
-            var dbConfiguration = serviceScope.ServiceProvider.GetService<DbConfiguration>();
-            dbConfiguration.Configure();
-
             // Don't seed test environment.
             if (!env.IsTest)
             {
