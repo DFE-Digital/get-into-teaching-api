@@ -28,7 +28,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 2,
-  "iteration": 1603898445768,
+  "iteration": 1604487342784,
   "links": [],
   "panels": [
     {
@@ -850,7 +850,8 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "cpu_percent",
+          "expr": "cpu_percent{space=\"$Space\"}",
+          "interval": "",
           "legendFormat": "{{service}}",
           "refId": "A"
         }
@@ -924,7 +925,7 @@
         "current": false,
         "max": false,
         "min": false,
-        "show": false,
+        "show": true,
         "total": false,
         "values": false
       },
@@ -946,6 +947,7 @@
       "targets": [
         {
           "expr": "dotnet_total_memory_bytes",
+          "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
@@ -1040,7 +1042,8 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "connections",
+          "expr": "connections{space=\"$Space\"}",
+          "interval": "",
           "legendFormat": "{{service}}",
           "refId": "A"
         }
@@ -1834,6 +1837,7 @@
       "targets": [
         {
           "expr": "sum(increase(http_request_duration_seconds_bucket[$__interval])) by (le) ",
+          "hide": false,
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -2124,7 +2128,7 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 30,
+          "value": 60,
           "yaxis": "left"
         },
         {
@@ -2132,7 +2136,7 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 15,
+          "value": 30,
           "yaxis": "left"
         }
       ],
@@ -2159,7 +2163,7 @@
           "format": "short",
           "label": "",
           "logBase": 1,
-          "max": "35",
+          "max": "65",
           "min": "0",
           "show": true
         },
@@ -2813,11 +2817,44 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "get-into-teaching-production",
+          "value": "get-into-teaching-production"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "Space",
+        "options": [
+          {
+            "selected": true,
+            "text": "get-into-teaching-production",
+            "value": "get-into-teaching-production"
+          },
+          {
+            "selected": false,
+            "text": "get-into-teaching-test",
+            "value": "get-into-teaching-test"
+          },
+          {
+            "selected": false,
+            "text": "get-into-teaching",
+            "value": "get-into-teaching"
+          }
+        ],
+        "query": "get-into-teaching-production,get-into-teaching-test,get-into-teaching",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
