@@ -80,11 +80,11 @@ groups:
         annotations:
           summary: Alert when the Google API returns a non-success response.
       - alert: ClientApproachingRateLimit
-        expr: 'sum(increase(http_request_duration_seconds_sum{controller=~"Candidates|MailingList|TeachingEvents",action=~"CreateAccessToken|AddMember|AddAttendee|SignUp",code=~".+"}[1m])) by (controller, action) > 15'
+        expr: 'sum(increase(http_request_duration_seconds_sum{controller=~"Candidates|MailingList|TeachingEvents",action=~"CreateAccessToken|AddMember|AddAttendee|SignUp",code=~".+"}[1m])) by (controller, action) > 30'
         labels:
           severity: medium
         annotations:
-          summary: Alert when a client is approaching the rate limit threshold (15rpm out of an available 30rpm).
+          summary: Alert when a client is approaching the rate limit threshold (30rpm out of an available 60rpm).
       - alert: HighCpu
         expr: 'max(cpu_percent) > 70'
         labels:
