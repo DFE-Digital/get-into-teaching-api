@@ -13,6 +13,18 @@ groups:
           severity: medium
         annotations:
           summary: Alert when a high number of 404 response codes are returned (>15 in a 10m period).
+      - alert: HighCpu
+        expr: 'max(cpu{app="get-into-teaching-app-prod"}) > 70'
+        labels:
+          severity: medium
+        annotations:
+          summary: Alert when max CPU utilization is over 70%.
+      - alert: HighMemory
+        expr: 'max(memory_utilization{app="get-into-teaching-app-prod"}) > 70'
+        labels:
+          severity: medium
+        annotations:
+          summary: Alert when memory utilization is over 70%.
   - name: TTA
     rules:
       - alert: TooManyRequests
@@ -27,6 +39,18 @@ groups:
           severity: medium
         annotations:
           summary: Alert when a high number of 404 response codes are returned (>15 in a 10m period).
+      - alert: HighCpu
+        expr: 'max(cpu{app="get-teacher-training-adviser-service-prod"}) > 70'
+        labels:
+          severity: medium
+        annotations:
+          summary: Alert when max CPU utilization is over 70%.
+      - alert: HighMemory
+        expr: 'max(memory_utilization{app="get-teacher-training-adviser-service-prod"}) > 70'
+        labels:
+          severity: medium
+        annotations:
+          summary: Alert when memory utilization is over 70%.
   - name: API
     rules:
       - alert: TooManyRequests
