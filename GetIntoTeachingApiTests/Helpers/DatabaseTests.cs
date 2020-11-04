@@ -18,7 +18,8 @@ namespace GetIntoTeachingApiTests.Helpers
             DbConfiguration.ConfigSqLite(builder, _keepAliveConnection);
 
             DbContext = new GetIntoTeachingDbContext(builder.Options);
-            new DbConfiguration(DbContext).Configure();
+            var dbConfiguration = new DbConfiguration(DbContext);
+            dbConfiguration.ConfigureAsync().Wait();
         }
 
         public void Dispose() => _keepAliveConnection.Dispose();
