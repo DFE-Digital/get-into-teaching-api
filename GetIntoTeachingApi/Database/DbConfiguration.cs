@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GetIntoTeachingApi.Utils;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -36,13 +37,18 @@ namespace GetIntoTeachingApi.Database
             builder.UseSqlite(keepAliveConnection, x => x.UseNetTopologySuite());
         }
 
-        public void Configure()
+        public async Task ConfigureAsync()
         {
             var migrationsAreSupported = _dbContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.Sqlite";
 
             if (migrationsAreSupported)
             {
-                _dbContext.Database.Migrate();
+                var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync();
+
+                if (pendingMigrations.Any())
+                {
+                    _dbContext.Database.Migrate();
+                }
             }
             else
             {
