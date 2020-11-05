@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using AspNetCoreRateLimit;
 using GetIntoTeachingApi.Database;
+using GetIntoTeachingApi.Utils;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,7 +24,8 @@ namespace GetIntoTeachingApi
 
             // Configure the database.
             var dbConfiguration = scope.ServiceProvider.GetRequiredService<DbConfiguration>();
-            await dbConfiguration.ConfigureAsync();
+            var env = scope.ServiceProvider.GetRequiredService<IEnv>();
+            dbConfiguration.Configure(env);
 
             await webHost.RunAsync();
         }
