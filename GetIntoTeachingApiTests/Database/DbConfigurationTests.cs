@@ -2,7 +2,6 @@
 using FluentAssertions;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Utils;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
 
