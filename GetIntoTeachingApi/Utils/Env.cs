@@ -22,5 +22,6 @@ namespace GetIntoTeachingApi.Utils
         public string SharedSecret => Environment.GetEnvironmentVariable("SHARED_SECRET");
         public string PenTestSharedSecret => Environment.GetEnvironmentVariable("PEN_TEST_SHARED_SECRET");
         public string GoogleApiKey => Environment.GetEnvironmentVariable("GOOGLE_API_KEY");
+        public int InstanceIndex => int.Parse(Environment.GetEnvironmentVariable("CF_INSTANCE_INDEX"));
     }
 }
