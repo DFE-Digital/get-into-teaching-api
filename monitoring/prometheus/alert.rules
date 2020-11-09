@@ -25,6 +25,12 @@ groups:
           severity: medium
         annotations:
           summary: Alert when memory utilization is over 70%.
+      - alert: StevesHighCpuTest
+        expr: 'max(cpu{app="get-into-teaching-app-dev"}) > 0'
+        labels:
+          severity: medium
+        annotations:
+          summary: Alert when max CPU utilization is over 70%.
   - name: TTA
     rules:
       - alert: TooManyRequests

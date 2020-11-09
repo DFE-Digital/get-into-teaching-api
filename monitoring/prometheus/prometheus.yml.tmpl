@@ -2,7 +2,7 @@ global:
   scrape_interval: 10s
 
 scrape_configs:
-- job_name: ${paas_prometheus_exporter_name}
+- job_name: PaaS Prometheus Exporter
   scheme: https
   static_configs:
     - targets: [${paas_prometheus_exporter_endpoint}]
