@@ -28,7 +28,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 2,
-  "iteration": 1604487342784,
+  "iteration": 1604929604936,
   "links": [],
   "panels": [
     {
@@ -2028,7 +2028,7 @@
               "field": "@timestamp",
               "id": "2",
               "settings": {
-                "interval": "1m",
+                "interval": "5m",
                 "min_doc_count": 0,
                 "trimEdges": 0
               },
@@ -2053,7 +2053,7 @@
               "field": "@timestamp",
               "id": "2",
               "settings": {
-                "interval": "auto",
+                "interval": "5m",
                 "min_doc_count": 0,
                 "trimEdges": 0
               },
@@ -2078,7 +2078,7 @@
               "field": "@timestamp",
               "id": "2",
               "settings": {
-                "interval": "auto",
+                "interval": "5m",
                 "min_doc_count": 0,
                 "trimEdges": 0
               },
@@ -2103,7 +2103,7 @@
               "field": "@timestamp",
               "id": "2",
               "settings": {
-                "interval": "auto",
+                "interval": "5m",
                 "min_doc_count": 0,
                 "trimEdges": 0
               },
@@ -2792,7 +2792,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "get-into-teaching-api-prod",
           "value": "get-into-teaching-api-prod"
         },
