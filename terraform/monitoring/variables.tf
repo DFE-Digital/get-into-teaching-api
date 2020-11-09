@@ -71,6 +71,6 @@ variable "google_client_secret" {}
 variable elasticsearch_user {}
 variable elasticsearch_password {}
 variable alertmanager_slack_url {}
-variable alertmanager_slack_channel { 
+variable alertmanager_slack_channel {
   default = "getintoteaching_tech"
 }
