@@ -86,7 +86,7 @@ groups:
         annotations:
           summary: Alert when the Google API returns a non-success response.
       - alert: ClientApproachingRateLimit
-        expr: 'sum(increase(http_request_duration_seconds_sum{controller=~"Candidates|MailingList|TeachingEvents",action=~"CreateAccessToken|AddMember|AddAttendee|SignUp",code=~".+"}[1m])) by (controller, action) > 30'
+        expr: 'max(increase(http_request_duration_seconds_sum{controller=~"Candidates|MailingList|TeachingEvents",action=~"CreateAccessToken|AddMember|AddAttendee|SignUp",code=~".+"}[1m])) by (controller, action) > 30'
         labels:
           severity: medium
         annotations:
