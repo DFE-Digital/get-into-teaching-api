@@ -21,7 +21,7 @@ locals {
 }
 
 module "prometheus" {
-  source                            = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/prometheus?ref=monitoring-terraform-0_13-tv"
+  source                            = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/prometheus"
   paas_prometheus_exporter_endpoint = module.paas_prometheus_exporter.endpoint
   monitoring_space_id               = data.cloudfoundry_space.space.id
   monitoring_instance_name          = local.monitoring_org_name
@@ -34,13 +34,13 @@ module "prometheus" {
 }
 
 module "influx" {
-  source                   = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/influxdb?ref=monitoring-terraform-0_13-tv"
+  source                   = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/influxdb"
   monitoring_space_id      = data.cloudfoundry_space.space.id
   monitoring_instance_name = local.monitoring_org_name
 }
 
 module "paas_prometheus_exporter" {
-  source                   = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/paas_prometheus_exporter?ref=monitoring-terraform-0_13-tv"
+  source                   = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/paas_prometheus_exporter"
   monitoring_space_id      = data.cloudfoundry_space.space.id
   monitoring_instance_name = local.monitoring_org_name
   paas_username            = var.paas_exporter_username
@@ -49,7 +49,7 @@ module "paas_prometheus_exporter" {
 
 
 module "grafana" {
-  source                   = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/grafana?ref=monitoring-terraform-0_13-tv"
+  source                   = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/grafana"
   monitoring_space_id      = data.cloudfoundry_space.space.id
   monitoring_instance_name = "${var.environment}-${var.grafana["name"]}"
   prometheus_endpoint      = module.prometheus.endpoint
@@ -64,8 +64,9 @@ module "grafana" {
 }
 
 module "alertmanager" {
-  source                   = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/alertmanager?ref=monitoring-terraform-0_13-tv"
+  source                   = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/alertmanager?ref=monitoring/alertmanager/templates"
   monitoring_space_id      = data.cloudfoundry_space.space.id
   monitoring_instance_name = "${var.environment}-${var.alertmanager["name"]}"
-  config                   = templatefile(var.alertmanager["config"], local.template_variable_map)
+  slack_url                =  var.alertmanager_slack_url
+  slack_channel            =  var.alertmanager_slack_channel
 }
