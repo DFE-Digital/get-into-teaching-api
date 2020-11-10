@@ -7,33 +7,24 @@ groups:
           severity: high
         annotations:
           summary: Alert when any user hits a rate limit (excluding the /csp_reports endpoint).
-          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2152497153/Rate+Limit
-          dashboard: https://grafana-dev-get-into-teaching.london.cloudapps.digital/d/qZjcqcpGz/csp-violations?orgId=1
       - alert: HighNotFound
         expr: 'sum(increase(app_requests_total{path=~".+",status=~"404"}[10m])) > 15'
         labels:
           severity: medium
         annotations:
           summary: Alert when a high number of 404 response codes are returned (>15 in a 10m period).
-          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2152497153/Rate+Limit
-          dashboard: https://grafana-dev-get-into-teaching.london.cloudapps.digital/d/qZjcqcpGz/csp-violations?orgId=1
       - alert: HighCpu
         expr: 'max(cpu{app="get-into-teaching-app-prod"}) > 70'
         labels:
           severity: medium
         annotations:
           summary: Alert when max CPU utilization is over 70%.
-          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2152497153/Rate+Limit
-          dashboard: https://grafana-dev-get-into-teaching.london.cloudapps.digital/d/qZjcqcpGz/csp-violations?orgId=1
-          description: The CPU usage has exceeded the threshold of 70%, please read the runbook for advice on what action should be taken.
       - alert: HighMemory
         expr: 'max(memory_utilization{app="get-into-teaching-app-prod"}) > 70'
         labels:
           severity: medium
         annotations:
           summary: Alert when memory utilization is over 70%.
-          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2152497153/Rate+Limit
-          dashboard: https://grafana-dev-get-into-teaching.london.cloudapps.digital/d/qZjcqcpGz/csp-violations?orgId=1
   - name: TTA
     rules:
       - alert: TooManyRequests
@@ -42,32 +33,24 @@ groups:
           severity: high
         annotations:
           summary: Alert when any user hits a rate limit (excluding the /csp_reports endpoint).
-          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2152497153/Rate+Limit
-          dashboard: https://grafana-dev-get-into-teaching.london.cloudapps.digital/d/qZjcqcpGz/csp-violations?orgId=1
       - alert: HighNotFound
         expr: 'sum(increase(tta_requests_total{path=~".+",status=~"404"}[10m])) > 15'
         labels:
           severity: medium
         annotations:
           summary: Alert when a high number of 404 response codes are returned (>15 in a 10m period).
-          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2152497153/Rate+Limit
-          dashboard: https://grafana-dev-get-into-teaching.london.cloudapps.digital/d/qZjcqcpGz/csp-violations?orgId=1
       - alert: HighCpu
         expr: 'max(cpu{app="get-teacher-training-adviser-service-prod"}) > 70'
         labels:
           severity: medium
         annotations:
           summary: Alert when max CPU utilization is over 70%.
-          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2152497153/Rate+Limit
-          dashboard: https://grafana-dev-get-into-teaching.london.cloudapps.digital/d/qZjcqcpGz/csp-violations?orgId=1
       - alert: HighMemory
         expr: 'max(memory_utilization{app="get-teacher-training-adviser-service-prod"}) > 70'
         labels:
           severity: medium
         annotations:
           summary: Alert when memory utilization is over 70%.
-          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2152497153/Rate+Limit
-          dashboard: https://grafana-dev-get-into-teaching.london.cloudapps.digital/d/qZjcqcpGz/csp-violations?orgId=1
   - name: API
     rules:
       - alert: TooManyRequests
@@ -75,66 +58,53 @@ groups:
           sum(increase(http_requests_received_total{controller=~".+",action=~".+",code=~"429"}[1m]))
           > 0
         labels:
-          severity: high
+          severity: medium
         annotations:
           summary: Alert when any client hits a rate limit.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2152497153/Rate+Limit
-          dashboard: https://grafana-dev-get-into-teaching.london.cloudapps.digital/d/qZjcqcpGz/csp-violations?orgId=1
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=60&orgId=1&var-App=get-into-teaching-api-prod
+          description: The API has recieved too many requests,  please read the runbook for advice on what action should be taken.
       - alert: FailedJobs
         expr: 'sum(increase(api_hangfire_jobs{state="failed"}[1m])) > 0'
         labels:
           severity: high
         annotations:
           summary: Alert when any job fails.
-          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2152497153/Rate+Limit
-          dashboard: https://grafana-dev-get-into-teaching.london.cloudapps.digital/d/qZjcqcpGz/csp-violations?orgId=1
       - alert: HighGoogleApiCalls
         expr: 'sum(increase(api_google_api_calls[10m])) > 5'
         labels:
           severity: high
         annotations:
           summary: Alert when a high number of Google API calls are made (>5 in a 10m period).
-          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2152497153/Rate+Limit
-          dashboard: https://grafana-dev-get-into-teaching.london.cloudapps.digital/d/qZjcqcpGz/csp-violations?orgId=1
       - alert: GoogleApiErrors
         expr: 'sum(rate(api_google_api_calls{result != "success"}[1m])) > 0'
         labels:
           severity: medium
         annotations:
           summary: Alert when the Google API returns a non-success response.
-          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2152497153/Rate+Limit
-          dashboard: https://grafana-dev-get-into-teaching.london.cloudapps.digital/d/qZjcqcpGz/csp-violations?orgId=1
       - alert: ClientApproachingRateLimit
         expr: 'sum(increase(http_request_duration_seconds_sum{controller=~"Candidates|MailingList|TeachingEvents",action=~"CreateAccessToken|AddMember|AddAttendee|SignUp",code=~".+"}[1m])) by (controller, action) > 30'
         labels:
           severity: medium
         annotations:
           summary: Alert when a client is approaching the rate limit threshold (30rpm out of an available 60rpm).
-          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2152497153/Rate+Limit
-          dashboard: https://grafana-dev-get-into-teaching.london.cloudapps.digital/d/qZjcqcpGz/csp-violations?orgId=1
       - alert: HighCpu
         expr: 'max(cpu_percent) > 70'
         labels:
           severity: medium
         annotations:
           summary: Alert when max CPU utilization is over 70%.
-          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2152497153/Rate+Limit
-          dashboard: https://grafana-dev-get-into-teaching.london.cloudapps.digital/d/qZjcqcpGz/csp-violations?orgId=1
       - alert: HighMemory
         expr: 'dotnet_total_memory_bytes > 768000000'
         labels:
           severity: medium
         annotations:
           summary: Alert when max memory utilization is over 768MB.
-          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2152497153/Rate+Limit
-          dashboard: https://grafana-dev-get-into-teaching.london.cloudapps.digital/d/qZjcqcpGz/csp-violations?orgId=1
       - alert: HighDatabaseConnections
         expr: 'max(connections) > 75'
         labels:
           severity: medium
         annotations:
           summary: Alert when max database connections exceeds 75 (out of an available 100).
-          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2152497153/Rate+Limit
-          dashboard: https://grafana-dev-get-into-teaching.london.cloudapps.digital/d/qZjcqcpGz/csp-violations?orgId=1
           
           
