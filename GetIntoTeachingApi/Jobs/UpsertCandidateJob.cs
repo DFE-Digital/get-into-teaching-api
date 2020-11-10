@@ -6,6 +6,7 @@ using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire.Server;
 using Microsoft.Extensions.Logging;
+using Prometheus;
 
 namespace GetIntoTeachingApi.Jobs
 {
@@ -14,6 +15,7 @@ namespace GetIntoTeachingApi.Jobs
         private readonly ICrmService _crm;
         private readonly INotifyService _notifyService;
         private readonly IPerformContextAdapter _contextAdapter;
+        private readonly IMetricService _metrics;
         private readonly ILogger<UpsertCandidateJob> _logger;
 
         public UpsertCandidateJob(
@@ -21,12 +23,14 @@ namespace GetIntoTeachingApi.Jobs
             ICrmService crm,
             INotifyService notifyService,
             IPerformContextAdapter contextAdapter,
+            IMetricService metrics,
             ILogger<UpsertCandidateJob> logger)
             : base(env)
         {
             _crm = crm;
             _notifyService = notifyService;
             _contextAdapter = contextAdapter;
+            _metrics = metrics;
             _logger = logger;
         }
 
@@ -56,6 +60,9 @@ namespace GetIntoTeachingApi.Jobs
 
                 _logger.LogInformation($"UpsertCandidateJob - Succeeded - {candidate.Id}");
             }
+
+            var duration = (DateTime.UtcNow - _contextAdapter.GetJobCreatedAt(context)).TotalSeconds;
+            _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Observe(duration);
         }
 
         private void SaveCandidate(Candidate candidate)

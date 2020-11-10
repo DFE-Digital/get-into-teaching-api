@@ -33,6 +33,13 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void HangfireJobQueueDuration_ReturnsMetric()
+        {
+            _metrics.HangfireJobQueueDuration.Name.Should().Be("api_hangfire_job_queue_duration_seconds");
+            _metrics.HangfireJobQueueDuration.LabelNames.Should().BeEquivalentTo(new[] { "job" });
+        }
+
+        [Fact]
         public void HangfireJobs_ReturnsMetric()
         {
             _metrics.HangfireJobs.Name.Should().Be("api_hangfire_jobs");
