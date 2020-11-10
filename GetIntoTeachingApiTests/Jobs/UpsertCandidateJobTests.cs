@@ -19,6 +19,7 @@ namespace GetIntoTeachingApiTests.Jobs
         private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<INotifyService> _mockNotifyService;
         private readonly Candidate _candidate;
+        private readonly IMetricService _metrics;
         private readonly UpsertCandidateJob _job;
         private readonly Mock<ILogger<UpsertCandidateJob>> _mockLogger;
 
@@ -28,9 +29,13 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockCrm = new Mock<ICrmService>();
             _mockNotifyService = new Mock<INotifyService>();
             _mockLogger = new Mock<ILogger<UpsertCandidateJob>>();
+            _metrics = new MetricService();
             _candidate = new Candidate() { Id = Guid.NewGuid(), Email = "test@test.com" };
             _job = new UpsertCandidateJob(new Env(), _mockCrm.Object, _mockNotifyService.Object,
-                _mockContext.Object, _mockLogger.Object);
+                _mockContext.Object, _metrics, _mockLogger.Object);
+
+            _metrics.HangfireJobQueueDuration.RemoveLabelled(new[] { "UpsertCandidateJob" });
+            _mockContext.Setup(m => m.GetJobCreatedAt(null)).Returns(DateTime.UtcNow.AddDays(-1));
         }
 
         [Fact]
@@ -43,6 +48,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockCrm.Verify(mock => mock.Save(_candidate), Times.Once);
             _mockLogger.VerifyInformationWasCalled("UpsertCandidateJob - Started (1/24)");
             _mockLogger.VerifyInformationWasCalled($"UpsertCandidateJob - Succeeded - {_candidate.Id}");
+            _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Count.Should().Be(1);
         }
 
         [Fact]
@@ -58,6 +64,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockCrm.Verify(mock => mock.Save(registration), Times.Once);
             registration.CandidateId.Should().Be(candidateId);
+            _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Count.Should().Be(1);
         }
 
         [Fact]
@@ -73,6 +80,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockCrm.Verify(mock => mock.Save(phoneCall), Times.Once);
             phoneCall.CandidateId.Should().Be(candidateId.ToString());
+            _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Count.Should().Be(1);
         }
 
         [Fact]
@@ -91,6 +99,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockCrm.Verify(mock => mock.Save(quota), Times.Once);
             quota.NumberOfBookings.Should().Be(6);
+            _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Count.Should().Be(1);
         }
 
         [Fact]
@@ -109,6 +118,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockCrm.Verify(mock => mock.Save(quota), Times.Never);
             quota.NumberOfBookings.Should().Be(5);
+            _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Count.Should().Be(1);
         }
 
         [Fact]
@@ -123,6 +133,7 @@ namespace GetIntoTeachingApiTests.Jobs
                 NotifyService.CandidateRegistrationFailedEmailTemplateId, It.IsAny<Dictionary<string, dynamic>>()));
             _mockLogger.VerifyInformationWasCalled("UpsertCandidateJob - Started (24/24)");
             _mockLogger.VerifyInformationWasCalled("UpsertCandidateJob - Deleted");
+            _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Count.Should().Be(1);
         }
     }
 }
