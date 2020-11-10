@@ -10,6 +10,11 @@ namespace GetIntoTeachingApi.Services
             .CreateHistogram("api_location_sync_duration_seconds", "Histogram of location sync durations.");
         private static readonly Histogram _locationBatchDuration = Metrics
             .CreateHistogram("api_location_batch_duration_seconds", "Histogram of location batch processing durations.");
+        private static readonly Histogram _hangfireJobQueueDuration = Metrics
+            .CreateHistogram("api_hangfire_job_queue_duration_seconds", "Histogram of the time jobs spend in the queue.", new HistogramConfiguration
+            {
+                LabelNames = new[] { "job" },
+            });
         private static readonly Gauge _hangfireJobs = Metrics
             .CreateGauge("api_hangfire_jobs", "Gauge number of Hangifre jobs.", "state");
         private static readonly Counter _googleApiCalls = Metrics
@@ -26,6 +31,7 @@ namespace GetIntoTeachingApi.Services
         public Histogram CrmSyncDuration => _crmSyncDuration;
         public Histogram LocationSyncDuration => _locationSyncDuration;
         public Histogram LocationBatchDuration => _locationBatchDuration;
+        public Histogram HangfireJobQueueDuration => _hangfireJobQueueDuration;
         public Gauge HangfireJobs => _hangfireJobs;
         public Counter GoogleApiCalls => _googleApiCalls;
         public Counter CacheLookups => _cacheLookups;
