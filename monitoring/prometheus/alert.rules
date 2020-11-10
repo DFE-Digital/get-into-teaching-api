@@ -25,12 +25,6 @@ groups:
           severity: medium
         annotations:
           summary: Alert when memory utilization is over 70%.
-      - alert: StevesHighCpuTest
-        expr: 'max(cpu{app="get-into-teaching-app-dev"}) > 0'
-        labels:
-          severity: medium
-        annotations:
-          summary: Alert when max CPU utilization is over 70%.
   - name: TTA
     rules:
       - alert: TooManyRequests
@@ -64,9 +58,12 @@ groups:
           sum(increase(http_requests_received_total{controller=~".+",action=~".+",code=~"429"}[1m]))
           > 0
         labels:
-          severity: high
+          severity: medium
         annotations:
           summary: Alert when any client hits a rate limit.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2152497153/Rate+Limit
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=60&orgId=1&var-App=get-into-teaching-api-prod
+          description: The API has recieved too many requests,  please read the runbook for advice on what action should be taken.
       - alert: FailedJobs
         expr: 'sum(increase(api_hangfire_jobs{state="failed"}[1m])) > 0'
         labels:

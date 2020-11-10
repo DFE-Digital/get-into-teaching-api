@@ -1,5 +1,0 @@
-applications:
-    - name: teaching-vacancies-alertmanager-staging
-      buildpacks:
-        - binary_buildpack
-      command: ./alertmanager --web.listen-address=:${PORT} --config.file=alertmanager.yml
