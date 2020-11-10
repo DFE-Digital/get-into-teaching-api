@@ -28,7 +28,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 2,
-  "iteration": 1604929604936,
+  "iteration": 1605023849506,
   "links": [],
   "panels": [
     {
@@ -1752,8 +1752,8 @@
       },
       "fontSize": "100%",
       "gridPos": {
-        "h": 12,
-        "w": 12,
+        "h": 11,
+        "w": 24,
         "x": 0,
         "y": 69
       },
@@ -1799,6 +1799,134 @@
       "type": "table-old"
     },
     {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 0,
+        "y": 80
+      },
+      "hiddenSeries": false,
+      "id": 61,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.2.2",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(1, sum(rate(api_hangfire_job_queue_duration_seconds_bucket[1h])) by (le, exported_job))",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "100p - {{exported_job}}",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(api_hangfire_job_queue_duration_seconds_bucket[1h])) by (le, exported_job))",
+          "interval": "",
+          "legendFormat": "99p - {{exported_job}}",
+          "refId": "D"
+        },
+        {
+          "expr": "histogram_quantile(0.98, sum(rate(api_hangfire_job_queue_duration_seconds_bucket[1h])) by (le, exported_job))",
+          "interval": "",
+          "legendFormat": "98p - {{exported_job}}",
+          "refId": "E"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(api_hangfire_job_queue_duration_seconds_bucket[1h])) by (le, exported_job))",
+          "interval": "",
+          "legendFormat": "95p - {{exported_job}}",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.75, sum(rate(api_hangfire_job_queue_duration_seconds_bucket[1h])) by (le, exported_job))",
+          "interval": "",
+          "legendFormat": "75p - {{exported_job}}",
+          "refId": "C"
+        },
+        {
+          "expr": "histogram_quantile(0.5, sum(rate(api_hangfire_job_queue_duration_seconds_bucket[1h])) by (le, exported_job))",
+          "interval": "",
+          "legendFormat": "50p - {{exported_job}}",
+          "refId": "F"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Job Time Spent in Queue",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "s",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
       "cards": {
         "cardPadding": null,
         "cardRound": null
@@ -1824,7 +1952,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 69
+        "y": 80
       },
       "heatmap": {},
       "hideZeroBuckets": false,
@@ -1894,7 +2022,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 81
+        "y": 92
       },
       "hiddenSeries": false,
       "id": 2,
@@ -1992,7 +2120,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 81
+        "y": 92
       },
       "hiddenSeries": false,
       "id": 60,
@@ -2201,7 +2329,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 91
+        "y": 102
       },
       "hiddenSeries": false,
       "id": 18,
@@ -2296,7 +2424,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 91
+        "y": 102
       },
       "hiddenSeries": false,
       "id": 54,
@@ -2403,7 +2531,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 101
+        "y": 112
       },
       "id": 34,
       "panels": [],
@@ -2417,7 +2545,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 102
+        "y": 113
       },
       "id": 42,
       "panels": [],
@@ -2465,7 +2593,7 @@
         "h": 10,
         "w": 4,
         "x": 0,
-        "y": 103
+        "y": 114
       },
       "id": 27,
       "interval": null,
@@ -2540,7 +2668,7 @@
         "h": 10,
         "w": 4,
         "x": 4,
-        "y": 103
+        "y": 114
       },
       "id": 55,
       "interval": null,
@@ -2611,7 +2739,7 @@
         "h": 10,
         "w": 8,
         "x": 8,
-        "y": 103
+        "y": 114
       },
       "id": 57,
       "pageSize": null,
@@ -2674,7 +2802,7 @@
         "h": 10,
         "w": 8,
         "x": 16,
-        "y": 103
+        "y": 114
       },
       "hiddenSeries": false,
       "id": 58,
