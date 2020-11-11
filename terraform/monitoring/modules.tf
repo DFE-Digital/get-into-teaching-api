@@ -64,7 +64,7 @@ module "grafana" {
 }
 
 module "alertmanager" {
-  source                   = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/alertmanager?ref=monitoring/alertmanager/templates"
+  source                   = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/alertmanager"
   monitoring_space_id      = data.cloudfoundry_space.space.id
   monitoring_instance_name = "${var.environment}-${var.alertmanager["name"]}"
   slack_url                =  var.alertmanager_slack_url
