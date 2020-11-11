@@ -6,25 +6,37 @@ groups:
         labels:
           severity: high
         annotations:
-          summary: Alert when any user hits a rate limit (excluding the /csp_reports endpoint).
+          summary: Alerts when any user hits a rate limit, excluding the /csp_reports endpoint.
+          description: Alerts when any user hits a rate limit, excluding the /csp_reports endpoint.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#TooManyRequests-HIGH
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=27&orgId=1
       - alert: HighNotFound
         expr: 'sum(increase(app_requests_total{path=~".+",status=~"404"}[10m])) > 15'
         labels:
           severity: medium
         annotations:
-          summary: Alert when a high number of 404 response codes are returned (>15 in a 10m period).
+          summary: Alerts when the app is serving a high number of 404 responses (more than 15 in any 10 minute period).
+          description: Alerts when the app is serving a high number of 404 responses (more than 15 in any 10 minute period).
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighNotFound-MEDIUM
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=27&orgId=1
       - alert: HighCpu
         expr: 'max(cpu{app="get-into-teaching-app-prod"}) > 70'
         labels:
           severity: medium
         annotations:
-          summary: Alert when max CPU utilization is over 70%.
+          summary: Alerts when any of the app instances exceed 70% CPU utilisation.
+          description: Alerts when any of the app instances exceed 70% CPU utilisation.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighCpu-MEDIUM
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=31&orgId=1
       - alert: HighMemory
         expr: 'max(memory_utilization{app="get-into-teaching-app-prod"}) > 70'
         labels:
           severity: medium
         annotations:
-          summary: Alert when memory utilization is over 70%.
+          summary: Alerts when any of the app instances exceed 70% memory utilisation.
+          description: Alerts when any of the app instances exceed 70% memory utilisation.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighMemory-MEDIUM
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=33&orgId=1
   - name: TTA
     rules:
       - alert: TooManyRequests
@@ -32,25 +44,37 @@ groups:
         labels:
           severity: high
         annotations:
-          summary: Alert when any user hits a rate limit (excluding the /csp_reports endpoint).
+          summary: Alerts when any user hits a rate limit, excluding the /csp_reports endpoint.
+          description: Alerts when any user hits a rate limit, excluding the /csp_reports endpoint.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#TooManyRequests-HIGH
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=27&orgId=1
       - alert: HighNotFound
         expr: 'sum(increase(tta_requests_total{path=~".+",status=~"404"}[10m])) > 15'
         labels:
           severity: medium
         annotations:
-          summary: Alert when a high number of 404 response codes are returned (>15 in a 10m period).
+          summary: Alerts when the app is serving a high number of 404 responses (more than 15 in any 10 minute period).
+          description: Alerts when the app is serving a high number of 404 responses (more than 15 in any 10 minute period).
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighNotFound-MEDIUM
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=27&orgId=1 
       - alert: HighCpu
         expr: 'max(cpu{app="get-teacher-training-adviser-service-prod"}) > 70'
         labels:
           severity: medium
         annotations:
-          summary: Alert when max CPU utilization is over 70%.
+          summary: Alerts when any of the app instances exceed 70% CPU utilisation.
+          description: Alerts when any of the app instances exceed 70% CPU utilisation.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighCpu-MEDIUM
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=31&orgId=1
       - alert: HighMemory
         expr: 'max(memory_utilization{app="get-teacher-training-adviser-service-prod"}) > 70'
         labels:
           severity: medium
         annotations:
-          summary: Alert when memory utilization is over 70%.
+          summary: Alerts when any of the app instances exceed 70% memory utilisation.
+          description: Alerts when any of the app instances exceed 70% memory utilisation.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighMemory-MEDIUM
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=33&orgId=1
   - name: API
     rules:
       - alert: TooManyRequests
