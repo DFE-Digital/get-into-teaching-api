@@ -60,57 +60,81 @@ groups:
         labels:
           severity: medium
         annotations:
-          summary: Alert when any client hits a rate limit.
-          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2152497153/Rate+Limit
+          summary: Alerts when the API has received too many requests from a client and has responded with a 429 status code.
+          description: Alerts when the API has received too many requests from a client and has responded with a 429 status code.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#TooManyRequests-Medium
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=60&orgId=1&var-App=get-into-teaching-api-prod
-          description: The API has recieved too many requests,  please read the runbook for advice on what action should be taken.
       - alert: FailedJobs
         expr: 'sum(increase(api_hangfire_jobs{state="failed"}[1m])) > 0'
         labels:
           severity: high
         annotations:
-          summary: Alert when any job fails.
+          summary: Alerts when a background job fails.
+          description: Alerts when a background job fails. Jobs are retried once per hour for a maximum of 24 attempts/hours before they are deemed as failures. Failed jobs are then deleted permanently.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#FailedJobs-high
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=2&orgId=1&var-App=get-into-teaching-api-prod
       - alert: HighGoogleApiCalls
         expr: 'sum(increase(api_google_api_calls[10m])) > 5'
         labels:
           severity: high
         annotations:
-          summary: Alert when a high number of Google API calls are made (>5 in a 10m period).
+          summary: Alerts when the API makes more than 5 requests to the Google Geocoding API in the space of 10 minutes.
+          description: Alerts when the API makes more than 5 requests to the Google Geocoding API in the space of 10 minutes.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#HighGoogleApiCalls-high
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=57&orgId=1&var-App=get-into-teaching-api-prod
       - alert: GoogleApiErrors
         expr: 'sum(rate(api_google_api_calls{result != "success"}[1m])) > 0'
         labels:
           severity: medium
         annotations:
-          summary: Alert when the Google API returns a non-success response.
+          summary: Alerts when the Google Geocoding API returns a non-success response.
+          description: Alerts when the Google Geocoding API returns a non-success response.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#GoogleApiErrors-MEDIUM
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=57&orgId=1&var-App=get-into-teaching-api-prod
       - alert: ClientApproachingRateLimit
         expr: 'max(increase(http_request_duration_seconds_sum{controller=~"Candidates|MailingList|TeachingEvents",action=~"AddMember|AddAttendee|SignUp",code=~".+"}[1m])) by (controller, action) > 50'
         labels:
           severity: medium
         annotations:
-          summary: Alert when a client is approaching the rate limit threshold (50rpm out of an available 100rpm).
+          summary: Alerts when the API is reviving a lot of requests to rate limited endpoints from a client (and is in danger of returning a 429 response soon). 
+          description: Alerts when the API is reviving a lot of requests to rate limited endpoints from a client (and is in danger of returning a 429 response soon). 
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#ClientApproachingRateLimit-MEDIUM
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=60&orgId=1&var-App=get-into-teaching-api-prod
       - alert: ClientApproachingRateLimit (CreateAccessToken)
         expr: 'max(increase(http_request_duration_seconds_sum{controller=~"Candidates",action=~"CreateAccessToken",code=~".+"}[1m])) by (controller, action) > 175'
         labels:
           severity: medium
         annotations:
-          summary: Alert when a client is approaching the rate limit threshold (175rpm out of an available 250rpm).
+          summary: Alerts when the API is reviving a lot of requests to the match back endpoint from a client (and is in danger of returning a 429 response soon). 
+          description: Alerts when the API is reviving a lot of requests to the match back endpoint from a client (and is in danger of returning a 429 response soon). 
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#ClientApproachingRateLimit-(CreateAccessToken)-MEDIUM
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=60&orgId=1&var-App=get-into-teaching-api-prod
       - alert: HighCpu
         expr: 'max(cpu_percent) > 70'
         labels:
           severity: medium
         annotations:
-          summary: Alert when max CPU utilization is over 70%.
+          summary: Alerts when any of the API instances exceed 70% CPU utilisation.
+          description: Alerts when any of the API instances exceed 70% CPU utilisation.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#HighCpu-MEDIUM
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=23&orgId=1&var-App=get-into-teaching-api-prod
       - alert: HighMemory
         expr: 'dotnet_total_memory_bytes > 768000000'
         labels:
           severity: medium
         annotations:
-          summary: Alert when max memory utilization is over 768MB.
+          summary: Alerts when any of the API instances exceed ~70% memory utilisation (768MB/1GB).
+          description: Alerts when any of the API instances exceed ~70% memory utilisation (768MB/1GB).
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#HighMemory-MEDIUM
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=12&orgId=1&var-App=get-into-teaching-api-prod
       - alert: HighDatabaseConnections
         expr: 'max(connections) > 75'
         labels:
           severity: medium
         annotations:
-          summary: Alert when max database connections exceeds 75 (out of an available 100).
+          summary: Alerts when any of the API database exceeds 75 out of a possible 100 connections.
+          description: Alerts when any of the API database exceeds 75 out of a possible 100 connections.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#HighDatabaseConnections-MEDIUM
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=4&orgId=1&var-App=get-into-teaching-api-prod
           
           
