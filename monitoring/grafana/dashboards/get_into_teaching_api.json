@@ -28,7 +28,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 2,
-  "iteration": 1605104949695,
+  "iteration": 1605107368852,
   "links": [],
   "panels": [
     {
@@ -1820,19 +1820,19 @@
         "y": 80
       },
       "hiddenSeries": false,
-      "id": 61,
+      "id": 18,
       "legend": {
         "avg": false,
         "current": false,
         "max": false,
         "min": false,
-        "show": true,
+        "show": false,
         "total": false,
         "values": false
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "connected",
+      "nullPointMode": "null",
       "options": {
         "alertThreshold": true
       },
@@ -1847,48 +1847,15 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(1, sum(rate(api_hangfire_job_queue_duration_seconds_bucket[1h])) by (le, exported_job))",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "100p - {{exported_job}}",
+          "expr": "sum(irate(http_request_duration_seconds_count[1m]))",
           "refId": "A"
-        },
-        {
-          "expr": "histogram_quantile(0.99, sum(rate(api_hangfire_job_queue_duration_seconds_bucket[1h])) by (le, exported_job))",
-          "interval": "",
-          "legendFormat": "99p - {{exported_job}}",
-          "refId": "D"
-        },
-        {
-          "expr": "histogram_quantile(0.98, sum(rate(api_hangfire_job_queue_duration_seconds_bucket[1h])) by (le, exported_job))",
-          "interval": "",
-          "legendFormat": "98p - {{exported_job}}",
-          "refId": "E"
-        },
-        {
-          "expr": "histogram_quantile(0.95, sum(rate(api_hangfire_job_queue_duration_seconds_bucket[1h])) by (le, exported_job))",
-          "interval": "",
-          "legendFormat": "95p - {{exported_job}}",
-          "refId": "B"
-        },
-        {
-          "expr": "histogram_quantile(0.75, sum(rate(api_hangfire_job_queue_duration_seconds_bucket[1h])) by (le, exported_job))",
-          "interval": "",
-          "legendFormat": "75p - {{exported_job}}",
-          "refId": "C"
-        },
-        {
-          "expr": "histogram_quantile(0.5, sum(rate(api_hangfire_job_queue_duration_seconds_bucket[1h])) by (le, exported_job))",
-          "interval": "",
-          "legendFormat": "50p - {{exported_job}}",
-          "refId": "F"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Job Time Spent in Queue",
+      "title": "Requests/s",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1904,9 +1871,8 @@
       },
       "yaxes": [
         {
-          "decimals": null,
-          "format": "s",
-          "label": "",
+          "format": "reqps",
+          "label": null,
           "logBase": 1,
           "max": null,
           "min": null,
@@ -1998,17 +1964,12 @@
       "yBucketSize": null
     },
     {
-      "aliasColors": {
-        "deleted": "red",
-        "failed": "dark-red",
-        "processing": "purple",
-        "retry": "yellow",
-        "succeeded": "green"
-      },
+      "aliasColors": {},
       "bars": false,
       "dashLength": 10,
       "dashes": false,
       "datasource": "Prometheus",
+      "description": "Counts all requests, both successful and failed",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -2025,19 +1986,23 @@
         "y": 92
       },
       "hiddenSeries": false,
-      "id": 2,
+      "id": 54,
       "legend": {
+        "alignAsTable": false,
         "avg": false,
         "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
         "max": false,
         "min": false,
+        "rightSide": true,
         "show": true,
         "total": false,
         "values": false
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "connected",
+      "nullPointMode": "null",
       "options": {
         "alertThreshold": true
       },
@@ -2052,11 +2017,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "increase(api_hangfire_jobs{state=~\"succeeded|deleted|failed|enqueued|processing|retry|scheduled\"}[10m]) ",
-          "format": "time_series",
-          "instant": false,
+          "expr": "sum(rate(http_requests_received_total[3m])) by (controller)",
           "interval": "",
-          "legendFormat": "{{state}}",
+          "legendFormat": "{{controller}}",
           "refId": "A"
         }
       ],
@@ -2064,12 +2027,31 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Hangfire Jobs",
+      "title": "Requests Received by Controller",
       "tooltip": {
         "shared": true,
         "sort": 0,
         "value_type": "individual"
       },
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "CallbackBookingQuotas",
+                "Candidates",
+                "MailingList",
+                "Operations",
+                "PrivacyPolicies",
+                "TeachingEvents",
+                "Types",
+                "Time"
+              ]
+            }
+          }
+        }
+      ],
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -2080,8 +2062,7 @@
       },
       "yaxes": [
         {
-          "decimals": null,
-          "format": "short",
+          "format": "reqps",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -2319,6 +2300,20 @@
       }
     },
     {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 102
+      },
+      "id": 34,
+      "panels": [],
+      "title": "Jobs",
+      "type": "row"
+    },
+    {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -2334,25 +2329,25 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 10,
+        "h": 12,
         "w": 12,
         "x": 0,
-        "y": 102
+        "y": 103
       },
       "hiddenSeries": false,
-      "id": 18,
+      "id": 61,
       "legend": {
         "avg": false,
         "current": false,
         "max": false,
         "min": false,
-        "show": false,
+        "show": true,
         "total": false,
         "values": false
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null",
+      "nullPointMode": "connected",
       "options": {
         "alertThreshold": true
       },
@@ -2367,15 +2362,48 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(irate(http_request_duration_seconds_count[1m]))",
+          "expr": "histogram_quantile(1, sum(rate(api_hangfire_job_queue_duration_seconds_bucket[1h])) by (le, exported_job))",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "100p - {{exported_job}}",
           "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(api_hangfire_job_queue_duration_seconds_bucket[1h])) by (le, exported_job))",
+          "interval": "",
+          "legendFormat": "99p - {{exported_job}}",
+          "refId": "D"
+        },
+        {
+          "expr": "histogram_quantile(0.98, sum(rate(api_hangfire_job_queue_duration_seconds_bucket[1h])) by (le, exported_job))",
+          "interval": "",
+          "legendFormat": "98p - {{exported_job}}",
+          "refId": "E"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(api_hangfire_job_queue_duration_seconds_bucket[1h])) by (le, exported_job))",
+          "interval": "",
+          "legendFormat": "95p - {{exported_job}}",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.75, sum(rate(api_hangfire_job_queue_duration_seconds_bucket[1h])) by (le, exported_job))",
+          "interval": "",
+          "legendFormat": "75p - {{exported_job}}",
+          "refId": "C"
+        },
+        {
+          "expr": "histogram_quantile(0.5, sum(rate(api_hangfire_job_queue_duration_seconds_bucket[1h])) by (le, exported_job))",
+          "interval": "",
+          "legendFormat": "50p - {{exported_job}}",
+          "refId": "F"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Requests/s",
+      "title": "Job Time Spent in Queue",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -2391,8 +2419,9 @@
       },
       "yaxes": [
         {
-          "format": "reqps",
-          "label": null,
+          "decimals": null,
+          "format": "s",
+          "label": "",
           "logBase": 1,
           "max": null,
           "min": null,
@@ -2413,12 +2442,17 @@
       }
     },
     {
-      "aliasColors": {},
+      "aliasColors": {
+        "deleted": "red",
+        "failed": "dark-red",
+        "processing": "purple",
+        "retry": "yellow",
+        "succeeded": "green"
+      },
       "bars": false,
       "dashLength": 10,
       "dashes": false,
       "datasource": "Prometheus",
-      "description": "Counts all requests, both successful and failed",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -2429,29 +2463,25 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 10,
+        "h": 12,
         "w": 12,
         "x": 12,
-        "y": 102
+        "y": 103
       },
       "hiddenSeries": false,
-      "id": 54,
+      "id": 2,
       "legend": {
-        "alignAsTable": false,
         "avg": false,
         "current": false,
-        "hideEmpty": true,
-        "hideZero": true,
         "max": false,
         "min": false,
-        "rightSide": true,
         "show": true,
         "total": false,
         "values": false
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null",
+      "nullPointMode": "connected",
       "options": {
         "alertThreshold": true
       },
@@ -2466,9 +2496,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(http_requests_received_total[3m])) by (controller)",
+          "expr": "increase(api_hangfire_jobs{state=~\"succeeded|deleted|failed|enqueued|processing|retry|scheduled\"}[10m]) ",
+          "format": "time_series",
+          "instant": false,
           "interval": "",
-          "legendFormat": "{{controller}}",
+          "legendFormat": "{{state}}",
           "refId": "A"
         }
       ],
@@ -2476,31 +2508,12 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Requests Received by Controller",
+      "title": "Hangfire Jobs",
       "tooltip": {
         "shared": true,
         "sort": 0,
         "value_type": "individual"
       },
-      "transformations": [
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "CallbackBookingQuotas",
-                "Candidates",
-                "MailingList",
-                "Operations",
-                "PrivacyPolicies",
-                "TeachingEvents",
-                "Types",
-                "Time"
-              ]
-            }
-          }
-        }
-      ],
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -2511,7 +2524,8 @@
       },
       "yaxes": [
         {
-          "format": "reqps",
+          "decimals": null,
+          "format": "short",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -2539,21 +2553,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 112
-      },
-      "id": 34,
-      "panels": [],
-      "title": "Jobs",
-      "type": "row"
-    },
-    {
-      "collapsed": false,
-      "datasource": null,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 113
+        "y": 115
       },
       "id": 42,
       "panels": [],
@@ -2562,7 +2562,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": null,
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -2601,7 +2601,7 @@
         "h": 10,
         "w": 4,
         "x": 0,
-        "y": 114
+        "y": 116
       },
       "id": 27,
       "interval": null,
@@ -2624,7 +2624,7 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "expr": "sum(increase(api_google_api_calls{result!=\"error\"}[$__range]))",
+          "expr": "sum(increase(api_google_api_calls[$__range]))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -2676,7 +2676,7 @@
         "h": 10,
         "w": 4,
         "x": 4,
-        "y": 114
+        "y": 116
       },
       "id": 55,
       "interval": null,
@@ -2747,7 +2747,7 @@
         "h": 10,
         "w": 8,
         "x": 8,
-        "y": 114
+        "y": 116
       },
       "id": 57,
       "pageSize": null,
@@ -2810,7 +2810,7 @@
         "h": 10,
         "w": 8,
         "x": 16,
-        "y": 114
+        "y": 116
       },
       "hiddenSeries": false,
       "id": 58,
