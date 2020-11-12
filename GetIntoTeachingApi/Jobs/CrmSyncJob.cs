@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
+using Hangfire;
 using Microsoft.Extensions.Logging;
 using Prometheus;
 
@@ -27,6 +28,7 @@ namespace GetIntoTeachingApi.Jobs
             _metrics = metrics;
         }
 
+        [DisableConcurrentExecution(timeoutInSeconds: 10 * 60)]
         public async Task RunAsync()
         {
             using (_metrics.CrmSyncDuration.NewTimer())
