@@ -3,6 +3,7 @@ using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
+using Hangfire;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -24,6 +25,14 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockStore = new Mock<IStore>();
             _metrics = new MetricService();
             _job = new CrmSyncJob(new Env(), _mockCrm.Object, _mockStore.Object, _mockLogger.Object, _metrics);
+        }
+
+        [Fact]
+        public void DisableConcurrentExecutionAttribute()
+        {
+            var type = typeof(CrmSyncJob);
+
+            type.GetMethod("RunAsync").Should().BeDecoratedWith<DisableConcurrentExecutionAttribute>();
         }
 
         [Fact]
