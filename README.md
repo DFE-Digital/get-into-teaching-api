@@ -21,53 +21,41 @@ Before you build the app you will need to add a package source for the GOV.UK No
 https://api.bintray.com/nuget/gov-uk-notify/nuget
 ```
 
-If you are using a Mac OS/Linux you will also need to ensure Spatialite is installed (for Windows this is pulled in via a NuGet package).
+Next you will need to set up the environment (see the `Environment` section below) before booting up the dependent services in Docker with `docker-compose up`.
 
-When the application runs in development it will open the Swagger documentation by default.
+When the application runs in development it will open the Swagger documentation by default (the development shared secret is `abc123`).
+
+On the first run it will do a long sync of UK postcode information into the Postgres instance running in Docker - you can monitor the progress via the Hangfire dashboard (subsequent start ups should be quicker).
 
 ### Environment
 
 If you want to run the API locally end-to-end you will need to set some environment variables (you can specify these in `GetIntoTeachingApi/Properties/launchSettings.json` under `environmentVariables`):
 
 ```
-# Secret shared between the API and client.
-SHARED_SECRET=****
-
-# Secret used when generating Timed One Time Passwords
-TOTP_SECRET_KEY=****
-
 # CRM credentials
 CRM_SERVICE_URL=****
 CRM_CLIENT_ID=****
 CRM_CLIENT_SECRET=****
+CRM_TENANT_ID=****
 
 # GOV.UK Notify Service credentials
 NOTIFY_API_KEY=****
-
-# Postgres instance names
-DATABASE_INSTANCE_NAME=****
-HANGFIRE_INSTANCE_NAME=****
-
-# Sentry
-Sentry__Dsn=****
-
-# Google
-GOOGLE_API_KEY=****
 ```
 
-The Postgres connections (for Hangfire and our database) are setup dynamically from the `VCAP_SERVICES` environment variable provided by GOV.UK PaaS and not used in development (they are replaced by in-memory alternatives by default). If you want to connect to a Postgres instance running in PaaS, such as the test environment instance, you can do so by creating a conduit to it using Cloud Foundry:
+Other environment variables are available (see the `IEnv` interface) but not necessary to run the bare-bones application.
+
+The Postgres connections (for Hangfire and our database) are setup dynamically from the `VCAP_SERVICES` environment variable provided by GOV.UK PaaS. If you want to connect to a Postgres instance running in PaaS instead of the one in Docker - such as the test environment instance - you can do so by creating a conduit to it using Cloud Foundry:
 
 ```
 cf conduit get-into-teaching-api-dev-pg-svc
 ```
 
-You then need to add a connection string containing the details for your conduit session and point it to localhost:
+You then need to update the `VCAP_SERVICES` environment variable (in `launchSettings.json`) to reflect the connection details for your conduit session:
 
 ```
-Server=127.0.0.1;SSL Mode=Require;Trust Server Certificate=true;Port=7080;Database=rdsbroker_277c8858_eb3a_427b_99ed_0f4f4171701e;User Id=******;Password=******;
-```
+{\"postgres\": [{\"instance_name\": \"rdsbroker_277c8858_eb3a_427b_99ed_0f4f4171701e\",\"credentials\": {\"host\": \"127.0.0.1\",\"name\": \"rdsbroker_277c8858_eb3a_427b_99ed_0f4f4171701e\",\"username\": \"******\",\"password\": \"******\",\"port\": \"7080\"}}]}
 
-Finally, update `Startup.cs` to use your connection string instead of the builder in `DbConfiguration.cs`.
+```
 
 ### Documentation
 

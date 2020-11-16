@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  postgres:
+    image: kartoza/postgis:12.0
+    environment:
+      - POSTGRES_DBNAME=gis,gis_test
+    volumes:
+      - db-data:/var/lib/postgresql
+    restart: on-failure
+    healthcheck:
+        test: "exit 0"
+    ports:
+      - '5432:5432'
+
+volumes:
+  db-data:

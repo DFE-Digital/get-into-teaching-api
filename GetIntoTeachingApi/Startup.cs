@@ -17,7 +17,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -61,14 +60,10 @@ namespace GetIntoTeachingApi
             services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
             services.AddSingleton<IEnv>(env);
 
-            if (env.IsDevelopment || env.IsTest)
+            if (!env.IsTest)
             {
-                var keepAliveConnection = new SqliteConnection("DataSource=:memory:");
-                services.AddDbContext<GetIntoTeachingDbContext>(builder => DbConfiguration.ConfigSqLite(builder, keepAliveConnection));
-            }
-            else
-            {
-                services.AddDbContext<GetIntoTeachingDbContext>(b => DbConfiguration.ConfigPostgres(env, b));
+                var connectionString = DbConfiguration.DatabaseConnectionString(env);
+                services.AddDbContext<GetIntoTeachingDbContext>(b => DbConfiguration.ConfigPostgres(connectionString, b));
             }
 
             services.AddAuthentication("SharedSecretHandler")
@@ -143,7 +138,7 @@ The GIT API aims to provide:
                     .UseRecommendedSerializerSettings()
                     .UseFilter(automaticRetry);
 
-                if (env.IsDevelopment || env.IsTest)
+                if (env.IsTest)
                 {
                     config.UseMemoryStorage().WithJobExpirationTimeout(JobConfiguration.ExpirationTimeout);
                 }
