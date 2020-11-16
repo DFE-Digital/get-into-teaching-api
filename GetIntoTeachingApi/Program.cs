@@ -25,7 +25,7 @@ namespace GetIntoTeachingApi
             // Configure the database.
             var dbConfiguration = scope.ServiceProvider.GetRequiredService<DbConfiguration>();
             var env = scope.ServiceProvider.GetRequiredService<IEnv>();
-            dbConfiguration.Configure(env);
+            dbConfiguration.Configure(env.InstanceIndex);
 
             await webHost.RunAsync();
         }

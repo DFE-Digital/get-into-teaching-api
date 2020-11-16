@@ -24,7 +24,10 @@ jobs:
         run:  dotnet tool install --global dotnet-sonarscanner --version 4.8.0
 
       - name: Install dependencies
-        run:  sudo dotnet restore && sudo apt-get update && sudo apt-get install -y libsqlite3-mod-spatialite
+        run:  sudo dotnet restore
+
+      - name: Spin Up Stack
+        run: docker-compose up -d
 
       - name: SonarCloud
         env:

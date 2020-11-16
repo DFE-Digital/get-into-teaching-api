@@ -23,8 +23,9 @@ namespace GetIntoTeachingApi.Database
         public GetIntoTeachingDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<GetIntoTeachingDbContext>();
+            var connectionString = DbConfiguration.DatabaseConnectionString(_env);
 
-            DbConfiguration.ConfigPostgres(_env, optionsBuilder);
+            DbConfiguration.ConfigPostgres(connectionString, optionsBuilder);
 
             return new GetIntoTeachingDbContext(optionsBuilder.Options);
         }

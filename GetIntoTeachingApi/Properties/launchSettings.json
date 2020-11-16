@@ -23,7 +23,17 @@
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DATABASE_INSTANCE_NAME": "gis",
+        "HANGFIRE_INSTANCE_NAME": "gis",
+        "VCAP_SERVICES": "{\"postgres\": [{\"instance_name\": \"gis\",\"credentials\": {\"host\": \"localhost\",\"name\": \"gis\",\"username\": \"docker\",\"password\": \"docker\",\"port\": \"5432\"}}]}",
+        "SHARED_SECRET": "abc123",
+        "TOTP_SECRET_KEY": "def456",
+        "CRM_CLIENT_SECRET": "3Q_bZ0epYn8oB._QtLYshtPUX5M8~Zhe-~",
+        "CRM_CLIENT_ID": "965b7a3a-dc0a-4f4f-b75c-14ad6dbc57f2",
+        "CRM_SERVICE_URL": "https://gitis-dev.api.crm4.dynamics.com",
+        "CRM_TENANT_ID": "fad277c9-c60a-4da1-b5f3-b3b8b34a82f9",
+        "NOTIFY_API_KEY": "dev_api_key-d9fdd2e0-6c6b-4fc6-93c1-509db81d8bc6-ad1df893-0a8a-430c-94bb-60b2c1dd3ee6"
       }
     }
   }

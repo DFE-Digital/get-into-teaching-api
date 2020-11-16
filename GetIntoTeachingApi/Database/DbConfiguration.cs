@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GetIntoTeachingApi.Utils;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Npgsql;
@@ -25,29 +24,18 @@ namespace GetIntoTeachingApi.Database
         public static string HangfireConnectionString(IEnv env) =>
             $"{GenerateConnectionString(env, env.HangfireInstanceName)};SearchPath=hangfire";
 
-        public static void ConfigPostgres(IEnv env, DbContextOptionsBuilder builder)
+        public static void ConfigPostgres(string connetionString, DbContextOptionsBuilder builder)
         {
-            builder.UseNpgsql(DatabaseConnectionString(env), x => x.UseNetTopologySuite());
+            builder.UseNpgsql(connetionString, x => x.UseNetTopologySuite());
         }
 
-        public static void ConfigSqLite(DbContextOptionsBuilder builder, SqliteConnection keepAliveConnection)
+        public void Configure(int instanceIndex = 0)
         {
-            keepAliveConnection.Open();
-            builder.UseSqlite(keepAliveConnection, x => x.UseNetTopologySuite());
-        }
+            var firstInstance = instanceIndex == 0;
 
-        public void Configure(IEnv env)
-        {
-            var migrationsAreSupported = _dbContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.Sqlite";
-            var firstInstance = env.InstanceIndex == 0;
-
-            if (migrationsAreSupported && firstInstance)
+            if (firstInstance)
             {
                 _dbContext.Database.Migrate();
-            }
-            else
-            {
-                _dbContext.Database.EnsureCreated();
             }
         }
 

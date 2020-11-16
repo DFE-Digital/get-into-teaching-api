@@ -16,13 +16,14 @@ using Location = GetIntoTeachingApi.Models.Location;
 
 namespace GetIntoTeachingApiTests.Jobs
 {
+    [Collection("Database")]
     public class LocationBatchJobTests : DatabaseTests
     {
         private readonly LocationBatchJob _job;
         private readonly IMetricService _metrics;
         private readonly Mock<ILogger<LocationBatchJob>> _mockLogger;
 
-        public LocationBatchJobTests()
+        public LocationBatchJobTests(DatabaseFixture databaseFixture): base(databaseFixture)
         {
             _mockLogger = new Mock<ILogger<LocationBatchJob>>();
             _metrics = new MetricService();

@@ -122,11 +122,6 @@ namespace GetIntoTeachingApi.Jobs
 
         private async Task<string> RetrieveCsv(string ukPostcodeCsvUrl)
         {
-            if (Env.IsDevelopment)
-            {
-                return "./Fixtures/ukpostcodes.dev.csv";
-            }
-
             var zipPath = GetTempPath();
             var csvPath = GetTempPath();
             var net = new System.Net.WebClient();
@@ -152,10 +147,7 @@ namespace GetIntoTeachingApi.Jobs
 
         private void DeleteCsv(string csvPath)
         {
-            if (!Env.IsDevelopment)
-            {
-                File.Delete(csvPath);
-            }
+            File.Delete(csvPath);
         }
     }
 }
