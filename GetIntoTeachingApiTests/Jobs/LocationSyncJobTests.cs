@@ -74,25 +74,5 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _metrics.LocationSyncDuration.Count.Should().BeGreaterOrEqualTo(1);
         }
-
-        [Fact]
-        public async void RunAsync_InDevelopment_UsesLocalFixture()
-        {
-            _mockEnv.Setup(m => m.IsDevelopment).Returns(true);
-
-            await _job.RunAsync("http://will-be-ignored.com/test.csv");
-
-            var expectedLocationBatch = new List<dynamic>
-            {
-                new { Postcode = "ky119yu", Latitude = 56.02748, Longitude = -3.35870 },
-                new { Postcode = "wc1b3ls", Latitude = 51.51727, Longitude = -0.12847 },
-            };
-
-            _mockJobClient.Verify(x => x.Create(
-                It.Is<Job>(job => job.Type == typeof(LocationBatchJob) &&
-                                  job.Method.Name == "RunAsync" &&
-                                  (string)job.Args[0] == JsonConvert.SerializeObject(expectedLocationBatch)),
-                It.IsAny<EnqueuedState>()));
-        }
     }
 }
