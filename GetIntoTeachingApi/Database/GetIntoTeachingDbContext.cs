@@ -18,16 +18,6 @@ namespace GetIntoTeachingApi.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            switch (Database.ProviderName)
-            {
-                case "Microsoft.EntityFrameworkCore.Sqlite":
-                    modelBuilder.Entity<Location>().Property(m => m.Coordinate)
-                        .HasSrid(DbConfiguration.Wgs84Srid);
-                    modelBuilder.Entity<TeachingEventBuilding>().Property(m => m.Coordinate)
-                        .HasSrid(DbConfiguration.Wgs84Srid);
-                    break;
-            }
-
             modelBuilder.Entity<TeachingEvent>().HasOne(c => c.Building).WithMany(b => b.TeachingEvents)
                 .HasForeignKey(e => e.BuildingId).OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<TypeEntity>().HasKey(t => new { t.Id, t.EntityName, t.AttributeName });

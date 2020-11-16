@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GetIntoTeachingApi.Utils;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Npgsql;
@@ -30,24 +29,13 @@ namespace GetIntoTeachingApi.Database
             builder.UseNpgsql(connetionString, x => x.UseNetTopologySuite());
         }
 
-        public static void ConfigSqLite(DbContextOptionsBuilder builder, SqliteConnection keepAliveConnection)
-        {
-            keepAliveConnection.Open();
-            builder.UseSqlite(keepAliveConnection, x => x.UseNetTopologySuite());
-        }
-
         public void Configure(int instanceIndex = 0)
         {
-            var migrationsAreSupported = _dbContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.Sqlite";
             var firstInstance = instanceIndex == 0;
 
-            if (migrationsAreSupported && firstInstance)
+            if (firstInstance)
             {
                 _dbContext.Database.Migrate();
-            }
-            else
-            {
-                _dbContext.Database.EnsureCreated();
             }
         }
 
