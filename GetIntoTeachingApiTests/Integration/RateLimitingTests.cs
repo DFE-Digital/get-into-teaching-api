@@ -1,20 +1,20 @@
 ﻿using FluentAssertions;
-using GetIntoTeachingApi;
+using GetIntoTeachingApiTests.Helpers;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Integration
 {
-    public class RateLimitingTests
+    [Collection("Database")]
+    public class RateLimitingTests : DatabaseTests
     {
         private readonly HttpClient _client;
 
-        public RateLimitingTests()
+        public RateLimitingTests(DatabaseFixture databaseFixture) : base(databaseFixture)
         {
-            var factory = new WebApplicationFactory<Startup>();
+            var factory = new GetIntoTeachingWebApplicationFactory(DbContext);
             _client = factory.CreateClient();
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "Token 1");
