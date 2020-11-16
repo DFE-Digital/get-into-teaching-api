@@ -17,13 +17,14 @@ using Location = GetIntoTeachingApi.Models.Location;
 
 namespace GetIntoTeachingApiTests.Services
 {
+    [Collection("Database")]
     public class StoreTests : DatabaseTests
     {
         private static readonly Guid FindEventGuid = new Guid("ff927e43-5650-44aa-859a-8297139b8eee");
         private readonly IStore _store;
         private readonly Mock<IGeocodeClientAdapter> _mockGeocodeClient;
 
-        public StoreTests()
+        public StoreTests(DatabaseFixture databaseFixture) : base(databaseFixture)
         {
             _mockGeocodeClient = new Mock<IGeocodeClientAdapter>();
             _store = new Store(DbContext, _mockGeocodeClient.Object);

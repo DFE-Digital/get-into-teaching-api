@@ -21,9 +21,9 @@ Before you build the app you will need to add a package source for the GOV.UK No
 https://api.bintray.com/nuget/gov-uk-notify/nuget
 ```
 
-If you are using a Mac OS/Linux you will also need to ensure Spatialite is installed (for Windows this is pulled in via a NuGet package).
+Next you will need to set up the environment (see the `Environment` section below) before booting up the dependent services in Docker with `docker-compose up`.
 
-When the application runs in development it will open the Swagger documentation by default.
+When the application runs in development it will open the Swagger documentation by default. On the first run it will do a long sync of UK postcode information into the Postgres instance running in Docker - you can monitor the progress via the Hangfire dashboard (subsequent start ups should be quicker).
 
 ### Environment
 
