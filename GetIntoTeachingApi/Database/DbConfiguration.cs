@@ -25,9 +25,9 @@ namespace GetIntoTeachingApi.Database
         public static string HangfireConnectionString(IEnv env) =>
             $"{GenerateConnectionString(env, env.HangfireInstanceName)};SearchPath=hangfire";
 
-        public static void ConfigPostgres(IEnv env, DbContextOptionsBuilder builder)
+        public static void ConfigPostgres(string connetionString, DbContextOptionsBuilder builder)
         {
-            builder.UseNpgsql(DatabaseConnectionString(env), x => x.UseNetTopologySuite());
+            builder.UseNpgsql(connetionString, x => x.UseNetTopologySuite());
         }
 
         public static void ConfigSqLite(DbContextOptionsBuilder builder, SqliteConnection keepAliveConnection)
@@ -36,10 +36,10 @@ namespace GetIntoTeachingApi.Database
             builder.UseSqlite(keepAliveConnection, x => x.UseNetTopologySuite());
         }
 
-        public void Configure(IEnv env)
+        public void Configure(int instanceIndex = 0)
         {
             var migrationsAreSupported = _dbContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.Sqlite";
-            var firstInstance = env.InstanceIndex == 0;
+            var firstInstance = instanceIndex == 0;
 
             if (migrationsAreSupported && firstInstance)
             {

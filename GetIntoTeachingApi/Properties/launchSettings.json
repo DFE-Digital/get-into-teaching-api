@@ -23,7 +23,11 @@
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DATABASE_INSTANCE_NAME": "gis",
+        "HANGFIRE_INSTANCE_NAME": "gis",
+        "VCAP_SERVICES": "{\"postgres\": [{\"instance_name\": \"gis\",\"credentials\": {\"host\": \"localhost\",\"name\": \"gis\",\"username\": \"docker\",\"password\": \"docker\",\"port\": \"5432\"}}]}",
+        "SHARED_SECRET": "abc123"
       }
     }
   }
