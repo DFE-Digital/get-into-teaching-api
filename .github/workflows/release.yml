@@ -80,7 +80,7 @@ jobs:
 
        - name: Create Sentry release
          if: success()
-         uses: getsentry/action-release@v1.1.1
+         uses: getsentry/action-release@v1.1.3
          env:
            SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
            SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
