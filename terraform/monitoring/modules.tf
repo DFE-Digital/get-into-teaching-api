@@ -1,7 +1,6 @@
 locals {
   dashboard_list      = fileset(path.module, "${var.grafana["dashboard_directory"]}/*.json")
   datasource_list     = fileset(path.module, "${var.grafana["datasource_directory"]}/*.yml.tmpl")
-  prometheus_file     = "${path.module}/${var.prometheus["config_file"]}"
   configuration_file  = "${path.module}/${var.grafana["configuration_file"]}"
   alert_rules         = file("${path.module}/${var.prometheus["alert_rules"]}")
   monitoring_org_name = "${var.environment}-${var.prometheus["name"]}"
@@ -23,10 +22,11 @@ locals {
 module "prometheus" {
   source                            = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/prometheus"
   paas_prometheus_exporter_endpoint = module.paas_prometheus_exporter.endpoint
+  redis_prometheus_exporter_endpoint= module.redis_prometheus_exporter.endpoint
   monitoring_space_id               = data.cloudfoundry_space.space.id
   monitoring_instance_name          = local.monitoring_org_name
   alertmanager_endpoint             = module.alertmanager.endpoint
-  config_file                       = templatefile(local.prometheus_file, local.template_variable_map)
+  extra_scrape_config               = templatefile("${path.module}/${var.prometheus["scrape_file"]}" , local.template_variable_map )
   alert_rules                       = local.alert_rules
   influxdb_service_instance_id      = module.influx.service_instance_id
   memory                            = 5120
@@ -48,6 +48,14 @@ module "paas_prometheus_exporter" {
 }
 
 
+module "redis_prometheus_exporter" {
+  source                    = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/redis_prometheus_exporter"
+  monitoring_space_id       = data.cloudfoundry_space.space.id
+  monitoring_instance_name  = local.monitoring_org_name
+  redis_service_instance_id = data.cloudfoundry_service_instance.redis.id
+}
+
+
 module "grafana" {
   source                   = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/grafana"
   monitoring_space_id      = data.cloudfoundry_space.space.id
@@ -57,6 +65,7 @@ module "grafana" {
   google_client_id         = var.google_client_id
   google_client_secret     = var.google_client_secret
   admin_password           = var.grafana_password
+  influxdb_credentials     = module.influx.credentials
 
   json_dashboards   = [for f in local.dashboard_list : file(f)]
   extra_datasources = [for f in local.datasource_list : templatefile(f, local.template_variable_map)]
