@@ -36,6 +36,7 @@ variable "api_application_name" {}
 variable "paas_exporter_username" {}
 variable "paas_exporter_password" {}
 variable "grafana_password" {}
+variable "redis_service" {}
 
 variable "prometheus" {
   type = map
@@ -44,7 +45,7 @@ variable "prometheus" {
     "username"    = "username"
     "password"    = "password"
     "alert_rules" = "../../monitoring/prometheus/alert.rules"
-    "config_file" = "../../monitoring/prometheus/prometheus.yml.tmpl"
+    "scrape_file" = "../../monitoring/prometheus/scrapes.yml.tmpl"
   }
 }
 
