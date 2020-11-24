@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using AspNetCoreRateLimit;
+using dotenv.net;
 using FluentValidation.AspNetCore;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Auth;
@@ -42,6 +43,11 @@ namespace GetIntoTeachingApi
             ConfigureRateLimiting(services);
 
             var env = new Env();
+
+            if (env.IsDevelopment)
+            {
+                DotEnv.Config(true, ".env.development");
+            }
 
             services.AddSingleton<CdsServiceClientWrapper, CdsServiceClientWrapper>();
             services.AddTransient<IOrganizationService>(sp => sp.GetService<CdsServiceClientWrapper>().CdsServiceClient.Clone());
