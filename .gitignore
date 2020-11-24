@@ -42,3 +42,6 @@ msbuild.wrn
 
 # Coverage
 TestResults
+
+# Dotenv
+.env*
