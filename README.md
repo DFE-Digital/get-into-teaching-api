@@ -29,7 +29,7 @@ On the first run it will do a long sync of UK postcode information into the Post
 
 ### Environment
 
-If you want to run the API locally end-to-end you will need to set some environment variables (you can specify these in `GetIntoTeachingApi/Properties/launchSettings.json` under `environmentVariables`):
+If you want to run the API locally end-to-end you will need to set some environment variables (you can specify these in `.env.development`):
 
 ```
 # CRM credentials
@@ -41,6 +41,8 @@ CRM_TENANT_ID=****
 # GOV.UK Notify Service credentials
 NOTIFY_API_KEY=****
 ```
+
+A number of non-secret, default development environment variables are pre-set in `GetIntoTeachingApi/Properties/launchSettings.json` (such as a development `SHARED_SECRET` of `abc123` and the `VCAP_SERVICES` setup for the Postgres instance running in Docker).
 
 Other environment variables are available (see the `IEnv` interface) but not necessary to run the bare-bones application.
 
