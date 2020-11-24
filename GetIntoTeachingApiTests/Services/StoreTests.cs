@@ -144,7 +144,7 @@ namespace GetIntoTeachingApiTests.Services
             teachingEvent.Building.Coordinate.Should().Be(coordinate);
             DbContext.Locations.FirstOrDefault(l => l.Postcode == sanitizedPostcode).Should().NotBeNull();
         }
-        
+
         [Fact]
         public async void SyncAsync_InsertsNewPrivacyPolicies()
         {
@@ -401,6 +401,19 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public async void SearchTeachingEvents_FilteredByRadiusWithOutwardOnlyPostcode_ReturnsMatchingAndOnlineEvents()
+        {
+            SeedMockLocations();
+            await SeedMockTeachingEventsAsync();
+            var request = new TeachingEventSearchRequest() { Postcode = "KY6", Radius = 15 };
+
+            var result = await _store.SearchTeachingEventsAsync(request);
+
+            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 3", "Event 5" },
+                options => options.WithStrictOrdering());
+        }
+
+        [Fact]
         public async void SearchTeachingEvents_FilteredByRadiusWithFailedPostcodeGeocoding_ReturnsEmpty()
         {
             SeedMockLocations();
@@ -602,7 +615,7 @@ namespace GetIntoTeachingApiTests.Services
             var policy2 = new PrivacyPolicy() { Id = Guid.NewGuid(), Text = "Policy 2", CreatedAt = DateTime.UtcNow };
             var policy3 = new PrivacyPolicy() { Id = Guid.NewGuid(), Text = "Policy 3", CreatedAt = DateTime.UtcNow.AddDays(-5) };
 
-            return new [] { policy1, policy2, policy3 };
+            return new[] { policy1, policy2, policy3 };
         }
 
         private async Task<IEnumerable<PrivacyPolicy>> SeedMockPrivacyPoliciesAsync()
@@ -669,6 +682,7 @@ namespace GetIntoTeachingApiTests.Services
                 new Location() {Postcode = "ky62nj", Coordinate = geometryFactory.CreatePoint(new Coordinate(-3.178240, 56.182790))},
                 new Location() {Postcode = "kw14yl", Coordinate = geometryFactory.CreatePoint(new Coordinate(-3.10075, 58.64102))},
                 new Location() {Postcode = "tr182ab", Coordinate = geometryFactory.CreatePoint(new Coordinate(-5.53987, 50.12279))},
+                new Location() {Postcode = "ky6", Coordinate = geometryFactory.CreatePoint(new Coordinate(-3.224217, 56.217468))},
             };
 
             DbContext.Locations.AddRange(locations);

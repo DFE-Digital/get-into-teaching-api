@@ -9,8 +9,14 @@ namespace GetIntoTeachingApi.Models
 {
     public class Location
     {
+        public static readonly Regex OutwardOrFullPostcodeRegex = new Regex(
+            $"^({OutwardPostcodePattern}|{FullPostcodePattern})$", RegexOptions.IgnoreCase);
         public static readonly Regex PostcodeRegex = new Regex(
-            @"^([A-Z][A-HJ-Y]?\d[A-Z\d]? ?\d[A-Z]{2}|GIR ?0A{2})$", RegexOptions.IgnoreCase);
+            $"^({FullPostcodePattern})$", RegexOptions.IgnoreCase);
+
+        private const string OutwardPostcodePattern = @"[A-Z][A-HJ-Y]?\d[A-Z\d]?";
+        private const string InwardPostcodePattern = @"\d[A-Z]{2}|GIR ?0A{2}";
+        private const string FullPostcodePattern = OutwardPostcodePattern + " ?" + InwardPostcodePattern;
 
         [Key]
         public string Postcode { get; set; }
