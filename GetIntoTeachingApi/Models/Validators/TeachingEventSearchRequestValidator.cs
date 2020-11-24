@@ -16,7 +16,7 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(request => request.Postcode)
                 .NotEmpty()
                 .MaximumLength(40)
-                .Matches(Location.PostcodeRegex)
+                .Matches(Location.OutwardOrFullPostcodeRegex)
                 .Unless(request => request.Postcode == null && request.Radius == null);
             RuleFor(request => request.TypeId)
                 .Must(id => TypeIds().Contains(id.ToString()))

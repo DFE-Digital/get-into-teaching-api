@@ -98,6 +98,8 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [InlineData("ky119yu", false)]
         [InlineData("KY999 9YU", true)]
         [InlineData("AZ1VS1", true)]
+        [InlineData("KY11", false)]
+        [InlineData("KY999", true)]
         public void Validate_PostcodeFormat_ValidatesCorrectly(string postcode, bool hasError)
         {
             if (hasError)
