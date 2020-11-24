@@ -1,0 +1,54 @@
+[
+  {
+    "DisplayLabel": "GITIS Events Service",
+    "PickListItemId": 222750000
+  },
+  {
+    "DisplayLabel": "Within Dynamics",
+    "PickListItemId": 222750001
+  },
+  {
+    "DisplayLabel": "GITIS - On Campus - Brand Ambassador activity",
+    "PickListItemId": 222750030
+  },
+  {
+    "DisplayLabel": "GITIS - On Campus - Virtual Grad Fairs",
+    "PickListItemId": 222750031
+  },
+  {
+    "DisplayLabel": "GITIS - On Campus - Online events (students)",
+    "PickListItemId": 222750032
+  },
+  {
+    "DisplayLabel": "GITIS - On Campus - Virtual Pop-up events",
+    "PickListItemId": 222750033
+  },
+  {
+    "DisplayLabel": "GITIS - On Campus - Refreshers Fairs",
+    "PickListItemId": 222750034
+  },
+  {
+    "DisplayLabel": "GITIS - On Campus - Social media",
+    "PickListItemId": 222750035
+  },
+  {
+    "DisplayLabel": "GITIS - On Campus - Commercial emails",
+    "PickListItemId": 222750036
+  },
+  {
+    "DisplayLabel": "GITIS - On Campus - Careers Services activity",
+    "PickListItemId": 222750037
+  },
+  {
+    "DisplayLabel": "GITIS - On Campus - Students Union Media",
+    "PickListItemId": 222750038
+  },
+  {
+    "DisplayLabel": "GITIS - On Campus - Grad Fairs (face-to-face)",
+    "PickListItemId": 222750039
+  },
+  {
+    "DisplayLabel": "GITIS - On Campus - Pop-up events (face-to-face)",
+    "PickListItemId": 222750040
+  }
+]

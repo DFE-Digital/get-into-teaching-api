@@ -1,0 +1,126 @@
+[
+  {
+    "DisplayLabel": "Graduate Promotions Registration",
+    "PickListItemId": 222750000
+  },
+  {
+    "DisplayLabel": "Campus Registrations - Unknown event type",
+    "PickListItemId": 222750001
+  },
+  {
+    "DisplayLabel": "Early Years Registration - Historic",
+    "PickListItemId": 222750015
+  },
+  {
+    "DisplayLabel": "Inbound Email - Historic",
+    "PickListItemId": 222750016
+  },
+  {
+    "DisplayLabel": "Grad Fayre Registrations",
+    "PickListItemId": 222750002
+  },
+  {
+    "DisplayLabel": "University Campus Pop-up Registrations",
+    "PickListItemId": 222750003
+  },
+  {
+    "DisplayLabel": "University Campus Registrations",
+    "PickListItemId": 222750004
+  },
+  {
+    "DisplayLabel": "Unknown - Historic",
+    "PickListItemId": 222750018
+  },
+  {
+    "DisplayLabel": "RTT Web Registration",
+    "PickListItemId": 222750019
+  },
+  {
+    "DisplayLabel": "Scholarship Registration",
+    "PickListItemId": 222750020
+  },
+  {
+    "DisplayLabel": "School Experience - Web Registration",
+    "PickListItemId": 222750021
+  },
+  {
+    "DisplayLabel": "Shopping Centre Pop-Up Event Registrations - Historic",
+    "PickListItemId": 222750022
+  },
+  {
+    "DisplayLabel": "Inbound Call",
+    "PickListItemId": 222750024
+  },
+  {
+    "DisplayLabel": "Web Registration",
+    "PickListItemId": 222750005
+  },
+  {
+    "DisplayLabel": "Paper-Based Registrations  - Historic",
+    "PickListItemId": 222750017
+  },
+  {
+    "DisplayLabel": "UCAS Registration",
+    "PickListItemId": 222750006
+  },
+  {
+    "DisplayLabel": "GITIS Web Registration",
+    "PickListItemId": 222750007
+  },
+  {
+    "DisplayLabel": "GITIS Web Registration - with Callback",
+    "PickListItemId": 222750008
+  },
+  {
+    "DisplayLabel": "GITIS Web Registration - Event driven",
+    "PickListItemId": 222750009
+  },
+  {
+    "DisplayLabel": "GITIS Web Registration - Event driven with Callback",
+    "PickListItemId": 222750010
+  },
+  {
+    "DisplayLabel": "Within Dynamics",
+    "PickListItemId": 222750011
+  },
+  {
+    "DisplayLabel": "NCTL University Campus Virtual Pop-up Registrations",
+    "PickListItemId": 222750012
+  },
+  {
+    "DisplayLabel": "Off Campus",
+    "PickListItemId": 222750013
+  },
+  {
+    "DisplayLabel": "Teach First",
+    "PickListItemId": 222750014
+  },
+  {
+    "DisplayLabel": "Freshers Fair",
+    "PickListItemId": 222750023
+  },
+  {
+    "DisplayLabel": "Apply for Teacher Training",
+    "PickListItemId": 222750025
+  },
+  {
+    "DisplayLabel": "Internship",
+    "PickListItemId": 222750026
+  },
+  {
+    "DisplayLabel": "GITIS - TTA Service",
+    "PickListItemId": 222750027
+  },
+  {
+    "DisplayLabel": "GITIS - Mailing List Service",
+    "PickListItemId": 222750028
+  },
+  {
+    "DisplayLabel": "GITIS - Events Service",
+    "PickListItemId": 222750029
+  },
+  {
+    "DisplayLabel": "GITIS - On Campus Service",
+    "PickListItemId": 222750030
+  }
+]

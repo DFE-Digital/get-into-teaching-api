@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetIntoTeachingApiContractTests", "GetIntoTeachingApiContractTests\GetIntoTeachingApiContractTests.csproj", "{6CE06BEA-92CF-4F4C-AB58-98E8A7997E6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{CAC77B5B-9DBF-41DB-9BC2-EFD5A8C4CB69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CAC77B5B-9DBF-41DB-9BC2-EFD5A8C4CB69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CAC77B5B-9DBF-41DB-9BC2-EFD5A8C4CB69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CE06BEA-92CF-4F4C-AB58-98E8A7997E6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CE06BEA-92CF-4F4C-AB58-98E8A7997E6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CE06BEA-92CF-4F4C-AB58-98E8A7997E6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CE06BEA-92CF-4F4C-AB58-98E8A7997E6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

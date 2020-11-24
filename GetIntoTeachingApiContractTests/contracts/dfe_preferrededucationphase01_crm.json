@@ -1,0 +1,34 @@
+[
+  {
+    "DisplayLabel": "Early years",
+    "PickListItemId": 222750007
+  },
+  {
+    "DisplayLabel": "Primary",
+    "PickListItemId": 222750000
+  },
+  {
+    "DisplayLabel": "Middle",
+    "PickListItemId": 222750004
+  },
+  {
+    "DisplayLabel": "Secondary",
+    "PickListItemId": 222750001
+  },
+  {
+    "DisplayLabel": "Further Education",
+    "PickListItemId": 222750002
+  },
+  {
+    "DisplayLabel": "Higher Education",
+    "PickListItemId": 222750005
+  },
+  {
+    "DisplayLabel": "Teaching adults",
+    "PickListItemId": 222750006
+  },
+  {
+    "DisplayLabel": "Other",
+    "PickListItemId": 222750003
+  }
+]

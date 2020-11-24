@@ -37,7 +37,7 @@ namespace GetIntoTeachingApi
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public virtual void ConfigureServices(IServiceCollection services)
         {
             ConfigureRateLimiting(services);
 
@@ -150,7 +150,7 @@ The GIT API aims to provide:
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment hostEnv)
+        public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment hostEnv)
         {
             using var serviceScope = app.ApplicationServices.CreateScope();
             var env = serviceScope.ServiceProvider.GetService<IEnv>();

@@ -1,0 +1,14 @@
+[
+  {
+    "DisplayLabel": "Open",
+    "PickListItemId": 222750000
+  },
+  {
+    "DisplayLabel": "Closed",
+    "PickListItemId": 222750001
+  },
+  {
+    "DisplayLabel": "In Draft",
+    "PickListItemId": 222750002
+  }
+]

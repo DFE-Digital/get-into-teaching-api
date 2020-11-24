@@ -1,0 +1,50 @@
+[
+  {
+    "DisplayLabel": "Train To Teach Event",
+    "PickListItemId": 222750001
+  },
+  {
+    "DisplayLabel": "Application Workshop",
+    "PickListItemId": 222750000
+  },
+  {
+    "DisplayLabel": "Online Event",
+    "PickListItemId": 222750008
+  },
+  {
+    "DisplayLabel": "School or University Event",
+    "PickListItemId": 222750009
+  },
+  {
+    "DisplayLabel": "Early Year Event",
+    "PickListItemId": 222750010
+  },
+  {
+    "DisplayLabel": "Other type of Event",
+    "PickListItemId": 222750011
+  },
+  {
+    "DisplayLabel": "Question Time",
+    "PickListItemId": 222750007
+  },
+  {
+    "DisplayLabel": "Executive Briefing",
+    "PickListItemId": 222750002
+  },
+  {
+    "DisplayLabel": "Conference",
+    "PickListItemId": 222750003
+  },
+  {
+    "DisplayLabel": "Demonstration",
+    "PickListItemId": 222750004
+  },
+  {
+    "DisplayLabel": "Training",
+    "PickListItemId": 222750005
+  },
+  {
+    "DisplayLabel": "Webcast",
+    "PickListItemId": 222750006
+  }
+]
