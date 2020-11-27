@@ -89,9 +89,31 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_PreferredEducationPhaseIdIsNull_HasError()
+        public void Validate_PreferredEducationPhaseIdIsNull_NotReturningToTeaching_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.PreferredEducationPhaseId, null as int?);
+            var request = new TeacherTrainingAdviserSignUp
+            {
+                PreferredEducationPhaseId = null,
+                SubjectTaughtId = null,
+            };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldHaveValidationErrorFor("PreferredEducationPhaseId");
+        }
+
+        [Fact]
+        public void Validate_PreferredEducationPhaseIdIsNull_ReturningToTeaching_HasNoError()
+        {
+            var request = new TeacherTrainingAdviserSignUp
+            {
+                PreferredEducationPhaseId = null,
+                SubjectTaughtId = Guid.NewGuid(),
+            };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldNotHaveValidationErrorFor("PreferredEducationPhaseId");
         }
 
         [Fact]
@@ -621,20 +643,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var result = _validator.TestValidate(request);
 
             result.ShouldNotHaveValidationErrorFor("PreferredTeachingSubjectId");
-        }
-
-        [Fact]
-        public void Validate_HasPastTeachingPositionsAndPreferredEducationPhaseIsPrimary_HasError()
-        {
-            var request = new TeacherTrainingAdviserSignUp
-            {
-                SubjectTaughtId = Guid.NewGuid(),
-                PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Primary,
-            };
-
-            var result = _validator.TestValidate(request);
-
-            result.ShouldHaveValidationErrorFor("PreferredEducationPhaseId").WithErrorMessage("Must be secondary when past teaching positions are present.");
         }
 
         [Fact]
