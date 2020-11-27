@@ -15,7 +15,10 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(request => request.DateOfBirth).NotNull();
             RuleFor(request => request.AcceptedPolicyId).NotNull();
             RuleFor(request => request.CountryId).NotNull();
-            RuleFor(request => request.PreferredEducationPhaseId).NotNull();
+
+            RuleFor(request => request.PreferredEducationPhaseId)
+                .NotNull()
+                .Unless(request => request.SubjectTaughtId != null);
 
             RuleFor(request => request.AddressLine1).NotEmpty().Unless(request => request.CountryId != TypeEntity.UnitedKingdomCountryId)
                 .WithMessage("Must be set candidate in the UK.");
@@ -111,11 +114,6 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(request => request.PreferredTeachingSubjectId).NotEmpty()
                 .When(request => request.Candidate.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Secondary)
                 .WithMessage("Must be set when preferred education phase is secondary.");
-
-            RuleFor(request => request.PreferredEducationPhaseId)
-                .Must(phase => phase == (int)Candidate.PreferredEducationPhase.Secondary)
-                .When(request => request.Candidate.IsReturningToTeaching())
-                .WithMessage("Must be secondary when past teaching positions are present.");
 
             RuleFor(request => request)
                 .Must(request => HasOrIsPlanningOnRetakingEnglishAndMaths(request) && HasOrIsPlanningOnRetakingScience(request))
