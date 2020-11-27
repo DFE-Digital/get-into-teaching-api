@@ -428,6 +428,14 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
+        public void Candidate_ReturningToTeaching_PreferredEducationPhaseIdDefaultsToSecondary()
+        {
+            var request = new TeacherTrainingAdviserSignUp() { SubjectTaughtId = Guid.NewGuid() };
+
+            request.Candidate.PreferredEducationPhaseId.Should().Be((int)Candidate.PreferredEducationPhase.Secondary);
+        }
+
+        [Fact]
         public void Candidate_SubjectTaughtIdIsNotNull_PreferredEducationPhaseIdDefaultsToSecondary()
         {
             var request = new TeacherTrainingAdviserSignUp() { SubjectTaughtId = Guid.NewGuid() };
