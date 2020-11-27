@@ -158,11 +158,20 @@ namespace GetIntoTeachingApi.Models
             AddPastTeachingPosition(candidate);
             SetAdviserEligibility(candidate);
             SetType(candidate);
+            DefaultPreferredEducationPhase(candidate);
             DefaultPreferredTeachingSubjectId(candidate);
             ConfigureSubscription(candidate);
             ConfigureConsent(candidate);
 
             return candidate;
+        }
+
+        private void DefaultPreferredEducationPhase(Candidate candidate)
+        {
+            if (candidate.IsReturningToTeaching())
+            {
+                candidate.PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary;
+            }
         }
 
         private void DefaultPreferredTeachingSubjectId(Candidate candidate)
