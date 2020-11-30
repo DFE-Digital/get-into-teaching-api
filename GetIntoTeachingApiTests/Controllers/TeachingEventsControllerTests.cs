@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Authorization;
 using MoreLinq;
 using GetIntoTeachingApi.Attributes;
 using System.Linq;
+using Microsoft.Extensions.Logging;
+using GetIntoTeachingApiTests.Helpers;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -24,6 +26,7 @@ namespace GetIntoTeachingApiTests.Controllers
         private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly Mock<IStore> _mockStore;
+        private readonly Mock<ILogger<TeachingEventsController>> _mockLogger;
         private readonly TeachingEventsController _controller;
         private readonly ExistingCandidateRequest _request;
 
@@ -34,7 +37,9 @@ namespace GetIntoTeachingApiTests.Controllers
             _mockCrm = new Mock<ICrmService>();
             _mockStore = new Mock<IStore>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
-            _controller = new TeachingEventsController(_mockStore.Object, _mockJobClient.Object, _mockTokenService.Object, _mockCrm.Object);
+            _mockLogger = new Mock<ILogger<TeachingEventsController>>();
+            _controller = new TeachingEventsController(_mockStore.Object, _mockJobClient.Object,
+                _mockTokenService.Object, _mockCrm.Object, _mockLogger.Object);
         }
 
         [Fact]
@@ -112,6 +117,8 @@ namespace GetIntoTeachingApiTests.Controllers
             var result = (IDictionary<string, IEnumerable<TeachingEvent>>)ok.Value;
             result["123"].Count().Should().Be(3);
             result["456"].Count().Should().Be(1);
+
+            _mockLogger.VerifyInformationWasCalled("SearchIndexedByType: KY12 8FG");
         }
 
         [Fact]
