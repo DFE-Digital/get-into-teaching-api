@@ -1,7 +1,7 @@
 ---
 
-VisualCpp:
-  - GetIntoTeachingApi/**/*.rb
+VisualCSharp:
+  - GetIntoTeachingApi/**/*.cs
 
 Test:
   - GetIntoTeachingApiTests/**/*
