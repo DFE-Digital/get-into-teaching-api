@@ -1,0 +1,18 @@
+---
+
+VisualCSharp:
+  - GetIntoTeachingApi/**/*.cs
+
+Test:
+  - GetIntoTeachingApiTests/**/*
+
+Monitoring:
+  - monitoring/**/*
+
+DevOps:
+  - terraform/**/*
+  - .github/**/*.yml
+
+Docker:
+  - Dockerfile 
+  - docker-compose.yml
