@@ -8,6 +8,7 @@ using GetIntoTeachingApi.Services;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Controllers
@@ -22,17 +23,20 @@ namespace GetIntoTeachingApi.Controllers
         private readonly ICrmService _crm;
         private readonly IStore _store;
         private readonly IBackgroundJobClient _jobClient;
+        private readonly ILogger<TeachingEventsController> _logger;
 
         public TeachingEventsController(
             IStore store,
             IBackgroundJobClient jobClient,
             ICandidateAccessTokenService tokenService,
-            ICrmService crm)
+            ICrmService crm,
+            ILogger<TeachingEventsController> logger)
         {
             _store = store;
             _jobClient = jobClient;
             _crm = crm;
             _tokenService = tokenService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -52,6 +56,11 @@ namespace GetIntoTeachingApi.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(this.ModelState);
+            }
+
+            if (request.Postcode != null)
+            {
+                _logger.LogInformation($"SearchIndexedByType: {request.Postcode}");
             }
 
             var teachingEvents = await _store.SearchTeachingEventsAsync(request);
