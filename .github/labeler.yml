@@ -1,0 +1,18 @@
+---
+
+VisualCpp:
+  - GetIntoTeachingApi/**/*.rb
+
+Test:
+  - GetIntoTeachingApiTests/**/*
+
+Monitoring:
+  - monitoring/**/*
+
+DevOps:
+  - terraform/**/*
+  - .github/**/*.yml
+
+Docker:
+  - Dockerfile 
+  - docker-compose.yml
