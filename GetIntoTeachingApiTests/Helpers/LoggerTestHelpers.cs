@@ -21,6 +21,11 @@ namespace GetIntoTeachingApiTests.Helpers
             return VerifyCalled(logger, LogLevel.Warning, expectedMessage);
         }
 
+        public static Mock<ILogger<T>> VerifyErrorWasCalled<T>(this Mock<ILogger<T>> logger, string expectedMessage)
+        {
+            return VerifyCalled(logger, LogLevel.Error, expectedMessage);
+        }
+
         private static Mock<ILogger<T>> VerifyCalledExactly<T>(this Mock<ILogger<T>> logger, LogLevel expectedLogLevel, string expectedMessage)
         {
             bool state(object v, Type t) => v.ToString() == expectedMessage;
