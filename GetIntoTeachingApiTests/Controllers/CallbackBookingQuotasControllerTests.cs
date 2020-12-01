@@ -13,13 +13,13 @@ namespace GetIntoTeachingApiTests.Controllers
 {
     public class CallbackBookingQuotasControllerTests
     {
-        private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<ICallbackBookingService> _mockCallbackBookingService;
         private readonly CallbackBookingQuotasController _controller;
 
         public CallbackBookingQuotasControllerTests()
         {
-            _mockCrm = new Mock<ICrmService>();
-            _controller = new CallbackBookingQuotasController(_mockCrm.Object);
+            _mockCallbackBookingService = new Mock<ICallbackBookingService>();
+            _controller = new CallbackBookingQuotasController(_mockCallbackBookingService.Object);
         }
 
         [Fact]
@@ -38,7 +38,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void GetAll_ReturnsAllQuotas()
         {
             var mockQuotas = new[] { MockQuota(), MockQuota() };
-            _mockCrm.Setup(mock => mock.GetCallbackBookingQuotas()).Returns(mockQuotas);
+            _mockCallbackBookingService.Setup(mock => mock.GetCallbackBookingQuotas()).Returns(mockQuotas);
 
             var response = _controller.GetAll();
 
