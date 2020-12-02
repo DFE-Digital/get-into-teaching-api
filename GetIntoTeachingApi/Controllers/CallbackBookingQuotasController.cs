@@ -14,11 +14,11 @@ namespace GetIntoTeachingApi.Controllers
     [Authorize]
     public class CallbackBookingQuotasController : ControllerBase
     {
-        private readonly ICrmService _crm;
+        private readonly ICallbackBookingService _callbackBookingService;
 
-        public CallbackBookingQuotasController(ICrmService crm)
+        public CallbackBookingQuotasController(ICallbackBookingService callbackBookingService)
         {
-            _crm = crm;
+            _callbackBookingService = callbackBookingService;
         }
 
         [HttpGet]
@@ -30,7 +30,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<CallbackBookingQuota>), 200)]
         public IActionResult GetAll()
         {
-            var quotas = _crm.GetCallbackBookingQuotas();
+            var quotas = _callbackBookingService.GetCallbackBookingQuotas();
             return Ok(quotas);
         }
     }
