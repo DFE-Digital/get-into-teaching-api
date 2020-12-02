@@ -1,9 +1,11 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using GeocodeSharp.Google;
+using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Microsoft.Extensions.Logging;
+using NetTopologySuite;
 using NetTopologySuite.Geometries;
 
 namespace GetIntoTeachingApi.Adapters
@@ -44,7 +46,9 @@ namespace GetIntoTeachingApi.Adapters
             _metrics.GoogleApiCalls.WithLabels(postcode, "success").Inc();
 
             var location = result.Geometry.Location;
-            return new Point(new Coordinate(location.Longitude, location.Latitude));
+            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: DbConfiguration.Wgs84Srid);
+
+            return geometryFactory.CreatePoint(new Coordinate(location.Longitude, location.Latitude));
         }
     }
 }
