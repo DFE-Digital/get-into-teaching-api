@@ -3,6 +3,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Database;
+using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Prometheus;
-using Location = GetIntoTeachingApi.Models.Location;
 
 namespace GetIntoTeachingApi.Jobs
 {
@@ -56,7 +56,7 @@ namespace GetIntoTeachingApi.Jobs
 
         private static Location CreateLocation(dynamic location)
         {
-            return new Location(location.Postcode, location.Latitude, location.Longitude);
+            return new Location(location.Postcode, location.Latitude, location.Longitude, Source.CSV);
         }
     }
 }
