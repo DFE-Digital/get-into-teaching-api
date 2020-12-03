@@ -12,6 +12,7 @@ namespace GetIntoTeachingApi.Controllers
     [Route("api/privacy_policies")]
     [ApiController]
     [LogRequests]
+    [PrivateShortTermResponseCache]
     [Authorize]
     public class PrivacyPoliciesController : ControllerBase
     {
