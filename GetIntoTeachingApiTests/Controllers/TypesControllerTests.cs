@@ -41,6 +41,12 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
+        public void PrivateShortTermResponseCache_IsPresent()
+        {
+            typeof(TypesController).Should().BeDecoratedWith<PrivateShortTermResponseCacheAttribute>();
+        }
+
+        [Fact]
         public void CrmETag_IsPresent()
         {
             JobStorage.Current = new Mock<JobStorage>().Object;

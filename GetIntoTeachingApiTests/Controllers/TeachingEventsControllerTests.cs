@@ -64,6 +64,15 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
+        public void CrmETagPrivateShortTermResponseCache_IsPresent()
+        {
+            JobStorage.Current = new Mock<JobStorage>().Object;
+            var methods = new[] { "Get", "SearchIndexedByType", "UpcomingIndexedByType" };
+
+            methods.ForEach(m => typeof(TeachingEventsController).GetMethod(m).Should().BeDecoratedWith<PrivateShortTermResponseCacheAttribute>());
+        }
+
+        [Fact]
         public void AddAttendee_InvalidRequest_RespondsWithValidationErrors()
         {
             var request = new TeachingEventAddAttendee() { EventId = Guid.NewGuid(), FirstName = null };
