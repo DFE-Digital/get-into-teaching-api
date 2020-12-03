@@ -28,6 +28,9 @@ namespace GetIntoTeachingApi.Migrations
                     b.Property<Point>("Coordinate")
                         .HasColumnType("geography");
 
+                    b.Property<int>("Source")
+                        .HasColumnType("integer");
+
                     b.HasKey("Postcode");
 
                     b.ToTable("Locations");
