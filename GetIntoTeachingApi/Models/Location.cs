@@ -22,6 +22,7 @@ namespace GetIntoTeachingApi.Models
         public string Postcode { get; set; }
         [Column(TypeName = "geography")]
         public Point Coordinate { get; set; }
+        public Source Source { get; set; }
 
         public static string SanitizePostcode(string postcode)
         {
@@ -50,5 +51,12 @@ namespace GetIntoTeachingApi.Models
         {
             Coordinate = coordinate;
         }
+    }
+
+    public enum Source
+    {
+        Unknown,
+        Google,
+        CSV,
     }
 }
