@@ -26,10 +26,11 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DATABASE_INSTANCE_NAME": "gis",
         "HANGFIRE_INSTANCE_NAME": "gis",
-        "VCAP_SERVICES": "{\"postgres\": [{\"instance_name\": \"gis\",\"credentials\": {\"host\": \"localhost\",\"name\": \"gis\",\"username\": \"docker\",\"password\": \"docker\",\"port\": \"5432\"}}]}",
+        "VCAP_SERVICES": "{\"postgres\": [{\"instance_name\": \"gis\",\"credentials\": {\"host\": \"localhost\",\"name\": \"gis\",\"username\": \"docker\",\"password\": \"docker\",\"port\": \"5432\"}}],\"redis\": [{\"credentials\": {\"host\": \"0.0.0.0\",\"port\": \"6379\",\"password\": \"docker\",\"tls_enabled\": false}}]}",
         "SHARED_SECRET": "abc123",
         "TOTP_SECRET_KEY": "def456"
       }
     }
   }
 }
+
