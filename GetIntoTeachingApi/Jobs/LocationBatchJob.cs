@@ -41,11 +41,13 @@ namespace GetIntoTeachingApi.Jobs
                 var batchLocations = JsonConvert.DeserializeObject<List<ExpandoObject>>(
                     batchJson, new ExpandoObjectConverter()).Select(l => (dynamic)l).ToList();
                 var batchPostcodes = batchLocations.Select(l => l.Postcode);
-                var existingPostcodes = await _dbContext.Locations
-                    .Where(l => batchPostcodes.Contains(l.Postcode))
-                    .Select(l => l.Postcode)
-                    .ToListAsync();
+                var existingLocations = _dbContext.Locations
+                    .Where(l => batchPostcodes.Contains(l.Postcode));
+                var existingPostcodes = await existingLocations
+                    .Select(l => l.Postcode).ToListAsync();
                 var newBatchLocations = batchLocations.Where(l => !existingPostcodes.Contains(l.Postcode));
+
+                CorrectUnknownSources(existingLocations);
 
                 await _dbContext.Locations.AddRangeAsync(newBatchLocations.Select(CreateLocation));
                 await _dbContext.SaveChangesAsync();
@@ -57,6 +59,17 @@ namespace GetIntoTeachingApi.Jobs
         private static Location CreateLocation(dynamic location)
         {
             return new Location(location.Postcode, location.Latitude, location.Longitude, Source.CSV);
+        }
+
+        private void CorrectUnknownSources(IQueryable<Location> locations)
+        {
+            foreach (var location in locations)
+            {
+                if (location.Source == Source.Unknown)
+                {
+                    location.Source = Source.CSV;
+                }
+            }
         }
     }
 }
