@@ -7,6 +7,7 @@ using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -92,6 +93,7 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("trigger_location_sync")]
         [SwaggerOperation(
             Summary = "Manually triggers a location sync job",
