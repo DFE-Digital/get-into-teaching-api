@@ -10,6 +10,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using static GetIntoTeachingApi.Utils.Constants;
 
 namespace GetIntoTeachingApi.Controllers
 {
@@ -23,19 +24,22 @@ namespace GetIntoTeachingApi.Controllers
         private readonly INotifyService _notifyService;
         private readonly IHangfireService _hangfire;
         private readonly IEnv _env;
+        private readonly IBackgroundJobClient _jobClient;
 
         public OperationsController(
             ICrmService crm,
             IStore store,
             INotifyService notifyService,
             IHangfireService hangfire,
-            IEnv env)
+            IEnv env,
+            IBackgroundJobClient jobClient)
         {
             _store = store;
             _crm = crm;
             _notifyService = notifyService;
             _hangfire = hangfire;
             _env = env;
+            _jobClient = jobClient;
         }
 
         [HttpGet]
@@ -102,7 +106,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(void), 200)]
         public void TriggerLocationSync()
         {
-            RecurringJob.Trigger(JobConfiguration.LocationSyncJobId);
+            _jobClient.Enqueue<LocationSyncJob>(job => job.RunAsync(FreeMapToolsUrl));
         }
     }
 }
