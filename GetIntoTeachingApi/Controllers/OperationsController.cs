@@ -2,9 +2,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Attributes;
+using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -87,6 +89,18 @@ namespace GetIntoTeachingApi.Controllers
             System.Text.StringBuilder builder = null;
 
             builder.Append("throw error");
+        }
+
+        [HttpGet]
+        [Route("trigger_location_sync")]
+        [SwaggerOperation(
+            Summary = "Manually triggers a location sync job",
+            OperationId = "TriggerLocationSync",
+            Tags = new[] { "Operations" })]
+        [ProducesResponseType(typeof(void), 200)]
+        public void TriggerLocationSync()
+        {
+            RecurringJob.Trigger(JobConfiguration.LocationSyncJobId);
         }
     }
 }
