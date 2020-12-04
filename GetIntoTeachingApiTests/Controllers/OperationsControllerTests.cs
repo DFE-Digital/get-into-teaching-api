@@ -10,6 +10,8 @@ using Moq;
 using Xunit;
 using GetIntoTeachingApi.Attributes;
 using System;
+using System.Reflection;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -102,6 +104,13 @@ namespace GetIntoTeachingApiTests.Controllers
         public void LogRequests_IsPresent()
         {
             typeof(OperationsController).Should().BeDecoratedWith<LogRequestsAttribute>();
+        }
+
+        [Fact]
+        public void TriggerLocationSync_Authorize_IsPresent()
+        {
+            MethodInfo triggerLocationSync = typeof(OperationsController).GetMethod("TriggerLocationSync");
+            triggerLocationSync.Should().BeDecoratedWith<AuthorizeAttribute>();
         }
     }
 }
