@@ -46,5 +46,29 @@
       ],
       "volume_mounts": []
     }
+  ],
+  "redis": [
+    {
+      "binding_name": null,
+      "credentials": {
+        "host": "master.cf-aefqwyp2nntp4.b5xrdh.euw2.cache.amazonaws.com",
+        "name": "cf-aefqwyp2nntp4",
+        "password": "password",
+        "port": 6379,
+        "tls_enabled": true,
+        "uri": "rediss://x:password@master.cf-aefqwyp2nntp4.b5xrdh.euw2.cache.amazonaws.com:6379"
+      },
+      "instance_name": "get-into-teaching-dev-redis-svc",
+      "label": "redis",
+      "name": "get-into-teaching-dev-redis-svc",
+      "plan": "small-ha-5.x",
+      "provider": null,
+      "syslog_drain_url": null,
+      "tags": [
+        "elasticache",
+        "redis"
+      ],
+      "volume_mounts": []
+    }
   ]
 }
