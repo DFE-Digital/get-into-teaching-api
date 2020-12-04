@@ -142,7 +142,8 @@ namespace GetIntoTeachingApiTests.Services
             var teachingEvent = DbContext.TeachingEvents.Include(te => te.Building)
                 .First(te => te.Building.AddressPostcode == postcode);
             teachingEvent.Building.Coordinate.Should().Be(coordinate);
-            DbContext.Locations.FirstOrDefault(l => l.Postcode == sanitizedPostcode).Should().NotBeNull();
+            DbContext.Locations.FirstOrDefault(l => (l.Postcode == sanitizedPostcode) &&
+                                                    (l.Source == Source.Google)).Should().NotBeNull();
         }
 
         [Fact]
