@@ -40,9 +40,9 @@ namespace GetIntoTeachingApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            ConfigureRateLimiting(services);
-
             var env = new Env();
+
+            ConfigureRateLimiting(services, env);
 
             if (env.IsDevelopment)
             {
@@ -238,7 +238,7 @@ The GIT API aims to provide:
             });
         }
 
-        private void ConfigureRateLimiting(IServiceCollection services)
+        private void ConfigureRateLimiting(IServiceCollection services, IEnv env)
         {
             // Load appsettings.json.
             services.AddOptions();
@@ -251,8 +251,14 @@ The GIT API aims to provide:
             services.Configure<ClientRateLimitPolicies>(Configuration.GetSection("ClientRateLimitPolicies"));
 
             // Inject counter and rules stores.
-            services.AddSingleton<IClientPolicyStore, MemoryCacheClientPolicyStore>();
-            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+            services.AddSingleton<IClientPolicyStore, DistributedCacheClientPolicyStore>();
+            services.AddSingleton<IRateLimitCounterStore, DistributedCacheRateLimitCounterStore>();
+
+            // Setup Redis connection.
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.ConfigurationOptions = RedisConfiguration.ConfigurationOptions(env);
+            });
 
             // https://github.com/aspnet/Hosting/issues/793
             // The IHttpContextAccessor service is not registered by default.
