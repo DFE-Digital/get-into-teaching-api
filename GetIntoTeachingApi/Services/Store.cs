@@ -270,7 +270,7 @@ namespace GetIntoTeachingApi.Services
 
         private async Task CacheLocation(string postcode, Point coordinate)
         {
-            var location = new Location(postcode, coordinate);
+            var location = new Location(postcode, coordinate, Source.Google);
             await _dbContext.Locations.AddAsync(location);
             await _dbContext.SaveChangesAsync();
         }
