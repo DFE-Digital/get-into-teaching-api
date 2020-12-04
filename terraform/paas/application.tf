@@ -17,10 +17,13 @@ resource "cloudfoundry_app" "api_application" {
   }
 
   docker_credentials = {
-      username = var.docker_username
-      password = var.docker_password
+    username = var.docker_username
+    password = var.docker_password
   }
 
+  service_binding {
+    service_instance = cloudfoundry_service_instance.redis.id
+  }
   service_binding {
     service_instance = cloudfoundry_service_instance.hangfire.id
   }
