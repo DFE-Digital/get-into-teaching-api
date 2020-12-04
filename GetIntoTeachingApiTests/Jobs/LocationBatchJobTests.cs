@@ -3,6 +3,7 @@ using System.Linq;
 using FluentAssertions;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
+using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
@@ -23,7 +24,7 @@ namespace GetIntoTeachingApiTests.Jobs
         private readonly IMetricService _metrics;
         private readonly Mock<ILogger<LocationBatchJob>> _mockLogger;
 
-        public LocationBatchJobTests(DatabaseFixture databaseFixture): base(databaseFixture)
+        public LocationBatchJobTests(DatabaseFixture databaseFixture) : base(databaseFixture)
         {
             _mockLogger = new Mock<ILogger<LocationBatchJob>>();
             _metrics = new MetricService();
@@ -45,9 +46,10 @@ namespace GetIntoTeachingApiTests.Jobs
             await _job.RunAsync(JsonConvert.SerializeObject(batch));
             await _job.RunAsync(JsonConvert.SerializeObject(batch));
 
-            DbContext.Locations.Count().Should().Be(batch.Count());
+            DbContext.Locations.Count().Should().Be(batch.Count);
             DbContext.Locations.ToList().All(l =>
                 batch.Any(b => BatchLocationMatchesExistingLocation(b, l))).Should().BeTrue();
+            DbContext.Locations.All(l => l.Source == Source.CSV);
 
             _mockLogger.VerifyInformationWasCalled("LocationBatchJob - Started");
             _mockLogger.VerifyInformationWasCalled("LocationBatchJob - Succeeded");
