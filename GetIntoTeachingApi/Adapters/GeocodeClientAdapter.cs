@@ -25,7 +25,7 @@ namespace GetIntoTeachingApi.Adapters
 
         public async Task<Point> GeocodePostcodeAsync(string postcode)
         {
-            var response = await _client.GeocodeAddress(postcode);
+            var response = await _client.GeocodeAddress($"postcode {postcode}");
 
             _logger.LogInformation($"Google API Status: {response.StatusText}");
 

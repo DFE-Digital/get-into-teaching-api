@@ -214,7 +214,7 @@ The GIT API aims to provide:
             RecurringJob.AddOrUpdate<CrmSyncJob>(JobConfiguration.CrmSyncJobId, (x) => x.RunAsync(), everyFifthMinute);
             RecurringJob.AddOrUpdate<LocationSyncJob>(
                 JobConfiguration.LocationSyncJobId,
-                (x) => x.RunAsync("https://www.freemaptools.com/download/full-postcodes/ukpostcodes.zip"),
+                (x) => x.RunAsync(LocationSyncJob.FreeMapToolsUrl),
                 Cron.Weekly());
 
             // Don't seed test environment.
