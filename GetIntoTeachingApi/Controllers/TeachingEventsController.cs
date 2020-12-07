@@ -41,6 +41,7 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpGet]
         [CrmETag]
+        [PrivateShortTermResponseCache]
         [Route("search_indexed_by_type")]
         [SwaggerOperation(
             Summary = "Searches for teaching events, returning grouped by type.",
@@ -69,6 +70,7 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpGet]
         [CrmETag]
+        [PrivateShortTermResponseCache]
         [Route("upcoming_indexed_by_type")]
         [SwaggerOperation(
             Summary = "Retrieves upcoming teaching events grouped by type.",
@@ -84,6 +86,7 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpGet]
         [CrmETag]
+        [PrivateShortTermResponseCache]
         [Route("{readableId}")]
         [SwaggerOperation(
             Summary = "Retrieves an event.",

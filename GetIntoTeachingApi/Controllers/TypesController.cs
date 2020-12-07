@@ -14,6 +14,7 @@ namespace GetIntoTeachingApi.Controllers
     [Route("api/types")]
     [ApiController]
     [LogRequests]
+    [PrivateShortTermResponseCache]
     [Authorize]
     public class TypesController : ControllerBase
     {
