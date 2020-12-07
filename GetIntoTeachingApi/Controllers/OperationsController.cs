@@ -10,7 +10,6 @@ using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using static GetIntoTeachingApi.Utils.Constants;
 
 namespace GetIntoTeachingApi.Controllers
 {
@@ -106,7 +105,7 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(void), 200)]
         public void TriggerLocationSync()
         {
-            _jobClient.Enqueue<LocationSyncJob>(job => job.RunAsync(FreeMapToolsUrl));
+            _jobClient.Enqueue<LocationSyncJob>(job => job.RunAsync(LocationSyncJob.FreeMapToolsUrl));
         }
     }
 }

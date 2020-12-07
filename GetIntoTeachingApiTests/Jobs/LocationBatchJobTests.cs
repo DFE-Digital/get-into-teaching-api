@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
@@ -34,6 +35,7 @@ namespace GetIntoTeachingApiTests.Jobs
         [Fact]
         public async void RunAsync_InsertsNewLocations()
         {
+            long previousMetricCount = _metrics.LocationBatchDuration.Count;
             var batch = new List<dynamic>
             {
                 new { Postcode = "ky119yu", Latitude = 56.02748, Longitude = -3.35870 },
@@ -54,7 +56,24 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockLogger.VerifyInformationWasCalled("LocationBatchJob - Started");
             _mockLogger.VerifyInformationWasCalled("LocationBatchJob - Succeeded");
 
-            _metrics.LocationBatchDuration.Count.Should().Be(2);
+            _metrics.LocationBatchDuration.Count.Should().Be(previousMetricCount + 2);
+        }
+
+        [Fact]
+        public async Task RunAsync_WhenSameExistingLocationHasUnknownSource_UpdatesSourceToCsv()
+        {
+            const string postcodeUnderTest = "ky119yu";
+            var batchWithExistingPostcode = new List<dynamic>
+            {
+                new Location { Postcode = postcodeUnderTest, Source = Source.Unknown }
+            };
+            var unknownSourceLocation = new Location { Postcode = postcodeUnderTest };
+            DbContext.Add(unknownSourceLocation);
+            DbContext.SaveChanges();
+
+            await _job.RunAsync(JsonConvert.SerializeObject(batchWithExistingPostcode));
+
+            DbContext.Locations.All(location => location.Source == Source.CSV).Should().BeTrue();
         }
 
         private static bool BatchLocationMatchesExistingLocation(dynamic batchLocation, Location existingLocation)
