@@ -16,6 +16,7 @@ using Hangfire;
 using Hangfire.Common;
 using GetIntoTeachingApi.Jobs;
 using Hangfire.States;
+using System.Threading.Tasks;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -129,6 +130,57 @@ namespace GetIntoTeachingApiTests.Controllers
                 It.Is<Job>(job => (job.Type == typeof(LocationSyncJob)) &&
                                   (job.Method.Name == "RunAsync")),
                 It.IsAny<EnqueuedState>()));
+        }
+
+        [Fact]
+        public void RemoveUnknownLocations_Authorize_IsPresent()
+        {
+            MethodInfo triggerLocationSync = typeof(OperationsController).GetMethod("RemoveUnknownLocations");
+            triggerLocationSync.Should().BeDecoratedWith<AuthorizeAttribute>();
+        }
+
+        [Fact]
+        public async Task RemoveUnknownLocations_WhenDryRunSpecified_ReturnsMessage()
+        {
+            const bool dryRun = true;
+            const int mockNumberOfLocations = 10;
+            var mockStore = new Mock<IStore>();
+            mockStore.Setup(store => store.GetNumberOfUnknownLocations())
+                .Returns(mockNumberOfLocations);
+            var controller = new OperationsController(
+                _mockCrm.Object,
+                mockStore.Object,
+                _mockNotifyService.Object,
+                _mockHangfire.Object,
+                _mockEnv.Object,
+                _mockClient.Object);
+
+            var response = await controller.RemoveUnknownLocations(dryRun);
+
+            response.Should().BeOfType<OkObjectResult>();
+            var objectResponse = response as ObjectResult;
+            objectResponse.Value.Should().Be("Number of locations with Unknown source: 10");
+        }
+
+        [Fact]
+        public async Task RemoveUnknownLocations_WhenDryRunIsFalse_CallsRemoveUnknownLocations()
+        {
+            const bool dryRun = false;
+            var mockStore = new Mock<IStore>();
+            mockStore.Setup(store => store.RemoveUnknownLocations())
+                .Verifiable();
+            var controller = new OperationsController(
+                _mockCrm.Object,
+                mockStore.Object,
+                _mockNotifyService.Object,
+                _mockHangfire.Object,
+                _mockEnv.Object,
+                _mockClient.Object);
+
+            var response = await controller.RemoveUnknownLocations(dryRun);
+
+            response.Should().BeOfType<OkResult>();
+            mockStore.Verify();
         }
     }
 }

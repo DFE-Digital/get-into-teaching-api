@@ -495,6 +495,36 @@ namespace GetIntoTeachingApiTests.Services
             dates.Should().OnlyContain(d => d >= DateTime.UtcNow);
         }
 
+        [Fact]
+        public async Task GetNumberOfUnknownLocations_ReturnsUnknownLocationsCount()
+        {
+            var locations = new List<Location>() {
+                new Location { Postcode =  "ky119yu", Source = Source.Unknown },
+                new Location { Postcode = "ca48le", Source = Source.CSV },
+            };
+            DbContext.Locations.AddRange(locations);
+            await DbContext.SaveChangesAsync();
+
+            int result = _store.GetNumberOfUnknownLocations();
+
+            result.Should().Be(1);
+        }
+
+        [Fact]
+        public async Task RemoveUnknownLocations_RemovesUnknownLocations()
+        {
+            var locations = new List<Location>() {
+                new Location { Postcode =  "ky119yu", Source = Source.Unknown },
+                new Location { Postcode = "ca48le", Source = Source.CSV },
+            };
+            DbContext.Locations.AddRange(locations);
+            await DbContext.SaveChangesAsync();
+
+            await _store.RemoveUnknownLocations();
+
+            DbContext.Locations.Count().Should().Be(1);
+        }
+
         private static IEnumerable<TeachingEvent> MockTeachingEvents()
         {
             var sharedBuildingId = Guid.NewGuid();

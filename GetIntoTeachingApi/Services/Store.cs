@@ -118,6 +118,24 @@ namespace GetIntoTeachingApi.Services
                 .Where(e => e.StartAt >= DateTime.UtcNow);
         }
 
+        public int GetNumberOfUnknownLocations()
+        {
+            IQueryable<Location> unknownLocations = GetUnknownLocations();
+            return unknownLocations.Count();
+        }
+
+        public async Task RemoveUnknownLocations()
+        {
+            IQueryable<Location> unknownLocations = GetUnknownLocations();
+            _dbContext.RemoveRange(unknownLocations);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        private IQueryable<Location> GetUnknownLocations()
+        {
+            return _dbContext.Locations.Where(location => location.Source == Source.Unknown);
+        }
+
         private async Task<IEnumerable<TeachingEvent>> FilterTeachingEventsByRadius(
             IQueryable<TeachingEvent> teachingEvents, TeachingEventSearchRequest request)
         {

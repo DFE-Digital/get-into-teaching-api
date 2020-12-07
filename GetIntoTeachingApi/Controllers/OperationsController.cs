@@ -107,5 +107,25 @@ namespace GetIntoTeachingApi.Controllers
         {
             _jobClient.Enqueue<LocationSyncJob>(job => job.RunAsync(LocationSyncJob.FreeMapToolsUrl));
         }
+
+        [HttpGet]
+        [Authorize]
+        [Route("remove_unknown_locations")]
+        [SwaggerOperation(
+      Summary = "Remove locations of unknown source from the database",
+      OperationId = "RemoveUnknownLocations",
+      Tags = new[] { "Operations" })]
+        [ProducesResponseType(typeof(void), 200)]
+        [ProducesResponseType(typeof(string), 200)]
+        public async Task<IActionResult> RemoveUnknownLocations(bool dryRun)
+        {
+            if (dryRun)
+            {
+                return Ok($"Number of locations with Unknown source: {_store.GetNumberOfUnknownLocations()}");
+            }
+
+            await _store.RemoveUnknownLocations();
+            return Ok();
+        }
     }
 }
