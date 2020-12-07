@@ -51,6 +51,18 @@ namespace GetIntoTeachingApi.Models
         {
             Coordinate = coordinate;
         }
+
+        public Location(string postcode, Point coordinate, Source source)
+         : this(postcode, coordinate)
+        {
+            Source = source;
+        }
+
+        public Location(string postcode, double latitude, double longitude, Source source)
+           : this(postcode, latitude, longitude)
+        {
+            Source = source;
+        }
     }
 
     public enum Source

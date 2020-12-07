@@ -2,9 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Attributes;
+using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
+using Hangfire;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -20,19 +23,22 @@ namespace GetIntoTeachingApi.Controllers
         private readonly INotifyService _notifyService;
         private readonly IHangfireService _hangfire;
         private readonly IEnv _env;
+        private readonly IBackgroundJobClient _jobClient;
 
         public OperationsController(
             ICrmService crm,
             IStore store,
             INotifyService notifyService,
             IHangfireService hangfire,
-            IEnv env)
+            IEnv env,
+            IBackgroundJobClient jobClient)
         {
             _store = store;
             _crm = crm;
             _notifyService = notifyService;
             _hangfire = hangfire;
             _env = env;
+            _jobClient = jobClient;
         }
 
         [HttpGet]
@@ -87,6 +93,19 @@ namespace GetIntoTeachingApi.Controllers
             System.Text.StringBuilder builder = null;
 
             builder.Append("throw error");
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("trigger_location_sync")]
+        [SwaggerOperation(
+            Summary = "Manually triggers a location sync job",
+            OperationId = "TriggerLocationSync",
+            Tags = new[] { "Operations" })]
+        [ProducesResponseType(typeof(void), 200)]
+        public void TriggerLocationSync()
+        {
+            _jobClient.Enqueue<LocationSyncJob>(job => job.RunAsync(LocationSyncJob.FreeMapToolsUrl));
         }
     }
 }

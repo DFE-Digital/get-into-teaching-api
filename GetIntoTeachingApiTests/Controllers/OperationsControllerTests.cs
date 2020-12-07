@@ -10,6 +10,12 @@ using Moq;
 using Xunit;
 using GetIntoTeachingApi.Attributes;
 using System;
+using System.Reflection;
+using Microsoft.AspNetCore.Authorization;
+using Hangfire;
+using Hangfire.Common;
+using GetIntoTeachingApi.Jobs;
+using Hangfire.States;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -20,6 +26,7 @@ namespace GetIntoTeachingApiTests.Controllers
         private readonly Mock<INotifyService> _mockNotifyService;
         private readonly Mock<IHangfireService> _mockHangfire;
         private readonly Mock<IEnv> _mockEnv;
+        private readonly Mock<IBackgroundJobClient> _mockClient;
         private readonly OperationsController _controller;
 
         public OperationsControllerTests()
@@ -29,13 +36,15 @@ namespace GetIntoTeachingApiTests.Controllers
             _mockNotifyService = new Mock<INotifyService>();
             _mockHangfire = new Mock<IHangfireService>();
             _mockEnv = new Mock<IEnv>();
+            _mockClient = new Mock<IBackgroundJobClient>();
 
             _controller = new OperationsController(
                 _mockCrm.Object,
                 _mockStore.Object,
                 _mockNotifyService.Object,
                 _mockHangfire.Object,
-                _mockEnv.Object);
+                _mockEnv.Object,
+                _mockClient.Object);
         }
 
         [Fact]
@@ -102,6 +111,24 @@ namespace GetIntoTeachingApiTests.Controllers
         public void LogRequests_IsPresent()
         {
             typeof(OperationsController).Should().BeDecoratedWith<LogRequestsAttribute>();
+        }
+
+        [Fact]
+        public void TriggerLocationSync_Authorize_IsPresent()
+        {
+            MethodInfo triggerLocationSync = typeof(OperationsController).GetMethod("TriggerLocationSync");
+            triggerLocationSync.Should().BeDecoratedWith<AuthorizeAttribute>();
+        }
+
+        [Fact]
+        public void TriggerLocationSync_EnqueuesLocationSyncJob()
+        {
+            _controller.TriggerLocationSync();
+
+            _mockClient.Verify(client => client.Create(
+                It.Is<Job>(job => (job.Type == typeof(LocationSyncJob)) &&
+                                  (job.Method.Name == "RunAsync")),
+                It.IsAny<EnqueuedState>()));
         }
     }
 }
