@@ -25,7 +25,6 @@ using Microsoft.OpenApi.Models;
 using Microsoft.Xrm.Sdk;
 using Prometheus;
 using Swashbuckle.AspNetCore.Swagger;
-using static GetIntoTeachingApi.Utils.Constants;
 
 namespace GetIntoTeachingApi
 {
@@ -215,7 +214,7 @@ The GIT API aims to provide:
             RecurringJob.AddOrUpdate<CrmSyncJob>(JobConfiguration.CrmSyncJobId, (x) => x.RunAsync(), everyFifthMinute);
             RecurringJob.AddOrUpdate<LocationSyncJob>(
                 JobConfiguration.LocationSyncJobId,
-                (x) => x.RunAsync(FreeMapToolsUrl),
+                (x) => x.RunAsync(LocationSyncJob.FreeMapToolsUrl),
                 Cron.Weekly());
 
             // Don't seed test environment.

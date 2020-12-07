@@ -18,6 +18,7 @@ namespace GetIntoTeachingApi.Jobs
     public class LocationSyncJob : BaseJob
     {
         public const string UkPostcodeCsvFilename = "ukpostcodes.csv";
+        public static readonly string FreeMapToolsUrl = "https://www.freemaptools.com/download/full-postcodes/ukpostcodes.zip";
         private const int BatchInterval = 100;
         private readonly IBackgroundJobClient _jobClient;
         private readonly ILogger<LocationSyncJob> _logger;
