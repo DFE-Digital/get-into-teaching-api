@@ -21,10 +21,10 @@ namespace GetIntoTeachingApiTests.Integration
         }
 
         [Theory]
-        [InlineData("/api/candidates/access_tokens", 250)]
-        [InlineData("/api/mailing_list/members", 100)]
-        [InlineData("/api/teaching_events/attendees", 100)]
-        [InlineData("/api/teacher_training_adviser/candidates", 100)]
+        [InlineData("/api/candidates/access_tokens", 500)]
+        [InlineData("/api/mailing_list/members", 250)]
+        [InlineData("/api/teaching_events/attendees", 250)]
+        [InlineData("/api/teacher_training_adviser/candidates", 250)]
         public async void Path_ExceedingRateLimit_ReturnsStatus429TooManyRequests(string path, int limit)
         {
             HttpResponseMessage response = null;
