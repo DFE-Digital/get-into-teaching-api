@@ -115,7 +115,7 @@ namespace GetIntoTeachingApi.Controllers
       Summary = "Remove locations of unknown source from the database",
       OperationId = "RemoveUnknownLocations",
       Tags = new[] { "Operations" })]
-        [ProducesResponseType(typeof(void), 200)]
+        [ProducesResponseType(204)]
         [ProducesResponseType(typeof(string), 200)]
         public async Task<IActionResult> RemoveUnknownLocations(bool dryRun)
         {
@@ -125,7 +125,7 @@ namespace GetIntoTeachingApi.Controllers
             }
 
             await _store.RemoveUnknownLocations();
-            return Ok();
+            return NoContent();
         }
     }
 }

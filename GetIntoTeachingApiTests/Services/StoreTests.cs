@@ -522,7 +522,7 @@ namespace GetIntoTeachingApiTests.Services
 
             await _store.RemoveUnknownLocations();
 
-            DbContext.Locations.Count().Should().Be(1);
+            DbContext.Locations.All(l => l.Source != Source.Unknown).Should().BeTrue();
         }
 
         private static IEnumerable<TeachingEvent> MockTeachingEvents()
