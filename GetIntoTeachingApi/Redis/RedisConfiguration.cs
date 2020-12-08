@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using GetIntoTeachingApi.Utils;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
-namespace GetIntoTeachingApi.Utils
+namespace GetIntoTeachingApi.Redis
 {
     public class RedisConfiguration
     {

@@ -1,10 +1,11 @@
 ﻿using System.IO;
 using FluentAssertions;
+using GetIntoTeachingApi.Redis;
 using GetIntoTeachingApi.Utils;
 using Moq;
 using Xunit;
 
-namespace GetIntoTeachingApiTests.Utils
+namespace GetIntoTeachingApiTests.Redis
 {
     public class RedisConfigurationTests
     {

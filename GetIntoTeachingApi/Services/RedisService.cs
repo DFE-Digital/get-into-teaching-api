@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Redis;
 using GetIntoTeachingApi.Utils;
 using StackExchange.Redis;
 
