@@ -9,6 +9,7 @@ using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.ModelBinders;
 using GetIntoTeachingApi.OperationFilters;
+using GetIntoTeachingApi.Redis;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
@@ -42,7 +43,7 @@ namespace GetIntoTeachingApi
         {
             var env = new Env();
 
-            ConfigureRateLimiting(services, env);
+            ConfigureRateLimiting(services);
 
             if (env.IsDevelopment)
             {
@@ -239,7 +240,7 @@ The GIT API aims to provide:
             });
         }
 
-        private void ConfigureRateLimiting(IServiceCollection services, IEnv env)
+        private void ConfigureRateLimiting(IServiceCollection services)
         {
             // Load appsettings.json.
             services.AddOptions();
@@ -252,14 +253,8 @@ The GIT API aims to provide:
             services.Configure<ClientRateLimitPolicies>(Configuration.GetSection("ClientRateLimitPolicies"));
 
             // Inject counter and rules stores.
-            services.AddSingleton<IClientPolicyStore, DistributedCacheClientPolicyStore>();
-            services.AddSingleton<IRateLimitCounterStore, DistributedCacheRateLimitCounterStore>();
-
-            // Setup Redis connection.
-            services.AddStackExchangeRedisCache(options =>
-            {
-                options.ConfigurationOptions = RedisConfiguration.ConfigurationOptions(env);
-            });
+            services.AddSingleton<IClientPolicyStore, MemoryCacheClientPolicyStore>();
+            services.AddSingleton<IRateLimitCounterStore, RedisRateLimitCounterStore>();
 
             // https://github.com/aspnet/Hosting/issues/793
             // The IHttpContextAccessor service is not registered by default.
