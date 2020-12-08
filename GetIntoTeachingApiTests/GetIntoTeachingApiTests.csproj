@@ -43,6 +43,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Utils\RedisConfigurationTests.cs" />
+    <Folder Include="Redis\" />
   </ItemGroup>
 </Project>
