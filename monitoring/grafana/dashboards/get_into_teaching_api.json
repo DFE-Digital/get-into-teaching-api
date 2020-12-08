@@ -28,7 +28,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 2,
-  "iteration": 1605107368852,
+  "iteration": 1607423005383,
   "links": [],
   "panels": [
     {
@@ -2237,7 +2237,7 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 100,
+          "value": 500,
           "yaxis": "left"
         },
         {
@@ -2245,7 +2245,7 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 50,
+          "value": 150,
           "yaxis": "left"
         },
         {
@@ -2254,6 +2254,14 @@
           "line": true,
           "op": "gt",
           "value": 250,
+          "yaxis": "left"
+        },
+        {
+          "colorMode": "warning",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 350,
           "yaxis": "left"
         }
       ],
@@ -2280,7 +2288,7 @@
           "format": "short",
           "label": "",
           "logBase": 1,
-          "max": "300",
+          "max": "550",
           "min": "0",
           "show": true
         },
