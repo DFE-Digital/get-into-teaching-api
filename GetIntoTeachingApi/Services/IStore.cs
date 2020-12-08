@@ -19,7 +19,5 @@ namespace GetIntoTeachingApi.Services
         Task<TeachingEvent> GetTeachingEventAsync(Guid id);
         Task<TeachingEvent> GetTeachingEventAsync(string readableId);
         IQueryable<TeachingEvent> GetUpcomingTeachingEvents();
-        Task RemoveUnknownLocations();
-        int GetNumberOfUnknownLocations();
     }
 }
