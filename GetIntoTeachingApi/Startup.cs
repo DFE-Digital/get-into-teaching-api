@@ -63,6 +63,7 @@ namespace GetIntoTeachingApi
             services.AddSingleton<ICandidateAccessTokenService, CandidateAccessTokenService>();
             services.AddSingleton<INotifyService, NotifyService>();
             services.AddSingleton<IHangfireService, HangfireService>();
+            services.AddSingleton<IRedisService, RedisService>();
             services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
             services.AddSingleton<ICallbackBookingService, CallbackBookingService>();
             services.AddSingleton<IEnv>(env);

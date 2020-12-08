@@ -14,11 +14,12 @@ namespace GetIntoTeachingApi.Models
         public string Database { get; set; }
         public string Hangfire { get; set; }
         public string Crm { get; set; }
+        public string Redis { get; set; }
         public string Notify { get; set; }
         [JsonIgnore]
         public IEnumerable<string> Services => DependentServices.Concat(DownstreamServices);
         [JsonIgnore]
-        public IEnumerable<string> DependentServices => new[] { Database, Hangfire };
+        public IEnumerable<string> DependentServices => new[] { Database, Hangfire, Redis };
         [JsonIgnore]
         public IEnumerable<string> DownstreamServices => new[] { Crm, Notify };
 

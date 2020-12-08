@@ -25,6 +25,7 @@ namespace GetIntoTeachingApiTests.Controllers
         private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<INotifyService> _mockNotifyService;
         private readonly Mock<IHangfireService> _mockHangfire;
+        private readonly Mock<IRedisService> _mockRedis;
         private readonly Mock<IEnv> _mockEnv;
         private readonly Mock<IBackgroundJobClient> _mockClient;
         private readonly OperationsController _controller;
@@ -35,6 +36,7 @@ namespace GetIntoTeachingApiTests.Controllers
             _mockCrm = new Mock<ICrmService>();
             _mockNotifyService = new Mock<INotifyService>();
             _mockHangfire = new Mock<IHangfireService>();
+            _mockRedis = new Mock<IRedisService>();
             _mockEnv = new Mock<IEnv>();
             _mockClient = new Mock<IBackgroundJobClient>();
 
@@ -43,6 +45,7 @@ namespace GetIntoTeachingApiTests.Controllers
                 _mockStore.Object,
                 _mockNotifyService.Object,
                 _mockHangfire.Object,
+                _mockRedis.Object,
                 _mockEnv.Object,
                 _mockClient.Object);
         }
@@ -67,16 +70,17 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Theory]
-        [InlineData(true, true, true, true, "healthy")]
-        [InlineData(true, true, false, true, "degraded")]
-        [InlineData(true, true, false, false, "degraded")]
-        [InlineData(true, true, true, false, "degraded")]
-        [InlineData(false, true, true, true, "unhealthy")]
-        [InlineData(true, false, true, true, "unhealthy")]
-        [InlineData(false, false, true, true, "unhealthy")]
-        [InlineData(true, false, false, true, "unhealthy")]
-        [InlineData(false, false, false, false, "unhealthy")]
-        public async void HealthCheck_ReturnsCorrectly(bool database, bool hangfire, bool crm, bool notify, string expectedStatus)
+        [InlineData(true, true, true, true, true, "healthy")]
+        [InlineData(true, true, true, false, true, "degraded")]
+        [InlineData(true, true, true, false, false, "degraded")]
+        [InlineData(true, true, true, true, false, "degraded")]
+        [InlineData(false, true, true, true, true, "unhealthy")]
+        [InlineData(true, false, true, true, true, "unhealthy")]
+        [InlineData(true, true, false, true, true, "unhealthy")]
+        [InlineData(false, false, false, true, true, "unhealthy")]
+        [InlineData(true, false, false, false, true, "unhealthy")]
+        [InlineData(false, false, false, false, false, "unhealthy")]
+        public async void HealthCheck_ReturnsCorrectly(bool database, bool hangfire, bool redis, bool crm, bool notify, string expectedStatus)
         {
             const string sha = "3c42c1051f6eb535c2017eafb660d1a884a39722";
             const string environmentName = "Test";
@@ -85,11 +89,13 @@ namespace GetIntoTeachingApiTests.Controllers
             var hangfireStatus = hangfire ? HealthCheckResponse.StatusOk : "error";
             var crmStatus = crm ? HealthCheckResponse.StatusOk : "error";
             var notifyStatus = notify ? HealthCheckResponse.StatusOk : "error";
+            var redisStatus = redis ? HealthCheckResponse.StatusOk : "error";
 
             _mockEnv.Setup(m => m.GitCommitSha).Returns(sha);
             _mockEnv.Setup(m => m.EnvironmentName).Returns(environmentName);
             _mockStore.Setup(m => m.CheckStatusAsync()).ReturnsAsync(databaseStatus);
             _mockNotifyService.Setup(m => m.CheckStatusAsync()).ReturnsAsync(notifyStatus);
+            _mockRedis.Setup(m => m.CheckStatusAsync()).ReturnsAsync(redisStatus);
             _mockHangfire.Setup(m => m.CheckStatus()).Returns(hangfireStatus);
             _mockCrm.Setup(m => m.CheckStatus()).Returns(crmStatus);
 
@@ -103,6 +109,7 @@ namespace GetIntoTeachingApiTests.Controllers
             health.Database.Should().Be(databaseStatus);
             health.Crm.Should().Be(crmStatus);
             health.Notify.Should().Be(notifyStatus);
+            health.Redis.Should().Be(redisStatus);
             health.Hangfire.Should().Be(hangfireStatus);
             health.Status.Should().Be(expectedStatus);
         }

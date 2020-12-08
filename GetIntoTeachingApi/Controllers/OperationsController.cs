@@ -22,6 +22,7 @@ namespace GetIntoTeachingApi.Controllers
         private readonly ICrmService _crm;
         private readonly INotifyService _notifyService;
         private readonly IHangfireService _hangfire;
+        private readonly IRedisService _redis;
         private readonly IEnv _env;
         private readonly IBackgroundJobClient _jobClient;
 
@@ -30,6 +31,7 @@ namespace GetIntoTeachingApi.Controllers
             IStore store,
             INotifyService notifyService,
             IHangfireService hangfire,
+            IRedisService redis,
             IEnv env,
             IBackgroundJobClient jobClient)
         {
@@ -37,6 +39,7 @@ namespace GetIntoTeachingApi.Controllers
             _crm = crm;
             _notifyService = notifyService;
             _hangfire = hangfire;
+            _redis = redis;
             _env = env;
             _jobClient = jobClient;
         }
@@ -76,6 +79,7 @@ namespace GetIntoTeachingApi.Controllers
                 Database = await _store.CheckStatusAsync(),
                 Crm = _crm.CheckStatus(),
                 Notify = await _notifyService.CheckStatusAsync(),
+                Redis = await _redis.CheckStatusAsync(),
             };
 
             return Ok(response);
