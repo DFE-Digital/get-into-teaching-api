@@ -135,8 +135,8 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void RemoveUnknownLocations_Authorize_IsPresent()
         {
-            MethodInfo triggerLocationSync = typeof(OperationsController).GetMethod("RemoveUnknownLocations");
-            triggerLocationSync.Should().BeDecoratedWith<AuthorizeAttribute>();
+            MethodInfo removeUnknownLocations = typeof(OperationsController).GetMethod("RemoveUnknownLocations");
+            removeUnknownLocations.Should().BeDecoratedWith<AuthorizeAttribute>();
         }
 
         [Fact]
@@ -144,18 +144,10 @@ namespace GetIntoTeachingApiTests.Controllers
         {
             const bool dryRun = true;
             const int mockNumberOfLocations = 10;
-            var mockStore = new Mock<IStore>();
-            mockStore.Setup(store => store.GetNumberOfUnknownLocations())
-                .Returns(mockNumberOfLocations);
-            var controller = new OperationsController(
-                _mockCrm.Object,
-                mockStore.Object,
-                _mockNotifyService.Object,
-                _mockHangfire.Object,
-                _mockEnv.Object,
-                _mockClient.Object);
+            _mockStore.Setup(store => store.GetNumberOfUnknownLocations())
+               .Returns(mockNumberOfLocations);
 
-            var response = await controller.RemoveUnknownLocations(dryRun);
+            var response = await _controller.RemoveUnknownLocations(dryRun);
 
             response.Should().BeOfType<OkObjectResult>();
             var objectResponse = response as ObjectResult;
@@ -163,24 +155,26 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async Task RemoveUnknownLocations_WhenDryRunIsFalse_CallsRemoveUnknownLocations()
+        public async Task RemoveUnknownLocations_WhenDryRunSpecified_DoesNotCallRemoveLocations()
+        {
+            const bool dryRun = true;
+
+            await _controller.RemoveUnknownLocations(dryRun);
+
+            _mockStore.Verify(store => store.RemoveUnknownLocations(), Times.Never);
+        }
+
+        [Fact]
+        public async Task RemoveUnknownLocations_WhenNotDryrun_CallsRemoveUnknownLocations()
         {
             const bool dryRun = false;
-            var mockStore = new Mock<IStore>();
-            mockStore.Setup(store => store.RemoveUnknownLocations())
+            _mockStore.Setup(store => store.RemoveUnknownLocations())
                 .Verifiable();
-            var controller = new OperationsController(
-                _mockCrm.Object,
-                mockStore.Object,
-                _mockNotifyService.Object,
-                _mockHangfire.Object,
-                _mockEnv.Object,
-                _mockClient.Object);
 
-            var response = await controller.RemoveUnknownLocations(dryRun);
+            var response = await _controller.RemoveUnknownLocations(dryRun);
 
-            response.Should().BeOfType<OkResult>();
-            mockStore.Verify();
+            response.Should().BeOfType<NoContentResult>();
+            _mockStore.Verify();
         }
     }
 }

@@ -120,14 +120,12 @@ namespace GetIntoTeachingApi.Services
 
         public int GetNumberOfUnknownLocations()
         {
-            IQueryable<Location> unknownLocations = GetUnknownLocations();
-            return unknownLocations.Count();
+            return GetUnknownLocations().Count();
         }
 
         public async Task RemoveUnknownLocations()
         {
-            IQueryable<Location> unknownLocations = GetUnknownLocations();
-            _dbContext.RemoveRange(unknownLocations);
+            _dbContext.RemoveRange(GetUnknownLocations());
             await _dbContext.SaveChangesAsync();
         }
 
