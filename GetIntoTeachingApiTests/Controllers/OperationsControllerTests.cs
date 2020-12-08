@@ -16,6 +16,7 @@ using Hangfire;
 using Hangfire.Common;
 using GetIntoTeachingApi.Jobs;
 using Hangfire.States;
+using System.Threading.Tasks;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -129,6 +130,51 @@ namespace GetIntoTeachingApiTests.Controllers
                 It.Is<Job>(job => (job.Type == typeof(LocationSyncJob)) &&
                                   (job.Method.Name == "RunAsync")),
                 It.IsAny<EnqueuedState>()));
+        }
+
+        [Fact]
+        public void RemoveUnknownLocations_Authorize_IsPresent()
+        {
+            MethodInfo removeUnknownLocations = typeof(OperationsController).GetMethod("RemoveUnknownLocations");
+            removeUnknownLocations.Should().BeDecoratedWith<AuthorizeAttribute>();
+        }
+
+        [Fact]
+        public async Task RemoveUnknownLocations_WhenDryRunSpecified_ReturnsMessage()
+        {
+            const bool dryRun = true;
+            const int mockNumberOfLocations = 10;
+            _mockStore.Setup(store => store.GetNumberOfUnknownLocations())
+               .Returns(mockNumberOfLocations);
+
+            var response = await _controller.RemoveUnknownLocations(dryRun);
+
+            response.Should().BeOfType<OkObjectResult>();
+            var objectResponse = response as ObjectResult;
+            objectResponse.Value.Should().Be("Number of locations with Unknown source: 10");
+        }
+
+        [Fact]
+        public async Task RemoveUnknownLocations_WhenDryRunSpecified_DoesNotCallRemoveLocations()
+        {
+            const bool dryRun = true;
+
+            await _controller.RemoveUnknownLocations(dryRun);
+
+            _mockStore.Verify(store => store.RemoveUnknownLocations(), Times.Never);
+        }
+
+        [Fact]
+        public async Task RemoveUnknownLocations_WhenNotDryrun_CallsRemoveUnknownLocations()
+        {
+            const bool dryRun = false;
+            _mockStore.Setup(store => store.RemoveUnknownLocations())
+                .Verifiable();
+
+            var response = await _controller.RemoveUnknownLocations(dryRun);
+
+            response.Should().BeOfType<NoContentResult>();
+            _mockStore.Verify();
         }
     }
 }
