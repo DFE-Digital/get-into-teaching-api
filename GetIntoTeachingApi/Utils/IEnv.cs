@@ -18,7 +18,6 @@
         string CrmClientSecret { get; }
         string NotifyApiKey { get; }
         string SharedSecret { get; }
-        string PenTestSharedSecret { get; }
         string GoogleApiKey { get; }
         int InstanceIndex { get; }
     }

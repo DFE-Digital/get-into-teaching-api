@@ -35,7 +35,7 @@ namespace GetIntoTeachingApi.Auth
 
             var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
 
-            var secrets = new[] { _env.SharedSecret, _env.PenTestSharedSecret };
+            var secrets = new[] { _env.SharedSecret };
 
             if (string.IsNullOrWhiteSpace(token) || !secrets.Contains(token))
             {
