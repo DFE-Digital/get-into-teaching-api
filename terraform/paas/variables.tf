@@ -95,9 +95,6 @@ variable "CRM_CLIENT_ID" {}
 variable "CRM_TENANT_ID" {}
 variable "CRM_CLIENT_SECRET" {}
 variable "SHARED_SECRET" {}
-variable "PEN_TEST_SHARED_SECRET" {
-  default = ""
-}
 variable "NOTIFY_API_KEY" {}
 variable "TOTP_SECRET_KEY" {}
 variable "SENTRY_DSN" {

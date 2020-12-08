@@ -44,7 +44,6 @@ resource "cloudfoundry_app" "api_application" {
     NOTIFY_API_KEY         = var.NOTIFY_API_KEY
     TOTP_SECRET_KEY        = var.TOTP_SECRET_KEY
     SHARED_SECRET          = var.SHARED_SECRET
-    PEN_TEST_SHARED_SECRET = var.PEN_TEST_SHARED_SECRET
     Sentry__Dsn            = var.SENTRY_DSN
     GOOGLE_API_KEY         = var.GOOGLE_API_KEY
     ASPNETCORE_ENVIRONMENT = var.ASPNETCORE_ENVIRONMENT
