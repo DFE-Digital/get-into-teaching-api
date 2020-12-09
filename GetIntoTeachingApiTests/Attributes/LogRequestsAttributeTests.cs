@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApiTests.Helpers;
+using GetIntoTeachingApiTests.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -148,28 +149,6 @@ namespace GetIntoTeachingApiTests.Filters
             _filter.OnActionExecuted(_actionExecutedContext);
 
             _mockLogger.VerifyInformationWasCalledExactly("Response Controller:Action - ");
-        }
-
-        [Loggable]
-        private class StubLoggable
-        {
-            public string Name { get; set; } = "Ross";
-            [SensitiveData]
-            public string Password { get; set; } = "sensitive";
-            [JsonIgnore]
-            public string Ignored { get; set; } = "ignored";
-
-            public StubLoggable() { }
-
-            public StubLoggable(string name)
-            {
-                Name = name;
-            }
-        }
-
-        private class StubUnloggable
-        {
-            public string Name { get; set; } = "Ross";
         }
     }
 }
