@@ -1,36 +1,129 @@
----  
 name: Deploy to PaaS
-
 on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'The environment to deploy to eg: qa, staging, production etc'
+        description: The environment to deploy to Development/Test/Production/
         required: true
       sha:
         description: Commit sha to be deployed
         required: true
+      pr:
+        description: Pull Request Reference
+        required: false
+      project:
+        description: Name of Release Project
+        required: false
+        default: Teacher Training Adviser
 
 env:
-  DOCKERHUB_REPOSITORY:     dfedigital/get-into-teaching-api
-  
+  DOCKERHUB_REPOSITORY:  dfedigital/get-into-teaching-api
+  DOMAIN:                london.cloudapps.digital
+  APPLICATION:           Get Into Teaching API Service
+  PAAS_APPLICATION_NAME: get-into-teaching-api
+
 jobs:
+  turnstyle:
+    name: Wait for any previous deployments
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+       - name: Turnstyle
+         uses: softprops/turnstyle@v1
+         with:
+            continue-after-seconds: 300
+            same-branch-only: false
+
   deploy:
     name: Deploy ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
+    needs: turnstyle
 
     defaults:
       run:
         shell: bash
-
     steps:
-
-       - uses: softprops/turnstyle@v1
-         name: Wait for other inprogress deployment runs
+       - name: Checkout
+         uses: actions/checkout@v2
          with:
-            continue-after-seconds: 180
+            ref: ${{ github.event.inputs.sha }}
+
+       - name: Get Short SHA
+         id: sha
+         run: echo ::set-output name=short::$(echo "${{ github.event.inputs.sha }}" | cut -c -7)
+
+       - name: Setup Environment Variables
+         id:  variables
+         run: |
+             if [ "${{github.event.inputs.environment }}" == "Development" ]
+             then
+                 echo ::set-output name=ARM_ACCESS_KEY::$(echo "${{ secrets.DEV_ARM_ACCESS_KEY  }}" )
+                 echo ::set-output name=control::$(echo "dev" )
+                 echo ::set-output name=healthcheck::$(echo "${{env.PAAS_APPLICATION_NAME}}-dev" )
+                 echo ::set-output name=key::"app.dev.terraform"
+                 echo ::set-output name=docker_image::"${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}}"
+
+                 echo "TF_VAR_CRM_SERVICE_URL=${{            secrets.CRM_SERVICE_URL     }}" >> $GITHUB_ENV
+                 echo "TF_VAR_CRM_CLIENT_ID=${{              secrets.CRM_CLIENT_ID       }}" >> $GITHUB_ENV
+                 echo "TF_VAR_CRM_CLIENT_SECRET=${{          secrets.CRM_CLIENT_SECRET   }}" >> $GITHUB_ENV
+                 echo "TF_VAR_CRM_TENANT_ID=${{              secrets.CRM_TENANT_ID       }}" >> $GITHUB_ENV
+                 echo "TF_VAR_SHARED_SECRET=${{              secrets.SHARED_SECRET       }}" >> $GITHUB_ENV
+                 echo "TF_VAR_NOTIFY_API_KEY=${{             secrets.NOTIFY_API_KEY      }}" >> $GITHUB_ENV
+                 echo "TF_VAR_GOOGLE_API_KEY=${{             secrets.GOOGLE_API_KEY      }}" >> $GITHUB_ENV
+                 echo "TF_VAR_TOTP_SECRET_KEY=${{            secrets.TOTP_SECRET_KEY     }}" >> $GITHUB_ENV
+                 echo "TF_VAR_SENTRY_DSN=${{                 secrets.SENTRY_DSN          }}" >> $GITHUB_ENV
+
+             if [ "${{github.event.inputs.environment }}" == "Test" ]
+             then
+                 echo ::set-output name=ARM_ACCESS_KEY::$(echo "${{ secrets.TEST_ARM_ACCESS_KEY  }}" )
+                 echo ::set-output name=control::$(echo "test" )
+                 echo ::set-output name=healthcheck::$(echo "${{env.PAAS_APPLICATION_NAME}}-test" )
+                 echo ::set-output name=key::"app.test.terraform"
+                 echo ::set-output name=docker_image::"${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}}"
+
+                 echo "TF_VAR_CRM_CLIENT_ID=${{              secrets.TEST_CRM_CLIENT_ID       }}" >> $GITHUB_ENV
+                 echo "TF_VAR_CRM_CLIENT_SECRET=${{          secrets.TEST_CRM_CLIENT_SECRET   }}" >> $GITHUB_ENV
+                 echo "TF_VAR_CRM_SERVICE_URL=${{            secrets.TEST_CRM_SERVICE_URL     }}" >> $GITHUB_ENV
+                 echo "TF_VAR_CRM_TENANT_ID=${{              secrets.TEST_CRM_TENANT_ID       }}" >> $GITHUB_ENV
+                 echo "TF_VAR_SHARED_SECRET=${{              secrets.SHARED_SECRET       }}" >> $GITHUB_ENV
+                 echo "TF_VAR_NOTIFY_API_KEY=${{             secrets.NOTIFY_API_KEY      }}" >> $GITHUB_ENV
+                 echo "TF_VAR_GOOGLE_API_KEY=${{             secrets.GOOGLE_API_KEY      }}" >> $GITHUB_ENV
+                 echo "TF_VAR_TOTP_SECRET_KEY=${{            secrets.TOTP_SECRET_KEY     }}" >> $GITHUB_ENV
+                 echo "TF_VAR_SENTRY_DSN=${{                 secrets.SENTRY_DSN          }}" >> $GITHUB_ENV
+                 echo "TF_VAR_paas_logging_endpoint_port=${{ secrets.LOGIT_ENDPOINT      }}" >> $GITHUB_ENV
+
+             if [ "${{github.event.inputs.environment }}" == "Production" ]
+             then
+                 echo ::set-output name=ARM_ACCESS_KEY::$(echo "${{ secrets.PROD_ARM_ACCESS_KEY  }}" )
+                 echo ::set-output name=control::$(echo "production" )
+                 echo ::set-output name=healthcheck::$(echo "${{env.PAAS_APPLICATION_NAME}}-prod" )
+                 echo ::set-output name=key::"app.production.terraform"
+                 echo ::set-output name=docker_image::"${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}}"
+
+                 echo "TF_VAR_CRM_CLIENT_ID=${{              secrets.PROD_CRM_CLIENT_ID       }}" >> $GITHUB_ENV
+                 echo "TF_VAR_CRM_CLIENT_SECRET=${{          secrets.PROD_CRM_CLIENT_SECRET   }}" >> $GITHUB_ENV
+                 echo "TF_VAR_CRM_TENANT_ID=${{              secrets.PROD_CRM_TENANT_ID       }}" >> $GITHUB_ENV
+                 echo "TF_VAR_CRM_SERVICE_URL=${{            secrets.PROD_CRM_SERVICE_URL     }}" >> $GITHUB_ENV
+                 echo "TF_VAR_GOOGLE_API_KEY=${{             secrets.PROD_GOOGLE_API_KEY      }}" >> $GITHUB_ENV
+                 echo "TF_VAR_SHARED_SECRET=${{              secrets.PROD_SHARED_SECRET       }}" >> $GITHUB_ENV
+                 echo "TF_VAR_NOTIFY_API_KEY=${{             secrets.PROD_NOTIFY_API_KEY      }}" >> $GITHUB_ENV
+                 echo "TF_VAR_TOTP_SECRET_KEY=${{            secrets.PROD_TOTP_SECRET_KEY     }}" >> $GITHUB_ENV
+                 echo "TF_VAR_SENTRY_DSN=${{                 secrets.SENTRY_DSN          }}" >> $GITHUB_ENV
+                 echo "TF_VAR_paas_logging_endpoint_port=${{ secrets.LOGIT_ENDPOINT      }}" >> $GITHUB_ENV
+
+             if [ "${{github.event.inputs.environment }}" == "Test" ]
+             fi
+
+       - uses: hashicorp/setup-terraform@v1.2.1
+         with:
+              terraform_version: 0.13.4
+
+       - name: Wait for any previous runs to complete
+         uses: softprops/turnstyle@v1
          env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         with:
+           continue-after-seconds: 180
 
        - name: Start ${{ github.event.inputs.environment }} Deployment
          uses: bobheadxi/deployments@v0.4.3
@@ -41,45 +134,23 @@ jobs:
            env: ${{ github.event.inputs.environment }}
            ref: ${{ github.event.inputs.sha }}
 
-       - name: Checkout
-         uses: actions/checkout@v2
-   
-       - name: Set Variables
-         id: sha
-         run: |
-          echo ::set-output name=short::$(git rev-parse --short $GITHUB_SHA)
-          cat .github/workflows/environments/${DEPLOY_ENV}.env >> $GITHUB_ENV 
-         env:
-            DEPLOY_ENV: ${{ github.event.inputs.environment }}
-
-       - uses: hashicorp/setup-terraform@v1.2.1
-         with:
-           terraform_version: 0.13.4
-
-       - name: Terraform Init
+       - name: Terraform ( ${{github.event.inputs.environment}} ) 
          run: |
              cd terraform/paas && pwd
-             terraform init -backend-config=${{env.TERRAFORM_BACKEND}}
-   
-       - name: Terraform Plan
-         run: |
-             cd terraform/paas && pwd
-             terraform plan -var-file=${{env.TERRAFORM_TFVARS}} -out plan
-   
-       - name: Terraform Apply
-         run: |
-             cd terraform/paas && pwd
+             terraform init -backend-config=${{steps.variables.outputs.control}}.bk.vars -backend-config="key=${{steps.variables.outputs.key}}.tfstate"
+             terraform plan -var-file=${{steps.variables.outputs.control}}.env.tfvars -out plan
              terraform apply -auto-approve plan
-   
-       - name:  Smoke Test
-         run: |
-             tests/confidence/healthcheck.sh "get-into-teaching-api-test"  "${{ steps.sha.outputs.short}}" 
+         env:
+             ARM_ACCESS_KEY:               ${{ steps.variables.outputs.ARM_ACCESS_KEY  }}
+             TF_VAR_user:                  ${{ secrets.GOVUKPAAS_USERNAME  }}
+             TF_VAR_password:              ${{ secrets.GOVUKPAAS_PASSWORD  }}
+             TF_VAR_paas_app_docker_image: ${{ steps.variables.outputs.docker_image}}" 
+             TF_VAR_docker_username:       ${{ secrets.DOCKERHUB_USERNAME }}
+             TF_VAR_docker_password:       ${{ secrets.DOCKERHUB_PERSONAL_ACCESS_TOKEN }}
 
-       - name: Create Sentry release
-         if: success()
-         uses: getsentry/action-release@v1.1.5
-         with:
-           environment: ${{ github.event.inputs.environment }}
+       - name: Smoke tests
+         run: |
+             tests/confidence/healthcheck.sh  "${{steps.variables.outputs.healthcheck}}"  "${{ steps.sha.outputs.short }}"
 
        - name: Update ${{ github.event.inputs.environment }} status
          if: always() 
@@ -87,25 +158,5 @@ jobs:
          with:
            step: finish
            token: ${{ secrets.GITHUB_TOKEN }}
-           env: ${{ github.event.inputs.environment }}
            status: ${{ job.status }}
            deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-           ref: ${{ github.event.inputs.sha }}
-
-       - name: Slack Notification
-         if: failure()
-         uses: rtCamp/action-slack-notify@master
-         env:
-            SLACK_TITLE: 'API Failure to Deploy to ${{ github.event.inputs.environment }}' 
-            SLACK_MESSAGE: 'Pipeline Failure carrying out job ${{github.job}}'
-
-       - name: Trigger ${{ env.NEXT_ENV }} Deployment
-         if: env.NEXT_ENV != '' && github.ref == 'refs/heads/master' }}
-         uses: benc-uk/workflow-dispatch@v1.1
-         with:
-           workflow: Deploy to PaaS
-           token: ${{ secrets.GITHUB_TOKEN }}
-           inputs: '{"environment": "${{ env.NEXT_ENV }}", "sha": "${{ github.event.inputs.sha }}"}'
-
-
-
