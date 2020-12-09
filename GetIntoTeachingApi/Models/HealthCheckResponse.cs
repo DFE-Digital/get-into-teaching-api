@@ -17,11 +17,11 @@ namespace GetIntoTeachingApi.Models
         public string Redis { get; set; }
         public string Notify { get; set; }
         [JsonIgnore]
-        public IEnumerable<string> Services => DependentServices.Concat(DownstreamServices);
+        public IEnumerable<string> Services => CriticalServices.Concat(NonCriticalServices);
         [JsonIgnore]
-        public IEnumerable<string> DependentServices => new[] { Database, Hangfire, Redis };
+        public IEnumerable<string> CriticalServices => new[] { Database, Hangfire };
         [JsonIgnore]
-        public IEnumerable<string> DownstreamServices => new[] { Crm, Notify };
+        public IEnumerable<string> NonCriticalServices => new[] { Crm, Notify, Redis };
 
         public string Status
         {
@@ -32,7 +32,7 @@ namespace GetIntoTeachingApi.Models
                     return "healthy";
                 }
 
-                if (DownstreamServices.Any(s => s != StatusOk) && DependentServices.All(s => s == StatusOk))
+                if (NonCriticalServices.Any(s => s != StatusOk) && CriticalServices.All(s => s == StatusOk))
                 {
                     return "degraded";
                 }
