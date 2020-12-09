@@ -8,13 +8,6 @@ on:
       sha:
         description: Commit sha to be deployed
         required: true
-      pr:
-        description: Pull Request Reference
-        required: false
-      project:
-        description: Name of Release Project
-        required: false
-        default: Teacher Training Adviser
 
 env:
   DOCKERHUB_REPOSITORY:  dfedigital/get-into-teaching-api
@@ -60,7 +53,7 @@ jobs:
                  echo ::set-output name=ARM_ACCESS_KEY::$(echo "${{ secrets.DEV_ARM_ACCESS_KEY  }}" )
                  echo ::set-output name=control::$(echo "dev" )
                  echo ::set-output name=healthcheck::$(echo "${{env.PAAS_APPLICATION_NAME}}-dev" )
-                 echo ::set-output name=key::"app.dev.terraform"
+                 echo ::set-output name=key::"api.dev.terraform"
                  echo ::set-output name=docker_image::"${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}}"
 
                  echo "TF_VAR_CRM_SERVICE_URL=${{            secrets.CRM_SERVICE_URL     }}" >> $GITHUB_ENV
@@ -72,13 +65,14 @@ jobs:
                  echo "TF_VAR_GOOGLE_API_KEY=${{             secrets.GOOGLE_API_KEY      }}" >> $GITHUB_ENV
                  echo "TF_VAR_TOTP_SECRET_KEY=${{            secrets.TOTP_SECRET_KEY     }}" >> $GITHUB_ENV
                  echo "TF_VAR_SENTRY_DSN=${{                 secrets.SENTRY_DSN          }}" >> $GITHUB_ENV
+             fi
 
              if [ "${{github.event.inputs.environment }}" == "Test" ]
              then
                  echo ::set-output name=ARM_ACCESS_KEY::$(echo "${{ secrets.TEST_ARM_ACCESS_KEY  }}" )
                  echo ::set-output name=control::$(echo "test" )
                  echo ::set-output name=healthcheck::$(echo "${{env.PAAS_APPLICATION_NAME}}-test" )
-                 echo ::set-output name=key::"app.test.terraform"
+                 echo ::set-output name=key::"api.test.terraform"
                  echo ::set-output name=docker_image::"${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}}"
 
                  echo "TF_VAR_CRM_CLIENT_ID=${{              secrets.TEST_CRM_CLIENT_ID       }}" >> $GITHUB_ENV
@@ -91,13 +85,14 @@ jobs:
                  echo "TF_VAR_TOTP_SECRET_KEY=${{            secrets.TOTP_SECRET_KEY     }}" >> $GITHUB_ENV
                  echo "TF_VAR_SENTRY_DSN=${{                 secrets.SENTRY_DSN          }}" >> $GITHUB_ENV
                  echo "TF_VAR_paas_logging_endpoint_port=${{ secrets.LOGIT_ENDPOINT      }}" >> $GITHUB_ENV
+             fi
 
              if [ "${{github.event.inputs.environment }}" == "Production" ]
              then
                  echo ::set-output name=ARM_ACCESS_KEY::$(echo "${{ secrets.PROD_ARM_ACCESS_KEY  }}" )
                  echo ::set-output name=control::$(echo "production" )
                  echo ::set-output name=healthcheck::$(echo "${{env.PAAS_APPLICATION_NAME}}-prod" )
-                 echo ::set-output name=key::"app.production.terraform"
+                 echo ::set-output name=key::"api.production.terraform"
                  echo ::set-output name=docker_image::"${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}}"
 
                  echo "TF_VAR_CRM_CLIENT_ID=${{              secrets.PROD_CRM_CLIENT_ID       }}" >> $GITHUB_ENV
@@ -110,20 +105,12 @@ jobs:
                  echo "TF_VAR_TOTP_SECRET_KEY=${{            secrets.PROD_TOTP_SECRET_KEY     }}" >> $GITHUB_ENV
                  echo "TF_VAR_SENTRY_DSN=${{                 secrets.SENTRY_DSN          }}" >> $GITHUB_ENV
                  echo "TF_VAR_paas_logging_endpoint_port=${{ secrets.LOGIT_ENDPOINT      }}" >> $GITHUB_ENV
-
-             if [ "${{github.event.inputs.environment }}" == "Test" ]
              fi
+
 
        - uses: hashicorp/setup-terraform@v1.2.1
          with:
               terraform_version: 0.13.4
-
-       - name: Wait for any previous runs to complete
-         uses: softprops/turnstyle@v1
-         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-         with:
-           continue-after-seconds: 180
 
        - name: Start ${{ github.event.inputs.environment }} Deployment
          uses: bobheadxi/deployments@v0.4.3
@@ -144,7 +131,7 @@ jobs:
              ARM_ACCESS_KEY:               ${{ steps.variables.outputs.ARM_ACCESS_KEY  }}
              TF_VAR_user:                  ${{ secrets.GOVUKPAAS_USERNAME  }}
              TF_VAR_password:              ${{ secrets.GOVUKPAAS_PASSWORD  }}
-             TF_VAR_paas_app_docker_image: ${{ steps.variables.outputs.docker_image}}" 
+             TF_VAR_paas_api_docker_image: ${{ steps.variables.outputs.docker_image}}
              TF_VAR_docker_username:       ${{ secrets.DOCKERHUB_USERNAME }}
              TF_VAR_docker_password:       ${{ secrets.DOCKERHUB_PERSONAL_ACCESS_TOKEN }}
 
