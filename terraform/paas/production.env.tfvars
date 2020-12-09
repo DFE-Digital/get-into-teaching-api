@@ -6,7 +6,6 @@ paas_database_2_name       = "get-into-teaching-api-prod-pg2-svc"
 paas_redis_1_name          = "get-into-teaching-prod-redis-svc"
 paas_api_application_name  = "get-into-teaching-api-prod"
 paas_api_route_name        = "get-into-teaching-api-prod"
-paas_logging_endpoint_port = "syslog-tls://89d7be0f-ddcd-437e-ad3c-c8125d0bad00-ls.logit.io:18190"
 ASPNETCORE_ENVIRONMENT     = "Production"
 application_instances      = 2
 application_memory         = 2048
