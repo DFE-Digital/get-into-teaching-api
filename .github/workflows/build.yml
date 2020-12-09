@@ -211,20 +211,6 @@ jobs:
            inputs: '{"application": "BOTH" , "reference": "${{ github.sha }}" }'
            ref:  refs/heads/master
 
-       - name: Wait for Cypress Tests
-         uses: fountainhead/action-wait-for-check@v1.0.0
-         id: wait-for-deploy
-         with:
-           token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN}}
-           checkName: ${{ github.sha }}
-           ref: refs/heads/master
-           repo: get-into-teaching-frontend-tests
-           intervalSeconds: 30
-           timeoutSeconds: 1800
-
-       - name: Check for test failure
-         if: steps.wait-for-build.outputs.conclusion == 'failure'
-         run: exit 1
 
   production:
      name: Production Deployment
