@@ -15,7 +15,7 @@ namespace GetIntoTeachingApiTests.Models
         {
             var type = typeof(TeachingEventAddAttendee);
 
-            type.Should().BeDecoratedWith<LoggableAttribute>();
+            type.Should().BeDecoratedWithOrInherit<LoggableAttribute>();
 
             type.GetProperty("Email").Should().BeDecoratedWith<SensitiveDataAttribute>();
             type.GetProperty("FirstName").Should().BeDecoratedWith<SensitiveDataAttribute>();
