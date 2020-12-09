@@ -243,11 +243,15 @@ The GIT API aims to provide:
             // Don't seed test environment.
             if (!env.IsTest)
             {
-                // Sync with the CRM.
-                RecurringJob.Trigger(JobConfiguration.CrmSyncJobId);
+                var dbContext = serviceScope.ServiceProvider.GetService<GetIntoTeachingDbContext>();
+
+                // Initial CRM sync.
+                if (!dbContext.TypeEntities.Any())
+                {
+                    RecurringJob.Trigger(JobConfiguration.CrmSyncJobId);
+                }
 
                 // Initial locations sync.
-                var dbContext = serviceScope.ServiceProvider.GetService<GetIntoTeachingDbContext>();
                 if (!dbContext.Locations.Any())
                 {
                     RecurringJob.Trigger(JobConfiguration.LocationSyncJobId);
