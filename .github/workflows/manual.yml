@@ -1,0 +1,44 @@
+---  
+name: Manual Release
+on: 
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Development/Test/Production
+        required: true
+      tag:
+        description: Release Tag
+        required: true
+
+jobs:
+  manual:
+    name: Deploy to ${{github.event.inputs.environment}}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+
+       - name: Check Tag (${{github.event.inputs.tag}}) is a Release 
+         id: tag_info
+         run: |
+               rval=$(curl -s -X GET https://api.github.com/repos/${{github.repository}}/releases/tags/${{ github.event.inputs.tag }} )
+
+               if [ $(echo ${rval} | jq -r '.message' )  = "Not Found" ]
+               then
+                   echo "Tag ${{ github.event.inputs.tags }} cannot be found in releases"
+                   exit 1
+               fi
+               echo ::set-output name=sha::$(echo ${rval} | jq -r '.target_commitish' )
+               echo ::set-output name=tag::$(echo ${rval} | jq -r '.tag_name' )
+               exit 0
+
+       - name: Trigger Deployment to ${{github.event.inputs.environment}}
+         uses: benc-uk/workflow-dispatch@v1.1
+         with:
+           workflow: Deploy to PaaS
+           token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN }}
+           inputs: '{"environment": "${{github.event.inputs.environment}}" , "sha": "${{steps.tag_info.outputs.sha}}"  }'
+
+
+

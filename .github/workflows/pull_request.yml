@@ -3,10 +3,10 @@ on:
   pull_request:
     types: [assigned, opened, synchronize, reopened]
 env:
-  DOCKERHUB_REPOSITORY: dfedigital/get-into-teaching-api
-  GOVUKPAAS_ORG: dfe-teacher-services
-  GOVUKPAAS_SPACE: get-into-teaching
-  CONTAINER: get-into-teaching-api
+  DOCKERHUB_REPOSITORY:  dfedigital/get-into-teaching-api
+  DOMAIN:                london.cloudapps.digital
+  APPLICATION:           Get Into Teaching API Service
+  PAAS_APPLICATION_NAME: get-into-teaching-api
 
 jobs:
   test_dot_net:
@@ -47,6 +47,7 @@ jobs:
            SLACK_CHANNEL: getintoteaching_tech
            SLACK_COLOR: '#3278BD'
            SLACK_ICON: https://github.com/rtCamp.png?size=48
-           SLACK_MESSAGE: ':disappointed_relieved: Pipeline Failure carrying out job ${{github.job}} :disappointed_relieved:'
+           SLACK_MESSAGE: 'Pipeline Failure carrying out job ${{github.job}}'
            SLACK_TITLE: 'Failure: ${{ github.workflow }}'
            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+           SLACK_FOOTER: ${{env.APPLICATION }}
