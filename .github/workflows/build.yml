@@ -127,25 +127,22 @@ jobs:
        - name: Generate Tag from PR Number
          id: tag_version
          run: |
-           MATCH="Merge pull request #[0-9]+"
-           STRING=$(curl -s -X GET "https://api.github.com/repos/${{github.repository}}/commits/${{github.sha}}" | jq -r  ".commit.message")
-
-           if [[ ${STRING}  =~ ${MATCH} ]] ;
+           NUM=$(curl -s -X GET "https://api.github.com/repos/${{github.repository}}/pulls?state=all" | jq '.[] | select( .merge_commit_sha == "${{github.sha}}" ) | .number')
+           if [[ -z ${NUM} ]] ;
            then
-              echo "Pull request merge"
-              TAG=$( echo ${STRING} | grep -oh "[0-9]\+" | head -1 )
-              echo "PR Number ${TAG}"
-              BODY=$(curl -s -X GET "https://api.github.com/repos/${{github.repository}}/pulls/${TAG}" | jq -r ".body")
-           else
               echo "Not a pull request merge"
-              TAG=$( date "+ Release %Y-%m-%d %H%M" )
-              BODY="Please Enter Manually"
+              echo ::set-output name=create::false
+           else
+              echo "Pull request merge"
+              BODY=$(curl -s -X GET "https://api.github.com/repos/${{github.repository}}/pulls/${NUM}" | jq -r ".body" )
+              echo ::set-output name=tag::"PR-${NUM}"
+              echo ::set-output name=changelog::"${BODY}"
+              echo ::set-output name=create::true
            fi
-           echo ::set-output name=tag::"PR-${TAG}"
-           echo ::set-output name=changelog::"${BODY}"
            echo ::set-output name=sha::"${{github.sha}}"
 
        - name: Create a GitHub Release
+         if:   steps.tag_version.outputs.create == true
          uses: actions/create-release@v1
          env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
