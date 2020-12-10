@@ -187,7 +187,10 @@ The GIT API aims to provide:
             using var serviceScope = app.ApplicationServices.CreateScope();
             var env = serviceScope.ServiceProvider.GetService<IEnv>();
 
-            app.UseClientRateLimiting();
+            if (!env.IsStaging)
+            {
+                app.UseClientRateLimiting();
+            }
 
             if (hostEnv.IsDevelopment())
             {
