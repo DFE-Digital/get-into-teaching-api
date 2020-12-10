@@ -138,15 +138,14 @@ jobs:
               BODY=$(curl -s -X GET "https://api.github.com/repos/${{github.repository}}/pulls/${TAG}" | jq -r ".body")
            else
               echo "Not a pull request merge"
-              TAG="0"
-              BODY="Nothing"
+              TAG=$( date "+ Release %Y-%m-%d %H%M" )
+              BODY="Please Enter Manually"
            fi
            echo ::set-output name=tag::"PR-${TAG}"
            echo ::set-output name=changelog::"${BODY}"
            echo ::set-output name=sha::"${{github.sha}}"
 
        - name: Create a GitHub Release
-         if: steps.tag_version.outputs.tag != '0'
          uses: actions/create-release@v1
          env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
