@@ -125,32 +125,21 @@ jobs:
          run: exit 1
 
        - name: Generate Tag from PR Number
-         id: tag_version
-         run: |
-           NUM=$(curl -s -X GET "https://api.github.com/repos/${{github.repository}}/pulls?state=all" | jq '.[] | select( .merge_commit_sha == "${{github.sha}}" ) | .number')
-           if [[ -z ${NUM} ]] ;
-           then
-              echo "Not a pull request merge"
-              echo ::set-output name=create::'false'
-           else
-              echo "Pull request merge"
-              BODY=$(curl -s -X GET "https://api.github.com/repos/${{github.repository}}/pulls/${NUM}" | jq -r ".body" )
-              echo ::set-output name=tag::"PR-${NUM}"
-              echo ::set-output name=changelog::"${BODY}"
-              echo ::set-output name=create::'true'
-           fi
-           echo ::set-output name=sha::"${{github.sha}}"
+         id:   tag_version
+         uses: DFE-Digital/github-actions/GenerateReleaseFromSHA@master
+         with:
+           sha: ${{github.sha}}
 
        - name: Create a GitHub Release
-         if:   steps.tag_version.outputs.create == 'true'
+         if:   steps.tag_version.outputs.pr_found == 1
          uses: actions/create-release@v1
          env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
          with:
-            tag_name: ${{ steps.tag_version.outputs.tag }}
-            release_name: Release ${{ steps.tag_version.outputs.tag }}
-            body: ${{ steps.tag_version.outputs.changelog }}
-            commitish: ${{ steps.tag_version.outputs.sha}}
+            tag_name: ${{ steps.tag_version.outputs.pr_number }}
+            release_name: Release ${{ steps.tag_version.outputs.pr_number }}
+            body: ${{ steps.tag_version.outputs.pr_text }}
+            commitish: ${{github.sha}}
             prerelease: false
             draft:      false
 
