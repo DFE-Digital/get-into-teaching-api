@@ -225,7 +225,7 @@ jobs:
               fi 
 
        - name: Publish Release
-         if: steps.tag_id.outputs.publish = 'true'
+         if: steps.tag_id.outputs.publish == 'true'
          uses: eregon/publish-release@v1
          env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
