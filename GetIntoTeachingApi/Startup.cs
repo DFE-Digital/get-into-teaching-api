@@ -9,6 +9,7 @@ using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.ModelBinders;
 using GetIntoTeachingApi.OperationFilters;
+using GetIntoTeachingApi.Redis;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
@@ -44,9 +45,9 @@ namespace GetIntoTeachingApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            ConfigureRateLimiting(services);
-
             var env = new Env();
+
+            ConfigureRateLimiting(services);
 
             if (env.IsDevelopment)
             {
@@ -67,6 +68,7 @@ namespace GetIntoTeachingApi
             services.AddSingleton<ICandidateAccessTokenService, CandidateAccessTokenService>();
             services.AddSingleton<INotifyService, NotifyService>();
             services.AddSingleton<IHangfireService, HangfireService>();
+            services.AddSingleton<IRedisService, RedisService>();
             services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
             services.AddSingleton<ICallbackBookingService, CallbackBookingService>();
             services.AddSingleton<IEnv>(env);
@@ -279,7 +281,7 @@ The GIT API aims to provide:
 
             // Inject counter and rules stores.
             services.AddSingleton<IClientPolicyStore, MemoryCacheClientPolicyStore>();
-            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+            services.AddSingleton<IRateLimitCounterStore, RedisRateLimitCounterStore>();
 
             // https://github.com/aspnet/Hosting/issues/793
             // The IHttpContextAccessor service is not registered by default.

@@ -17,8 +17,8 @@ namespace GetIntoTeachingApiTests.Database
             var json = reader.ReadToEnd();
 
             _mockEnv = new Mock<IEnv>();
-            _mockEnv.Setup(m => m.DatabaseInstanceName).Returns("get-into-teaching-api-dev-pg-svc-2");
-            _mockEnv.Setup(m => m.HangfireInstanceName).Returns("get-into-teaching-api-dev-pg-svc");
+            _mockEnv.Setup(m => m.DatabaseInstanceName).Returns("database");
+            _mockEnv.Setup(m => m.HangfireInstanceName).Returns("hangfire");
             _mockEnv.Setup(m => m.VcapServices).Returns(json);
         }
 
@@ -27,11 +27,11 @@ namespace GetIntoTeachingApiTests.Database
         {
             var connectionString = DbConfiguration.DatabaseConnectionString(_mockEnv.Object);
 
-            connectionString.Should().Be("Host=host2.coowcrpgh5fz.eu-west-2.rds.amazonaws.com;" +
-                                         "Database=rdsbroker_ce514fe0_b017_4caf_8609_c1dc1dec978d;" +
+            connectionString.Should().Be("Host=host.com;" +
+                                         "Database=database;" +
                                          "Username=username2;" +
                                          "Password=password2;" +
-                                         "Port=5432;" +
+                                         "Port=1234;" +
                                          "SSL Mode=Require;" +
                                          "Trust Server Certificate=True");
         }
@@ -41,11 +41,11 @@ namespace GetIntoTeachingApiTests.Database
         {
             var connectionString = DbConfiguration.HangfireConnectionString(_mockEnv.Object);
 
-            connectionString.Should().Be("Host=host1.coowcrpgh5fz.eu-west-2.rds.amazonaws.com;" +
-                                         "Database=rdsbroker_277c8858_eb3a_427b_99ed_0f4f4171701e;" +
+            connectionString.Should().Be("Host=host.com;" +
+                                         "Database=hangfire;" +
                                          "Username=username1;" +
                                          "Password=password1;" +
-                                         "Port=5432;" +
+                                         "Port=1234;" +
                                          "SSL Mode=Require;" +
                                          "Trust Server Certificate=True;" +
                                          "SearchPath=hangfire");
