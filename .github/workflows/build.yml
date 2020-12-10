@@ -131,18 +131,18 @@ jobs:
            if [[ -z ${NUM} ]] ;
            then
               echo "Not a pull request merge"
-              echo ::set-output name=create::false
+              echo ::set-output name=create::'false'
            else
               echo "Pull request merge"
               BODY=$(curl -s -X GET "https://api.github.com/repos/${{github.repository}}/pulls/${NUM}" | jq -r ".body" )
               echo ::set-output name=tag::"PR-${NUM}"
               echo ::set-output name=changelog::"${BODY}"
-              echo ::set-output name=create::true
+              echo ::set-output name=create::'true'
            fi
            echo ::set-output name=sha::"${{github.sha}}"
 
        - name: Create a GitHub Release
-         if:   steps.tag_version.outputs.create == true
+         if:   steps.tag_version.outputs.create == 'true'
          uses: actions/create-release@v1
          env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -218,8 +218,14 @@ jobs:
          run: |
               ID=$(curl -s -X GET "https://api.github.com/repos/${{github.repository}}/releases/tags/${{needs.development.outputs.release_tag}}" | jq -r .id )
               echo ::set-output name=tag_id::"${ID}"
+              if [[ -z ${tag_id} ]] ; then
+                  echo ::set-output name=publish::'false'
+              else
+                  echo ::set-output name=publish::'true'
+              fi 
 
        - name: Publish Release
+         if: steps.tag_id.outputs.publish == 'true'
          uses: eregon/publish-release@v1
          env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
