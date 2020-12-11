@@ -31,17 +31,17 @@ namespace GetIntoTeachingApi.Models.Validators
 
         private IEnumerable<string> UkDegreeGradeIds()
         {
-            return _store.GetPickListItems("dfe_candidatequalification", "dfe_ukdegreegrade").Select(grade => grade.Id);
+            return _store.GetTypeEntitites("dfe_candidatequalification", "dfe_ukdegreegrade").Select(grade => grade.Id);
         }
 
         private IEnumerable<string> StatusIds()
         {
-            return _store.GetPickListItems("dfe_candidatequalification", "dfe_degreestatus").Select(status => status.Id);
+            return _store.GetTypeEntitites("dfe_candidatequalification", "dfe_degreestatus").Select(status => status.Id);
         }
 
         private IEnumerable<string> TypeIds()
         {
-            return _store.GetPickListItems("dfe_candidatequalification", "dfe_type").Select(type => type.Id);
+            return _store.GetTypeEntitites("dfe_candidatequalification", "dfe_type").Select(type => type.Id);
         }
     }
 }

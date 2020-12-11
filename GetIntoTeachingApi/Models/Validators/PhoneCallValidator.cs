@@ -23,7 +23,7 @@ namespace GetIntoTeachingApi.Models.Validators
 
         private IEnumerable<string> ChannelIds()
         {
-            return _store.GetPickListItems("phonecall", "dfe_channelcreation").Select(channel => channel.Id);
+            return _store.GetTypeEntitites("phonecall", "dfe_channelcreation").Select(channel => channel.Id);
         }
     }
 }

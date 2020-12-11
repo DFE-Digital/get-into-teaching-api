@@ -59,7 +59,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetCountries_ReturnsAllCountriesSortedByCountryName()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetLookupItems("dfe_country")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("dfe_country", null)).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetCountries();
 
@@ -72,7 +72,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetTeachingSubjects_ReturnsAllSubjectsSortedBySubjectName()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("dfe_teachingsubjectlist", null)).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetTeachingSubjects();
 
@@ -85,7 +85,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetCandidateInitialTeacherTrainingYears_ReturnsAllYears()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_ittyear")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("contact", "dfe_ittyear")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetCandidateInitialTeacherTrainingYears();
 
@@ -97,7 +97,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetCandidatePreferredEducationPhases_ReturnsAllPhases()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_preferrededucationphase01"))
+            _mockStore.Setup(mock => mock.GetTypeEntitites("contact", "dfe_preferrededucationphase01"))
                 .Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetCandidatePreferredEducationPhases();
@@ -110,7 +110,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetCandidateChannels_ReturnsAllChannels()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_channelcreation")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("contact", "dfe_channelcreation")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetCandidateChannels();
 
@@ -122,7 +122,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetCandidateMailingListSubscriptionChannels_ReturnsAllChannels()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_gitismlservicesubscriptionchannel")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("contact", "dfe_gitismlservicesubscriptionchannel")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetCandidateMailingListSubscriptionChannels();
 
@@ -134,7 +134,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetCandidateEventSubscriptionChannels_ReturnsAllChannels()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_gitiseventsservicesubscriptionchannel")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("contact", "dfe_gitiseventsservicesubscriptionchannel")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetCandidateEventSubscriptionChannels();
 
@@ -146,7 +146,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetCandidateGcseStatus_ReturnsAllStatus()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_websitehasgcseenglish")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("contact", "dfe_websitehasgcseenglish")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetCandidateGcseStatus();
 
@@ -158,7 +158,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetCandidateRetakeGcseStatus_ReturnsAllStatus()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("contact", "dfe_websiteplanningretakeenglishgcse")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetCandidateRetakeGcseStatus();
 
@@ -170,7 +170,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetCandidateConsiderationJourneyStages_ReturnsAllStages()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_websitewhereinconsiderationjourney")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("contact", "dfe_websitewhereinconsiderationjourney")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetCandidateConsiderationJourneyStages();
 
@@ -182,7 +182,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetCandidateTypes_ReturnsAllTypes()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_typeofcandidate")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("contact", "dfe_typeofcandidate")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetCandidateTypes();
 
@@ -194,7 +194,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetCandidateAssignmentStatus_ReturnsAllStatus()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_candidatestatus")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("contact", "dfe_candidatestatus")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetCandidateAssignmentStatus();
 
@@ -206,7 +206,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetCandidateAdviserEligibilities_ReturnsAllEligibilities()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_iscandidateeligibleforadviser")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("contact", "dfe_iscandidateeligibleforadviser")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetCandidateAdviserEligibilities();
 
@@ -218,7 +218,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetCandidateAdviserRequirements_ReturnsAllEligibilities()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_isadvisorrequiredos")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("contact", "dfe_isadvisorrequiredos")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetCandidateAdviserRequirements();
 
@@ -230,7 +230,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetQualificationDegreeStatus_ReturnsAllStatus()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_degreestatus")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("dfe_candidatequalification", "dfe_degreestatus")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetQualificationDegreeStatus();
 
@@ -242,7 +242,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetQualificationTypes_ReturnsAllTypes()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_type")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("dfe_candidatequalification", "dfe_type")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetQualificationTypes();
 
@@ -254,7 +254,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetQualificationUkDegreeGrades_ReturnsAllGrades()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_ukdegreegrade")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("dfe_candidatequalification", "dfe_ukdegreegrade")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetQualificationUkDegreeGrades();
 
@@ -266,7 +266,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetPastTeachingPositionEducationPhases_ReturnsAllPhases()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase"))
+            _mockStore.Setup(mock => mock.GetTypeEntitites("dfe_candidatepastteachingposition", "dfe_educationphase"))
                 .Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetPastTeachingPositionEducationPhases();
@@ -279,7 +279,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetTeachingEventTypes_ReturnsAllTypes()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("msevtmgt_event", "dfe_event_type")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("msevtmgt_event", "dfe_event_type")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetTeachingEventTypes();
 
@@ -291,7 +291,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetTeachingEventStatus_ReturnsAllStatus()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("msevtmgt_event", "dfe_eventstatus")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("msevtmgt_event", "dfe_eventstatus")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetTeachingEventStatus();
 
@@ -303,7 +303,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetTeachingEventRegistrationChannels_ReturnsAllChannels()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("msevtmgt_eventregistration", "dfe_channelcreation")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("msevtmgt_eventregistration", "dfe_channelcreation")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetTeachingEventRegistrationChannels();
 
@@ -315,7 +315,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetPhoneCallChannels_ReturnsAllChannels()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("phonecall", "dfe_channelcreation")).Returns(mockEntities.AsAsyncQueryable());
+            _mockStore.Setup(mock => mock.GetTypeEntitites("phonecall", "dfe_channelcreation")).Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetPhoneCallChannels();
 
@@ -327,7 +327,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async void GetSubscriptionTypes_ReturnsAllTypes()
         {
             var mockEntities = MockTypeEntities();
-            _mockStore.Setup(mock => mock.GetPickListItems("dfe_servicesubscription", "dfe_servicesubscriptiontype"))
+            _mockStore.Setup(mock => mock.GetTypeEntitites("dfe_servicesubscription", "dfe_servicesubscriptiontype"))
                 .Returns(mockEntities.AsAsyncQueryable());
 
             var response = await _controller.GetSubscriptionTypes();

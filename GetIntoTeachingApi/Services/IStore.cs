@@ -10,8 +10,7 @@ namespace GetIntoTeachingApi.Services
     {
         Task<string> CheckStatusAsync();
         Task SyncAsync(ICrmService crm);
-        IQueryable<TypeEntity> GetLookupItems(string entityName);
-        IQueryable<TypeEntity> GetPickListItems(string entityName, string attributeName);
+        IQueryable<TypeEntity> GetTypeEntitites(string entityName, string attributeName = null);
         Task<PrivacyPolicy> GetLatestPrivacyPolicyAsync();
         IQueryable<PrivacyPolicy> GetPrivacyPolicies();
         Task<PrivacyPolicy> GetPrivacyPolicyAsync(Guid id);

@@ -48,33 +48,33 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void GetLookupItems_ReturnsAll()
-        {
-            var queryableCountries = MockCountries();
-            _mockService.Setup(mock => mock.CreateQuery("dfe_country", _context))
-                .Returns(queryableCountries);
-
-            var result = _crm.GetLookupItems("dfe_country").ToList();
-
-            result.Select(country => country.Value).Should().BeEquivalentTo(
-                new object[] { "Country 1", "Country 2", "Country 3" },
-                options => options.WithStrictOrdering());
-            result.Select(country => country.EntityName).Should().OnlyContain(name => name == "dfe_country");
-        }
-
-        [Fact]
-        public void GetPickListItems_ReturnsAll()
+        public void GetTypeEntitites_ForPickListItem_ReturnsMatchingOrderedByIdAscending()
         {
             var initialTeacherTrainingYears = MockInitialTeacherTrainingYears();
             _mockService.Setup(mock => mock.GetPickListItemsForAttribute("contact", "dfe_ittyear"))
                 .Returns(initialTeacherTrainingYears);
 
-            var result = _crm.GetPickListItems("contact", "dfe_ittyear").ToList();
+            var result = _crm.GetTypeEntities("contact", "dfe_ittyear").ToList();
 
             result.Select(year => year.Value).Should().BeEquivalentTo(new object[] { "2010", "2011", "2012" },
                 options => options.WithStrictOrdering());
             result.Select(year => year.EntityName).Should().OnlyContain(name => name == "contact");
             result.Select(year => year.AttributeName).Should().OnlyContain(name => name == "dfe_ittyear");
+        }
+
+        [Fact]
+        public void GetTypeEntitites_ForLookupItem_ReturnsMatchingOrderedByIdAscending()
+        {
+            var queryableCountries = MockCountries();
+            _mockService.Setup(mock => mock.CreateQuery("dfe_country", _context))
+                .Returns(queryableCountries);
+
+            var result = _crm.GetTypeEntities("dfe_country").ToList();
+
+            result.Select(country => country.Value).Should().BeEquivalentTo(
+                new object[] { "Country 1", "Country 2", "Country 3" },
+                options => options.WithStrictOrdering());
+            result.Select(country => country.EntityName).Should().OnlyContain(name => name == "dfe_country");
         }
 
         [Fact]
