@@ -32,7 +32,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 SubjectTaughtId = Guid.NewGuid(),
                 PastTeachingPositionId = Guid.NewGuid(),
                 PreferredTeachingSubjectId = Guid.NewGuid(),
-                CountryId = TypeEntity.UnitedKingdomCountryId,
+                CountryId = LookupItem.UnitedKingdomCountryId,
                 UkDegreeGradeId = 1,
                 DegreeStatusId = 2,
                 InitialTeacherTrainingYearId = 3,
@@ -145,7 +145,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
-                CountryId = TypeEntity.UnitedKingdomCountryId,
+                CountryId = LookupItem.UnitedKingdomCountryId,
                 AddressLine1 = null,
                 AddressCity = null,
                 AddressPostcode = null,
@@ -181,7 +181,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
-                CountryId = TypeEntity.UnitedKingdomCountryId,
+                CountryId = LookupItem.UnitedKingdomCountryId,
                 AddressLine1 = "Line 1",
                 AddressCity = "City",
                 AddressPostcode = "KY11 9YU",
@@ -242,7 +242,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var request = new TeacherTrainingAdviserSignUp
             {
                 DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent,
-                CountryId = TypeEntity.UnitedKingdomCountryId,
+                CountryId = LookupItem.UnitedKingdomCountryId,
                 PhoneCallScheduledAt = null,
             };
 
@@ -271,7 +271,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var request = new TeacherTrainingAdviserSignUp
             {
                 DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent,
-                CountryId = TypeEntity.UnitedKingdomCountryId,
+                CountryId = LookupItem.UnitedKingdomCountryId,
                 PhoneCallScheduledAt = DateTime.UtcNow,
             };
 

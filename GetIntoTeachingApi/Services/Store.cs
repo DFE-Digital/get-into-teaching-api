@@ -44,6 +44,12 @@ namespace GetIntoTeachingApi.Services
             await SyncTeachingEvents(crm);
             await SyncPrivacyPolicies(crm);
             await SyncTypeEntities(crm);
+            await SyncLookupItems(crm);
+        }
+
+        public IQueryable<LookupItem> GetLookupItems(string entityName)
+        {
+            return _dbContext.LookupItems.Where(t => t.EntityName == entityName).OrderBy(t => t.Id);
         }
 
         public IQueryable<TypeEntity> GetTypeEntitites(string entityName, string attributeName = null)
@@ -208,6 +214,12 @@ namespace GetIntoTeachingApi.Services
             await SyncTypes(crm.GetTypeEntities("dfe_servicesubscription", "dfe_servicesubscriptiontype"));
         }
 
+        private async Task SyncLookupItems(ICrmService crm)
+        {
+            await SyncLookupItem("dfe_country", crm);
+            await SyncLookupItem("dfe_teachingsubjectlist", crm);
+        }
+
         private async Task SyncModels<T>(IEnumerable<T> models, IQueryable<T> dbSet)
             where T : BaseModel
         {
@@ -217,6 +229,20 @@ namespace GetIntoTeachingApi.Services
             _dbContext.RemoveRange(dbSet.Where(m => !modelIds.Contains(m.Id)));
             _dbContext.UpdateRange(models.Where(m => existingIds.Contains(m.Id)));
             await _dbContext.AddRangeAsync(models.Where(m => !existingIds.Contains(m.Id)));
+            await _dbContext.SaveChangesAsync();
+        }
+
+        private async Task SyncLookupItem(string entityName, ICrmService crm)
+        {
+            var items = crm.GetLookupItems(entityName);
+            var ids = items.Select(t => t.Id);
+            var existingIds = _dbContext.LookupItems
+                .Where(t => t.EntityName == entityName)
+                .Select(t => t.Id);
+
+            _dbContext.RemoveRange(_dbContext.LookupItems.Where(t => t.EntityName == entityName && !ids.Contains(t.Id)));
+            _dbContext.UpdateRange(items.Where(t => existingIds.Contains(t.Id)));
+            await _dbContext.AddRangeAsync(items.Where(t => !existingIds.Contains(t.Id)));
             await _dbContext.SaveChangesAsync();
         }
 
