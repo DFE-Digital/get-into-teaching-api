@@ -30,46 +30,46 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
             
             _mockStore
-                .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
+                .Setup(mock => mock.GetTypeEntitites("dfe_teachingsubjectlist", null))
                 .Returns(new[] { mockEntityReference }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetLookupItems("dfe_country"))
+                .Setup(mock => mock.GetTypeEntitites("dfe_country", null))
                 .Returns(new[] { mockEntityReference }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetPickListItems("contact", "dfe_preferrededucationphase01"))
+                .Setup(mock => mock.GetTypeEntitites("contact", "dfe_preferrededucationphase01"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetPickListItems("contact", "dfe_ittyear"))
+                .Setup(mock => mock.GetTypeEntitites("contact", "dfe_ittyear"))
                 .Returns(new[] { mockPickListItem }.AsQueryable);
             _mockStore
-                .Setup(mock => mock.GetPickListItems("contact", "dfe_channelcreation"))
+                .Setup(mock => mock.GetTypeEntitites("contact", "dfe_channelcreation"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetPickListItems("contact", "dfe_gitismlservicesubscriptionchannel"))
+                .Setup(mock => mock.GetTypeEntitites("contact", "dfe_gitismlservicesubscriptionchannel"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetPickListItems("contact", "dfe_gitiseventsservicesubscriptionchannel"))
+                .Setup(mock => mock.GetTypeEntitites("contact", "dfe_gitiseventsservicesubscriptionchannel"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetPickListItems("contact", "dfe_websitehasgcseenglish"))
+                .Setup(mock => mock.GetTypeEntitites("contact", "dfe_websitehasgcseenglish"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse"))
+                .Setup(mock => mock.GetTypeEntitites("contact", "dfe_websiteplanningretakeenglishgcse"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetPickListItems("contact", "dfe_websitewhereinconsiderationjourney"))
+                .Setup(mock => mock.GetTypeEntitites("contact", "dfe_websitewhereinconsiderationjourney"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetPickListItems("contact", "dfe_typeofcandidate"))
+                .Setup(mock => mock.GetTypeEntitites("contact", "dfe_typeofcandidate"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetPickListItems("contact", "dfe_candidatestatus"))
+                .Setup(mock => mock.GetTypeEntitites("contact", "dfe_candidatestatus"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetPickListItems("contact", "dfe_iscandidateeligibleforadviser"))
+                .Setup(mock => mock.GetTypeEntitites("contact", "dfe_iscandidateeligibleforadviser"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetPickListItems("contact", "dfe_isadvisorrequiredos"))
+                .Setup(mock => mock.GetTypeEntitites("contact", "dfe_isadvisorrequiredos"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPrivacyPolicies())
@@ -493,7 +493,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var mockChannel = NewMock(123);
             _mockStore
-                .Setup(mock => mock.GetPickListItems("contact", "dfe_channelcreation"))
+                .Setup(mock => mock.GetTypeEntitites("contact", "dfe_channelcreation"))
                 .Returns(new[] { mockChannel }.AsQueryable());
             var candidate = new Candidate() { Id = Guid.NewGuid(), ChannelId = int.Parse(mockChannel.Id) };
             var result = _validator.TestValidate(candidate);

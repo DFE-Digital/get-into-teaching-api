@@ -46,14 +46,16 @@ namespace GetIntoTeachingApi.Services
             await SyncTypeEntities(crm);
         }
 
-        public IQueryable<TypeEntity> GetLookupItems(string entityName)
+        public IQueryable<TypeEntity> GetTypeEntitites(string entityName, string attributeName = null)
         {
-            return _dbContext.TypeEntities.Where(t => t.EntityName == entityName).OrderBy(t => t.Id);
-        }
+            var query = _dbContext.TypeEntities.Where(t => t.EntityName == entityName);
 
-        public IQueryable<TypeEntity> GetPickListItems(string entityName, string attributeName)
-        {
-            return _dbContext.TypeEntities.Where(t => t.EntityName == entityName && t.AttributeName == attributeName).OrderBy(t => t.Id);
+            if (attributeName != null)
+            {
+                query = query.Where(t => t.AttributeName == attributeName);
+            }
+
+            return query.OrderBy(t => t.Id);
         }
 
         public async Task<PrivacyPolicy> GetLatestPrivacyPolicyAsync()
@@ -181,29 +183,29 @@ namespace GetIntoTeachingApi.Services
 
         private async Task SyncTypeEntities(ICrmService crm)
         {
-            await SyncTypes(crm.GetLookupItems("dfe_country"));
-            await SyncTypes(crm.GetLookupItems("dfe_teachingsubjectlist"));
-            await SyncTypes(crm.GetPickListItems("contact", "dfe_ittyear"));
-            await SyncTypes(crm.GetPickListItems("contact", "dfe_preferrededucationphase01"));
-            await SyncTypes(crm.GetPickListItems("contact", "dfe_channelcreation"));
-            await SyncTypes(crm.GetPickListItems("contact", "dfe_websitehasgcseenglish"));
-            await SyncTypes(crm.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse"));
-            await SyncTypes(crm.GetPickListItems("contact", "dfe_websitewhereinconsiderationjourney"));
-            await SyncTypes(crm.GetPickListItems("contact", "dfe_typeofcandidate"));
-            await SyncTypes(crm.GetPickListItems("contact", "dfe_candidatestatus"));
-            await SyncTypes(crm.GetPickListItems("contact", "dfe_iscandidateeligibleforadviser"));
-            await SyncTypes(crm.GetPickListItems("contact", "dfe_isadvisorrequiredos"));
-            await SyncTypes(crm.GetPickListItems("contact", "dfe_gitismlservicesubscriptionchannel"));
-            await SyncTypes(crm.GetPickListItems("contact", "dfe_gitiseventsservicesubscriptionchannel"));
-            await SyncTypes(crm.GetPickListItems("dfe_candidatequalification", "dfe_degreestatus"));
-            await SyncTypes(crm.GetPickListItems("dfe_candidatequalification", "dfe_ukdegreegrade"));
-            await SyncTypes(crm.GetPickListItems("dfe_candidatequalification", "dfe_type"));
-            await SyncTypes(crm.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase"));
-            await SyncTypes(crm.GetPickListItems("msevtmgt_event", "dfe_event_type"));
-            await SyncTypes(crm.GetPickListItems("msevtmgt_event", "dfe_eventstatus"));
-            await SyncTypes(crm.GetPickListItems("msevtmgt_eventregistration", "dfe_channelcreation"));
-            await SyncTypes(crm.GetPickListItems("phonecall", "dfe_channelcreation"));
-            await SyncTypes(crm.GetPickListItems("dfe_servicesubscription", "dfe_servicesubscriptiontype"));
+            await SyncTypes(crm.GetTypeEntities("dfe_country"));
+            await SyncTypes(crm.GetTypeEntities("dfe_teachingsubjectlist"));
+            await SyncTypes(crm.GetTypeEntities("contact", "dfe_ittyear"));
+            await SyncTypes(crm.GetTypeEntities("contact", "dfe_preferrededucationphase01"));
+            await SyncTypes(crm.GetTypeEntities("contact", "dfe_channelcreation"));
+            await SyncTypes(crm.GetTypeEntities("contact", "dfe_websitehasgcseenglish"));
+            await SyncTypes(crm.GetTypeEntities("contact", "dfe_websiteplanningretakeenglishgcse"));
+            await SyncTypes(crm.GetTypeEntities("contact", "dfe_websitewhereinconsiderationjourney"));
+            await SyncTypes(crm.GetTypeEntities("contact", "dfe_typeofcandidate"));
+            await SyncTypes(crm.GetTypeEntities("contact", "dfe_candidatestatus"));
+            await SyncTypes(crm.GetTypeEntities("contact", "dfe_iscandidateeligibleforadviser"));
+            await SyncTypes(crm.GetTypeEntities("contact", "dfe_isadvisorrequiredos"));
+            await SyncTypes(crm.GetTypeEntities("contact", "dfe_gitismlservicesubscriptionchannel"));
+            await SyncTypes(crm.GetTypeEntities("contact", "dfe_gitiseventsservicesubscriptionchannel"));
+            await SyncTypes(crm.GetTypeEntities("dfe_candidatequalification", "dfe_degreestatus"));
+            await SyncTypes(crm.GetTypeEntities("dfe_candidatequalification", "dfe_ukdegreegrade"));
+            await SyncTypes(crm.GetTypeEntities("dfe_candidatequalification", "dfe_type"));
+            await SyncTypes(crm.GetTypeEntities("dfe_candidatepastteachingposition", "dfe_educationphase"));
+            await SyncTypes(crm.GetTypeEntities("msevtmgt_event", "dfe_event_type"));
+            await SyncTypes(crm.GetTypeEntities("msevtmgt_event", "dfe_eventstatus"));
+            await SyncTypes(crm.GetTypeEntities("msevtmgt_eventregistration", "dfe_channelcreation"));
+            await SyncTypes(crm.GetTypeEntities("phonecall", "dfe_channelcreation"));
+            await SyncTypes(crm.GetTypeEntities("dfe_servicesubscription", "dfe_servicesubscriptiontype"));
         }
 
         private async Task SyncModels<T>(IEnumerable<T> models, IQueryable<T> dbSet)

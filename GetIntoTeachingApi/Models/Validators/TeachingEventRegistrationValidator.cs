@@ -34,7 +34,7 @@ namespace GetIntoTeachingApi.Models.Validators
 
         private IEnumerable<string> ChannelIds()
         {
-            return _store.GetPickListItems("msevtmgt_eventregistration", "dfe_channelcreation").Select(channel => channel.Id);
+            return _store.GetTypeEntitites("msevtmgt_eventregistration", "dfe_channelcreation").Select(channel => channel.Id);
         }
 
         private bool BeAvailableForOnlineRegistrations(Guid id)

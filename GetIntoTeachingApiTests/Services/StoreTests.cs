@@ -189,53 +189,11 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_InsertsNewLookupItems()
-        {
-            var mockCountries = MockCountries().ToList();
-            var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetLookupItems("dfe_country")).Returns(mockCountries);
-
-            await _store.SyncAsync(mockCrm.Object);
-
-            var ids = DbContext.TypeEntities.Select(e => e.Id);
-            ids.Should().BeEquivalentTo(mockCountries.Select(e => e.Id));
-            DbContext.TypeEntities.Count().Should().Be(3);
-        }
-
-        [Fact]
-        public async void SyncAsync_UpdatesExistingLookupItems()
-        {
-            var updatedCountries = (await SeedMockCountriesAsync()).ToList();
-            updatedCountries.ForEach(c => c.Value += "Updated");
-            var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetLookupItems("dfe_country")).Returns(updatedCountries);
-
-            await _store.SyncAsync(mockCrm.Object);
-
-            var countries = DbContext.TypeEntities.ToList();
-            countries.Select(c => c.Value).ToList().ForEach(value => value.Should().Contain("Updated"));
-            DbContext.TypeEntities.Count().Should().Be(3);
-        }
-
-        [Fact]
-        public async void SyncAsync_DeletesOrphanedLookupItems()
-        {
-            var countries = (await SeedMockCountriesAsync()).ToList();
-            var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetLookupItems("dfe_country")).Returns(countries.GetRange(0, 2));
-
-            await _store.SyncAsync(mockCrm.Object);
-
-            var remainingCountries = DbContext.TypeEntities.Where(te => te.EntityName == "dfe_country").ToArray();
-            remainingCountries.Should().BeEquivalentTo(countries.GetRange(0, 2));
-        }
-
-        [Fact]
-        public async void SyncAsync_InsertsNewPickListItems()
+        public async void SyncAsync_InsertsNewPickListItemsAsTypeEntities()
         {
             var mockYears = MockInitialTeacherTrainingYears().ToList();
             var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_ittyear")).Returns(mockYears);
+            mockCrm.Setup(m => m.GetTypeEntities("contact", "dfe_ittyear")).Returns(mockYears);
 
             await _store.SyncAsync(mockCrm.Object);
 
@@ -245,12 +203,12 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_UpdatesExistingPickListItems()
+        public async void SyncAsync_UpdatesExistingPickListItemsAsTypeEntities()
         {
             var updatedYears = (await SeedMockInitialTeacherTrainingYearsAsync()).ToList();
             updatedYears.ForEach(c => c.Value += "Updated");
             var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_ittyear")).Returns(updatedYears);
+            mockCrm.Setup(m => m.GetTypeEntities("contact", "dfe_ittyear")).Returns(updatedYears);
 
             await _store.SyncAsync(mockCrm.Object);
 
@@ -260,11 +218,11 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_DeletesOrphanedPickListItems()
+        public async void SyncAsync_DeletesOrphanedPickListItemsAsTypeEntities()
         {
             var years = (await SeedMockInitialTeacherTrainingYearsAsync()).ToList();
             var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_ittyear")).Returns(years.GetRange(0, 2));
+            mockCrm.Setup(m => m.GetTypeEntities("contact", "dfe_ittyear")).Returns(years.GetRange(0, 2));
 
             await _store.SyncAsync(mockCrm.Object);
 
@@ -280,49 +238,49 @@ namespace GetIntoTeachingApiTests.Services
 
             await _store.SyncAsync(mockCrm.Object);
 
-            mockCrm.Verify(m => m.GetLookupItems("dfe_country"));
-            mockCrm.Verify(m => m.GetLookupItems("dfe_teachingsubjectlist"));
-            mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_ittyear"));
-            mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_preferrededucationphase01"));
-            mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_channelcreation"));
-            mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_websitehasgcseenglish"));
-            mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse"));
-            mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_websitewhereinconsiderationjourney"));
-            mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_typeofcandidate"));
-            mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_candidatestatus"));
-            mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_iscandidateeligibleforadviser"));
-            mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_isadvisorrequiredos"));
-            mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_gitismlservicesubscriptionchannel"));
-            mockCrm.Verify(m => m.GetPickListItems("contact", "dfe_gitiseventsservicesubscriptionchannel"));
-            mockCrm.Verify(m => m.GetPickListItems("dfe_candidatequalification", "dfe_degreestatus"));
-            mockCrm.Verify(m => m.GetPickListItems("dfe_candidatequalification", "dfe_ukdegreegrade"));
-            mockCrm.Verify(m => m.GetPickListItems("dfe_candidatequalification", "dfe_type"));
-            mockCrm.Verify(m => m.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase"));
-            mockCrm.Verify(m => m.GetPickListItems("msevtmgt_event", "dfe_event_type"));
-            mockCrm.Verify(m => m.GetPickListItems("msevtmgt_event", "dfe_eventstatus"));
-            mockCrm.Verify(m => m.GetPickListItems("msevtmgt_eventregistration", "dfe_channelcreation"));
-            mockCrm.Verify(m => m.GetPickListItems("phonecall", "dfe_channelcreation"));
-            mockCrm.Verify(m => m.GetPickListItems("dfe_servicesubscription", "dfe_servicesubscriptiontype"));
+            mockCrm.Verify(m => m.GetTypeEntities("dfe_country", null));
+            mockCrm.Verify(m => m.GetTypeEntities("dfe_teachingsubjectlist", null));
+            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_ittyear"));
+            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_preferrededucationphase01"));
+            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_channelcreation"));
+            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_websitehasgcseenglish"));
+            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_websiteplanningretakeenglishgcse"));
+            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_websitewhereinconsiderationjourney"));
+            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_typeofcandidate"));
+            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_candidatestatus"));
+            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_iscandidateeligibleforadviser"));
+            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_isadvisorrequiredos"));
+            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_gitismlservicesubscriptionchannel"));
+            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_gitiseventsservicesubscriptionchannel"));
+            mockCrm.Verify(m => m.GetTypeEntities("dfe_candidatequalification", "dfe_degreestatus"));
+            mockCrm.Verify(m => m.GetTypeEntities("dfe_candidatequalification", "dfe_ukdegreegrade"));
+            mockCrm.Verify(m => m.GetTypeEntities("dfe_candidatequalification", "dfe_type"));
+            mockCrm.Verify(m => m.GetTypeEntities("dfe_candidatepastteachingposition", "dfe_educationphase"));
+            mockCrm.Verify(m => m.GetTypeEntities("msevtmgt_event", "dfe_event_type"));
+            mockCrm.Verify(m => m.GetTypeEntities("msevtmgt_event", "dfe_eventstatus"));
+            mockCrm.Verify(m => m.GetTypeEntities("msevtmgt_eventregistration", "dfe_channelcreation"));
+            mockCrm.Verify(m => m.GetTypeEntities("phonecall", "dfe_channelcreation"));
+            mockCrm.Verify(m => m.GetTypeEntities("dfe_servicesubscription", "dfe_servicesubscriptiontype"));
         }
 
         [Fact]
-        public async void GetLookupItems_ReturnsMatchingOrderedByIdAscending()
-        {
-            await SeedMockCountriesAsync();
-
-            var result = _store.GetLookupItems("dfe_country");
-
-            result.Select(t => t.Value).Should().BeEquivalentTo(new string[] { "Country 1", "Country 2", "Country 3" });
-        }
-
-        [Fact]
-        public async void GetPickListItems_ReturnsMatchingOrderedByIdAscending()
+        public async void GetTypeEntitites_ForPickListItem_ReturnsMatchingOrderedByIdAscending()
         {
             await SeedMockInitialTeacherTrainingYearsAsync();
 
-            var result = _store.GetPickListItems("contact", "dfe_ittyear");
+            var result = _store.GetTypeEntitites("contact", "dfe_ittyear");
 
             result.Select(t => t.Value).Should().BeEquivalentTo(new string[] { "2009", "2010", "2011" });
+        }
+
+        [Fact]
+        public async void GetTypeEntitites_ForLookupItem_ReturnsMatchingOrderedByIdAscending()
+        {
+            await SeedMockCountriesAsTypesAsync();
+
+            var result = _store.GetTypeEntitites("dfe_country");
+
+            result.Select(t => t.Value).Should().BeEquivalentTo(new string[] { "Country 1", "Country 2", "Country 3" });
         }
 
         [Fact]
@@ -631,7 +589,7 @@ namespace GetIntoTeachingApiTests.Services
             return privacyPolicies;
         }
 
-        private static IEnumerable<TypeEntity> MockCountries()
+        private static IEnumerable<TypeEntity> MockCountriesAsTypes()
         {
             var country1 = new TypeEntity() { Id = "00000000-0000-0000-0000-000000000000", Value = "Country 1", EntityName = "dfe_country" };
             var country2 = new TypeEntity() { Id = "00000000-0000-0000-0000-000000000001", Value = "Country 2", EntityName = "dfe_country" };
@@ -640,12 +598,12 @@ namespace GetIntoTeachingApiTests.Services
             return new TypeEntity[] { country2, country1, country3 };
         }
 
-        private async Task<IEnumerable<TypeEntity>> SeedMockCountriesAsync()
+        private async Task<IEnumerable<TypeEntity>> SeedMockCountriesAsTypesAsync()
         {
-            var types = MockCountries().ToList();
+            var types = MockCountriesAsTypes().ToList();
             var mockCrm = new Mock<ICrmService>();
 
-            mockCrm.Setup(m => m.GetLookupItems("dfe_country")).Returns(types);
+            mockCrm.Setup(m => m.GetTypeEntities("dfe_country", null)).Returns(types);
 
             await _store.SyncAsync(mockCrm.Object);
 
@@ -666,7 +624,7 @@ namespace GetIntoTeachingApiTests.Services
             var types = MockInitialTeacherTrainingYears().ToList();
             var mockCrm = new Mock<ICrmService>();
 
-            mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_ittyear")).Returns(types);
+            mockCrm.Setup(m => m.GetTypeEntities("contact", "dfe_ittyear")).Returns(types);
 
             await _store.SyncAsync(mockCrm.Object);
 

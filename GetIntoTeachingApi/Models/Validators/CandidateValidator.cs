@@ -119,72 +119,72 @@ namespace GetIntoTeachingApi.Models.Validators
 
         private IEnumerable<string> PreferredTeachingSubjectIds()
         {
-            return _store.GetLookupItems("dfe_teachingsubjectlist").Select(subject => subject.Id);
+            return _store.GetTypeEntitites("dfe_teachingsubjectlist").Select(subject => subject.Id);
         }
 
         private IEnumerable<string> CountryIds()
         {
-            return _store.GetLookupItems("dfe_country").Select(country => country.Id);
+            return _store.GetTypeEntitites("dfe_country").Select(country => country.Id);
         }
 
         private IEnumerable<string> PreferredEducationPhaseIds()
         {
-            return _store.GetPickListItems("contact", "dfe_preferrededucationphase01").Select(phase => phase.Id);
+            return _store.GetTypeEntitites("contact", "dfe_preferrededucationphase01").Select(phase => phase.Id);
         }
 
         private IEnumerable<string> InitialTeacherTrainingYearIds()
         {
-            return _store.GetPickListItems("contact", "dfe_ittyear").Select(year => year.Id);
+            return _store.GetTypeEntitites("contact", "dfe_ittyear").Select(year => year.Id);
         }
 
         private IEnumerable<string> ChannelIds()
         {
-            return _store.GetPickListItems("contact", "dfe_channelcreation").Select(channel => channel.Id);
+            return _store.GetTypeEntitites("contact", "dfe_channelcreation").Select(channel => channel.Id);
         }
 
         private IEnumerable<string> MailingListSubscriptionChannelIds()
         {
-            return _store.GetPickListItems("contact", "dfe_gitismlservicesubscriptionchannel").Select(channel => channel.Id);
+            return _store.GetTypeEntitites("contact", "dfe_gitismlservicesubscriptionchannel").Select(channel => channel.Id);
         }
 
         private IEnumerable<string> EventSubscriptionChannelIds()
         {
-            return _store.GetPickListItems("contact", "dfe_gitiseventsservicesubscriptionchannel").Select(channel => channel.Id);
+            return _store.GetTypeEntitites("contact", "dfe_gitiseventsservicesubscriptionchannel").Select(channel => channel.Id);
         }
 
         private IEnumerable<string> GcseStatusIds()
         {
-            return _store.GetPickListItems("contact", "dfe_websitehasgcseenglish").Select(status => status.Id);
+            return _store.GetTypeEntitites("contact", "dfe_websitehasgcseenglish").Select(status => status.Id);
         }
 
         private IEnumerable<string> RetakeGcseStatusIds()
         {
-            return _store.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse").Select(status => status.Id);
+            return _store.GetTypeEntitites("contact", "dfe_websiteplanningretakeenglishgcse").Select(status => status.Id);
         }
 
         private IEnumerable<string> ConsiderationJourneyStageIds()
         {
-            return _store.GetPickListItems("contact", "dfe_websitewhereinconsiderationjourney").Select(describe => describe.Id);
+            return _store.GetTypeEntitites("contact", "dfe_websitewhereinconsiderationjourney").Select(describe => describe.Id);
         }
 
         private IEnumerable<string> TypeIds()
         {
-            return _store.GetPickListItems("contact", "dfe_typeofcandidate").Select(type => type.Id);
+            return _store.GetTypeEntitites("contact", "dfe_typeofcandidate").Select(type => type.Id);
         }
 
         private IEnumerable<string> AssignmentStatusIds()
         {
-            return _store.GetPickListItems("contact", "dfe_candidatestatus").Select(type => type.Id);
+            return _store.GetTypeEntitites("contact", "dfe_candidatestatus").Select(type => type.Id);
         }
 
         private IEnumerable<string> AdviserEligibilityIds()
         {
-            return _store.GetPickListItems("contact", "dfe_iscandidateeligibleforadviser").Select(eligibility => eligibility.Id);
+            return _store.GetTypeEntitites("contact", "dfe_iscandidateeligibleforadviser").Select(eligibility => eligibility.Id);
         }
 
         private IEnumerable<string> AdviserRequirementIds()
         {
-            return _store.GetPickListItems("contact", "dfe_isadvisorrequiredos").Select(requirement => requirement.Id);
+            return _store.GetTypeEntitites("contact", "dfe_isadvisorrequiredos").Select(requirement => requirement.Id);
         }
     }
 }
