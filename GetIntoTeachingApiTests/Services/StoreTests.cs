@@ -23,11 +23,13 @@ namespace GetIntoTeachingApiTests.Services
         private static readonly Guid FindEventGuid = new Guid("ff927e43-5650-44aa-859a-8297139b8eee");
         private readonly IStore _store;
         private readonly Mock<IGeocodeClientAdapter> _mockGeocodeClient;
+        private readonly Mock<ICrmService> _mockCrm;
 
         public StoreTests(DatabaseFixture databaseFixture) : base(databaseFixture)
         {
             _mockGeocodeClient = new Mock<IGeocodeClientAdapter>();
-            _store = new Store(DbContext, _mockGeocodeClient.Object);
+            _mockCrm = new Mock<ICrmService>();
+            _store = new Store(DbContext, _mockGeocodeClient.Object, _mockCrm.Object);
         }
 
         [Fact]
@@ -48,10 +50,9 @@ namespace GetIntoTeachingApiTests.Services
         {
             await SeedMockPrivacyPoliciesAsync();
             var countBefore = DbContext.PrivacyPolicies.Count();
-            var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetPrivacyPolicies()).Throws<Exception>();
+            _mockCrm.Setup(m => m.GetPrivacyPolicies()).Throws<Exception>();
 
-            _store.Invoking(s => s.SyncAsync(mockCrm.Object))
+            _store.Invoking(s => s.SyncAsync())
                 .Should().Throw<Exception>();
 
             var countAfter = DbContext.PrivacyPolicies.Count();
@@ -63,10 +64,9 @@ namespace GetIntoTeachingApiTests.Services
         public async void SyncAsync_InsertsNewTeachingEvents()
         {
             var mockTeachingEvents = MockTeachingEvents().ToList();
-            var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetTeachingEvents()).Returns(mockTeachingEvents);
+            _mockCrm.Setup(m => m.GetTeachingEvents()).Returns(mockTeachingEvents);
 
-            await _store.SyncAsync(mockCrm.Object);
+            await _store.SyncAsync();
 
             var ids = DbContext.TeachingEvents.Select(te => te.Id);
             ids.Should().BeEquivalentTo(mockTeachingEvents.Select(te => te.Id));
@@ -83,10 +83,9 @@ namespace GetIntoTeachingApiTests.Services
                 te.Name += "Updated";
                 if (te.Building != null) te.Building.AddressLine1 += "Updated";
             });
-            var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetTeachingEvents()).Returns(updatedTeachingEvents);
+            _mockCrm.Setup(m => m.GetTeachingEvents()).Returns(updatedTeachingEvents);
 
-            await _store.SyncAsync(mockCrm.Object);
+            await _store.SyncAsync();
 
             var teachingEvents = DbContext.TeachingEvents.Include(te => te.Building).ToList();
             teachingEvents.Select(te => te.Name).ToList().ForEach(name => name.Should().Contain("Updated"));
@@ -101,10 +100,9 @@ namespace GetIntoTeachingApiTests.Services
         {
             await SeedMockTeachingEventsAsync();
             var teachingEvents = MockTeachingEvents().ToList();
-            var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetTeachingEvents()).Returns(teachingEvents.GetRange(0, 1));
+            _mockCrm.Setup(m => m.GetTeachingEvents()).Returns(teachingEvents.GetRange(0, 1));
 
-            await _store.SyncAsync(mockCrm.Object);
+            await _store.SyncAsync();
 
             DbContext.TeachingEvents.Should().BeEquivalentTo(teachingEvents.GetRange(0, 1));
             DbContext.TeachingEventBuildings.Should()
@@ -115,10 +113,9 @@ namespace GetIntoTeachingApiTests.Services
         public async void SyncAsync_PopulatesTeachingEventBuildingCoordinates()
         {
             SeedMockLocations();
-            var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetTeachingEvents()).Returns(MockTeachingEvents);
+            _mockCrm.Setup(m => m.GetTeachingEvents()).Returns(MockTeachingEvents);
 
-            await _store.SyncAsync(mockCrm.Object);
+            await _store.SyncAsync();
 
             var teachingEvent = DbContext.TeachingEvents.Include(te => te.Building).First(te => te.Id == FindEventGuid);
             teachingEvent.Building.Coordinate.Should().Be(new Point(new Coordinate(-3.3587, 56.02748)));
@@ -128,8 +125,7 @@ namespace GetIntoTeachingApiTests.Services
         public async void SyncAsync_FallbackToGeocodeClient_PopulatesTeachingEventBuildingCoordinatesAndCachesLocation()
         {
             SeedMockLocations();
-            var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetTeachingEvents()).Returns(MockTeachingEvents);
+            _mockCrm.Setup(m => m.GetTeachingEvents()).Returns(MockTeachingEvents);
             var postcode = "TE7 9IN";
             var coordinate = new Point(1, 2);
             var sanitizedPostcode = Location.SanitizePostcode(postcode);
@@ -137,7 +133,7 @@ namespace GetIntoTeachingApiTests.Services
                 .ReturnsAsync(coordinate);
             DbContext.Locations.FirstOrDefault(l => l.Postcode == sanitizedPostcode).Should().BeNull();
 
-            await _store.SyncAsync(mockCrm.Object);
+            await _store.SyncAsync();
 
             var teachingEvent = DbContext.TeachingEvents.Include(te => te.Building)
                 .First(te => te.Building.AddressPostcode == postcode);
@@ -150,10 +146,9 @@ namespace GetIntoTeachingApiTests.Services
         public async void SyncAsync_InsertsNewPrivacyPolicies()
         {
             var mockPolicies = MockPrivacyPolicies().ToList();
-            var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetPrivacyPolicies()).Returns(mockPolicies);
+            _mockCrm.Setup(m => m.GetPrivacyPolicies()).Returns(mockPolicies);
 
-            await _store.SyncAsync(mockCrm.Object);
+            await _store.SyncAsync();
 
             var ids = DbContext.PrivacyPolicies.Select(p => p.Id);
             ids.Should().BeEquivalentTo(mockPolicies.Select(p => p.Id));
@@ -165,10 +160,9 @@ namespace GetIntoTeachingApiTests.Services
         {
             var updatedPolicies = (await SeedMockPrivacyPoliciesAsync()).ToList();
             updatedPolicies.ForEach(te => te.Text += "Updated");
-            var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetPrivacyPolicies()).Returns(updatedPolicies);
+            _mockCrm.Setup(m => m.GetPrivacyPolicies()).Returns(updatedPolicies);
 
-            await _store.SyncAsync(mockCrm.Object);
+            await _store.SyncAsync();
 
             var policies = DbContext.PrivacyPolicies.ToList();
             policies.Select(te => te.Text).ToList().ForEach(name => name.Should().Contain("Updated"));
@@ -179,10 +173,9 @@ namespace GetIntoTeachingApiTests.Services
         public async void SyncAsync_DeletesOrphanedPrivacyPolicies()
         {
             var policies = (await SeedMockPrivacyPoliciesAsync()).ToList();
-            var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetPrivacyPolicies()).Returns(policies.GetRange(0, 2));
+            _mockCrm.Setup(m => m.GetPrivacyPolicies()).Returns(policies.GetRange(0, 2));
 
-            await _store.SyncAsync(mockCrm.Object);
+            await _store.SyncAsync();
 
             var remainingPolicies = DbContext.PrivacyPolicies.ToArray();
             remainingPolicies.Should().BeEquivalentTo(policies.GetRange(0, 2));
@@ -192,10 +185,9 @@ namespace GetIntoTeachingApiTests.Services
         public async void SyncAsync_InsertsNewLookupItemsAsTypeEntities()
         {
             var mockCountries = MockCountriesAsTypes().ToList();
-            var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetTypeEntities("dfe_country", null)).Returns(mockCountries);
+            _mockCrm.Setup(m => m.GetTypeEntities("dfe_country", null)).Returns(mockCountries);
 
-            await _store.SyncAsync(mockCrm.Object);
+            await _store.SyncAsync();
 
             var ids = DbContext.TypeEntities.Select(e => e.Id);
             ids.Should().BeEquivalentTo(mockCountries.Select(e => e.Id));
@@ -207,10 +199,9 @@ namespace GetIntoTeachingApiTests.Services
         {
             var updatedCountries = (await SeedMockCountriesAsTypesAsync()).ToList();
             updatedCountries.ForEach(c => c.Value += "Updated");
-            var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetTypeEntities("dfe_country", null)).Returns(updatedCountries);
+            _mockCrm.Setup(m => m.GetTypeEntities("dfe_country", null)).Returns(updatedCountries);
 
-            await _store.SyncAsync(mockCrm.Object);
+            await _store.SyncAsync();
 
             var countries = DbContext.TypeEntities.ToList();
             countries.Select(c => c.Value).ToList().ForEach(value => value.Should().Contain("Updated"));
@@ -221,10 +212,9 @@ namespace GetIntoTeachingApiTests.Services
         public async void SyncAsync_DeletesOrphanedLookupItemsAsTypeEntities()
         {
             var countries = (await SeedMockCountriesAsTypesAsync()).ToList();
-            var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetTypeEntities("dfe_country", null)).Returns(countries.GetRange(0, 2));
+            _mockCrm.Setup(m => m.GetTypeEntities("dfe_country", null)).Returns(countries.GetRange(0, 2));
 
-            await _store.SyncAsync(mockCrm.Object);
+            await _store.SyncAsync();
 
             var remainingCountries = DbContext.TypeEntities.Where(te => te.EntityName == "dfe_country").ToArray();
             remainingCountries.Should().BeEquivalentTo(countries.GetRange(0, 2));
@@ -234,10 +224,9 @@ namespace GetIntoTeachingApiTests.Services
         public async void SyncAsync_InsertsNewPickListItemsAsTypeEntities()
         {
             var mockYears = MockInitialTeacherTrainingYears().ToList();
-            var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetTypeEntities("contact", "dfe_ittyear")).Returns(mockYears);
+            _mockCrm.Setup(m => m.GetTypeEntities("contact", "dfe_ittyear")).Returns(mockYears);
 
-            await _store.SyncAsync(mockCrm.Object);
+            await _store.SyncAsync();
 
             var ids = DbContext.TypeEntities.Select(e => e.Id);
             ids.Should().BeEquivalentTo(mockYears.Select(e => e.Id));
@@ -249,10 +238,9 @@ namespace GetIntoTeachingApiTests.Services
         {
             var updatedYears = (await SeedMockInitialTeacherTrainingYearsAsync()).ToList();
             updatedYears.ForEach(c => c.Value += "Updated");
-            var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetTypeEntities("contact", "dfe_ittyear")).Returns(updatedYears);
+            _mockCrm.Setup(m => m.GetTypeEntities("contact", "dfe_ittyear")).Returns(updatedYears);
 
-            await _store.SyncAsync(mockCrm.Object);
+            await _store.SyncAsync();
 
             var countries = DbContext.TypeEntities.ToList();
             countries.Select(c => c.Value).ToList().ForEach(value => value.Should().Contain("Updated"));
@@ -263,10 +251,9 @@ namespace GetIntoTeachingApiTests.Services
         public async void SyncAsync_DeletesOrphanedPickListItemsAsTypeEntities()
         {
             var years = (await SeedMockInitialTeacherTrainingYearsAsync()).ToList();
-            var mockCrm = new Mock<ICrmService>();
-            mockCrm.Setup(m => m.GetTypeEntities("contact", "dfe_ittyear")).Returns(years.GetRange(0, 2));
+            _mockCrm.Setup(m => m.GetTypeEntities("contact", "dfe_ittyear")).Returns(years.GetRange(0, 2));
 
-            await _store.SyncAsync(mockCrm.Object);
+            await _store.SyncAsync();
 
             var remainingCountries = DbContext.TypeEntities
                 .Where(te => te.EntityName == "contact" && te.AttributeName == "dfe_ittyear").ToArray();
@@ -276,33 +263,31 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public async void SyncAsync_SyncsAllTypeEntities()
         {
-            var mockCrm = new Mock<ICrmService>();
+            await _store.SyncAsync();
 
-            await _store.SyncAsync(mockCrm.Object);
-
-            mockCrm.Verify(m => m.GetTypeEntities("dfe_country", null));
-            mockCrm.Verify(m => m.GetTypeEntities("dfe_teachingsubjectlist", null));
-            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_ittyear"));
-            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_preferrededucationphase01"));
-            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_channelcreation"));
-            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_websitehasgcseenglish"));
-            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_websiteplanningretakeenglishgcse"));
-            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_websitewhereinconsiderationjourney"));
-            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_typeofcandidate"));
-            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_candidatestatus"));
-            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_iscandidateeligibleforadviser"));
-            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_isadvisorrequiredos"));
-            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_gitismlservicesubscriptionchannel"));
-            mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_gitiseventsservicesubscriptionchannel"));
-            mockCrm.Verify(m => m.GetTypeEntities("dfe_candidatequalification", "dfe_degreestatus"));
-            mockCrm.Verify(m => m.GetTypeEntities("dfe_candidatequalification", "dfe_ukdegreegrade"));
-            mockCrm.Verify(m => m.GetTypeEntities("dfe_candidatequalification", "dfe_type"));
-            mockCrm.Verify(m => m.GetTypeEntities("dfe_candidatepastteachingposition", "dfe_educationphase"));
-            mockCrm.Verify(m => m.GetTypeEntities("msevtmgt_event", "dfe_event_type"));
-            mockCrm.Verify(m => m.GetTypeEntities("msevtmgt_event", "dfe_eventstatus"));
-            mockCrm.Verify(m => m.GetTypeEntities("msevtmgt_eventregistration", "dfe_channelcreation"));
-            mockCrm.Verify(m => m.GetTypeEntities("phonecall", "dfe_channelcreation"));
-            mockCrm.Verify(m => m.GetTypeEntities("dfe_servicesubscription", "dfe_servicesubscriptiontype"));
+            _mockCrm.Verify(m => m.GetTypeEntities("dfe_country", null));
+            _mockCrm.Verify(m => m.GetTypeEntities("dfe_teachingsubjectlist", null));
+            _mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_ittyear"));
+            _mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_preferrededucationphase01"));
+            _mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_channelcreation"));
+            _mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_websitehasgcseenglish"));
+            _mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_websiteplanningretakeenglishgcse"));
+            _mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_websitewhereinconsiderationjourney"));
+            _mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_typeofcandidate"));
+            _mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_candidatestatus"));
+            _mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_iscandidateeligibleforadviser"));
+            _mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_isadvisorrequiredos"));
+            _mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_gitismlservicesubscriptionchannel"));
+            _mockCrm.Verify(m => m.GetTypeEntities("contact", "dfe_gitiseventsservicesubscriptionchannel"));
+            _mockCrm.Verify(m => m.GetTypeEntities("dfe_candidatequalification", "dfe_degreestatus"));
+            _mockCrm.Verify(m => m.GetTypeEntities("dfe_candidatequalification", "dfe_ukdegreegrade"));
+            _mockCrm.Verify(m => m.GetTypeEntities("dfe_candidatequalification", "dfe_type"));
+            _mockCrm.Verify(m => m.GetTypeEntities("dfe_candidatepastteachingposition", "dfe_educationphase"));
+            _mockCrm.Verify(m => m.GetTypeEntities("msevtmgt_event", "dfe_event_type"));
+            _mockCrm.Verify(m => m.GetTypeEntities("msevtmgt_event", "dfe_eventstatus"));
+            _mockCrm.Verify(m => m.GetTypeEntities("msevtmgt_eventregistration", "dfe_channelcreation"));
+            _mockCrm.Verify(m => m.GetTypeEntities("phonecall", "dfe_channelcreation"));
+            _mockCrm.Verify(m => m.GetTypeEntities("dfe_servicesubscription", "dfe_servicesubscriptiontype"));
         }
 
         [Fact]
@@ -611,11 +596,9 @@ namespace GetIntoTeachingApiTests.Services
         private async Task<IEnumerable<TeachingEvent>> SeedMockTeachingEventsAsync()
         {
             var teachingEvents = MockTeachingEvents().ToList();
-            var mockCrm = new Mock<ICrmService>();
+            _mockCrm.Setup(m => m.GetTeachingEvents()).Returns(teachingEvents);
 
-            mockCrm.Setup(m => m.GetTeachingEvents()).Returns(teachingEvents);
-
-            await _store.SyncAsync(mockCrm.Object);
+            await _store.SyncAsync();
 
             return teachingEvents;
         }
@@ -632,11 +615,9 @@ namespace GetIntoTeachingApiTests.Services
         private async Task<IEnumerable<PrivacyPolicy>> SeedMockPrivacyPoliciesAsync()
         {
             var privacyPolicies = MockPrivacyPolicies().ToList();
-            var mockCrm = new Mock<ICrmService>();
+            _mockCrm.Setup(m => m.GetPrivacyPolicies()).Returns(privacyPolicies);
 
-            mockCrm.Setup(m => m.GetPrivacyPolicies()).Returns(privacyPolicies);
-
-            await _store.SyncAsync(mockCrm.Object);
+            await _store.SyncAsync();
 
             return privacyPolicies;
         }
@@ -653,11 +634,9 @@ namespace GetIntoTeachingApiTests.Services
         private async Task<IEnumerable<TypeEntity>> SeedMockCountriesAsTypesAsync()
         {
             var types = MockCountriesAsTypes().ToList();
-            var mockCrm = new Mock<ICrmService>();
+            _mockCrm.Setup(m => m.GetTypeEntities("dfe_country", null)).Returns(types);
 
-            mockCrm.Setup(m => m.GetTypeEntities("dfe_country", null)).Returns(types);
-
-            await _store.SyncAsync(mockCrm.Object);
+            await _store.SyncAsync();
 
             return types;
         }
@@ -674,11 +653,9 @@ namespace GetIntoTeachingApiTests.Services
         private async Task<IEnumerable<LookupItem>> SeedMockCountriesAsync()
         {
             var lookupItems = MockCountries().ToList();
-            var mockCrm = new Mock<ICrmService>();
+            _mockCrm.Setup(m => m.GetLookupItems("dfe_country")).Returns(lookupItems);
 
-            mockCrm.Setup(m => m.GetLookupItems("dfe_country")).Returns(lookupItems);
-
-            await _store.SyncAsync(mockCrm.Object);
+            await _store.SyncAsync();
 
             return lookupItems;
         }
@@ -695,11 +672,9 @@ namespace GetIntoTeachingApiTests.Services
         private async Task<IEnumerable<TypeEntity>> SeedMockInitialTeacherTrainingYearsAsync()
         {
             var types = MockInitialTeacherTrainingYears().ToList();
-            var mockCrm = new Mock<ICrmService>();
+            _mockCrm.Setup(m => m.GetTypeEntities("contact", "dfe_ittyear")).Returns(types);
 
-            mockCrm.Setup(m => m.GetTypeEntities("contact", "dfe_ittyear")).Returns(types);
-
-            await _store.SyncAsync(mockCrm.Object);
+            await _store.SyncAsync();
 
             return types;
         }
