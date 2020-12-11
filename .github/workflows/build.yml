@@ -141,7 +141,7 @@ jobs:
             body: ${{ steps.tag_version.outputs.pr_text }}
             commitish: ${{github.sha}}
             prerelease: false
-            draft:      false
+            draft:      true
 
   qa:
     name: Quality Assurance Deployment
@@ -203,23 +203,19 @@ jobs:
      needs: [ cypress , development ]
      steps:
        - name: Get Release Id from Tag
-         id:   tag_id
-         run: |
-              ID=$(curl -s -X GET "https://api.github.com/repos/${{github.repository}}/releases/tags/${{needs.development.outputs.release_tag}}" | jq -r .id )
-              echo ::set-output name=tag_id::"${ID}"
-              if [[ -z ${tag_id} ]] ; then
-                  echo ::set-output name=publish::'false'
-              else
-                  echo ::set-output name=publish::'true'
-              fi 
+         id: tag_id
+         uses: DFE-Digital/github-actions/DraftReleaseByTag@master
+         with:
+           TAG: ${{needs.development.outputs.release_tag}}
+           TOKEN: ${{secrets.ACTIONS_API_ACCESS_TOKEN}}
 
-       - name: Publish Release
-         if: steps.tag_id.outputs.publish == 'true'
+       - name: Publish Release  
+         if: steps.tag_id.outputs.found == 1
          uses: eregon/publish-release@v1
          env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
          with:
-           release_id: ${{steps.tag_id.outputs.tag_id}}
+           release_id: ${{steps.tag_id.outputs.release_id}}
 
        - name: Slack Notification
          if: failure()
