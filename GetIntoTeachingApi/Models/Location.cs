@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
 using System.Text.RegularExpressions;
 using GetIntoTeachingApi.Database;
 using NetTopologySuite;
@@ -26,7 +28,20 @@ namespace GetIntoTeachingApi.Models
 
         public static string SanitizePostcode(string postcode)
         {
-            return Regex.Replace(postcode, @"\s+", string.Empty).ToLower();
+            var builder = new StringBuilder();
+
+            // More efficient than string.Replace
+            foreach (char c in postcode)
+            {
+                if (char.IsWhiteSpace(c))
+                {
+                    continue;
+                }
+
+                builder.Append(char.ToLower(c));
+            }
+
+            return builder.ToString();
         }
 
         public Location()
