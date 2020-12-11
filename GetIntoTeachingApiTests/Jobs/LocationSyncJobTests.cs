@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
+using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
+using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
-using Hangfire;
-using Hangfire.Common;
-using Hangfire.States;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
@@ -17,22 +18,27 @@ using Xunit;
 
 namespace GetIntoTeachingApiTests.Jobs
 {
-    public class LocationSyncJobTests
+    [Collection("Database")]
+    public class LocationSyncJobTests : DatabaseTests
     {
         private readonly LocationSyncJob _job;
-        private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly Mock<ILogger<LocationSyncJob>> _mockLogger;
         private readonly Mock<IEnv> _mockEnv;
         private readonly IMetricService _metrics;
 
-        public LocationSyncJobTests()
+        public LocationSyncJobTests(DatabaseFixture databaseFixture) : base(databaseFixture)
         {
             _mockEnv = new Mock<IEnv>();
-            _mockJobClient = new Mock<IBackgroundJobClient>();
             _mockLogger = new Mock<ILogger<LocationSyncJob>>();
             _metrics = new MetricService();
-            _job = new LocationSyncJob(_mockEnv.Object, _mockJobClient.Object,
-                _mockLogger.Object, _metrics);
+            _job = new LocationSyncJob(_mockEnv.Object,
+                DbContext, _mockLogger.Object, _metrics);
+        }
+
+        [Fact]
+        public void FreeMapToolsUrl_IsCorrect()
+        {
+            LocationSyncJob.FreeMapToolsUrl.Should().Be("https://www.freemaptools.com/download/full-postcodes/ukpostcodes.zip");
         }
 
         [Fact]
@@ -48,8 +54,10 @@ namespace GetIntoTeachingApiTests.Jobs
                 );
 
             await _job.RunAsync(ukPostcodeCsvUrl);
+            // Run again to verify upsert/no duplicates
+            await _job.RunAsync(ukPostcodeCsvUrl);
 
-            var expectedLocationBatch = new List<dynamic>
+            var batch = new List<dynamic>
             {
                 new { Postcode = "ky119yu", Latitude = 56.02748, Longitude = -3.35870 },
                 new { Postcode = "ca48le", Latitude = 54.89014, Longitude = -2.84000 },
@@ -58,21 +66,37 @@ namespace GetIntoTeachingApiTests.Jobs
                 new { Postcode = "tr182ab", Latitude = 50.12279, Longitude = -5.53987 },
             };
 
-            _mockJobClient.Verify(x => x.Create(
-                It.Is<Job>(job => job.Type == typeof(LocationBatchJob) &&
-                                  job.Method.Name == "RunAsync" &&
-                                  (string)job.Args[0] == JsonConvert.SerializeObject(expectedLocationBatch)),
-                It.IsAny<EnqueuedState>()));
+            DbContext.Locations.Count().Should().Be(batch.Count);
+            DbContext.Locations.ToList().All(l =>
+                batch.Any(b => BatchLocationMatchesExistingLocation(b, l))).Should().BeTrue();
+            DbContext.Locations.All(l => l.Source == Source.CSV);
 
             _mockLogger.VerifyInformationWasCalled("LocationSyncJob - Started");
             _mockLogger.VerifyInformationWasCalled("LocationSyncJob - ZIP Downloaded");
             _mockLogger.VerifyInformationWasCalled("LocationSyncJob - CSV Extracted");
             _mockLogger.VerifyInformationWasCalled("LocationSyncJob - ZIP Deleted");
-            _mockLogger.VerifyInformationWasCalled("LocationSyncJob - Queueing 5 Locations (1 Jobs)");
+            _mockLogger.VerifyInformationWasCalled("LocationSyncJob - Processed 5 Locations (1 Batches)");
             _mockLogger.VerifyInformationWasCalled("LocationSyncJob - CSV Deleted");
             _mockLogger.VerifyInformationWasCalled("LocationSyncJob - Succeeded");
 
             _metrics.LocationSyncDuration.Count.Should().BeGreaterOrEqualTo(1);
+        }
+
+        private static bool BatchLocationMatchesExistingLocation(dynamic batchLocation, GetIntoTeachingApi.Models.Location existingLocation)
+        {
+            var postcodeMatch = batchLocation.Postcode == existingLocation.Postcode;
+            var batchCoordinate = Coordinate(batchLocation.Latitude, batchLocation.Longitude);
+            var coordinateMatch = batchCoordinate == existingLocation.Coordinate;
+
+            return postcodeMatch && coordinateMatch;
+        }
+
+        private static Point Coordinate(double latitude, double longitude)
+        {
+            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: DbConfiguration.Wgs84Srid);
+            var coordinate = new Coordinate(longitude, latitude);
+
+            return geometryFactory.CreatePoint(coordinate);
         }
     }
 }
