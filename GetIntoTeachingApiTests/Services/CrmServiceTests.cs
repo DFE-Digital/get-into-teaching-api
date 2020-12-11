@@ -48,6 +48,21 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void GetLookupItems_ReturnsAll()
+        {
+            var queryableCountries = MockCountries();
+            _mockService.Setup(mock => mock.CreateQuery("dfe_country", _context))
+                .Returns(queryableCountries);
+
+            var result = _crm.GetLookupItems("dfe_country").ToList();
+
+            result.Select(country => country.Value).Should().BeEquivalentTo(
+                new object[] { "Country 1", "Country 2", "Country 3" },
+                options => options.WithStrictOrdering());
+            result.Select(country => country.EntityName).Should().OnlyContain(name => name == "dfe_country");
+        }
+
+        [Fact]
         public void GetTypeEntitites_ForPickListItem_ReturnsMatchingOrderedByIdAscending()
         {
             var initialTeacherTrainingYears = MockInitialTeacherTrainingYears();

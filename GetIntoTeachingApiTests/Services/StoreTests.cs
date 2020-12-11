@@ -189,6 +189,48 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public async void SyncAsync_InsertsNewLookupItemsAsTypeEntities()
+        {
+            var mockCountries = MockCountriesAsTypes().ToList();
+            var mockCrm = new Mock<ICrmService>();
+            mockCrm.Setup(m => m.GetTypeEntities("dfe_country", null)).Returns(mockCountries);
+
+            await _store.SyncAsync(mockCrm.Object);
+
+            var ids = DbContext.TypeEntities.Select(e => e.Id);
+            ids.Should().BeEquivalentTo(mockCountries.Select(e => e.Id));
+            DbContext.TypeEntities.Count().Should().Be(3);
+        }
+
+        [Fact]
+        public async void SyncAsync_UpdatesExistingLookupItemsAsTypeEntities()
+        {
+            var updatedCountries = (await SeedMockCountriesAsTypesAsync()).ToList();
+            updatedCountries.ForEach(c => c.Value += "Updated");
+            var mockCrm = new Mock<ICrmService>();
+            mockCrm.Setup(m => m.GetTypeEntities("dfe_country", null)).Returns(updatedCountries);
+
+            await _store.SyncAsync(mockCrm.Object);
+
+            var countries = DbContext.TypeEntities.ToList();
+            countries.Select(c => c.Value).ToList().ForEach(value => value.Should().Contain("Updated"));
+            DbContext.TypeEntities.Count().Should().Be(3);
+        }
+
+        [Fact]
+        public async void SyncAsync_DeletesOrphanedLookupItemsAsTypeEntities()
+        {
+            var countries = (await SeedMockCountriesAsTypesAsync()).ToList();
+            var mockCrm = new Mock<ICrmService>();
+            mockCrm.Setup(m => m.GetTypeEntities("dfe_country", null)).Returns(countries.GetRange(0, 2));
+
+            await _store.SyncAsync(mockCrm.Object);
+
+            var remainingCountries = DbContext.TypeEntities.Where(te => te.EntityName == "dfe_country").ToArray();
+            remainingCountries.Should().BeEquivalentTo(countries.GetRange(0, 2));
+        }
+
+        [Fact]
         public async void SyncAsync_InsertsNewPickListItemsAsTypeEntities()
         {
             var mockYears = MockInitialTeacherTrainingYears().ToList();
@@ -261,6 +303,16 @@ namespace GetIntoTeachingApiTests.Services
             mockCrm.Verify(m => m.GetTypeEntities("msevtmgt_eventregistration", "dfe_channelcreation"));
             mockCrm.Verify(m => m.GetTypeEntities("phonecall", "dfe_channelcreation"));
             mockCrm.Verify(m => m.GetTypeEntities("dfe_servicesubscription", "dfe_servicesubscriptiontype"));
+        }
+
+        [Fact]
+        public async void GetLookupItems_ReturnsMatchingOrderedByIdAscending()
+        {
+            await SeedMockCountriesAsync();
+
+            var result = _store.GetLookupItems("dfe_country");
+
+            result.Select(t => t.Value).Should().BeEquivalentTo(new string[] { "Country 1", "Country 2", "Country 3" });
         }
 
         [Fact]
@@ -608,6 +660,27 @@ namespace GetIntoTeachingApiTests.Services
             await _store.SyncAsync(mockCrm.Object);
 
             return types;
+        }
+
+        private static IEnumerable<LookupItem> MockCountries()
+        {
+            var country1 = new LookupItem() { Id = new Guid("00000000-0000-0000-0000-000000000000"), Value = "Country 1", EntityName = "dfe_country" };
+            var country2 = new LookupItem() { Id = new Guid("00000000-0000-0000-0000-000000000001"), Value = "Country 2", EntityName = "dfe_country" };
+            var country3 = new LookupItem() { Id = new Guid("00000000-0000-0000-0000-000000000002"), Value = "Country 3", EntityName = "dfe_country" };
+
+            return new LookupItem[] { country2, country1, country3 };
+        }
+
+        private async Task<IEnumerable<LookupItem>> SeedMockCountriesAsync()
+        {
+            var lookupItems = MockCountries().ToList();
+            var mockCrm = new Mock<ICrmService>();
+
+            mockCrm.Setup(m => m.GetLookupItems("dfe_country")).Returns(lookupItems);
+
+            await _store.SyncAsync(mockCrm.Object);
+
+            return lookupItems;
         }
 
         private static IEnumerable<TypeEntity> MockInitialTeacherTrainingYears()
