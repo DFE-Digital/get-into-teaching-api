@@ -143,7 +143,7 @@ namespace GetIntoTeachingApiTests.Services
                 .First(te => te.Building.AddressPostcode == postcode);
             teachingEvent.Building.Coordinate.Should().Be(coordinate);
             DbContext.Locations.FirstOrDefault(l => (l.Postcode == sanitizedPostcode) &&
-                                                    (l.Source == Source.Google)).Should().NotBeNull();
+                                                    (l.Source == Location.SourceType.Google)).Should().NotBeNull();
         }
 
         [Fact]
