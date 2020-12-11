@@ -69,7 +69,7 @@ namespace GetIntoTeachingApiTests.Jobs
             DbContext.Locations.Count().Should().Be(batch.Count);
             DbContext.Locations.ToList().All(l =>
                 batch.Any(b => BatchLocationMatchesExistingLocation(b, l))).Should().BeTrue();
-            DbContext.Locations.All(l => l.Source == Source.CSV);
+            DbContext.Locations.All(l => l.Source == GetIntoTeachingApi.Models.Location.SourceType.CSV);
 
             _mockLogger.VerifyInformationWasCalled("LocationSyncJob - Started");
             _mockLogger.VerifyInformationWasCalled("LocationSyncJob - ZIP Downloaded");
