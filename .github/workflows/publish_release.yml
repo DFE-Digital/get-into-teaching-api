@@ -1,0 +1,27 @@
+name: Publish Release Notes
+
+on:
+  release:
+    types: [published]
+    
+env:
+  APPLICATION:           Get Into Teaching API
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@master
+        env:
+           SLACK_USERNAME: GiT Deployment
+           SLACK_CHANNEL: twd_getintoteaching
+           SLACK_COLOR: '#B90E0A'
+           SLACK_ICON: https://github.com/rtCamp.png?size=48
+           SLACK_TITLE: Release Published ${{github.event.release.name}}
+           SLACK_MESSAGE: ${{github.event.release.body}}
+           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+           SLACK_FOOTER: ${{env.APPLICATION}}    
+           MSG_MINIMAL: true
