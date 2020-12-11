@@ -27,12 +27,6 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void LocationBatchDuration_ReturnsMetric()
-        {
-            _metrics.LocationBatchDuration.Name.Should().Be("api_location_batch_duration_seconds");
-        }
-
-        [Fact]
         public void HangfireJobQueueDuration_ReturnsMetric()
         {
             _metrics.HangfireJobQueueDuration.Name.Should().Be("api_hangfire_job_queue_duration_seconds");
