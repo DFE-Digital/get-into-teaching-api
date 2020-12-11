@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -11,6 +10,13 @@ namespace GetIntoTeachingApi.Models
 {
     public class Location
     {
+        public enum SourceType
+        {
+            Unknown,
+            Google,
+            CSV,
+        }
+
         public static readonly Regex OutwardOrFullPostcodeRegex = new Regex(
             $@"\A({OutwardPostcodePattern})\Z|\A({FullPostcodePattern})\z", RegexOptions.IgnoreCase);
         public static readonly Regex PostcodeRegex = new Regex(
@@ -24,7 +30,7 @@ namespace GetIntoTeachingApi.Models
         public string Postcode { get; set; }
         [Column(TypeName = "geography")]
         public Point Coordinate { get; set; }
-        public Source Source { get; set; }
+        public SourceType Source { get; set; }
 
         public static string SanitizePostcode(string postcode)
         {
@@ -67,23 +73,16 @@ namespace GetIntoTeachingApi.Models
             Coordinate = coordinate;
         }
 
-        public Location(string postcode, Point coordinate, Source source)
+        public Location(string postcode, Point coordinate, SourceType source)
          : this(postcode, coordinate)
         {
             Source = source;
         }
 
-        public Location(string postcode, double latitude, double longitude, Source source)
+        public Location(string postcode, double latitude, double longitude, SourceType source)
            : this(postcode, latitude, longitude)
         {
             Source = source;
         }
-    }
-
-    public enum Source
-    {
-        Unknown,
-        Google,
-        CSV,
     }
 }
