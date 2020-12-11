@@ -72,7 +72,7 @@ namespace GetIntoTeachingApi.Jobs
 
             var postcode = csv.GetField<string>("postcode");
 
-            return new Location(postcode, (double)latitude, (double)longitude, Source.CSV);
+            return new Location(postcode, (double)latitude, (double)longitude, Location.SourceType.CSV);
         }
 
         private static string GetTempPath()
@@ -132,7 +132,7 @@ namespace GetIntoTeachingApi.Jobs
             {
                 new NpgsqlParameter($"postcode{index}", location.Postcode),
                 new NpgsqlParameter($"coordinate{index}", location.Coordinate),
-                new NpgsqlParameter($"source{index}", (int)Source.CSV),
+                new NpgsqlParameter($"source{index}", (int)Location.SourceType.CSV),
             };
         }
 
