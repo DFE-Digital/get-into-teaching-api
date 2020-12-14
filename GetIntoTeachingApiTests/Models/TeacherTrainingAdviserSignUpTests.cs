@@ -225,7 +225,7 @@ namespace GetIntoTeachingApiTests.Models
 
             var candidate = request.Candidate;
 
-            candidate.PreferredTeachingSubjectId.Should().Be(TypeEntity.PrimaryTeachingSubjectId);
+            candidate.PreferredTeachingSubjectId.Should().Be(LookupItem.PrimaryTeachingSubjectId);
         }
 
         [Fact]

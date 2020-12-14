@@ -181,7 +181,7 @@ namespace GetIntoTeachingApi.Models
                 return;
             }
 
-            candidate.PreferredTeachingSubjectId = TypeEntity.PrimaryTeachingSubjectId;
+            candidate.PreferredTeachingSubjectId = LookupItem.PrimaryTeachingSubjectId;
         }
 
         private void ConfigureGcseStatus(Candidate candidate)

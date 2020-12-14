@@ -26,15 +26,22 @@ namespace GetIntoTeachingApi.Services
             return _service.CheckStatus();
         }
 
-        public IEnumerable<TypeEntity> GetLookupItems(string entityName)
+        public IEnumerable<LookupItem> GetLookupItems(string entityName)
         {
-            return _service.CreateQuery(entityName, Context()).Select((entity) => new TypeEntity(entity, entityName));
+            return _service.CreateQuery(entityName, Context()).Select((entity) => new LookupItem(entity, entityName));
         }
 
-        public IEnumerable<TypeEntity> GetPickListItems(string entityName, string attributeName)
+        public IEnumerable<TypeEntity> GetTypeEntities(string entityName, string attributeName = null)
         {
-            return _service.GetPickListItemsForAttribute(entityName, attributeName)
-                .Select((pickListItem) => new TypeEntity(pickListItem, entityName, attributeName));
+            if (attributeName == null)
+            {
+                return _service.CreateQuery(entityName, Context()).Select((entity) => new TypeEntity(entity, entityName));
+            }
+            else
+            {
+                return _service.GetPickListItemsForAttribute(entityName, attributeName)
+                    .Select((pickListItem) => new TypeEntity(pickListItem, entityName, attributeName));
+            }
         }
 
         public IEnumerable<CallbackBookingQuota> GetCallbackBookingQuotas()

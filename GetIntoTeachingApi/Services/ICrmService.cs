@@ -9,8 +9,8 @@ namespace GetIntoTeachingApi.Services
     public interface ICrmService
     {
         string CheckStatus();
-        IEnumerable<TypeEntity> GetLookupItems(string entityName);
-        IEnumerable<TypeEntity> GetPickListItems(string entityName, string attributeName);
+        IEnumerable<LookupItem> GetLookupItems(string entityName);
+        IEnumerable<TypeEntity> GetTypeEntities(string entityName, string attributeName = null);
         IEnumerable<PrivacyPolicy> GetPrivacyPolicies();
         Candidate MatchCandidate(ExistingCandidateRequest request);
         Candidate GetCandidate(Guid id);

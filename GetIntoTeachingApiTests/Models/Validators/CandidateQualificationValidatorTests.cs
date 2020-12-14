@@ -26,13 +26,13 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var mockPickListItem = new TypeEntity { Id = "123" };
 
             _mockStore
-                .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_ukdegreegrade"))
+                .Setup(mock => mock.GetTypeEntitites("dfe_candidatequalification", "dfe_ukdegreegrade"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_degreestatus"))
+                .Setup(mock => mock.GetTypeEntitites("dfe_candidatequalification", "dfe_degreestatus"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_type"))
+                .Setup(mock => mock.GetTypeEntitites("dfe_candidatequalification", "dfe_type"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
 
             var qualification = new CandidateQualification()

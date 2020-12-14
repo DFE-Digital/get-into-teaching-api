@@ -31,7 +31,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 .Setup(mock => mock.GetTeachingEventAsync((Guid)mockTeachingEvent.Id))
                 .ReturnsAsync(mockTeachingEvent);
             _mockStore
-                .Setup(mock => mock.GetPickListItems("msevtmgt_eventregistration", "dfe_channelcreation"))
+                .Setup(mock => mock.GetTypeEntitites("msevtmgt_eventregistration", "dfe_channelcreation"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
 
             var registration = new TeachingEventRegistration() 
@@ -61,7 +61,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 .Setup(mock => mock.GetTeachingEventAsync((Guid)mockTeachingEvent.Id))
                 .ReturnsAsync(mockTeachingEvent);
             _mockStore
-                .Setup(mock => mock.GetPickListItems("msevtmgt_eventregistration", "dfe_channelcreation"))
+                .Setup(mock => mock.GetTypeEntitites("msevtmgt_eventregistration", "dfe_channelcreation"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
 
             var registration = new TeachingEventRegistration()
