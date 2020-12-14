@@ -23,13 +23,13 @@ namespace GetIntoTeachingApi.Models.Validators
 
         private IEnumerable<string> TeachingSubjectIds()
         {
-            return _store.GetLookupItems("dfe_teachingsubjectlist").Select(subject => subject.Id);
+            return _store.GetTypeEntitites("dfe_teachingsubjectlist").Select(subject => subject.Id);
         }
 
         private IEnumerable<string> EducationPhaseIds()
         {
             return _store.
-                GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase")
+                GetTypeEntitites("dfe_candidatepastteachingposition", "dfe_educationphase")
                 .Select(type => type.Id);
         }
     }

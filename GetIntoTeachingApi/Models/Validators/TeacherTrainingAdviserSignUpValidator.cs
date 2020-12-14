@@ -20,11 +20,11 @@ namespace GetIntoTeachingApi.Models.Validators
                 .NotNull()
                 .Unless(request => request.SubjectTaughtId != null);
 
-            RuleFor(request => request.AddressLine1).NotEmpty().Unless(request => request.CountryId != TypeEntity.UnitedKingdomCountryId)
+            RuleFor(request => request.AddressLine1).NotEmpty().Unless(request => request.CountryId != LookupItem.UnitedKingdomCountryId)
                 .WithMessage("Must be set candidate in the UK.");
-            RuleFor(request => request.AddressCity).NotEmpty().Unless(request => request.CountryId != TypeEntity.UnitedKingdomCountryId)
+            RuleFor(request => request.AddressCity).NotEmpty().Unless(request => request.CountryId != LookupItem.UnitedKingdomCountryId)
                 .WithMessage("Must be set candidate in the UK.");
-            RuleFor(request => request.AddressPostcode).NotEmpty().Unless(request => request.CountryId != TypeEntity.UnitedKingdomCountryId)
+            RuleFor(request => request.AddressPostcode).NotEmpty().Unless(request => request.CountryId != LookupItem.UnitedKingdomCountryId)
                 .WithMessage("Must be set candidate in the UK.");
 
             RuleFor(request => request.Telephone).NotEmpty()
@@ -36,10 +36,10 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Must be set for candidates with an equivalent degree.");
 
             RuleFor(request => request.PhoneCallScheduledAt).NotNull()
-                .When(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent && request.CountryId == TypeEntity.UnitedKingdomCountryId)
+                .When(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent && request.CountryId == LookupItem.UnitedKingdomCountryId)
                 .WithMessage("Must be set for candidate with UK equivalent degree.");
             RuleFor(request => request.PhoneCallScheduledAt).Null()
-                .When(request => request.CountryId != TypeEntity.UnitedKingdomCountryId)
+                .When(request => request.CountryId != LookupItem.UnitedKingdomCountryId)
                 .WithMessage("Cannot be set for overseas candidates.");
 
             RuleFor(request => request.InitialTeacherTrainingYearId).NotNull()

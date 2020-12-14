@@ -27,7 +27,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var mockPickListItem = new TypeEntity { Id = "123" };
 
             _mockStore
-                .Setup(mock => mock.GetPickListItems("msevtmgt_event", "dfe_event_type"))
+                .Setup(mock => mock.GetTypeEntitites("msevtmgt_event", "dfe_event_type"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
 
             var request = new TeachingEventSearchRequest()

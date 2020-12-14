@@ -27,7 +27,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var mockPickListItem = new TypeEntity { Id = "123" };
 
             _mockStore
-                .Setup(mock => mock.GetPickListItems("phonecall", "dfe_channelcreation"))
+                .Setup(mock => mock.GetTypeEntitites("phonecall", "dfe_channelcreation"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
 
             var phoneCall = new PhoneCall()

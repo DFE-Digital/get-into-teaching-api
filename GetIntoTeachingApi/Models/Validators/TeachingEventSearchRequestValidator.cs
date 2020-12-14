@@ -36,7 +36,7 @@ namespace GetIntoTeachingApi.Models.Validators
 
         private IEnumerable<string> TypeIds()
         {
-            return _store.GetPickListItems("msevtmgt_event", "dfe_event_type").Select(type => type.Id);
+            return _store.GetTypeEntitites("msevtmgt_event", "dfe_event_type").Select(type => type.Id);
         }
     }
 }
