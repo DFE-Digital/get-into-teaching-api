@@ -48,7 +48,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void GetLookupItems_ReturnsAll()
+        public void GetLookupItems_ReturnsMatchingOrderedByIdAscending()
         {
             var queryableCountries = MockCountries();
             _mockService.Setup(mock => mock.CreateQuery("dfe_country", _context))
@@ -60,6 +60,21 @@ namespace GetIntoTeachingApiTests.Services
                 new object[] { "Country 1", "Country 2", "Country 3" },
                 options => options.WithStrictOrdering());
             result.Select(country => country.EntityName).Should().OnlyContain(name => name == "dfe_country");
+        }
+
+        [Fact]
+        public void GetPickListItems_ReturnsMatchingOrderedByIdAscending()
+        {
+            var initialTeacherTrainingYears = MockInitialTeacherTrainingYears();
+            _mockService.Setup(mock => mock.GetPickListItemsForAttribute("contact", "dfe_ittyear"))
+                .Returns(initialTeacherTrainingYears);
+
+            var result = _crm.GetPickListItems("contact", "dfe_ittyear").ToList();
+
+            result.Select(year => year.Value).Should().BeEquivalentTo(new object[] { "2010", "2011", "2012" },
+                options => options.WithStrictOrdering());
+            result.Select(year => year.EntityName).Should().OnlyContain(name => name == "contact");
+            result.Select(year => year.AttributeName).Should().OnlyContain(name => name == "dfe_ittyear");
         }
 
         [Fact]
@@ -616,13 +631,13 @@ namespace GetIntoTeachingApiTests.Services
             return new[] { country1, country2, country3 }.AsQueryable();
         }
 
-        private static IEnumerable<PickListItem> MockInitialTeacherTrainingYears()
+        private static IEnumerable<Microsoft.PowerPlatform.Cds.Client.CdsServiceClient.PickListItem> MockInitialTeacherTrainingYears()
         {
-            var year1 = new PickListItem { PickListItemId = 1, DisplayLabel = "2010" };
-            var year2 = new PickListItem { PickListItemId = 2, DisplayLabel = "2011" };
-            var year3 = new PickListItem { PickListItemId = 3, DisplayLabel = "2012" };
+            var year1 = new Microsoft.PowerPlatform.Cds.Client.CdsServiceClient.PickListItem { PickListItemId = 1, DisplayLabel = "2010" };
+            var year2 = new Microsoft.PowerPlatform.Cds.Client.CdsServiceClient.PickListItem { PickListItemId = 2, DisplayLabel = "2011" };
+            var year3 = new Microsoft.PowerPlatform.Cds.Client.CdsServiceClient.PickListItem { PickListItemId = 3, DisplayLabel = "2012" };
 
-            return new List<PickListItem> { year1, year2, year3 };
+            return new List<Microsoft.PowerPlatform.Cds.Client.CdsServiceClient.PickListItem> { year1, year2, year3 };
         }
     }
 }
