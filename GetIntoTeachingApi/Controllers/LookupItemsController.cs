@@ -31,7 +31,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of countries.",
             OperationId = "GetCountries",
-            Tags = new[] { "LookupItems" })]
+            Tags = new[] { "Lookup Items" })]
         [ProducesResponseType(typeof(IEnumerable<LookupItem>), 200)]
         public async Task<IActionResult> GetCountries()
         {
@@ -46,7 +46,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of teaching subjects.",
             OperationId = "GetTeachingSubjects",
-            Tags = new[] { "LookupItems" })]
+            Tags = new[] { "Lookup Items" })]
         [ProducesResponseType(typeof(IEnumerable<LookupItem>), 200)]
         public async Task<IActionResult> GetTeachingSubjects()
         {

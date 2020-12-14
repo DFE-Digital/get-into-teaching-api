@@ -30,7 +30,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate initial teacher training years.",
             OperationId = "GetCandidateInitialTeacherTrainingYears",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetCandidateInitialTeacherTrainingYears()
         {
@@ -43,7 +43,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate preferred education phases.",
             OperationId = "GetCandidatePreferredEducationPhases",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetCandidatePreferredEducationPhases()
         {
@@ -56,7 +56,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate channels.",
             OperationId = "GetCandidateChannels",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetCandidateChannels()
         {
@@ -69,7 +69,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate mailing list subscription channels.",
             OperationId = "GetCandidateMailingListSubscriptionChannels",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetCandidateMailingListSubscriptionChannels()
         {
@@ -82,7 +82,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate event subscription channels.",
             OperationId = "GetCandidateEventSubscriptionChannels",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetCandidateEventSubscriptionChannels()
         {
@@ -95,7 +95,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate GCSE status.",
             OperationId = "GetCandidateGcseStatus",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetCandidateGcseStatus()
         {
@@ -108,7 +108,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate retake GCSE status.",
             OperationId = "GetCandidateRetakeGcseStatus",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetCandidateRetakeGcseStatus()
         {
@@ -121,7 +121,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate consideration journey stages.",
             OperationId = "GetCandidateJourneyStages",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetCandidateConsiderationJourneyStages()
         {
@@ -134,7 +134,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate adviser eligibilities.",
             OperationId = "GetCandidateAdviserEligibilities",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetCandidateAdviserEligibilities()
         {
@@ -147,7 +147,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate adviser requirements.",
             OperationId = "GetCandidateAdviserRequirements",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetCandidateAdviserRequirements()
         {
@@ -160,7 +160,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate types.",
             OperationId = "GetCandidateTypes",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetCandidateTypes()
         {
@@ -173,7 +173,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate assignment status.",
             OperationId = "GetCandidateAssignmentStatus",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetCandidateAssignmentStatus()
         {
@@ -186,7 +186,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of qualification degree status.",
             OperationId = "GetQualificationDegreeStatus",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetQualificationDegreeStatus()
         {
@@ -199,7 +199,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of qualification types.",
             OperationId = "GetQualificationTypes",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetQualificationTypes()
         {
@@ -212,7 +212,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of qualification UK degree grades.",
             OperationId = "GetQualificationUkDegreeGrades",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetQualificationUkDegreeGrades()
         {
@@ -225,7 +225,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of past teaching position education phases.",
             OperationId = "GetPastTeachingPositionEducationPhases",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetPastTeachingPositionEducationPhases()
         {
@@ -238,7 +238,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of teaching event types.",
             OperationId = "GetTeachingEventTypes",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetTeachingEventTypes()
         {
@@ -251,7 +251,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of teaching event status.",
             OperationId = "GetTeachingEventStatus",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetTeachingEventStatus()
         {
@@ -264,7 +264,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of teaching event registration channels.",
             OperationId = "GetTeachingEventRegistrationChannels",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetTeachingEventRegistrationChannels()
         {
@@ -277,7 +277,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of phone call channels.",
             OperationId = "GetPhoneCallChannels",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetPhoneCallChannels()
         {
@@ -290,7 +290,7 @@ namespace GetIntoTeachingApi.Controllers
         [SwaggerOperation(
             Summary = "Retrieves the list of subscription types.",
             OperationId = "GetSubscriptionTypes",
-            Tags = new[] { "PickListItems" })]
+            Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), 200)]
         public async Task<IActionResult> GetSubscriptionTypes()
         {
