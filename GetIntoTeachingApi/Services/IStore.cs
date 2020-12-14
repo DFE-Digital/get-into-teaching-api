@@ -9,7 +9,7 @@ namespace GetIntoTeachingApi.Services
     public interface IStore
     {
         Task<string> CheckStatusAsync();
-        Task SyncAsync(ICrmService crm);
+        Task SyncAsync();
         IQueryable<LookupItem> GetLookupItems(string entityName);
         IQueryable<TypeEntity> GetTypeEntitites(string entityName, string attributeName = null);
         Task<PrivacyPolicy> GetLatestPrivacyPolicyAsync();
