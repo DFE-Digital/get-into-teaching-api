@@ -223,7 +223,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public async void SyncAsync_InsertsNewPickListItemsAsTypeEntities()
         {
-            var mockYears = MockInitialTeacherTrainingYears().ToList();
+            var mockYears = MockInitialTeacherTrainingYearsAsTypes().ToList();
             _mockCrm.Setup(m => m.GetTypeEntities("contact", "dfe_ittyear")).Returns(mockYears);
 
             await _store.SyncAsync();
@@ -236,7 +236,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public async void SyncAsync_UpdatesExistingPickListItemsAsTypeEntities()
         {
-            var updatedYears = (await SeedMockInitialTeacherTrainingYearsAsync()).ToList();
+            var updatedYears = (await SeedMockInitialTeacherTrainingYearsAsTypesAsync()).ToList();
             updatedYears.ForEach(c => c.Value += "Updated");
             _mockCrm.Setup(m => m.GetTypeEntities("contact", "dfe_ittyear")).Returns(updatedYears);
 
@@ -250,13 +250,92 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public async void SyncAsync_DeletesOrphanedPickListItemsAsTypeEntities()
         {
-            var years = (await SeedMockInitialTeacherTrainingYearsAsync()).ToList();
+            var years = (await SeedMockInitialTeacherTrainingYearsAsTypesAsync()).ToList();
             _mockCrm.Setup(m => m.GetTypeEntities("contact", "dfe_ittyear")).Returns(years.GetRange(0, 2));
 
             await _store.SyncAsync();
 
             var remainingCountries = DbContext.TypeEntities
                 .Where(te => te.EntityName == "contact" && te.AttributeName == "dfe_ittyear").ToArray();
+            remainingCountries.Should().BeEquivalentTo(years.GetRange(0, 2));
+        }
+
+        [Fact]
+        public async void SyncAsync_InsertsNewLookupItems()
+        {
+            var mockCountries = MockCountries().ToList();
+            _mockCrm.Setup(m => m.GetLookupItems("dfe_country")).Returns(mockCountries);
+
+            await _store.SyncAsync();
+
+            var ids = DbContext.LookupItems.Select(e => e.Id);
+            ids.Should().BeEquivalentTo(mockCountries.Select(e => e.Id));
+            DbContext.LookupItems.Count().Should().Be(3);
+        }
+
+        [Fact]
+        public async void SyncAsync_UpdatesExistingLookupItems()
+        {
+            var updatedCountries = (await SeedMockCountriesAsync()).ToList();
+            updatedCountries.ForEach(c => c.Value += "Updated");
+            _mockCrm.Setup(m => m.GetLookupItems("dfe_country")).Returns(updatedCountries);
+
+            await _store.SyncAsync();
+
+            var countries = DbContext.LookupItems.ToList();
+            countries.Select(c => c.Value).ToList().ForEach(value => value.Should().Contain("Updated"));
+            DbContext.LookupItems.Count().Should().Be(3);
+        }
+
+        [Fact]
+        public async void SyncAsync_DeletesOrphanedLookupItems()
+        {
+            var countries = (await SeedMockCountriesAsync()).ToList();
+            _mockCrm.Setup(m => m.GetLookupItems("dfe_country")).Returns(countries.GetRange(0, 2));
+
+            await _store.SyncAsync();
+
+            var remainingCountries = DbContext.LookupItems.Where(l => l.EntityName == "dfe_country").ToArray();
+            remainingCountries.Should().BeEquivalentTo(countries.GetRange(0, 2));
+        }
+
+        [Fact]
+        public async void SyncAsync_InsertsNewPickListItems()
+        {
+            var mockYears = MockInitialTeacherTrainingYears().ToList();
+            _mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_ittyear")).Returns(mockYears);
+
+            await _store.SyncAsync();
+
+            var ids = DbContext.PickListItems.Select(e => e.Id);
+            ids.Should().BeEquivalentTo(mockYears.Select(e => e.Id));
+            DbContext.PickListItems.Count().Should().Be(3);
+        }
+
+        [Fact]
+        public async void SyncAsync_UpdatesExistingPickListItems()
+        {
+            var updatedYears = (await SeedMockInitialTeacherTrainingYearsAsync()).ToList();
+            updatedYears.ForEach(c => c.Value += "Updated");
+            _mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_ittyear")).Returns(updatedYears);
+
+            await _store.SyncAsync();
+
+            var countries = DbContext.PickListItems.ToList();
+            countries.Select(c => c.Value).ToList().ForEach(value => value.Should().Contain("Updated"));
+            DbContext.PickListItems.Count().Should().Be(3);
+        }
+
+        [Fact]
+        public async void SyncAsync_DeletesOrphanedPickListItems()
+        {
+            var years = (await SeedMockInitialTeacherTrainingYearsAsync()).ToList();
+            _mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_ittyear")).Returns(years.GetRange(0, 2));
+
+            await _store.SyncAsync();
+
+            var remainingCountries = DbContext.PickListItems
+                .Where(p => p.EntityName == "contact" && p.AttributeName == "dfe_ittyear").ToArray();
             remainingCountries.Should().BeEquivalentTo(years.GetRange(0, 2));
         }
 
@@ -301,9 +380,19 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void GetTypeEntitites_ForPickListItem_ReturnsMatchingOrderedByIdAscending()
+        public async void GetPickListItems_ReturnsMatchingOrderedByIdAscending()
         {
             await SeedMockInitialTeacherTrainingYearsAsync();
+
+            var result = _store.GetPickListItems("contact", "dfe_ittyear");
+
+            result.Select(t => t.Value).Should().BeEquivalentTo(new string[] { "2009", "2010", "2011" });
+        }
+
+        [Fact]
+        public async void GetTypeEntitites_ForPickListItem_ReturnsMatchingOrderedByIdAscending()
+        {
+            await SeedMockInitialTeacherTrainingYearsAsTypesAsync();
 
             var result = _store.GetTypeEntitites("contact", "dfe_ittyear");
 
@@ -660,7 +749,7 @@ namespace GetIntoTeachingApiTests.Services
             return lookupItems;
         }
 
-        private static IEnumerable<TypeEntity> MockInitialTeacherTrainingYears()
+        private static IEnumerable<TypeEntity> MockInitialTeacherTrainingYearsAsTypes()
         {
             var year1 = new TypeEntity() { Id = "1", Value = "2009", EntityName = "contact", AttributeName = "dfe_ittyear" };
             var year2 = new TypeEntity() { Id = "2", Value = "2010", EntityName = "contact", AttributeName = "dfe_ittyear" };
@@ -669,14 +758,33 @@ namespace GetIntoTeachingApiTests.Services
             return new TypeEntity[] { year2, year1, year3 };
         }
 
-        private async Task<IEnumerable<TypeEntity>> SeedMockInitialTeacherTrainingYearsAsync()
+        private async Task<IEnumerable<TypeEntity>> SeedMockInitialTeacherTrainingYearsAsTypesAsync()
         {
-            var types = MockInitialTeacherTrainingYears().ToList();
+            var types = MockInitialTeacherTrainingYearsAsTypes().ToList();
             _mockCrm.Setup(m => m.GetTypeEntities("contact", "dfe_ittyear")).Returns(types);
 
             await _store.SyncAsync();
 
             return types;
+        }
+
+        private static IEnumerable<PickListItem> MockInitialTeacherTrainingYears()
+        {
+            var year1 = new PickListItem() { Id = 1, Value = "2009", EntityName = "contact", AttributeName = "dfe_ittyear" };
+            var year2 = new PickListItem() { Id = 2, Value = "2010", EntityName = "contact", AttributeName = "dfe_ittyear" };
+            var year3 = new PickListItem() { Id = 3, Value = "2011", EntityName = "contact", AttributeName = "dfe_ittyear" };
+
+            return new PickListItem[] { year2, year1, year3 };
+        }
+
+        private async Task<IEnumerable<PickListItem>> SeedMockInitialTeacherTrainingYearsAsync()
+        {
+            var items = MockInitialTeacherTrainingYears().ToList();
+            _mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_ittyear")).Returns(items);
+
+            await _store.SyncAsync();
+
+            return items;
         }
 
         private void SeedMockLocations()
