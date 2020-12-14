@@ -11,6 +11,7 @@ namespace GetIntoTeachingApi.Services
         Task<string> CheckStatusAsync();
         Task SyncAsync();
         IQueryable<LookupItem> GetLookupItems(string entityName);
+        IQueryable<PickListItem> GetPickListItems(string entityName, string attributeName);
         IQueryable<TypeEntity> GetTypeEntitites(string entityName, string attributeName = null);
         Task<PrivacyPolicy> GetLatestPrivacyPolicyAsync();
         IQueryable<PrivacyPolicy> GetPrivacyPolicies();
