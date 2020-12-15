@@ -47,11 +47,17 @@ namespace GetIntoTeachingApi.Services
             await SyncPrivacyPolicies();
             await SyncTypeEntities();
             await SyncLookupItems();
+            await SyncPickListItems();
         }
 
         public IQueryable<LookupItem> GetLookupItems(string entityName)
         {
             return _dbContext.LookupItems.Where(t => t.EntityName == entityName).OrderBy(t => t.Id);
+        }
+
+        public IQueryable<PickListItem> GetPickListItems(string entityName, string attributeName)
+        {
+            return _dbContext.PickListItems.Where(t => t.EntityName == entityName && t.AttributeName == attributeName).OrderBy(t => t.Id);
         }
 
         public IQueryable<TypeEntity> GetTypeEntitites(string entityName, string attributeName = null)
@@ -222,6 +228,31 @@ namespace GetIntoTeachingApi.Services
             await SyncLookupItem("dfe_teachingsubjectlist");
         }
 
+        private async Task SyncPickListItems()
+        {
+            await SyncPickListItem("contact", "dfe_ittyear");
+            await SyncPickListItem("contact", "dfe_preferrededucationphase01");
+            await SyncPickListItem("contact", "dfe_channelcreation");
+            await SyncPickListItem("contact", "dfe_websitehasgcseenglish");
+            await SyncPickListItem("contact", "dfe_websiteplanningretakeenglishgcse");
+            await SyncPickListItem("contact", "dfe_websitewhereinconsiderationjourney");
+            await SyncPickListItem("contact", "dfe_typeofcandidate");
+            await SyncPickListItem("contact", "dfe_candidatestatus");
+            await SyncPickListItem("contact", "dfe_iscandidateeligibleforadviser");
+            await SyncPickListItem("contact", "dfe_isadvisorrequiredos");
+            await SyncPickListItem("contact", "dfe_gitismlservicesubscriptionchannel");
+            await SyncPickListItem("contact", "dfe_gitiseventsservicesubscriptionchannel");
+            await SyncPickListItem("dfe_candidatequalification", "dfe_degreestatus");
+            await SyncPickListItem("dfe_candidatequalification", "dfe_ukdegreegrade");
+            await SyncPickListItem("dfe_candidatequalification", "dfe_type");
+            await SyncPickListItem("dfe_candidatepastteachingposition", "dfe_educationphase");
+            await SyncPickListItem("msevtmgt_event", "dfe_event_type");
+            await SyncPickListItem("msevtmgt_event", "dfe_eventstatus");
+            await SyncPickListItem("msevtmgt_eventregistration", "dfe_channelcreation");
+            await SyncPickListItem("phonecall", "dfe_channelcreation");
+            await SyncPickListItem("dfe_servicesubscription", "dfe_servicesubscriptiontype");
+        }
+
         private async Task SyncModels<T>(IEnumerable<T> models, IQueryable<T> dbSet)
             where T : BaseModel
         {
@@ -243,6 +274,21 @@ namespace GetIntoTeachingApi.Services
                 .Select(t => t.Id);
 
             _dbContext.RemoveRange(_dbContext.LookupItems.Where(t => t.EntityName == entityName && !ids.Contains(t.Id)));
+            _dbContext.UpdateRange(items.Where(t => existingIds.Contains(t.Id)));
+            await _dbContext.AddRangeAsync(items.Where(t => !existingIds.Contains(t.Id)));
+            await _dbContext.SaveChangesAsync();
+        }
+
+        private async Task SyncPickListItem(string entityName, string attributeName)
+        {
+            var items = _crm.GetPickListItems(entityName, attributeName);
+            var ids = items.Select(t => t.Id);
+            var existingIds = _dbContext.PickListItems
+                .Where(t => t.EntityName == entityName && t.AttributeName == attributeName)
+                .Select(t => t.Id);
+
+            _dbContext.RemoveRange(_dbContext.PickListItems.Where(t => t.EntityName == entityName &&
+                t.AttributeName == attributeName && !ids.Contains(t.Id)));
             _dbContext.UpdateRange(items.Where(t => existingIds.Contains(t.Id)));
             await _dbContext.AddRangeAsync(items.Where(t => !existingIds.Contains(t.Id)));
             await _dbContext.SaveChangesAsync();

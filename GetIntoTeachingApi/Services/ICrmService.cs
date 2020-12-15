@@ -10,6 +10,7 @@ namespace GetIntoTeachingApi.Services
     {
         string CheckStatus();
         IEnumerable<LookupItem> GetLookupItems(string entityName);
+        IEnumerable<PickListItem> GetPickListItems(string entityName, string attributeName);
         IEnumerable<TypeEntity> GetTypeEntities(string entityName, string attributeName = null);
         IEnumerable<PrivacyPolicy> GetPrivacyPolicies();
         Candidate MatchCandidate(ExistingCandidateRequest request);
