@@ -45,7 +45,6 @@ namespace GetIntoTeachingApi.Services
         {
             await SyncTeachingEvents();
             await SyncPrivacyPolicies();
-            await SyncTypeEntities();
             await SyncLookupItems();
             await SyncPickListItems();
         }
@@ -58,18 +57,6 @@ namespace GetIntoTeachingApi.Services
         public IQueryable<PickListItem> GetPickListItems(string entityName, string attributeName)
         {
             return _dbContext.PickListItems.Where(t => t.EntityName == entityName && t.AttributeName == attributeName).OrderBy(t => t.Id);
-        }
-
-        public IQueryable<TypeEntity> GetTypeEntitites(string entityName, string attributeName = null)
-        {
-            var query = _dbContext.TypeEntities.Where(t => t.EntityName == entityName);
-
-            if (attributeName != null)
-            {
-                query = query.Where(t => t.AttributeName == attributeName);
-            }
-
-            return query.OrderBy(t => t.Id);
         }
 
         public async Task<PrivacyPolicy> GetLatestPrivacyPolicyAsync()
@@ -195,33 +182,6 @@ namespace GetIntoTeachingApi.Services
             await SyncModels(policies, _dbContext.PrivacyPolicies);
         }
 
-        private async Task SyncTypeEntities()
-        {
-            await SyncTypes("dfe_country");
-            await SyncTypes("dfe_teachingsubjectlist");
-            await SyncTypes("contact", "dfe_ittyear");
-            await SyncTypes("contact", "dfe_preferrededucationphase01");
-            await SyncTypes("contact", "dfe_channelcreation");
-            await SyncTypes("contact", "dfe_websitehasgcseenglish");
-            await SyncTypes("contact", "dfe_websiteplanningretakeenglishgcse");
-            await SyncTypes("contact", "dfe_websitewhereinconsiderationjourney");
-            await SyncTypes("contact", "dfe_typeofcandidate");
-            await SyncTypes("contact", "dfe_candidatestatus");
-            await SyncTypes("contact", "dfe_iscandidateeligibleforadviser");
-            await SyncTypes("contact", "dfe_isadvisorrequiredos");
-            await SyncTypes("contact", "dfe_gitismlservicesubscriptionchannel");
-            await SyncTypes("contact", "dfe_gitiseventsservicesubscriptionchannel");
-            await SyncTypes("dfe_candidatequalification", "dfe_degreestatus");
-            await SyncTypes("dfe_candidatequalification", "dfe_ukdegreegrade");
-            await SyncTypes("dfe_candidatequalification", "dfe_type");
-            await SyncTypes("dfe_candidatepastteachingposition", "dfe_educationphase");
-            await SyncTypes("msevtmgt_event", "dfe_event_type");
-            await SyncTypes("msevtmgt_event", "dfe_eventstatus");
-            await SyncTypes("msevtmgt_eventregistration", "dfe_channelcreation");
-            await SyncTypes("phonecall", "dfe_channelcreation");
-            await SyncTypes("dfe_servicesubscription", "dfe_servicesubscriptiontype");
-        }
-
         private async Task SyncLookupItems()
         {
             await SyncLookupItem("dfe_country");
@@ -291,28 +251,6 @@ namespace GetIntoTeachingApi.Services
                 t.AttributeName == attributeName && !ids.Contains(t.Id)));
             _dbContext.UpdateRange(items.Where(t => existingIds.Contains(t.Id)));
             await _dbContext.AddRangeAsync(items.Where(t => !existingIds.Contains(t.Id)));
-            await _dbContext.SaveChangesAsync();
-        }
-
-        private async Task SyncTypes(string entityName, string attributeName = null)
-        {
-            var types = _crm.GetTypeEntities(entityName, attributeName);
-
-            if (!types.Any())
-            {
-                return;
-            }
-
-            var key = types.Select(t => new { t.EntityName, t.AttributeName }).First();
-            var typeIds = types.Select(t => t.Id);
-            var existingIds = _dbContext.TypeEntities
-                .Where(t => t.EntityName == key.EntityName && t.AttributeName == key.AttributeName)
-                .Select(t => t.Id);
-
-            _dbContext.RemoveRange(_dbContext.TypeEntities.Where(t => t.EntityName == key.EntityName
-                && t.AttributeName == key.AttributeName && !typeIds.Contains(t.Id)));
-            _dbContext.UpdateRange(types.Where(t => existingIds.Contains(t.Id)));
-            await _dbContext.AddRangeAsync(types.Where(t => !existingIds.Contains(t.Id)));
             await _dbContext.SaveChangesAsync();
         }
 

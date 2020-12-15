@@ -14,34 +14,34 @@ namespace GetIntoTeachingApi.Models.Validators
             _store = store;
 
             RuleFor(qualification => qualification.UkDegreeGradeId)
-                .Must(id => UkDegreeGradeIds().Contains(id.ToString()))
+                .Must(id => UkDegreeGradeIds().Contains(id))
                 .Unless(qualification => qualification.UkDegreeGradeId == null)
                 .WithMessage("Must be a valid qualification uk degree grade.");
             RuleFor(qualification => qualification.DegreeStatusId)
-                .Must(id => StatusIds().Contains(id.ToString()))
+                .Must(id => StatusIds().Contains(id))
                 .Unless(qualification => qualification.DegreeStatusId == null)
                 .WithMessage("Must be a valid qualification degree status.");
             RuleFor(qualification => qualification.TypeId)
-                .Must(id => TypeIds().Contains(id.ToString()))
+                .Must(id => TypeIds().Contains(id))
                 .Unless(qualification => qualification.TypeId == null)
                 .WithMessage("Must be a valid qualification types.");
 
             RuleFor(qualification => qualification.DegreeSubject).MaximumLength(600);
         }
 
-        private IEnumerable<string> UkDegreeGradeIds()
+        private IEnumerable<int?> UkDegreeGradeIds()
         {
-            return _store.GetTypeEntitites("dfe_candidatequalification", "dfe_ukdegreegrade").Select(grade => grade.Id);
+            return _store.GetPickListItems("dfe_candidatequalification", "dfe_ukdegreegrade").Select(grade => (int?)grade.Id);
         }
 
-        private IEnumerable<string> StatusIds()
+        private IEnumerable<int?> StatusIds()
         {
-            return _store.GetTypeEntitites("dfe_candidatequalification", "dfe_degreestatus").Select(status => status.Id);
+            return _store.GetPickListItems("dfe_candidatequalification", "dfe_degreestatus").Select(status => (int?)status.Id);
         }
 
-        private IEnumerable<string> TypeIds()
+        private IEnumerable<int?> TypeIds()
         {
-            return _store.GetTypeEntitites("dfe_candidatequalification", "dfe_type").Select(type => type.Id);
+            return _store.GetPickListItems("dfe_candidatequalification", "dfe_type").Select(type => (int?)type.Id);
         }
     }
 }

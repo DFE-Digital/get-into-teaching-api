@@ -24,20 +24,20 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var mockPickListItem = new TypeEntity { Id = "123" };
-            var mockEntityReference = new TypeEntity { Id = Guid.NewGuid().ToString() };
+            var mockPickListItem = new PickListItem { Id = 123 };
+            var mockLookupItem = new LookupItem { Id = Guid.NewGuid() };
 
             _mockStore
-                .Setup(mock => mock.GetTypeEntitites("dfe_teachingsubjectlist", null))
-                .Returns(new[] { mockEntityReference }.AsQueryable());
+                .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
+                .Returns(new[] { mockLookupItem }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetTypeEntitites("dfe_candidatepastteachingposition", "dfe_educationphase"))
+                .Setup(mock => mock.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
 
             var position = new CandidatePastTeachingPosition
             {
-                SubjectTaughtId = Guid.Parse(mockEntityReference.Id),
-                EducationPhaseId = int.Parse(mockPickListItem.Id),
+                SubjectTaughtId = mockLookupItem.Id,
+                EducationPhaseId = mockPickListItem.Id,
             };
 
             var result = _validator.TestValidate(position);

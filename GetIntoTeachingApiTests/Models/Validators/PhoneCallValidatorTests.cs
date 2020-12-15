@@ -24,16 +24,16 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var mockPickListItem = new TypeEntity { Id = "123" };
+            var mockPickListItem = new PickListItem { Id = 123 };
 
             _mockStore
-                .Setup(mock => mock.GetTypeEntitites("phonecall", "dfe_channelcreation"))
+                .Setup(mock => mock.GetPickListItems("phonecall", "dfe_channelcreation"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
 
             var phoneCall = new PhoneCall()
             {
                 ScheduledAt = DateTime.UtcNow.AddDays(2),
-                ChannelId = int.Parse(mockPickListItem.Id),
+                ChannelId = mockPickListItem.Id,
             };
 
             var result = _validator.TestValidate(phoneCall);

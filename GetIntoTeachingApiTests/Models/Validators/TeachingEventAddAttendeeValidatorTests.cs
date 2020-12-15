@@ -24,18 +24,18 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var mockPickListItem = new TypeEntity { Id = "123" };
-            var mockEntityReference = new TypeEntity { Id = Guid.NewGuid().ToString() };
+            var mockPickListItem = new PickListItem { Id = 123 };
+            var mockLookupItem = new LookupItem { Id = Guid.NewGuid() };
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
 
             var request = new TeachingEventAddAttendee()
             {
                 CandidateId = null,
                 EventId = Guid.NewGuid(),
-                PreferredTeachingSubjectId = Guid.Parse(mockEntityReference.Id),
+                PreferredTeachingSubjectId = mockLookupItem.Id,
                 AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id,
-                ConsiderationJourneyStageId = int.Parse(mockPickListItem.Id),
-                DegreeStatusId = int.Parse(mockPickListItem.Id),
+                ConsiderationJourneyStageId = mockPickListItem.Id,
+                DegreeStatusId = mockPickListItem.Id,
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
