@@ -23,24 +23,24 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var mockPickListItem = new TypeEntity { Id = "123" };
+            var mockPickListItem = new PickListItem { Id = 123 };
 
             _mockStore
-                .Setup(mock => mock.GetTypeEntitites("dfe_candidatequalification", "dfe_ukdegreegrade"))
+                .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_ukdegreegrade"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetTypeEntitites("dfe_candidatequalification", "dfe_degreestatus"))
+                .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_degreestatus"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetTypeEntitites("dfe_candidatequalification", "dfe_type"))
+                .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_type"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
 
             var qualification = new CandidateQualification()
             {
-                UkDegreeGradeId = int.Parse(mockPickListItem.Id),
+                UkDegreeGradeId = mockPickListItem.Id,
                 DegreeSubject = "History",
-                DegreeStatusId = int.Parse(mockPickListItem.Id),
-                TypeId = int.Parse(mockPickListItem.Id),
+                DegreeStatusId = mockPickListItem.Id,
+                TypeId = mockPickListItem.Id,
             };
 
             var result = _validator.TestValidate(qualification);
@@ -88,11 +88,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_SubjectTooLong_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(qualification => qualification.DegreeSubject, new string('a', 601));
-        }
-
-        private static TypeEntity NewMock(dynamic id)
-        {
-            return new TypeEntity { Id = id.ToString() };
         }
     }
 }

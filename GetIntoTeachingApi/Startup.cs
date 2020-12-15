@@ -253,7 +253,7 @@ The GIT API aims to provide:
                 var dbContext = serviceScope.ServiceProvider.GetService<GetIntoTeachingDbContext>();
 
                 // Initial CRM sync.
-                if (!dbContext.TypeEntities.Any())
+                if (!dbContext.PickListItems.Any())
                 {
                     RecurringJob.Trigger(JobConfiguration.CrmSyncJobId);
                 }

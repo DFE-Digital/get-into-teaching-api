@@ -37,19 +37,6 @@ namespace GetIntoTeachingApi.Services
                 .Select((pickListItem) => new PickListItem(pickListItem, entityName, attributeName));
         }
 
-        public IEnumerable<TypeEntity> GetTypeEntities(string entityName, string attributeName = null)
-        {
-            if (attributeName == null)
-            {
-                return _service.CreateQuery(entityName, Context()).Select((entity) => new TypeEntity(entity, entityName));
-            }
-            else
-            {
-                return _service.GetPickListItemsForAttribute(entityName, attributeName)
-                    .Select((pickListItem) => new TypeEntity(pickListItem, entityName, attributeName));
-            }
-        }
-
         public IEnumerable<CallbackBookingQuota> GetCallbackBookingQuotas()
         {
             return _service.CreateQuery("dfe_callbackbookingquota", Context())
