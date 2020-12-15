@@ -45,4 +45,7 @@
   <ItemGroup>
     <Folder Include="Redis\" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Controllers\LookupItemsControllerTests.cs" />
+  </ItemGroup>
 </Project>

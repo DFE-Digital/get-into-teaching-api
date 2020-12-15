@@ -31,6 +31,12 @@ namespace GetIntoTeachingApi.Services
             return _service.CreateQuery(entityName, Context()).Select((entity) => new LookupItem(entity, entityName));
         }
 
+        public IEnumerable<PickListItem> GetPickListItems(string entityName, string attributeName)
+        {
+            return _service.GetPickListItemsForAttribute(entityName, attributeName)
+                .Select((pickListItem) => new PickListItem(pickListItem, entityName, attributeName));
+        }
+
         public IEnumerable<TypeEntity> GetTypeEntities(string entityName, string attributeName = null)
         {
             if (attributeName == null)
