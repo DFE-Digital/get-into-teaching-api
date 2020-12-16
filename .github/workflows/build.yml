@@ -15,7 +15,6 @@ env:
   SLACK_FAILURE:         '#ff0000'
   SLACK_SUCCESS:         '#00ff00'
   SLACK_ICON:            https://raw.githubusercontent.com/${{github.repository}}/master/.github/image.png?size=48
-
   
 jobs:
   turnstyle:
@@ -31,15 +30,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Slack Notification
-        if: failure()
+        if: failure() && github.ref == 'refs/heads/master'
         uses: rtCamp/action-slack-notify@master
         env:
-           SLACK_COLOR:  env.SLACK_FAILURE
-           SLACK_ICON:   env.SLACK_ICON
+           SLACK_COLOR:   ${{env.SLACK_FAILURE}}
+           SLACK_ICON:    ${{env.SLACK_ICON}}
            SLACK_MESSAGE: Content Delivery has failed. This is due to a workflow concurrency issue
-           SLACK_TITLE: Turnstyle failure ${{ github.workflow }}
+           SLACK_TITLE:   Turnstyle failure ${{ github.workflow }}
            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-           SLACK_FOOTER: ${{env.APPLICATION}}
+           SLACK_FOOTER:  ${{env.APPLICATION}}
 
   build:
     name: Build and push to DockerHub
@@ -86,15 +85,15 @@ jobs:
           build-args: GIT_COMMIT_SHA=${{ steps.vars.outputs.sha_short }}
 
       - name: Slack Notification
-        if: failure()
+        if: failure() && github.ref == 'refs/heads/master'
         uses: rtCamp/action-slack-notify@master
         env:
-           SLACK_COLOR: env.SLACK_FAILURE
-           SLACK_ICON:  env.SLACK_ICON
+           SLACK_COLOR:   ${{env.SLACK_FAILURE}}
+           SLACK_ICON:    ${{env.SLACK_ICON}}
            SLACK_MESSAGE: 'The pipeline has failed to build the API image'
-           SLACK_TITLE: 'Failure to Build API '
+           SLACK_TITLE:   'Failure to Build API '
            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-           SLACK_FOOTER: ${{ env.APPLICATION }}
+           SLACK_FOOTER:  ${{ env.APPLICATION }}
 
   development:
     name: Development Deployment
@@ -174,12 +173,12 @@ jobs:
          if: failure()
          uses: rtCamp/action-slack-notify@master
          env:
-           SLACK_COLOR: env.SLACK_FAILURE
-           SLACK_ICON:  env.SLACK_ICON
-           SLACK_TITLE: Failure in Post-Development Deploy
+           SLACK_COLOR:   ${{env.SLACK_FAILURE}}
+           SLACK_ICON:    ${{env.SLACK_ICON}}
+           SLACK_TITLE:   Failure in Post-Development Deploy
            SLACK_MESSAGE: Failure with initialising QA deployment for ${{env.APPLICATION}}
            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-           SLACK_FOOTER: ${{env.APPLICATION}}
+           SLACK_FOOTER:  ${{env.APPLICATION}}
 
   cypress:
      name: Run Cypress Tests on QA
@@ -195,7 +194,6 @@ jobs:
            token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN }}
            inputs: '{"application": "BOTH" , "reference": "${{ github.sha }}" }'
            ref:  refs/heads/master
-
 
   production:
      name: Production Deployment
@@ -245,8 +243,8 @@ jobs:
          if: steps.tag_id.outputs.release_id
          uses: rtCamp/action-slack-notify@master
          env:
-           SLACK_COLOR:    env.SLACK_SUCCESS
-           SLACK_ICON:     env.SLACK_ICON
+           SLACK_COLOR:    ${{env.SLACK_SUCCESS}}
+           SLACK_ICON:     ${{env.SLACK_ICON}}
            SLACK_TITLE:    "Release Published: ${{steps.tag_id.outputs.release_name}}"
            SLACK_MESSAGE:  ${{steps.tag_id.outputs.release_body}}
            SLACK_WEBHOOK:  ${{ secrets.SLACK_RELEASE_NOTE_WEBHOOK }}
@@ -257,8 +255,8 @@ jobs:
          if: failure()
          uses: rtCamp/action-slack-notify@master
          env:
-           SLACK_COLOR:    env.SLACK_FAILURE
-           SLACK_ICON:     env.SLACK_ICON
+           SLACK_COLOR:    ${{env.SLACK_FAILURE}}
+           SLACK_ICON:     ${{env.SLACK_ICON}}
            SLACK_TITLE:    "Release Failed: ${{steps.tag_id.outputs.release_name}}"
            SLACK_MESSAGE:  Failure deploying Production release
            SLACK_WEBHOOK:  ${{ secrets.SLACK_WEBHOOK }}
