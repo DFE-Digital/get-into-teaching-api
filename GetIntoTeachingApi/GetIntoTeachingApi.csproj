@@ -46,5 +46,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Redis\" />
+	  <Folder Include="Validators\" />
 	</ItemGroup>
 </Project>
