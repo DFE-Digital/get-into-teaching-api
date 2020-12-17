@@ -9,11 +9,6 @@ on:
         description: Commit sha to be deployed
         required: true
 
-env:
-  DOCKERHUB_REPOSITORY:  dfedigital/get-into-teaching-api
-  DOMAIN:                london.cloudapps.digital
-  APPLICATION:           Get Into Teaching API Service
-  PAAS_APPLICATION_NAME: get-into-teaching-api
 
 jobs:
   turnstyle:
@@ -39,7 +34,10 @@ jobs:
        - name: Checkout
          uses: actions/checkout@v2
          with:
-            ref: ${{ github.event.inputs.sha }}
+             ref: ${{ github.event.inputs.sha }}
+
+       - name: set-up-environment
+         uses: DFE-Digital/github-actions/set-up-environment@master
 
        - name: Get Short SHA
          id: sha

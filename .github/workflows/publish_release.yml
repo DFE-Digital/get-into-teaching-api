@@ -1,5 +1,4 @@
 name: Publish Release Notes
-
 on:
   release:
     types: [published]
@@ -13,15 +12,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         
+      - name: set-up-environment
+        uses: DFE-Digital/github-actions/set-up-environment@master
+
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@master
         env:
-           SLACK_USERNAME: GiT Deployment
-           SLACK_CHANNEL: twd_getintoteaching
-           SLACK_COLOR: '#B90E0A'
-           SLACK_ICON: https://github.com/rtCamp.png?size=48
-           SLACK_TITLE: Release Published ${{github.event.release.name}}
+           SLACK_COLOR:   ${{env.SLACK_SUCCESS}}
+           SLACK_TITLE:   Release Published ${{github.event.release.name}}
            SLACK_MESSAGE: ${{github.event.release.body}}
-           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-           SLACK_FOOTER: ${{env.APPLICATION}}    
-           MSG_MINIMAL: true
+           SLACK_WEBHOOK: ${{secrets.SLACK_RELEASE_NOTE_WEBHOOK}}
+           MSG_MINIMAL:   true

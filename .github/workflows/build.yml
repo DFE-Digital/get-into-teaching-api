@@ -7,20 +7,17 @@ on:
     branches:
       - master
 
-env:
-  DOCKERHUB_REPOSITORY:  dfedigital/get-into-teaching-api
-  DOMAIN:                london.cloudapps.digital
-  APPLICATION:           Get Into Teaching API Service
-  PAAS_APPLICATION_NAME: get-into-teaching-api
-  SLACK_FAILURE:         '#ff0000'
-  SLACK_SUCCESS:         '#00ff00'
-  SLACK_ICON:            https://raw.githubusercontent.com/${{github.repository}}/master/.github/image.png?size=48
-  
 jobs:
   turnstyle:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: set-up-environment
+        uses: DFE-Digital/github-actions/set-up-environment@master
+
       - name: Check workflow concurrency
         uses: softprops/turnstyle@v1
         with:
@@ -34,11 +31,9 @@ jobs:
         uses: rtCamp/action-slack-notify@master
         env:
            SLACK_COLOR:   ${{env.SLACK_FAILURE}}
-           SLACK_ICON:    ${{env.SLACK_ICON}}
            SLACK_MESSAGE: Content Delivery has failed. This is due to a workflow concurrency issue
            SLACK_TITLE:   Turnstyle failure ${{ github.workflow }}
            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-           SLACK_FOOTER:  ${{env.APPLICATION}}
 
   build:
     name: Build and push to DockerHub
@@ -49,6 +44,9 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
+
+      - name: set-up-environment
+        uses: DFE-Digital/github-actions/set-up-environment@master
 
       - name: Set up Docker Buildx
         id: buildx
@@ -89,11 +87,9 @@ jobs:
         uses: rtCamp/action-slack-notify@master
         env:
            SLACK_COLOR:   ${{env.SLACK_FAILURE}}
-           SLACK_ICON:    ${{env.SLACK_ICON}}
            SLACK_MESSAGE: 'The pipeline has failed to build the API image'
            SLACK_TITLE:   'Failure to Build API '
            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-           SLACK_FOOTER:  ${{ env.APPLICATION }}
 
   development:
     name: Development Deployment
@@ -174,11 +170,9 @@ jobs:
          uses: rtCamp/action-slack-notify@master
          env:
            SLACK_COLOR:   ${{env.SLACK_FAILURE}}
-           SLACK_ICON:    ${{env.SLACK_ICON}}
            SLACK_TITLE:   Failure in Post-Development Deploy
            SLACK_MESSAGE: Failure with initialising QA deployment for ${{env.APPLICATION}}
            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-           SLACK_FOOTER:  ${{env.APPLICATION}}
 
   cypress:
      name: Run Cypress Tests on QA
@@ -244,11 +238,9 @@ jobs:
          uses: rtCamp/action-slack-notify@master
          env:
            SLACK_COLOR:    ${{env.SLACK_SUCCESS}}
-           SLACK_ICON:     ${{env.SLACK_ICON}}
            SLACK_TITLE:    "Release Published: ${{steps.tag_id.outputs.release_name}}"
            SLACK_MESSAGE:  ${{steps.tag_id.outputs.release_body}}
            SLACK_WEBHOOK:  ${{ secrets.SLACK_RELEASE_NOTE_WEBHOOK }}
-           SLACK_FOOTER:   ${{env.APPLICATION}}
            MSG_MINIMAL:    true
 
        - name: Slack Notification
@@ -256,8 +248,6 @@ jobs:
          uses: rtCamp/action-slack-notify@master
          env:
            SLACK_COLOR:    ${{env.SLACK_FAILURE}}
-           SLACK_ICON:     ${{env.SLACK_ICON}}
            SLACK_TITLE:    "Release Failed: ${{steps.tag_id.outputs.release_name}}"
            SLACK_MESSAGE:  Failure deploying Production release
            SLACK_WEBHOOK:  ${{ secrets.SLACK_WEBHOOK }}
-           SLACK_FOOTER:   ${{env.APPLICATION}}

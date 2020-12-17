@@ -14,6 +14,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: set-up-environment
+        uses: DFE-Digital/github-actions/set-up-environment@master
+
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag localbuild/testimage:latest
 
@@ -35,9 +38,7 @@ jobs:
         if: failure()
         uses: rtCamp/action-slack-notify@master
         env:
-           SLACK_CHANNEL: getintoteaching_tech
-           SLACK_COLOR: '#3278BD'
-           SLACK_ICON: https://github.com/rtCamp.png?size=48
-           SLACK_MESSAGE: ':disappointed_relieved: Pipeline Failure carrying out job ${{github.job}} :disappointed_relieved:'
-           SLACK_TITLE: 'Failure: ${{ github.workflow }}'
-           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+           SLACK_COLOR:    ${{ env.SLACK_FAILURE }}
+           SLACK_MESSAGE:  'Pipeline Failure running CVE scanner for API'
+           SLACK_TITLE:    'Failure: Running CVE Scanner'
+           SLACK_WEBHOOK:  ${{ secrets.SLACK_WEBHOOK }}
