@@ -25,19 +25,19 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_WhenValid_HasNoErrors()
         {
             var mockTeachingEvent = new TeachingEvent { Id = Guid.NewGuid(), WebFeedId = "123" };
-            var mockPickListItem = new TypeEntity { Id = "123" };
+            var mockPickListItem = new PickListItem { Id = 123 };
 
             _mockStore
                 .Setup(mock => mock.GetTeachingEventAsync((Guid)mockTeachingEvent.Id))
                 .ReturnsAsync(mockTeachingEvent);
             _mockStore
-                .Setup(mock => mock.GetTypeEntitites("msevtmgt_eventregistration", "dfe_channelcreation"))
+                .Setup(mock => mock.GetPickListItems("msevtmgt_eventregistration", "dfe_channelcreation"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
 
             var registration = new TeachingEventRegistration() 
             {
                 EventId = (Guid)mockTeachingEvent.Id,
-                ChannelId = int.Parse(mockPickListItem.Id),
+                ChannelId = mockPickListItem.Id,
             };
 
             var result = _validator.TestValidate(registration);
@@ -55,19 +55,19 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_EventDoesNotAcceptOnlineRegistrations_HasError()
         {
             var mockTeachingEvent = new TeachingEvent { Id = Guid.NewGuid(), WebFeedId = null };
-            var mockPickListItem = new TypeEntity { Id = "123" };
+            var mockPickListItem = new PickListItem { Id = 123 };
 
             _mockStore
                 .Setup(mock => mock.GetTeachingEventAsync((Guid)mockTeachingEvent.Id))
                 .ReturnsAsync(mockTeachingEvent);
             _mockStore
-                .Setup(mock => mock.GetTypeEntitites("msevtmgt_eventregistration", "dfe_channelcreation"))
+                .Setup(mock => mock.GetPickListItems("msevtmgt_eventregistration", "dfe_channelcreation"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
 
             var registration = new TeachingEventRegistration()
             {
                 EventId = (Guid)mockTeachingEvent.Id,
-                ChannelId = int.Parse(mockPickListItem.Id),
+                ChannelId = mockPickListItem.Id,
             };
 
             var result = _validator.TestValidate(registration);

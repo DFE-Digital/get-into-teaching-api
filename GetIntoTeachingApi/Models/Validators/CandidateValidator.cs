@@ -40,23 +40,23 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Must not contain multiple registrations for the same event.");
 
             RuleFor(candidate => candidate.PreferredTeachingSubjectId)
-                .Must(id => PreferredTeachingSubjectIds().Contains(id.ToString()))
+                .Must(id => PreferredTeachingSubjectIds().Contains(id))
                 .Unless(candidate => candidate.PreferredTeachingSubjectId == null)
                 .WithMessage("Must be a valid teaching subject.");
             RuleFor(candidate => candidate.CountryId)
-                .Must(id => CountryIds().Contains(id.ToString()))
+                .Must(id => CountryIds().Contains(id))
                 .Unless(candidate => candidate.CountryId == null)
                 .WithMessage("Must be a valid country.");
             RuleFor(candidate => candidate.PreferredEducationPhaseId)
-                .Must(id => PreferredEducationPhaseIds().Contains(id.ToString()))
+                .Must(id => PreferredEducationPhaseIds().Contains(id))
                 .Unless(candidate => candidate.PreferredEducationPhaseId == null)
                 .WithMessage("Must be a valid candidate education phase.");
             RuleFor(candidate => candidate.InitialTeacherTrainingYearId)
-                .Must(id => InitialTeacherTrainingYearIds().Contains(id.ToString()))
+                .Must(id => InitialTeacherTrainingYearIds().Contains(id))
                 .Unless(candidate => candidate.InitialTeacherTrainingYearId == null)
                 .WithMessage("Must be a valid candidate initial teacher training year.");
             RuleFor(candidate => candidate.ChannelId)
-                .Must(id => ChannelIds().Contains(id.ToString()))
+                .Must(id => ChannelIds().Contains(id))
                 .Unless(candidate => candidate.Id != null)
                 .WithMessage("Must be a valid candidate channel.");
             RuleFor(candidate => candidate.ChannelId)
@@ -64,127 +64,127 @@ namespace GetIntoTeachingApi.Models.Validators
                 .Unless(candidate => candidate.Id == null)
                 .WithMessage("You cannot change the channel of an existing candidate.");
             RuleFor(candidate => candidate.HasGcseEnglishId)
-                .Must(id => GcseStatusIds().Contains(id.ToString()))
+                .Must(id => GcseStatusIds().Contains(id))
                 .Unless(candidate => candidate.HasGcseEnglishId == null)
                 .WithMessage("Must be a valid candidate GCSE status.");
             RuleFor(candidate => candidate.HasGcseMathsId)
-                .Must(id => GcseStatusIds().Contains(id.ToString()))
+                .Must(id => GcseStatusIds().Contains(id))
                 .Unless(candidate => candidate.HasGcseMathsId == null)
                 .WithMessage("Must be a valid candidate GCSE status.");
             RuleFor(candidate => candidate.HasGcseScienceId)
-                .Must(id => GcseStatusIds().Contains(id.ToString()))
+                .Must(id => GcseStatusIds().Contains(id))
                 .Unless(candidate => candidate.HasGcseScienceId == null)
                 .WithMessage("Must be a valid candidate GCSE status.");
             RuleFor(candidate => candidate.PlanningToRetakeGcseScienceId)
-                .Must(id => RetakeGcseStatusIds().Contains(id.ToString()))
+                .Must(id => RetakeGcseStatusIds().Contains(id))
                 .Unless(candidate => candidate.PlanningToRetakeGcseScienceId == null)
                 .WithMessage("Must be a valid candidate retake GCSE status.");
             RuleFor(candidate => candidate.PlanningToRetakeGcseEnglishId)
-                .Must(id => RetakeGcseStatusIds().Contains(id.ToString()))
+                .Must(id => RetakeGcseStatusIds().Contains(id))
                 .Unless(candidate => candidate.PlanningToRetakeGcseEnglishId == null)
                 .WithMessage("Must be a valid candidate retake GCSE status.");
             RuleFor(candidate => candidate.PlanningToRetakeGcseMathsId)
-                .Must(id => RetakeGcseStatusIds().Contains(id.ToString()))
+                .Must(id => RetakeGcseStatusIds().Contains(id))
                 .Unless(candidate => candidate.PlanningToRetakeGcseMathsId == null)
                 .WithMessage("Must be a valid candidate retake GCSE status.");
             RuleFor(candidate => candidate.ConsiderationJourneyStageId)
-                .Must(id => ConsiderationJourneyStageIds().Contains(id.ToString()))
+                .Must(id => ConsiderationJourneyStageIds().Contains(id))
                 .Unless(candidate => candidate.ConsiderationJourneyStageId == null)
                 .WithMessage("Must be a valid candidate consideration journey stage.");
             RuleFor(candidate => candidate.TypeId)
-                .Must(id => TypeIds().Contains(id.ToString()))
+                .Must(id => TypeIds().Contains(id))
                 .Unless(candidate => candidate.TypeId == null)
                 .WithMessage("Must be a valid candidate type.");
             RuleFor(candidate => candidate.AssignmentStatusId)
-                .Must(id => AssignmentStatusIds().Contains(id.ToString()))
+                .Must(id => AssignmentStatusIds().Contains(id))
                 .Unless(candidate => candidate.AssignmentStatusId == null)
                 .WithMessage("Must be a valid candidate assignment status.");
             RuleFor(candidate => candidate.AdviserEligibilityId)
-                .Must(id => AdviserEligibilityIds().Contains(id.ToString()))
+                .Must(id => AdviserEligibilityIds().Contains(id))
                 .Unless(candidate => candidate.AdviserEligibilityId == null)
                 .WithMessage("Must be a valid candidate adviser eligibility.");
             RuleFor(candidate => candidate.AdviserRequirementId)
-                .Must(id => AdviserRequirementIds().Contains(id.ToString()))
+                .Must(id => AdviserRequirementIds().Contains(id))
                 .Unless(candidate => candidate.AdviserRequirementId == null)
                 .WithMessage("Must be a valid candidate adviser requirement.");
             RuleFor(candidate => candidate.EventsSubscriptionChannelId)
-                .Must(id => EventSubscriptionChannelIds().Contains(id.ToString()))
+                .Must(id => EventSubscriptionChannelIds().Contains(id))
                 .Unless(candidate => candidate.EventsSubscriptionChannelId == null)
                 .WithMessage("Must be a valid event subscription channel.");
             RuleFor(candidate => candidate.MailingListSubscriptionChannelId)
-                .Must(id => MailingListSubscriptionChannelIds().Contains(id.ToString()))
+                .Must(id => MailingListSubscriptionChannelIds().Contains(id))
                 .Unless(candidate => candidate.MailingListSubscriptionChannelId == null)
                 .WithMessage("Must be a valid mailing list subscription channel.");
         }
 
-        private IEnumerable<string> PreferredTeachingSubjectIds()
+        private IEnumerable<Guid?> PreferredTeachingSubjectIds()
         {
-            return _store.GetTypeEntitites("dfe_teachingsubjectlist").Select(subject => subject.Id);
+            return _store.GetLookupItems("dfe_teachingsubjectlist").Select(subject => subject.Id);
         }
 
-        private IEnumerable<string> CountryIds()
+        private IEnumerable<Guid?> CountryIds()
         {
-            return _store.GetTypeEntitites("dfe_country").Select(country => country.Id);
+            return _store.GetLookupItems("dfe_country").Select(country => country.Id);
         }
 
-        private IEnumerable<string> PreferredEducationPhaseIds()
+        private IEnumerable<int?> PreferredEducationPhaseIds()
         {
-            return _store.GetTypeEntitites("contact", "dfe_preferrededucationphase01").Select(phase => phase.Id);
+            return _store.GetPickListItems("contact", "dfe_preferrededucationphase01").Select(phase => (int?)phase.Id);
         }
 
-        private IEnumerable<string> InitialTeacherTrainingYearIds()
+        private IEnumerable<int?> InitialTeacherTrainingYearIds()
         {
-            return _store.GetTypeEntitites("contact", "dfe_ittyear").Select(year => year.Id);
+            return _store.GetPickListItems("contact", "dfe_ittyear").Select(year => (int?)year.Id);
         }
 
-        private IEnumerable<string> ChannelIds()
+        private IEnumerable<int?> ChannelIds()
         {
-            return _store.GetTypeEntitites("contact", "dfe_channelcreation").Select(channel => channel.Id);
+            return _store.GetPickListItems("contact", "dfe_channelcreation").Select(channel => (int?)channel.Id);
         }
 
-        private IEnumerable<string> MailingListSubscriptionChannelIds()
+        private IEnumerable<int?> MailingListSubscriptionChannelIds()
         {
-            return _store.GetTypeEntitites("contact", "dfe_gitismlservicesubscriptionchannel").Select(channel => channel.Id);
+            return _store.GetPickListItems("contact", "dfe_gitismlservicesubscriptionchannel").Select(channel => (int?)channel.Id);
         }
 
-        private IEnumerable<string> EventSubscriptionChannelIds()
+        private IEnumerable<int?> EventSubscriptionChannelIds()
         {
-            return _store.GetTypeEntitites("contact", "dfe_gitiseventsservicesubscriptionchannel").Select(channel => channel.Id);
+            return _store.GetPickListItems("contact", "dfe_gitiseventsservicesubscriptionchannel").Select(channel => (int?)channel.Id);
         }
 
-        private IEnumerable<string> GcseStatusIds()
+        private IEnumerable<int?> GcseStatusIds()
         {
-            return _store.GetTypeEntitites("contact", "dfe_websitehasgcseenglish").Select(status => status.Id);
+            return _store.GetPickListItems("contact", "dfe_websitehasgcseenglish").Select(status => (int?)status.Id);
         }
 
-        private IEnumerable<string> RetakeGcseStatusIds()
+        private IEnumerable<int?> RetakeGcseStatusIds()
         {
-            return _store.GetTypeEntitites("contact", "dfe_websiteplanningretakeenglishgcse").Select(status => status.Id);
+            return _store.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse").Select(status => (int?)status.Id);
         }
 
-        private IEnumerable<string> ConsiderationJourneyStageIds()
+        private IEnumerable<int?> ConsiderationJourneyStageIds()
         {
-            return _store.GetTypeEntitites("contact", "dfe_websitewhereinconsiderationjourney").Select(describe => describe.Id);
+            return _store.GetPickListItems("contact", "dfe_websitewhereinconsiderationjourney").Select(describe => (int?)describe.Id);
         }
 
-        private IEnumerable<string> TypeIds()
+        private IEnumerable<int?> TypeIds()
         {
-            return _store.GetTypeEntitites("contact", "dfe_typeofcandidate").Select(type => type.Id);
+            return _store.GetPickListItems("contact", "dfe_typeofcandidate").Select(type => (int?)type.Id);
         }
 
-        private IEnumerable<string> AssignmentStatusIds()
+        private IEnumerable<int?> AssignmentStatusIds()
         {
-            return _store.GetTypeEntitites("contact", "dfe_candidatestatus").Select(type => type.Id);
+            return _store.GetPickListItems("contact", "dfe_candidatestatus").Select(type => (int?)type.Id);
         }
 
-        private IEnumerable<string> AdviserEligibilityIds()
+        private IEnumerable<int?> AdviserEligibilityIds()
         {
-            return _store.GetTypeEntitites("contact", "dfe_iscandidateeligibleforadviser").Select(eligibility => eligibility.Id);
+            return _store.GetPickListItems("contact", "dfe_iscandidateeligibleforadviser").Select(eligibility => (int?)eligibility.Id);
         }
 
-        private IEnumerable<string> AdviserRequirementIds()
+        private IEnumerable<int?> AdviserRequirementIds()
         {
-            return _store.GetTypeEntitites("contact", "dfe_isadvisorrequiredos").Select(requirement => requirement.Id);
+            return _store.GetPickListItems("contact", "dfe_isadvisorrequiredos").Select(requirement => (int?)requirement.Id);
         }
     }
 }
