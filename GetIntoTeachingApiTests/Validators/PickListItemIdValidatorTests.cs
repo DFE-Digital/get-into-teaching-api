@@ -32,7 +32,7 @@ namespace GetIntoTeachingApiTests.Validators
         {
             var selector = ValidatorOptions.ValidatorSelectors.DefaultValidatorSelectorFactory();
             var validationContext = new ValidationContext(_item.Id, new PropertyChain(), selector);
-            var propertyValidatorContext = new PropertyValidatorContext(validationContext, PropertyRule.Create<int?, int?>(t => t), "prop");
+            var propertyValidatorContext = new PropertyValidatorContext(validationContext, PropertyRule.Create<int?, int?>(t => t), "Prop");
 
             var errors = _validator.Validate(propertyValidatorContext);
 
@@ -44,11 +44,12 @@ namespace GetIntoTeachingApiTests.Validators
         {
             var selector = ValidatorOptions.ValidatorSelectors.DefaultValidatorSelectorFactory();
             var validationContext = new ValidationContext(456, new PropertyChain(), selector);
-            var propertyValidatorContext = new PropertyValidatorContext(validationContext, PropertyRule.Create<int?, int?>(t => t), "prop");
+            var propertyValidatorContext = new PropertyValidatorContext(validationContext, PropertyRule.Create<int?, int?>(t => t), "Prop");
 
             var errors = _validator.Validate(propertyValidatorContext);
 
             errors.Should().NotBeEmpty();
+            errors.First().ErrorMessage.Should().Equals("Prop must be a valid contact/dfe_channel item.");
         }
     }
 }
