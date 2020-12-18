@@ -97,8 +97,8 @@ jobs:
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     outputs:
-      release_tag: ${{steps.tag_version.outputs.tag}}
-      release_sha: ${{steps.tag_version.outputs.sha}}
+      release_tag: ${{steps.tag_version.outputs.pr_number}}
+      release_sha: ${{github.sha}}
     steps:
        - name: Trigger Development Deployment
          uses: benc-uk/workflow-dispatch@v1.1
