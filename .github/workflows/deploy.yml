@@ -33,8 +33,6 @@ jobs:
     steps:
        - name: Checkout
          uses: actions/checkout@v2
-         with:
-             ref: ${{ github.event.inputs.sha }}
 
        - name: set-up-environment
          uses: DFE-Digital/github-actions/set-up-environment@master
@@ -138,7 +136,7 @@ jobs:
              tests/confidence/healthcheck.sh  "${{steps.variables.outputs.healthcheck}}"  "${{ steps.sha.outputs.short }}"
 
        - name: Update ${{ github.event.inputs.environment }} status
-         if: always() 
+         if: success() 
          uses: bobheadxi/deployments@v0.4.3
          with:
            step: finish

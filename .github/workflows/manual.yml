@@ -45,19 +45,19 @@ jobs:
            inputs: '{"environment": "${{github.event.inputs.environment}}" , "sha": "${{steps.tag_id.outputs.release_sha}}"  }'
            ref: "${{github.ref}}"
 
-       - name: Wait for Deployment to Production
+       - name: Wait for Deployment to ${{github.event.inputs.environment}}
          uses: fountainhead/action-wait-for-check@v1.0.0
          id: wait-for-deploy
          with:
            token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN}}
-           checkName: Deploy Production
+           checkName: Deploy ${{github.event.inputs.environment}}
            ref: "${{github.ref}}"
 
-       - name: Check if Production Deployment has returned with a failure
+       - name: Check if ${{github.event.inputs.environment}} Deployment has returned with a failure
          if: steps.wait-for-deploy.outputs.conclusion == 'failure'
          run: exit 1
 
-       - name: Check if Production Deployment has returned with a time out
+       - name: Check if ${{github.event.inputs.environment}} Deployment has returned with a time out
          if: steps.wait-for-deploy.outputs.conclusion == 'timed_out'
          run: exit 1
 
@@ -77,6 +77,6 @@ jobs:
          env:
            SLACK_COLOR:    ${{env.SLACK_FAILURE}}
            SLACK_TITLE:    "Manual Release Failed: ${{steps.tag_id.outputs.release_name}}"
-           SLACK_MESSAGE:  Failure deploying Production release
+           SLACK_MESSAGE:  Failure deploying ${{github.event.inputs.environment}} release
            SLACK_WEBHOOK:  ${{ secrets.SLACK_WEBHOOK }}
 

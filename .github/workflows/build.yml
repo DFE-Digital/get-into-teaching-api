@@ -10,7 +10,7 @@ on:
 jobs:
   turnstyle:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 60
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
