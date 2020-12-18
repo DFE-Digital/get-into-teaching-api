@@ -9,13 +9,16 @@ jobs:
   sonarcloud:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-java@v1
-        with:
-          java-version: '11'
-
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
+      - name: set-up-environment
+        uses: DFE-Digital/github-actions/set-up-environment@master
+
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11'
 
       - name: Install NotifyBintray
         run:  dotnet nuget add source --name NotifyBintray https://api.bintray.com/nuget/gov-uk-notify/nuget 
@@ -61,10 +64,8 @@ jobs:
         if: failure()
         uses: rtCamp/action-slack-notify@master
         env:
-           SLACK_CHANNEL: getintoteaching_tech
-           SLACK_COLOR: '#3278BD'
-           SLACK_ICON: https://github.com/rtCamp.png?size=48
-           SLACK_MESSAGE: ':disappointed_relieved: Pipeline Failure carrying out job ${{github.job}} :disappointed_relieved:'
-           SLACK_TITLE: 'Failure: ${{ github.workflow }}'
+           SLACK_COLOR:   ${{env.SLACK_FAILURE }}
+           SLACK_MESSAGE: Pipeline Failure carrying out job ${{github.job}} 
+           SLACK_TITLE:   'Failure: ${{ github.workflow }}'
            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
