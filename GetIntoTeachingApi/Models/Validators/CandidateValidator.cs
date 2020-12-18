@@ -4,18 +4,16 @@ using System.Linq;
 using FluentValidation;
 using FluentValidation.Validators;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Validators;
 
 namespace GetIntoTeachingApi.Models.Validators
 {
     public class CandidateValidator : AbstractValidator<Candidate>
     {
-        private readonly IStore _store;
         private readonly string[] _validEligibilityRulesPassedValues = new[] { "true", "false" };
 
         public CandidateValidator(IStore store)
         {
-            _store = store;
-
             RuleFor(candidate => candidate.FirstName).NotEmpty().MaximumLength(256);
             RuleFor(candidate => candidate.LastName).NotEmpty().MaximumLength(256);
             RuleFor(candidate => candidate.Email).NotEmpty().EmailAddress(EmailValidationMode.AspNetCoreCompatible).MaximumLength(100);
@@ -40,151 +38,63 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Must not contain multiple registrations for the same event.");
 
             RuleFor(candidate => candidate.PreferredTeachingSubjectId)
-                .Must(id => PreferredTeachingSubjectIds().Contains(id))
-                .Unless(candidate => candidate.PreferredTeachingSubjectId == null)
-                .WithMessage("Must be a valid teaching subject.");
+                .SetValidator(new LookupItemIdValidator("dfe_teachingsubjectlist", store))
+                .Unless(candidate => candidate.PreferredTeachingSubjectId == null);
             RuleFor(candidate => candidate.CountryId)
-                .Must(id => CountryIds().Contains(id))
-                .Unless(candidate => candidate.CountryId == null)
-                .WithMessage("Must be a valid country.");
+                .SetValidator(new LookupItemIdValidator("dfe_country", store))
+                .Unless(candidate => candidate.CountryId == null);
             RuleFor(candidate => candidate.PreferredEducationPhaseId)
-                .Must(id => PreferredEducationPhaseIds().Contains(id))
-                .Unless(candidate => candidate.PreferredEducationPhaseId == null)
-                .WithMessage("Must be a valid candidate education phase.");
+                .SetValidator(new PickListItemIdValidator("contact", "dfe_preferrededucationphase01", store))
+                .Unless(candidate => candidate.PreferredEducationPhaseId == null);
             RuleFor(candidate => candidate.InitialTeacherTrainingYearId)
-                .Must(id => InitialTeacherTrainingYearIds().Contains(id))
-                .Unless(candidate => candidate.InitialTeacherTrainingYearId == null)
-                .WithMessage("Must be a valid candidate initial teacher training year.");
+                .SetValidator(new PickListItemIdValidator("contact", "dfe_ittyear", store))
+                .Unless(candidate => candidate.InitialTeacherTrainingYearId == null);
             RuleFor(candidate => candidate.ChannelId)
-                .Must(id => ChannelIds().Contains(id))
-                .Unless(candidate => candidate.Id != null)
-                .WithMessage("Must be a valid candidate channel.");
+                .SetValidator(new PickListItemIdValidator("contact", "dfe_channelcreation", store))
+                .Unless(candidate => candidate.Id != null);
             RuleFor(candidate => candidate.ChannelId)
                 .Must(id => id == null)
                 .Unless(candidate => candidate.Id == null)
                 .WithMessage("You cannot change the channel of an existing candidate.");
             RuleFor(candidate => candidate.HasGcseEnglishId)
-                .Must(id => GcseStatusIds().Contains(id))
-                .Unless(candidate => candidate.HasGcseEnglishId == null)
-                .WithMessage("Must be a valid candidate GCSE status.");
+                .SetValidator(new PickListItemIdValidator("contact", "dfe_websitehasgcseenglish", store))
+                .Unless(candidate => candidate.HasGcseEnglishId == null);
             RuleFor(candidate => candidate.HasGcseMathsId)
-                .Must(id => GcseStatusIds().Contains(id))
-                .Unless(candidate => candidate.HasGcseMathsId == null)
-                .WithMessage("Must be a valid candidate GCSE status.");
+                .SetValidator(new PickListItemIdValidator("contact", "dfe_websitehasgcseenglish", store))
+                .Unless(candidate => candidate.HasGcseMathsId == null);
             RuleFor(candidate => candidate.HasGcseScienceId)
-                .Must(id => GcseStatusIds().Contains(id))
-                .Unless(candidate => candidate.HasGcseScienceId == null)
-                .WithMessage("Must be a valid candidate GCSE status.");
+                .SetValidator(new PickListItemIdValidator("contact", "dfe_websitehasgcseenglish", store))
+                .Unless(candidate => candidate.HasGcseScienceId == null);
             RuleFor(candidate => candidate.PlanningToRetakeGcseScienceId)
-                .Must(id => RetakeGcseStatusIds().Contains(id))
-                .Unless(candidate => candidate.PlanningToRetakeGcseScienceId == null)
-                .WithMessage("Must be a valid candidate retake GCSE status.");
+                .SetValidator(new PickListItemIdValidator("contact", "dfe_websiteplanningretakeenglishgcse", store))
+                .Unless(candidate => candidate.PlanningToRetakeGcseScienceId == null);
             RuleFor(candidate => candidate.PlanningToRetakeGcseEnglishId)
-                .Must(id => RetakeGcseStatusIds().Contains(id))
-                .Unless(candidate => candidate.PlanningToRetakeGcseEnglishId == null)
-                .WithMessage("Must be a valid candidate retake GCSE status.");
+                .SetValidator(new PickListItemIdValidator("contact", "dfe_websiteplanningretakeenglishgcse", store))
+                .Unless(candidate => candidate.PlanningToRetakeGcseEnglishId == null);
             RuleFor(candidate => candidate.PlanningToRetakeGcseMathsId)
-                .Must(id => RetakeGcseStatusIds().Contains(id))
-                .Unless(candidate => candidate.PlanningToRetakeGcseMathsId == null)
-                .WithMessage("Must be a valid candidate retake GCSE status.");
+                .SetValidator(new PickListItemIdValidator("contact", "dfe_websiteplanningretakeenglishgcse", store))
+                .Unless(candidate => candidate.PlanningToRetakeGcseMathsId == null);
             RuleFor(candidate => candidate.ConsiderationJourneyStageId)
-                .Must(id => ConsiderationJourneyStageIds().Contains(id))
-                .Unless(candidate => candidate.ConsiderationJourneyStageId == null)
-                .WithMessage("Must be a valid candidate consideration journey stage.");
+                .SetValidator(new PickListItemIdValidator("contact", "dfe_websitewhereinconsiderationjourney", store))
+                .Unless(candidate => candidate.ConsiderationJourneyStageId == null);
             RuleFor(candidate => candidate.TypeId)
-                .Must(id => TypeIds().Contains(id))
-                .Unless(candidate => candidate.TypeId == null)
-                .WithMessage("Must be a valid candidate type.");
+                .SetValidator(new PickListItemIdValidator("contact", "dfe_typeofcandidate", store))
+                .Unless(candidate => candidate.TypeId == null);
             RuleFor(candidate => candidate.AssignmentStatusId)
-                .Must(id => AssignmentStatusIds().Contains(id))
-                .Unless(candidate => candidate.AssignmentStatusId == null)
-                .WithMessage("Must be a valid candidate assignment status.");
+                .SetValidator(new PickListItemIdValidator("contact", "dfe_candidatestatus", store))
+                .Unless(candidate => candidate.AssignmentStatusId == null);
             RuleFor(candidate => candidate.AdviserEligibilityId)
-                .Must(id => AdviserEligibilityIds().Contains(id))
-                .Unless(candidate => candidate.AdviserEligibilityId == null)
-                .WithMessage("Must be a valid candidate adviser eligibility.");
+                .SetValidator(new PickListItemIdValidator("contact", "dfe_iscandidateeligibleforadviser", store))
+                .Unless(candidate => candidate.AdviserEligibilityId == null);
             RuleFor(candidate => candidate.AdviserRequirementId)
-                .Must(id => AdviserRequirementIds().Contains(id))
-                .Unless(candidate => candidate.AdviserRequirementId == null)
-                .WithMessage("Must be a valid candidate adviser requirement.");
+                .SetValidator(new PickListItemIdValidator("contact", "dfe_websitewhereinconsiderationjourney", store))
+                .Unless(candidate => candidate.AdviserRequirementId == null);
             RuleFor(candidate => candidate.EventsSubscriptionChannelId)
-                .Must(id => EventSubscriptionChannelIds().Contains(id))
-                .Unless(candidate => candidate.EventsSubscriptionChannelId == null)
-                .WithMessage("Must be a valid event subscription channel.");
+                .SetValidator(new PickListItemIdValidator("contact", "dfe_gitiseventsservicesubscriptionchannel", store))
+                .Unless(candidate => candidate.EventsSubscriptionChannelId == null);
             RuleFor(candidate => candidate.MailingListSubscriptionChannelId)
-                .Must(id => MailingListSubscriptionChannelIds().Contains(id))
-                .Unless(candidate => candidate.MailingListSubscriptionChannelId == null)
-                .WithMessage("Must be a valid mailing list subscription channel.");
-        }
-
-        private IEnumerable<Guid?> PreferredTeachingSubjectIds()
-        {
-            return _store.GetLookupItems("dfe_teachingsubjectlist").Select(subject => subject.Id);
-        }
-
-        private IEnumerable<Guid?> CountryIds()
-        {
-            return _store.GetLookupItems("dfe_country").Select(country => country.Id);
-        }
-
-        private IEnumerable<int?> PreferredEducationPhaseIds()
-        {
-            return _store.GetPickListItems("contact", "dfe_preferrededucationphase01").Select(phase => (int?)phase.Id);
-        }
-
-        private IEnumerable<int?> InitialTeacherTrainingYearIds()
-        {
-            return _store.GetPickListItems("contact", "dfe_ittyear").Select(year => (int?)year.Id);
-        }
-
-        private IEnumerable<int?> ChannelIds()
-        {
-            return _store.GetPickListItems("contact", "dfe_channelcreation").Select(channel => (int?)channel.Id);
-        }
-
-        private IEnumerable<int?> MailingListSubscriptionChannelIds()
-        {
-            return _store.GetPickListItems("contact", "dfe_gitismlservicesubscriptionchannel").Select(channel => (int?)channel.Id);
-        }
-
-        private IEnumerable<int?> EventSubscriptionChannelIds()
-        {
-            return _store.GetPickListItems("contact", "dfe_gitiseventsservicesubscriptionchannel").Select(channel => (int?)channel.Id);
-        }
-
-        private IEnumerable<int?> GcseStatusIds()
-        {
-            return _store.GetPickListItems("contact", "dfe_websitehasgcseenglish").Select(status => (int?)status.Id);
-        }
-
-        private IEnumerable<int?> RetakeGcseStatusIds()
-        {
-            return _store.GetPickListItems("contact", "dfe_websiteplanningretakeenglishgcse").Select(status => (int?)status.Id);
-        }
-
-        private IEnumerable<int?> ConsiderationJourneyStageIds()
-        {
-            return _store.GetPickListItems("contact", "dfe_websitewhereinconsiderationjourney").Select(describe => (int?)describe.Id);
-        }
-
-        private IEnumerable<int?> TypeIds()
-        {
-            return _store.GetPickListItems("contact", "dfe_typeofcandidate").Select(type => (int?)type.Id);
-        }
-
-        private IEnumerable<int?> AssignmentStatusIds()
-        {
-            return _store.GetPickListItems("contact", "dfe_candidatestatus").Select(type => (int?)type.Id);
-        }
-
-        private IEnumerable<int?> AdviserEligibilityIds()
-        {
-            return _store.GetPickListItems("contact", "dfe_iscandidateeligibleforadviser").Select(eligibility => (int?)eligibility.Id);
-        }
-
-        private IEnumerable<int?> AdviserRequirementIds()
-        {
-            return _store.GetPickListItems("contact", "dfe_isadvisorrequiredos").Select(requirement => (int?)requirement.Id);
+                .SetValidator(new PickListItemIdValidator("contact", "dfe_gitismlservicesubscriptionchannel", store))
+                .Unless(candidate => candidate.MailingListSubscriptionChannelId == null);
         }
     }
 }
