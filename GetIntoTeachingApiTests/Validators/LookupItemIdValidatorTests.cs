@@ -33,7 +33,7 @@ namespace GetIntoTeachingApiTests.Validators
         {
             var selector = ValidatorOptions.ValidatorSelectors.DefaultValidatorSelectorFactory();
             var validationContext = new ValidationContext(_item.Id, new PropertyChain(), selector);
-            var propertyValidatorContext = new PropertyValidatorContext(validationContext, PropertyRule.Create<Guid, Guid>(t => t), "prop");
+            var propertyValidatorContext = new PropertyValidatorContext(validationContext, PropertyRule.Create<Guid, Guid>(t => t), "Prop");
 
             var errors = _validator.Validate(propertyValidatorContext);
 
@@ -45,11 +45,12 @@ namespace GetIntoTeachingApiTests.Validators
         {
             var selector = ValidatorOptions.ValidatorSelectors.DefaultValidatorSelectorFactory();
             var validationContext = new ValidationContext(Guid.NewGuid(), new PropertyChain(), selector);
-            var propertyValidatorContext = new PropertyValidatorContext(validationContext, PropertyRule.Create<Guid, Guid>(t => t), "prop");
+            var propertyValidatorContext = new PropertyValidatorContext(validationContext, PropertyRule.Create<Guid, Guid>(t => t), "Prop");
 
             var errors = _validator.Validate(propertyValidatorContext);
 
             errors.Should().NotBeEmpty();
+            errors.First().ErrorMessage.Should().Equals("Prop must be a valid dfe_country item.");
         }
     }
 }

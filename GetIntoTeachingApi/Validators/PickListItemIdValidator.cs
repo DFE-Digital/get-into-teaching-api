@@ -29,6 +29,7 @@ namespace GetIntoTeachingApi.Validators
                 return true;
             }
 
+            context.MessageFormatter.AppendArgument("PropertyName", context.PropertyName);
             context.MessageFormatter.AppendArgument("EntityName", _entityName);
             context.MessageFormatter.AppendArgument("AttributeName", _attributeName);
 
