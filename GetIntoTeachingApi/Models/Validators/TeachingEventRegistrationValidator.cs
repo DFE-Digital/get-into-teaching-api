@@ -23,7 +23,7 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Attendence cannot be registered for this event via the API (it has no WebFeedId).");
 
             RuleFor(registration => registration.ChannelId)
-                .Must(id => ChannelIds().Contains(id.ToString()))
+                .Must(id => ChannelIds().Contains(id))
                 .Unless(registration => registration.Id != null)
                 .WithMessage("Must be a valid teaching event registration channel.");
             RuleFor(regigstration => regigstration.ChannelId)
@@ -32,9 +32,9 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("You cannot change the channel of an existing teaching event registration.");
         }
 
-        private IEnumerable<string> ChannelIds()
+        private IEnumerable<int?> ChannelIds()
         {
-            return _store.GetTypeEntitites("msevtmgt_eventregistration", "dfe_channelcreation").Select(channel => channel.Id);
+            return _store.GetPickListItems("msevtmgt_eventregistration", "dfe_channelcreation").Select(channel => (int?)channel.Id);
         }
 
         private bool BeAvailableForOnlineRegistrations(Guid id)

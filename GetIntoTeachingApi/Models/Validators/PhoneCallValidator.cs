@@ -17,13 +17,13 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(phoneCall => phoneCall.ScheduledAt).GreaterThan(candidate => DateTime.UtcNow);
 
             RuleFor(candidate => candidate.ChannelId)
-                .Must(id => ChannelIds().Contains(id.ToString()))
+                .Must(id => ChannelIds().Contains(id))
                 .WithMessage("Must be a valid candidate channel.");
         }
 
-        private IEnumerable<string> ChannelIds()
+        private IEnumerable<int?> ChannelIds()
         {
-            return _store.GetTypeEntitites("phonecall", "dfe_channelcreation").Select(channel => channel.Id);
+            return _store.GetPickListItems("phonecall", "dfe_channelcreation").Select(channel => (int?)channel.Id);
         }
     }
 }
