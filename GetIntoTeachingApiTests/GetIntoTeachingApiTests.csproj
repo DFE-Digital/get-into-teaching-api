@@ -44,6 +44,7 @@
 
   <ItemGroup>
     <Folder Include="Redis\" />
+    <Folder Include="Validators\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Controllers\LookupItemsControllerTests.cs" />
