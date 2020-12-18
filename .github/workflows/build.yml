@@ -2,23 +2,22 @@ name: Build
 on:
   repository_dispatch:
   pull_request:
-    types: [assigned, opened, synchronize, reopened]
+    types: [assigned, opened, synchronize, reopened, ready_for_review]
   push:
     branches:
       - master
 
-env:
-  DOCKERHUB_REPOSITORY:  dfedigital/get-into-teaching-api
-  DOMAIN:                london.cloudapps.digital
-  APPLICATION:           Get Into Teaching API Service
-  PAAS_APPLICATION_NAME: get-into-teaching-api
-
-  
 jobs:
   turnstyle:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 60
     steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: set-up-environment
+        uses: DFE-Digital/github-actions/set-up-environment@master
+
       - name: Check workflow concurrency
         uses: softprops/turnstyle@v1
         with:
@@ -28,16 +27,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Slack Notification
-        if: failure()
+        if: failure() && github.ref == 'refs/heads/master'
         uses: rtCamp/action-slack-notify@master
         env:
-           SLACK_CHANNEL: getintoteaching_tech
-           SLACK_COLOR: '#3278BD'
-           SLACK_ICON: https://github.com/rtCamp.png?size=48
+           SLACK_COLOR:   ${{env.SLACK_FAILURE}}
            SLACK_MESSAGE: Content Delivery has failed. This is due to a workflow concurrency issue
-           SLACK_TITLE: Turnstyle failure ${{ github.workflow }}
+           SLACK_TITLE:   Turnstyle failure ${{ github.workflow }}
            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-           SLACK_FOOTER: ${{env.APPLICATION}}
 
   build:
     name: Build and push to DockerHub
@@ -48,6 +44,9 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
+
+      - name: set-up-environment
+        uses: DFE-Digital/github-actions/set-up-environment@master
 
       - name: Set up Docker Buildx
         id: buildx
@@ -84,16 +83,13 @@ jobs:
           build-args: GIT_COMMIT_SHA=${{ steps.vars.outputs.sha_short }}
 
       - name: Slack Notification
-        if: failure()
+        if: failure() && github.ref == 'refs/heads/master'
         uses: rtCamp/action-slack-notify@master
         env:
-           SLACK_CHANNEL: getintoteaching_tech
-           SLACK_COLOR: '#3278BD'
-           SLACK_ICON: https://github.com/rtCamp.png?size=48
+           SLACK_COLOR:   ${{env.SLACK_FAILURE}}
            SLACK_MESSAGE: 'The pipeline has failed to build the API image'
-           SLACK_TITLE: 'Failure to Build API '
+           SLACK_TITLE:   'Failure to Build API '
            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-           SLACK_FOOTER: ${{ env.APPLICATION }}
 
   development:
     name: Development Deployment
@@ -173,13 +169,10 @@ jobs:
          if: failure()
          uses: rtCamp/action-slack-notify@master
          env:
-           SLACK_CHANNEL: getintoteaching_tech
-           SLACK_COLOR: '#B90E0A'
-           SLACK_ICON: https://github.com/rtCamp.png?size=48
-           SLACK_TITLE: Failure in Post-Development Deploy
+           SLACK_COLOR:   ${{env.SLACK_FAILURE}}
+           SLACK_TITLE:   Failure in Post-Development Deploy
            SLACK_MESSAGE: Failure with initialising QA deployment for ${{env.APPLICATION}}
            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-           SLACK_FOOTER: ${{env.APPLICATION}}
 
   cypress:
      name: Run Cypress Tests on QA
@@ -196,7 +189,6 @@ jobs:
            inputs: '{"application": "BOTH" , "reference": "${{ github.sha }}" }'
            ref:  refs/heads/master
 
-
   production:
      name: Production Deployment
      runs-on: ubuntu-latest
@@ -210,22 +202,52 @@ jobs:
            TOKEN: ${{secrets.ACTIONS_API_ACCESS_TOKEN}}
 
        - name: Publish Release  
-         if: steps.tag_id.outputs.found == 1
+         if: steps.tag_id.outputs.release_id
          uses: eregon/publish-release@v1
          env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
          with:
            release_id: ${{steps.tag_id.outputs.release_id}}
+           
+       - name: Trigger Deployment to Production
+         uses: benc-uk/workflow-dispatch@v1.1
+         with:
+           workflow: Deploy to PaaS
+           token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN }}
+           inputs: '{"environment": "Production", "sha": "${{ github.sha }}" }'
+           ref: "${{github.ref}}" 
+
+       - name: Wait for Deployment to Production
+         uses: fountainhead/action-wait-for-check@v1.0.0
+         id: wait-for-deploy
+         with:
+           token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN}}
+           checkName: Deploy Production
+           ref: "${{github.ref}}" 
+
+       - name: Check if Production Deployment has returned with a failure
+         if: steps.wait-for-deploy.outputs.conclusion == 'failure'
+         run: exit 1
+
+       - name: Check if Production Deployment has returned with a time out
+         if: steps.wait-for-deploy.outputs.conclusion == 'timed_out'
+         run: exit 1
+
+       - name: Slack Release Notification
+         if: steps.tag_id.outputs.release_id
+         uses: rtCamp/action-slack-notify@master
+         env:
+           SLACK_COLOR:    ${{env.SLACK_SUCCESS}}
+           SLACK_TITLE:    "Release Published: ${{steps.tag_id.outputs.release_name}}"
+           SLACK_MESSAGE:  ${{steps.tag_id.outputs.release_body}}
+           SLACK_WEBHOOK:  ${{ secrets.SLACK_RELEASE_NOTE_WEBHOOK }}
+           MSG_MINIMAL:    true
 
        - name: Slack Notification
          if: failure()
          uses: rtCamp/action-slack-notify@master
          env:
-           SLACK_USERNAME: GiT Deployment
-           SLACK_CHANNEL: getintoteaching_tech
-           SLACK_COLOR: '#B90E0A'
-           SLACK_ICON: https://github.com/rtCamp.png?size=48
-           SLACK_TITLE: Production Release ${{github.event.title}}
-           SLACK_MESSAGE: Failure deploying Production release
-           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-           SLACK_FOOTER: ${{env.APPLICATION}}
+           SLACK_COLOR:    ${{env.SLACK_FAILURE}}
+           SLACK_TITLE:    "Release Failed: ${{steps.tag_id.outputs.release_name}}"
+           SLACK_MESSAGE:  Failure deploying Production release
+           SLACK_WEBHOOK:  ${{ secrets.SLACK_WEBHOOK }}

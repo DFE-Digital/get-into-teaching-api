@@ -18,27 +18,65 @@ jobs:
       run:
         shell: bash
     steps:
+       - name: Checkout
+         uses: actions/checkout@v2
+   
+       - name: set-up-environment
+         uses: DFE-Digital/github-actions/set-up-environment@master
 
-       - name: Check Tag (${{github.event.inputs.tag}}) is a Release 
-         id: tag_info
+       - name: Get Release Id from Tag
+         id: tag_id
+         uses: DFE-Digital/github-actions/DraftReleaseByTag@master
+         with:
+           TAG: ${{ github.event.inputs.tag }}
+           TOKEN: ${{secrets.ACTIONS_API_ACCESS_TOKEN}}
+
+       - name: Check if found
+         if:  steps.tag_id.outputs.found == 0 
          run: |
-               rval=$(curl -s -X GET https://api.github.com/repos/${{github.repository}}/releases/tags/${{ github.event.inputs.tag }} )
-
-               if [ $(echo ${rval} | jq -r '.message' )  = "Not Found" ]
-               then
-                   echo "Tag ${{ github.event.inputs.tags }} cannot be found in releases"
-                   exit 1
-               fi
-               echo ::set-output name=sha::$(echo ${rval} | jq -r '.target_commitish' )
-               echo ::set-output name=tag::$(echo ${rval} | jq -r '.tag_name' )
-               exit 0
+              echo "::error ::Tag ${{ github.event.inputs.tag }} cannot be found in releases"
+              exit 1
 
        - name: Trigger Deployment to ${{github.event.inputs.environment}}
          uses: benc-uk/workflow-dispatch@v1.1
          with:
            workflow: Deploy to PaaS
            token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN }}
-           inputs: '{"environment": "${{github.event.inputs.environment}}" , "sha": "${{steps.tag_info.outputs.sha}}"  }'
+           inputs: '{"environment": "${{github.event.inputs.environment}}" , "sha": "${{steps.tag_id.outputs.release_sha}}"  }'
+           ref: "${{github.ref}}"
 
+       - name: Wait for Deployment to ${{github.event.inputs.environment}}
+         uses: fountainhead/action-wait-for-check@v1.0.0
+         id: wait-for-deploy
+         with:
+           token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN}}
+           checkName: Deploy ${{github.event.inputs.environment}}
+           ref: "${{github.ref}}"
 
+       - name: Check if ${{github.event.inputs.environment}} Deployment has returned with a failure
+         if: steps.wait-for-deploy.outputs.conclusion == 'failure'
+         run: exit 1
+
+       - name: Check if ${{github.event.inputs.environment}} Deployment has returned with a time out
+         if: steps.wait-for-deploy.outputs.conclusion == 'timed_out'
+         run: exit 1
+
+       - name: Slack Release Notification
+         if: steps.tag_id.outputs.release_id && github.event.inputs.environment == 'Production'
+         uses: rtCamp/action-slack-notify@master
+         env:
+           SLACK_COLOR:    ${{env.SLACK_SUCCESS}}
+           SLACK_TITLE:    "Release Published to ${{github.event.inputs.environment}}: ${{steps.tag_id.outputs.release_name}}"
+           SLACK_MESSAGE:  ${{steps.tag_id.outputs.release_body}}
+           SLACK_WEBHOOK:  ${{ secrets.SLACK_RELEASE_NOTE_WEBHOOK }}
+           MSG_MINIMAL:    true
+
+       - name: Slack Notification
+         if: failure()
+         uses: rtCamp/action-slack-notify@master
+         env:
+           SLACK_COLOR:    ${{env.SLACK_FAILURE}}
+           SLACK_TITLE:    "Manual Release Failed: ${{steps.tag_id.outputs.release_name}}"
+           SLACK_MESSAGE:  Failure deploying ${{github.event.inputs.environment}} release
+           SLACK_WEBHOOK:  ${{ secrets.SLACK_WEBHOOK }}
 

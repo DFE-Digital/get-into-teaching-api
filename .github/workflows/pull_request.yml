@@ -9,11 +9,15 @@ env:
   PAAS_APPLICATION_NAME: get-into-teaching-api
 
 jobs:
+
   test_dot_net:
     runs-on: ubuntu-latest
     steps:
 
     - uses: actions/checkout@v2
+
+    - name: set-up-environment
+      uses: DFE-Digital/github-actions/set-up-environment@master
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
@@ -44,10 +48,7 @@ jobs:
       if: failure()
       uses: rtCamp/action-slack-notify@master
       env:
-           SLACK_CHANNEL: getintoteaching_tech
-           SLACK_COLOR: '#3278BD'
-           SLACK_ICON: https://github.com/rtCamp.png?size=48
-           SLACK_MESSAGE: 'Pipeline Failure carrying out job ${{github.job}}'
-           SLACK_TITLE: 'Failure: ${{ github.workflow }}'
+           SLACK_COLOR:   ${{env.SLACK_FAILURE }}
+           SLACK_MESSAGE: Pipeline Failure carrying out job ${{github.job}}
+           SLACK_TITLE:   'Failure: ${{ github.workflow }}'
            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-           SLACK_FOOTER: ${{env.APPLICATION }}
