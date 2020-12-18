@@ -19,7 +19,7 @@ namespace GetIntoTeachingApi.Models.Validators
                 .Matches(Location.OutwardOrFullPostcodeRegex)
                 .Unless(request => request.Postcode == null && request.Radius == null);
             RuleFor(request => request.TypeId)
-                .Must(id => TypeIds().Contains(id.ToString()))
+                .Must(id => TypeIds().Contains(id))
                 .Unless(request => request.TypeId == null)
                 .WithMessage("Must be a valid type.");
             RuleFor(request => request.Radius).GreaterThan(0);
@@ -34,9 +34,9 @@ namespace GetIntoTeachingApi.Models.Validators
             return request.StartAfter < request.StartBefore;
         }
 
-        private IEnumerable<string> TypeIds()
+        private IEnumerable<int?> TypeIds()
         {
-            return _store.GetTypeEntitites("msevtmgt_event", "dfe_event_type").Select(type => type.Id);
+            return _store.GetPickListItems("msevtmgt_event", "dfe_event_type").Select(type => (int?)type.Id);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using GetIntoTeachingApi.Services;
@@ -14,23 +15,23 @@ namespace GetIntoTeachingApi.Models.Validators
             _store = store;
 
             RuleFor(position => position.EducationPhaseId)
-                .Must(id => EducationPhaseIds().Contains(id.ToString()))
+                .Must(id => EducationPhaseIds().Contains(id))
                 .WithMessage("Must be a valid past teaching position education phase.");
             RuleFor(candidate => candidate.SubjectTaughtId)
-                .Must(id => TeachingSubjectIds().Contains(id.ToString()))
+                .Must(id => TeachingSubjectIds().Contains(id))
                 .WithMessage("Must be a valid teaching subject.");
         }
 
-        private IEnumerable<string> TeachingSubjectIds()
+        private IEnumerable<Guid?> TeachingSubjectIds()
         {
-            return _store.GetTypeEntitites("dfe_teachingsubjectlist").Select(subject => subject.Id);
+            return _store.GetLookupItems("dfe_teachingsubjectlist").Select(subject => subject.Id);
         }
 
-        private IEnumerable<string> EducationPhaseIds()
+        private IEnumerable<int?> EducationPhaseIds()
         {
             return _store.
-                GetTypeEntitites("dfe_candidatepastteachingposition", "dfe_educationphase")
-                .Select(type => type.Id);
+                GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase")
+                .Select(type => (int?)type.Id);
         }
     }
 }

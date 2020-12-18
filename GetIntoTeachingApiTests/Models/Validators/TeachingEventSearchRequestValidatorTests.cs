@@ -24,17 +24,17 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var mockPickListItem = new TypeEntity { Id = "123" };
+            var mockPickListItem = new PickListItem { Id = 123 };
 
             _mockStore
-                .Setup(mock => mock.GetTypeEntitites("msevtmgt_event", "dfe_event_type"))
+                .Setup(mock => mock.GetPickListItems("msevtmgt_event", "dfe_event_type"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
 
             var request = new TeachingEventSearchRequest()
             {
                 Postcode = "KY11 9HF",
                 Radius = 10,
-                TypeId = int.Parse(mockPickListItem.Id),
+                TypeId = mockPickListItem.Id,
                 StartAfter = DateTime.UtcNow.AddDays(-1),
                 StartBefore = DateTime.UtcNow.AddDays(1)
             };
