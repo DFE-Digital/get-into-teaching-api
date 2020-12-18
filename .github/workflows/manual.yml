@@ -62,7 +62,7 @@ jobs:
          run: exit 1
 
        - name: Slack Release Notification
-         if: steps.tag_id.outputs.release_id
+         if: steps.tag_id.outputs.release_id && github.event.inputs.environment == 'Production'
          uses: rtCamp/action-slack-notify@master
          env:
            SLACK_COLOR:    ${{env.SLACK_SUCCESS}}
