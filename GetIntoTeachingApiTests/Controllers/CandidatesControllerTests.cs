@@ -8,6 +8,11 @@ using GetIntoTeachingApi.Services;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using GetIntoTeachingApi.Attributes;
+using Hangfire;
+using GetIntoTeachingApi.Jobs;
+using Hangfire.Common;
+using System;
+using Hangfire.States;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -16,14 +21,16 @@ namespace GetIntoTeachingApiTests.Controllers
         private readonly Mock<ICandidateAccessTokenService> _mockTokenService;
         private readonly Mock<INotifyService> _mockNotifyService;
         private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly CandidatesController _controller;
 
         public CandidatesControllerTests()
         {
             _mockTokenService = new Mock<ICandidateAccessTokenService>();
             _mockNotifyService = new Mock<INotifyService>();
+            _mockJobClient = new Mock<IBackgroundJobClient>();
             _mockCrm = new Mock<ICrmService>();
-            _controller = new CandidatesController(_mockTokenService.Object, _mockNotifyService.Object, _mockCrm.Object);
+            _controller = new CandidatesController(_mockTokenService.Object, _mockNotifyService.Object, _mockCrm.Object, _mockJobClient.Object);
         }
 
         [Fact]
@@ -81,10 +88,36 @@ namespace GetIntoTeachingApiTests.Controllers
 
             response.Should().BeOfType<NotFoundResult>();
 
-            _mockNotifyService.Verify(mock => 
-                mock.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, dynamic>>()), 
+            _mockNotifyService.Verify(mock =>
+                mock.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, dynamic>>()),
                 Times.Never()
             );
+        }
+
+        [Fact]
+        public void CreateLongLivedAccessToken_WhenCandidateCanNotBeFound_ReturnsNotFound()
+        {
+            var candidateId = Guid.NewGuid();
+            _mockCrm.Setup(mock => mock.GetCandidate(candidateId)).Returns<Candidate>(null);
+
+            var response = _controller.CreateLongLivedAccessToken(candidateId);
+
+            response.Should().BeOfType<NotFoundResult>();
+        }
+
+        [Fact]
+        public void CreateLongLivedAccessToken_WithExistingCandidate_CreatesAccessTokenAndReturnsNoContent()
+        {
+            var candidate = new Candidate() { Id = Guid.NewGuid() };
+            _mockCrm.Setup(mock => mock.GetCandidate((Guid)candidate.Id)).Returns(candidate);
+
+            var response = _controller.CreateLongLivedAccessToken((Guid)candidate.Id);
+
+            candidate.LongLivedAccessToken.Should().NotBeNull();
+            response.Should().BeOfType<NoContentResult>();
+            _mockJobClient.Verify(x => x.Create(
+                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" && candidate == (Candidate)job.Args[0]),
+                It.IsAny<EnqueuedState>()));
         }
     }
 }

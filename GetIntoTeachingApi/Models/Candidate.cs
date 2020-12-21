@@ -168,6 +168,8 @@ namespace GetIntoTeachingApi.Models
         public bool? OptOutOfGdpr { get; set; } = false;
         [EntityField("dfe_newregistrant")]
         public bool IsNewRegistrant { get; set; }
+        [EntityField("dfe_bursaryemailtext")]
+        public string LongLivedAccessToken { get; set; }
 
         [EntityField("dfe_gitisttaserviceissubscriber")]
         public bool? HasTeacherTrainingAdviserSubscription { get; set; }
