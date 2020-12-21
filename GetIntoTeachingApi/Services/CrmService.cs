@@ -103,6 +103,14 @@ namespace GetIntoTeachingApi.Services
             return entity == null ? null : new Candidate(entity, this);
         }
 
+        public Candidate LookupCandidate(Guid longLivedAccessToken)
+        {
+            var entity = _service.CreateQuery("contact", Context())
+                .FirstOrDefault(c => c.GetAttributeValue<string>("dfe_bursaryemailtext") == longLivedAccessToken.ToString());
+
+            return entity == null ? null : new Candidate(entity, this);
+        }
+
         public bool CandidateAlreadyHasLocalEventSubscriptionType(Guid candidateId)
         {
             return GetCandidate(candidateId).EventsSubscriptionTypeId == (int)Candidate.SubscriptionType.LocalEvent;
