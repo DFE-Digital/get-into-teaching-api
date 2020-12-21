@@ -88,6 +88,7 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("TeacherId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_dfesnumber");
             type.GetProperty("StatusIsWaitingToBeAssignedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_waitingtobeassigneddate");
             type.GetProperty("OptOutOfGdpr").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "msdyn_gdproptout");
+            type.GetProperty("LongLivedAccessToken").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_bursaryemailtext");
 
             type.GetProperty("TeacherTrainingAdviserSubscriptionChannelId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_gitisttaservicesubscriptionchannel" && a.Type == typeof(OptionSetValue));
