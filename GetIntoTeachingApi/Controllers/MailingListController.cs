@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
@@ -84,6 +85,30 @@ exchanged for your token matches the request payload here).",
             var candidate = _crm.MatchCandidate(request);
 
             if (candidate == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new MailingListAddMember(candidate));
+        }
+
+        [HttpPost]
+        [Route("members/{candidateId}/{longLivedAccessToken}")]
+        [SwaggerOperation(
+            Summary = "Retrieves a pre-populated MailingListAddMember for the candidate.",
+            Description = @"Retrieves a pre-populated MailingListAddMember for the candidate.
+                The `longLivedAccessToken` is obtained from a `POST /candidates/long_lived_access_tokens` request.",
+            OperationId = "GetPreFilledMailingListAddMemberLongLived",
+            Tags = new[] { "Mailing List" })]
+        [ProducesResponseType(typeof(MailingListAddMember), 200)]
+        [ProducesResponseType(404)]
+        public IActionResult GetMember(
+            [FromRoute, SwaggerParameter("Candidate id.", Required = true)] Guid candidateId,
+            [FromRoute, SwaggerParameter("Long lived access token.", Required = true)] Guid longLivedAccessToken)
+        {
+            var candidate = _crm.LookupCandidate(longLivedAccessToken);
+
+            if (candidate == null || candidate.Id != candidateId)
             {
                 return NotFound();
             }

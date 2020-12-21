@@ -14,6 +14,7 @@ namespace GetIntoTeachingApi.Services
         IEnumerable<PrivacyPolicy> GetPrivacyPolicies();
         Candidate MatchCandidate(ExistingCandidateRequest request);
         Candidate GetCandidate(Guid id);
+        Candidate LookupCandidate(Guid longLivedAccessToken);
         IEnumerable<TeachingEvent> GetTeachingEvents();
         IEnumerable<CallbackBookingQuota> GetCallbackBookingQuotas();
         CallbackBookingQuota GetCallbackBookingQuota(DateTime scheduledAt);

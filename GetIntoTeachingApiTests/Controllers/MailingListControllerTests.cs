@@ -106,6 +106,43 @@ namespace GetIntoTeachingApiTests.Controllers
                 It.IsAny<EnqueuedState>()));
         }
 
+        [Fact]
+        public void GetMember_ValidLongLivedAccessToken_RespondsWithMailingListAddMember()
+        {
+            var token = Guid.NewGuid();
+            var candidate = new Candidate { Id = Guid.NewGuid(), LongLivedAccessToken = token.ToString() };
+            _mockCrm.Setup(mock => mock.LookupCandidate(token)).Returns(candidate);
+
+            var response = _controller.GetMember((Guid)candidate.Id, token);
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            var responseModel = ok.Value as MailingListAddMember;
+            responseModel.CandidateId.Should().Be(candidate.Id);
+        }
+
+        [Fact]
+        public void GetMember_LongLivedAccessTokenIsNotFound_RespondsWithNotFound()
+        {
+            var token = Guid.NewGuid();
+            _mockCrm.Setup(mock => mock.LookupCandidate(token)).Returns<Candidate>(null);
+
+            var response = _controller.GetMember(Guid.NewGuid(), token);
+
+            response.Should().BeOfType<NotFoundResult>();
+        }
+
+        [Fact]
+        public void GetMember_IncorrectLongLivedAccessToken_RespondsWithNotFound()
+        {
+            var token = Guid.NewGuid();
+            var candidate = new Candidate() { Id = Guid.NewGuid(), LongLivedAccessToken = token.ToString() };
+            _mockCrm.Setup(mock => mock.LookupCandidate(token)).Returns(candidate);
+
+            var response = _controller.GetMember(Guid.NewGuid(), token);
+
+            response.Should().BeOfType<NotFoundResult>();
+        }
+
         private static bool IsMatch(Candidate candidateA, Candidate candidateB)
         {
             // Compares ignoring date attributes that are dynamic.

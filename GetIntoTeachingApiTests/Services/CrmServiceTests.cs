@@ -18,6 +18,7 @@ namespace GetIntoTeachingApiTests.Services
     {
         private static readonly Guid JaneDoeGuid = new Guid("bf927e43-5650-44aa-859a-8297139b8ddd");
         private static readonly Guid JohnDoeGuid = new Guid("cf927e43-5650-44aa-859a-8297139b8eee");
+        private static readonly Guid JaneDoeLongLivedAccessToken = new Guid("de927e43-5650-44aa-859a-8297139b8efc");
         private readonly Mock<IOrganizationServiceAdapter> _mockService;
         private readonly OrganizationServiceContext _context;
         private readonly ICrmService _crm;
@@ -266,6 +267,25 @@ namespace GetIntoTeachingApiTests.Services
             result.Should().BeNull();
         }
 
+        [Fact]
+        public void LookupCandidate_WithLongLivedAccessToken_ReturnsCorrectly()
+        {
+            _mockService.Setup(m => m.CreateQuery("contact", _context))
+                .Returns(MockCandidates);
+
+            var result = _crm.LookupCandidate(JaneDoeLongLivedAccessToken);
+
+            result.Id.Should().Be(JaneDoeGuid);
+        }
+
+        [Fact]
+        public void LookupCandidate_WithNonExistentLongLivedAccessToken_ReturnsNull()
+        {
+            var result = _crm.LookupCandidate(Guid.NewGuid());
+
+            result.Should().BeNull();
+        }
+
         [Theory]
         [InlineData("john@doe.com", "New John", "Doe", "New John")]
         [InlineData("JOHN@doe.com", "New John", "Doe", "New John")]
@@ -434,6 +454,7 @@ namespace GetIntoTeachingApiTests.Services
                 Id = JaneDoeGuid
             };
             candidate1["contactid"] = new EntityReference("contactid", JaneDoeGuid);
+            candidate1["dfe_bursaryemailtext"] = JaneDoeLongLivedAccessToken.ToString();
             candidate1["statecode"] = Candidate.Status.Active;
             candidate1["emailaddress1"] = "jane@doe.com";
             candidate1["firstname"] = "Jane";
