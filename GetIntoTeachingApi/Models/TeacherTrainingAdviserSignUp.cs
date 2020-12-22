@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Attributes;
 using Swashbuckle.AspNetCore.Annotations;
+using static GetIntoTeachingApi.Models.SubscriptionConfigurer;
 
 namespace GetIntoTeachingApi.Models
 {
@@ -298,14 +299,7 @@ namespace GetIntoTeachingApi.Models
 
         private void ConfigureSubscription(Candidate candidate)
         {
-            candidate.HasTeacherTrainingAdviserSubscription = true;
-            candidate.TeacherTrainingAdviserSubscriptionChannelId = (int)Candidate.SubscriptionChannel.TeacherTrainingAdviser;
-            candidate.TeacherTrainingAdviserSubscriptionStartAt = DateTime.UtcNow;
-            candidate.TeacherTrainingAdviserSubscriptionDoNotEmail = false;
-            candidate.TeacherTrainingAdviserSubscriptionDoNotBulkEmail = candidate.IsReturningToTeaching();
-            candidate.TeacherTrainingAdviserSubscriptionDoNotBulkPostalMail = candidate.IsReturningToTeaching();
-            candidate.TeacherTrainingAdviserSubscriptionDoNotPostalMail = candidate.IsReturningToTeaching();
-            candidate.TeacherTrainingAdviserSubscriptionDoNotSendMm = candidate.IsReturningToTeaching();
+            ConfigureSubscriptions(SubscriptionTypes.TeacherTrainingAdviser, candidate);
         }
 
         private int? DestinationForTelephone(string telephone)

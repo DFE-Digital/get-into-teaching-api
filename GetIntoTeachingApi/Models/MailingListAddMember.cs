@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Attributes;
 using Swashbuckle.AspNetCore.Annotations;
+using static GetIntoTeachingApi.Models.SubscriptionConfigurer;
 
 namespace GetIntoTeachingApi.Models
 {
@@ -116,29 +117,11 @@ namespace GetIntoTeachingApi.Models
 
         private void ConfigureSubscriptions(Candidate candidate)
         {
-            candidate.HasMailingListSubscription = true;
-            candidate.MailingListSubscriptionChannelId = ChannelId ?? (int)Candidate.SubscriptionChannel.MailingList;
-            candidate.MailingListSubscriptionStartAt = DateTime.UtcNow;
-            candidate.MailingListSubscriptionDoNotEmail = false;
-            candidate.MailingListSubscriptionDoNotBulkEmail = false;
-            candidate.MailingListSubscriptionDoNotBulkPostalMail = true;
-            candidate.MailingListSubscriptionDoNotPostalMail = true;
-            candidate.MailingListSubscriptionDoNotSendMm = false;
+            SubscriptionTypes subscription = !string.IsNullOrWhiteSpace(AddressPostcode)
+                 ? SubscriptionTypes.TeachingEvent | SubscriptionTypes.MailingList
+                 : SubscriptionTypes.MailingList;
 
-            if (string.IsNullOrWhiteSpace(AddressPostcode))
-            {
-                return;
-            }
-
-            candidate.HasEventsSubscription = true;
-            candidate.EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.LocalEvent;
-            candidate.EventsSubscriptionChannelId = ChannelId ?? (int)Candidate.SubscriptionChannel.Events;
-            candidate.EventsSubscriptionStartAt = DateTime.UtcNow;
-            candidate.EventsSubscriptionDoNotEmail = false;
-            candidate.EventsSubscriptionDoNotBulkEmail = false;
-            candidate.EventsSubscriptionDoNotBulkPostalMail = true;
-            candidate.EventsSubscriptionDoNotPostalMail = true;
-            candidate.EventsSubscriptionDoNotSendMm = false;
+            SubscriptionConfigurer.ConfigureSubscriptions(subscription, candidate, ChannelId);
         }
 
         private void AcceptPrivacyPolicy(Candidate candidate)
