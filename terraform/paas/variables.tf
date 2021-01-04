@@ -104,3 +104,8 @@ variable "GOOGLE_API_KEY" {
   default = ""
 }
 
+variable "sc_username" {}
+variable "sc_api_key" {}
+variable "alerts" {
+  type = map
+}
