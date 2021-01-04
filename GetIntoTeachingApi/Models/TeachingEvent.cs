@@ -68,6 +68,7 @@ namespace GetIntoTeachingApi.Models
         public TeachingEventBuilding Building { get; set; }
         [JsonIgnore]
         public Guid? BuildingId { get; set; }
+        public bool IsVirtual => IsOnline && !string.IsNullOrWhiteSpace(Building?.AddressPostcode);
 
         public TeachingEvent()
             : base()
