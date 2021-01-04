@@ -135,15 +135,13 @@ namespace GetIntoTeachingApi.Services
             // Exclude events we don't have a location for.
             teachingEvents = teachingEvents.Where(te => te.Building != null && te.Building.Coordinate != null);
 
-            var inMemoryTeachingEvents = await teachingEvents.ToListAsync();
+            // Filter events by distance in database
+            var result = teachingEvents.Where(teachingEvent => teachingEvent.Building.Coordinate.Distance(origin)
+                < request.RadiusInKm() * 1000).AsEnumerable();
 
-            // Project coordinates onto UK coordinate system for final, accurate distance filtering.
-            var result = inMemoryTeachingEvents.Where(te => te.Building.Coordinate.ProjectTo(DbConfiguration.UkSrid)
-                    .IsWithinDistance(origin.ProjectTo(DbConfiguration.UkSrid), (double)request.RadiusInKm() * 1000));
-
-            // We need to include the various 'online' event types in distance based search results.
-            result = result.Concat(await OnlineEventsMatchingRequest(request));
-
+            // We need to include online events in distance-based searches (unless explicitly filtered out by the request).
+            var includeOnlineEvents = request.TypeId == null || request.TypeId == (int)TeachingEvent.EventType.OnlineEvent;
+            if (includeOnlineEvents)
             return result;
         }
 
