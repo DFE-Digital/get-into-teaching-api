@@ -130,6 +130,8 @@ jobs:
              TF_VAR_paas_api_docker_image: ${{ steps.variables.outputs.docker_image}}
              TF_VAR_docker_username:       ${{ secrets.DOCKERHUB_USERNAME }}
              TF_VAR_docker_password:       ${{ secrets.DOCKERHUB_PERSONAL_ACCESS_TOKEN }}
+             TF_VAR_sc_username:           DfEStatusCake
+             TF_VAR_sc_api_key:            ${{ secrets.STATUS_CAKE_API }}
 
        - name: Smoke tests
          run: |
