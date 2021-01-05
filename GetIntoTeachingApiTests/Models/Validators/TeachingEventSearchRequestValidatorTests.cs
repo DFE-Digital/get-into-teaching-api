@@ -59,6 +59,34 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
+        public void Validate_StartAfterAndNoStartBefore_HasNoError()
+        {
+            var request = new TeachingEventSearchRequest()
+            {
+                StartAfter = DateTime.UtcNow.AddDays(1),
+                StartBefore = null,
+            };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldNotHaveAnyValidationErrors();
+        }
+
+        [Fact]
+        public void Validate_StartBeforeAndNoStartAfter_HasNoError()
+        {
+            var request = new TeachingEventSearchRequest()
+            {
+                StartBefore = DateTime.UtcNow.AddDays(1),
+                StartAfter = null,
+            };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldNotHaveAnyValidationErrors();
+        }
+
+        [Fact]
         public void Validate_RadiusIsNotNullAndPostcodeIsNull_HasError()
         {
             var request = new TeachingEventSearchRequest()

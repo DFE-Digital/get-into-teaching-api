@@ -19,7 +19,7 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(request => request.Radius).GreaterThan(0);
             RuleFor(request => request)
                 .Must(StartAfterEarlierThanStartBefore)
-                .Unless(request => request.StartAfter == null)
+                .Unless(request => request.StartAfter == null || request.StartBefore == null)
                 .WithMessage("Start after must be earlier than start before.");
         }
 
