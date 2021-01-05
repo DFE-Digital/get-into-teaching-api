@@ -141,20 +141,18 @@ namespace GetIntoTeachingApi.Services
             var result = inMemoryTeachingEvents.Where(te => te.Building.Coordinate.ProjectTo(DbConfiguration.UkSrid)
                     .IsWithinDistance(origin.ProjectTo(DbConfiguration.UkSrid), (double)request.RadiusInKm() * 1000));
 
-            // We need to include online events in distance-based searches (unless explicitly filtered out by the request).
-            var includeOnlineEvents = request.TypeId == null || request.TypeId == (int)TeachingEvent.EventType.OnlineEvent;
-            if (includeOnlineEvents)
-            {
-                var onlineEventsRequest = request.Clone(te =>
-                {
-                    te.TypeId = (int)TeachingEvent.EventType.OnlineEvent;
-                    te.Radius = null;
-                });
-
-                result = result.Concat(await SearchTeachingEventsAsync(onlineEventsRequest));
-            }
+            // We need to include the various 'online' event types in distance based search results.
+            result = result.Concat(await OnlineEventsMatchingRequest(request));
 
             return result;
+        }
+
+        private async Task<IEnumerable<TeachingEvent>> OnlineEventsMatchingRequest(TeachingEventSearchRequest originalRequest)
+        {
+            var request = originalRequest.Clone(te => { te.Radius = null; });
+            var result = await SearchTeachingEventsAsync(request);
+
+            return result.Where(te => te.IsOnline && !te.IsVirtual);
         }
 
         private async Task SyncTeachingEvents()
