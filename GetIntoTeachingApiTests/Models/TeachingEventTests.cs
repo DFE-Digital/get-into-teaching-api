@@ -45,5 +45,25 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("Building").Should().BeDecoratedWith<EntityRelationshipAttribute>(
                 a => a.Name == "msevtmgt_event_building" && a.Type == typeof(TeachingEventBuilding));
         }
+
+        [Theory]
+        [InlineData(true, "", false)]
+        [InlineData(true, "  ", false)]
+        [InlineData(true, "KY11 9YU", true)]
+        [InlineData(true, null, false)]
+        [InlineData(false, null, false)]
+        [InlineData(false, "", false)]
+        [InlineData(false, "  ", false)]
+        [InlineData(false, "KY11 9YU", false)]
+        public void IsVirtual_ReturnsCorrectly(bool isOnline, string addressPostcode, bool expected)
+        {
+            var teachingEvent = new TeachingEvent()
+            {
+                IsOnline = isOnline,
+                Building = new TeachingEventBuilding() { AddressPostcode = addressPostcode },
+            };
+
+            teachingEvent.IsVirtual.Should().Be(expected);
+    }
     }
 }

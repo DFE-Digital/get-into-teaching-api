@@ -352,7 +352,7 @@ namespace GetIntoTeachingApiTests.Services
 
             var result = await _store.SearchTeachingEventsAsync(request);
 
-            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 3", "Event 5" },
+            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 3", "Event 1", "Event 5" },
                 options => options.WithStrictOrdering());
         }
 
@@ -365,7 +365,7 @@ namespace GetIntoTeachingApiTests.Services
 
             var result = await _store.SearchTeachingEventsAsync(request);
 
-            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 3", "Event 5" },
+            result.Select(e => e.Name).Should().BeEquivalentTo(new string[] { "Event 2", "Event 3", "Event 1", "Event 5" },
                 options => options.WithStrictOrdering());
         }
 
@@ -460,11 +460,11 @@ namespace GetIntoTeachingApiTests.Services
                 ReadableId = "1",
                 Name = "Event 1",
                 TypeId = (int)TeachingEvent.EventType.TrainToTeachEvent,
+                IsOnline = true,
                 StartAt = DateTime.UtcNow.AddDays(5),
                 Building = new TeachingEventBuilding()
                 {
                     Id = sharedBuildingId,
-                    AddressLine1 = "Line 1"
                 }
             };
 
@@ -518,6 +518,7 @@ namespace GetIntoTeachingApiTests.Services
                 Id = Guid.NewGuid(),
                 ReadableId = "5",
                 Name = "Event 5",
+                IsOnline = true,
                 TypeId = (int)TeachingEvent.EventType.OnlineEvent,
                 StartAt = DateTime.UtcNow.AddDays(15),
             };
