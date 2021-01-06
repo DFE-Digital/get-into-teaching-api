@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Models;
-using GetIntoTeachingApi.Utils;
 using Microsoft.EntityFrameworkCore;
 using MoreLinq;
 using NetTopologySuite.Geometries;
@@ -139,9 +138,9 @@ namespace GetIntoTeachingApi.Services
             var result = teachingEvents.Where(teachingEvent => teachingEvent.Building.Coordinate.Distance(origin)
                 < request.RadiusInKm() * 1000).AsEnumerable();
 
-            // We need to include online events in distance-based searches (unless explicitly filtered out by the request).
-            var includeOnlineEvents = request.TypeId == null || request.TypeId == (int)TeachingEvent.EventType.OnlineEvent;
-            if (includeOnlineEvents)
+            // We need to include the various 'online' event types in distance based search results.
+            result = result.Concat(await OnlineEventsMatchingRequest(request));
+
             return result;
         }
 
