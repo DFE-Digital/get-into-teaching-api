@@ -8,5 +8,6 @@ paas_api_route_name       = "get-into-teaching-api-prod"
 ASPNETCORE_ENVIRONMENT    = "Production"
 application_instances     = 2
 application_memory        = 2048
-monitoring                = 0
+monitoring                = 1
+environment               = "prod"
 alerts                    = {}
