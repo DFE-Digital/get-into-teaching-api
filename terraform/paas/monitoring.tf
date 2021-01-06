@@ -15,7 +15,7 @@ resource cloudfoundry_service_instance influxdb {
 
 resource cloudfoundry_service_key influxdb-key {
   count            = var.monitoring
-  name             = "prometheus-key"
+  name             = "influxdb-prometheus-key"
   service_instance = cloudfoundry_service_instance.influxdb[0].id
 }
 
