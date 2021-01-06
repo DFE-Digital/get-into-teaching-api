@@ -61,6 +61,15 @@ jobs:
                  echo "TF_VAR_GOOGLE_API_KEY=${{             secrets.GOOGLE_API_KEY      }}" >> $GITHUB_ENV
                  echo "TF_VAR_TOTP_SECRET_KEY=${{            secrets.TOTP_SECRET_KEY     }}" >> $GITHUB_ENV
                  echo "TF_VAR_SENTRY_DSN=${{                 secrets.SENTRY_DSN          }}" >> $GITHUB_ENV
+
+                 echo "TF_VAR_paas_exporter_username=${{ secrets.GOVUKPAAS_USERNAME   }}"    >> $GITHUB_ENV
+                 echo "TF_VAR_paas_exporter_password=${{ secrets.GOVUKPAAS_PASSWORD   }}"    >> $GITHUB_ENV
+                 echo "TF_VAR_elasticsearch_user=${{     secrets.LOGIT_USERID     }}"        >> $GITHUB_ENV
+                 echo "TF_VAR_elasticsearch_password=${{ secrets.LOGIT_PASSWORD   }}"        >> $GITHUB_ENV
+                 echo "TF_VAR_google_client_id=${{       secrets.GOOGLE_CLIENT_ID }}"        >> $GITHUB_ENV
+                 echo "TF_VAR_google_client_secret=${{   secrets.GOOGLE_CLIENT_SECRET }}"    >> $GITHUB_ENV
+                 echo "TF_VAR_alertmanager_slack_url=${{ secrets.SLACK_ALERTMANAGER_HOOK }}" >> $GITHUB_ENV
+                 echo "TF_VAR_alertmanager_slack_channel=\"#getintoteaching_tech\""          >> $GITHUB_ENV
              fi
 
              if [ "${{github.event.inputs.environment }}" == "Test" ]
@@ -81,6 +90,15 @@ jobs:
                  echo "TF_VAR_TOTP_SECRET_KEY=${{            secrets.TOTP_SECRET_KEY     }}" >> $GITHUB_ENV
                  echo "TF_VAR_SENTRY_DSN=${{                 secrets.SENTRY_DSN          }}" >> $GITHUB_ENV
                  echo "TF_VAR_paas_logging_endpoint_port=${{ secrets.LOGIT_ENDPOINT      }}" >> $GITHUB_ENV
+
+                 echo "TF_VAR_paas_exporter_username=${{ secrets.GOVUKPAAS_USERNAME   }}"    >> $GITHUB_ENV
+                 echo "TF_VAR_paas_exporter_password=${{ secrets.GOVUKPAAS_PASSWORD   }}"    >> $GITHUB_ENV
+                 echo "TF_VAR_elasticsearch_user=${{     secrets.LOGIT_USERID     }}"        >> $GITHUB_ENV
+                 echo "TF_VAR_elasticsearch_password=${{ secrets.LOGIT_PASSWORD   }}"        >> $GITHUB_ENV
+                 echo "TF_VAR_google_client_id=${{       secrets.GOOGLE_CLIENT_ID }}"        >> $GITHUB_ENV
+                 echo "TF_VAR_google_client_secret=${{   secrets.GOOGLE_CLIENT_SECRET }}"    >> $GITHUB_ENV
+                 echo "TF_VAR_alertmanager_slack_url=${{ secrets.SLACK_ALERTMANAGER_HOOK }}" >> $GITHUB_ENV
+                 echo "TF_VAR_alertmanager_slack_channel=\"#getintoteaching_tech\""          >> $GITHUB_ENV
              fi
 
              if [ "${{github.event.inputs.environment }}" == "Production" ]
@@ -101,8 +119,17 @@ jobs:
                  echo "TF_VAR_TOTP_SECRET_KEY=${{            secrets.PROD_TOTP_SECRET_KEY     }}" >> $GITHUB_ENV
                  echo "TF_VAR_SENTRY_DSN=${{                 secrets.SENTRY_DSN          }}" >> $GITHUB_ENV
                  echo "TF_VAR_paas_logging_endpoint_port=${{ secrets.LOGIT_ENDPOINT      }}" >> $GITHUB_ENV
-             fi
 
+                 echo "TF_VAR_paas_exporter_username=${{ secrets.GOVUKPAAS_USERNAME   }}"    >> $GITHUB_ENV
+                 echo "TF_VAR_paas_exporter_password=${{ secrets.GOVUKPAAS_PASSWORD   }}"    >> $GITHUB_ENV
+                 echo "TF_VAR_elasticsearch_user=${{     secrets.LOGIT_USERID     }}"        >> $GITHUB_ENV
+                 echo "TF_VAR_elasticsearch_password=${{ secrets.LOGIT_PASSWORD   }}"        >> $GITHUB_ENV
+                 echo "TF_VAR_google_client_id=${{       secrets.GOOGLE_CLIENT_ID }}"        >> $GITHUB_ENV
+                 echo "TF_VAR_google_client_secret=${{   secrets.GOOGLE_CLIENT_SECRET }}"    >> $GITHUB_ENV
+                 echo "TF_VAR_alertmanager_slack_url=${{ secrets.SLACK_WEBHOOK }}"           >> $GITHUB_ENV
+                 echo "TF_VAR_alertmanager_slack_channel=\"#getintoteaching_tech\""          >> $GITHUB_ENV
+                 echo "TF_VAR_grafana_password=${{       secrets.GRAFANA_PASSWORD }}"        >> $GITHUB_ENV
+             fi
 
        - uses: hashicorp/setup-terraform@v1.3.2
          with:
