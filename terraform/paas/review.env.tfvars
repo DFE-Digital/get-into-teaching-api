@@ -5,4 +5,5 @@ paas_database_2_name   = "get-into-teaching-api-dev-pg2-svc"
 paas_redis_1_name      = "get-into-teaching-dev-redis-svc"
 application_instances  = 1
 ASPNETCORE_ENVIRONMENT = "Staging"
+monitoring             = 0
 alerts                 = {}

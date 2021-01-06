@@ -40,6 +40,10 @@ variable "paas_space" {
   default = "sandbox"
 }
 
+variable "environment" {
+  default = "sb"
+}
+
 variable "paas_org_name" {
   default = "dfe-teacher-services"
 }
@@ -79,24 +83,38 @@ variable "paas_api_route_name" {
   default = "dfe-teacher-services-sb-api"
 }
 
-variable "monitor_space" {
-  default = "get-into-teaching"
+variable "monitoring" {
+  default = 0
 }
 
-variable "prometheus" {
-  default = "prometheus-dev-get-into-teaching"
+variable "monitor_space" {
+  default = "get-into-teaching"
 }
 
 variable "ASPNETCORE_ENVIRONMENT" {
   default = "Staging"
 }
-variable "CRM_SERVICE_URL" {}
-variable "CRM_CLIENT_ID" {}
-variable "CRM_TENANT_ID" {}
-variable "CRM_CLIENT_SECRET" {}
-variable "SHARED_SECRET" {}
-variable "NOTIFY_API_KEY" {}
-variable "TOTP_SECRET_KEY" {}
+variable "CRM_SERVICE_URL" {
+  default = ""
+}
+variable "CRM_CLIENT_ID" {
+  default = ""
+}
+variable "CRM_TENANT_ID" {
+  default = ""
+}
+variable "CRM_CLIENT_SECRET" {
+  default = ""
+}
+variable "SHARED_SECRET" {
+  default = ""
+}
+variable "NOTIFY_API_KEY" {
+  default = ""
+}
+variable "TOTP_SECRET_KEY" {
+  default = ""
+}
 variable "SENTRY_DSN" {
   default = ""
 }
@@ -104,8 +122,25 @@ variable "GOOGLE_API_KEY" {
   default = ""
 }
 
-variable "sc_username" {}
-variable "sc_api_key" {}
+### Status Cake 
+variable "sc_username" {
+  default = ""
+}
+variable "sc_api_key" {
+  default = ""
+}
 variable "alerts" {
   type = map
+}
+
+### Monitoring
+variable "prometheus" {
+  type = map
+  default = {
+    "name"        = "get-into-teaching"
+    "username"    = "username"
+    "password"    = "password"
+    "alert_rules" = "../../monitoring/prometheus/alert.rules"
+    "scrape_file" = "../../monitoring/prometheus/scrapes.yml.tmpl"
+  }
 }

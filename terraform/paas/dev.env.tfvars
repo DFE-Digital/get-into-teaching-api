@@ -7,4 +7,6 @@ paas_api_application_name = "get-into-teaching-api-dev"
 paas_api_route_name       = "get-into-teaching-api-dev"
 application_instances     = 1
 ASPNETCORE_ENVIRONMENT    = "Staging"
+monitoring                = 1
+environment               = "dev"
 alerts                    = {}

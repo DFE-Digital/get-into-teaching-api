@@ -37,3 +37,4 @@ resource "cloudfoundry_service_instance" "redis" {
   service_plan = data.cloudfoundry_service.redis.service_plans["small-ha-5_x"]
   json_params  = "{\"maxmemory_policy\": \"allkeys-lfu\" }"
 }
+
