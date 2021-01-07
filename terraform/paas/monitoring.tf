@@ -40,7 +40,7 @@ resource cloudfoundry_service_key influxdb-key {
 
 module "prometheus" {
   count                              = var.monitoring
-  source                             = "git@github.com:DFE-Digital/cf-monitoring.git//prometheus"
+  source                             = "git::https://github.com/DFE-Digital/cf-monitoring.git//prometheus"
   paas_prometheus_exporter_endpoint  = module.paas_prometheus_exporter[0].endpoint
   redis_prometheus_exporter_endpoint = module.redis_prometheus_exporter[0].endpoint
   alertmanager_endpoint              = module.alertmanager[0].endpoint
@@ -55,7 +55,7 @@ module "prometheus" {
 
 module "paas_prometheus_exporter" {
   count                    = var.monitoring
-  source                   = "git@github.com:DFE-Digital/cf-monitoring.git//paas_prometheus_exporter"
+  source                   = "git::https://github.com/DFE-Digital/cf-monitoring.git//paas_prometheus_exporter"
   monitoring_space_id      = data.cloudfoundry_space.monitor.id
   monitoring_instance_name = local.monitoring_org_name
   paas_username            = var.paas_exporter_username
@@ -64,7 +64,7 @@ module "paas_prometheus_exporter" {
 
 module "redis_prometheus_exporter" {
   count                     = var.monitoring
-  source                    = "git@github.com:DFE-Digital/cf-monitoring.git//redis_prometheus_exporter"
+  source                    = "git::https://github.com/DFE-Digital/cf-monitoring.git//redis_prometheus_exporter"
   monitoring_space_id       = data.cloudfoundry_space.monitor.id
   monitoring_instance_name  = local.monitoring_org_name
   redis_service_instance_id = cloudfoundry_service_instance.redis.id
@@ -72,7 +72,7 @@ module "redis_prometheus_exporter" {
 
 module "grafana" {
   count                    = var.monitoring
-  source                   = "git@github.com:DFE-Digital/cf-monitoring.git//grafana"
+  source                   = "git::https://github.com/DFE-Digital/cf-monitoring.git//grafana"
   monitoring_space_id      = data.cloudfoundry_space.monitor.id
   monitoring_instance_name = "${var.environment}-${var.grafana["name"]}"
   prometheus_endpoint      = module.prometheus[0].endpoint
@@ -89,7 +89,7 @@ module "grafana" {
 
 module "alertmanager" {
   count                    = var.monitoring
-  source                   = "git@github.com:DFE-Digital/cf-monitoring.git//alertmanager"
+  source                   = "git::https://github.com/DFE-Digital/cf-monitoring.git//alertmanager"
   monitoring_space_id      = data.cloudfoundry_space.monitor.id
   monitoring_instance_name = "${var.environment}-${var.alertmanager["name"]}"
   slack_url                = var.alertmanager_slack_url
