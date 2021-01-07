@@ -116,22 +116,6 @@ namespace GetIntoTeachingApi.Controllers
         [HttpGet]
         [CrmETag]
         [PrivateShortTermResponseCache]
-        [Route("upcoming_grouped_by_type")]
-        [SwaggerOperation(
-            Summary = "Retrieves upcoming teaching events grouped by type.",
-            Description = @"Retrieves upcoming teaching events grouped by type and limited to a given quantity per type.",
-            OperationId = "UpcomingTeachingEventsGroupedByType",
-            Tags = new[] { "Teaching Events" })]
-        [ProducesResponseType(typeof(IEnumerable<TeachingEventsByType>), 200)]
-        public IActionResult UpcomingGroupedByType([FromQuery, SwaggerParameter("Quantity to return (per type).")] int quantityPerType = 3)
-        {
-            var teachingEventsByType = _store.GetUpcomingTeachingEvents();
-            return Ok(GroupTeachingEventsByType(teachingEventsByType, quantityPerType));
-        }
-
-        [HttpGet]
-        [CrmETag]
-        [PrivateShortTermResponseCache]
         [Route("{readableId}")]
         [SwaggerOperation(
             Summary = "Retrieves an event.",

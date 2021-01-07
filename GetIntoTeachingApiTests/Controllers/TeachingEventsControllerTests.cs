@@ -58,7 +58,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void CrmETag_IsPresent()
         {
             JobStorage.Current = new Mock<JobStorage>().Object;
-            var methods = new [] { "Get", "SearchIndexedByType", "UpcomingIndexedByType", "SearchGroupedByType", "UpcomingGroupedByType" };
+            var methods = new [] { "Get", "SearchIndexedByType", "UpcomingIndexedByType", "SearchGroupedByType" };
 
             methods.ForEach(m => typeof(TeachingEventsController).GetMethod(m).Should().BeDecoratedWith<CrmETagAttribute>());
         }
@@ -67,7 +67,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void CrmETagPrivateShortTermResponseCache_IsPresent()
         {
             JobStorage.Current = new Mock<JobStorage>().Object;
-            var methods = new[] { "Get", "SearchIndexedByType", "UpcomingIndexedByType", "SearchGroupedByType", "UpcomingGroupedByType" };
+            var methods = new[] { "Get", "SearchIndexedByType", "UpcomingIndexedByType", "SearchGroupedByType" };
 
             methods.ForEach(m => typeof(TeachingEventsController).GetMethod(m).Should().BeDecoratedWith<PrivateShortTermResponseCacheAttribute>());
         }
@@ -197,24 +197,6 @@ namespace GetIntoTeachingApiTests.Controllers
             var result = (IDictionary<string, IEnumerable<TeachingEvent>>)ok.Value;
             result["123"].Count().Should().Be(3);
             result["456"].Count().Should().Be(1);
-        }
-
-        [Fact]
-        public void UpcomingGroupedByType_ReturnsUpcomingEventsByType()
-        {
-            var mockEvents = MockEvents();
-            _mockStore.Setup(mock => mock.GetUpcomingTeachingEvents()).Returns(mockEvents.AsQueryable());
-
-            var response = _controller.UpcomingGroupedByType(3);
-
-            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
-            var result = (IEnumerable<TeachingEventsByType>)ok.Value;
-
-            result.First().TypeId.Should().Be(123);
-            result.First().TeachingEvents.Count().Should().Be(3);
-
-            result.Last().TypeId.Should().Be(456);
-            result.Last().TeachingEvents.Count().Should().Be(1);
         }
 
         [Fact]
