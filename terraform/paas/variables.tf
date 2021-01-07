@@ -86,6 +86,11 @@ variable "monitoring" {
   default = 0
 }
 
+variable "influx" {
+  default = 0
+}
+
+
 variable "monitor_space" {
   default = "get-into-teaching"
 }

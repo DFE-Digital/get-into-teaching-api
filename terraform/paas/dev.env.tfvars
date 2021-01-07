@@ -9,5 +9,6 @@ tta_application_name      = "get-teacher-training-adviser-service-dev"
 application_instances     = 1
 ASPNETCORE_ENVIRONMENT    = "Staging"
 monitoring                = 1
+influx                    = 1
 environment               = "dev"
 alerts                    = {}

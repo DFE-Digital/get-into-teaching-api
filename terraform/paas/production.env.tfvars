@@ -8,5 +8,6 @@ ASPNETCORE_ENVIRONMENT    = "Production"
 application_instances     = 2
 application_memory        = 2048
 monitoring                = 0
+influx                    = 1
 environment               = "prod"
 alerts                    = {}
