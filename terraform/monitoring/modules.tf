@@ -20,28 +20,31 @@ locals {
 }
 
 module "prometheus" {
-  source                            = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/prometheus"
-  paas_prometheus_exporter_endpoint = module.paas_prometheus_exporter.endpoint
-  redis_prometheus_exporter_endpoint= module.redis_prometheus_exporter.endpoint
-  monitoring_space_id               = data.cloudfoundry_space.space.id
-  monitoring_instance_name          = local.monitoring_org_name
-  alertmanager_endpoint             = module.alertmanager.endpoint
-  extra_scrape_config               = templatefile("${path.module}/${var.prometheus["scrape_file"]}" , local.template_variable_map )
-  alert_rules                       = local.alert_rules
-  influxdb_service_instance_id      = module.influx.service_instance_id
-  memory                            = 5120
-  disk_quota                        = 5120
+  count                              = var.monitoring
+  source                             = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/prometheus"
+  paas_prometheus_exporter_endpoint  = module.paas_prometheus_exporter.endpoint
+  redis_prometheus_exporter_endpoint = module.redis_prometheus_exporter.endpoint
+  monitoring_space_id                = data.cloudfoundry_space.monitor.id
+  monitoring_instance_name           = local.monitoring_org_name
+  alertmanager_endpoint              = module.alertmanager.endpoint
+  extra_scrape_config                = templatefile("${path.module}/${var.prometheus["scrape_file"]}", local.template_variable_map)
+  alert_rules                        = local.alert_rules
+  influxdb_service_instance_id       = module.influx.service_instance_id
+  memory                             = 5120
+  disk_quota                         = 5120
 }
 
 module "influx" {
+  count                    = var.monitoring
   source                   = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/influxdb"
-  monitoring_space_id      = data.cloudfoundry_space.space.id
+  monitoring_space_id      = data.cloudfoundry_space.monitor.id
   monitoring_instance_name = local.monitoring_org_name
 }
 
 module "paas_prometheus_exporter" {
+  count                    = var.monitoring
   source                   = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/paas_prometheus_exporter"
-  monitoring_space_id      = data.cloudfoundry_space.space.id
+  monitoring_space_id      = data.cloudfoundry_space.monitor.id
   monitoring_instance_name = local.monitoring_org_name
   paas_username            = var.paas_exporter_username
   paas_password            = var.paas_exporter_password
@@ -49,16 +52,18 @@ module "paas_prometheus_exporter" {
 
 
 module "redis_prometheus_exporter" {
+  count                     = var.monitoring
   source                    = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/redis_prometheus_exporter"
-  monitoring_space_id       = data.cloudfoundry_space.space.id
+  monitoring_space_id       = data.cloudfoundry_space.monitor.id
   monitoring_instance_name  = local.monitoring_org_name
-  redis_service_instance_id = data.cloudfoundry_service_instance.redis.id
+  redis_service_instance_id = cloudfoundry_service_instance.redis.id
 }
 
 
 module "grafana" {
+  count                    = var.monitoring
   source                   = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/grafana"
-  monitoring_space_id      = data.cloudfoundry_space.space.id
+  monitoring_space_id      = data.cloudfoundry_space.monitor.id
   monitoring_instance_name = "${var.environment}-${var.grafana["name"]}"
   prometheus_endpoint      = module.prometheus.endpoint
   runtime_version          = "7.2.2"
@@ -73,9 +78,10 @@ module "grafana" {
 }
 
 module "alertmanager" {
+  count                    = var.monitoring
   source                   = "git::https://github.com/DFE-Digital/bat-platform-building-blocks.git//terraform/modules/alertmanager"
-  monitoring_space_id      = data.cloudfoundry_space.space.id
+  monitoring_space_id      = data.cloudfoundry_space.monitor.id
   monitoring_instance_name = "${var.environment}-${var.alertmanager["name"]}"
-  slack_url                =  var.alertmanager_slack_url
-  slack_channel            =  var.alertmanager_slack_channel
+  slack_url                = var.alertmanager_slack_url
+  slack_channel            = var.alertmanager_slack_channel
 }
