@@ -87,6 +87,35 @@ namespace GetIntoTeachingApi.Controllers
         [HttpGet]
         [CrmETag]
         [PrivateShortTermResponseCache]
+        [Route("search_grouped_by_type")]
+        [SwaggerOperation(
+    Summary = "Searches for teaching events, returning grouped by type.",
+    Description = @"Searches for teaching events. Optionally limit the results by distance (in miles) from a postcode, event type and start date.",
+    OperationId = "SearchTeachingEventsGroupedByType",
+    Tags = new[] { "Teaching Events" })]
+        [ProducesResponseType(typeof(IEnumerable<TeachingEventsByType>), 200)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> SearchGroupedByType(
+    [FromQuery, SwaggerParameter("Event search criteria.", Required = true)] TeachingEventSearchRequest request,
+    [FromQuery, SwaggerParameter("Quantity to return (per type).")] int quantityPerType = 3)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(this.ModelState);
+            }
+
+            if (request.Postcode != null)
+            {
+                _logger.LogInformation($"SearchGroupedByType: {request.Postcode}");
+            }
+
+            var teachingEvents = await _store.SearchTeachingEventsAsync(request);
+            return Ok(GroupTeachingEventsByType(teachingEvents, quantityPerType));
+        }
+
+        [HttpGet]
+        [CrmETag]
+        [PrivateShortTermResponseCache]
         [Route("{readableId}")]
         [SwaggerOperation(
             Summary = "Retrieves an event.",
@@ -176,6 +205,18 @@ exchanged for your token matches the request payload here).",
                 .ToList()
                 .GroupBy(e => e.TypeId.ToString())
                 .ToDictionary(g => g.Key, g => g.Take(quantityPerType));
+        }
+
+        private static IEnumerable<TeachingEventsByType> GroupTeachingEventsByType(
+            IEnumerable<TeachingEvent> teachingEvents,
+            int quantityPerType)
+        {
+            return teachingEvents
+                .GroupBy(e => e.TypeId, e => e, (typeId, events) => new TeachingEventsByType()
+                {
+                    TypeId = typeId,
+                    TeachingEvents = events.Take(quantityPerType),
+                });
         }
     }
 }
