@@ -14,7 +14,7 @@ namespace GetIntoTeachingApi.Services
         IEnumerable<PrivacyPolicy> GetPrivacyPolicies();
         Candidate MatchCandidate(ExistingCandidateRequest request);
         Candidate GetCandidate(Guid id);
-        IEnumerable<TeachingEvent> GetTeachingEvents();
+        IEnumerable<TeachingEvent> GetTeachingEvents(DateTime? startAfter = null);
         IEnumerable<CallbackBookingQuota> GetCallbackBookingQuotas();
         CallbackBookingQuota GetCallbackBookingQuota(DateTime scheduledAt);
         bool CandidateAlreadyHasLocalEventSubscriptionType(Guid candidateId);

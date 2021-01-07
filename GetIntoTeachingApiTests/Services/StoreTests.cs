@@ -64,7 +64,7 @@ namespace GetIntoTeachingApiTests.Services
         public async void SyncAsync_InsertsNewTeachingEvents()
         {
             var mockTeachingEvents = MockTeachingEvents().ToList();
-            _mockCrm.Setup(m => m.GetTeachingEvents()).Returns(mockTeachingEvents);
+            _mockCrm.Setup(m => m.GetTeachingEvents(It.Is<DateTime>(d => CheckGetTeachingEventsAfterDate(d)))).Returns(mockTeachingEvents);
 
             await _store.SyncAsync();
 
@@ -83,7 +83,7 @@ namespace GetIntoTeachingApiTests.Services
                 te.Name += "Updated";
                 if (te.Building != null) te.Building.AddressLine1 += "Updated";
             });
-            _mockCrm.Setup(m => m.GetTeachingEvents()).Returns(updatedTeachingEvents);
+            _mockCrm.Setup(m => m.GetTeachingEvents(It.Is<DateTime>(d => CheckGetTeachingEventsAfterDate(d)))).Returns(updatedTeachingEvents);
 
             await _store.SyncAsync();
 
@@ -100,7 +100,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             await SeedMockTeachingEventsAsync();
             var teachingEvents = MockTeachingEvents().ToList();
-            _mockCrm.Setup(m => m.GetTeachingEvents()).Returns(teachingEvents.GetRange(0, 1));
+            _mockCrm.Setup(m => m.GetTeachingEvents(It.Is<DateTime>(d => CheckGetTeachingEventsAfterDate(d)))).Returns(teachingEvents.GetRange(0, 1));
 
             await _store.SyncAsync();
 
@@ -113,7 +113,8 @@ namespace GetIntoTeachingApiTests.Services
         public async void SyncAsync_PopulatesTeachingEventBuildingCoordinates()
         {
             SeedMockLocations();
-            _mockCrm.Setup(m => m.GetTeachingEvents()).Returns(MockTeachingEvents);
+            _mockCrm.Setup(m => m.GetTeachingEvents(It.Is<DateTime>(d => CheckGetTeachingEventsAfterDate(d)))).Returns(MockTeachingEvents);
+
 
             await _store.SyncAsync();
 
@@ -125,7 +126,7 @@ namespace GetIntoTeachingApiTests.Services
         public async void SyncAsync_FallbackToGeocodeClient_PopulatesTeachingEventBuildingCoordinatesAndCachesLocation()
         {
             SeedMockLocations();
-            _mockCrm.Setup(m => m.GetTeachingEvents()).Returns(MockTeachingEvents);
+            _mockCrm.Setup(m => m.GetTeachingEvents(It.Is<DateTime>(d => CheckGetTeachingEventsAfterDate(d)))).Returns(MockTeachingEvents);
             var postcode = "TE7 9IN";
             var coordinate = new Point(1, 2);
             var sanitizedPostcode = Location.SanitizePostcode(postcode);
@@ -490,6 +491,15 @@ namespace GetIntoTeachingApiTests.Services
             dates.Should().OnlyContain(d => d >= DateTime.UtcNow);
         }
 
+        private static bool CheckGetTeachingEventsAfterDate(DateTime date)
+        {
+            var afterDate = DateTime.UtcNow.Subtract(Store.TeachingEventArchiveSize);
+
+            date.Should().BeCloseTo(afterDate);
+
+            return true;
+        }
+
         private static IEnumerable<TeachingEvent> MockTeachingEvents()
         {
             var sharedBuildingId = Guid.NewGuid();
@@ -597,7 +607,7 @@ namespace GetIntoTeachingApiTests.Services
         private async Task<IEnumerable<TeachingEvent>> SeedMockTeachingEventsAsync()
         {
             var teachingEvents = MockTeachingEvents().ToList();
-            _mockCrm.Setup(m => m.GetTeachingEvents()).Returns(teachingEvents);
+            _mockCrm.Setup(m => m.GetTeachingEvents(It.IsAny<DateTime>())).Returns(teachingEvents);
 
             await _store.SyncAsync();
 
