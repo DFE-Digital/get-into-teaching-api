@@ -14,6 +14,7 @@ namespace GetIntoTeachingApi.Services
 {
     public class Store : IStore
     {
+        public static readonly TimeSpan TeachingEventArchiveSize = TimeSpan.FromDays(31 * 4);
         private readonly GetIntoTeachingDbContext _dbContext;
         private readonly IGeocodeClientAdapter _geocodeClient;
         private readonly ICrmService _crm;
@@ -154,7 +155,8 @@ namespace GetIntoTeachingApi.Services
 
         private async Task SyncTeachingEvents()
         {
-            var teachingEvents = _crm.GetTeachingEvents().ToList();
+            var afterDate = DateTime.UtcNow.Subtract(TeachingEventArchiveSize);
+            var teachingEvents = _crm.GetTeachingEvents(afterDate).ToList();
             await PopulateTeachingEventCoordinates(teachingEvents);
 
             var buildings = teachingEvents.Where(te => te.Building != null)
