@@ -344,6 +344,46 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public async void SearchTeachingEvents_WithFilters_ReturnsEventNarrowlyInRange()
+        {
+            SeedMockLocations();
+            await SeedMockTeachingEventsAsync();
+            var request = new TeachingEventSearchRequest()
+            {
+                Postcode = "KY6 2NJ",
+                Radius = 13,
+                TypeId = (int)TeachingEvent.EventType.ApplicationWorkshop,
+                StartAfter = DateTime.UtcNow,
+                StartBefore = DateTime.UtcNow.AddDays(3)
+            };
+
+            var result = await _store.SearchTeachingEventsAsync(request);
+
+            result.Select(e => e.Name).Should().BeEquivalentTo(
+                new string[] { "Event 2" },
+                options => options.WithStrictOrdering());
+        }
+
+        [Fact]
+        public async void SearchTeachingEvents_WithFilters_ExcludesEventNarrowlyOutOfRange()
+        {
+            SeedMockLocations();
+            await SeedMockTeachingEventsAsync();
+            var request = new TeachingEventSearchRequest()
+            {
+                Postcode = "KY6 2NJ",
+                Radius = 12,
+                TypeId = (int)TeachingEvent.EventType.ApplicationWorkshop,
+                StartAfter = DateTime.UtcNow,
+                StartBefore = DateTime.UtcNow.AddDays(3)
+            };
+
+            var result = await _store.SearchTeachingEventsAsync(request);
+
+            result.Select(e => e.Name).Should().BeEmpty();
+        }
+
+        [Fact]
         public async void SearchTeachingEvents_FilteredByRadius_ReturnsMatchingAndOnlineEvents()
         {
             SeedMockLocations();
