@@ -72,16 +72,15 @@ variable "paas_api_application_name" {
   default = "dfe-teacher-services-api"
 }
 
+variable "tta_application_name" {}
+variable "app_application_name" {}
+
 variable "paas_api_docker_image" {
   default = "dfedigital/get-into-teaching-api:latest"
 }
 
 variable "docker_username" {}
 variable "docker_password" {}
-
-variable "paas_api_route_name" {
-  default = "dfe-teacher-services-sb-api"
-}
 
 variable "monitoring" {
   default = 0
@@ -143,4 +142,54 @@ variable "prometheus" {
     "alert_rules" = "../../monitoring/prometheus/alert.rules"
     "scrape_file" = "../../monitoring/prometheus/scrapes.yml.tmpl"
   }
+}
+
+variable "grafana" {
+  type = map
+  default = {
+    "name"                 = "get-into-teaching"
+    "dashboard_directory"  = "../../monitoring/grafana/dashboards"
+    "datasource_directory" = "../../monitoring/grafana/datasources"
+    "configuration_file"   = "../../monitoring/grafana/grafana.ini"
+  }
+}
+
+variable "alertmanager" {
+  type = map
+  default = {
+    "name"   = "get-into-teaching"
+    "config" = "../../monitoring/alertmanager/alertmanager.yml.tmpl"
+  }
+}
+
+variable "paas_exporter_username" {
+  default = ""
+}
+variable "paas_exporter_password" {
+  default = ""
+}
+variable "grafana_password" {
+  default = ""
+}
+variable "redis_service" {
+  default = ""
+}
+
+variable "google_client_id" {
+  default = ""
+}
+variable "google_client_secret" {
+  default = ""
+}
+variable elasticsearch_user {
+  default = ""
+}
+variable elasticsearch_password {
+  default = ""
+}
+variable alertmanager_slack_url {
+  default = ""
+}
+variable alertmanager_slack_channel {
+  default = "getintoteaching_tech"
 }
