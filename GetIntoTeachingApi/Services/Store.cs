@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Models;
-using GetIntoTeachingApi.Utils;
 using Microsoft.EntityFrameworkCore;
 using MoreLinq;
 using NetTopologySuite.Geometries;
@@ -15,6 +14,7 @@ namespace GetIntoTeachingApi.Services
 {
     public class Store : IStore
     {
+        public static readonly TimeSpan TeachingEventArchiveSize = TimeSpan.FromDays(31 * 4);
         private readonly GetIntoTeachingDbContext _dbContext;
         private readonly IGeocodeClientAdapter _geocodeClient;
         private readonly ICrmService _crm;
@@ -135,11 +135,9 @@ namespace GetIntoTeachingApi.Services
             // Exclude events we don't have a location for.
             teachingEvents = teachingEvents.Where(te => te.Building != null && te.Building.Coordinate != null);
 
-            var inMemoryTeachingEvents = await teachingEvents.ToListAsync();
-
-            // Project coordinates onto UK coordinate system for final, accurate distance filtering.
-            var result = inMemoryTeachingEvents.Where(te => te.Building.Coordinate.ProjectTo(DbConfiguration.UkSrid)
-                    .IsWithinDistance(origin.ProjectTo(DbConfiguration.UkSrid), (double)request.RadiusInKm() * 1000));
+            // Filter events by distance in database
+            var result = teachingEvents.Where(teachingEvent => teachingEvent.Building.Coordinate.Distance(origin)
+                < request.RadiusInKm() * 1000).AsEnumerable();
 
             // We need to include the various 'online' event types in distance based search results.
             result = result.Concat(await OnlineEventsMatchingRequest(request));
@@ -157,7 +155,8 @@ namespace GetIntoTeachingApi.Services
 
         private async Task SyncTeachingEvents()
         {
-            var teachingEvents = _crm.GetTeachingEvents().ToList();
+            var afterDate = DateTime.UtcNow.Subtract(TeachingEventArchiveSize);
+            var teachingEvents = _crm.GetTeachingEvents(afterDate).ToList();
             await PopulateTeachingEventCoordinates(teachingEvents);
 
             var buildings = teachingEvents.Where(te => te.Building != null)

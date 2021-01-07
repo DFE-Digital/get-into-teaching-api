@@ -171,14 +171,19 @@ namespace GetIntoTeachingApi.Services
             model.Id = entity.Id;
         }
 
-        public IEnumerable<TeachingEvent> GetTeachingEvents()
+        public IEnumerable<TeachingEvent> GetTeachingEvents(DateTime? startAfter = null)
         {
+            if (startAfter == null)
+            {
+                startAfter = DateTime.UtcNow;
+            }
+
             var query = new QueryExpression("msevtmgt_event");
             query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(TeachingEvent)));
 
             var status = new[] { (int)TeachingEvent.Status.Open, (int)TeachingEvent.Status.Closed };
             var statusCondition = new ConditionExpression("dfe_eventstatus", ConditionOperator.In, status);
-            var futureDatedCondition = new ConditionExpression("msevtmgt_eventenddate", ConditionOperator.GreaterThan, DateTime.UtcNow);
+            var futureDatedCondition = new ConditionExpression("msevtmgt_eventenddate", ConditionOperator.GreaterThan, startAfter);
             var types = Enum.GetValues(typeof(TeachingEvent.EventType)).Cast<int>().ToArray();
             var typeCondition = new ConditionExpression("dfe_event_type", ConditionOperator.In, types);
             var readableIdCondition = new ConditionExpression("dfe_websiteeventpartialurl", ConditionOperator.NotNull);
