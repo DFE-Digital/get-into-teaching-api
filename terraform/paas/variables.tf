@@ -72,15 +72,25 @@ variable "paas_api_application_name" {
   default = "dfe-teacher-services-api"
 }
 
-variable "tta_application_name" {}
-variable "app_application_name" {}
+variable "tta_application_name" {
+  default = ""
+}
+
+variable "app_application_name" {
+  default = ""
+}
 
 variable "paas_api_docker_image" {
   default = "dfedigital/get-into-teaching-api:latest"
 }
 
-variable "docker_username" {}
-variable "docker_password" {}
+variable "docker_username" {
+   default = ""
+}
+
+variable "docker_password" {
+   default = ""
+}
 
 variable "monitoring" {
   default = 0
@@ -89,7 +99,6 @@ variable "monitoring" {
 variable "influx" {
   default = 0
 }
-
 
 variable "monitor_space" {
   default = "get-into-teaching"
