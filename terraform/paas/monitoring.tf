@@ -16,8 +16,8 @@ locals {
     API_ENDPOINT                      = var.api_url
     slack_channel                     = var.alertmanager_slack_channel
     slack_url                         = var.alertmanager_slack_url
-    paas_prometheus_exporter_endpoint = module.paas_prometheus_exporter[0].endpoint
-    alertmanager_endpoint             = module.alertmanager[0].endpoint
+    paas_prometheus_exporter_endpoint = var.monitoring == 1 ? module.paas_prometheus_exporter[0].endpoint : ""
+    alertmanager_endpoint             = var.monitoring == 1 ? module.alertmanager[0].endpoint : ""
   }
 }
 
