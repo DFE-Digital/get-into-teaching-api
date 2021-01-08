@@ -113,14 +113,6 @@ namespace GetIntoTeachingApi.Services
             return await _dbContext.TeachingEvents.Include(e => e.Building).FirstOrDefaultAsync(e => e.ReadableId == readableId);
         }
 
-        public IQueryable<TeachingEvent> GetUpcomingTeachingEvents()
-        {
-            return _dbContext.TeachingEvents
-                .Include(e => e.Building)
-                .OrderBy(e => e.StartAt)
-                .Where(e => e.StartAt >= DateTime.UtcNow);
-        }
-
         private async Task<IEnumerable<TeachingEvent>> FilterTeachingEventsByRadius(
             IQueryable<TeachingEvent> teachingEvents, TeachingEventSearchRequest request)
         {
