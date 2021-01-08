@@ -85,11 +85,11 @@ variable "paas_api_docker_image" {
 }
 
 variable "docker_username" {
-   default = ""
+  default = ""
 }
 
 variable "docker_password" {
-   default = ""
+  default = ""
 }
 
 variable "monitoring" {

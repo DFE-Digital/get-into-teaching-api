@@ -1,11 +1,11 @@
 data cloudfoundry_app app_application {
-    name_or_id = var.app_application_name
-    space      = data.cloudfoundry_space.space.id
+  name_or_id = var.app_application_name
+  space      = data.cloudfoundry_space.space.id
 }
 
 data cloudfoundry_app tta_application {
-    name_or_id = var.tta_application_name
-    space      = data.cloudfoundry_space.space.id
+  name_or_id = var.tta_application_name
+  space      = data.cloudfoundry_space.space.id
 }
 
 resource "cloudfoundry_network_policy" "api-policy" {
