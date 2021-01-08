@@ -479,18 +479,6 @@ namespace GetIntoTeachingApiTests.Services
             result.Building.Should().NotBeNull();
         }
 
-        [Fact]
-        public async void GetUpcomingTeachingEventsByTypeAsync_ReturnsUpcomingEventsGroupedByType()
-        {
-            await SeedMockTeachingEventsAsync();
-
-            var result = _store.GetUpcomingTeachingEvents();
-
-            var dates = result.Select(e => e.StartAt);
-            dates.Should().BeEquivalentTo(dates.OrderBy(d => d), options => options.WithStrictOrdering());
-            dates.Should().OnlyContain(d => d >= DateTime.UtcNow);
-        }
-
         private static bool CheckGetTeachingEventsAfterDate(DateTime date)
         {
             var afterDate = DateTime.UtcNow.Subtract(Store.TeachingEventArchiveSize);
