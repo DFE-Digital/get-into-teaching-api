@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
@@ -54,7 +55,7 @@ that can then be used for verification.",
                 return NotFound();
             }
 
-            var token = _tokenService.GenerateToken(request);
+            var token = _tokenService.GenerateToken(request, (Guid)candidate.Id);
             var personalisation = new Dictionary<string, dynamic> { { "pin_code", token } };
 
             // We respond immediately/assume this will be successful.
