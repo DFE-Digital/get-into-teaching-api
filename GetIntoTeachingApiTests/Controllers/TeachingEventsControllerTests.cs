@@ -202,7 +202,9 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void GetAttendee_InvalidAccessToken_RespondsWithUnauthorized()
         {
-            _mockTokenService.Setup(mock => mock.IsValid("000000", _request)).Returns(false);
+            var candidate = new Candidate { Id = Guid.NewGuid() };
+            _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns(candidate);
+            _mockTokenService.Setup(mock => mock.IsValid("000000", _request, (Guid)candidate.Id)).Returns(false);
 
             var response = _controller.GetAttendee("000000", _request);
 
@@ -213,7 +215,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void GetAttendee_ValidToken_RespondsWithTeachingEventAddAttendee()
         {
             var candidate = new Candidate { Id = Guid.NewGuid() };
-            _mockTokenService.Setup(tokenService => tokenService.IsValid("000000", _request)).Returns(true);
+            _mockTokenService.Setup(tokenService => tokenService.IsValid("000000", _request, (Guid)candidate.Id)).Returns(true);
             _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns(candidate);
 
             var response = _controller.GetAttendee("000000", _request);
@@ -224,14 +226,13 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void GetAttendee_MissingCandidate_RespondsWithNotFound()
+        public void GetAttendee_MissingCandidate_RespondsWithUnauthorized()
         {
-            _mockTokenService.Setup(tokenService => tokenService.IsValid("000000", _request)).Returns(true);
             _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns<Candidate>(null);
 
             var response = _controller.GetAttendee("000000", _request);
 
-            response.Should().BeOfType<NotFoundResult>();
+            response.Should().BeOfType<UnauthorizedResult>();
         }
 
         private static IEnumerable<TeachingEvent> MockEvents()
