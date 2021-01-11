@@ -48,7 +48,7 @@ module "prometheus" {
   monitoring_instance_name           = local.monitoring_org_name
   extra_scrape_config                = templatefile("${path.module}/${var.prometheus["scrape_file"]}", local.template_variable_map)
   alert_rules                        = local.alert_rules
-  influxdb_service_instance_id       = cloudfoundry_service_instance.influxdb[0].id
+  influxdb_service_instance_id       = var.influx == 1 ? cloudfoundry_service_instance.influxdb[0].id : ""
   memory                             = 5120
   disk_quota                         = 5120
 }
