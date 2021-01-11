@@ -42,51 +42,6 @@ namespace GetIntoTeachingApi.Controllers
         [HttpGet]
         [CrmETag]
         [PrivateShortTermResponseCache]
-        [Route("search_indexed_by_type")]
-        [SwaggerOperation(
-            Summary = "Searches for teaching events, returning grouped by type.",
-            Description = @"Searches for teaching events. Optionally limit the results by distance (in miles) from a postcode, event type and start date.",
-            OperationId = "SearchTeachingEventsIndexedByType",
-            Tags = new[] { "Teaching Events" })]
-        [ProducesResponseType(typeof(IDictionary<string, IEnumerable<TeachingEvent>>), 200)]
-        [ProducesResponseType(400)]
-        public async Task<IActionResult> SearchIndexedByType(
-            [FromQuery, SwaggerParameter("Event search criteria.", Required = true)] TeachingEventSearchRequest request,
-            [FromQuery, SwaggerParameter("Quantity to return (per type).")] int quantityPerType = 3)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(this.ModelState);
-            }
-
-            if (request.Postcode != null)
-            {
-                _logger.LogInformation($"SearchIndexedByType: {request.Postcode}");
-            }
-
-            var teachingEvents = await _store.SearchTeachingEventsAsync(request);
-            return Ok(IndexTeachingEventsByType(teachingEvents, quantityPerType));
-        }
-
-        [HttpGet]
-        [CrmETag]
-        [PrivateShortTermResponseCache]
-        [Route("upcoming_indexed_by_type")]
-        [SwaggerOperation(
-            Summary = "Retrieves upcoming teaching events grouped by type.",
-            Description = @"Retrieves upcoming teaching events grouped by type and limited to a given quantity per type.",
-            OperationId = "UpcomingTeachingEventsIndexedByType",
-            Tags = new[] { "Teaching Events" })]
-        [ProducesResponseType(typeof(IDictionary<string, IEnumerable<TeachingEvent>>), 200)]
-        public IActionResult UpcomingIndexedByType([FromQuery, SwaggerParameter("Quantity to return (per type).")] int quantityPerType = 3)
-        {
-            var teachingEventsByType = _store.GetUpcomingTeachingEvents();
-            return Ok(IndexTeachingEventsByType(teachingEventsByType, quantityPerType));
-        }
-
-        [HttpGet]
-        [CrmETag]
-        [PrivateShortTermResponseCache]
         [Route("search_grouped_by_type")]
         [SwaggerOperation(
     Summary = "Searches for teaching events, returning grouped by type.",
@@ -195,16 +150,6 @@ exchanged for your token matches the request payload here).",
             }
 
             return Ok(new TeachingEventAddAttendee(candidate));
-        }
-
-        private static IDictionary<string, IEnumerable<TeachingEvent>> IndexTeachingEventsByType(
-            IEnumerable<TeachingEvent> teachingEvents,
-            int quantityPerType)
-        {
-            return teachingEvents
-                .ToList()
-                .GroupBy(e => e.TypeId.ToString())
-                .ToDictionary(g => g.Key, g => g.Take(quantityPerType));
         }
 
         private static IEnumerable<TeachingEventsByType> GroupTeachingEventsByType(
