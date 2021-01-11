@@ -10,6 +10,7 @@ data cloudfoundry_app tta_application {
 
 resource "cloudfoundry_network_policy" "api-policy" {
   count = var.monitoring
+  depends_on = [ module.prometheus ]
   policy {
     destination_app = cloudfoundry_app.api_application.id
     source_app      = module.prometheus[0].app_id
