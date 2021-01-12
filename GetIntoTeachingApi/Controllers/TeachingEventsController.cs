@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Attributes;
@@ -137,16 +138,11 @@ exchanged for your token matches the request payload here).",
             [FromRoute, SwaggerParameter("Access token (PIN code).", Required = true)] string accessToken,
             [FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] ExistingCandidateRequest request)
         {
-            if (!_tokenService.IsValid(accessToken, request))
-            {
-                return Unauthorized();
-            }
-
             var candidate = _crm.MatchCandidate(request);
 
-            if (candidate == null)
+            if (candidate == null || !_tokenService.IsValid(accessToken, request, (Guid)candidate.Id))
             {
-                return NotFound();
+                return Unauthorized();
             }
 
             return Ok(new TeachingEventAddAttendee(candidate));

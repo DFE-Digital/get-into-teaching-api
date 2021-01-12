@@ -8,6 +8,7 @@ using GetIntoTeachingApi.Services;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using GetIntoTeachingApi.Attributes;
+using System;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -55,8 +56,8 @@ namespace GetIntoTeachingApiTests.Controllers
         public void CreateAccessToken_ValidRequest_SendsPINCodeEmail()
         {
             var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
-            var candidate = new Candidate { Email = request.Email, FirstName = request.FirstName, LastName = request.LastName };
-            _mockTokenService.Setup(mock => mock.GenerateToken(request)).Returns("123456");
+            var candidate = new Candidate { Id = Guid.NewGuid(), Email = request.Email, FirstName = request.FirstName, LastName = request.LastName };
+            _mockTokenService.Setup(mock => mock.GenerateToken(request, (Guid)candidate.Id)).Returns("123456");
             _mockCrm.Setup(mock => mock.MatchCandidate(request)).Returns(candidate);
 
             var response = _controller.CreateAccessToken(request);
@@ -81,8 +82,8 @@ namespace GetIntoTeachingApiTests.Controllers
 
             response.Should().BeOfType<NotFoundResult>();
 
-            _mockNotifyService.Verify(mock => 
-                mock.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, dynamic>>()), 
+            _mockNotifyService.Verify(mock =>
+                mock.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, dynamic>>()),
                 Times.Never()
             );
         }

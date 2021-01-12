@@ -47,7 +47,9 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void GetMember_InvalidAccessToken_RespondsWithUnauthorized()
         {
-            _mockTokenService.Setup(mock => mock.IsValid("000000", _request)).Returns(false);
+            var candidate = new Candidate { Id = Guid.NewGuid() };
+            _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns(candidate);
+            _mockTokenService.Setup(mock => mock.IsValid("000000", _request, (Guid)candidate.Id)).Returns(false);
 
             var response = _controller.GetMember("000000", _request);
 
@@ -58,7 +60,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public void GetMember_ValidToken_RespondsWithMailingListAddMember()
         {
             var candidate = new Candidate { Id = Guid.NewGuid() };
-            _mockTokenService.Setup(tokenService => tokenService.IsValid("000000", _request)).Returns(true);
+            _mockTokenService.Setup(tokenService => tokenService.IsValid("000000", _request, (Guid)candidate.Id)).Returns(true);
             _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns(candidate);
 
             var response = _controller.GetMember("000000", _request);
@@ -69,14 +71,13 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void GetMember_MissingCandidate_RespondsWithNotFound()
+        public void GetMember_MissingCandidate_RespondsWithUnauthorized()
         {
-            _mockTokenService.Setup(tokenService => tokenService.IsValid("000000", _request)).Returns(true);
             _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns<Candidate>(null);
 
             var response = _controller.GetMember("000000", _request);
 
-            response.Should().BeOfType<NotFoundResult>();
+            response.Should().BeOfType<UnauthorizedResult>();
         }
 
         [Fact]
