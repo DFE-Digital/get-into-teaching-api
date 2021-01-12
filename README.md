@@ -106,7 +106,18 @@ The Hangfire web dashboard can be accessed at `/hangfire` in development.
 
 We run Entity Framework Core in order to persist models/data to a Postgres database.
 
-Migrations are applied from code when the application starts (see `DbConfiguration.cs`). You can add a migration by modifying the models and running `Add-Migration MyNewMigration` from the package manager console. As we run SQLite in development and Postgres in production we need to tell EF Core which provider to use at design-time; the `GetIntoTeachingDbContextFactory` takes care of this.
+Migrations are applied from code when the application starts (see `DbConfiguration.cs`). You can add a migration by modifying the models and running `Add-Migration MyNewMigration` from the package manager console.
+
+If you need to apply/rollback a migration manually in production, the process is not as straight-forward due to `dotnet ef` CLI requiring the application source code to run (in production we only deploy the compiled DLL). Instead, you need to:
+
+- If you are rolling back, ensure your local development database matches production _before_ proceeding
+- Generate the SQL for the migration manually, which can be done with `dotnet ef migrations script <from> <to>`
+    - To generate SQL that rolls back you would put `<from>` as the _current_ latest migration and `<to>` as the migration you want to rollback to
+    - Example: `dotnet ef migrations script DropTypeEntity AddPickListItem`
+- [Create a conduit](https://docs.cloud.service.gov.uk/deploying_services/postgresql/#connect-to-a-postgresql-service-from-your-local-machine) into the production database (currently only DevOps have permission to do this).
+    - `cf conduit <database>`
+- If you are rolling back, ensure that you have reverted the code change that introduced the migration _before_ proceeding
+- Execute the SQL
 
 ### Rate Limiting
 
