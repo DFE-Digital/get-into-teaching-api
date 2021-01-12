@@ -23,51 +23,52 @@ jobs:
       - name: Login to Cloud Foundry
         run: cf login -a api.london.cloud.service.gov.uk -u ${{secrets.GOVUKPAAS_USERNAME}} -p ${{secrets.GOVUKPAAS_PASSWORD}} -s get-into-teaching-monitoring
              
-
+      - name: Push App
+        run: cf push STEVE --docker-image alpine --no-start
       
       - name: Set Env
         run: |
-            cf set-env STEVE ACTIONS_API_ACCESS_TOKEN ${{secrets.ACTIONS_API_ACCESS_TOKEN}}
-            cf set-env STEVE CRM_CLIENT_ID ${{secrets.CRM_CLIENT_ID}}
-            cf set-env STEVE CRM_CLIENT_SECRET ${{secrets.CRM_CLIENT_SECRET}}
-            cf set-env STEVE CRM_SERVICE_URL ${{secrets.CRM_SERVICE_URL}}
-            cf set-env STEVE CRM_TENANT_ID ${{secrets.CRM_TENANT_ID}}
-            cf set-env STEVE DEV_ARM_ACCESS_KEY ${{secrets.DEV_ARM_ACCESS_KEY}}
-            cf set-env STEVE DOCKERHUB_PERSONAL_ACCESS_TOKEN ${{secrets.DOCKERHUB_PERSONAL_ACCESS_TOKEN}}
-            cf set-env STEVE DOCKERHUB_USERNAME ${{secrets.DOCKERHUB_USERNAME}}
-            cf set-env STEVE GOOGLE_API_KEY ${{secrets.GOOGLE_API_KEY}}
-            cf set-env STEVE GOOGLE_CLIENT_ID ${{secrets.GOOGLE_CLIENT_ID}}
-            cf set-env STEVE GOOGLE_CLIENT_SECRET ${{secrets.GOOGLE_CLIENT_SECRET}}
-            cf set-env STEVE GOVUKPAAS_PASSWORD ${{secrets.GOVUKPAAS_PASSWORD}}
-            cf set-env STEVE GOVUKPAAS_USERNAME ${{secrets.GOVUKPAAS_USERNAME}}
-            cf set-env STEVE GRAFANA_PASSWORD ${{secrets.GRAFANA_PASSWORD}}
-            cf set-env STEVE LOGIT_ENDPOINT ${{secrets.LOGIT_ENDPOINT}}
-            cf set-env STEVE LOGIT_PASSWORD ${{secrets.LOGIT_PASSWORD}}
-            cf set-env STEVE LOGIT_USERID ${{secrets.LOGIT_USERID}}
-            cf set-env STEVE NOTIFY_API_KEY ${{secrets.NOTIFY_API_KEY}}
-            cf set-env STEVE PEN_TEST_SHARED_SECRET ${{secrets.PEN_TEST_SHARED_SECRET}}
-            cf set-env STEVE PROD_ARM_ACCESS_KEY ${{secrets.PROD_ARM_ACCESS_KEY}}
-            cf set-env STEVE PROD_CRM_CLIENT_ID ${{secrets.PROD_CRM_CLIENT_ID}}
-            cf set-env STEVE PROD_CRM_CLIENT_SECRET ${{secrets.PROD_CRM_CLIENT_SECRET}}
-            cf set-env STEVE PROD_CRM_SERVICE_URL ${{secrets.PROD_CRM_SERVICE_URL}}
-            cf set-env STEVE PROD_CRM_TENANT_ID ${{secrets.PROD_CRM_TENANT_ID}}
-            cf set-env STEVE PROD_GOOGLE_API_KEY ${{secrets.PROD_GOOGLE_API_KEY}}
-            cf set-env STEVE PROD_NOTIFY_API_KEY ${{secrets.PROD_NOTIFY_API_KEY}}
-            cf set-env STEVE PROD_SHARED_SECRET ${{secrets.PROD_SHARED_SECRET}}
-            cf set-env STEVE PROD_TOTP_SECRET_KEY ${{secrets.PROD_TOTP_SECRET_KEY}}
-            cf set-env STEVE SENTRY_DSN ${{secrets.SENTRY_DSN}}
-            cf set-env STEVE SHARED_SECRET ${{secrets.SHARED_SECRET}}
-            cf set-env STEVE SLACK_ALERTMANAGER_HOOK ${{secrets.SLACK_ALERTMANAGER_HOOK}}
-            cf set-env STEVE SLACK_RELEASE_NOTE_WEBHOOK ${{secrets.SLACK_RELEASE_NOTE_WEBHOOK}}
-            cf set-env STEVE SLACK_WEBHOOK ${{secrets.SLACK_WEBHOOK}}
-            cf set-env STEVE SONAR_TOKEN ${{secrets.SONAR_TOKEN}}
-            cf set-env STEVE STATUS_CAKE_API ${{secrets.STATUS_CAKE_API}}
-            cf set-env STEVE TEST_ARM_ACCESS_KEY ${{secrets.TEST_ARM_ACCESS_KEY}}
-            cf set-env STEVE TEST_CRM_CLIENT_ID ${{secrets.TEST_CRM_CLIENT_ID}}
-            cf set-env STEVE TEST_CRM_CLIENT_SECRET ${{secrets.TEST_CRM_CLIENT_SECRET}}
-            cf set-env STEVE TEST_CRM_SERVICE_URL ${{secrets.TEST_CRM_SERVICE_URL}}
-            cf set-env STEVE TEST_CRM_TENANT_ID ${{secrets.TEST_CRM_TENANT_ID}}
-            cf set-env STEVE TOTP_SECRET_KEY ${{secrets.TOTP_SECRET_KEY}}
+            cf set-env STEVE ACTIONS_API_ACCESS_TOKEN '${{secrets.ACTIONS_API_ACCESS_TOKEN}}'
+            cf set-env STEVE CRM_CLIENT_ID '${{secrets.CRM_CLIENT_ID}}'
+            cf set-env STEVE CRM_CLIENT_SECRET '${{secrets.CRM_CLIENT_SECRET}}'
+            cf set-env STEVE CRM_SERVICE_URL '${{secrets.CRM_SERVICE_URL}}'
+            cf set-env STEVE CRM_TENANT_ID '${{secrets.CRM_TENANT_ID}}'
+            cf set-env STEVE DEV_ARM_ACCESS_KEY '${{secrets.DEV_ARM_ACCESS_KEY}}'
+            cf set-env STEVE DOCKERHUB_PERSONAL_ACCESS_TOKEN '${{secrets.DOCKERHUB_PERSONAL_ACCESS_TOKEN}}'
+            cf set-env STEVE DOCKERHUB_USERNAME '${{secrets.DOCKERHUB_USERNAME}}'
+            cf set-env STEVE GOOGLE_API_KEY '${{secrets.GOOGLE_API_KEY}}'
+            cf set-env STEVE GOOGLE_CLIENT_ID '${{secrets.GOOGLE_CLIENT_ID}}'
+            cf set-env STEVE GOOGLE_CLIENT_SECRET '${{secrets.GOOGLE_CLIENT_SECRET}}'
+            cf set-env STEVE GOVUKPAAS_PASSWORD '${{secrets.GOVUKPAAS_PASSWORD}}'
+            cf set-env STEVE GOVUKPAAS_USERNAME '${{secrets.GOVUKPAAS_USERNAME}}'
+            cf set-env STEVE GRAFANA_PASSWORD '${{secrets.GRAFANA_PASSWORD}}'
+            cf set-env STEVE LOGIT_ENDPOINT '${{secrets.LOGIT_ENDPOINT}}'
+            cf set-env STEVE LOGIT_PASSWORD '${{secrets.LOGIT_PASSWORD}}'
+            cf set-env STEVE LOGIT_USERID '${{secrets.LOGIT_USERID}}'
+            cf set-env STEVE NOTIFY_API_KEY '${{secrets.NOTIFY_API_KEY}}'
+            cf set-env STEVE PEN_TEST_SHARED_SECRET '${{secrets.PEN_TEST_SHARED_SECRET}}'
+            cf set-env STEVE PROD_ARM_ACCESS_KEY '${{secrets.PROD_ARM_ACCESS_KEY}}'
+            cf set-env STEVE PROD_CRM_CLIENT_ID '${{secrets.PROD_CRM_CLIENT_ID}}'
+            cf set-env STEVE PROD_CRM_CLIENT_SECRET '${{secrets.PROD_CRM_CLIENT_SECRET}}'
+            cf set-env STEVE PROD_CRM_SERVICE_URL '${{secrets.PROD_CRM_SERVICE_URL}}'
+            cf set-env STEVE PROD_CRM_TENANT_ID '${{secrets.PROD_CRM_TENANT_ID}}'
+            cf set-env STEVE PROD_GOOGLE_API_KEY '${{secrets.PROD_GOOGLE_API_KEY}}'
+            cf set-env STEVE PROD_NOTIFY_API_KEY '${{secrets.PROD_NOTIFY_API_KEY}}'
+            cf set-env STEVE PROD_SHARED_SECRET '${{secrets.PROD_SHARED_SECRET}}'
+            cf set-env STEVE PROD_TOTP_SECRET_KEY '${{secrets.PROD_TOTP_SECRET_KEY}}'
+            cf set-env STEVE SENTRY_DSN '${{secrets.SENTRY_DSN}}'
+            cf set-env STEVE SHARED_SECRET '${{secrets.SHARED_SECRET}}'
+            cf set-env STEVE SLACK_ALERTMANAGER_HOOK '${{secrets.SLACK_ALERTMANAGER_HOOK}}'
+            cf set-env STEVE SLACK_RELEASE_NOTE_WEBHOOK '${{secrets.SLACK_RELEASE_NOTE_WEBHOOK}}'
+            cf set-env STEVE SLACK_WEBHOOK '${{secrets.SLACK_WEBHOOK}}'
+            cf set-env STEVE SONAR_TOKEN '${{secrets.SONAR_TOKEN}}'
+            cf set-env STEVE STATUS_CAKE_API '${{secrets.STATUS_CAKE_API}}'
+            cf set-env STEVE TEST_ARM_ACCESS_KEY '${{secrets.TEST_ARM_ACCESS_KEY}}'
+            cf set-env STEVE TEST_CRM_CLIENT_ID '${{secrets.TEST_CRM_CLIENT_ID}}'
+            cf set-env STEVE TEST_CRM_CLIENT_SECRET '${{secrets.TEST_CRM_CLIENT_SECRET}}'
+            cf set-env STEVE TEST_CRM_SERVICE_URL '${{secrets.TEST_CRM_SERVICE_URL}}'
+            cf set-env STEVE TEST_CRM_TENANT_ID '${{secrets.TEST_CRM_TENANT_ID}}'
+            cf set-env STEVE TOTP_SECRET_KEY '${{secrets.TOTP_SECRET_KEY}}'
       
       - name: Give me 2 minutes
         run:  sleep 120
