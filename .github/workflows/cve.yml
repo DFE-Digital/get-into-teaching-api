@@ -19,3 +19,7 @@ jobs:
           echo "deb https://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
           sudo apt-get update
           sudo apt-get install cf7-cli  
+          
+      - name: Login to Cloud Foundry
+        run: cf login -a api.london.cloud.service.gov.uk -u ${{secrets.GOVUKPAAS_USERNAME}} -p ${{secrets.GOVUKPAAS_PASSWORD}} -s get-into-teaching-monitoring
+             
