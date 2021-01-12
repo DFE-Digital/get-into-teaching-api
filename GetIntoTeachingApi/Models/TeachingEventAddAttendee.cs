@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Attributes;
+using GetIntoTeachingApi.Services;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
@@ -126,37 +127,12 @@ namespace GetIntoTeachingApi.Models
 
         private void ConfigureSubscriptions(Candidate candidate)
         {
-            candidate.HasEventsSubscription = true;
-            candidate.EventsSubscriptionChannelId = (int)Candidate.SubscriptionChannel.Events;
-            candidate.EventsSubscriptionStartAt = DateTime.UtcNow;
-            candidate.EventsSubscriptionDoNotEmail = false;
-            candidate.EventsSubscriptionDoNotBulkEmail = false;
-            candidate.EventsSubscriptionDoNotBulkPostalMail = true;
-            candidate.EventsSubscriptionDoNotPostalMail = true;
-            candidate.EventsSubscriptionDoNotSendMm = false;
+            SubscriptionManager.SubscribeToEvents(candidate);
 
-            if (string.IsNullOrWhiteSpace(AddressPostcode))
+            if (SubscribeToMailingList)
             {
-                candidate.EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.SingleEvent;
+                SubscriptionManager.SubscribeToMailingList(candidate);
             }
-            else
-            {
-                candidate.EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.LocalEvent;
-            }
-
-            if (!SubscribeToMailingList)
-            {
-                return;
-            }
-
-            candidate.HasMailingListSubscription = true;
-            candidate.MailingListSubscriptionChannelId = (int)Candidate.SubscriptionChannel.MailingList;
-            candidate.MailingListSubscriptionStartAt = DateTime.UtcNow;
-            candidate.MailingListSubscriptionDoNotEmail = false;
-            candidate.MailingListSubscriptionDoNotBulkEmail = false;
-            candidate.MailingListSubscriptionDoNotBulkPostalMail = true;
-            candidate.MailingListSubscriptionDoNotPostalMail = true;
-            candidate.MailingListSubscriptionDoNotSendMm = false;
         }
 
         private void AddTeachingEventRegistration(Candidate candidate)
