@@ -10,5 +10,7 @@ namespace GetIntoTeachingApi.Services
         Gauge HangfireJobs { get; }
         Counter GoogleApiCalls { get; }
         Counter CacheLookups { get; }
+        Counter VerifiedTotps { get; }
+        Counter GeneratedTotps { get; }
     }
 }

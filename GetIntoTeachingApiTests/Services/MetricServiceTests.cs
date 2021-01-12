@@ -52,5 +52,19 @@ namespace GetIntoTeachingApiTests.Services
             _metrics.CacheLookups.Name.Should().Be("api_cache_lookups");
             _metrics.CacheLookups.LabelNames.Should().BeEquivalentTo(new[] { "outcome" });
         }
+
+        [Fact]
+        public void GeneratedTotps_ReturnsMetric()
+        {
+            _metrics.GeneratedTotps.Name.Should().Be("api_generated_totps");
+            _metrics.GeneratedTotps.LabelNames.Should().BeEquivalentTo(new[] { "candidate_id", "totp" });
+        }
+
+        [Fact]
+        public void VerifiedTotps_ReturnsMetric()
+        {
+            _metrics.VerifiedTotps.Name.Should().Be("api_verified_totps");
+            _metrics.VerifiedTotps.LabelNames.Should().BeEquivalentTo(new[] { "candidate_id", "totp", "valid" });
+        }
     }
 }

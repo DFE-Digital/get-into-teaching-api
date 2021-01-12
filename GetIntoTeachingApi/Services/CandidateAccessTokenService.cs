@@ -14,24 +14,29 @@ namespace GetIntoTeachingApi.Services
         public static readonly int StepInSeconds = 30;
         private const int Length = 6;
         private readonly IEnv _env;
+        private readonly IMetricService _metrics;
 
-        public CandidateAccessTokenService(IEnv env)
+        public CandidateAccessTokenService(IEnv env, IMetricService metrics)
         {
             _env = env;
+            _metrics = metrics;
         }
 
-        public string GenerateToken(ExistingCandidateRequest request)
+        public string GenerateToken(ExistingCandidateRequest request, Guid candidateId)
         {
-            var totp = CreateTotp(request);
-            return totp.ComputeTotp();
+            var totp = CreateTotp(request).ComputeTotp();
+
+            _metrics.GeneratedTotps.WithLabels(candidateId.ToString(), totp).Inc();
+
+            return totp;
         }
 
-        public bool IsValid(string token, ExistingCandidateRequest request)
+        public bool IsValid(string token, ExistingCandidateRequest request, Guid candidateId)
         {
-            return IsValid(token, request, DateTime.UtcNow);
+            return IsValid(token, request, candidateId, DateTime.UtcNow);
         }
 
-        public bool IsValid(string token, ExistingCandidateRequest request, DateTime timestamp)
+        public bool IsValid(string token, ExistingCandidateRequest request, Guid candidateId, DateTime timestamp)
         {
             if (string.IsNullOrWhiteSpace(token))
             {
@@ -40,11 +45,15 @@ namespace GetIntoTeachingApi.Services
 
             var totp = CreateTotp(request);
 
-            return totp.VerifyTotp(
+            var valid = totp.VerifyTotp(
                 timestamp,
                 token,
                 out _,
                 new VerificationWindow(previous: VerificationWindow, future: 0));
+
+            _metrics.VerifiedTotps.WithLabels(candidateId.ToString(), token, valid.ToString()).Inc();
+
+            return valid;
         }
 
         private Totp CreateTotp(ExistingCandidateRequest request)

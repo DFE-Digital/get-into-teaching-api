@@ -5,18 +5,24 @@ using System;
 using GetIntoTeachingApi.Utils;
 using Moq;
 using Xunit;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace GetIntoTeachingApiTests.Services
 {
     public class CandidateAccessTokenServiceTests
     {
         private readonly ICandidateAccessTokenService _service;
+        private readonly IMetricService _metrics;
+        private readonly Guid _candidateId;
 
         public CandidateAccessTokenServiceTests()
         {
+            _candidateId = Guid.NewGuid();
+            _metrics = new MetricService();
             var mockEnv = new Mock<IEnv>();
             mockEnv.Setup(m => m.TotpSecretKey).Returns("secret_key");
-            _service = new CandidateAccessTokenService(mockEnv.Object);
+            _service = new CandidateAccessTokenService(mockEnv.Object, _metrics);
         }
 
         [Theory]
@@ -26,9 +32,11 @@ namespace GetIntoTeachingApiTests.Services
         public void GenerateToken_ReturnsAValidToken(string email, string firstName, string lastName)
         {
             var request = new ExistingCandidateRequest { Email = email, FirstName = firstName, LastName = lastName };
-            var token = _service.GenerateToken(request);
+            var token = _service.GenerateToken(request, _candidateId);
 
-            _service.IsValid(token, request).Should().BeTrue();
+            _service.IsValid(token, request, _candidateId).Should().BeTrue();
+            _metrics.GeneratedTotps.WithLabels(new[] { _candidateId.ToString(), token }).Value.Should().Be(1);
+            _metrics.VerifiedTotps.WithLabels(new[] { _candidateId.ToString(), token, true.ToString() }).Value.Should().Be(1);
         }
 
         [Fact]
@@ -36,8 +44,8 @@ namespace GetIntoTeachingApiTests.Services
         {
             var request1 = new ExistingCandidateRequest { Email = "email1@address.com", FirstName = "John", LastName = "Doe" };
             var request2 = new ExistingCandidateRequest { Email = "email2@address.com", FirstName = "John", LastName = "Doe" };
-            var token1 = _service.GenerateToken(request1);
-            var token2 = _service.GenerateToken(request2);
+            var token1 = _service.GenerateToken(request1, _candidateId);
+            var token2 = _service.GenerateToken(request2, _candidateId);
             token1.Should().NotBe(token2);
         }
 
@@ -46,8 +54,8 @@ namespace GetIntoTeachingApiTests.Services
         {
             var request1 = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John1", LastName = "Doe" };
             var request2 = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John2", LastName = "Doe" };
-            var token1 = _service.GenerateToken(request1);
-            var token2 = _service.GenerateToken(request2);
+            var token1 = _service.GenerateToken(request1, _candidateId);
+            var token2 = _service.GenerateToken(request2, _candidateId);
             token1.Should().NotBe(token2);
         }
 
@@ -55,8 +63,8 @@ namespace GetIntoTeachingApiTests.Services
         public void GenerateToken_SameRequestInSameStep_ReturnSameToken()
         {
             var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
-            var token1 = _service.GenerateToken(request);
-            var token2 = _service.GenerateToken(request);
+            var token1 = _service.GenerateToken(request, _candidateId);
+            var token2 = _service.GenerateToken(request, _candidateId);
             token1.Should().Be(token2);
         }
 
@@ -68,7 +76,12 @@ namespace GetIntoTeachingApiTests.Services
         public void IsValid_WithInvalidToken_ReturnsFalse(string invalidToken)
         {
             var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
-            _service.IsValid(invalidToken, request).Should().BeFalse();
+            _service.IsValid(invalidToken, request, _candidateId).Should().BeFalse();
+
+            if (!string.IsNullOrWhiteSpace(invalidToken))
+            {
+                _metrics.VerifiedTotps.WithLabels(new[] { _candidateId.ToString(), invalidToken, false.ToString() }).Value.Should().Be(1);
+            }
         }
 
 
@@ -78,8 +91,9 @@ namespace GetIntoTeachingApiTests.Services
             var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
             var secondsToOutsideOfWindow = (CandidateAccessTokenService.StepInSeconds * CandidateAccessTokenService.VerificationWindow) + 1;
             var dateTimeOutsideOfWindow = DateTime.UtcNow.AddSeconds(-secondsToOutsideOfWindow);
-            var token = _service.GenerateToken(request);
-            _service.IsValid(token, request, dateTimeOutsideOfWindow).Should().BeFalse();
+            var token = _service.GenerateToken(request, _candidateId);
+            _service.IsValid(token, request, _candidateId, dateTimeOutsideOfWindow).Should().BeFalse();
+            _metrics.VerifiedTotps.WithLabels(new[] { _candidateId.ToString(), token, false.ToString() }).Value.Should().Be(1);
         }
     }
 }
