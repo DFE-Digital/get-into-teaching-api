@@ -1,8 +1,0 @@
-delivery_space       = "get-into-teaching"
-application_space    = "get-into-teaching"
-api_application_name = "get-into-teaching-api-dev"
-app_application_name = "get-into-teaching-app-dev"
-tta_application_name = "get-teacher-training-adviser-service-dev"
-grafana_password     = "a_password"
-redis_service        = "get-into-teaching-dev-redis-svc"
-environment          = "dev"
