@@ -61,6 +61,14 @@ jobs:
          if: steps.wait-for-deploy.outputs.conclusion == 'timed_out'
          run: exit 1
 
+       - name: Trigger ${{github.event.inputs.environment}} Fix Network Policies
+         uses: benc-uk/workflow-dispatch@v1.1
+         with:
+           workflow: Fix Network policies 
+           token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN }}
+           inputs: '{"environment": "${{github.event.inputs.environment}}" }'
+           ref: ${{github.ref}}
+           
        - name: Slack Release Notification
          if: steps.tag_id.outputs.release_id && github.event.inputs.environment == 'Production'
          uses: rtCamp/action-slack-notify@master
