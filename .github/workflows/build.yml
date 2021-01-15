@@ -126,6 +126,14 @@ jobs:
          if: steps.wait-for-deploy.outputs.conclusion == 'failure'
          run: exit 1
 
+       - name: Trigger Development Fix Network Policies
+         uses: benc-uk/workflow-dispatch@v1.1
+         with:
+           workflow: Fix Network policies 
+           token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN }}
+           inputs: '{"environment": "Development" }'
+           ref: ${{github.ref}}
+        
        - name: Generate Tag from PR Number
          id:   tag_version
          uses: DFE-Digital/github-actions/GenerateReleaseFromSHA@master
