@@ -217,7 +217,7 @@ The GIT API aims to provide:
             app.UseSwagger(c =>
             {
                 // The UI generated for V2 is buggy, so use V3 in development.
-                c.SerializeAsV2 = !env.IsDevelopment;
+                c.SerializeAsV2 = true; //#!env.IsDevelopment;
             });
 
             if (!env.IsProduction)
