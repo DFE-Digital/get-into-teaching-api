@@ -89,12 +89,6 @@ namespace GetIntoTeachingApi.Models
                 AddressPostcode = AddressPostcode,
                 Telephone = Telephone,
                 ChannelId = CandidateId == null ? ChannelId ?? (int?)Candidate.Channel.MailingList : null,
-                OptOutOfSms = false,
-                DoNotBulkEmail = false,
-                DoNotEmail = false,
-                DoNotBulkPostalMail = true,
-                DoNotPostalMail = true,
-                DoNotSendMm = false,
                 EligibilityRulesPassed = "false",
             };
 

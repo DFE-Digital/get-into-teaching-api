@@ -15,6 +15,13 @@ namespace GetIntoTeachingApi.Services
             candidate.MailingListSubscriptionDoNotBulkPostalMail = true;
             candidate.MailingListSubscriptionDoNotPostalMail = true;
             candidate.MailingListSubscriptionDoNotSendMm = false;
+
+            candidate.OptOutOfSms = ConsentValue(candidate.OptOutOfSms, false);
+            candidate.DoNotBulkEmail = ConsentValue(candidate.DoNotBulkEmail, false);
+            candidate.DoNotEmail = ConsentValue(candidate.DoNotEmail, false);
+            candidate.DoNotBulkPostalMail = ConsentValue(candidate.DoNotBulkPostalMail, true);
+            candidate.DoNotPostalMail = ConsentValue(candidate.DoNotPostalMail, true);
+            candidate.DoNotSendMm = ConsentValue(candidate.DoNotSendMm, false);
         }
 
         public static void SubscribeToEvents(Candidate candidate, int? channelId = null)
@@ -36,6 +43,13 @@ namespace GetIntoTeachingApi.Services
             {
                 candidate.EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.LocalEvent;
             }
+
+            candidate.OptOutOfSms = ConsentValue(candidate.OptOutOfSms, false);
+            candidate.DoNotBulkEmail = ConsentValue(candidate.DoNotBulkEmail, false);
+            candidate.DoNotEmail = ConsentValue(candidate.DoNotEmail, false);
+            candidate.DoNotBulkPostalMail = ConsentValue(candidate.DoNotBulkPostalMail, true);
+            candidate.DoNotPostalMail = ConsentValue(candidate.DoNotPostalMail, true);
+            candidate.DoNotSendMm = ConsentValue(candidate.DoNotSendMm, true);
         }
 
         public static void SubscribeToTeacherTrainingAdviser(Candidate candidate)
@@ -48,6 +62,24 @@ namespace GetIntoTeachingApi.Services
             candidate.TeacherTrainingAdviserSubscriptionDoNotBulkPostalMail = candidate.IsReturningToTeaching();
             candidate.TeacherTrainingAdviserSubscriptionDoNotPostalMail = candidate.IsReturningToTeaching();
             candidate.TeacherTrainingAdviserSubscriptionDoNotSendMm = candidate.IsReturningToTeaching();
+
+            candidate.OptOutOfSms = ConsentValue(candidate.OptOutOfSms, false);
+            candidate.DoNotBulkEmail = ConsentValue(candidate.DoNotBulkEmail, candidate.IsReturningToTeaching());
+            candidate.DoNotEmail = ConsentValue(candidate.DoNotEmail, false);
+            candidate.DoNotBulkPostalMail = ConsentValue(candidate.DoNotBulkPostalMail, candidate.IsReturningToTeaching());
+            candidate.DoNotPostalMail = ConsentValue(candidate.DoNotPostalMail, candidate.IsReturningToTeaching());
+            candidate.DoNotSendMm = ConsentValue(candidate.DoNotSendMm, candidate.IsReturningToTeaching());
+        }
+
+        private static bool ConsentValue(bool? currentValue, bool desiredValue)
+        {
+            // Never opt out if already consented.
+            if (currentValue == false)
+            {
+                return false;
+            }
+
+            return desiredValue;
         }
     }
 }

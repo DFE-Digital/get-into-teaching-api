@@ -162,7 +162,6 @@ namespace GetIntoTeachingApi.Models
             DefaultPreferredEducationPhase(candidate);
             DefaultPreferredTeachingSubjectId(candidate);
             SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate);
-            ConfigureConsent(candidate);
 
             return candidate;
         }
@@ -285,16 +284,6 @@ namespace GetIntoTeachingApi.Models
             {
                 candidate.TypeId = (int)Candidate.Type.InterestedInTeacherTraining;
             }
-        }
-
-        private void ConfigureConsent(Candidate candidate)
-        {
-            candidate.OptOutOfSms = false;
-            candidate.DoNotBulkEmail = candidate.IsReturningToTeaching();
-            candidate.DoNotEmail = false;
-            candidate.DoNotBulkPostalMail = candidate.IsReturningToTeaching();
-            candidate.DoNotPostalMail = candidate.IsReturningToTeaching();
-            candidate.DoNotSendMm = candidate.IsReturningToTeaching();
         }
 
         private int? DestinationForTelephone(string telephone)
