@@ -109,8 +109,8 @@ namespace GetIntoTeachingApiTests.Models
             candidate.OptOutOfSms.Should().BeFalse();
             candidate.DoNotBulkEmail.Should().BeFalse();
             candidate.DoNotEmail.Should().BeFalse();
-            candidate.DoNotBulkPostalMail.Should().BeFalse();
-            candidate.DoNotPostalMail.Should().BeFalse();
+            candidate.DoNotBulkPostalMail.Should().BeTrue();
+            candidate.DoNotPostalMail.Should().BeTrue();
             candidate.DoNotSendMm.Should().BeFalse();
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
@@ -130,15 +130,6 @@ namespace GetIntoTeachingApiTests.Models
 
         [Fact]
         public void Candidate_SubscribeToMailingListIsFalse_ConsentIsCorrect()
-        {
-            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, AddressPostcode = "TE7 8KJ" };
-
-            request.Candidate.DoNotBulkPostalMail.Should().BeTrue();
-            request.Candidate.DoNotPostalMail.Should().BeTrue();
-        }
-
-        [Fact]
-        public void Candidate_SubscribeToMailingListAndEventsAreFalse_ConsentIsCorrect()
         {
             var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, AddressPostcode = null };
 
@@ -175,18 +166,6 @@ namespace GetIntoTeachingApiTests.Models
             var request = new TeachingEventAddAttendee() { AddressPostcode = null };
 
             request.Candidate.HasEventsSubscription.Should().BeTrue();
-        }
-
-        [Theory]
-        [InlineData(false, null, false)]
-        [InlineData(false, "TE7 8JR", false)]
-        [InlineData(true, null, false)]
-        [InlineData(true, "TE7 8JR", true)]
-        public void SubscribeToEvents_ReturnsCorrectly(bool SubscribeToMailingList, string AddressPostcode, bool expectedOutcome)
-        {
-            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = SubscribeToMailingList, AddressPostcode = AddressPostcode };
-
-            request.SubscribeToEvents.Should().Be(expectedOutcome);
         }
     }
 }

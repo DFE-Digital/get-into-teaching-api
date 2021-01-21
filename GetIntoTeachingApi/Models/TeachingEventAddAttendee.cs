@@ -32,8 +32,6 @@ namespace GetIntoTeachingApi.Models
         public string AddressPostcode { get; set; }
         [SensitiveData]
         public string Telephone { get; set; }
-        [SwaggerSchema(ReadOnly = true)]
-        public bool SubscribeToEvents => AddressPostcode != null && SubscribeToMailingList;
         [SwaggerSchema(WriteOnly = true)]
         public bool SubscribeToMailingList { get; set; }
         [SwaggerSchema(ReadOnly = true)]
@@ -100,7 +98,6 @@ namespace GetIntoTeachingApi.Models
             AddQualification(candidate);
             AcceptPrivacyPolicy(candidate);
             ConfigureSubscriptions(candidate);
-            ConfigureConsent(candidate);
 
             return candidate;
         }
@@ -113,16 +110,6 @@ namespace GetIntoTeachingApi.Models
                 DegreeStatusId = DegreeStatusId,
                 TypeId = (int)CandidateQualification.DegreeType.Degree,
             });
-        }
-
-        private void ConfigureConsent(Candidate candidate)
-        {
-            candidate.OptOutOfSms = false;
-            candidate.DoNotBulkEmail = false;
-            candidate.DoNotBulkPostalMail = !SubscribeToMailingList;
-            candidate.DoNotEmail = false;
-            candidate.DoNotPostalMail = !SubscribeToMailingList;
-            candidate.DoNotSendMm = !SubscribeToEvents && !SubscribeToMailingList;
         }
 
         private void ConfigureSubscriptions(Candidate candidate)

@@ -37,6 +37,32 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void SubscribeToMailingList_NewCandidate_CorrectConsent()
+        {
+            var candidate = new Candidate();
+
+            SubscriptionManager.SubscribeToMailingList(candidate);
+
+            candidate.OptOutOfSms.Should().BeFalse();
+            candidate.DoNotBulkEmail.Should().BeFalse();
+            candidate.DoNotEmail.Should().BeFalse();
+            candidate.DoNotBulkPostalMail.Should().BeTrue();
+            candidate.DoNotPostalMail.Should().BeTrue();
+            candidate.DoNotSendMm.Should().BeFalse();
+        }
+
+        [Fact]
+        public void SubscribeToMailingList_ExistingCandidate_DoesNotOptOutIfAlreadyConsented()
+        {
+            var candidate = new Candidate() { DoNotBulkPostalMail = false, DoNotPostalMail = false };
+
+            SubscriptionManager.SubscribeToMailingList(candidate);
+
+            candidate.DoNotBulkPostalMail.Should().BeFalse();
+            candidate.DoNotPostalMail.Should().BeFalse();
+        }
+
+        [Fact]
         public void SubscribeToEvents_CandidateHasAddressPostcodeAndDefaultChannel_CorrectSubscription()
         {
             var candidate = new Candidate() { AddressPostcode = "TE5 7IN" };
@@ -63,6 +89,32 @@ namespace GetIntoTeachingApiTests.Services
 
             candidate.EventsSubscriptionChannelId.Should().Be(123);
             candidate.EventsSubscriptionTypeId.Should().Be((int)Candidate.SubscriptionType.SingleEvent);
+        }
+
+        [Fact]
+        public void SubscribeToEvents_NewCandidate_CorrectConsent()
+        {
+            var candidate = new Candidate();
+
+            SubscriptionManager.SubscribeToEvents(candidate);
+
+            candidate.OptOutOfSms.Should().BeFalse();
+            candidate.DoNotBulkEmail.Should().BeFalse();
+            candidate.DoNotEmail.Should().BeFalse();
+            candidate.DoNotBulkPostalMail.Should().BeTrue();
+            candidate.DoNotPostalMail.Should().BeTrue();
+            candidate.DoNotSendMm.Should().BeTrue();
+        }
+
+        [Fact]
+        public void SubscribeToEvents_ExistingCandidate_DoesNotOptOutIfAlreadyConsented()
+        {
+            var candidate = new Candidate() { DoNotBulkPostalMail = false, DoNotPostalMail = false };
+
+            SubscriptionManager.SubscribeToEvents(candidate);
+
+            candidate.DoNotBulkPostalMail.Should().BeFalse();
+            candidate.DoNotPostalMail.Should().BeFalse();
         }
 
         [Fact]
@@ -98,6 +150,58 @@ namespace GetIntoTeachingApiTests.Services
             candidate.TeacherTrainingAdviserSubscriptionDoNotPostalMail.Should().BeTrue();
             candidate.TeacherTrainingAdviserSubscriptionDoNotSendMm.Should().BeTrue();
             candidate.TeacherTrainingAdviserSubscriptionDoNotEmail.Should().BeFalse();
+        }
+
+        [Fact]
+        public void SubscribeToTeacherTrainingAdviser_NewNonReturnerCandidate_CorrectConsent()
+        {
+            var candidate = new Candidate();
+
+            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate);
+
+            candidate.OptOutOfSms.Should().BeFalse();
+            candidate.DoNotBulkEmail.Should().BeFalse();
+            candidate.DoNotEmail.Should().BeFalse();
+            candidate.DoNotBulkPostalMail.Should().BeFalse();
+            candidate.DoNotPostalMail.Should().BeFalse();
+            candidate.DoNotSendMm.Should().BeFalse();
+        }
+
+        [Fact]
+        public void SubscribeToTeacherTrainingAdviser_NewReturnerCandidate_CorrectConsent()
+        {
+            var position = new CandidatePastTeachingPosition() { Id = Guid.NewGuid() };
+            var candidate = new Candidate() { PastTeachingPositions = new List<CandidatePastTeachingPosition>() { position } };
+
+            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate);
+
+            candidate.OptOutOfSms.Should().BeFalse();
+            candidate.DoNotBulkEmail.Should().BeTrue();
+            candidate.DoNotEmail.Should().BeFalse();
+            candidate.DoNotBulkPostalMail.Should().BeTrue();
+            candidate.DoNotPostalMail.Should().BeTrue();
+            candidate.DoNotSendMm.Should().BeTrue();
+        }
+
+        [Fact]
+        public void SubscribeToTeacherTrainingAdviser_ExistingCandidate_DoesNotOptOutIfAlreadyConsented()
+        {
+            var position = new CandidatePastTeachingPosition() { Id = Guid.NewGuid() };
+            var candidate = new Candidate()
+            {
+                DoNotBulkEmail = false,
+                DoNotBulkPostalMail = false,
+                DoNotPostalMail = false,
+                DoNotSendMm = false,
+                PastTeachingPositions = new List<CandidatePastTeachingPosition>() { position },
+            };
+
+            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate);
+
+            candidate.DoNotBulkEmail.Should().BeFalse();
+            candidate.DoNotBulkPostalMail.Should().BeFalse();
+            candidate.DoNotPostalMail.Should().BeFalse();
+            candidate.DoNotSendMm.Should().BeFalse();
         }
     }
 }
