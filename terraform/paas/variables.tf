@@ -45,7 +45,7 @@ variable "environment" {
 }
 
 variable "paas_org_name" {
-  default = "dfe-teacher-services"
+  default = "dfe"
 }
 
 variable "paas_logging_name" {
