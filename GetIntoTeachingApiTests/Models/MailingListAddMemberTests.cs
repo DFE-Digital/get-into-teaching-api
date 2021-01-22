@@ -116,23 +116,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
 
             candidate.HasMailingListSubscription.Should().BeTrue();
-            candidate.MailingListSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.MailingList);
-            candidate.MailingListSubscriptionStartAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
-            candidate.MailingListSubscriptionDoNotBulkEmail.Should().BeFalse();
-            candidate.MailingListSubscriptionDoNotBulkPostalMail.Should().BeTrue();
-            candidate.MailingListSubscriptionDoNotPostalMail.Should().BeTrue();
-            candidate.MailingListSubscriptionDoNotSendMm.Should().BeFalse();
-            candidate.MailingListSubscriptionDoNotEmail.Should().BeFalse();
-
             candidate.HasEventsSubscription.Should().BeTrue();
-            candidate.EventsSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Events);
-            candidate.EventsSubscriptionStartAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
-            candidate.EventsSubscriptionDoNotBulkEmail.Should().BeFalse();
-            candidate.EventsSubscriptionDoNotBulkPostalMail.Should().BeTrue();
-            candidate.EventsSubscriptionDoNotPostalMail.Should().BeTrue();
-            candidate.EventsSubscriptionDoNotSendMm.Should().BeFalse();
-            candidate.EventsSubscriptionDoNotEmail.Should().BeFalse();
-            candidate.EventsSubscriptionTypeId.Should().Be((int)Candidate.SubscriptionType.LocalEvent);
 
             candidate.Qualifications.First().DegreeStatusId.Should().Be(request.DegreeStatusId);
             candidate.Qualifications.First().TypeId.Should().Be((int)CandidateQualification.DegreeType.Degree);

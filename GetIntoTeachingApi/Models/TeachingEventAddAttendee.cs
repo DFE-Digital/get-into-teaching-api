@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Attributes;
+using GetIntoTeachingApi.Services;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
@@ -31,8 +32,6 @@ namespace GetIntoTeachingApi.Models
         public string AddressPostcode { get; set; }
         [SensitiveData]
         public string Telephone { get; set; }
-        [SwaggerSchema(ReadOnly = true)]
-        public bool SubscribeToEvents => AddressPostcode != null && SubscribeToMailingList;
         [SwaggerSchema(WriteOnly = true)]
         public bool SubscribeToMailingList { get; set; }
         [SwaggerSchema(ReadOnly = true)]
@@ -99,7 +98,6 @@ namespace GetIntoTeachingApi.Models
             AddQualification(candidate);
             AcceptPrivacyPolicy(candidate);
             ConfigureSubscriptions(candidate);
-            ConfigureConsent(candidate);
 
             return candidate;
         }
@@ -114,49 +112,14 @@ namespace GetIntoTeachingApi.Models
             });
         }
 
-        private void ConfigureConsent(Candidate candidate)
-        {
-            candidate.OptOutOfSms = false;
-            candidate.DoNotBulkEmail = false;
-            candidate.DoNotBulkPostalMail = !SubscribeToMailingList;
-            candidate.DoNotEmail = false;
-            candidate.DoNotPostalMail = !SubscribeToMailingList;
-            candidate.DoNotSendMm = !SubscribeToEvents && !SubscribeToMailingList;
-        }
-
         private void ConfigureSubscriptions(Candidate candidate)
         {
-            candidate.HasEventsSubscription = true;
-            candidate.EventsSubscriptionChannelId = (int)Candidate.SubscriptionChannel.Events;
-            candidate.EventsSubscriptionStartAt = DateTime.UtcNow;
-            candidate.EventsSubscriptionDoNotEmail = false;
-            candidate.EventsSubscriptionDoNotBulkEmail = false;
-            candidate.EventsSubscriptionDoNotBulkPostalMail = true;
-            candidate.EventsSubscriptionDoNotPostalMail = true;
-            candidate.EventsSubscriptionDoNotSendMm = false;
+            SubscriptionManager.SubscribeToEvents(candidate);
 
-            if (string.IsNullOrWhiteSpace(AddressPostcode))
+            if (SubscribeToMailingList)
             {
-                candidate.EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.SingleEvent;
+                SubscriptionManager.SubscribeToMailingList(candidate);
             }
-            else
-            {
-                candidate.EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.LocalEvent;
-            }
-
-            if (!SubscribeToMailingList)
-            {
-                return;
-            }
-
-            candidate.HasMailingListSubscription = true;
-            candidate.MailingListSubscriptionChannelId = (int)Candidate.SubscriptionChannel.MailingList;
-            candidate.MailingListSubscriptionStartAt = DateTime.UtcNow;
-            candidate.MailingListSubscriptionDoNotEmail = false;
-            candidate.MailingListSubscriptionDoNotBulkEmail = false;
-            candidate.MailingListSubscriptionDoNotBulkPostalMail = true;
-            candidate.MailingListSubscriptionDoNotPostalMail = true;
-            candidate.MailingListSubscriptionDoNotSendMm = false;
         }
 
         private void AddTeachingEventRegistration(Candidate candidate)

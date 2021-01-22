@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Attributes;
+using GetIntoTeachingApi.Services;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
@@ -160,8 +161,7 @@ namespace GetIntoTeachingApi.Models
             SetType(candidate);
             DefaultPreferredEducationPhase(candidate);
             DefaultPreferredTeachingSubjectId(candidate);
-            ConfigureSubscription(candidate);
-            ConfigureConsent(candidate);
+            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate);
 
             return candidate;
         }
@@ -284,28 +284,6 @@ namespace GetIntoTeachingApi.Models
             {
                 candidate.TypeId = (int)Candidate.Type.InterestedInTeacherTraining;
             }
-        }
-
-        private void ConfigureConsent(Candidate candidate)
-        {
-            candidate.OptOutOfSms = false;
-            candidate.DoNotBulkEmail = candidate.IsReturningToTeaching();
-            candidate.DoNotEmail = false;
-            candidate.DoNotBulkPostalMail = candidate.IsReturningToTeaching();
-            candidate.DoNotPostalMail = candidate.IsReturningToTeaching();
-            candidate.DoNotSendMm = candidate.IsReturningToTeaching();
-        }
-
-        private void ConfigureSubscription(Candidate candidate)
-        {
-            candidate.HasTeacherTrainingAdviserSubscription = true;
-            candidate.TeacherTrainingAdviserSubscriptionChannelId = (int)Candidate.SubscriptionChannel.TeacherTrainingAdviser;
-            candidate.TeacherTrainingAdviserSubscriptionStartAt = DateTime.UtcNow;
-            candidate.TeacherTrainingAdviserSubscriptionDoNotEmail = false;
-            candidate.TeacherTrainingAdviserSubscriptionDoNotBulkEmail = candidate.IsReturningToTeaching();
-            candidate.TeacherTrainingAdviserSubscriptionDoNotBulkPostalMail = candidate.IsReturningToTeaching();
-            candidate.TeacherTrainingAdviserSubscriptionDoNotPostalMail = candidate.IsReturningToTeaching();
-            candidate.TeacherTrainingAdviserSubscriptionDoNotSendMm = candidate.IsReturningToTeaching();
         }
 
         private int? DestinationForTelephone(string telephone)

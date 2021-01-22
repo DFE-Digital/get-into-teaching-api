@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Attributes;
+using GetIntoTeachingApi.Services;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
@@ -88,12 +89,6 @@ namespace GetIntoTeachingApi.Models
                 AddressPostcode = AddressPostcode,
                 Telephone = Telephone,
                 ChannelId = CandidateId == null ? ChannelId ?? (int?)Candidate.Channel.MailingList : null,
-                OptOutOfSms = false,
-                DoNotBulkEmail = false,
-                DoNotEmail = false,
-                DoNotBulkPostalMail = true,
-                DoNotPostalMail = true,
-                DoNotSendMm = false,
                 EligibilityRulesPassed = "false",
             };
 
@@ -116,29 +111,12 @@ namespace GetIntoTeachingApi.Models
 
         private void ConfigureSubscriptions(Candidate candidate)
         {
-            candidate.HasMailingListSubscription = true;
-            candidate.MailingListSubscriptionChannelId = ChannelId ?? (int)Candidate.SubscriptionChannel.MailingList;
-            candidate.MailingListSubscriptionStartAt = DateTime.UtcNow;
-            candidate.MailingListSubscriptionDoNotEmail = false;
-            candidate.MailingListSubscriptionDoNotBulkEmail = false;
-            candidate.MailingListSubscriptionDoNotBulkPostalMail = true;
-            candidate.MailingListSubscriptionDoNotPostalMail = true;
-            candidate.MailingListSubscriptionDoNotSendMm = false;
+            SubscriptionManager.SubscribeToMailingList(candidate, ChannelId);
 
-            if (string.IsNullOrWhiteSpace(AddressPostcode))
+            if (!string.IsNullOrWhiteSpace(AddressPostcode))
             {
-                return;
+                SubscriptionManager.SubscribeToEvents(candidate, ChannelId);
             }
-
-            candidate.HasEventsSubscription = true;
-            candidate.EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.LocalEvent;
-            candidate.EventsSubscriptionChannelId = ChannelId ?? (int)Candidate.SubscriptionChannel.Events;
-            candidate.EventsSubscriptionStartAt = DateTime.UtcNow;
-            candidate.EventsSubscriptionDoNotEmail = false;
-            candidate.EventsSubscriptionDoNotBulkEmail = false;
-            candidate.EventsSubscriptionDoNotBulkPostalMail = true;
-            candidate.EventsSubscriptionDoNotPostalMail = true;
-            candidate.EventsSubscriptionDoNotSendMm = false;
         }
 
         private void AcceptPrivacyPolicy(Candidate candidate)

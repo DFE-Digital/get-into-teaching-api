@@ -261,46 +261,6 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void Candidate_NotReturningToTeaching_CorrectSubscriptionOptInStatus()
-        {
-            var request = new TeacherTrainingAdviserSignUp()
-            {
-                SubjectTaughtId = null
-            };
-
-            var candidate = request.Candidate;
-
-            candidate.HasTeacherTrainingAdviserSubscription.Should().BeTrue();
-            candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.TeacherTrainingAdviser);
-            candidate.TeacherTrainingAdviserSubscriptionStartAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
-            candidate.TeacherTrainingAdviserSubscriptionDoNotBulkEmail.Should().BeFalse();
-            candidate.TeacherTrainingAdviserSubscriptionDoNotBulkPostalMail.Should().BeFalse();
-            candidate.TeacherTrainingAdviserSubscriptionDoNotPostalMail.Should().BeFalse();
-            candidate.TeacherTrainingAdviserSubscriptionDoNotSendMm.Should().BeFalse();
-            candidate.TeacherTrainingAdviserSubscriptionDoNotEmail.Should().BeFalse();
-        }
-
-        [Fact]
-        public void Candidate_ReturningToTeaching_CorrectSubscriptionOptInStatus()
-        {
-            var request = new TeacherTrainingAdviserSignUp()
-            {
-                SubjectTaughtId = Guid.NewGuid()
-            };
-
-            var candidate = request.Candidate;
-
-            candidate.HasTeacherTrainingAdviserSubscription.Should().BeTrue();
-            candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.TeacherTrainingAdviser);
-            candidate.TeacherTrainingAdviserSubscriptionStartAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
-            candidate.TeacherTrainingAdviserSubscriptionDoNotBulkEmail.Should().BeTrue();
-            candidate.TeacherTrainingAdviserSubscriptionDoNotBulkPostalMail.Should().BeTrue();
-            candidate.TeacherTrainingAdviserSubscriptionDoNotPostalMail.Should().BeTrue();
-            candidate.TeacherTrainingAdviserSubscriptionDoNotSendMm.Should().BeTrue();
-            candidate.TeacherTrainingAdviserSubscriptionDoNotEmail.Should().BeFalse();
-        }
-
-        [Fact]
         public void Candidate_GcseIdIsNull_DefaultsToNotAnswered()
         {
             var request = new TeacherTrainingAdviserSignUp()
