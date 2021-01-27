@@ -151,7 +151,7 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
          with:
             tag_name: ${{ steps.tag_version.outputs.pr_number }}
-            release_name: GiT Content API Release ${{ steps.tag_version.outputs.pr_number }}
+            release_name: GiT API Release ${{ steps.tag_version.outputs.pr_number }}
             body_path: ./temp.md
             commitish: ${{github.sha}}
             prerelease: false
