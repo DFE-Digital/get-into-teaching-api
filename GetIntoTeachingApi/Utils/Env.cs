@@ -21,18 +21,16 @@ namespace GetIntoTeachingApi.Utils
         public string NotifyApiKey => Environment.GetEnvironmentVariable("NOTIFY_API_KEY");
         public string SharedSecret => Environment.GetEnvironmentVariable("SHARED_SECRET");
         public string GoogleApiKey => Environment.GetEnvironmentVariable("GOOGLE_API_KEY");
-        public int InstanceIndex
+
+        // The master instance boots first on deploy.
+        public bool IsMasterInstance
         {
             get
             {
                 var index = Environment.GetEnvironmentVariable("CF_INSTANCE_INDEX");
+                var success = int.TryParse(index, out int value);
 
-                if (string.IsNullOrWhiteSpace(index))
-                {
-                    return 0;
-                }
-
-                return int.Parse(index);
+                return !success || value == 0;
             }
         }
     }
