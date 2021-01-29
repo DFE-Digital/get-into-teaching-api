@@ -19,6 +19,6 @@
         string NotifyApiKey { get; }
         string SharedSecret { get; }
         string GoogleApiKey { get; }
-        int InstanceIndex { get; }
+        bool IsMasterInstance { get; }
     }
 }
