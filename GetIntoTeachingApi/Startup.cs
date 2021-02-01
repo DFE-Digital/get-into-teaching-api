@@ -80,8 +80,6 @@ namespace GetIntoTeachingApi
                 services.AddDbContext<GetIntoTeachingDbContext>(b => DbConfiguration.ConfigPostgres(connectionString, b));
             }
 
-            services.AddAuthentication("SharedSecretHandler")
-                .AddScheme<SharedSecretSchemeOptions, SharedSecretHandler>("SharedSecretHandler", op => { });
             services.AddAuthentication("ApiClientHandler")
                 .AddScheme<ApiClientSchemaOptions, ApiClientHandler>("ApiClientHandler", op => { });
 
