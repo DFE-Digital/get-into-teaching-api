@@ -43,7 +43,7 @@ namespace GetIntoTeachingApi.Auth
                 return Task.FromResult(AuthenticateResult.Fail("Token is not valid"));
             }
 
-            var claims = new[] { new Claim("token", token) };
+            var claims = new[] { new Claim("token", token), new Claim(ClaimTypes.Role, "Admin") };
             var identity = new ClaimsIdentity(claims, nameof(SharedSecretHandler));
             var ticket = new AuthenticationTicket(new ClaimsPrincipal(identity), this.Scheme.Name);
 
