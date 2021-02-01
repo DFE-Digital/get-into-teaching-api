@@ -47,6 +47,6 @@
     <Folder Include="Validators\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Controllers\LookupItemsControllerTests.cs" />
+    <Compile Remove="Services\ClientManagerTests.cs" />
   </ItemGroup>
 </Project>
