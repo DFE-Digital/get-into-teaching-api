@@ -45,7 +45,7 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void Authorize_IsPresent()
         {
-            typeof(TeachingEventsController).Should().BeDecoratedWith<AuthorizeAttribute>();
+            typeof(TeachingEventsController).Should().BeDecoratedWith<AuthorizeAttribute>(a => a.Roles.Contains("Admin"));
         }
 
         [Fact]

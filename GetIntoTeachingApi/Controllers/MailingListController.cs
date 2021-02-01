@@ -14,7 +14,7 @@ namespace GetIntoTeachingApi.Controllers
     [Route("api/mailing_list")]
     [ApiController]
     [LogRequests]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class MailingListController : ControllerBase
     {
         private readonly ICandidateAccessTokenService _tokenService;
