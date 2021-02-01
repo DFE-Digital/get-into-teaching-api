@@ -1,0 +1,12 @@
+﻿# List of active API clients in the format:
+#
+# name: name of the client service
+# description: description of the client service
+# api_key_prefix: forms part of environment varibale name containing the API key for this service: <api_key_prefix>_API_KEY_<environment>
+# role: used to scope the available endpoints to only those required by the service
+
+-
+  name: Administrator
+  description: "A super-user client for Development convenience and (securely) debugging in production"
+  api_key_prefix: ADMIN
+  role: Admin

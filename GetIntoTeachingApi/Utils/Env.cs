@@ -7,12 +7,11 @@ namespace GetIntoTeachingApi.Utils
         public bool IsDevelopment => EnvironmentName == "Development";
         public bool IsProduction => EnvironmentName == "Production";
         public bool IsStaging => EnvironmentName == "Staging";
-        public bool IsTest => EnvironmentName == null;
+        public bool IsTest => EnvironmentName == "Test";
         public string GitCommitSha => Environment.GetEnvironmentVariable("GIT_COMMIT_SHA");
         public bool ExportHangireToPrometheus => Environment.GetEnvironmentVariable("CF_INSTANCE_INDEX") == "0";
         public string DatabaseInstanceName => Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME");
         public string HangfireInstanceName => Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME");
-        public string EnvironmentName => Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
         public string TotpSecretKey => Environment.GetEnvironmentVariable("TOTP_SECRET_KEY");
         public string VcapServices => Environment.GetEnvironmentVariable("VCAP_SERVICES");
         public string CrmServiceUrl => Environment.GetEnvironmentVariable("CRM_SERVICE_URL");
@@ -32,6 +31,20 @@ namespace GetIntoTeachingApi.Utils
 
                 return !success || value == 0;
             }
+        }
+
+        public string EnvironmentName
+        {
+            get
+            {
+                var name = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                return name ?? "Test";
+            }
+        }
+
+        public string Get(string variable)
+        {
+            return Environment.GetEnvironmentVariable(variable);
         }
     }
 }
