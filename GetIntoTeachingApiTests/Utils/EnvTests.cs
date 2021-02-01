@@ -219,5 +219,34 @@ namespace GetIntoTeachingApiTests.Utils
 
             Environment.SetEnvironmentVariable("CF_INSTANCE_INDEX", previous);
         }
+
+        [Theory]
+        [InlineData(null, "Test")]
+        [InlineData("Development", "Development")]
+        [InlineData("Staging", "Staging")]
+        [InlineData("Production", "Production")]
+        public void EnvironmentName_ReturnsCorrectly(string environment, string expected)
+        {
+            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", environment);
+
+            _env.EnvironmentName.Should().Be(expected);
+        }
+
+        [Fact]
+        public void Get_WithVariable_ReturnsMatchingEnvironmentVariable()
+        {
+            var previous = Environment.GetEnvironmentVariable("AN_ENV_VAR");
+            Environment.SetEnvironmentVariable("AN_ENV_VAR", "test");
+
+            _env.Get("AN_ENV_VAR").Should().Be("test");
+
+            Environment.SetEnvironmentVariable("AN_ENV_VAR", previous);
+        }
+
+        [Fact]
+        public void Get_WhenVariableDoesNotExist_ReturnsNull()
+        {
+            _env.Get("NON_EXISTANT").Should().BeNull();
+        }
     }
 }
