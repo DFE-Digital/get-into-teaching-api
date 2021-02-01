@@ -82,6 +82,8 @@ namespace GetIntoTeachingApi
 
             services.AddAuthentication("SharedSecretHandler")
                 .AddScheme<SharedSecretSchemeOptions, SharedSecretHandler>("SharedSecretHandler", op => { });
+            services.AddAuthentication("ApiClientHandler")
+                .AddScheme<ApiClientSchemaOptions, ApiClientHandler>("ApiClientHandler", op => { });
 
             services.AddControllers(o =>
             {

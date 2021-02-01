@@ -1,4 +1,5 @@
-﻿using System.Text.Encodings.Web;
+﻿using System.Security.Claims;
+using System.Text.Encodings.Web;
 using FluentAssertions;
 using GetIntoTeachingApi.Auth;
 using GetIntoTeachingApi.Utils;
@@ -51,6 +52,12 @@ namespace GetIntoTeachingApiTests.Auth
             var result = await _handler.AuthenticateAsync();
 
             result.Succeeded.Should().Be(expected);
+
+            if (result.Succeeded)
+            {
+                result.Principal.HasClaim("token", "shared_secret").Should().BeTrue();
+                result.Principal.HasClaim(ClaimTypes.Role, "Admin").Should().BeTrue();
+            }
         }
 
         [Theory]
