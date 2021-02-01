@@ -139,24 +139,29 @@ jobs:
          uses: DFE-Digital/github-actions/GenerateReleaseFromSHA@master
          with:
            sha: ${{github.sha}}
-      
-       - name: Create Temporary Release File
-         if: steps.tag_version.outputs.pr_found == 1
-         run: echo "${{ steps.tag_version.outputs.pr_text }}" > ./temp.md
           
        - name: Create a GitHub Release
+         id: release
          if:   steps.tag_version.outputs.pr_found == 1
          uses: actions/create-release@v1
          env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
          with:
             tag_name: ${{ steps.tag_version.outputs.pr_number }}
-            release_name: GiT Content API Release ${{ steps.tag_version.outputs.pr_number }}
-            body_path: ./temp.md
+            release_name: Release ${{ steps.tag_version.outputs.pr_number }}
             commitish: ${{github.sha}}
             prerelease: false
             draft:      true
 
+       - name: Copy PR Info to Release
+         if: steps.release.outputs.id      
+         uses: DFE-Digital/github-actions/CopyPRtoRelease@master
+         with:
+           PR_NUMBER:  ${{ steps.tag_version.outputs.pr_number }}
+           RELEASE_ID: ${{ steps.release.outputs.id }}
+           TOKEN: ${{secrets.GITHUB_TOKEN}} 
+           
+           
   qa:
     name: Quality Assurance Deployment
     needs: development
