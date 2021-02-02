@@ -11,6 +11,8 @@ jobs:
   cf:
     name: Cloud Foundry Network
     runs-on: ubuntu-latest
+    environment:
+       name: ${{ github.event.inputs.environment }}
     steps:
       - name: Install Cloud Foundry
         run: |
@@ -19,8 +21,18 @@ jobs:
           sudo apt-get update
           sudo apt-get install cf7-cli  
           
+      - uses: Azure/login@v1
+        with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - uses: Azure/get-keyvault-secrets@v1
+        id:   azSecret
+        with:
+           keyvault: ${{ secrets.KEY_VAULT}}
+           secrets: 'PAAS-USERNAME, PAAS-PASSWORD'
+
       - name: Login to Cloud Foundry
-        run: cf login -a api.london.cloud.service.gov.uk -u ${{secrets.GOVUKPAAS_USERNAME}} -p ${{secrets.GOVUKPAAS_PASSWORD}} -s get-into-teaching
+        run: cf login -a api.london.cloud.service.gov.uk -u ${{steps.azSecret.outputs.PAAS-USERNAME}} -p ${{steps.azSecret.outputs.PAAS-PASSWORD}} -s get-into-teaching
              
       - name: Fix Development Policies 
         if:   github.event.inputs.environment == 'Development'

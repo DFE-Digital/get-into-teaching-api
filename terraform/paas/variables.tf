@@ -1,16 +1,13 @@
 # These settings are for the sandbox and should mainly be overriden by TF_VARS 
 # or set with environment variables TF_VAR_xxxx
 
-variable user {
-  default = "get-into-teaching-tech@digital.education.gov.uk"
-}
-
 variable api_url {
   default = "https://api.london.cloud.service.gov.uk"
 }
 
-variable password {}
-
+variable AZURE_CREDENTIALS {}
+variable azure_key_vault {}
+variable azure_resource_group {}
 
 variable "logging" {
   default = 1
@@ -84,14 +81,6 @@ variable "paas_api_docker_image" {
   default = "dfedigital/get-into-teaching-api:latest"
 }
 
-variable "docker_username" {
-  default = ""
-}
-
-variable "docker_password" {
-  default = ""
-}
-
 variable "monitoring" {
   default = 0
 }
@@ -104,44 +93,6 @@ variable "monitor_space" {
   default = "get-into-teaching"
 }
 
-variable "ASPNETCORE_ENVIRONMENT" {
-  default = "Staging"
-}
-variable "CRM_SERVICE_URL" {
-  default = ""
-}
-variable "CRM_CLIENT_ID" {
-  default = ""
-}
-variable "CRM_TENANT_ID" {
-  default = ""
-}
-variable "CRM_CLIENT_SECRET" {
-  default = ""
-}
-variable "SHARED_SECRET" {
-  default = ""
-}
-variable "NOTIFY_API_KEY" {
-  default = ""
-}
-variable "TOTP_SECRET_KEY" {
-  default = ""
-}
-variable "SENTRY_DSN" {
-  default = ""
-}
-variable "GOOGLE_API_KEY" {
-  default = ""
-}
-
-### Status Cake 
-variable "sc_username" {
-  default = ""
-}
-variable "sc_api_key" {
-  default = ""
-}
 variable "alerts" {
   type = map
 }
@@ -174,36 +125,4 @@ variable "alertmanager" {
     "name"   = "get-into-teaching"
     "config" = "../../monitoring/alertmanager/alertmanager.yml.tmpl"
   }
-}
-
-variable "paas_exporter_username" {
-  default = ""
-}
-variable "paas_exporter_password" {
-  default = ""
-}
-variable "grafana_password" {
-  default = ""
-}
-variable "redis_service" {
-  default = ""
-}
-
-variable "google_client_id" {
-  default = ""
-}
-variable "google_client_secret" {
-  default = ""
-}
-variable elasticsearch_user {
-  default = ""
-}
-variable elasticsearch_password {
-  default = ""
-}
-variable alertmanager_slack_url {
-  default = ""
-}
-variable alertmanager_slack_channel {
-  default = "getintoteaching_tech"
 }

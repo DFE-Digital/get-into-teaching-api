@@ -1,3 +1,8 @@
+locals {
+  environment_map = { DATABASE_INSTANCE_NAME = cloudfoundry_service_instance.postgres2.name,
+                      HANGFIRE_INSTANCE_NAME = cloudfoundry_service_instance.hangfire.name }
+}
+
 resource "cloudfoundry_app" "api_application" {
   name         = var.paas_api_application_name
   space        = data.cloudfoundry_space.space.id
@@ -17,8 +22,8 @@ resource "cloudfoundry_app" "api_application" {
   }
 
   docker_credentials = {
-    username = var.docker_username
-    password = var.docker_password
+    username = data.azurerm_key_vault_secret.docker_username.value
+    password = data.azurerm_key_vault_secret.docker_password.value
   }
 
   service_binding {
@@ -36,20 +41,9 @@ resource "cloudfoundry_app" "api_application" {
       service_instance = service_binding.value["id"]
     }
   }
-  environment = {
-    CRM_CLIENT_ID          = var.CRM_CLIENT_ID
-    CRM_CLIENT_SECRET      = var.CRM_CLIENT_SECRET
-    CRM_SERVICE_URL        = var.CRM_SERVICE_URL
-    CRM_TENANT_ID          = var.CRM_TENANT_ID
-    NOTIFY_API_KEY         = var.NOTIFY_API_KEY
-    TOTP_SECRET_KEY        = var.TOTP_SECRET_KEY
-    SHARED_SECRET          = var.SHARED_SECRET
-    Sentry__Dsn            = var.SENTRY_DSN
-    GOOGLE_API_KEY         = var.GOOGLE_API_KEY
-    ASPNETCORE_ENVIRONMENT = var.ASPNETCORE_ENVIRONMENT
-    DATABASE_INSTANCE_NAME = cloudfoundry_service_instance.postgres2.name
-    HANGFIRE_INSTANCE_NAME = cloudfoundry_service_instance.hangfire.name
-  }
+
+  environment = merge(local.application_secrets, local.environment_map)
+
 }
 
 
