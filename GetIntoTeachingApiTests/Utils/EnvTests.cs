@@ -204,24 +204,18 @@ namespace GetIntoTeachingApiTests.Utils
             Environment.SetEnvironmentVariable("GOOGLE_API_KEY", previous);
         }
 
-        [Fact]
-        public void InstanceIndex_ReturnsCorrectly()
+        [Theory]
+        [InlineData("0", true)]
+        [InlineData(null, true)]
+        [InlineData("invalid", true)]
+        [InlineData("1", false)]
+        [InlineData("-1", false)]
+        public void IsMasterInstance_ReturnsCorrectly(string index, bool expectedOutcome)
         {
             var previous = Environment.GetEnvironmentVariable("CF_INSTANCE_INDEX");
-            Environment.SetEnvironmentVariable("CF_INSTANCE_INDEX", "0");
+            Environment.SetEnvironmentVariable("CF_INSTANCE_INDEX", index);
 
-            _env.InstanceIndex.Should().Be(0);
-
-            Environment.SetEnvironmentVariable("CF_INSTANCE_INDEX", previous);
-        }
-
-        [Fact]
-        public void InstanceIndex_DefaultsToZero()
-        {
-            var previous = Environment.GetEnvironmentVariable("CF_INSTANCE_INDEX");
-            Environment.SetEnvironmentVariable("CF_INSTANCE_INDEX", null);
-
-            _env.InstanceIndex.Should().Be(0);
+            _env.IsMasterInstance.Should().Be(expectedOutcome);
 
             Environment.SetEnvironmentVariable("CF_INSTANCE_INDEX", previous);
         }
