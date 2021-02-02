@@ -12,7 +12,7 @@ namespace GetIntoTeachingApi.Controllers
     [Route("api/candidates")]
     [ApiController]
     [LogRequests]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,GetIntoTeaching,GetAnAdviser")]
     public class CandidatesController : ControllerBase
     {
         private readonly ICandidateAccessTokenService _tokenService;

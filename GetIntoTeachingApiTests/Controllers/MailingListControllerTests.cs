@@ -35,7 +35,7 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void Authorize_IsPresent()
         {
-            typeof(MailingListController).Should().BeDecoratedWith<AuthorizeAttribute>(a => a.Roles.Contains("Admin"));
+            typeof(MailingListController).Should().BeDecoratedWith<AuthorizeAttribute>(a => a.Roles == "Admin,GetIntoTeaching");
         }
 
         [Fact]

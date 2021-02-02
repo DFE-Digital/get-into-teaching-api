@@ -35,7 +35,7 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         [Fact]
         public void Authorize_IsPresent()
         {
-            typeof(CandidatesController).Should().BeDecoratedWith<AuthorizeAttribute>(a => a.Roles.Contains("Admin"));
+            typeof(CandidatesController).Should().BeDecoratedWith<AuthorizeAttribute>(a => a.Roles == "Admin,GetAnAdviser");
         }
 
         [Fact]
