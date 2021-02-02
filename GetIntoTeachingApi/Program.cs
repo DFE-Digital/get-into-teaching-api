@@ -16,16 +16,18 @@ namespace GetIntoTeachingApi
 
             using var scope = webHost.Services.CreateScope();
 
-            // Get the ClientPolicyStore instance.
+            // Configure rate limiting.
             var clientPolicyStore = scope.ServiceProvider.GetRequiredService<IClientPolicyStore>();
-
-            // Seed client data from appsettings.
             await clientPolicyStore.SeedAsync();
 
             // Configure the database.
             var dbConfiguration = scope.ServiceProvider.GetRequiredService<DbConfiguration>();
             var env = scope.ServiceProvider.GetRequiredService<IEnv>();
-            dbConfiguration.Configure(env.InstanceIndex);
+
+            if (env.IsMasterInstance)
+            {
+                dbConfiguration.Migrate();
+            }
 
             await webHost.RunAsync();
         }

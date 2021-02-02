@@ -29,14 +29,9 @@ namespace GetIntoTeachingApi.Database
             builder.UseNpgsql(connetionString, x => x.UseNetTopologySuite());
         }
 
-        public void Configure(int instanceIndex = 0)
+        public void Migrate()
         {
-            var firstInstance = instanceIndex == 0;
-
-            if (firstInstance)
-            {
-                _dbContext.Database.Migrate();
-            }
+            _dbContext.Database.Migrate();
         }
 
         private static string GenerateConnectionString(IEnv env, string instanceName)
