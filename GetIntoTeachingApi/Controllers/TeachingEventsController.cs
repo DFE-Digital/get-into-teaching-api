@@ -17,7 +17,7 @@ namespace GetIntoTeachingApi.Controllers
     [Route("api/teaching_events")]
     [ApiController]
     [LogRequests]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,GetIntoTeaching")]
     public class TeachingEventsController : ControllerBase
     {
         private readonly ICandidateAccessTokenService _tokenService;
