@@ -45,7 +45,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void GetClient_WithSecret_ReturnsCorrespondingClient()
         {
-            _mockEnv.Setup(m => m.Get("ADMIN_API_KEY_TEST")).Returns("admin_secret");
+            _mockEnv.Setup(m => m.Get("ADMIN_API_KEY")).Returns("admin_secret");
             var manager = new ClientManager(_mockEnv.Object);
 
             var client = manager.GetClient("admin_secret");
