@@ -25,7 +25,7 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void Authorize_IsPresent()
         {
-            typeof(CallbackBookingQuotasController).Should().BeDecoratedWith<AuthorizeAttribute>(a => a.Roles.Contains("Admin"));
+            typeof(CallbackBookingQuotasController).Should().BeDecoratedWith<AuthorizeAttribute>(a => a.Roles == "Admin,GetAnAdviser");
         }
 
         [Fact]
