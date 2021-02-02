@@ -11,11 +11,11 @@ locals {
     git_api                           = "${cloudfoundry_route.api_route_internal.hostname}.${data.cloudfoundry_domain.internal.name}"
     git_tta                           = "${var.tta_application_name}-internal.${data.cloudfoundry_domain.internal.name}"
     git_app                           = "${var.app_application_name}-internal.${data.cloudfoundry_domain.internal.name}"
-    elastic_user                      = var.elasticsearch_user
-    elastic_pass                      = var.elasticsearch_password
+    elastic_user                      = local.monitoring_secrets["LOGIT_USERID"]
+    elastic_pass                      = local.monitoring_secrets["LOGIT_PASSWORD"]
     API_ENDPOINT                      = var.api_url
-    slack_channel                     = var.alertmanager_slack_channel
-    slack_url                         = var.alertmanager_slack_url
+    slack_channel                     = local.monitoring_secrets["SLACK_CHANNEL"]
+    slack_url                         = local.monitoring_secrets["SLACK_ALERTMANAGER_HOOK"]
     paas_prometheus_exporter_endpoint = var.monitoring == 1 ? module.paas_prometheus_exporter[0].endpoint : ""
     alertmanager_endpoint             = var.monitoring == 1 ? module.alertmanager[0].endpoint : ""
   }
@@ -58,8 +58,8 @@ module "paas_prometheus_exporter" {
   source                   = "git::https://github.com/DFE-Digital/cf-monitoring.git//paas_prometheus_exporter"
   monitoring_space_id      = data.cloudfoundry_space.monitor.id
   monitoring_instance_name = local.monitoring_org_name
-  paas_username            = var.paas_exporter_username
-  paas_password            = var.paas_exporter_password
+  paas_username            = data.azurerm_key_vault_secret.paas_username.value
+  paas_password            = data.azurerm_key_vault_secret.paas_password.value
 }
 
 module "redis_prometheus_exporter" {
@@ -77,9 +77,9 @@ module "grafana" {
   monitoring_instance_name = "${var.environment}-${var.grafana["name"]}"
   prometheus_endpoint      = module.prometheus[0].endpoint
   runtime_version          = "7.2.2"
-  google_client_id         = var.google_client_id
-  google_client_secret     = var.google_client_secret
-  admin_password           = var.grafana_password
+  google_client_id         = local.monitoring_secrets["GOOGLE_CLIENT_ID"]
+  google_client_secret     = local.monitoring_secrets["GOOGLE_CLIENT_SECRET"]
+  admin_password           = local.monitoring_secrets["GRAFANA_ADMIN_PASSWORD"]
   influxdb_credentials     = cloudfoundry_service_key.influxdb-key[0].credentials
 
   json_dashboards   = [for f in local.dashboard_list : file(f)]
@@ -92,6 +92,6 @@ module "alertmanager" {
   source                   = "git::https://github.com/DFE-Digital/cf-monitoring.git//alertmanager"
   monitoring_space_id      = data.cloudfoundry_space.monitor.id
   monitoring_instance_name = "${var.environment}-${var.alertmanager["name"]}"
-  slack_url                = var.alertmanager_slack_url
-  slack_channel            = var.alertmanager_slack_channel
+  slack_url                = local.monitoring_secrets["SLACK_ALERTMANAGER_HOOK"]
+  slack_channel            = local.monitoring_secrets["SLACK_CHANNEL"]
 }
