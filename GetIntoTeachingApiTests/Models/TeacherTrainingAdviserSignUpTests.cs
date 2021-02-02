@@ -239,8 +239,6 @@ namespace GetIntoTeachingApiTests.Models
             var candidate = request.Candidate;
 
             candidate.DoNotBulkEmail.Should().BeTrue();
-            candidate.DoNotBulkPostalMail.Should().BeTrue();
-            candidate.DoNotPostalMail.Should().BeTrue();
             candidate.DoNotSendMm.Should().BeTrue();
         }
 
@@ -255,8 +253,6 @@ namespace GetIntoTeachingApiTests.Models
             var candidate = request.Candidate;
 
             candidate.DoNotBulkEmail.Should().BeFalse();
-            candidate.DoNotBulkPostalMail.Should().BeFalse();
-            candidate.DoNotPostalMail.Should().BeFalse();
             candidate.DoNotSendMm.Should().BeFalse();
         }
 
