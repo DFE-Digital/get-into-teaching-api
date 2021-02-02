@@ -42,10 +42,17 @@
 		<PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
 		<PackageReference Include="dotenv.net" Version="2.1.1" />
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="5.0.0" />
+		<PackageReference Include="YamlDotNet" Version="9.1.4" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="Redis\" />
 	  <Folder Include="Validators\" />
+	  <Folder Include="Fixtures\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Update="Fixtures\clients.yml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 </Project>

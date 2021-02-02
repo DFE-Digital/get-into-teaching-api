@@ -20,5 +20,7 @@
         string SharedSecret { get; }
         string GoogleApiKey { get; }
         bool IsMasterInstance { get; }
+
+        string Get(string variable);
     }
 }
