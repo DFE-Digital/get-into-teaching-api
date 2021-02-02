@@ -59,15 +59,15 @@ namespace GetIntoTeachingApi.Services
             candidate.TeacherTrainingAdviserSubscriptionStartAt = DateTime.UtcNow;
             candidate.TeacherTrainingAdviserSubscriptionDoNotEmail = false;
             candidate.TeacherTrainingAdviserSubscriptionDoNotBulkEmail = candidate.IsReturningToTeaching();
-            candidate.TeacherTrainingAdviserSubscriptionDoNotBulkPostalMail = candidate.IsReturningToTeaching();
-            candidate.TeacherTrainingAdviserSubscriptionDoNotPostalMail = candidate.IsReturningToTeaching();
+            candidate.TeacherTrainingAdviserSubscriptionDoNotBulkPostalMail = true;
+            candidate.TeacherTrainingAdviserSubscriptionDoNotPostalMail = true;
             candidate.TeacherTrainingAdviserSubscriptionDoNotSendMm = candidate.IsReturningToTeaching();
 
             candidate.OptOutOfSms = ConsentValue(candidate.OptOutOfSms, false);
             candidate.DoNotBulkEmail = ConsentValue(candidate.DoNotBulkEmail, candidate.IsReturningToTeaching());
             candidate.DoNotEmail = ConsentValue(candidate.DoNotEmail, false);
-            candidate.DoNotBulkPostalMail = ConsentValue(candidate.DoNotBulkPostalMail, candidate.IsReturningToTeaching());
-            candidate.DoNotPostalMail = ConsentValue(candidate.DoNotPostalMail, candidate.IsReturningToTeaching());
+            candidate.DoNotBulkPostalMail = ConsentValue(candidate.DoNotBulkPostalMail, true);
+            candidate.DoNotPostalMail = ConsentValue(candidate.DoNotPostalMail, true);
             candidate.DoNotSendMm = ConsentValue(candidate.DoNotSendMm, candidate.IsReturningToTeaching());
         }
 
