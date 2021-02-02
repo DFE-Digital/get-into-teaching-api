@@ -10,3 +10,13 @@
   description: "A super-user client for Development convenience and (securely) debugging in production"
   api_key_prefix: ADMIN
   role: Admin
+-
+  name: Get into Teaching
+  description: "A service to support potential teachers on their journey into teaching"
+  api_key_prefix: GIT
+  role: GetIntoTeaching
+-
+  name: Get an Adviser
+  description: "A service to enable candidates to sign up for a Teacher Training Adviser (TTA)"
+  api_key_prefix: TTA
+  role: GetAnAdviser
