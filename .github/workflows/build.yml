@@ -144,7 +144,7 @@ jobs:
          uses: benc-uk/workflow-dispatch@v1.1
          with:
            workflow: Deploy to PaaS
-           token: steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN
+           token: ${{steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN}}
            inputs: '{"environment": "Development", "sha": "${{ github.sha }}"}'
            ref: ${{github.ref}}
 
@@ -152,7 +152,7 @@ jobs:
          uses: fountainhead/action-wait-for-check@v1.0.0
          id: wait-for-deploy
          with:
-           token: steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN
+           token: ${{steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN}}
            checkName: Deploy Development
            ref: ${{github.ref}}
 
@@ -164,7 +164,7 @@ jobs:
          uses: benc-uk/workflow-dispatch@v1.1
          with:
            workflow: Fix Network policies 
-           token: steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN
+           token: ${{steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN}}
            inputs: '{"environment": "Development" }'
            ref: ${{github.ref}}
         
@@ -223,7 +223,7 @@ jobs:
          uses: benc-uk/workflow-dispatch@v1.1
          with:
            workflow: Deploy to PaaS
-           token: steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN
+           token: ${{steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN}}
            inputs: '{"environment": "Test", "sha": "${{ github.sha }}" }'
            ref: ${{github.ref}}
 
@@ -231,7 +231,7 @@ jobs:
          uses: fountainhead/action-wait-for-check@v1.0.0
          id: wait-for-deploy
          with:
-           token: steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN
+           token: ${{steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN}}
            checkName: Deploy Test
            ref: ${{github.ref}}
 
@@ -275,7 +275,7 @@ jobs:
          with:
            repo: DFE-Digital/get-into-teaching-frontend-tests
            workflow: Cypress
-           token: steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN
+           token: ${{steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN}}
            inputs: '{"application": "BOTH" , "reference": "${{ github.sha }}" }'
            ref:  refs/heads/master
 
@@ -306,7 +306,7 @@ jobs:
          uses: DFE-Digital/github-actions/DraftReleaseByTag@master
          with:
            TAG: ${{needs.development.outputs.release_tag}}
-           TOKEN: steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN
+           TOKEN: ${{steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN}}
 
        - name: Publish Release  
          if: steps.tag_id.outputs.release_id
