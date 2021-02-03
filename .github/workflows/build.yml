@@ -11,12 +11,23 @@ jobs:
   turnstyle:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    environment: Development
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
 
       - name: set-up-environment
         uses: DFE-Digital/github-actions/set-up-environment@master
+
+      - uses: Azure/login@v1
+        with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - uses: Azure/get-keyvault-secrets@v1
+        id:   azSecret
+        with:
+            keyvault: ${{ secrets.KEY_VAULT}}
+            secrets: 'ACTIONS-API-ACCESS-TOKEN, SLACK-WEBHOOK'
 
       - name: Check workflow concurrency
         uses: softprops/turnstyle@v1
@@ -33,12 +44,13 @@ jobs:
            SLACK_COLOR:   ${{env.SLACK_FAILURE}}
            SLACK_MESSAGE: Content Delivery has failed. This is due to a workflow concurrency issue
            SLACK_TITLE:   Turnstyle failure ${{ github.workflow }}
-           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+           SLACK_WEBHOOK: steps.azSecret.outputs.SLACK-WEBHOOK
 
   build:
     name: Build and push to DockerHub
     runs-on: ubuntu-latest
     needs: turnstyle 
+    environment: Development
     outputs:
        image: ${{steps.docker_image.outputs.IMAGE}}
     steps:
@@ -47,6 +59,16 @@ jobs:
 
       - name: set-up-environment
         uses: DFE-Digital/github-actions/set-up-environment@master
+
+      - uses: Azure/login@v1
+        with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - uses: Azure/get-keyvault-secrets@v1
+        id:   azSecret
+        with:
+            keyvault: ${{ secrets.KEY_VAULT}}
+            secrets: 'ACTIONS-API-ACCESS-TOKEN, SLACK-WEBHOOK, DOCKER-USERNAME, DOCKER-PASSWORD'
 
       - name: Set up Docker Buildx
         id: buildx
@@ -68,8 +90,9 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PERSONAL_ACCESS_TOKEN }}
+          username: ${{ steps.azSecret.outputs.DOCKER-USERNAME }}
+          password: ${{ steps.azSecret.outputs.DOCKER-PASSWORD }}
+
 
       - name: Build
         uses: docker/build-push-action@v2
@@ -89,10 +112,11 @@ jobs:
            SLACK_COLOR:   ${{env.SLACK_FAILURE}}
            SLACK_MESSAGE: 'The pipeline has failed to build the API image'
            SLACK_TITLE:   'Failure to Build API '
-           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+           SLACK_WEBHOOK: steps.azSecret.outputs.SLACK-WEBHOOK
 
   development:
     name: Development Deployment
+    environment: Development
     needs: build
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
@@ -106,11 +130,21 @@ jobs:
        - name: set-up-environment
          uses: DFE-Digital/github-actions/set-up-environment@master
 
+       - uses: Azure/login@v1
+         with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+       - uses: Azure/get-keyvault-secrets@v1
+         id:   azSecret
+         with:
+            keyvault: ${{ secrets.KEY_VAULT}}
+            secrets: 'ACTIONS-API-ACCESS-TOKEN'
+
        - name: Trigger Development Deployment
          uses: benc-uk/workflow-dispatch@v1.1
          with:
            workflow: Deploy to PaaS
-           token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN }}
+           token: steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN
            inputs: '{"environment": "Development", "sha": "${{ github.sha }}"}'
            ref: ${{github.ref}}
 
@@ -118,7 +152,7 @@ jobs:
          uses: fountainhead/action-wait-for-check@v1.0.0
          id: wait-for-deploy
          with:
-           token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN}}
+           token: steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN
            checkName: Deploy Development
            ref: ${{github.ref}}
 
@@ -130,7 +164,7 @@ jobs:
          uses: benc-uk/workflow-dispatch@v1.1
          with:
            workflow: Fix Network policies 
-           token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN }}
+           token: steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN
            inputs: '{"environment": "Development" }'
            ref: ${{github.ref}}
         
@@ -151,7 +185,7 @@ jobs:
             release_name: Release ${{ steps.tag_version.outputs.pr_number }}
             commitish: ${{github.sha}}
             prerelease: false
-            draft:      true
+            draft:      false
 
        - name: Copy PR Info to Release
          if: steps.release.outputs.id      
@@ -165,6 +199,7 @@ jobs:
   qa:
     name: Quality Assurance Deployment
     needs: development
+    environment: Test
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
@@ -174,11 +209,21 @@ jobs:
        - name: set-up-environment
          uses: DFE-Digital/github-actions/set-up-environment@master
 
+       - uses: Azure/login@v1
+         with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+       - uses: Azure/get-keyvault-secrets@v1
+         id:   azSecret
+         with:
+            keyvault: ${{ secrets.KEY_VAULT}}
+            secrets: 'ACTIONS-API-ACCESS-TOKEN, SLACK-WEBHOOK'
+
        - name: Trigger Deployment to QA
          uses: benc-uk/workflow-dispatch@v1.1
          with:
            workflow: Deploy to PaaS
-           token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN }}
+           token: steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN
            inputs: '{"environment": "Test", "sha": "${{ github.sha }}" }'
            ref: ${{github.ref}}
 
@@ -186,7 +231,7 @@ jobs:
          uses: fountainhead/action-wait-for-check@v1.0.0
          id: wait-for-deploy
          with:
-           token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN}}
+           token: steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN
            checkName: Deploy Test
            ref: ${{github.ref}}
 
@@ -201,45 +246,67 @@ jobs:
            SLACK_COLOR:   ${{env.SLACK_FAILURE}}
            SLACK_TITLE:   Failure in Post-Development Deploy
            SLACK_MESSAGE: Failure with initialising QA deployment for ${{env.APPLICATION}}
-           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+           SLACK_WEBHOOK: steps.azSecret.outputs.SLACK-WEBHOOK
 
   cypress:
-     name: Run Cypress Tests on QA
-     runs-on: ubuntu-latest
-     needs: qa
-     steps:
+    name: Run Cypress Tests on QA
+    runs-on: ubuntu-latest
+    environment: Test
+    needs: qa
+    steps:
        - name: Check out the repo
          uses: actions/checkout@v2
 
        - name: set-up-environment
          uses: DFE-Digital/github-actions/set-up-environment@master
+
+       - uses: Azure/login@v1
+         with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+       - uses: Azure/get-keyvault-secrets@v1
+         id:   azSecret
+         with:
+            keyvault: ${{ secrets.KEY_VAULT}}
+            secrets: 'ACTIONS-API-ACCESS-TOKEN'
 
        - name: Trigger Cypress Tests (DFE-Digital/get-into-teaching-frontend-tests )
          uses: benc-uk/workflow-dispatch@v1.1
          with:
            repo: DFE-Digital/get-into-teaching-frontend-tests
            workflow: Cypress
-           token: ${{ secrets.ACTIONS_API_ACCESS_TOKEN }}
+           token: steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN
            inputs: '{"application": "BOTH" , "reference": "${{ github.sha }}" }'
            ref:  refs/heads/master
 
   production:
-     name: Production Deployment
-     runs-on: ubuntu-latest
-     needs: [ cypress , development ]
-     steps:
+    name: Production Deployment
+    runs-on: ubuntu-latest
+    needs: [ cypress , development ]
+    environment: Production
+    steps:
        - name: Check out the repo
          uses: actions/checkout@v2
 
        - name: set-up-environment
          uses: DFE-Digital/github-actions/set-up-environment@master
 
+       - uses: Azure/login@v1
+         with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+       - uses: Azure/get-keyvault-secrets@v1
+         id:   azSecret
+         with:
+            keyvault: ${{ secrets.KEY_VAULT}}
+            secrets: 'ACTIONS-API-ACCESS-TOKEN'
+
        - name: Get Release Id from Tag
          id: tag_id
          uses: DFE-Digital/github-actions/DraftReleaseByTag@master
          with:
            TAG: ${{needs.development.outputs.release_tag}}
-           TOKEN: ${{secrets.ACTIONS_API_ACCESS_TOKEN}}
+           TOKEN: steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN
 
        - name: Publish Release  
          if: steps.tag_id.outputs.release_id

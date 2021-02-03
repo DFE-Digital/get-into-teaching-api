@@ -12,9 +12,20 @@ jobs:
 
   test_dot_net:
     runs-on: ubuntu-latest
+    environment: Development
     steps:
 
     - uses: actions/checkout@v2
+
+    - uses: Azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - uses: Azure/get-keyvault-secrets@v1
+      id:   azSecret
+      with:
+        keyvault: ${{ secrets.KEY_VAULT}}
+        secrets: 'SLACK-WEBHOOK'
 
     - name: set-up-environment
       uses: DFE-Digital/github-actions/set-up-environment@master
@@ -51,4 +62,4 @@ jobs:
            SLACK_COLOR:   ${{env.SLACK_FAILURE }}
            SLACK_MESSAGE: Pipeline Failure carrying out job ${{github.job}}
            SLACK_TITLE:   'Failure: ${{ github.workflow }}'
-           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+           SLACK_WEBHOOK: ${{ steps.azSecret.outputs.SLACK-WEBHOOK }}
