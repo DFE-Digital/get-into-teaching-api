@@ -34,7 +34,7 @@ jobs:
          id:   azSecret
          with:
             keyvault: ${{ secrets.KEY_VAULT}}
-            secrets: 'ACTIONS-API-ACCESS_TOKEN, SLACK-RELEASE-NOTE-WEBHOOK, SLACK-WEBHOOK'
+            secrets: 'ACTIONS-API-ACCESS-TOKEN, SLACK-RELEASE-NOTE-WEBHOOK, SLACK-WEBHOOK'
 
        - name: Get Release Id from Tag
          id: tag_id
@@ -53,7 +53,7 @@ jobs:
          uses: benc-uk/workflow-dispatch@v1.1
          with:
            workflow: Deploy to PaaS
-           token: steps.azSecret.outputs.ACTIONS-API-ACCESS_TOKEN
+           token: steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN
            inputs: '{"environment": "${{github.event.inputs.environment}}" , "sha": "${{steps.tag_id.outputs.release_sha}}"  }'
            ref: "${{github.ref}}"
 
@@ -61,7 +61,7 @@ jobs:
          uses: fountainhead/action-wait-for-check@v1.0.0
          id: wait-for-deploy
          with:
-           token: steps.azSecret.outputs.ACTIONS-API-ACCESS_TOKEN
+           token: steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN
            checkName: Deploy ${{github.event.inputs.environment}}
            ref: "${{github.ref}}"
 
@@ -77,7 +77,7 @@ jobs:
          uses: benc-uk/workflow-dispatch@v1.1
          with:
            workflow: Fix Network policies 
-           token: steps.azSecret.outputs.ACTIONS-API-ACCESS_TOKEN
+           token: steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN
            inputs: '{"environment": "${{github.event.inputs.environment}}" }'
            ref: ${{github.ref}}
            
