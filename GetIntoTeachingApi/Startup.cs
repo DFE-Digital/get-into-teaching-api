@@ -9,6 +9,7 @@ using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.ModelBinders;
 using GetIntoTeachingApi.OperationFilters;
+using GetIntoTeachingApi.RateLimiting;
 using GetIntoTeachingApi.Redis;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
@@ -295,7 +296,7 @@ The GIT API aims to provide:
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             // Configuration (resolvers, counter key builders).
-            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+            services.AddSingleton<IRateLimitConfiguration, ApiClientRateLimitConfiguration>();
         }
     }
 }
