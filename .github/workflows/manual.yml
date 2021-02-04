@@ -41,7 +41,7 @@ jobs:
          uses: DFE-Digital/github-actions/DraftReleaseByTag@master
          with:
            TAG: ${{ github.event.inputs.tag }}
-           TOKEN: steps.azSecret.outputs.ACTIONS-API-ACCESS_TOKEN
+           TOKEN: steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN
 
        - name: Check if found
          if:  steps.tag_id.outputs.found == 0 
