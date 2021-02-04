@@ -17,7 +17,6 @@
         string CrmClientId { get; }
         string CrmClientSecret { get; }
         string NotifyApiKey { get; }
-        string SharedSecret { get; }
         string GoogleApiKey { get; }
         bool IsMasterInstance { get; }
 
