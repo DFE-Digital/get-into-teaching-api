@@ -27,7 +27,6 @@
         "DATABASE_INSTANCE_NAME": "gis",
         "HANGFIRE_INSTANCE_NAME": "gis",
         "VCAP_SERVICES": "{\"postgres\": [{\"instance_name\": \"gis\",\"credentials\": {\"host\": \"localhost\",\"name\": \"gis\",\"username\": \"docker\",\"password\": \"docker\",\"port\": \"5432\"}}],\"redis\": [{\"credentials\": {\"host\": \"0.0.0.0\",\"port\": \"6379\",\"password\": \"docker\",\"tls_enabled\": false}}]}",
-        "SHARED_SECRET": "abc123",
         "ADMIN_API_KEY": "secret-admin",
         "GIT_API_KEY": "secret-git",
         "TTA_API_KEY": "secret-tta",
