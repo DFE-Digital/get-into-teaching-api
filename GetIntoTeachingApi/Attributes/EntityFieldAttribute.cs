@@ -9,12 +9,14 @@ namespace GetIntoTeachingApi.Attributes
         public string Name { get; }
         public Type Type { get; }
         public string Reference { get; }
+        public bool Transient { get; }
 
-        public EntityFieldAttribute(string name, Type type = null, string reference = null)
+        public EntityFieldAttribute(string name, Type type = null, string reference = null, bool transient = false)
         {
             Name = name;
             Type = type;
             Reference = reference;
+            Transient = transient;
         }
 
         public IDictionary<string, string> ToDictionary()
