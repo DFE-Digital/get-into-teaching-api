@@ -67,6 +67,7 @@ namespace GetIntoTeachingApi
             services.AddSingleton<INotificationClientAdapter, NotificationClientAdapter>();
             services.AddSingleton<IGeocodeClientAdapter, GeocodeClientAdapter>();
             services.AddSingleton<ICandidateAccessTokenService, CandidateAccessTokenService>();
+            services.AddSingleton<ICandidateMagicLinkTokenService, CandidateMagicLinkTokenService>();
             services.AddSingleton<INotifyService, NotifyService>();
             services.AddSingleton<IClientManager, ClientManager>();
             services.AddSingleton<IHangfireService, HangfireService>();
