@@ -37,6 +37,13 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
+        public void EntityFieldAttribute_OnPropertyWithTransientAttribute_ReturnsNull()
+        {
+            var property = typeof(MockModel).GetProperty("Field4");
+            BaseModel.EntityFieldAttribute(property).Should().BeNull();
+        }
+
+        [Fact]
         public void EntityFieldAttribute_OnPropertyWithoutAttribute_ReturnsNull()
         {
             var property = typeof(MockModel).GetProperty("RelatedMock");
