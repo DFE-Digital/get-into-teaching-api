@@ -17,17 +17,20 @@ namespace GetIntoTeachingApi.Controllers
     [Authorize(Roles = "Admin,GetIntoTeaching")]
     public class MailingListController : ControllerBase
     {
-        private readonly ICandidateAccessTokenService _tokenService;
+        private readonly ICandidateAccessTokenService _accessTokenService;
+        private readonly ICandidateMagicLinkTokenService _magicLinkTokenService;
         private readonly ICrmService _crm;
         private readonly IBackgroundJobClient _jobClient;
 
         public MailingListController(
-            ICandidateAccessTokenService tokenService,
+            ICandidateAccessTokenService accessTokenService,
+            ICandidateMagicLinkTokenService magicLinkTokenService,
             ICrmService crm,
             IBackgroundJobClient jobClient)
         {
             _crm = crm;
-            _tokenService = tokenService;
+            _accessTokenService = accessTokenService;
+            _magicLinkTokenService = magicLinkTokenService;
             _jobClient = jobClient;
         }
 
@@ -79,7 +82,31 @@ namespace GetIntoTeachingApi.Controllers
         {
             var candidate = _crm.MatchCandidate(request);
 
-            if (candidate == null || !_tokenService.IsValid(accessToken, request, (Guid)candidate.Id))
+            if (candidate == null || !_accessTokenService.IsValid(accessToken, request, (Guid)candidate.Id))
+            {
+                return Unauthorized();
+            }
+
+            return Ok(new MailingListAddMember(candidate));
+        }
+
+        [HttpGet]
+        [Route("members/exchange_magic_link_token/{magicLinkToken}")]
+        [SwaggerOperation(
+            Summary = "Retrieves a pre-populated MailingListAddMember for the candidate.",
+            Description = @"
+                Retrieves a pre-populated MailingListAddMember for the candidate. The `magicLinkToken` is obtained from a 
+                `POST /candidates/magic_link_tokens` request.",
+            OperationId = "ExchangeMailingListTokenForMailingListAddMember",
+            Tags = new[] { "Mailing List" })]
+        [ProducesResponseType(typeof(MailingListAddMember), 200)]
+        [ProducesResponseType(404)]
+        public IActionResult ExchangeMagicLinkTokenForMember(
+            [FromRoute, SwaggerParameter("Magic link token.", Required = true)] string magicLinkToken)
+        {
+            var candidate = _magicLinkTokenService.Exchange(magicLinkToken);
+
+            if (candidate == null)
             {
                 return Unauthorized();
             }
