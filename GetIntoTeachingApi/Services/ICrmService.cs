@@ -13,7 +13,9 @@ namespace GetIntoTeachingApi.Services
         IEnumerable<PickListItem> GetPickListItems(string entityName, string attributeName);
         IEnumerable<PrivacyPolicy> GetPrivacyPolicies();
         Candidate MatchCandidate(ExistingCandidateRequest request);
+        IEnumerable<Candidate> MatchCandidates(string magicLinkToken);
         Candidate GetCandidate(Guid id);
+        IEnumerable<Candidate> GetCandidates(IEnumerable<Guid> ids);
         IEnumerable<TeachingEvent> GetTeachingEvents(DateTime? startAfter = null);
         IEnumerable<CallbackBookingQuota> GetCallbackBookingQuotas();
         CallbackBookingQuota GetCallbackBookingQuota(DateTime scheduledAt);
