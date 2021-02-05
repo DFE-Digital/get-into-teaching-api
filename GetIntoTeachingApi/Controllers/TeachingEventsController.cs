@@ -123,32 +123,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpPost]
-        [Route("attendees/{accessToken}")]
-        [SwaggerOperation(
-            Summary = "Retrieves a pre-populated TeachingEventAddAttendee for the candidate.",
-            Description = @"
-Retrieves a pre-populated TeachingEventAddAttendee for the candidate. The `accessToken` is obtained from a 
-`POST /candidates/access_tokens` request (you must also ensure the `ExistingCandidateRequest` payload you 
-exchanged for your token matches the request payload here).",
-            OperationId = "GetPreFilledTeachingEventAddAttendee",
-            Tags = new[] { "Teaching Events" })]
-        [ProducesResponseType(typeof(TeachingEventAddAttendee), 200)]
-        [ProducesResponseType(404)]
-        public IActionResult GetAttendee(
-            [FromRoute, SwaggerParameter("Access token (PIN code).", Required = true)] string accessToken,
-            [FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] ExistingCandidateRequest request)
-        {
-            var candidate = _crm.MatchCandidate(request);
-
-            if (candidate == null || !_tokenService.IsValid(accessToken, request, (Guid)candidate.Id))
-            {
-                return Unauthorized();
-            }
-
-            return Ok(new TeachingEventAddAttendee(candidate));
-        }
-
-        [HttpPost]
         [Route("attendees/exchange_access_token/{accessToken}")]
         [SwaggerOperation(
             Summary = "Retrieves a pre-populated TeachingEventAddAttendee for the candidate.",

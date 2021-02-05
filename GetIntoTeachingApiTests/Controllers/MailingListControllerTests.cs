@@ -45,32 +45,6 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void GetMember_InvalidAccessToken_RespondsWithUnauthorized()
-        {
-            var candidate = new Candidate { Id = Guid.NewGuid() };
-            _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns(candidate);
-            _mockTokenService.Setup(mock => mock.IsValid("000000", _request, (Guid)candidate.Id)).Returns(false);
-
-            var response = _controller.GetMember("000000", _request);
-
-            response.Should().BeOfType<UnauthorizedResult>();
-        }
-
-        [Fact]
-        public void GetMember_ValidToken_RespondsWithMailingListAddMember()
-        {
-            var candidate = new Candidate { Id = Guid.NewGuid() };
-            _mockTokenService.Setup(tokenService => tokenService.IsValid("000000", _request, (Guid)candidate.Id)).Returns(true);
-            _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns(candidate);
-
-            var response = _controller.GetMember("000000", _request);
-
-            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
-            var responseModel = ok.Value as MailingListAddMember;
-            responseModel.CandidateId.Should().Be(candidate.Id);
-        }
-
-        [Fact]
         public void ExchangeAccessTokenForMember_MissingCandidate_RespondsWithUnauthorized()
         {
             _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns<Candidate>(null);
@@ -104,16 +78,6 @@ namespace GetIntoTeachingApiTests.Controllers
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             var responseModel = ok.Value as MailingListAddMember;
             responseModel.CandidateId.Should().Be(candidate.Id);
-        }
-
-        [Fact]
-        public void GetMember_MissingCandidate_RespondsWithUnauthorized()
-        {
-            _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns<Candidate>(null);
-
-            var response = _controller.GetMember("000000", _request);
-
-            response.Should().BeOfType<UnauthorizedResult>();
         }
 
         [Fact]
