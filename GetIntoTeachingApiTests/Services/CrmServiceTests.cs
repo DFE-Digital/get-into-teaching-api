@@ -18,6 +18,7 @@ namespace GetIntoTeachingApiTests.Services
     {
         private static readonly Guid JaneDoeGuid = new Guid("bf927e43-5650-44aa-859a-8297139b8ddd");
         private static readonly Guid JohnDoeGuid = new Guid("cf927e43-5650-44aa-859a-8297139b8eee");
+        private static readonly string JaneDoeMagicLinkToken = "7898be2c4699719c8eca56ebd1fb8e6e";
         private readonly Mock<IOrganizationServiceAdapter> _mockService;
         private readonly OrganizationServiceContext _context;
         private readonly ICrmService _crm;
@@ -156,8 +157,10 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void CandidateAlreadyHasLocalEventSubscriptionType_WhenHasLocalEventSubscription_ReturnsTrue()
         {
-            _mockService.Setup(m => m.CreateQuery("contact", _context))
-                .Returns(MockCandidates);
+            var ids = new Guid[] { JaneDoeGuid };
+            var candidates = MockCandidates().Where(c => ids.Contains(c.Id));
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyCandidatesQueryExpression(q, ids)))).Returns(candidates);
 
             var result = _crm.CandidateAlreadyHasLocalEventSubscriptionType(JaneDoeGuid);
 
@@ -167,8 +170,10 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void CandidateAlreadyHasLocalEventSubscriptionType_WhenHasSingleEventSubscription_ReturnsFalse()
         {
-            _mockService.Setup(m => m.CreateQuery("contact", _context))
-                .Returns(MockCandidates);
+            var ids = new Guid[] { JohnDoeGuid };
+            var candidates = MockCandidates().Where(c => ids.Contains(c.Id));
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyCandidatesQueryExpression(q, ids)))).Returns(candidates);
 
             var result = _crm.CandidateAlreadyHasLocalEventSubscriptionType(JohnDoeGuid);
 
@@ -250,8 +255,10 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void GetCandidate_WithId_ReturnsCorrectly()
         {
-            _mockService.Setup(m => m.CreateQuery("contact", _context))
-                .Returns(MockCandidates);
+            var ids = new Guid[] { JaneDoeGuid };
+            var candidates = MockCandidates().Where(c => ids.Contains(c.Id));
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyCandidatesQueryExpression(q, ids)))).Returns(candidates);
 
             var result = _crm.GetCandidate(JaneDoeGuid);
 
@@ -261,9 +268,64 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void GetCandidate_WithNonExistentId_ReturnsNull()
         {
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyCandidatesQueryExpression(q, new Guid[0])))).Returns(new Entity[0]);
+
             var result = _crm.GetCandidate(Guid.NewGuid());
 
             result.Should().BeNull();
+        }
+
+        [Fact]
+        public void GetCandidates_ReturnsMatchingCandidates()
+        {
+            var ids = new Guid[] { JaneDoeGuid, JohnDoeGuid };
+            var candidates = MockCandidates().Where(c => ids.Contains(c.Id));
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyCandidatesQueryExpression(q, ids)))).Returns(candidates);
+
+            var result = _crm.GetCandidates(ids);
+
+            result.First().Id.Should().Be(JaneDoeGuid);
+            result.Last().Id.Should().Be(JohnDoeGuid);
+        }
+
+        [Fact]
+        public void GetCandidates_WithMissingCandidateIds_ReturnsMatchingCandidates()
+        {
+            var ids = new Guid[] { Guid.NewGuid(), JaneDoeGuid };
+            var candidates = MockCandidates().Where(c => ids.Contains(c.Id));
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyCandidatesQueryExpression(q, ids)))).Returns(candidates);
+
+            var result = _crm.GetCandidates(ids);
+
+            result.Count().Should().Be(1);
+            result.First().Id.Should().Be(JaneDoeGuid);
+        }
+
+        [Fact]
+        public void GetCandidate_WithNoMatches_ReturnsEmpty()
+        {
+            var ids = new Guid[] { Guid.NewGuid() };
+            var candidates = MockCandidates().Where(c => ids.Contains(c.Id));
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyCandidatesQueryExpression(q, ids)))).Returns(new Entity[0]);
+
+            var result = _crm.GetCandidates(ids);
+
+            result.Should().BeEmpty();
+        }
+
+        private static bool VerifyCandidatesQueryExpression(QueryExpression query, IEnumerable<Guid> ids)
+        {
+            var objectIds = ids.Select(id => (object)id).ToArray();
+            var hasEntityName = query.EntityName == "contact";
+            var conditions = query.Criteria.Filters.First().Conditions;
+            var hasIdsCondition = conditions.Where(c => c.AttributeName == "contactid" &&
+                c.Operator == ConditionOperator.In && c.Values.ToArray().SequenceEqual(objectIds)).Any();
+
+            return hasEntityName && hasIdsCondition;
         }
 
         [Theory]
@@ -318,6 +380,30 @@ namespace GetIntoTeachingApiTests.Services
             var result = _crm.MatchCandidate(request);
 
             result?.FirstName.Should().Be("Master");
+        }
+
+        [Theory]
+        [InlineData("7898be2c4699719c8eca56ebd1fb8e6e", new string[] { "Jane" })]
+        [InlineData(" 7898be2c4699719c8eca56ebd1fb8e6e", new string[0])]
+        [InlineData("6898be2c4699719c8eca56ebd1fb8e7d", new string[0])]
+        [InlineData("", new string[0])]
+        [InlineData(null, new string[0])]
+        [InlineData("duplicated-token", new string[] { "Old John", "New John" })]
+        public void MatchCandidates_WithMagicLinkToken_ReturnsMatchingCandidates(string token, IEnumerable<string> expectedFirstNames)
+        {
+            _mockService.Setup(mock => mock.CreateQuery("contact", _context)).Returns(MockCandidates());
+            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
+                new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), _context));
+            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
+                new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), _context));
+            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
+                new Relationship("dfe_contact_dfe_servicesubscription_contact"), _context));
+            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
+                new Relationship("msevtmgt_contact_msevtmgt_eventregistration_Contact"), _context));
+
+            var result = _crm.MatchCandidates(token);
+
+            result.Select(c => c.FirstName).Should().BeEquivalentTo(expectedFirstNames);
         }
 
         [Fact]
@@ -439,6 +525,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate1["firstname"] = "Jane";
             candidate1["lastname"] = "Doe";
             candidate1["modifiedon"] = DateTime.UtcNow;
+            candidate1["dfe_websitemltoken"] = JaneDoeMagicLinkToken;
             candidate1["dfe_duplicatescorecalculated"] = 10.0;
             candidate1["dfe_gitiseventsservicesubscriptiontype"] = new OptionSetValue((int)Candidate.SubscriptionType.LocalEvent);
 
@@ -452,6 +539,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate2["firstname"] = "New John";
             candidate2["lastname"] = "Doe";
             candidate2["modifiedon"] = DateTime.UtcNow;
+            candidate2["dfe_websitemltoken"] = "duplicated-token";
             candidate2["dfe_duplicatescorecalculated"] = 9.5;
             candidate2["dfe_gitiseventsservicesubscriptiontype"] = new OptionSetValue((int)Candidate.SubscriptionType.SingleEvent);
 
@@ -460,6 +548,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate3["emailaddress1"] = "john@doe.com";
             candidate3["firstname"] = "Old John";
             candidate3["lastname"] = "Doe";
+            candidate3["dfe_websitemltoken"] = "duplicated-token";
             candidate3["modifiedon"] = DateTime.UtcNow.AddDays(-5);
             candidate3["dfe_duplicatescorecalculated"] = 8.3;
 

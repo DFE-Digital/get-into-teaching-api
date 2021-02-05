@@ -87,20 +87,49 @@ namespace GetIntoTeachingApi.Services
                 return null;
             }
 
-            _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), context);
-            _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), context);
-            _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_servicesubscription_contact"), context);
-            _service.LoadProperty(entity, new Relationship("msevtmgt_contact_msevtmgt_eventregistration_Contact"), context);
+            LoadCandidateRelationships(entity, context);
 
             return new Candidate(entity, this);
         }
 
+        public IEnumerable<Candidate> MatchCandidates(string magicLinkToken)
+        {
+            // Avoids a potentially very expensive query.
+            if (string.IsNullOrEmpty(magicLinkToken))
+            {
+                return new Candidate[0];
+            }
+
+            var context = Context();
+            var entities = _service.CreateQuery("contact", Context())
+                .Where(c => c.GetAttributeValue<string>("dfe_websitemltoken") == magicLinkToken);
+
+            foreach (var entity in entities)
+            {
+                LoadCandidateRelationships(entity, context);
+            }
+
+            return entities.Select(e => new Candidate(e, this));
+        }
+
         public Candidate GetCandidate(Guid id)
         {
-            var entity = _service.CreateQuery("contact", Context())
-                .FirstOrDefault(c => c.GetAttributeValue<EntityReference>("contactid").Id == id);
+            return GetCandidates(new List<Guid>() { id }).FirstOrDefault();
+        }
 
-            return entity == null ? null : new Candidate(entity, this);
+        public IEnumerable<Candidate> GetCandidates(IEnumerable<Guid> ids)
+        {
+            var query = new QueryExpression("contact");
+            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
+
+            var idsCondition = new ConditionExpression("contactid", ConditionOperator.In, ids.ToArray());
+            var filter = new FilterExpression(LogicalOperator.And);
+            filter.Conditions.AddRange(new[] { idsCondition });
+            query.Criteria.AddFilter(filter);
+
+            var entities = _service.RetrieveMultiple(query);
+
+            return entities.Select((entity) => new Candidate(entity, this)).ToList();
         }
 
         public bool CandidateAlreadyHasLocalEventSubscriptionType(Guid candidateId)
@@ -198,6 +227,14 @@ namespace GetIntoTeachingApi.Services
             var entities = _service.RetrieveMultiple(query);
 
             return entities.Select((entity) => new TeachingEvent(entity, this)).ToList();
+        }
+
+        private void LoadCandidateRelationships(Entity entity, OrganizationServiceContext context)
+        {
+            _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), context);
+            _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), context);
+            _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_servicesubscription_contact"), context);
+            _service.LoadProperty(entity, new Relationship("msevtmgt_contact_msevtmgt_eventregistration_Contact"), context);
         }
 
         private OrganizationServiceContext Context()
