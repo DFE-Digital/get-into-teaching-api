@@ -279,39 +279,4 @@ jobs:
            inputs: '{"application": "BOTH" , "reference": "${{ github.sha }}" }'
            ref:  refs/heads/master
 
-  production:
-    name: Production Deployment
-    runs-on: ubuntu-latest
-    needs: [ cypress , development ]
-    environment: Production
-    steps:
-       - name: Check out the repo
-         uses: actions/checkout@v2
 
-       - name: set-up-environment
-         uses: DFE-Digital/github-actions/set-up-environment@master
-
-       - uses: Azure/login@v1
-         with:
-            creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-       - uses: Azure/get-keyvault-secrets@v1
-         id:   azSecret
-         with:
-            keyvault: ${{ secrets.KEY_VAULT}}
-            secrets: 'ACTIONS-API-ACCESS-TOKEN'
-
-       - name: Get Release Id from Tag
-         id: tag_id
-         uses: DFE-Digital/github-actions/DraftReleaseByTag@master
-         with:
-           TAG: ${{needs.development.outputs.release_tag}}
-           TOKEN: ${{steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN}}
-
-       - name: Publish Release  
-         if: steps.tag_id.outputs.release_id
-         uses: eregon/publish-release@v1
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-         with:
-           release_id: ${{steps.tag_id.outputs.release_id}}
