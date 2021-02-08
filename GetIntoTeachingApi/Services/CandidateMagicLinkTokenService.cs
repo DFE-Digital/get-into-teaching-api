@@ -24,7 +24,7 @@ namespace GetIntoTeachingApi.Services
             candidate.MagicLinkTokenStatusId = (int)Candidate.MagicLinkTokenStatus.Generated;
         }
 
-        public Candidate Exchange(string token)
+        public CandidateMagicLinkExchangeResult Exchange(string token)
         {
             var matchingCandidates = _crm.MatchCandidates(token);
 
@@ -32,14 +32,15 @@ namespace GetIntoTeachingApi.Services
             // unlikely case a token has been duplicated.
             if (matchingCandidates.Count() != 1)
             {
-                return null;
+                return new CandidateMagicLinkExchangeResult(null);
             }
 
             var candidate = matchingCandidates.First();
+            var result = new CandidateMagicLinkExchangeResult(candidate);
 
             candidate.MagicLinkTokenStatusId = (int)Candidate.MagicLinkTokenStatus.Exchanged;
 
-            return candidate;
+            return result;
         }
 
         private string CreateToken()
