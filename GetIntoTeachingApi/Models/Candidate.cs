@@ -170,7 +170,7 @@ namespace GetIntoTeachingApi.Models
         public bool IsNewRegistrant { get; set; }
         [EntityField("dfe_websitemltoken", null, null, true)]
         public string MagicLinkToken { get; set; }
-        public DateTime? MagicLinkTokenCreatedAt { get; set; }
+        public DateTime? MagicLinkTokenExpiresAt { get; set; }
 
         [EntityField("dfe_gitisttaserviceissubscriber")]
         public bool? HasTeacherTrainingAdviserSubscription { get; set; }
@@ -267,6 +267,8 @@ namespace GetIntoTeachingApi.Models
         {
             return new[] { PlanningToRetakeGcseMathsId, PlanningToRetakeGcseEnglishId }.All(g => g == (int)GcseStatus.HasOrIsPlanningOnRetaking);
         }
+
+        public bool MagicLinkTokenExpired() => MagicLinkTokenExpiresAt == null || MagicLinkTokenExpiresAt < DateTime.UtcNow;
 
         protected override bool ShouldMap(ICrmService crm)
         {
