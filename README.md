@@ -11,6 +11,67 @@ The GIT API aims to provide:
 - Message queueing (while the GIT CRM is offline for updates).
 - Validation to ensure consistency across services writing to the GIT CRM.
 
+## API Clients
+
+### Adding a New Client
+
+The API can be integrated into a new service by creating a 'client' in `Fixtures/clients.yml`:
+
+```
+name: My Service
+description: "An example service description"
+api_key_prefix: MY_SERVICE
+role: MyService
+```
+
+### Setting API Keys
+
+Once a client has been added, you will need to ensure that the relevant variables containing the API keys are defined in Azure for each environment. In the above case this would be:
+
+```
+MY_SERVICE_API_KEY=<a long secure value>
+```
+
+It is important that you use a unique value for the service API key as the client/role is derived from this; if the API keys are not unique your service may not have access to the endpoints you expect.
+
+To make development easier you can define a short, memerable API key in `GetIntoTeachingApi/Properties/launchSettings.json` and commit it. **Do not commit keys for non-development environments!**.
+
+### Authorizing Roles
+
+The role associated with the client should be added to any controller/actions that the service requires access to:
+
+```
+[Authorize(Roles = "ServiceRole")]
+public class CandidatesController : ControllerBase
+{
+    ...
+}
+```
+
+If a controller/action is decorated with an `[Authorize]` attribute without a role specified it will be accessible to all clients.
+
+Multiple clients can utilise the same role, if applicable.
+
+### Rate Limiting
+
+Endpoints that are potentially exploitable have global rate limits applied. If you need more than the base-line quota (or less) for a service you can override them by editing the `ClientRules` in `GetIntoTeachingApi/appsettings.json`:
+
+```
+"ClientRules": [{
+    "ClientId": "<client_api_key_prefix>",
+    "Rules": [
+        {
+            "Endpoint": "POST:/api/candidates/access_tokens",
+            "Period": "1m",
+            "Limit": 500
+        }
+    ]
+}]
+```
+
+More information on rate limiting can be found [below](#rate-limiting).
+
+
 ## Getting Started
 
 The API is an ASP.NET Core web application; to get up and running clone the repository and open `GetIntoTeachingApi.sln` in Visual Studio.
@@ -23,7 +84,7 @@ https://api.bintray.com/nuget/gov-uk-notify/nuget
 
 Next you will need to set up the environment (see the `Environment` section below) before booting up the dependent services in Docker with `docker-compose up`.
 
-When the application runs in development it will open the Swagger documentation by default (the development shared secret is `abc123`).
+When the application runs in development it will open the Swagger documentation by default (the development shared secret for the admin client is `secret-admin`).
 
 On the first run it will do a long sync of UK postcode information into the Postgres instance running in Docker - you can monitor the progress via the Hangfire dashboard (subsequent start ups should be quicker).
 
@@ -42,7 +103,7 @@ CRM_TENANT_ID=****
 NOTIFY_API_KEY=****
 ```
 
-A number of non-secret, default development environment variables are pre-set in `GetIntoTeachingApi/Properties/launchSettings.json` (such as a development `SHARED_SECRET` of `abc123` and the `VCAP_SERVICES` setup for the Postgres instance running in Docker).
+A number of non-secret, default development environment variables are pre-set in `GetIntoTeachingApi/Properties/launchSettings.json` (such as a development `ADMIN_API_KEY` of `admin-secret` and the `VCAP_SERVICES` setup for the Postgres instance running in Docker).
 
 Other environment variables are available (see the `IEnv` interface) but not necessary to run the bare-bones application.
 
