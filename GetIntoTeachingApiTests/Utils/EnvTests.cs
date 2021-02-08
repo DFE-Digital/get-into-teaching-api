@@ -183,17 +183,6 @@ namespace GetIntoTeachingApiTests.Utils
         }
 
         [Fact]
-        public void SharedSecret_ReturnsCorrectly()
-        {
-            var previous = Environment.GetEnvironmentVariable("SHARED_SECRET");
-            Environment.SetEnvironmentVariable("SHARED_SECRET", "shared-secret");
-
-            _env.SharedSecret.Should().Be("shared-secret");
-
-            Environment.SetEnvironmentVariable("SHARED_SECRET", previous);
-        }
-
-        [Fact]
         public void GoogleApiKey_ReturnsCorrectly()
         {
             var previous = Environment.GetEnvironmentVariable("GOOGLE_API_KEY");
