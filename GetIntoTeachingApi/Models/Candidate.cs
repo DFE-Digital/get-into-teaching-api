@@ -87,6 +87,13 @@ namespace GetIntoTeachingApi.Models
             NotAnswered = 222750001,
         }
 
+        public enum MagicLinkTokenStatus
+        {
+            Pending = 222750002,
+            Generated = 222750003,
+            Exchanged = 222750004,
+        }
+
         public string FullName => $"{this.FirstName} {this.LastName}";
         [EntityField("dfe_preferredteachingsubject01", typeof(EntityReference), "dfe_teachingsubjectlist")]
         public Guid? PreferredTeachingSubjectId { get; set; }
@@ -128,6 +135,8 @@ namespace GetIntoTeachingApi.Models
         public int? PreferredContactMethodId { get; set; } = (int)ContactMethod.Any;
         [EntityField("msgdpr_gdprconsent", typeof(OptionSetValue))]
         public int? GdprConsentId { get; set; } = (int)GdprConsent.Consent;
+        [EntityField("dfe_websitemltokenstatus", typeof(OptionSetValue), null, true)]
+        public int? MagicLinkTokenStatusId { get; set; }
         [EntityField("dfe_waitingtobeassigneddate")]
         public DateTime? StatusIsWaitingToBeAssignedAt { get; set; }
         [EntityField("emailaddress1")]
@@ -170,6 +179,7 @@ namespace GetIntoTeachingApi.Models
         public bool IsNewRegistrant { get; set; }
         [EntityField("dfe_websitemltoken", null, null, true)]
         public string MagicLinkToken { get; set; }
+        [EntityField("dfe_websitemltokenexpirydate", null, null, true)]
         public DateTime? MagicLinkTokenExpiresAt { get; set; }
 
         [EntityField("dfe_gitisttaserviceissubscriber")]
@@ -269,6 +279,7 @@ namespace GetIntoTeachingApi.Models
         }
 
         public bool MagicLinkTokenExpired() => MagicLinkTokenExpiresAt == null || MagicLinkTokenExpiresAt < DateTime.UtcNow;
+        public bool MagicLinkTokenAlreadyExchanged() => MagicLinkTokenStatusId == (int)MagicLinkTokenStatus.Exchanged;
 
         protected override bool ShouldMap(ICrmService crm)
         {

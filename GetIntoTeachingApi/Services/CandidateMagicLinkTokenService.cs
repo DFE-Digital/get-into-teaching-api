@@ -21,6 +21,7 @@ namespace GetIntoTeachingApi.Services
         {
             candidate.MagicLinkToken = CreateToken();
             candidate.MagicLinkTokenExpiresAt = DateTime.UtcNow.AddHours(TokenTimeSpan.TotalHours);
+            candidate.MagicLinkTokenStatusId = (int)Candidate.MagicLinkTokenStatus.Generated;
         }
 
         public Candidate Exchange(string token)
@@ -34,7 +35,11 @@ namespace GetIntoTeachingApi.Services
                 return null;
             }
 
-            return matchingCandidates.First();
+            var candidate = matchingCandidates.First();
+
+            candidate.MagicLinkTokenStatusId = (int)Candidate.MagicLinkTokenStatus.Exchanged;
+
+            return candidate;
         }
 
         private string CreateToken()
