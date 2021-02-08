@@ -58,32 +58,6 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
         }
 
         [HttpPost]
-        [Route("{accessToken}")]
-        [SwaggerOperation(
-            Summary = "Retrieves a pre-populated TeacherTrainingAdviserSignUp for the candidate.",
-            Description = @"
-Retrieves a pre-populated TeacherTrainingAdviserSignUp for the candidate. The `accessToken` is obtained from a 
-`POST /candidates/access_tokens` request (you must also ensure the `ExistingCandidateRequest` payload you 
-exchanged for your token matches the request payload here).",
-            OperationId = "GetPreFilledTeacherTrainingAdviserSignUp",
-            Tags = new[] { "Teacher Training Adviser" })]
-        [ProducesResponseType(typeof(TeacherTrainingAdviserSignUp), 200)]
-        [ProducesResponseType(404)]
-        public IActionResult Get(
-            [FromRoute, SwaggerParameter("Access token (PIN code).", Required = true)] string accessToken,
-            [FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] ExistingCandidateRequest request)
-        {
-            var candidate = _crm.MatchCandidate(request);
-
-            if (candidate == null || !_tokenService.IsValid(accessToken, request, (Guid)candidate.Id))
-            {
-                return Unauthorized();
-            }
-
-            return Ok(new TeacherTrainingAdviserSignUp(candidate));
-        }
-
-        [HttpPost]
         [Route("exchange_access_token/{accessToken}")]
         [SwaggerOperation(
             Summary = "Retrieves a pre-populated TeacherTrainingAdviserSignUp for the candidate.",
