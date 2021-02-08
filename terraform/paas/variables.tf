@@ -29,6 +29,14 @@ variable "application_memory" {
   default = "1024"
 }
 
+variable "postgres_service_plan" {
+  default = "small-11"
+}
+
+variable "redis_service_plan" {
+  default = "small-ha-5_x"
+}
+
 variable "application_disk" {
   default = "1024"
 }
