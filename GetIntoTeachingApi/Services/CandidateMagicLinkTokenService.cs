@@ -7,6 +7,7 @@ namespace GetIntoTeachingApi.Services
 {
     public class CandidateMagicLinkTokenService : ICandidateMagicLinkTokenService
     {
+        public static readonly TimeSpan TokenTimeSpan = new TimeSpan(48, 0, 0);
         private readonly ICrmService _crm;
         private readonly RNGCryptoServiceProvider _cryptoService;
 
@@ -19,7 +20,7 @@ namespace GetIntoTeachingApi.Services
         public void GenerateToken(Candidate candidate)
         {
             candidate.MagicLinkToken = CreateToken();
-            candidate.MagicLinkTokenCreatedAt = DateTime.UtcNow;
+            candidate.MagicLinkTokenExpiresAt = DateTime.UtcNow.AddHours(TokenTimeSpan.TotalHours);
         }
 
         public Candidate Exchange(string token)

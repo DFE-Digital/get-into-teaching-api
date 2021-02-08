@@ -20,7 +20,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void GenerateTokens_WithCandidates_SetsTokenAndCreatedAt()
+        public void GenerateTokens_WithCandidates_SetsTokenAndExpiresAt()
         {
             var candidate = new Candidate();
 
@@ -28,7 +28,7 @@ namespace GetIntoTeachingApiTests.Services
 
             candidate.MagicLinkToken.Should().NotBeNull();
             candidate.MagicLinkToken.Length.Should().Be(32);
-            candidate.MagicLinkTokenCreatedAt.Should().BeCloseTo(DateTime.UtcNow);
+            candidate.MagicLinkTokenExpiresAt.Should().BeCloseTo(DateTime.UtcNow.AddHours(48));
         }
 
         [Fact]

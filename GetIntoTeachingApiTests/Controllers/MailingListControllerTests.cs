@@ -87,20 +87,21 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void ExchangeMagicLinkTokenForMember_MissingCandidate_RespondsWithUnauthorized()
+        public void ExchangeMagicLinkTokenForMember_InvalidToken_RespondsWithBadRequest()
         {
             var token = Guid.NewGuid().ToString();
             _mockMagicLinkTokenService.Setup(m => m.Exchange(token)).Returns(null as Candidate);
 
             var response = _controller.ExchangeMagicLinkTokenForMember(token);
 
-            response.Should().BeOfType<UnauthorizedResult>();
+            var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
+            badRequest.Value.Should().BeEquivalentTo(new { Message = "Magic link token is not valid.", Status = "Invalid" });
         }
 
         [Fact]
-        public void ExchangeMagicLinkTokenForMember_MatchingCandidate_RespondsWithMailingListAddMember()
+        public void ExchangeMagicLinkTokenForMember_ValidToken_RespondsWithMailingListAddMember()
         {
-            var candidate = new Candidate { Id = Guid.NewGuid(), MagicLinkToken = Guid.NewGuid().ToString() };
+            var candidate = new Candidate { Id = Guid.NewGuid(), MagicLinkToken = Guid.NewGuid().ToString(), MagicLinkTokenExpiresAt = DateTime.UtcNow.AddMinutes(1) };
             _mockMagicLinkTokenService.Setup(m => m.Exchange(candidate.MagicLinkToken)).Returns(candidate);
 
             var response = _controller.ExchangeMagicLinkTokenForMember(candidate.MagicLinkToken);
@@ -108,6 +109,18 @@ namespace GetIntoTeachingApiTests.Controllers
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             var responseModel = ok.Value as MailingListAddMember;
             responseModel.CandidateId.Should().Be(candidate.Id);
+        }
+
+        [Fact]
+        public void ExchangeMagicLinkTokenForMember_ExpiredToken_RespondsWithBadRequest()
+        {
+            var candidate = new Candidate { Id = Guid.NewGuid(), MagicLinkToken = Guid.NewGuid().ToString(), MagicLinkTokenExpiresAt = DateTime.UtcNow.AddMinutes(-1) };
+            _mockMagicLinkTokenService.Setup(m => m.Exchange(candidate.MagicLinkToken)).Returns(candidate);
+
+            var response = _controller.ExchangeMagicLinkTokenForMember(candidate.MagicLinkToken);
+
+            var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
+            badRequest.Value.Should().BeEquivalentTo(new { Message = "Magic link token has expired.", Status = "Expired" });
         }
 
         [Fact]

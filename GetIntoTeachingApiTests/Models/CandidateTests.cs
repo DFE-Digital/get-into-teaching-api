@@ -414,5 +414,38 @@ namespace GetIntoTeachingApiTests.Models
 
             candidate.IsReturningToTeaching().Should().BeFalse();
         }
+
+        [Fact]
+        public void MagicLinkTokenExpired_WhenNull_ReturnsTrue()
+        {
+            var candidate = new Candidate
+            {
+                MagicLinkTokenExpiresAt = null
+            };
+
+            candidate.MagicLinkTokenExpired().Should().BeTrue();
+        }
+
+        [Fact]
+        public void MagicLinkTokenExpired_WhenExpiredInPast_ReturnsTrue()
+        {
+            var candidate = new Candidate
+            {
+                MagicLinkTokenExpiresAt = DateTime.UtcNow.AddSeconds(-5)
+            };
+
+            candidate.MagicLinkTokenExpired().Should().BeTrue();
+        }
+
+        [Fact]
+        public void MagicLinkTokenExpired_WhenExpiredInFuture_ReturnsFalse()
+        {
+            var candidate = new Candidate
+            {
+                MagicLinkTokenExpiresAt = DateTime.UtcNow.AddSeconds(5)
+            };
+
+            candidate.MagicLinkTokenExpired().Should().BeFalse();
+        }
     }
 }

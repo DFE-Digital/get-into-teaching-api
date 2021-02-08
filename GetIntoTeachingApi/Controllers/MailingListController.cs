@@ -108,7 +108,12 @@ namespace GetIntoTeachingApi.Controllers
 
             if (candidate == null)
             {
-                return Unauthorized();
+                return BadRequest(new { Message = "Magic link token is not valid.", Status = "Invalid" });
+            }
+
+            if (candidate.MagicLinkTokenExpired())
+            {
+                return BadRequest(new { Message = "Magic link token has expired.", Status = "Expired" });
             }
 
             return Ok(new MailingListAddMember(candidate));
