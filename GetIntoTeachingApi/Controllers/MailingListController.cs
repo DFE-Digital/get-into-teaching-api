@@ -116,6 +116,11 @@ namespace GetIntoTeachingApi.Controllers
                 return BadRequest(new { Message = "Magic link token has expired.", Status = "Expired" });
             }
 
+            if (candidate.MagicLinkTokenAlreadyExchanged())
+            {
+                return BadRequest(new { Message = "Magic link token has already been exchanged.", Status = "AlreadyExchanged" });
+            }
+
             return Ok(new MailingListAddMember(candidate));
         }
     }

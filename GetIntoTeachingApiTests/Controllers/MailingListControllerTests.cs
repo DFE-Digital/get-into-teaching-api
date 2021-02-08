@@ -124,6 +124,24 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
+        public void ExchangeMagicLinkTokenForMember_TokenAlreadyExchanged_RespondsWithBadRequest()
+        {
+            var candidate = new Candidate
+            {
+                Id = Guid.NewGuid(),
+                MagicLinkToken = Guid.NewGuid().ToString(),
+                MagicLinkTokenExpiresAt = DateTime.UtcNow.AddMinutes(1),
+                MagicLinkTokenStatusId = (int)Candidate.MagicLinkTokenStatus.Exchanged
+            };
+            _mockMagicLinkTokenService.Setup(m => m.Exchange(candidate.MagicLinkToken)).Returns(candidate);
+
+            var response = _controller.ExchangeMagicLinkTokenForMember(candidate.MagicLinkToken);
+
+            var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
+            badRequest.Value.Should().BeEquivalentTo(new { Message = "Magic link token has already been exchanged.", Status = "AlreadyExchanged" });
+        }
+
+        [Fact]
         public void AddMember_InvalidRequest_RespondsWithValidationErrors()
         {
             var request = new MailingListAddMember() { FirstName = null };

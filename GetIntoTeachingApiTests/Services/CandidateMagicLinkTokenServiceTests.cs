@@ -20,7 +20,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void GenerateTokens_WithCandidates_SetsTokenAndExpiresAt()
+        public void GenerateTokens_WithCandidates_SetsTokenDetails()
         {
             var candidate = new Candidate();
 
@@ -29,6 +29,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate.MagicLinkToken.Should().NotBeNull();
             candidate.MagicLinkToken.Length.Should().Be(32);
             candidate.MagicLinkTokenExpiresAt.Should().BeCloseTo(DateTime.UtcNow.AddHours(48));
+            candidate.MagicLinkTokenStatusId.Should().Be((int)Candidate.MagicLinkTokenStatus.Generated);
         }
 
         [Fact]
@@ -48,7 +49,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void Exchange_WithValidToken_ReturnsCandidate()
+        public void Exchange_WithValidToken_ReturnsCandidateAndUpdatesStatus()
         {
             var candidate = new Candidate();
             var token = Guid.NewGuid().ToString();
@@ -57,6 +58,7 @@ namespace GetIntoTeachingApiTests.Services
             var result = _service.Exchange(token);
 
             result.Should().Be(candidate);
+            candidate.MagicLinkTokenStatusId.Should().Be((int)Candidate.MagicLinkTokenStatus.Exchanged);
         }
 
         [Fact]
