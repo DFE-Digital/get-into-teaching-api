@@ -30,6 +30,7 @@
         "ADMIN_API_KEY": "secret-admin",
         "GIT_API_KEY": "secret-git",
         "TTA_API_KEY": "secret-tta",
+        "CRM_API_KEY": "secret-crm",
         "TOTP_SECRET_KEY": "def456"
       }
     }

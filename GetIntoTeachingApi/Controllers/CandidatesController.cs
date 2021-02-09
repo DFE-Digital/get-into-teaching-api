@@ -15,7 +15,7 @@ namespace GetIntoTeachingApi.Controllers
     [Route("api/candidates")]
     [ApiController]
     [LogRequests]
-    [Authorize(Roles = "Admin,GetIntoTeaching,GetAnAdviser")]
+    [Authorize]
     public class CandidatesController : ControllerBase
     {
         private const int MaximumMagicLinkTokensPerBatch = 25;
@@ -42,6 +42,7 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpPost]
         [Route("access_tokens")]
+        [Authorize(Roles = "Admin,GetIntoTeaching,GetAnAdviser")]
         [SwaggerOperation(
             Summary = "Creates a candidate access token.",
             Description = @"
@@ -77,6 +78,7 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpPost]
         [Route("magic_link_tokens")]
+        [Authorize(Roles = "Admin,Crm")]
         [SwaggerOperation(
             Summary = "Creates a token for use in a magic link.",
             Description = @"Creates a long-lived magic link token that can be exchanged for candidate information for up to 48 hours.
