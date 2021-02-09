@@ -18,6 +18,13 @@ namespace GetIntoTeachingApi.OperationFilters
                 return;
             }
 
+            var authAttributeAlreadyPresent = operation.Responses.Any(r => r.Key == "401");
+
+            if (authAttributeAlreadyPresent)
+            {
+                return;
+            }
+
             operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
             operation.Security = new List<OpenApiSecurityRequirement>
             {

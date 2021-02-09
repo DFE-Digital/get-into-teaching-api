@@ -87,27 +87,30 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void ExchangeMagicLinkTokenForMember_MissingCandidate_RespondsWithUnauthorized()
+        public void ExchangeMagicLinkTokenForMember_ValidToken_RespondsWithMailingListAddMember()
         {
-            var token = Guid.NewGuid().ToString();
-            _mockMagicLinkTokenService.Setup(m => m.Exchange(token)).Returns(null as Candidate);
-
-            var response = _controller.ExchangeMagicLinkTokenForMember(token);
-
-            response.Should().BeOfType<UnauthorizedResult>();
-        }
-
-        [Fact]
-        public void ExchangeMagicLinkTokenForMember_MatchingCandidate_RespondsWithMailingListAddMember()
-        {
-            var candidate = new Candidate { Id = Guid.NewGuid(), MagicLinkToken = Guid.NewGuid().ToString() };
-            _mockMagicLinkTokenService.Setup(m => m.Exchange(candidate.MagicLinkToken)).Returns(candidate);
+            var candidate = new Candidate { Id = Guid.NewGuid(), MagicLinkTokenExpiresAt = DateTime.UtcNow.AddMinutes(1) };
+            var result = new CandidateMagicLinkExchangeResult(candidate);
+            _mockMagicLinkTokenService.Setup(m => m.Exchange(candidate.MagicLinkToken)).Returns(result);
 
             var response = _controller.ExchangeMagicLinkTokenForMember(candidate.MagicLinkToken);
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             var responseModel = ok.Value as MailingListAddMember;
             responseModel.CandidateId.Should().Be(candidate.Id);
+        }
+
+        [Fact]
+        public void ExchangeMagicLinkTokenForMember_InvalidToken_RespondsWithUnauthorized()
+        {
+            var token = Guid.NewGuid().ToString();
+            var result = new CandidateMagicLinkExchangeResult(null);
+            _mockMagicLinkTokenService.Setup(m => m.Exchange(token)).Returns(result);
+
+            var response = _controller.ExchangeMagicLinkTokenForMember(token);
+
+            var unauthorized = response.Should().BeOfType<UnauthorizedObjectResult>().Subject;
+            unauthorized.Value.Should().BeEquivalentTo(result);
         }
 
         [Fact]
