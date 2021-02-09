@@ -39,7 +39,7 @@ namespace GetIntoTeachingApi.Models
         public static EntityFieldAttribute EntityFieldAttribute(ICustomAttributeProvider property)
         {
             return (EntityFieldAttribute)property.GetCustomAttributes(false)
-                .FirstOrDefault(a => a.GetType() == typeof(EntityFieldAttribute));
+                .FirstOrDefault(a => a.GetType() == typeof(EntityFieldAttribute) && !((EntityFieldAttribute)a).Transient);
         }
 
         public static EntityRelationshipAttribute EntityRelationshipAttribute(ICustomAttributeProvider property)
