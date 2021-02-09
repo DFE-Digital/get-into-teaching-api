@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Text.Json.Serialization;
 using AspNetCoreRateLimit;
 using dotenv.net;
 using FluentValidation.AspNetCore;
@@ -92,6 +93,10 @@ namespace GetIntoTeachingApi
             .AddFluentValidation(c =>
             {
                 c.RegisterValidatorsFromAssemblyContaining<Startup>();
+            })
+            .AddJsonOptions(o =>
+            {
+                o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
 
             services.Configure<KestrelServerOptions>(options =>
