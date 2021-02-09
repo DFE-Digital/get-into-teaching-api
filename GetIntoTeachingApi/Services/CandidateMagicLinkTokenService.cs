@@ -7,6 +7,7 @@ namespace GetIntoTeachingApi.Services
 {
     public class CandidateMagicLinkTokenService : ICandidateMagicLinkTokenService
     {
+        public static readonly TimeSpan TokenTimeSpan = new TimeSpan(48, 0, 0);
         private readonly ICrmService _crm;
         private readonly RNGCryptoServiceProvider _cryptoService;
 
@@ -19,10 +20,11 @@ namespace GetIntoTeachingApi.Services
         public void GenerateToken(Candidate candidate)
         {
             candidate.MagicLinkToken = CreateToken();
-            candidate.MagicLinkTokenCreatedAt = DateTime.UtcNow;
+            candidate.MagicLinkTokenExpiresAt = DateTime.UtcNow.AddHours(TokenTimeSpan.TotalHours);
+            candidate.MagicLinkTokenStatusId = (int)Candidate.MagicLinkTokenStatus.Generated;
         }
 
-        public Candidate Exchange(string token)
+        public CandidateMagicLinkExchangeResult Exchange(string token)
         {
             var matchingCandidates = _crm.MatchCandidates(token);
 
@@ -30,10 +32,15 @@ namespace GetIntoTeachingApi.Services
             // unlikely case a token has been duplicated.
             if (matchingCandidates.Count() != 1)
             {
-                return null;
+                return new CandidateMagicLinkExchangeResult(null);
             }
 
-            return matchingCandidates.First();
+            var candidate = matchingCandidates.First();
+            var result = new CandidateMagicLinkExchangeResult(candidate);
+
+            candidate.MagicLinkTokenStatusId = (int)Candidate.MagicLinkTokenStatus.Exchanged;
+
+            return result;
         }
 
         private string CreateToken()

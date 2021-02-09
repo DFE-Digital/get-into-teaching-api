@@ -97,21 +97,21 @@ namespace GetIntoTeachingApi.Controllers
             Description = @"
                 Retrieves a pre-populated MailingListAddMember for the candidate. The `magicLinkToken` is obtained from a 
                 `POST /candidates/magic_link_tokens` request.",
-            OperationId = "ExchangeMailingListTokenForMailingListAddMember",
+            OperationId = "ExchangeMagicLinkTokenForMailingListAddMember",
             Tags = new[] { "Mailing List" })]
         [ProducesResponseType(typeof(MailingListAddMember), 200)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(CandidateMagicLinkExchangeResult), 401)]
         public IActionResult ExchangeMagicLinkTokenForMember(
             [FromRoute, SwaggerParameter("Magic link token.", Required = true)] string magicLinkToken)
         {
-            var candidate = _magicLinkTokenService.Exchange(magicLinkToken);
+            var result = _magicLinkTokenService.Exchange(magicLinkToken);
 
-            if (candidate == null)
+            if (!result.Success)
             {
-                return Unauthorized();
+                return Unauthorized(result);
             }
 
-            return Ok(new MailingListAddMember(candidate));
+            return Ok(new MailingListAddMember(result.Candidate));
         }
     }
 }

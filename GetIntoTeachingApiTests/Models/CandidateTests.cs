@@ -60,6 +60,9 @@ namespace GetIntoTeachingApiTests.Models
                 a => a.Name == "dfe_isadvisorrequiredos" && a.Type == typeof(OptionSetValue));
             type.GetProperty("GdprConsentId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "msgdpr_gdprconsent" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("MagicLinkTokenStatusId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "dfe_websitemltokenstatus" && a.Type == typeof(OptionSetValue) && a.Transient);
+            
 
             type.GetProperty("Email").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "emailaddress1");
             type.GetProperty("FirstName").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "firstname");
@@ -89,6 +92,7 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("StatusIsWaitingToBeAssignedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_waitingtobeassigneddate");
             type.GetProperty("OptOutOfGdpr").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "msdyn_gdproptout");
             type.GetProperty("MagicLinkToken").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_websitemltoken" && a.Transient);
+            type.GetProperty("MagicLinkTokenExpiresAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_websitemltokenexpirydate" && a.Transient);
 
             type.GetProperty("TeacherTrainingAdviserSubscriptionChannelId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_gitisttaservicesubscriptionchannel" && a.Type == typeof(OptionSetValue));
@@ -413,6 +417,53 @@ namespace GetIntoTeachingApiTests.Models
             };
 
             candidate.IsReturningToTeaching().Should().BeFalse();
+        }
+
+        [Fact]
+        public void MagicLinkTokenExpired_WhenNull_ReturnsTrue()
+        {
+            var candidate = new Candidate
+            {
+                MagicLinkTokenExpiresAt = null
+            };
+
+            candidate.MagicLinkTokenExpired().Should().BeTrue();
+        }
+
+        [Fact]
+        public void MagicLinkTokenExpired_WhenExpiredInPast_ReturnsTrue()
+        {
+            var candidate = new Candidate
+            {
+                MagicLinkTokenExpiresAt = DateTime.UtcNow.AddSeconds(-5)
+            };
+
+            candidate.MagicLinkTokenExpired().Should().BeTrue();
+        }
+
+        [Fact]
+        public void MagicLinkTokenExpired_WhenExpiredInFuture_ReturnsFalse()
+        {
+            var candidate = new Candidate
+            {
+                MagicLinkTokenExpiresAt = DateTime.UtcNow.AddSeconds(5)
+            };
+
+            candidate.MagicLinkTokenExpired().Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(Candidate.MagicLinkTokenStatus.Exchanged, true)]
+        [InlineData(Candidate.MagicLinkTokenStatus.Generated, false)]
+        [InlineData(null, false)]
+        public void MagicLinkTokenAlreadyExchanged_ReturnsCorrectly(Candidate.MagicLinkTokenStatus? status, bool expected)
+        {
+            var candidate = new Candidate
+            {
+                MagicLinkTokenStatusId = (int?)status,
+            };
+
+            candidate.MagicLinkTokenAlreadyExchanged().Should().Be(expected);
         }
     }
 }
