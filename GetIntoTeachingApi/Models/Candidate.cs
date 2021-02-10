@@ -135,7 +135,7 @@ namespace GetIntoTeachingApi.Models
         public int? PreferredContactMethodId { get; set; } = (int)ContactMethod.Any;
         [EntityField("msgdpr_gdprconsent", typeof(OptionSetValue))]
         public int? GdprConsentId { get; set; } = (int)GdprConsent.Consent;
-        [EntityField("dfe_websitemltokenstatus", typeof(OptionSetValue), null, true)]
+        [EntityField("dfe_websitemltokenstatus", typeof(OptionSetValue), null, new string[] { "Production" })]
         public int? MagicLinkTokenStatusId { get; set; }
         [EntityField("dfe_waitingtobeassigneddate")]
         public DateTime? StatusIsWaitingToBeAssignedAt { get; set; }
@@ -177,9 +177,9 @@ namespace GetIntoTeachingApi.Models
         public bool? OptOutOfGdpr { get; set; } = false;
         [EntityField("dfe_newregistrant")]
         public bool IsNewRegistrant { get; set; }
-        [EntityField("dfe_websitemltoken", null, null, true)]
+        [EntityField("dfe_websitemltoken", null, null, new string[] { "Production" })]
         public string MagicLinkToken { get; set; }
-        [EntityField("dfe_websitemltokenexpirydate", null, null, true)]
+        [EntityField("dfe_websitemltokenexpirydate", null, null, new string[] { "Production" })]
         public DateTime? MagicLinkTokenExpiresAt { get; set; }
 
         [EntityField("dfe_gitisttaserviceissubscriber")]
