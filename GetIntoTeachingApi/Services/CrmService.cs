@@ -114,22 +114,11 @@ namespace GetIntoTeachingApi.Services
 
         public Candidate GetCandidate(Guid id)
         {
-            return GetCandidates(new List<Guid>() { id }).FirstOrDefault();
-        }
+            var entity = _service.CreateQuery("contact", Context())
+                .FirstOrDefault(c => c.GetAttributeValue<EntityReference>("contactid") != null &&
+                c.GetAttributeValue<EntityReference>("contactid").Id == id);
 
-        public IEnumerable<Candidate> GetCandidates(IEnumerable<Guid> ids)
-        {
-            var query = new QueryExpression("contact");
-            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
-
-            var idsCondition = new ConditionExpression("contactid", ConditionOperator.In, ids.ToArray());
-            var filter = new FilterExpression(LogicalOperator.And);
-            filter.Conditions.AddRange(new[] { idsCondition });
-            query.Criteria.AddFilter(filter);
-
-            var entities = _service.RetrieveMultiple(query);
-
-            return entities.Select((entity) => new Candidate(entity, this)).ToList();
+            return entity == null ? null : new Candidate(entity, this);
         }
 
         public bool CandidateAlreadyHasLocalEventSubscriptionType(Guid candidateId)
