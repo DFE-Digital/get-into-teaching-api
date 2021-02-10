@@ -157,10 +157,8 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void CandidateAlreadyHasLocalEventSubscriptionType_WhenHasLocalEventSubscription_ReturnsTrue()
         {
-            var ids = new Guid[] { JaneDoeGuid };
-            var candidates = MockCandidates().Where(c => ids.Contains(c.Id));
-            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
-                q => VerifyCandidatesQueryExpression(q, ids)))).Returns(candidates);
+            _mockService.Setup(m => m.CreateQuery("contact", _context))
+                .Returns(MockCandidates);
 
             var result = _crm.CandidateAlreadyHasLocalEventSubscriptionType(JaneDoeGuid);
 
@@ -170,10 +168,8 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void CandidateAlreadyHasLocalEventSubscriptionType_WhenHasSingleEventSubscription_ReturnsFalse()
         {
-            var ids = new Guid[] { JohnDoeGuid };
-            var candidates = MockCandidates().Where(c => ids.Contains(c.Id));
-            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
-                q => VerifyCandidatesQueryExpression(q, ids)))).Returns(candidates);
+            _mockService.Setup(m => m.CreateQuery("contact", _context))
+                            .Returns(MockCandidates);
 
             var result = _crm.CandidateAlreadyHasLocalEventSubscriptionType(JohnDoeGuid);
 
@@ -255,10 +251,8 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void GetCandidate_WithId_ReturnsCorrectly()
         {
-            var ids = new Guid[] { JaneDoeGuid };
-            var candidates = MockCandidates().Where(c => ids.Contains(c.Id));
-            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
-                q => VerifyCandidatesQueryExpression(q, ids)))).Returns(candidates);
+            _mockService.Setup(m => m.CreateQuery("contact", _context))
+                .Returns(MockCandidates);
 
             var result = _crm.GetCandidate(JaneDoeGuid);
 
@@ -268,64 +262,12 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void GetCandidate_WithNonExistentId_ReturnsNull()
         {
-            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
-                q => VerifyCandidatesQueryExpression(q, new Guid[0])))).Returns(new Entity[0]);
+            _mockService.Setup(m => m.CreateQuery("contact", _context))
+                          .Returns(MockCandidates);
 
             var result = _crm.GetCandidate(Guid.NewGuid());
 
             result.Should().BeNull();
-        }
-
-        [Fact]
-        public void GetCandidates_ReturnsMatchingCandidates()
-        {
-            var ids = new Guid[] { JaneDoeGuid, JohnDoeGuid };
-            var candidates = MockCandidates().Where(c => ids.Contains(c.Id));
-            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
-                q => VerifyCandidatesQueryExpression(q, ids)))).Returns(candidates);
-
-            var result = _crm.GetCandidates(ids);
-
-            result.First().Id.Should().Be(JaneDoeGuid);
-            result.Last().Id.Should().Be(JohnDoeGuid);
-        }
-
-        [Fact]
-        public void GetCandidates_WithMissingCandidateIds_ReturnsMatchingCandidates()
-        {
-            var ids = new Guid[] { Guid.NewGuid(), JaneDoeGuid };
-            var candidates = MockCandidates().Where(c => ids.Contains(c.Id));
-            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
-                q => VerifyCandidatesQueryExpression(q, ids)))).Returns(candidates);
-
-            var result = _crm.GetCandidates(ids);
-
-            result.Count().Should().Be(1);
-            result.First().Id.Should().Be(JaneDoeGuid);
-        }
-
-        [Fact]
-        public void GetCandidate_WithNoMatches_ReturnsEmpty()
-        {
-            var ids = new Guid[] { Guid.NewGuid() };
-            var candidates = MockCandidates().Where(c => ids.Contains(c.Id));
-            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
-                q => VerifyCandidatesQueryExpression(q, ids)))).Returns(new Entity[0]);
-
-            var result = _crm.GetCandidates(ids);
-
-            result.Should().BeEmpty();
-        }
-
-        private static bool VerifyCandidatesQueryExpression(QueryExpression query, IEnumerable<Guid> ids)
-        {
-            var objectIds = ids.Select(id => (object)id).ToArray();
-            var hasEntityName = query.EntityName == "contact";
-            var conditions = query.Criteria.Filters.First().Conditions;
-            var hasIdsCondition = conditions.Where(c => c.AttributeName == "contactid" &&
-                c.Operator == ConditionOperator.In && c.Values.ToArray().SequenceEqual(objectIds)).Any();
-
-            return hasEntityName && hasIdsCondition;
         }
 
         [Theory]
