@@ -16,7 +16,7 @@ namespace GetIntoTeachingApiTests.Mocks
         public int? Field2 { get; set; }
         [EntityField("dfe_field3")]
         public string Field3 { get; set; }
-        [EntityField("dfe_field4", null, null, true)]
+        [EntityField("dfe_field4", null, null, new string[] { "Test" })]
         public string Field4 { get; set; }
         [EntityRelationship("dfe_mock_dfe_relatedmock_mock", typeof(MockRelatedModel))]
         public MockRelatedModel RelatedMock { get; set; }

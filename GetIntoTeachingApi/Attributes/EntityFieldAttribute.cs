@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using GetIntoTeachingApi.Utils;
 
 namespace GetIntoTeachingApi.Attributes
 {
@@ -9,14 +11,22 @@ namespace GetIntoTeachingApi.Attributes
         public string Name { get; }
         public Type Type { get; }
         public string Reference { get; }
-        public bool Transient { get; }
+        public string[] IgnoreInEnvironments { get; }
 
-        public EntityFieldAttribute(string name, Type type = null, string reference = null, bool transient = false)
+        public bool Ignored
+        {
+            get
+            {
+                return IgnoreInEnvironments?.Contains(new Env().EnvironmentName) == true;
+            }
+        }
+
+        public EntityFieldAttribute(string name, Type type = null, string reference = null, string[] ignoreInEnvironments = null)
         {
             Name = name;
             Type = type;
             Reference = reference;
-            Transient = transient;
+            IgnoreInEnvironments = ignoreInEnvironments;
         }
 
         public IDictionary<string, string> ToDictionary()
