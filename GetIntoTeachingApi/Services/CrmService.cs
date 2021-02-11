@@ -101,7 +101,7 @@ namespace GetIntoTeachingApi.Services
             }
 
             var context = Context();
-            var entities = _service.CreateQuery("contact", Context())
+            var entities = _service.CreateQuery("contact", context)
                 .Where(c => c.GetAttributeValue<string>("dfe_websitemltoken") == magicLinkToken);
 
             foreach (var entity in entities)
