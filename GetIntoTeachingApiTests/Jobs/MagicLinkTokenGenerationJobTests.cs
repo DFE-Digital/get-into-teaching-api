@@ -44,7 +44,7 @@ namespace GetIntoTeachingApiTests.Jobs
         public void Run_UpsertsCandidatesWithMagicLinkTokens()
         {
             var candidate = new Candidate() { MagicLinkTokenStatusId = (int)Candidate.MagicLinkTokenStatus.Pending };
-            _mockCrm.Setup(m => m.GetCandidatesPendingMagicLinkTokenGeneration(1000)).Returns(new Candidate[] { candidate });
+            _mockCrm.Setup(m => m.GetCandidatesPendingMagicLinkTokenGeneration(5000)).Returns(new Candidate[] { candidate });
 
             _job.Run();
 
