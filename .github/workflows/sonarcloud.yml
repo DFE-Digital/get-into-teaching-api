@@ -32,8 +32,10 @@ jobs:
           java-version: '11'
 
       - name: Install NotifyBintray
-        run:  dotnet nuget add source --name NotifyBintray https://api.bintray.com/nuget/gov-uk-notify/nuget 
-
+        run:  |
+               dotnet nuget add source --name NotifyBintray https://api.bintray.com/nuget/gov-uk-notify/nuget 
+               nuget install Notify
+               
       - name: Install dotnet-sonarscanner
         run:  dotnet tool install --global dotnet-sonarscanner --version 4.8.0
 
