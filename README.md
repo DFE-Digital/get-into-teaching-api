@@ -277,6 +277,15 @@ This example creates a reference to the preferred teaching subject, which is ano
 
 > **If you add a new `EntityReference` type you should ensure that it is synced to the `Store` and exposed to clients via the `TypesController`.**
 
+#### Ignoring Fields by Environment
+
+If a new field is not yet available in one of the CRM environments you can still develop and deploy code against the attribute as long as you mark it as ignored for any environments that it is not available in. For example, to map a field in dev but _not_ test (staging) or production:
+
+```
+[EntityField("dfe_brand_new_field", null, null, new string[] { "Staging", "Production" })]
+public string NewField { get; set; }
+```
+
 #### Hidden Fields
 
 Some fields are set by the API rather than passed in as part of a client request. An example is the `Telephone` property of `PhoneCall`, which is set to whatever value is within the `Candidate` `Telephone` property. In this case we don't want to expose the property details externally, so they should be tagged with the `JsonIgnore` annotation:
