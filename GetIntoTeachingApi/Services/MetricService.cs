@@ -8,6 +8,8 @@ namespace GetIntoTeachingApi.Services
             .CreateHistogram("api_crm_sync_duration_seconds", "Histogram of CRM sync durations.");
         private static readonly Histogram _locationSyncDuration = Metrics
             .CreateHistogram("api_location_sync_duration_seconds", "Histogram of location sync durations.");
+        private static readonly Histogram _magicLinkTokenGenerationDuration = Metrics
+            .CreateHistogram("api_magic_link_token_generation_duration_seconds", "Histogram of magic link token generation durations.");
         private static readonly Histogram _hangfireJobQueueDuration = Metrics
             .CreateHistogram("api_hangfire_job_queue_duration_seconds", "Histogram of the time jobs spend in the queue.", new HistogramConfiguration
             {
@@ -38,6 +40,7 @@ namespace GetIntoTeachingApi.Services
 
         public Histogram CrmSyncDuration => _crmSyncDuration;
         public Histogram LocationSyncDuration => _locationSyncDuration;
+        public Histogram MagicLinkTokenGenerationDuration => _magicLinkTokenGenerationDuration;
         public Histogram HangfireJobQueueDuration => _hangfireJobQueueDuration;
         public Gauge HangfireJobs => _hangfireJobs;
         public Counter GoogleApiCalls => _googleApiCalls;

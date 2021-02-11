@@ -10,5 +10,6 @@ namespace GetIntoTeachingApi.Jobs
         public static TimeSpan ExpirationTimeout => TimeSpan.FromHours(24);
         public static string CrmSyncJobId => "crm-sync";
         public static string LocationSyncJobId => "location-sync";
+        public static string MagicLinkTokenGenerationJobId => "magic-link-token-generation";
     }
 }

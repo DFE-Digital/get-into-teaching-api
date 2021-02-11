@@ -249,11 +249,21 @@ The GIT API aims to provide:
 
             // Configure recurring jobs.
             const string everyFifthMinute = "*/5 * * * *";
+            const string everyMinute = "* * * * *";
             RecurringJob.AddOrUpdate<CrmSyncJob>(JobConfiguration.CrmSyncJobId, (x) => x.RunAsync(), everyFifthMinute);
             RecurringJob.AddOrUpdate<LocationSyncJob>(
                 JobConfiguration.LocationSyncJobId,
                 (x) => x.RunAsync(LocationSyncJob.FreeMapToolsUrl),
                 Cron.Weekly());
+
+            // Disabled in Production until magic link fields are available.
+            if (!env.IsProduction)
+            {
+                RecurringJob.AddOrUpdate<MagicLinkTokenGenerationJob>(
+                    JobConfiguration.MagicLinkTokenGenerationJobId,
+                    (x) => x.Run(),
+                    everyMinute);
+            }
 
             // Don't seed test environment.
             if (!env.IsTest)

@@ -27,6 +27,12 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void MagicLinkTokenGenerationDuration_ReturnsMetric()
+        {
+            _metrics.MagicLinkTokenGenerationDuration.Name.Should().Be("api_magic_link_token_generation_duration_seconds");
+        }
+
+        [Fact]
         public void HangfireJobQueueDuration_ReturnsMetric()
         {
             _metrics.HangfireJobQueueDuration.Name.Should().Be("api_hangfire_job_queue_duration_seconds");

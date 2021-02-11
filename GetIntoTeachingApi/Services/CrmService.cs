@@ -121,6 +121,15 @@ namespace GetIntoTeachingApi.Services
             return entity == null ? null : new Candidate(entity, this);
         }
 
+        public IEnumerable<Candidate> GetCandidatesPendingMagicLinkTokenGeneration(int limit = 10)
+        {
+            return _service.CreateQuery("contact", Context())
+                .Where(entity => entity.GetAttributeValue<OptionSetValue>("dfe_websitemltokenstatus") != null &&
+                    entity.GetAttributeValue<OptionSetValue>("dfe_websitemltokenstatus").Value == (int)Candidate.MagicLinkTokenStatus.Pending)
+                .Take(limit)
+                .Select(e => new Candidate(e, this));
+        }
+
         public bool CandidateAlreadyHasLocalEventSubscriptionType(Guid candidateId)
         {
             return GetCandidate(candidateId).EventsSubscriptionTypeId == (int)Candidate.SubscriptionType.LocalEvent;
