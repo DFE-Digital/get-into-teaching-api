@@ -62,7 +62,7 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("GdprConsentId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "msgdpr_gdprconsent" && a.Type == typeof(OptionSetValue));
             type.GetProperty("MagicLinkTokenStatusId").Should().BeDecoratedWith<EntityFieldAttribute>(
-                a => a.Name == "dfe_websitemltokenstatus" && a.Type == typeof(OptionSetValue) && a.IgnoreInEnvironments.Contains("Production"));
+                a => a.Name == "dfe_websitemltokenstatus" && a.Type == typeof(OptionSetValue));
             
 
             type.GetProperty("Email").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "emailaddress1");
@@ -92,8 +92,8 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("TeacherId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_dfesnumber");
             type.GetProperty("StatusIsWaitingToBeAssignedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_waitingtobeassigneddate");
             type.GetProperty("OptOutOfGdpr").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "msdyn_gdproptout");
-            type.GetProperty("MagicLinkToken").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_websitemltoken" && a.IgnoreInEnvironments.Contains("Production"));
-            type.GetProperty("MagicLinkTokenExpiresAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_websitemltokenexpirydate" && a.IgnoreInEnvironments.Contains("Production"));
+            type.GetProperty("MagicLinkToken").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_websitemltoken");
+            type.GetProperty("MagicLinkTokenExpiresAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_websitemltokenexpirydate");
 
             type.GetProperty("TeacherTrainingAdviserSubscriptionChannelId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_gitisttaservicesubscriptionchannel" && a.Type == typeof(OptionSetValue));
