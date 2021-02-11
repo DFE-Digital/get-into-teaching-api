@@ -270,6 +270,28 @@ namespace GetIntoTeachingApiTests.Services
             result.Should().BeNull();
         }
 
+        [Fact]
+        public void GetCandidatesPendingMagicLinkTokenGeneration_ReturnsCorrectly()
+        {
+            _mockService.Setup(m => m.CreateQuery("contact", _context))
+                .Returns(MockCandidates());
+
+            var result = _crm.GetCandidatesPendingMagicLinkTokenGeneration();
+
+            result.Select(c => c.MagicLinkTokenStatusId).Should().AllBeEquivalentTo((int)Candidate.MagicLinkTokenStatus.Pending);
+        }
+
+        [Fact]
+        public void GetCandidatesPendingMagicLinkTokenGeneration_WithLimit_ReturnsCorrectly()
+        {
+            _mockService.Setup(m => m.CreateQuery("contact", _context))
+                .Returns(MockCandidates());
+
+            var result = _crm.GetCandidatesPendingMagicLinkTokenGeneration(1);
+
+            result.Count().Should().Be(1);
+        }
+
         [Theory]
         [InlineData("john@doe.com", "New John", "Doe", "New John")]
         [InlineData("JOHN@doe.com", "New John", "Doe", "New John")]
@@ -468,6 +490,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate1["lastname"] = "Doe";
             candidate1["modifiedon"] = DateTime.UtcNow;
             candidate1["dfe_websitemltoken"] = JaneDoeMagicLinkToken;
+            candidate1["dfe_websitemltokenstatus"] = new OptionSetValue((int)Candidate.MagicLinkTokenStatus.Pending);
             candidate1["dfe_duplicatescorecalculated"] = 10.0;
             candidate1["dfe_gitiseventsservicesubscriptiontype"] = new OptionSetValue((int)Candidate.SubscriptionType.LocalEvent);
 
@@ -482,6 +505,7 @@ namespace GetIntoTeachingApiTests.Services
             candidate2["lastname"] = "Doe";
             candidate2["modifiedon"] = DateTime.UtcNow;
             candidate2["dfe_websitemltoken"] = "duplicated-token";
+            candidate2["dfe_websitemltokenstatus"] = new OptionSetValue((int)Candidate.MagicLinkTokenStatus.Pending);
             candidate2["dfe_duplicatescorecalculated"] = 9.5;
             candidate2["dfe_gitiseventsservicesubscriptiontype"] = new OptionSetValue((int)Candidate.SubscriptionType.SingleEvent);
 
