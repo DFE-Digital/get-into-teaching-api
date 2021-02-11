@@ -57,12 +57,24 @@ variable "paas_database_1_name" {
   default = "dfe-teacher-services-sb-ms-svc"
 }
 
+variable "database_1_plan" {
+  default = "small-11"
+}
+
 variable "paas_database_2_name" {
   default = "dfe-teacher-services-sb-pg-svc"
 }
 
+variable "database_2_plan" {
+  default = "small-11"
+}
+
 variable "paas_redis_1_name" {
   default = "dfe-teacher-services-sb-redis-svc"
+}
+
+variable "redis_1_plan" {
+  default = "small-ha-5_x"
 }
 
 variable "paas_api_application_name" {
