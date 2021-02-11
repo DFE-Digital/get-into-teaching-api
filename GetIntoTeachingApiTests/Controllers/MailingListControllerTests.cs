@@ -101,6 +101,21 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
+        public void ExchangeMagicLinkTokenForMember_ValidToken_UpdatesTokenAsExchanged()
+        {
+            var candidate = new Candidate { Id = Guid.NewGuid(), MagicLinkTokenExpiresAt = DateTime.UtcNow.AddMinutes(1) };
+            var result = new CandidateMagicLinkExchangeResult(candidate);
+            _mockMagicLinkTokenService.Setup(m => m.Exchange(candidate.MagicLinkToken)).Returns(result);
+
+            var response = _controller.ExchangeMagicLinkTokenForMember(candidate.MagicLinkToken);
+
+            _mockJobClient.Verify(x => x.Create(
+                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
+                IsMatch(candidate, (Candidate)job.Args[0])),
+                It.IsAny<EnqueuedState>()));
+        }
+
+        [Fact]
         public void ExchangeMagicLinkTokenForMember_InvalidToken_RespondsWithUnauthorized()
         {
             var token = Guid.NewGuid().ToString();
