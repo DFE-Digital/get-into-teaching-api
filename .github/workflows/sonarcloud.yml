@@ -31,6 +31,7 @@ jobs:
                dotnet --version
                dotnet nuget --version
                dotnet nuget list source
+               curl "https://dl.bintray.com/gov-uk-notify/nuget/Notify.4.0.0.nupkg" --output temp.bin
                dotnet nuget add source --name NotifyBintray https://api.bintray.com/nuget/gov-uk-notify/nuget 
                dotnet nuget list source
                nuget install Notify
