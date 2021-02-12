@@ -32,6 +32,7 @@ jobs:
                dotnet nuget --version
                dotnet nuget list source
                dotnet nuget add source --name NotifyBintray https://api.bintray.com/nuget/gov-uk-notify/nuget 
+               dotnet nuget list source
                nuget install Notify
                
       - name: Install dotnet-sonarscanner
