@@ -67,9 +67,9 @@ jobs:
             " \
             /d:sonar.verbose=true \
             /d:sonar.log.level="DEBUG"
-          sudo dotnet build
-            sudo dotnet test --no-build --logger:trx /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-          dotnet sonarscanner end /d:sonar.login="${{ steps.azSecret.outputs.SONAR-TOKEN }}"
+             dotnet build
+             dotnet test --no-build --logger:trx /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+             dotnet sonarscanner end /d:sonar.login="${{ steps.azSecret.outputs.SONAR-TOKEN }}"
 
       - name: Slack Notification
         if: failure()
