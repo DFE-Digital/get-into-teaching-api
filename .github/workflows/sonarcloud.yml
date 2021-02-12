@@ -40,7 +40,7 @@ jobs:
       - name: Install dependencies
         run:  |
           dotnet nuget list source
-          dotnet restore
+          dotnet restore  -s NotifyBinTray -s nuget.org
 
       - name: Spin Up Stack
         run: docker-compose up -d
@@ -69,7 +69,7 @@ jobs:
             " \
             /d:sonar.verbose=true \
             /d:sonar.log.level="DEBUG"
-          sudo dotnet build
+          sudo dotnet build --no-restore
             sudo dotnet test --no-build --logger:trx /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
           dotnet sonarscanner end /d:sonar.login="${{ steps.azSecret.outputs.SONAR-TOKEN }}"
 
