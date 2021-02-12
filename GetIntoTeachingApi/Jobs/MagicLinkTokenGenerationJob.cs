@@ -9,7 +9,7 @@ namespace GetIntoTeachingApi.Jobs
 {
     public class MagicLinkTokenGenerationJob : BaseJob
     {
-        private const int BatchSize = 1000;
+        private const int BatchSize = 5000;
         private readonly ICrmService _crm;
         private readonly IBackgroundJobClient _jobClient;
         private readonly ICandidateMagicLinkTokenService _magicLinkTokenService;
