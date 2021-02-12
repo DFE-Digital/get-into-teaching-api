@@ -1,0 +1,17 @@
+paas_space                = "sandbox"
+monitor_space             = "sandbox"
+paas_database_1_name      = "get-into-teaching-api-sb-ms1-svc"
+paas_database_2_name      = "get-into-teaching-api-sb-pg2-svc"
+database_2_plan           = "small-ha-11"
+paas_redis_1_name         = "get-into-teaching-sb-redis-svc"
+paas_api_application_name = "get-into-teaching-api-sb"
+app_application_name      = "get-into-teaching-app-sb"
+tta_application_name      = "get-teacher-training-adviser-service-sb"
+application_instances     = 1
+logging                   = 0
+monitoring                = 0
+influx                    = 0
+environment               = "sb"
+azure_key_vault           = "s146d01-kv"
+azure_resource_group      = "s146d01-rg"
+alerts                    = {}
