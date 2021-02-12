@@ -111,6 +111,8 @@ namespace GetIntoTeachingApi.Controllers
                 return Unauthorized(result);
             }
 
+            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(result.Candidate, null));
+
             return Ok(new MailingListAddMember(result.Candidate));
         }
     }
