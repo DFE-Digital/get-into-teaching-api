@@ -38,7 +38,7 @@ jobs:
         run:  dotnet tool install --global dotnet-sonarscanner --version 4.8.0
 
       - name: Install dependencies
-        run:  sudo dotnet restore
+        run:  dotnet restore
 
       - name: Spin Up Stack
         run: docker-compose up -d
