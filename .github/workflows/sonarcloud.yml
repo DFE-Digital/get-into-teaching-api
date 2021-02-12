@@ -21,6 +21,11 @@ jobs:
         with:
           java-version: '11'
 
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0
+          
       - name: Install NotifyBintray
         run:  |
                dotnet --version
@@ -64,13 +69,4 @@ jobs:
           sudo dotnet build
             sudo dotnet test --no-build --logger:trx /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
           dotnet sonarscanner end /d:sonar.login="${{ steps.azSecret.outputs.SONAR-TOKEN }}"
-
-      - name: Slack Notification
-        if: failure()
-        uses: rtCamp/action-slack-notify@master
-        env:
-           SLACK_COLOR:   ${{env.SLACK_FAILURE }}
-           SLACK_MESSAGE: Pipeline Failure carrying out job ${{github.job}} 
-           SLACK_TITLE:   'Failure: ${{ github.workflow }}'
-           SLACK_WEBHOOK: ${{ steps.azSecret.outputs.SLACK-WEBHOOK }}
 
