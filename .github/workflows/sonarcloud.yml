@@ -32,15 +32,15 @@ jobs:
           java-version: '11'
 
       - name: Install NotifyBintray
-        run: |  
-          dotnet nuget add source --name NotifyBintray https://api.bintray.com/nuget/gov-uk-notify/nuget
-          dotnet nuget list source
+        run:  dotnet nuget add source --name NotifyBintray https://api.bintray.com/nuget/gov-uk-notify/nuget
 
       - name: Install dotnet-sonarscanner
         run:  dotnet tool install --global dotnet-sonarscanner --version 4.8.0
 
       - name: Install dependencies
-        run:  dotnet restore **/*.csproj
+        run:  |
+          dotnet nuget list source
+          dotnet restore
 
       - name: Spin Up Stack
         run: docker-compose up -d
