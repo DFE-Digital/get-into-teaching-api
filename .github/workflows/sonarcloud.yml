@@ -40,7 +40,7 @@ jobs:
       - name: Install dependencies
         run:  |
           dotnet nuget list source
-          dotnet restore  -s NotifyBinTray -s nuget.org
+          dotnet restore  -s https://api.bintray.com/nuget/gov-uk-notify/nuge -s https://api.nuget.org/v3/index.json
 
       - name: Spin Up Stack
         run: docker-compose up -d
@@ -69,8 +69,8 @@ jobs:
             " \
             /d:sonar.verbose=true \
             /d:sonar.log.level="DEBUG"
-          sudo dotnet build --no-restore
-            sudo dotnet test --no-build --logger:trx /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+          dotnet build --no-restore
+          dotnet test --no-build --logger:trx /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
           dotnet sonarscanner end /d:sonar.login="${{ steps.azSecret.outputs.SONAR-TOKEN }}"
 
       - name: Slack Notification
