@@ -44,7 +44,7 @@ jobs:
            TOKEN: ${{steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN}}
 
        - name: Check if found
-         if:  steps.tag_id.outputs.found == 0 
+         if:  steps.tag_id.outputs.release_id == ''
          run: |
               echo "::error ::Tag ${{ github.event.inputs.tag }} cannot be found in releases"
               exit 1
