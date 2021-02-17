@@ -87,7 +87,7 @@ jobs:
          env:
            SLACK_COLOR:    ${{env.SLACK_SUCCESS}}
            SLACK_TITLE:    "Release Published to ${{github.event.inputs.environment}}: ${{steps.tag_id.outputs.release_name}}"
-           SLACK_MESSAGE:  ${{steps.tag_id.outputs.release_body}}
+           SLACK_MESSAGE:  ${{ fromJson( steps.tag_id.outputs.release_body) }}
            SLACK_WEBHOOK:  ${{steps.azSecret.outputs.SLACK-RELEASE-NOTE-WEBHOOK}}
            MSG_MINIMAL:    true
 
