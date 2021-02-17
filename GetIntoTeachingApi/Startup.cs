@@ -97,6 +97,7 @@ namespace GetIntoTeachingApi
             .AddJsonOptions(o =>
             {
                 o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                o.JsonSerializerOptions.Converters.Add(new EmptyStringToNullJsonConverter());
             });
 
             services.Configure<KestrelServerOptions>(options =>
