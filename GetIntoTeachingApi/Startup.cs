@@ -255,15 +255,10 @@ The GIT API aims to provide:
                 JobConfiguration.LocationSyncJobId,
                 (x) => x.RunAsync(LocationSyncJob.FreeMapToolsUrl),
                 Cron.Weekly());
-
-            // Disabled in Production until magic link fields are available.
-            if (!env.IsProduction)
-            {
-                RecurringJob.AddOrUpdate<MagicLinkTokenGenerationJob>(
-                    JobConfiguration.MagicLinkTokenGenerationJobId,
-                    (x) => x.Run(),
-                    everyMinute);
-            }
+            RecurringJob.AddOrUpdate<MagicLinkTokenGenerationJob>(
+                JobConfiguration.MagicLinkTokenGenerationJobId,
+                (x) => x.Run(),
+                everyMinute);
 
             // Don't seed test environment.
             if (!env.IsTest)
