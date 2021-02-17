@@ -32,11 +32,12 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Must be set to schedule a callback.");
 
             RuleFor(request => request.Telephone).NotEmpty()
-                .When(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent)
+                .When(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent && !request.Candidate.IsReturningToTeaching())
                 .WithMessage("Must be set for candidates with an equivalent degree.");
 
             RuleFor(request => request.PhoneCallScheduledAt).NotNull()
-                .When(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent && request.CountryId == LookupItem.UnitedKingdomCountryId)
+                .When(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent &&
+                !request.Candidate.IsReturningToTeaching() && request.CountryId == LookupItem.UnitedKingdomCountryId)
                 .WithMessage("Must be set for candidate with UK equivalent degree.");
             RuleFor(request => request.PhoneCallScheduledAt).Null()
                 .When(request => request.CountryId != LookupItem.UnitedKingdomCountryId)
@@ -52,6 +53,7 @@ namespace GetIntoTeachingApi.Models.Validators
 
             RuleFor(request => request.DegreeStatusId)
                 .Must(status => status != (int)CandidateQualification.DegreeStatus.NoDegree)
+                .Unless(request => request.Candidate.IsReturningToTeaching())
                 .WithMessage("Not eligible for service if degree status is no degree.");
 
             RuleFor(request => request.DegreeTypeId).NotEmpty()
@@ -65,7 +67,7 @@ namespace GetIntoTeachingApi.Models.Validators
                         (int)CandidateQualification.DegreeType.Degree,
                         (int)CandidateQualification.DegreeType.DegreeEquivalent,
                     }.Contains(type))
-                .When(request => request.DegreeStatusId == (int)CandidateQualification.DegreeStatus.HasDegree)
+                .When(request => request.DegreeStatusId == (int)CandidateQualification.DegreeStatus.HasDegree && !request.Candidate.IsReturningToTeaching())
                 .WithMessage("Must be set degree or degree equivalent when the degree status is has a degree.");
 
             RuleFor(request => request.DegreeTypeId)
@@ -82,7 +84,7 @@ namespace GetIntoTeachingApi.Models.Validators
 
             RuleFor(request => request.DegreeTypeId)
                 .Must(type => type == (int)CandidateQualification.DegreeType.Degree)
-                .When(request => request.DegreeStatusId == (int)CandidateQualification.DegreeStatus.NoDegree)
+                .When(request => request.DegreeStatusId == (int)CandidateQualification.DegreeStatus.NoDegree && !request.Candidate.IsReturningToTeaching())
                 .WithMessage("Must be set to degree when the degree status is no degree.");
 
             RuleFor(request => request.DegreeSubject).NotEmpty()
@@ -95,7 +97,7 @@ namespace GetIntoTeachingApi.Models.Validators
                         (int)CandidateQualification.DegreeStatus.FirstYear,
                         (int)CandidateQualification.DegreeStatus.Other,
                     }.Contains(request.DegreeStatusId))
-                .Unless(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent)
+                .Unless(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent || request.Candidate.IsReturningToTeaching())
                 .WithMessage("Must be set when candidate has a degree or is studying for a degree.");
 
             RuleFor(request => request.UkDegreeGradeId).NotEmpty()
@@ -108,7 +110,7 @@ namespace GetIntoTeachingApi.Models.Validators
                         (int)CandidateQualification.DegreeStatus.FirstYear,
                         (int)CandidateQualification.DegreeStatus.Other,
                     }.Contains(request.DegreeStatusId))
-                .Unless(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent)
+                .Unless(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent || request.Candidate.IsReturningToTeaching())
                 .WithMessage("Must be set when candidate has a degree or is studying for a degree (predicted grade).");
 
             RuleFor(request => request.PreferredTeachingSubjectId).NotEmpty()
@@ -118,7 +120,7 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(request => request)
                 .Must(request => HasOrIsPlanningOnRetakingEnglishAndMaths(request) && HasOrIsPlanningOnRetakingScience(request))
                 .When(request => request.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Primary)
-                .Unless(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent)
+                .Unless(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent || request.Candidate.IsReturningToTeaching())
                 .WithMessage("Must have or be retaking all GCSEs when preferred education phase is primary.");
 
             RuleFor(request => request)
