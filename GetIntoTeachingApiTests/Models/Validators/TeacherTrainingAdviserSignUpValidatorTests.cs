@@ -223,6 +223,21 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
+        public void Validate_DegreeTypeIdIsEquivalentAndTelephoneIsNullAndIsReturningToTeaching_HasNoError()
+        {
+            var request = new TeacherTrainingAdviserSignUp
+            {
+                DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent,
+                Telephone = null,
+                SubjectTaughtId = Guid.NewGuid(),
+            };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldNotHaveValidationErrorFor("Telephone");
+        }
+
+        [Fact]
         public void Validate_PhoneCallScheduledAtIsPresentAndTelephoneIsNotNull_HasNoError()
         {
             var request = new TeacherTrainingAdviserSignUp
@@ -249,6 +264,22 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var result = _validator.TestValidate(request);
 
             result.ShouldHaveValidationErrorFor("PhoneCallScheduledAt").WithErrorMessage("Must be set for candidate with UK equivalent degree.");
+        }
+
+        [Fact]
+        public void Validate_DegreeTypeIsEquivalentAndCountryIsUkAndPhoneCallScheduledAtIsNullAndReturningTeacher_HasNoError()
+        {
+            var request = new TeacherTrainingAdviserSignUp
+            {
+                DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent,
+                CountryId = LookupItem.UnitedKingdomCountryId,
+                PhoneCallScheduledAt = null,
+                SubjectTaughtId = Guid.NewGuid(),
+            };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldNotHaveValidationErrorFor("PhoneCallScheduledAt");
         }
 
         [Fact]
@@ -294,6 +325,20 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
+        public void Validate_DegreeStatusIsNoDegreeAndReturningTeacher_HasNoError()
+        {
+            var request = new TeacherTrainingAdviserSignUp
+            {
+                DegreeStatusId = (int)CandidateQualification.DegreeStatus.NoDegree,
+                SubjectTaughtId = Guid.NewGuid(),
+            };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldNotHaveValidationErrorFor("DegreeStatusId");
+        }
+
+        [Fact]
         public void Validate_DegreeStatusIsHasDegreeAndDegreeTypeIsNull_HasError()
         {
             var request = new TeacherTrainingAdviserSignUp
@@ -305,6 +350,21 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var result = _validator.TestValidate(request);
 
             result.ShouldHaveValidationErrorFor("DegreeTypeId").WithErrorMessage("Must be set degree or degree equivalent when the degree status is has a degree.");
+        }
+
+        [Fact]
+        public void Validate_DegreeStatusIsHasDegreeAndDegreeTypeIsNullAndReturningTeacher_HasNoError()
+        {
+            var request = new TeacherTrainingAdviserSignUp
+            {
+                DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree,
+                DegreeTypeId = null,
+                SubjectTaughtId = Guid.NewGuid(),
+            };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldNotHaveValidationErrorFor("DegreeTypeId");
         }
 
         [Fact]
@@ -375,6 +435,21 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var result = _validator.TestValidate(request);
 
             result.ShouldHaveValidationErrorFor("DegreeTypeId").WithErrorMessage("Must be set to degree when the degree status is no degree.");
+        }
+
+        [Fact]
+        public void Validate_DegreeStatusIsNoDegreeAndAndDegreeTypeIsNullAndReturningTeacher_HasNoError()
+        {
+            var request = new TeacherTrainingAdviserSignUp
+            {
+                DegreeStatusId = (int)CandidateQualification.DegreeStatus.NoDegree,
+                DegreeTypeId = null,
+                SubjectTaughtId = Guid.NewGuid(),
+            };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldNotHaveValidationErrorFor("DegreeTypeId");
         }
 
         [Fact]
@@ -490,6 +565,21 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
+        public void Validate_DegreeStatusIsStudyingAndDegreeSubjectIsNullAndReturningTeacher_HasNoError()
+        {
+            var request = new TeacherTrainingAdviserSignUp
+            {
+                DegreeStatusId = (int)CandidateQualification.DegreeStatus.FirstYear,
+                DegreeSubject = null,
+                SubjectTaughtId = Guid.NewGuid(),
+            };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldNotHaveValidationErrorFor("DegreeSubject");
+        }
+
+        [Fact]
         public void Validate_DegreeStatusIsHasDegreeAndDegreeTypeIsEquivalentAndDegreeSubjectIsNull_HasNoError()
         {
             var request = new TeacherTrainingAdviserSignUp
@@ -558,6 +648,21 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var result = _validator.TestValidate(request);
 
             result.ShouldHaveValidationErrorFor("UkDegreeGradeId").WithErrorMessage("Must be set when candidate has a degree or is studying for a degree (predicted grade).");
+        }
+
+        [Fact]
+        public void Validate_DegreeStatusIsHasDegreeAndUkDegreeGradeIsNullAndReturningTeacher_HasNoError()
+        {
+            var request = new TeacherTrainingAdviserSignUp
+            {
+                DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree,
+                UkDegreeGradeId = null,
+                SubjectTaughtId = Guid.NewGuid(),
+            };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldNotHaveValidationErrorFor("UkDegreeGradeId");
         }
 
         [Fact]
@@ -672,6 +777,22 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var result = _validator.TestValidate(request);
 
             result.ShouldHaveValidationErrorFor(request => request).WithErrorMessage("Must have or be retaking all GCSEs when preferred education phase is primary.");
+        }
+
+        [Fact]
+        public void Validate_PreferredEducationPhaseIsPrimaryAndDoesNotHaveNorPlanningToRetakeAllGcsesAndReturningTeacher_HasNoError()
+        {
+            var request = new TeacherTrainingAdviserSignUp
+            {
+                PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Primary,
+                HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
+                HasGcseScienceId = -1,
+                SubjectTaughtId = Guid.NewGuid(),
+            };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldNotHaveValidationErrorFor(request => request);
         }
 
         [Fact]
