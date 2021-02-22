@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Text.Json;
 using FluentAssertions;
-using GetIntoTeachingApi.Utils;
+using GetIntoTeachingApi.JsonConverters;
 using Xunit;
 
-namespace GetIntoTeachingApiTests.Utils
+namespace GetIntoTeachingApiTests.JsonConverters
 {
     public class EmptyStringToNullJsonConverterTests
     {
