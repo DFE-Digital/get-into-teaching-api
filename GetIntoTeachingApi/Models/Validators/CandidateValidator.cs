@@ -22,7 +22,9 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.AddressLine1).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressLine2).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressCity).MaximumLength(128);
-            RuleFor(candidate => candidate.AddressPostcode).MaximumLength(40).Matches(Location.PostcodeRegex);
+            RuleFor(candidate => candidate.AddressPostcode)
+                .SetValidator(new PostcodeValidator())
+                .Unless(candidate => candidate.AddressPostcode == null);
             RuleFor(candidate => candidate.EligibilityRulesPassed)
                 .Must(value => _validEligibilityRulesPassedValues.Contains(value))
                 .Unless(candidate => candidate.EligibilityRulesPassed == null)

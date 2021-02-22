@@ -256,6 +256,11 @@ namespace GetIntoTeachingApi.Models
         public Candidate(Entity entity, ICrmService crm)
             : base(entity, crm)
         {
+            // Treat invalid postcodes coming back from the CRM as null.
+            if (AddressPostcode != null && !Location.PostcodeRegex.IsMatch(AddressPostcode))
+            {
+                AddressPostcode = null;
+            }
         }
 
         public bool HasTeacherTrainingAdviser()
