@@ -125,6 +125,30 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
+        public void Constructor_WithEntityThatHasUntrimmedAndEmptyStrings_TrimsAndNullifiesStrings()
+        {
+            var entity = new Entity("mock") { Id = Guid.NewGuid() };
+            entity["dfe_field3"] = "   a field3\n\rgoes here\n\r  ";
+            entity["dfe_field4"] = "  ";
+
+            var mock = new MockModel(entity, _crm);
+
+            mock.Field3.Should().Be("a field3\n\rgoes here");
+            mock.Field4.Should().BeNull();
+        }
+
+        [Fact]
+        public void Constructor_WithEntityThatHasNullStrings_MapsCorrectly()
+        {
+            var entity = new Entity("mock") { Id = Guid.NewGuid() };
+            entity["dfe_field3"] = null as string;
+
+            var mock = new MockModel(entity, _crm);
+
+            mock.Field3.Should().BeNull();
+        }
+
+        [Fact]
         public void Constructor_WithEntityThatHasNoLoadedRelationships()
         {
             var entity = new Entity("mock") { Id = Guid.NewGuid() };

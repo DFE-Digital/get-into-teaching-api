@@ -95,6 +95,12 @@ namespace GetIntoTeachingApi.Models
             return model.GetType().GetProperties();
         }
 
+        private static string TrimAndNullifyIfEmpty(string input)
+        {
+            input = input?.Trim();
+            return string.IsNullOrWhiteSpace(input) ? null : input;
+        }
+
         private void MapFieldAttributesFromEntity(Entity entity)
         {
             foreach (var property in GetProperties(this))
@@ -116,7 +122,14 @@ namespace GetIntoTeachingApi.Models
                 }
                 else
                 {
-                    property.SetValue(this, entity.GetAttributeValue<dynamic>(attribute.Name));
+                    var value = entity.GetAttributeValue<dynamic>(attribute.Name);
+
+                    if (value is string @string)
+                    {
+                        value = TrimAndNullifyIfEmpty(@string);
+                    }
+
+                    property.SetValue(this, value);
                 }
             }
         }
