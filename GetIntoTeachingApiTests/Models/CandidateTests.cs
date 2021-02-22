@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
@@ -63,7 +62,7 @@ namespace GetIntoTeachingApiTests.Models
                 a => a.Name == "msgdpr_gdprconsent" && a.Type == typeof(OptionSetValue));
             type.GetProperty("MagicLinkTokenStatusId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_websitemltokenstatus" && a.Type == typeof(OptionSetValue));
-            
+
 
             type.GetProperty("Email").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "emailaddress1");
             type.GetProperty("FirstName").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "firstname");
@@ -153,14 +152,14 @@ namespace GetIntoTeachingApiTests.Models
         public void HasTeacherTrainingAdviser_WithSubscription_ReturnsCorrectly(bool? hasSubscription, string owningBusinessUnitId, bool expectedOutcome)
         {
             Guid? id = null;
-            
+
             if (owningBusinessUnitId != null)
             {
                 id = new Guid(owningBusinessUnitId);
             }
 
-            var candidate = new Candidate() { 
-                HasTeacherTrainingAdviserSubscription = hasSubscription, 
+            var candidate = new Candidate() {
+                HasTeacherTrainingAdviserSubscription = hasSubscription,
                 OwningBusinessUnitId = id,
             };
 
@@ -465,6 +464,21 @@ namespace GetIntoTeachingApiTests.Models
             };
 
             candidate.MagicLinkTokenAlreadyExchanged().Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData("invalid", null)]
+        [InlineData("KY11 9YU", "KY11 9YU")]
+        public void Constructor_WithEntity_OnlyPopulatesValidAddressPostcodes(string postcode, string expected)
+        {
+            var mockCrm = new Mock<ICrmService>();
+            var entity = new Entity("contact");
+
+            entity.Attributes.Add("address1_postalcode", postcode);
+
+            var candidate = new Candidate(entity, mockCrm.Object);
+
+            candidate.AddressPostcode.Should().Be(expected);
         }
     }
 }
