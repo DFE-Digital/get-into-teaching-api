@@ -8,6 +8,7 @@ using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Auth;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
+using GetIntoTeachingApi.JsonConverters;
 using GetIntoTeachingApi.ModelBinders;
 using GetIntoTeachingApi.OperationFilters;
 using GetIntoTeachingApi.RateLimiting;
