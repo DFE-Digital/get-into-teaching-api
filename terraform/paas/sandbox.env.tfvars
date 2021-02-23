@@ -1,5 +1,6 @@
 paas_space                = "sandbox"
 monitor_space             = "sandbox"
+paas_database_common_name = "get-into-teaching-api-sb-pg-common-svc"
 paas_database_1_name      = "get-into-teaching-api-sb-ms1-svc"
 paas_database_2_name      = "get-into-teaching-api-sb-pg2-svc"
 database_2_plan           = "small-ha-11"
