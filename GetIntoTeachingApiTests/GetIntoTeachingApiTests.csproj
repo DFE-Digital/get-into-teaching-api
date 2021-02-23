@@ -45,6 +45,7 @@
   <ItemGroup>
     <Folder Include="Redis\" />
     <Folder Include="Validators\" />
+    <Folder Include="JsonConverters\" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

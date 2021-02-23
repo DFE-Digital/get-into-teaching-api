@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Text.Json;
 using FluentAssertions;
-using GetIntoTeachingApi.Utils;
+using GetIntoTeachingApi.JsonConverters;
 using Xunit;
 
-namespace GetIntoTeachingApiTests.Utils
+namespace GetIntoTeachingApiTests.JsonConverters
 {
-    public class EmptyStringToNullJsonConverterTests
+    public class TrimStringJsonConverterTests
     {
-        private readonly EmptyStringToNullJsonConverter _converter;
+        private readonly TrimStringJsonConverter _converter;
 
-        public EmptyStringToNullJsonConverterTests()
+        public TrimStringJsonConverterTests()
         {
-            _converter = new EmptyStringToNullJsonConverter();
+            _converter = new TrimStringJsonConverter();
         }
 
         [Theory]
@@ -26,11 +26,13 @@ namespace GetIntoTeachingApiTests.Utils
         }
 
         [Theory]
-        [InlineData("{\"Name\":\"\"}", null)]
-        [InlineData("{\"Name\":\" \"}", null)]
+        [InlineData("{\"Name\":\"\"}", "")]
+        [InlineData("{\"Name\":\" \"}", "")]
         [InlineData("{\"Name\":null}", null)]
-        [InlineData("{\"Name\":\" a\"}", " a")]
-        [InlineData("{\"Name\":\"a test string\"}", "a test string")]
+        [InlineData("{\"Name\":\" a\"}", "a")]
+        [InlineData("{\"Name\":\" a test string   \"}", "a test string")]
+        [InlineData("{\"Name\":\"test\\n\\r\"}", "test")]
+        [InlineData("{\"Name\":\"\\n\\rtest\\n\\rtest\\n\\r\"}", "test\n\rtest")]
         public void Read_DeserializesString_ToNullIfEmpty(string json, string expected)
         {
             var options = new JsonSerializerOptions();
@@ -42,17 +44,19 @@ namespace GetIntoTeachingApiTests.Utils
         }
 
         [Theory]
-        [InlineData("", "{\"Name\":null}")]
-        [InlineData(" ", "{\"Name\":null}")]
+        [InlineData("", "{\"Name\":\"\"}")]
+        [InlineData(" ", "{\"Name\":\"\"}")]
         [InlineData(null, "{\"Name\":null}")]
-        [InlineData(" a", "{\"Name\":\" a\"}")]
-        [InlineData("a test string", "{\"Name\":\"a test string\"}")]
+        [InlineData(" a", "{\"Name\":\"a\"}")]
+        [InlineData(" a test string   ", "{\"Name\":\"a test string\"}")]
+        [InlineData("test\n\r", "{\"Name\":\"test\"}")]
+        [InlineData("\n\rtest\n\rtest\n\r", "{\"Name\":\"test\\n\\rtest\"}")]
         public void Write_SerializesString_ToNullIfEmpty(string input, string expected)
         {
             var stub = new StubPerson() { Name = input };
             var options = new JsonSerializerOptions();
             options.Converters.Add(_converter);
-           
+
             var result = JsonSerializer.Serialize(stub, options);
 
             result.Should().Be(expected);
