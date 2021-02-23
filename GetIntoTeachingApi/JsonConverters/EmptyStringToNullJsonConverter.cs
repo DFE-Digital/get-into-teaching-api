@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace GetIntoTeachingApi.Utils
+namespace GetIntoTeachingApi.JsonConverters
 {
     public class EmptyStringToNullJsonConverter : JsonConverter<string>
     {

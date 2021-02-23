@@ -49,6 +49,7 @@
 	  <Folder Include="Redis\" />
 	  <Folder Include="Validators\" />
 	  <Folder Include="Fixtures\" />
+	  <Folder Include="JsonConverters\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="Fixtures\clients.yml">
