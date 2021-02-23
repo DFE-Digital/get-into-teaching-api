@@ -248,6 +248,14 @@ The GIT API aims to provide:
 
             app.UseAuthorization();
 
+            // Configure the database.
+            var dbConfiguration = serviceScope.ServiceProvider.GetRequiredService<DbConfiguration>();
+
+            if (env.IsMasterInstance)
+            {
+                dbConfiguration.Migrate();
+            }
+
             // Configure recurring jobs.
             const string everyFifthMinute = "*/5 * * * *";
             const string everyMinute = "* * * * *";
@@ -282,14 +290,6 @@ The GIT API aims to provide:
             // Configure rate limiting.
             var clientPolicyStore = serviceScope.ServiceProvider.GetRequiredService<IClientPolicyStore>();
             clientPolicyStore.SeedAsync().GetAwaiter().GetResult();
-
-            // Configure the database.
-            var dbConfiguration = serviceScope.ServiceProvider.GetRequiredService<DbConfiguration>();
-
-            if (env.IsMasterInstance)
-            {
-                dbConfiguration.Migrate();
-            }
 
             app.UseEndpoints(endpoints =>
             {
