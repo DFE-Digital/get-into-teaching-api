@@ -57,19 +57,7 @@ variable "paas_database_common_name" {
   default = "dfe-teacher-services-sb-common-pg-svc"
 }
 
-variable "paas_database_1_name" {
-  default = "dfe-teacher-services-sb-ms-svc"
-}
-
-variable "database_1_plan" {
-  default = "small-11"
-}
-
-variable "paas_database_2_name" {
-  default = "dfe-teacher-services-sb-pg-svc"
-}
-
-variable "database_2_plan" {
+variable "database_plan" {
   default = "small-11"
 }
 
