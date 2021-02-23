@@ -24,6 +24,13 @@ resource "cloudfoundry_service_instance" "postgres2" {
   json_params  = "{\"enable_extensions\": [\"postgis\"] }"
 }
 
+resource "cloudfoundry_service_instance" "postgres_common" {
+  name         = var.paas_database_common_name
+  space        = data.cloudfoundry_space.space.id
+  service_plan = data.cloudfoundry_service.postgres.service_plans[ var.database_2_plan ]
+  json_params  = "{\"enable_extensions\": [\"postgis\"] }"
+}
+
 resource "cloudfoundry_user_provided_service" "logging" {
   count            = var.logging
   name             = var.paas_logging_name
