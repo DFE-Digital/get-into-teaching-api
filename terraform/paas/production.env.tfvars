@@ -1,5 +1,6 @@
 paas_space                = "get-into-teaching-production"
 monitor_space             = "get-into-teaching-monitoring"
+paas_database_common_name = "get-into-teaching-api-prod-pg-common-svc"
 paas_database_1_name      = "get-into-teaching-api-prod-ms1-svc"
 database_1_plan           = "small-ha-11"
 paas_database_2_name      = "get-into-teaching-api-prod-pg2-svc"
