@@ -53,6 +53,10 @@ variable "paas_logging_endpoint_port" {
   default = ""
 }
 
+variable "paas_database_common_name" {
+  default = "dfe-teacher-services-sb-common-pg-svc"
+}
+
 variable "paas_database_1_name" {
   default = "dfe-teacher-services-sb-ms-svc"
 }
