@@ -54,12 +54,6 @@ namespace GetIntoTeachingApiTests.Controllers
             ).Should().BeTrue();
         }
 
-        [Fact]
-        public void SimulateError_ThrowsNullReferenceException()
-        {
-            _controller.Invoking(c => c.SimulateError()).Should().Throw<NullReferenceException>();
-        }
-
         [Theory]
         [InlineData(true, true, true, true, true, "healthy")]
         [InlineData(true, true, true, false, true, "degraded")]
