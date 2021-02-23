@@ -10,8 +10,12 @@ namespace GetIntoTeachingApi.Adapters
 
         public CdsServiceClientWrapper(IEnv env)
         {
-            CdsServiceClient = new CdsServiceClient(ConnectionString(env));
-            CdsServiceClient.MaxConnectionTimeout = TimeSpan.FromSeconds(30);
+            // We don't want to try and connect to Dynamics when integration testing.
+            if (!env.IsTest)
+            {
+                CdsServiceClient = new CdsServiceClient(ConnectionString(env));
+                CdsServiceClient.MaxConnectionTimeout = TimeSpan.FromSeconds(30);
+            }
         }
 
         private static string ConnectionString(IEnv env)
