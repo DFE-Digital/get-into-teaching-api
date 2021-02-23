@@ -1,6 +1,6 @@
 locals {
-  environment_map = { DATABASE_INSTANCE_NAME = cloudfoundry_service_instance.postgres2.name,
-                      HANGFIRE_INSTANCE_NAME = cloudfoundry_service_instance.hangfire.name }
+  environment_map = { DATABASE_INSTANCE_NAME = cloudfoundry_service_instance.postgres_common.name,
+                      HANGFIRE_INSTANCE_NAME = cloudfoundry_service_instance.postgres_common.name }
 }
 
 resource "cloudfoundry_app" "api_application" {
@@ -28,14 +28,6 @@ resource "cloudfoundry_app" "api_application" {
 
   service_binding {
     service_instance = cloudfoundry_service_instance.redis.id
-  }
-
-  service_binding {
-    service_instance = cloudfoundry_service_instance.hangfire.id
-  }
-
-  service_binding {
-    service_instance = cloudfoundry_service_instance.postgres2.id
   }
 
   service_binding {
