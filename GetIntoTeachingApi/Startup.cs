@@ -57,8 +57,9 @@ namespace GetIntoTeachingApi
             }
 
             services.AddSingleton<CdsServiceClientWrapper, CdsServiceClientWrapper>();
-            services.AddTransient<IOrganizationService>(sp => sp.GetService<CdsServiceClientWrapper>().CdsServiceClient.Clone());
+            services.AddTransient<IOrganizationService>(sp => sp.GetService<CdsServiceClientWrapper>().CdsServiceClient?.Clone());
             services.AddTransient<IOrganizationServiceAdapter, OrganizationServiceAdapter>();
+
             services.AddTransient<ICrmService, CrmService>();
 
             services.AddScoped<IStore, Store>();
@@ -77,11 +78,8 @@ namespace GetIntoTeachingApi
             services.AddSingleton<ICallbackBookingService, CallbackBookingService>();
             services.AddSingleton<IEnv>(env);
 
-            if (!env.IsTest)
-            {
-                var connectionString = DbConfiguration.DatabaseConnectionString(env);
-                services.AddDbContext<GetIntoTeachingDbContext>(b => DbConfiguration.ConfigPostgres(connectionString, b));
-            }
+            var connectionString = DbConfiguration.DatabaseConnectionString(env);
+            services.AddDbContext<GetIntoTeachingDbContext>(b => DbConfiguration.ConfigPostgres(connectionString, b));
 
             services.AddAuthentication("ApiClientHandler")
                 .AddScheme<ApiClientSchemaOptions, ApiClientHandler>("ApiClientHandler", op => { });
@@ -277,6 +275,18 @@ The GIT API aims to provide:
                 {
                     RecurringJob.Trigger(JobConfiguration.LocationSyncJobId);
                 }
+            }
+
+            // Configure rate limiting.
+            var clientPolicyStore = serviceScope.ServiceProvider.GetRequiredService<IClientPolicyStore>();
+            clientPolicyStore.SeedAsync().GetAwaiter().GetResult();
+
+            // Configure the database.
+            var dbConfiguration = serviceScope.ServiceProvider.GetRequiredService<DbConfiguration>();
+
+            if (env.IsMasterInstance)
+            {
+                dbConfiguration.Migrate();
             }
 
             app.UseEndpoints(endpoints =>
