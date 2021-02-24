@@ -18,6 +18,7 @@ namespace GetIntoTeachingApi.Models
         public Guid? CountryId { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public Guid? AcceptedPolicyId { get; set; }
+        public int? TypeId { get; set; }
         public int? UkDegreeGradeId { get; set; }
         public int? DegreeStatusId { get; set; }
         public int? DegreeTypeId { get; set; }
@@ -97,6 +98,7 @@ namespace GetIntoTeachingApi.Models
             AddressLine2 = candidate.AddressLine2;
             AddressCity = candidate.AddressCity;
             AddressPostcode = candidate.AddressPostcode;
+            TypeId = candidate.TypeId;
 
             AlreadySubscribedToTeacherTrainingAdviser = candidate.HasTeacherTrainingAdviser();
 
@@ -137,6 +139,7 @@ namespace GetIntoTeachingApi.Models
                 AddressPostcode = AddressPostcode,
                 Telephone = Telephone,
                 TeacherId = TeacherId,
+                TypeId = TypeId,
                 InitialTeacherTrainingYearId = InitialTeacherTrainingYearId,
                 PreferredEducationPhaseId = PreferredEducationPhaseId,
                 HasGcseEnglishId = HasGcseMathsAndEnglishId,
@@ -276,6 +279,11 @@ namespace GetIntoTeachingApi.Models
 
         private void SetType(Candidate candidate)
         {
+            if (candidate.TypeId != null)
+            {
+                return;
+            }
+
             if (candidate.IsReturningToTeaching())
             {
                 candidate.TypeId = (int)Candidate.Type.ReturningToTeacherTraining;
