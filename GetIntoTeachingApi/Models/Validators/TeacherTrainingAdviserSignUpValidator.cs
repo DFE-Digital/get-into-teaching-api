@@ -15,6 +15,7 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(request => request.DateOfBirth).NotNull();
             RuleFor(request => request.AcceptedPolicyId).NotNull();
             RuleFor(request => request.CountryId).NotNull();
+            RuleFor(request => request.TypeId).NotNull();
 
             RuleFor(request => request.PreferredEducationPhaseId)
                 .NotNull()
