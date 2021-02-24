@@ -69,6 +69,7 @@ namespace GetIntoTeachingApiTests.Models
                 CountryId = Guid.NewGuid(),
                 InitialTeacherTrainingYearId = 1,
                 PreferredEducationPhaseId = 2,
+                TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
                 HasGcseEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 HasGcseMathsId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 HasGcseScienceId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
@@ -101,6 +102,7 @@ namespace GetIntoTeachingApiTests.Models
             response.HasGcseScienceId.Should().Be(candidate.HasGcseScienceId);
             response.PlanningToRetakeGcseScienceId.Should().Be(candidate.PlanningToRetakeGcseScienceId);
             response.PlanningToRetakeGcseMathsAndEnglishId.Should().Be((int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking);
+            response.TypeId.Should().Be((int)Candidate.Type.ReturningToTeacherTraining);
             response.Email.Should().Be(candidate.Email);
             response.FirstName.Should().Be(candidate.FirstName);
             response.LastName.Should().Be(candidate.LastName);
@@ -135,6 +137,7 @@ namespace GetIntoTeachingApiTests.Models
                 PreferredTeachingSubjectId = Guid.NewGuid(),
                 CountryId = Guid.NewGuid(),
                 AcceptedPolicyId = Guid.NewGuid(),
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 UkDegreeGradeId = 0,
                 DegreeStatusId = 1,
                 DegreeTypeId = 2,
@@ -174,6 +177,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.AdviserRequirementId.Should().Be((int)Candidate.AdviserRequirement.Yes);
             candidate.AdviserEligibilityId.Should().Be((int)Candidate.AdviserEligibility.Yes);
             candidate.AssignmentStatusId.Should().Be((int)Candidate.AssignmentStatus.WaitingToBeAssigned);
+            candidate.TypeId.Should().Be((int)Candidate.Type.InterestedInTeacherTraining);
             candidate.Email.Should().Be(request.Email);
             candidate.FirstName.Should().Be(request.FirstName);
             candidate.LastName.Should().Be(request.LastName);
@@ -339,7 +343,7 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void Candidate_TypeIdIsPresent_QualificationIsCreated()
+        public void Candidate_DegreeTypeIdIsPresent_QualificationIsCreated()
         {
             var request = new TeacherTrainingAdviserSignUp() { UkDegreeGradeId = null, DegreeStatusId = null, DegreeSubject = null, DegreeTypeId = 1 };
 
@@ -450,7 +454,7 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void Candidate_ReturningToTeaching_TypeIsCorrect()
+        public void Candidate_SubjectTaughtIdIsPresent_ReturningToTeachingAndTypeIdAreCorrect()
         {
             var request = new TeacherTrainingAdviserSignUp() { SubjectTaughtId = Guid.NewGuid() };
 
@@ -459,7 +463,7 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void Candidate_NotReturningToTeaching_TypeIsCorrect()
+        public void Candidate_SubjectTaughtIdIsNull_ReturningToTeachingAndTypeIdAreCorrect()
         {
             var request = new TeacherTrainingAdviserSignUp() { SubjectTaughtId = null };
 
