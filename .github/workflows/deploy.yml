@@ -103,7 +103,7 @@ jobs:
 
        - name: Update ${{ github.event.inputs.environment }} status
          if: success() 
-         uses: bobheadxi/deployments@v0.5.1
+         uses: bobheadxi/deployments@v0.4.3
          with:
            step: finish
            token: ${{ secrets.GITHUB_TOKEN }}
