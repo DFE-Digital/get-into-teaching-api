@@ -35,6 +35,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 CountryId = LookupItem.UnitedKingdomCountryId,
                 UkDegreeGradeId = 1,
                 DegreeStatusId = 2,
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 InitialTeacherTrainingYearId = 3,
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary,
                 HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
@@ -86,6 +87,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_CountryIdIsNull_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(request => request.CountryId, null as Guid?);
+        }
+
+        [Fact]
+        public void Validate_TypeIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.TypeId, null as int?);
         }
 
         [Fact]
