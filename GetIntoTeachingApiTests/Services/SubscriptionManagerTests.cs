@@ -120,7 +120,10 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void SubscribeToTeacherTrainingAdviser_NotReturningToTeaching_CorrectSubscription()
         {
-            var candidate = new Candidate();
+            var candidate = new Candidate()
+            {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
+            };
 
             SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate);
 
@@ -137,8 +140,10 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void SubscribeToTeacherTrainingAdviser_ReturningToTeaching_CorrectSubscription()
         {
-            var position = new CandidatePastTeachingPosition() { Id = Guid.NewGuid() };
-            var candidate = new Candidate() { PastTeachingPositions = new List<CandidatePastTeachingPosition>() { position } };
+            var candidate = new Candidate()
+            {
+                TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
+            };
 
             SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate);
 
@@ -170,8 +175,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void SubscribeToTeacherTrainingAdviser_NewReturnerCandidate_CorrectConsent()
         {
-            var position = new CandidatePastTeachingPosition() { Id = Guid.NewGuid() };
-            var candidate = new Candidate() { PastTeachingPositions = new List<CandidatePastTeachingPosition>() { position } };
+            var candidate = new Candidate() { TypeId = (int)Candidate.Type.ReturningToTeacherTraining };
 
             SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate);
 
@@ -184,16 +188,15 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void SubscribeToTeacherTrainingAdviser_ExistingCandidate_DoesNotOptOutIfAlreadyConsented()
+        public void SubscribeToTeacherTrainingAdviser_ExistingReturnerCandidate_DoesNotOptOutIfAlreadyConsented()
         {
-            var position = new CandidatePastTeachingPosition() { Id = Guid.NewGuid() };
             var candidate = new Candidate()
             {
                 DoNotBulkEmail = false,
                 DoNotBulkPostalMail = false,
                 DoNotPostalMail = false,
                 DoNotSendMm = false,
-                PastTeachingPositions = new List<CandidatePastTeachingPosition>() { position },
+                TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
             };
 
             SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate);
