@@ -13,7 +13,6 @@ namespace GetIntoTeachingApi.Auth
     public class ApiClientHandler : AuthenticationHandler<ApiClientSchemaOptions>
     {
         private readonly IClientManager _clientManager;
-        private readonly ILogger<ApiClientHandler> _logger;
 
         public ApiClientHandler(
             IClientManager clientManager,
@@ -24,7 +23,6 @@ namespace GetIntoTeachingApi.Auth
             : base(options, loggerFactory, encoder, clock)
         {
             _clientManager = clientManager;
-            _logger = loggerFactory.CreateLogger<ApiClientHandler>();
         }
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -32,9 +30,13 @@ namespace GetIntoTeachingApi.Auth
             var apiKey = GetApiKey();
             var claims = AuthenticateApiClient(apiKey);
 
+            if (!Request.Headers.ContainsKey("Authorization"))
+            {
+                return Task.FromResult(AuthenticateResult.NoResult());
+            }
+
             if (string.IsNullOrWhiteSpace(apiKey) || !claims.Any())
             {
-                _logger.LogWarning("ApiClientHandler - API key is not valid");
                 return Task.FromResult(AuthenticateResult.Fail("API key is not valid"));
             }
 
