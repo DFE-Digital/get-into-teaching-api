@@ -270,7 +270,7 @@ namespace GetIntoTeachingApi.Models
 
         public bool IsReturningToTeaching()
         {
-            return PastTeachingPositions.Count > 0;
+            return TypeId == (int)Type.ReturningToTeacherTraining;
         }
 
         public bool HasGcseMathsAndEnglish()
