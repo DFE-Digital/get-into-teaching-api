@@ -91,6 +91,7 @@ namespace GetIntoTeachingApiTests.Auth
             var result = await _handler.AuthenticateAsync();
 
             result.Succeeded.Should().BeFalse();
+            result.Failure.Message.Should().Be("API key is not valid");
         }
 
         [Fact]
@@ -103,19 +104,6 @@ namespace GetIntoTeachingApiTests.Auth
             var result = await _handler.AuthenticateAsync();
 
             result.Succeeded.Should().BeFalse();
-        }
-
-        [Fact]
-        public async void InitializeAsync_IncorrectAuthorizationHeader_LogsWarning()
-        {
-            var context = new DefaultHttpContext();
-            context.Request.Headers.Add("Authorization", "incorrect_admin_secret");
-            var scheme = new AuthenticationScheme("ApiClientHandler", null, typeof(ApiClientHandler));
-            await _handler.InitializeAsync(scheme, context);
-
-            await _handler.AuthenticateAsync();
-
-            _mockLogger.VerifyWarningWasCalled("ApiClientHandler - API key is not valid");
         }
     }
 }
