@@ -53,7 +53,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 AddressLine2 = "Line 2",
                 AddressCity = "City",
                 AddressPostcode = "KY11 9YU",
-                PhoneCallScheduledAt = DateTime.UtcNow,
             };
 
             var result = _validator.TestValidate(request);
@@ -100,8 +99,8 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 PreferredEducationPhaseId = null,
-                SubjectTaughtId = null,
             };
 
             var result = _validator.TestValidate(request);
@@ -220,6 +219,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent,
                 Telephone = null,
             };
@@ -263,6 +263,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent,
                 CountryId = LookupItem.UnitedKingdomCountryId,
                 PhoneCallScheduledAt = null,
@@ -300,7 +301,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
             var result = _validator.TestValidate(request);
 
-            result.ShouldHaveValidationErrorFor("PhoneCallScheduledAt").WithErrorMessage("Cannot be set for overseas candidates.");
+            result.ShouldHaveValidationErrorFor("PhoneCallScheduledAt").WithErrorMessage("Can only be set for UK candidates with an equivalent degree.");
         }
 
         [Fact]
@@ -308,6 +309,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent,
                 CountryId = LookupItem.UnitedKingdomCountryId,
                 PhoneCallScheduledAt = DateTime.UtcNow,
@@ -323,12 +325,13 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.NoDegree,
             };
 
             var result = _validator.TestValidate(request);
 
-            result.ShouldHaveValidationErrorFor("DegreeStatusId").WithErrorMessage("Not eligible for service if degree status is no degree.");
+            result.ShouldHaveValidationErrorFor("DegreeStatusId").WithErrorMessage("Can not be no degree (ineligible for service).");
         }
 
         [Fact]
@@ -350,13 +353,14 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree,
                 DegreeTypeId = null,
             };
 
             var result = _validator.TestValidate(request);
 
-            result.ShouldHaveValidationErrorFor("DegreeTypeId").WithErrorMessage("Must be set degree or degree equivalent when the degree status is has a degree.");
+            result.ShouldHaveValidationErrorFor("DegreeTypeId").WithErrorMessage("Must be set for candidates interested in teacher training.");
         }
 
         [Fact]
@@ -379,6 +383,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree,
                 DegreeTypeId = (int)CandidateQualification.DegreeType.Degree,
             };
@@ -393,6 +398,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree,
                 DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent,
             };
@@ -407,13 +413,14 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.FinalYear,
                 DegreeTypeId = null,
             };
 
             var result = _validator.TestValidate(request);
 
-            result.ShouldHaveValidationErrorFor("DegreeTypeId").WithErrorMessage("Must be set to degree when status is studying for a degree.");
+            result.ShouldHaveValidationErrorFor("DegreeTypeId").WithErrorMessage("Must be set for candidates interested in teacher training.");
         }
 
         [Fact]
@@ -421,6 +428,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.FinalYear,
                 DegreeTypeId = (int)CandidateQualification.DegreeType.Degree,
             };
@@ -435,13 +443,14 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.NoDegree,
                 DegreeTypeId = null,
             };
 
             var result = _validator.TestValidate(request);
 
-            result.ShouldHaveValidationErrorFor("DegreeTypeId").WithErrorMessage("Must be set to degree when the degree status is no degree.");
+            result.ShouldHaveValidationErrorFor("DegreeTypeId").WithErrorMessage("Must be set for candidates interested in teacher training.");
         }
 
         [Fact]
@@ -464,6 +473,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.NoDegree,
                 DegreeTypeId = (int)CandidateQualification.DegreeType.Degree,
             };
@@ -474,25 +484,25 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_NoPastTeachingPositionsAndInitialTeacherTrainingYearIsNull_HasError()
+        public void Validate_TypeIdIsInterestedInTeachingAndInitialTeacherTrainingYearIsNull_HasError()
         {
             var request = new TeacherTrainingAdviserSignUp
             {
-                SubjectTaughtId = null,
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 InitialTeacherTrainingYearId = null,
             };
 
             var result = _validator.TestValidate(request);
 
-            result.ShouldHaveValidationErrorFor("InitialTeacherTrainingYearId").WithErrorMessage("Must be set unless candidate has past teaching positions.");
+            result.ShouldHaveValidationErrorFor("InitialTeacherTrainingYearId").WithErrorMessage("Must be set for candidates interested in teacher training.");
         }
 
         [Fact]
-        public void Validate_NoPastTeachingPositionsAndInitialTeacherTrainingYearIsNotNull_HasNoError()
+        public void Validate_TypeIdIsInterestedInTeachingAndInitialTeacherTrainingYearIsNotNull_HasNoError()
         {
             var request = new TeacherTrainingAdviserSignUp
             {
-                SubjectTaughtId = null,
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 InitialTeacherTrainingYearId = 1,
             };
 
@@ -502,25 +512,25 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_NoPastTeachingPositionsAndDegreeStatusIsNull_HasError()
+        public void Validate_TypeIdIsInterestedInTeachingAndDegreeStatusIsNull_HasError()
         {
             var request = new TeacherTrainingAdviserSignUp
             {
-                SubjectTaughtId = null,
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = null,
             };
 
             var result = _validator.TestValidate(request);
 
-            result.ShouldHaveValidationErrorFor("DegreeStatusId").WithErrorMessage("Must be set unless candidate has past teaching positions.");
+            result.ShouldHaveValidationErrorFor("DegreeStatusId").WithErrorMessage("Must be set for candidates interested in teacher training.");
         }
 
         [Fact]
-        public void Validate_NoPastTeachingPositionsAndDegreeStatusIsNotNull_HasNoError()
+        public void Validate_TypeIdIsInterestedInTeachingAndDegreeStatusIsNotNull_HasNoError()
         {
             var request = new TeacherTrainingAdviserSignUp
             {
-                SubjectTaughtId = null,
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = 1,
             };
 
@@ -530,25 +540,25 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_NoPastTeachingPositionsAndDegreeTypeIsNull_HasError()
+        public void Validate_TypeIdIsInterestedInTeachingAndDegreeTypeIsNull_HasError()
         {
             var request = new TeacherTrainingAdviserSignUp
             {
-                SubjectTaughtId = null,
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeTypeId = null,
             };
 
             var result = _validator.TestValidate(request);
 
-            result.ShouldHaveValidationErrorFor("DegreeTypeId").WithErrorMessage("Must be set unless candidate has past teaching positions.");
+            result.ShouldHaveValidationErrorFor("DegreeTypeId").WithErrorMessage("Must be set for candidates interested in teacher training.");
         }
 
         [Fact]
-        public void Validate_NoPastTeachingPositionsAndDegreeTypeIsNotNull_HasNoError()
+        public void Validate_TypeIdIsInterestedInTeachingAndDegreeTypeIsNotNull_HasNoError()
         {
             var request = new TeacherTrainingAdviserSignUp
             {
-                SubjectTaughtId = null,
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeTypeId = 1,
             };
 
@@ -562,6 +572,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.FirstYear,
                 DegreeSubject = null,
             };
@@ -591,6 +602,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree,
                 DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent,
                 DegreeSubject = null,
@@ -606,6 +618,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.FirstYear,
                 DegreeSubject = "Maths",
             };
@@ -620,6 +633,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree,
                 DegreeSubject = null,
             };
@@ -634,6 +648,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree,
                 DegreeSubject = "English",
             };
@@ -648,6 +663,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree,
                 UkDegreeGradeId = null,
             };
@@ -677,6 +693,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree,
                 DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent,
                 UkDegreeGradeId = null,
@@ -692,6 +709,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree,
                 UkDegreeGradeId = 1,
             };
@@ -706,6 +724,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree,
                 UkDegreeGradeId = null,
             };
@@ -720,6 +739,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree,
                 UkDegreeGradeId = 1,
             };
@@ -734,6 +754,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary,
                 PreferredTeachingSubjectId = null,
             };
@@ -748,6 +769,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary,
                 PreferredTeachingSubjectId = Guid.NewGuid(),
             };
@@ -758,11 +780,11 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_HasPastTeachingPositionsAndPreferredEducationPhaseIsSecondary_HasNoError()
+        public void Validate_TypeIdIsReturningToTeachingAndPreferredEducationPhaseIsSecondary_HasNoError()
         {
             var request = new TeacherTrainingAdviserSignUp
             {
-                SubjectTaughtId = Guid.NewGuid(),
+                TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary,
             };
 
@@ -776,6 +798,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Primary,
                 HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 HasGcseScienceId = -1,
@@ -807,6 +830,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Primary,
                 HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 PlanningToRetakeGcseScienceId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
@@ -822,6 +846,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Primary,
                 HasGcseMathsAndEnglishId = -1,
                 DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent,
@@ -837,8 +862,8 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
-                PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary,
                 TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
+                PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary,
                 HasGcseMathsAndEnglishId = -1,
             };
 
@@ -852,6 +877,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary,
                 HasGcseMathsAndEnglishId = -1,
                 DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent,
@@ -867,6 +893,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary,
                 HasGcseMathsAndEnglishId = -1,
             };
@@ -881,6 +908,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new TeacherTrainingAdviserSignUp
             {
+                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary,
                 HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
