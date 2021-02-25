@@ -9,13 +9,29 @@ namespace GetIntoTeachingApi.Models.Validators
     {
         public TeacherTrainingAdviserSignUpValidator(IStore store)
         {
-            RuleFor(request => request.FirstName).NotEmpty();
-            RuleFor(request => request.LastName).NotEmpty();
-            RuleFor(request => request.Email).NotEmpty();
+            RuleFor(request => request.FirstName).NotNull();
+            RuleFor(request => request.LastName).NotNull();
+            RuleFor(request => request.Email).NotNull();
             RuleFor(request => request.DateOfBirth).NotNull();
             RuleFor(request => request.AcceptedPolicyId).NotNull();
             RuleFor(request => request.CountryId).NotNull();
             RuleFor(request => request.TypeId).NotNull();
+
+            RuleFor(request => request.Telephone).NotNull()
+                .When(request => request.PhoneCallScheduledAt != null)
+                .WithMessage("Must be set to schedule a callback.");
+
+            RuleFor(request => request.PhoneCallScheduledAt).Null()
+                .When(request => request.CountryId != LookupItem.UnitedKingdomCountryId ||
+                    request.DegreeTypeId != (int)CandidateQualification.DegreeType.DegreeEquivalent)
+                .WithMessage("Can only be set for UK candidates with an equivalent degree.");
+
+            When(request => request.CountryId == LookupItem.UnitedKingdomCountryId, () =>
+            {
+                RuleFor(request => request.AddressLine1).NotNull().WithMessage("Must be set candidate in the UK.");
+                RuleFor(request => request.AddressCity).NotNull().WithMessage("Must be set candidate in the UK.");
+                RuleFor(request => request.AddressPostcode).NotNull().WithMessage("Must be set candidate in the UK.");
+            });
 
             When(request => request.Candidate.IsReturningToTeaching(), () =>
             {
@@ -36,13 +52,13 @@ namespace GetIntoTeachingApi.Models.Validators
                 RuleFor(request => request.DegreeTypeId).NotNull()
                     .WithMessage("Must be set for candidates interested in teacher training.");
 
-                RuleFor(request => request.PreferredTeachingSubjectId).NotNull()
-                    .When(request => request.Candidate.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Secondary)
-                    .WithMessage("Must be set when preferred education phase is secondary.");
-
                 RuleFor(request => request.DegreeStatusId)
                     .Must(status => status != (int)CandidateQualification.DegreeStatus.NoDegree)
                     .WithMessage("Can not be no degree (ineligible for service).");
+
+                RuleFor(request => request.PreferredTeachingSubjectId).NotNull()
+                    .When(request => request.Candidate.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Secondary)
+                    .WithMessage("Must be set when preferred education phase is secondary.");
 
                 RuleFor(request => request.DegreeTypeId)
                     .Must(type =>
@@ -71,40 +87,22 @@ namespace GetIntoTeachingApi.Models.Validators
                         .When(request => request.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Primary)
                         .WithMessage("Must have or be retaking all GCSEs when preferred education phase is primary.");
 
-                    RuleFor(request => request.DegreeSubject).NotEmpty()
-                        .When(request => HaveOrStudyingForADegreeStatus().Contains(request.DegreeStatusId))
+                    RuleFor(request => request.DegreeSubject).NotNull()
                         .WithMessage("Must be set when candidate has a degree or is studying for a degree.");
 
                     RuleFor(request => request.UkDegreeGradeId).NotNull()
-                        .When(request => HaveOrStudyingForADegreeStatus().Contains(request.DegreeStatusId))
                         .WithMessage("Must be set when candidate has a degree or is studying for a degree (predicted grade).");
                 });
 
                 When(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent, () =>
                 {
-                    RuleFor(request => request.Telephone).NotEmpty()
+                    RuleFor(request => request.Telephone).NotNull()
                         .WithMessage("Must be set for candidates with an equivalent degree.");
                     RuleFor(request => request.PhoneCallScheduledAt).NotNull()
                         .When(request => request.CountryId == LookupItem.UnitedKingdomCountryId)
                         .WithMessage("Must be set for candidate with UK equivalent degree.");
                 });
             });
-
-            When(request => request.CountryId == LookupItem.UnitedKingdomCountryId, () =>
-            {
-                RuleFor(request => request.AddressLine1).NotEmpty().WithMessage("Must be set candidate in the UK.");
-                RuleFor(request => request.AddressCity).NotEmpty().WithMessage("Must be set candidate in the UK.");
-                RuleFor(request => request.AddressPostcode).NotEmpty().WithMessage("Must be set candidate in the UK.");
-            });
-
-            RuleFor(request => request.Telephone).NotEmpty()
-                .When(request => request.PhoneCallScheduledAt != null)
-                .WithMessage("Must be set to schedule a callback.");
-
-            RuleFor(request => request.PhoneCallScheduledAt).Null()
-                .When(request => request.CountryId != LookupItem.UnitedKingdomCountryId ||
-                    request.DegreeTypeId != (int)CandidateQualification.DegreeType.DegreeEquivalent)
-                .WithMessage("Can only be set for UK candidates with an equivalent degree.");
 
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store));
         }
@@ -118,13 +116,6 @@ namespace GetIntoTeachingApi.Models.Validators
                 (int)CandidateQualification.DegreeStatus.FirstYear,
                 (int)CandidateQualification.DegreeStatus.Other,
             };
-        }
-
-        private static List<int?> HaveOrStudyingForADegreeStatus()
-        {
-            var status = StudyingForADegreeStatus();
-            status.Add((int)CandidateQualification.DegreeStatus.HasDegree);
-            return status;
         }
 
         private static bool HasOrIsPlanningOnRetakingEnglishAndMaths(TeacherTrainingAdviserSignUp request)
