@@ -35,6 +35,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 CountryId = LookupItem.UnitedKingdomCountryId,
                 UkDegreeGradeId = 1,
                 DegreeStatusId = 2,
+                TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
                 InitialTeacherTrainingYearId = 3,
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary,
                 HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
@@ -86,6 +87,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_CountryIdIsNull_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(request => request.CountryId, null as Guid?);
+        }
+
+        [Fact]
+        public void Validate_TypeIdIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.TypeId, null as int?);
         }
 
         [Fact]
@@ -229,7 +236,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             {
                 DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent,
                 Telephone = null,
-                SubjectTaughtId = Guid.NewGuid(),
+                TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
             };
 
             var result = _validator.TestValidate(request);
@@ -274,7 +281,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent,
                 CountryId = LookupItem.UnitedKingdomCountryId,
                 PhoneCallScheduledAt = null,
-                SubjectTaughtId = Guid.NewGuid(),
+                TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
             };
 
             var result = _validator.TestValidate(request);
@@ -330,7 +337,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var request = new TeacherTrainingAdviserSignUp
             {
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.NoDegree,
-                SubjectTaughtId = Guid.NewGuid(),
+                TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
             };
 
             var result = _validator.TestValidate(request);
@@ -359,7 +366,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             {
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree,
                 DegreeTypeId = null,
-                SubjectTaughtId = Guid.NewGuid(),
+                TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
             };
 
             var result = _validator.TestValidate(request);
@@ -444,7 +451,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             {
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.NoDegree,
                 DegreeTypeId = null,
-                SubjectTaughtId = Guid.NewGuid(),
+                TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
             };
 
             var result = _validator.TestValidate(request);
@@ -571,7 +578,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             {
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.FirstYear,
                 DegreeSubject = null,
-                SubjectTaughtId = Guid.NewGuid(),
+                TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
             };
 
             var result = _validator.TestValidate(request);
@@ -657,7 +664,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             {
                 DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree,
                 UkDegreeGradeId = null,
-                SubjectTaughtId = Guid.NewGuid(),
+                TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
             };
 
             var result = _validator.TestValidate(request);
@@ -787,7 +794,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Primary,
                 HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 HasGcseScienceId = -1,
-                SubjectTaughtId = Guid.NewGuid(),
+                TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
             };
 
             var result = _validator.TestValidate(request);
@@ -831,7 +838,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var request = new TeacherTrainingAdviserSignUp
             {
                 PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary,
-                SubjectTaughtId = Guid.NewGuid(),
+                TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
                 HasGcseMathsAndEnglishId = -1,
             };
 

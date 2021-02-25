@@ -161,7 +161,6 @@ namespace GetIntoTeachingApi.Models
             AddQualification(candidate);
             AddPastTeachingPosition(candidate);
             SetAdviserEligibility(candidate);
-            SetType(candidate);
             DefaultPreferredEducationPhase(candidate);
             DefaultPreferredTeachingSubjectId(candidate);
             SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate);
@@ -274,23 +273,6 @@ namespace GetIntoTeachingApi.Models
                 candidate.AssignmentStatusId = (int)Candidate.AssignmentStatus.WaitingToBeAssigned;
                 candidate.AdviserEligibilityId = (int)Candidate.AdviserEligibility.Yes;
                 candidate.AdviserRequirementId = (int)Candidate.AdviserRequirement.Yes;
-            }
-        }
-
-        private void SetType(Candidate candidate)
-        {
-            if (candidate.TypeId != null)
-            {
-                return;
-            }
-
-            if (candidate.IsReturningToTeaching())
-            {
-                candidate.TypeId = (int)Candidate.Type.ReturningToTeacherTraining;
-            }
-            else
-            {
-                candidate.TypeId = (int)Candidate.Type.InterestedInTeacherTraining;
             }
         }
 

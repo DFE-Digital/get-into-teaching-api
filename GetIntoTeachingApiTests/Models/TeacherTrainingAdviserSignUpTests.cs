@@ -137,7 +137,7 @@ namespace GetIntoTeachingApiTests.Models
                 PreferredTeachingSubjectId = Guid.NewGuid(),
                 CountryId = Guid.NewGuid(),
                 AcceptedPolicyId = Guid.NewGuid(),
-                TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
+                TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
                 UkDegreeGradeId = 0,
                 DegreeStatusId = 1,
                 DegreeTypeId = 2,
@@ -177,7 +177,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.AdviserRequirementId.Should().Be((int)Candidate.AdviserRequirement.Yes);
             candidate.AdviserEligibilityId.Should().Be((int)Candidate.AdviserEligibility.Yes);
             candidate.AssignmentStatusId.Should().Be((int)Candidate.AssignmentStatus.WaitingToBeAssigned);
-            candidate.TypeId.Should().Be((int)Candidate.Type.InterestedInTeacherTraining);
+            candidate.TypeId.Should().Be((int)Candidate.Type.ReturningToTeacherTraining);
             candidate.Email.Should().Be(request.Email);
             candidate.FirstName.Should().Be(request.FirstName);
             candidate.LastName.Should().Be(request.LastName);
@@ -235,10 +235,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_ReturningToTeaching_CorrectConsent()
         {
-            var request = new TeacherTrainingAdviserSignUp()
-            {
-                SubjectTaughtId = Guid.NewGuid()
-            };
+            var request = new TeacherTrainingAdviserSignUp() { TypeId = (int)Candidate.Type.ReturningToTeacherTraining };
 
             var candidate = request.Candidate;
 
@@ -249,10 +246,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_InterestedInTeaching_CorrectConsent()
         {
-            var request = new TeacherTrainingAdviserSignUp()
-            {
-                SubjectTaughtId = null
-            };
+            var request = new TeacherTrainingAdviserSignUp() { TypeId = (int)Candidate.Type.InterestedInTeacherTraining };
 
             var candidate = request.Candidate;
 
@@ -390,15 +384,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_ReturningToTeaching_PreferredEducationPhaseIdDefaultsToSecondary()
         {
-            var request = new TeacherTrainingAdviserSignUp() { SubjectTaughtId = Guid.NewGuid() };
-
-            request.Candidate.PreferredEducationPhaseId.Should().Be((int)Candidate.PreferredEducationPhase.Secondary);
-        }
-
-        [Fact]
-        public void Candidate_SubjectTaughtIdIsNotNull_PreferredEducationPhaseIdDefaultsToSecondary()
-        {
-            var request = new TeacherTrainingAdviserSignUp() { SubjectTaughtId = Guid.NewGuid() };
+            var request = new TeacherTrainingAdviserSignUp() { TypeId = (int)Candidate.Type.ReturningToTeacherTraining };
 
             request.Candidate.PreferredEducationPhaseId.Should().Be((int)Candidate.PreferredEducationPhase.Secondary);
         }
@@ -434,7 +420,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_ReturningToTeaching_IsEligibleForAdviser()
         {
-            var request = new TeacherTrainingAdviserSignUp() { SubjectTaughtId = Guid.NewGuid() };
+            var request = new TeacherTrainingAdviserSignUp() { TypeId = (int)Candidate.Type.ReturningToTeacherTraining };
 
             request.Candidate.IsReturningToTeaching().Should().BeTrue();
             request.Candidate.AssignmentStatusId.Should().Be((int)Candidate.AssignmentStatus.WaitingToBeAssigned);
@@ -443,32 +429,14 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void Candidate_HasNoPastTeachingPositions_IsNotEligibleForAdviser()
+        public void Candidate_InterestedInTeaching_IsNotEligibleForAdviser()
         {
-            var request = new TeacherTrainingAdviserSignUp() { SubjectTaughtId = null };
+            var request = new TeacherTrainingAdviserSignUp() { TypeId = (int)Candidate.Type.InterestedInTeacherTraining };
 
             request.Candidate.IsReturningToTeaching().Should().BeFalse();
             request.Candidate.AssignmentStatusId.Should().BeNull();
             request.Candidate.AdviserEligibilityId.Should().BeNull();
             request.Candidate.AdviserRequirementId.Should().BeNull();
-        }
-
-        [Fact]
-        public void Candidate_SubjectTaughtIdIsPresent_ReturningToTeachingAndTypeIdAreCorrect()
-        {
-            var request = new TeacherTrainingAdviserSignUp() { SubjectTaughtId = Guid.NewGuid() };
-
-            request.Candidate.IsReturningToTeaching().Should().BeTrue();
-            request.Candidate.TypeId.Should().Be((int)Candidate.Type.ReturningToTeacherTraining);
-        }
-
-        [Fact]
-        public void Candidate_SubjectTaughtIdIsNull_ReturningToTeachingAndTypeIdAreCorrect()
-        {
-            var request = new TeacherTrainingAdviserSignUp() { SubjectTaughtId = null };
-
-            request.Candidate.IsReturningToTeaching().Should().BeFalse();
-            request.Candidate.TypeId.Should().Be((int)Candidate.Type.InterestedInTeacherTraining);
         }
     }
 }
