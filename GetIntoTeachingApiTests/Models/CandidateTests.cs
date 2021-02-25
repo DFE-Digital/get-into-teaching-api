@@ -400,21 +400,17 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void IsReturningToTeaching_WhenHasPastTeachingPositions_ReturnsTrue()
+        public void IsReturningToTeaching_WhenTypeIsReturningToTeaching_ReturnsTrue()
         {
-            var candidate = new Candidate();
-            candidate.PastTeachingPositions.Add(new CandidatePastTeachingPosition());
+            var candidate = new Candidate() { TypeId = (int)Candidate.Type.ReturningToTeacherTraining };
 
             candidate.IsReturningToTeaching().Should().BeTrue();
         }
 
         [Fact]
-        public void IsReturningToTeaching_WhenHasPastTeachingPositions_ReturnsFalse()
+        public void IsReturningToTeaching_WhenTypeIdIsInterestedInTeacherTraining_ReturnsFalse()
         {
-            var candidate = new Candidate
-            {
-                PastTeachingPositions = new List<CandidatePastTeachingPosition>()
-            };
+            var candidate = new Candidate() { TypeId = (int)Candidate.Type.InterestedInTeacherTraining };
 
             candidate.IsReturningToTeaching().Should().BeFalse();
         }
