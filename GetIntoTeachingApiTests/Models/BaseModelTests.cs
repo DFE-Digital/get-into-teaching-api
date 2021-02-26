@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
 using FluentAssertions;
+using FluentValidation;
+using FluentValidation.Results;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
@@ -19,14 +21,17 @@ namespace GetIntoTeachingApiTests.Models
     public class BaseModelTests
     {
         private readonly Mock<IOrganizationServiceAdapter> _mockService;
+        private readonly Mock<IValidatorFactory> _mockValidatorFactory;
         private readonly CrmService _crm;
         private readonly OrganizationServiceContext _context;
 
         public BaseModelTests()
         {
+            _mockValidatorFactory = new Mock<IValidatorFactory>();
+            _mockValidatorFactory.Setup(m => m.GetValidator(It.IsAny<Type>())).Returns<IValidator>(null);
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _context = _mockService.Object.Context();
-            _crm = new CrmService(_mockService.Object);
+            _crm = new CrmService(_mockService.Object, _mockValidatorFactory.Object);
         }
 
         [Fact]
@@ -89,11 +94,11 @@ namespace GetIntoTeachingApiTests.Models
             {
                 // Constructor is required for creating related models in BaseModel.MapRelationshipAttributesFromEntity
                 var requiredConstructor = subType.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null,
-                    new Type[] { typeof(Entity), typeof(ICrmService) }, null);
+                    new Type[] { typeof(Entity), typeof(ICrmService), typeof(IValidatorFactory) }, null);
                 requiredConstructor.Should().NotBeNull();
                 // Instantiate to include in coverage reports
                 var entity = new Entity();
-                Activator.CreateInstance(subType, entity, new Mock<ICrmService>().Object);
+                Activator.CreateInstance(subType, entity, new Mock<ICrmService>().Object, _mockValidatorFactory.Object);
             }
         }
 
@@ -113,7 +118,7 @@ namespace GetIntoTeachingApiTests.Models
             _mockService.Setup(m => m.RelatedEntities(entity, "dfe_mock_dfe_relatedmock_mocks"))
                 .Returns(new List<Entity> { relatedEntity2 });
 
-            var mock = new MockModel(entity, _crm);
+            var mock = new MockModel(entity, _crm, _mockValidatorFactory.Object);
 
             mock.Id.Should().Be(entity.Id);
             mock.Field1.Should().Be(entity.GetAttributeValue<EntityReference>("dfe_field1").Id);
@@ -131,7 +136,7 @@ namespace GetIntoTeachingApiTests.Models
             entity["dfe_field3"] = "   a field3\n\rgoes here\n\r  ";
             entity["dfe_field4"] = "  ";
 
-            var mock = new MockModel(entity, _crm);
+            var mock = new MockModel(entity, _crm, _mockValidatorFactory.Object);
 
             mock.Field3.Should().Be("a field3\n\rgoes here");
             mock.Field4.Should().BeNull();
@@ -141,11 +146,51 @@ namespace GetIntoTeachingApiTests.Models
         public void Constructor_WithEntityThatHasNullStrings_MapsCorrectly()
         {
             var entity = new Entity("mock") { Id = Guid.NewGuid() };
-            entity["dfe_field3"] = null as string;
+            entity["dfe_field3"] = null;
 
-            var mock = new MockModel(entity, _crm);
+            var mock = new MockModel(entity, _crm, _mockValidatorFactory.Object);
 
             mock.Field3.Should().BeNull();
+        }
+
+        [Fact]
+        public void Constructor_WithEntityThatHasAnInvalidFieldAttributeValue_NullifiesValue()
+        {
+            var entity = new Entity("mock") { Id = Guid.NewGuid() };
+            entity["dfe_field2"] = new OptionSetValue { Value = 123 };
+            entity["dfe_field3"] = "an-invalid-value";
+
+            var mockValidator = new Mock<IValidator>();
+            var validationResult = new ValidationResult();
+            _mockValidatorFactory.Setup(m => m.GetValidator(It.IsAny<Type>())).Returns(mockValidator.Object);
+            mockValidator.Setup(m => m.Validate(It.IsAny<BaseModel>())).Returns(validationResult);
+            validationResult.Errors.Add(new ValidationFailure("Field3", "this value is not valid!"));
+
+            var mock = new MockModel(entity, _crm, _mockValidatorFactory.Object);
+
+            mock.Field2.Should().Be(123);
+            mock.Field3.Should().BeNull();
+        }
+
+        [Fact]
+        public void Constructor_WithEntityThatHasAnInvalidRelationshipAttributeValue_DoesNotNullifyValue()
+        {
+            var entity = new Entity("mock") { Id = Guid.NewGuid() };
+            var relatedEntity = new Entity("relatedMock") { Id = Guid.NewGuid() };
+
+            _mockService.Setup(m => m.RelatedEntities(entity, "dfe_mock_dfe_relatedmock_mock"))
+                .Returns(new List<Entity> { relatedEntity });
+
+            var mockValidator = new Mock<IValidator>();
+            var validationResult = new ValidationResult();
+            _mockValidatorFactory.Setup(m => m.GetValidator(It.IsAny<Type>())).Returns(mockValidator.Object);
+            mockValidator.Setup(m => m.Validate(It.IsAny<BaseModel>())).Returns(validationResult);
+            validationResult.Errors.Add(new ValidationFailure("RelatedMock", "this value is not valid!"));
+
+            var mock = new MockModel(entity, _crm, _mockValidatorFactory.Object);
+
+            mock.Id.Should().Be(entity.Id);
+            mock.RelatedMock.Id.Should().Be(relatedEntity.Id);
         }
 
         [Fact]
@@ -159,7 +204,7 @@ namespace GetIntoTeachingApiTests.Models
             _mockService.Setup(m => m.RelatedEntities(entity, "dfe_mock_dfe_relatedmock_mock")).Returns(new List<Entity>());
             _mockService.Setup(m => m.RelatedEntities(entity, "dfe_mock_dfe_relatedmock_mocks")).Returns(new List<Entity>());
 
-            var mock = new MockModel(entity, _crm);
+            var mock = new MockModel(entity, _crm, _mockValidatorFactory.Object);
 
             mock.Id.Should().Be(entity.Id);
             mock.Field1.Should().Be(entity.GetAttributeValue<EntityReference>("dfe_field1").Id);

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
@@ -35,8 +36,8 @@ namespace GetIntoTeachingApi.Models
         {
         }
 
-        public TeachingEventBuilding(Entity entity, ICrmService crm)
-            : base(entity, crm)
+        public TeachingEventBuilding(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
+            : base(entity, crm, validatorFactory)
         {
         }
     }
