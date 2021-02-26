@@ -1,4 +1,5 @@
 ﻿using System;
+using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
@@ -26,8 +27,8 @@ namespace GetIntoTeachingApi.Models
         {
         }
 
-        public CandidatePrivacyPolicy(Entity entity, ICrmService crm)
-            : base(entity, crm)
+        public CandidatePrivacyPolicy(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
+            : base(entity, crm, validatorFactory)
         {
         }
     }

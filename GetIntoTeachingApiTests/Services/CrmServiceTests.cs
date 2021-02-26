@@ -11,6 +11,8 @@ using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
 using Xunit;
 using System.Linq.Dynamic.Core;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace GetIntoTeachingApiTests.Services
 {
@@ -25,10 +27,13 @@ namespace GetIntoTeachingApiTests.Services
 
         public CrmServiceTests()
         {
+            var mockValidatorFactory = new Mock<IValidatorFactory>();
+            mockValidatorFactory.Setup(m => m.GetValidator(It.IsAny<Type>())).Returns<IValidator>(null);
+
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _context = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
             _mockService.Setup(mock => mock.Context()).Returns(_context);
-            _crm = new CrmService(_mockService.Object);
+            _crm = new CrmService(_mockService.Object, mockValidatorFactory.Object);
         }
 
         [Fact]
