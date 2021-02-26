@@ -273,6 +273,11 @@ namespace GetIntoTeachingApi.Models
             return TypeId == (int)Type.ReturningToTeacherTraining;
         }
 
+        public bool IsInterestedInTeaching()
+        {
+            return TypeId == (int)Type.InterestedInTeacherTraining;
+        }
+
         public bool HasGcseMathsAndEnglish()
         {
             return new[] { HasGcseEnglishId, HasGcseMathsId }.All(g => g == (int)GcseStatus.HasOrIsPlanningOnRetaking);
