@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using GetIntoTeachingApi.Services;
@@ -20,6 +21,9 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(request => request.Telephone).NotNull()
                 .When(request => request.PhoneCallScheduledAt != null)
                 .WithMessage("Must be set to schedule a callback.");
+            RuleFor(request => request.PhoneCallScheduledAt).GreaterThan(candidate => DateTime.UtcNow)
+                .When(request => request.PhoneCallScheduledAt != null)
+                .WithMessage("Can only be scheduled for future dates.");
 
             RuleFor(request => request.PhoneCallScheduledAt).Null()
                 .When(request => request.CountryId != LookupItem.UnitedKingdomCountryId ||
