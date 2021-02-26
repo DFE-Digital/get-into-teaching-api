@@ -52,9 +52,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_SubjectTaughtIdIsNull_HasError()
+        public void Validate_SubjectTaughtIdIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(position => position.SubjectTaughtId, null as Guid?);
+            _validator.ShouldNotHaveValidationErrorFor(position => position.SubjectTaughtId, null as Guid?);
         }
 
         [Fact]
@@ -64,9 +64,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_EducationPhaseIsNull_HasError()
+        public void Validate_EducationPhaseIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(position => position.EducationPhaseId, null as int?);
+            _validator.ShouldNotHaveValidationErrorFor(position => position.EducationPhaseId, null as int?);
         }
     }
 }

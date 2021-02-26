@@ -37,7 +37,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_WhenTelephoneIsNull_AndPhoneCallScheduledAtIsNotNull_HasError()
         {
             _request.Telephone = null;
-            _request.PhoneCallScheduledAt = DateTime.UtcNow;
+            _request.PhoneCallScheduledAt = DateTime.UtcNow.AddDays(1);
 
             var result = _validator.TestValidate(_request);
 
@@ -61,7 +61,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_WhenPhoneCallScheduledAtIsNotNull_AndCountryIsNotUk_OrDegreeTypeIsNotDegreeEquivalent_HasError()
         {
-            _request.PhoneCallScheduledAt = DateTime.UtcNow;
+            _request.PhoneCallScheduledAt = DateTime.UtcNow.AddDays(1);
             _request.CountryId = Guid.NewGuid();
             _request.DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent;
 
@@ -454,7 +454,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
             }
 
             [Fact]
-            public void Validate_WhenPhoneCallScheduledAtIsNull_AndDegreeTypeIsDegreeEquivalent_AndCountryIdIsUk_HasError()
+            public void Validate_WhenPhoneCallScheduledAtIsNullOrInPast_AndDegreeTypeIsDegreeEquivalent_AndCountryIdIsUk_HasError()
             {
                 _request.PhoneCallScheduledAt = null;
                 _request.CountryId = LookupItem.UnitedKingdomCountryId;
@@ -465,7 +465,14 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 result.ShouldHaveValidationErrorFor(request => request.PhoneCallScheduledAt)
                     .WithErrorMessage("Must be set for candidate with UK equivalent degree.");
 
-                _request.PhoneCallScheduledAt = DateTime.UtcNow;
+                _request.PhoneCallScheduledAt = DateTime.UtcNow.AddDays(-1);
+
+                result = _validator.TestValidate(_request);
+
+                result.ShouldHaveValidationErrorFor(request => request.PhoneCallScheduledAt)
+                    .WithErrorMessage("Can only be scheduled for future dates.");
+
+                _request.PhoneCallScheduledAt = DateTime.UtcNow.AddDays(1);
 
                 result = _validator.TestValidate(_request);
 
