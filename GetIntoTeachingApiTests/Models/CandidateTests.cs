@@ -416,6 +416,22 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
+        public void IsInterestedInTeaching_WhenTypeIsInterestedInTeaching_ReturnsTrue()
+        {
+            var candidate = new Candidate() { TypeId = (int)Candidate.Type.InterestedInTeacherTraining };
+
+            candidate.IsInterestedInTeaching().Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsInterestedInTeaching_WhenTypeIdIsIReturningToTeacherTraining_ReturnsFalse()
+        {
+            var candidate = new Candidate() { TypeId = (int)Candidate.Type.ReturningToTeacherTraining };
+
+            candidate.IsInterestedInTeaching().Should().BeFalse();
+        }
+
+        [Fact]
         public void MagicLinkTokenExpired_WhenNull_ReturnsTrue()
         {
             var candidate = new Candidate
