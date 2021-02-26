@@ -103,9 +103,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
             var result = _validator.TestValidate(_request);
 
-            result.ShouldHaveValidationErrorFor(request => request.AddressLine1).WithErrorMessage("Must be set candidate in the UK.");
-            result.ShouldHaveValidationErrorFor(request => request.AddressCity).WithErrorMessage("Must be set candidate in the UK.");
-            result.ShouldHaveValidationErrorFor(request => request.AddressPostcode).WithErrorMessage("Must be set candidate in the UK.");
+            result.ShouldHaveValidationErrorFor(request => request.AddressLine1).WithErrorMessage("Must be set when the candidate is in the UK.");
+            result.ShouldHaveValidationErrorFor(request => request.AddressCity).WithErrorMessage("Must be set when the candidate is in the UK.");
+            result.ShouldHaveValidationErrorFor(request => request.AddressPostcode).WithErrorMessage("Must be set when the candidate is in the UK.");
 
             _request.CountryId = Guid.NewGuid();
 

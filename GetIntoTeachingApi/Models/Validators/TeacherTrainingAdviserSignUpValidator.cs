@@ -28,9 +28,9 @@ namespace GetIntoTeachingApi.Models.Validators
 
             When(request => request.CountryId == LookupItem.UnitedKingdomCountryId, () =>
             {
-                RuleFor(request => request.AddressLine1).NotNull().WithMessage("Must be set candidate in the UK.");
-                RuleFor(request => request.AddressCity).NotNull().WithMessage("Must be set candidate in the UK.");
-                RuleFor(request => request.AddressPostcode).NotNull().WithMessage("Must be set candidate in the UK.");
+                RuleFor(request => request.AddressLine1).NotNull().WithMessage("Must be set when the candidate is in the UK.");
+                RuleFor(request => request.AddressCity).NotNull().WithMessage("Must be set when the candidate is in the UK.");
+                RuleFor(request => request.AddressPostcode).NotNull().WithMessage("Must be set when the candidate is in the UK.");
             });
 
             When(request => request.Candidate.IsReturningToTeaching(), () =>
