@@ -80,6 +80,7 @@ module "grafana" {
   google_client_id         = local.monitoring_secrets["GOOGLE_CLIENT_ID"]
   google_client_secret     = local.monitoring_secrets["GOOGLE_CLIENT_SECRET"]
   admin_password           = local.monitoring_secrets["GRAFANA_ADMIN_PASSWORD"]
+  google_jwt               = local.monitoring_secrets["GOOGLE_JWT"]
   influxdb_credentials     = cloudfoundry_service_key.influxdb-key[0].credentials
 
   json_dashboards   = [for f in local.dashboard_list : file(f)]

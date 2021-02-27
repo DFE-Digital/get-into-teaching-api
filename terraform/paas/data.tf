@@ -47,4 +47,3 @@ data azurerm_key_vault_secret statuscake_password {
   key_vault_id = data.azurerm_key_vault.vault.id
   name         = "SC-PASSWORD"
 }
-
