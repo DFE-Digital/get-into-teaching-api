@@ -6,7 +6,6 @@ using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire.Server;
 using Microsoft.Extensions.Logging;
-using Prometheus;
 
 namespace GetIntoTeachingApi.Jobs
 {
