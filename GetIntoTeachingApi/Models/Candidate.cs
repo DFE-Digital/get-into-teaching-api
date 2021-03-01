@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
@@ -253,14 +254,9 @@ namespace GetIntoTeachingApi.Models
         {
         }
 
-        public Candidate(Entity entity, ICrmService crm)
-            : base(entity, crm)
+        public Candidate(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
+            : base(entity, crm, validatorFactory)
         {
-            // Treat invalid postcodes coming back from the CRM as null.
-            if (AddressPostcode != null && !Location.PostcodeRegex.IsMatch(AddressPostcode))
-            {
-                AddressPostcode = null;
-            }
         }
 
         public bool HasTeacherTrainingAdviser()

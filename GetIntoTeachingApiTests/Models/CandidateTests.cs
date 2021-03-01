@@ -477,20 +477,5 @@ namespace GetIntoTeachingApiTests.Models
 
             candidate.MagicLinkTokenAlreadyExchanged().Should().Be(expected);
         }
-
-        [Theory]
-        [InlineData("invalid", null)]
-        [InlineData("KY11 9YU", "KY11 9YU")]
-        public void Constructor_WithEntity_OnlyPopulatesValidAddressPostcodes(string postcode, string expected)
-        {
-            var mockCrm = new Mock<ICrmService>();
-            var entity = new Entity("contact");
-
-            entity.Attributes.Add("address1_postalcode", postcode);
-
-            var candidate = new Candidate(entity, mockCrm.Object);
-
-            candidate.AddressPostcode.Should().Be(expected);
-        }
     }
 }

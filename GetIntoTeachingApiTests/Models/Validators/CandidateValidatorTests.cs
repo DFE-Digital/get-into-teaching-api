@@ -112,24 +112,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_TeachingEventRegistrationsWithDuplicateEvents_HasError()
-        {
-            var mockEvent = new TeachingEvent { Id = Guid.NewGuid() };
-
-            var candidate = new Candidate
-            {
-                TeachingEventRegistrations = new List<TeachingEventRegistration>
-                {
-                    new TeachingEventRegistration {EventId = (Guid)mockEvent.Id},
-                    new TeachingEventRegistration {EventId = (Guid)mockEvent.Id},
-                }
-            };
-            var result = _validator.TestValidate(candidate);
-
-            result.ShouldHaveValidationErrorFor("TeachingEventRegistrations");
-        }
-
-        [Fact]
         public void Validate_TechingEventRegistrationIsInvalid_HasError()
         {
             var candidate = new Candidate
@@ -180,11 +162,11 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var candidate = new Candidate
             {
-                PhoneCall = new PhoneCall() { ScheduledAt = DateTime.UtcNow.AddDays(-10) }
+                PhoneCall = new PhoneCall() { ChannelId = -1 }
             };
             var result = _validator.TestValidate(candidate);
 
-            result.ShouldHaveValidationErrorFor(c => c.PhoneCall.ScheduledAt);
+            result.ShouldHaveValidationErrorFor(c => c.PhoneCall.ChannelId);
         }
 
         [Fact]
@@ -197,12 +179,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var result = _validator.TestValidate(candidate);
 
             result.ShouldHaveValidationErrorFor(c => c.PrivacyPolicy.AcceptedPolicyId);
-        }
-
-        [Fact]
-        public void Validate_PrivacyPolicyIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.PrivacyPolicy, null as CandidatePrivacyPolicy);
         }
 
         [Fact]
@@ -483,19 +459,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_ChannelIdIsNullWhenNewCandidate_HasError()
         {
             var candidate = new Candidate() { Id = null, ChannelId = null};
-            var result = _validator.TestValidate(candidate);
-
-            result.ShouldHaveValidationErrorFor("ChannelId");
-        }
-
-        [Fact]
-        public void Validate_ChannelIdIsNotNullWhenExistingCandidate_HasError()
-        {
-            var mockChannel = new PickListItem() { Id = 123 };
-            _mockStore
-                .Setup(mock => mock.GetPickListItems("contact", "dfe_channelcreation"))
-                .Returns(new[] { mockChannel }.AsQueryable());
-            var candidate = new Candidate() { Id = Guid.NewGuid(), ChannelId = mockChannel.Id };
             var result = _validator.TestValidate(candidate);
 
             result.ShouldHaveValidationErrorFor("ChannelId");

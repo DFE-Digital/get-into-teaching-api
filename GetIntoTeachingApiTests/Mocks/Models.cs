@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
@@ -25,7 +26,8 @@ namespace GetIntoTeachingApiTests.Mocks
 
         public MockModel() : base() { }
 
-        public MockModel(Entity entity, ICrmService crm) : base(entity, crm) { }
+        public MockModel(Entity entity, ICrmService crm, IValidatorFactory validatorFactory) :
+            base(entity, crm, validatorFactory) { }
     }
 
     [Entity("relatedMock")]
@@ -33,6 +35,7 @@ namespace GetIntoTeachingApiTests.Mocks
     {
         public MockRelatedModel() : base() { }
 
-        public MockRelatedModel(Entity entity, ICrmService crm) : base(entity, crm) { }
+        public MockRelatedModel(Entity entity, ICrmService crm, IValidatorFactory validatorFactory) :
+            base(entity, crm, validatorFactory) { }
     }
 }

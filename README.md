@@ -134,6 +134,8 @@ You can hit the API endpoints directly from the Swagger UI - hit the `Authorize`
 
 The majority of the validation should be performed against the core models linked to Dynamics entities (any model that inherits from `BaseModel`). The validation in these models should make sure that the data is correct, but remain loose around which fields are required; often a model will be reused in different contexts and the required fields will change. `Candidate` is a good example of this; the request models `MailingListAddMember`, `TeacherTrainingAdviserSignUp` and `TeachingEventAddAttendee` all map onto `Candidate`, however the required fields are different for each.
 
+We also call registered validators for subclasses of `BaseModel` when mapping CRM entities into our API models. If the CRM returns an invalid value according to our validation logic it will be nullified. An example of where this can happen is with postcodes; if the CRM returns an invalid postcode we will nullify it (otherwise the client may re-post the invalid postcode back to the API without checking it and receive a 400 bad request response unexpectedly).
+
 Property names in request models should be consistent with any hidden `BaseModel` models they encapsulate and map to; this way the client can resolve the validation error messages back to the original request attributes. For example, the `MailingListAddMember.UkDegreeGradeId` maps to and is consistent with `MailingListAddMember.Candidate.Qualifications[0].UkDegreeGradeId`.
 
 ### Testing

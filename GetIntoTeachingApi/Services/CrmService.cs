@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentValidation;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using Microsoft.Xrm.Sdk;
@@ -15,10 +16,12 @@ namespace GetIntoTeachingApi.Services
         private const int MaximumNumberOfPrivacyPolicies = 3;
         private const int MaximumCallbackBookingQuotaDaysInAdvance = 14;
         private readonly IOrganizationServiceAdapter _service;
+        private readonly IValidatorFactory _validatorFactory;
 
-        public CrmService(IOrganizationServiceAdapter service)
+        public CrmService(IOrganizationServiceAdapter service, IValidatorFactory validatorFactory)
         {
             _service = service;
+            _validatorFactory = validatorFactory;
         }
 
         public string CheckStatus()
@@ -43,7 +46,7 @@ namespace GetIntoTeachingApi.Services
                 .Where((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime") > DateTime.UtcNow &&
                                    entity.GetAttributeValue<DateTime>("dfe_starttime") < DateTime.UtcNow.AddDays(MaximumCallbackBookingQuotaDaysInAdvance))
                 .OrderBy((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime"))
-                .Select((entity) => new CallbackBookingQuota(entity, this))
+                .Select((entity) => new CallbackBookingQuota(entity, this, _validatorFactory))
                 .ToList()
                 .Where((quota) => quota.IsAvailable); // Doing this in the Dynamics query throws an exception, though I'm not sure why.
         }
@@ -52,7 +55,7 @@ namespace GetIntoTeachingApi.Services
         {
             return _service.CreateQuery("dfe_callbackbookingquota", Context())
                 .Where((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime") == scheduledAt)
-                .Select((entity) => new CallbackBookingQuota(entity, this))
+                .Select((entity) => new CallbackBookingQuota(entity, this, _validatorFactory))
                 .FirstOrDefault();
         }
 
@@ -63,7 +66,7 @@ namespace GetIntoTeachingApi.Services
                     entity.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int)PrivacyPolicy.Type.Web &&
                     entity.GetAttributeValue<bool>("dfe_active"))
                 .OrderByDescending((policy) => policy.GetAttributeValue<DateTime>("createdon"))
-                .Select((entity) => new PrivacyPolicy(entity, this))
+                .Select((entity) => new PrivacyPolicy(entity, this, _validatorFactory))
                 .Take(MaximumNumberOfPrivacyPolicies);
         }
 
@@ -89,7 +92,7 @@ namespace GetIntoTeachingApi.Services
 
             LoadCandidateRelationships(entity, context);
 
-            return new Candidate(entity, this);
+            return new Candidate(entity, this, _validatorFactory);
         }
 
         public IEnumerable<Candidate> MatchCandidates(string magicLinkToken)
@@ -109,7 +112,7 @@ namespace GetIntoTeachingApi.Services
                 LoadCandidateRelationships(entity, context);
             }
 
-            return entities.Select(e => new Candidate(e, this));
+            return entities.Select(e => new Candidate(e, this, _validatorFactory));
         }
 
         public Candidate GetCandidate(Guid id)
@@ -118,7 +121,7 @@ namespace GetIntoTeachingApi.Services
                 .FirstOrDefault(c => c.GetAttributeValue<EntityReference>("contactid") != null &&
                 c.GetAttributeValue<EntityReference>("contactid").Id == id);
 
-            return entity == null ? null : new Candidate(entity, this);
+            return entity == null ? null : new Candidate(entity, this, _validatorFactory);
         }
 
         public IEnumerable<Candidate> GetCandidatesPendingMagicLinkTokenGeneration(int limit = 10)
@@ -127,7 +130,7 @@ namespace GetIntoTeachingApi.Services
                 .Where(entity => entity.GetAttributeValue<OptionSetValue>("dfe_websitemltokenstatus") != null &&
                     entity.GetAttributeValue<OptionSetValue>("dfe_websitemltokenstatus").Value == (int)Candidate.MagicLinkTokenStatus.Pending)
                 .Take(limit)
-                .Select(e => new Candidate(e, this));
+                .Select(e => new Candidate(e, this, _validatorFactory));
         }
 
         public bool CandidateAlreadyHasLocalEventSubscriptionType(Guid candidateId)
@@ -224,7 +227,7 @@ namespace GetIntoTeachingApi.Services
 
             var entities = _service.RetrieveMultiple(query);
 
-            return entities.Select((entity) => new TeachingEvent(entity, this)).ToList();
+            return entities.Select((entity) => new TeachingEvent(entity, this, _validatorFactory)).ToList();
         }
 
         private void LoadCandidateRelationships(Entity entity, OrganizationServiceContext context)
