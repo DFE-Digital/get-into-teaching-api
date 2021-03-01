@@ -148,13 +148,13 @@ namespace GetIntoTeachingApi.Models
                 PlanningToRetakeGcseEnglishId = PlanningToRetakeGcseMathsAndEnglishId,
                 PlanningToRetakeGcseMathsId = PlanningToRetakeGcseMathsAndEnglishId,
                 PlanningToRetakeGcseScienceId = PlanningToRetakeGcseScienceId,
-                ChannelId = CandidateId == null ? (int?)Candidate.Channel.TeacherTrainingAdviser : null,
                 EligibilityRulesPassed = "false",
                 AdviserRequirementId = null,
                 AdviserEligibilityId = null,
                 AssignmentStatusId = null,
             };
 
+            ConfigureChannel(candidate);
             ConfigureGcseStatus(candidate);
             AcceptPrivacyPolicy(candidate);
             SchedulePhoneCall(candidate);
@@ -168,6 +168,14 @@ namespace GetIntoTeachingApi.Models
             return candidate;
         }
 
+        private void ConfigureChannel(Candidate candidate)
+        {
+            if (CandidateId == null)
+            {
+                candidate.ChannelId = (int?)Candidate.Channel.TeacherTrainingAdviser;
+            }
+        }
+
         private void DefaultPreferredEducationPhase(Candidate candidate)
         {
             if (candidate.IsReturningToTeaching())
@@ -178,12 +186,10 @@ namespace GetIntoTeachingApi.Models
 
         private void DefaultPreferredTeachingSubjectId(Candidate candidate)
         {
-            if (candidate.PreferredEducationPhaseId != (int)Candidate.PreferredEducationPhase.Primary)
+            if (candidate.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Primary)
             {
-                return;
+                candidate.PreferredTeachingSubjectId = LookupItem.PrimaryTeachingSubjectId;
             }
-
-            candidate.PreferredTeachingSubjectId = LookupItem.PrimaryTeachingSubjectId;
         }
 
         private void ConfigureGcseStatus(Candidate candidate)
@@ -260,8 +266,6 @@ namespace GetIntoTeachingApi.Models
                     SubjectTaughtId = SubjectTaughtId,
                     EducationPhaseId = (int)CandidatePastTeachingPosition.EducationPhase.Secondary,
                 });
-
-                candidate.PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary;
             }
         }
 

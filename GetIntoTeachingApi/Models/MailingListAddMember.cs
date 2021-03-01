@@ -88,15 +88,23 @@ namespace GetIntoTeachingApi.Models
                 LastName = LastName,
                 AddressPostcode = AddressPostcode,
                 Telephone = Telephone,
-                ChannelId = CandidateId == null ? ChannelId ?? (int?)Candidate.Channel.MailingList : null,
                 EligibilityRulesPassed = "false",
             };
 
+            ConfigureChannel(candidate);
             ConfigureSubscriptions(candidate);
             AddQualification(candidate);
             AcceptPrivacyPolicy(candidate);
 
             return candidate;
+        }
+
+        private void ConfigureChannel(Candidate candidate)
+        {
+            if (CandidateId == null)
+            {
+                candidate.ChannelId = ChannelId ?? (int?)Candidate.Channel.MailingList;
+            }
         }
 
         private void AddQualification(Candidate candidate)
