@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
@@ -12,8 +16,15 @@ using Microsoft.Xrm.Sdk.Client;
 
 namespace GetIntoTeachingApi.Models
 {
-    public class BaseModel
+    public class BaseModel : INotifyPropertyChanged
     {
+        private readonly string[] _propertyNamesExcludedFromChangeTracking = new string[] { "ChangeTrackingEnabled", "ChangedPropertyNames" };
+
+        [NotMapped]
+        public HashSet<string> ChangedPropertyNames { get; set; } = new HashSet<string>();
+        [JsonIgnore]
+        [NotMapped]
+        public bool ChangeTrackingEnabled { get; set; } = true;
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid? Id { get; set; }
 
@@ -27,9 +38,12 @@ namespace GetIntoTeachingApi.Models
 
             MapFieldAttributesFromEntity(entity);
             MapRelationshipAttributesFromEntity(entity, crm, vaidatorFactory);
-
             NullifyInvalidFieldAttributes(vaidatorFactory);
         }
+
+        #pragma warning disable 67
+        public event PropertyChangedEventHandler PropertyChanged;
+        #pragma warning restore 67
 
         public static string[] EntityFieldAttributeNames(Type type)
         {
@@ -83,6 +97,14 @@ namespace GetIntoTeachingApi.Models
             return true;
         }
 
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            if (ChangeTrackingEnabled && !_propertyNamesExcludedFromChangeTracking.Any(p => p == propertyName))
+            {
+                ChangedPropertyNames.Add(propertyName);
+            }
+        }
+
         private static IList NewListOfType(Type type)
         {
             var listType = typeof(List<>).MakeGenericType(type);
@@ -130,6 +152,18 @@ namespace GetIntoTeachingApi.Models
                     property.SetValue(this, null);
                 }
             }
+        }
+
+        [OnDeserializing]
+        private void StopChangeTracking(StreamingContext context)
+        {
+            ChangeTrackingEnabled = false;
+        }
+
+        [OnDeserialized]
+        private void StartChangeTracking(StreamingContext context)
+        {
+            ChangeTrackingEnabled = true;
         }
 
         private void MapFieldAttributesFromEntity(Entity entity)
