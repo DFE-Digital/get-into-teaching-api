@@ -205,17 +205,18 @@ namespace GetIntoTeachingApi.Models
             {
                 var attribute = EntityFieldAttribute(property);
                 var value = property.GetValue(this);
+                var valueChanged = ChangedPropertyNames.Contains(property.Name);
 
-                if (attribute == null || value == null)
+                if (attribute == null || !valueChanged)
                 {
                     continue;
                 }
 
-                if (attribute.Type == typeof(EntityReference))
+                if (attribute.Type == typeof(EntityReference) && value != null)
                 {
                     entity[attribute.Name] = new EntityReference(attribute.Reference, (Guid)value);
                 }
-                else if (attribute.Type == typeof(OptionSetValue))
+                else if (attribute.Type == typeof(OptionSetValue) && value != null)
                 {
                     entity[attribute.Name] = new OptionSetValue((int)value);
                 }
@@ -232,8 +233,9 @@ namespace GetIntoTeachingApi.Models
             {
                 var attribute = EntityRelationshipAttribute(property);
                 var value = property.GetValue(this);
+                var valueChanged = ChangedPropertyNames.Contains(property.Name);
 
-                if (attribute == null || value == null)
+                if (attribute == null || !valueChanged || value == null)
                 {
                     continue;
                 }

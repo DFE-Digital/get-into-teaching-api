@@ -349,7 +349,7 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void ToEntity_NewWithExistingRelationships()
+        public void ToEntity_WithNewThatHasExistingRelationships()
         {
             var mock = new MockModel()
             {
@@ -369,39 +369,47 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void ToEntity_WithNullProperties()
+        public void ToEntity_WritesNullProperties()
         {
             var mock = new MockModel()
             {
                 Id = Guid.NewGuid(),
-                Field1 = Guid.NewGuid(),
-                Field2 = 1,
+                Field1 = null,
+                Field2 = null,
                 Field3 = null,
-                RelatedMock = null,
-                RelatedMocks = null,
             };
 
             var mockEntity = new Entity("mock", (Guid)mock.Id);
-            var relatedMockEntity = new Entity("mock") { EntityState = EntityState.Created };
 
             _mockService.Setup(m => m.BlankExistingEntity("mock", mockEntity.Id, _context)).Returns(mockEntity);
-            _mockService.Setup(m => m.NewEntity("relatedMock", _context)).Returns(relatedMockEntity);
 
             mock.ToEntity(_crm, _context);
 
-            mockEntity.GetAttributeValue<EntityReference>("dfe_field1").Id.Should().Be((Guid)mock.Field1);
-            mockEntity.GetAttributeValue<EntityReference>("dfe_field1").LogicalName.Should().Be("dfe_list");
-            mockEntity.GetAttributeValue<OptionSetValue>("dfe_field2").Value.Should().Be(mock.Field2);
-            mockEntity.GetAttributeValue<string>("dfe_field3").Should().Be(mock.Field3);
+            mockEntity.GetAttributeValue<EntityReference>("dfe_field1").Should().BeNull();
+            mockEntity.GetAttributeValue<OptionSetValue>("dfe_field2").Should().BeNull();
+            mockEntity.GetAttributeValue<string>("dfe_field3").Should().BeNull();
 
-            _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mock"),
-                relatedMockEntity, _context), Times.Never());
-            _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mocks"),
-                relatedMockEntity, _context), Times.Never());
+            var numberOfChangedAttributes = mockEntity.Attributes.Count();
+            numberOfChangedAttributes.Should().Be(3);
         }
 
         [Fact]
-        public void ToEntity_WithNullRelationship()
+        public void ToEntity_DoesNotWriteUnchangedProperties()
+        {
+            var mock = new MockModel() { Id = Guid.NewGuid(), Field1 = null, Field3 = "new value" };
+
+            var mockEntity = new Entity("mock", (Guid)mock.Id);
+
+            _mockService.Setup(m => m.BlankExistingEntity("mock", mockEntity.Id, _context)).Returns(mockEntity);
+
+            mock.ToEntity(_crm, _context);
+
+            var numberOfChangedAttributes = mockEntity.Attributes.Count();
+            numberOfChangedAttributes.Should().Be(2);
+        }
+
+        [Fact]
+        public void ToEntity_DoesNotWriteNullRelationships()
         {
             var mock = new MockModel() { Id = Guid.NewGuid() };
 
@@ -416,7 +424,7 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void ToEntity_RelatedModelToEntityIsNull()
+        public void ToEntity_WhenRelatedModelToEntityReturnsNull_DoesNotWriteNullRelationship()
         {
             var relatedMock = new Mock<MockRelatedModel>();
             var mock = new MockModel()
