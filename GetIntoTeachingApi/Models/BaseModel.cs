@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
+using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
@@ -20,11 +21,14 @@ namespace GetIntoTeachingApi.Models
         {
         }
 
-        public BaseModel(Entity entity, ICrmService crm)
+        public BaseModel(Entity entity, ICrmService crm, IValidatorFactory vaidatorFactory)
         {
             Id = entity.Id;
+
             MapFieldAttributesFromEntity(entity);
-            MapRelationshipAttributesFromEntity(entity, crm);
+            MapRelationshipAttributesFromEntity(entity, crm, vaidatorFactory);
+
+            NullifyInvalidFieldAttributes(vaidatorFactory);
         }
 
         public static string[] EntityFieldAttributeNames(Type type)
@@ -99,6 +103,33 @@ namespace GetIntoTeachingApi.Models
         {
             input = input?.Trim();
             return string.IsNullOrWhiteSpace(input) ? null : input;
+        }
+
+        private void NullifyInvalidFieldAttributes(IValidatorFactory validatorFactory)
+        {
+            var validator = validatorFactory.GetValidator(GetType());
+
+            if (validator == null)
+            {
+                return;
+            }
+
+            var result = validator.Validate(this);
+
+            foreach (var property in GetProperties(this))
+            {
+                var attribute = EntityFieldAttribute(property);
+
+                if (attribute == null)
+                {
+                    continue;
+                }
+
+                if (result.Errors.Any(e => e.PropertyName == property.Name))
+                {
+                    property.SetValue(this, null);
+                }
+            }
         }
 
         private void MapFieldAttributesFromEntity(Entity entity)
@@ -190,7 +221,7 @@ namespace GetIntoTeachingApi.Models
             }
         }
 
-        private void MapRelationshipAttributesFromEntity(Entity entity, ICrmService crm)
+        private void MapRelationshipAttributesFromEntity(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
         {
             foreach (var property in GetProperties(this))
             {
@@ -209,7 +240,7 @@ namespace GetIntoTeachingApi.Models
                     continue;
                 }
 
-                var relatedModels = relatedEntities.Select(e => Activator.CreateInstance(attribute.Type, e, crm));
+                var relatedModels = relatedEntities.Select(e => Activator.CreateInstance(attribute.Type, e, crm, validatorFactory));
 
                 if (typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
                 {

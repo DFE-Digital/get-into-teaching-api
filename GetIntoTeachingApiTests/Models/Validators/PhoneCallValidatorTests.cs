@@ -42,27 +42,15 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_ScheduledAtInPast_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(phoneCall => phoneCall.ScheduledAt, DateTime.UtcNow.AddMinutes(-1));
-        }
-
-        [Fact]
-        public void Validate_ScheduledAtInFuture_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(phoneCall => phoneCall.ScheduledAt, DateTime.UtcNow.AddMinutes(1));
-        }
-
-        [Fact]
         public void Validate_ChannelIdIsInvalid_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(phoneCall => phoneCall.ChannelId, 123);
         }
 
         [Fact]
-        public void Validate_ChannelIdIsNull_HasError()
+        public void Validate_ChannelIdIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(phoneCall => phoneCall.ChannelId, null as int?);
+            _validator.ShouldNotHaveValidationErrorFor(phoneCall => phoneCall.ChannelId, null as int?);
         }
     }
 }

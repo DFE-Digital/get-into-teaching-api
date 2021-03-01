@@ -31,13 +31,10 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Must be true or false (as string values).");
 
             RuleFor(candidate => candidate.PhoneCall).SetValidator(new PhoneCallValidator(store)).Unless(candidate => candidate.PhoneCall == null);
-            RuleFor(candidate => candidate.PrivacyPolicy).NotNull().SetValidator(new CandidatePrivacyPolicyValidator(store));
+            RuleFor(candidate => candidate.PrivacyPolicy).SetValidator(new CandidatePrivacyPolicyValidator(store));
             RuleForEach(candidate => candidate.Qualifications).SetValidator(new CandidateQualificationValidator(store));
             RuleForEach(candidate => candidate.PastTeachingPositions).SetValidator(new CandidatePastTeachingPositionValidator(store));
             RuleForEach(candidate => candidate.TeachingEventRegistrations).SetValidator(new TeachingEventRegistrationValidator(store));
-            RuleFor(candidate => candidate.TeachingEventRegistrations)
-                .Must(registrations => registrations.Select(s => s.EventId).Distinct().Count() == registrations.Count)
-                .WithMessage("Must not contain multiple registrations for the same event.");
 
             RuleFor(candidate => candidate.PreferredTeachingSubjectId)
                 .SetValidator(new LookupItemIdValidator("dfe_teachingsubjectlist", store))
@@ -54,10 +51,6 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.ChannelId)
                 .SetValidator(new PickListItemIdValidator("contact", "dfe_channelcreation", store))
                 .Unless(candidate => candidate.Id != null);
-            RuleFor(candidate => candidate.ChannelId)
-                .Must(id => id == null)
-                .Unless(candidate => candidate.Id == null)
-                .WithMessage("You cannot change the channel of an existing candidate.");
             RuleFor(candidate => candidate.HasGcseEnglishId)
                 .SetValidator(new PickListItemIdValidator("contact", "dfe_websitehasgcseenglish", store))
                 .Unless(candidate => candidate.HasGcseEnglishId == null);
