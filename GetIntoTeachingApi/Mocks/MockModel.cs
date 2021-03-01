@@ -6,7 +6,10 @@ using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
 
-namespace GetIntoTeachingApiTests.Mocks
+// Ideally this would be in the test project, however the Fody weavers
+// don't appear to run against the models in the test project so they
+// are included here.
+namespace GetIntoTeachingApi.Mocks
 {
     [Entity("mock")]
     public class MockModel : BaseModel
@@ -24,18 +27,14 @@ namespace GetIntoTeachingApiTests.Mocks
         [EntityRelationship("dfe_mock_dfe_relatedmock_mocks", typeof(MockRelatedModel))]
         public IEnumerable<MockRelatedModel> RelatedMocks { get; set; }
 
-        public MockModel() : base() { }
+        public MockModel()
+            : base()
+        {
+        }
 
-        public MockModel(Entity entity, ICrmService crm, IValidatorFactory validatorFactory) :
-            base(entity, crm, validatorFactory) { }
-    }
-
-    [Entity("relatedMock")]
-    public class MockRelatedModel : BaseModel
-    {
-        public MockRelatedModel() : base() { }
-
-        public MockRelatedModel(Entity entity, ICrmService crm, IValidatorFactory validatorFactory) :
-            base(entity, crm, validatorFactory) { }
+        public MockModel(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
+            : base(entity, crm, validatorFactory)
+        {
+        }
     }
 }

@@ -50,6 +50,7 @@
 	  <Folder Include="Validators\" />
 	  <Folder Include="Fixtures\" />
 	  <Folder Include="JsonConverters\" />
+	  <Folder Include="Mocks\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="Fixtures\clients.yml">
