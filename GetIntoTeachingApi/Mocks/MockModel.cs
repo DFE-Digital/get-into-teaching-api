@@ -26,6 +26,7 @@ namespace GetIntoTeachingApi.Mocks
         public MockRelatedModel RelatedMock { get; set; }
         [EntityRelationship("dfe_mock_dfe_relatedmock_mocks", typeof(MockRelatedModel))]
         public IEnumerable<MockRelatedModel> RelatedMocks { get; set; }
+        public string CompoundField => $"Field 4: {Field4}";
 
         public MockModel()
             : base()

@@ -103,6 +103,72 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
+        public void ChangedPropertyNames_UpdatesAsExpected()
+        {
+            var model = new MockModel();
+
+            // Empty on init.
+            model.ChangedPropertyNames.Should().BeEmpty();
+
+            // Null to value.
+            model.Field3 = "test";
+            model.ChangedPropertyNames.Should().ContainSingle("Field3");
+
+            // Value to null.
+            model.Field3 = null;
+            model.ChangedPropertyNames.Should().ContainSingle("Field3");
+
+            // Second property change.
+            model.Field2 = 0;
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Field3", "Field2" });
+
+            // Computed attributes.
+            model.Field4 = "test";
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Field3", "Field2", "Field4", "CompoundField" });
+
+            // Not changed to null.
+            model.Field1 = null;
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Field3", "Field2", "Field4", "CompoundField", "Field1" });
+
+            // Init with changes.
+            model = new MockModel() { Field3 = "test", Field2 = 0 };
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Field3", "Field2" });
+        }
+
+        [Fact]
+        public void ChangedPropertyNames_DuringDeserialization_IsNotAltered()
+        {
+            // If you deserialize an object with change tracking enabled
+            // all of the attributes are considered 'changed' and the serialized
+            // ChangedPropertyNames are lost, which is not what we want.
+            var model = new MockModel() { Id = Guid.NewGuid(), Field3 = "test" };
+
+            model.ChangeTrackingEnabled = false;
+            model.Field4 = "test";
+            model.ChangeTrackingEnabled = true;
+
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3" });
+
+            // Test using Newtonsoft.Json as Hangfire uses this (we manually disable tracking during deserialization).
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(model);
+            var deserializedModel = Newtonsoft.Json.JsonConvert.DeserializeObject<MockModel>(json);
+
+            deserializedModel.Id.Should().Be(model.Id);
+            deserializedModel.Field3.Should().Be(model.Field3);
+            deserializedModel.Field4.Should().Be(model.Field4);
+            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3" });
+
+            // Test using System.Text.Json as this is the app default (works correctly out of the box with tracking enabled).
+            json = System.Text.Json.JsonSerializer.Serialize(model);
+            deserializedModel = System.Text.Json.JsonSerializer.Deserialize<MockModel>(json);
+
+            deserializedModel.Id.Should().Be(model.Id);
+            deserializedModel.Field3.Should().Be(model.Field3);
+            deserializedModel.Field4.Should().Be(model.Field4);
+            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3" });
+        }
+
+        [Fact]
         public void Constructor_WithEntity()
         {
             var entity = new Entity("mock") { Id = Guid.NewGuid() };
