@@ -233,9 +233,8 @@ namespace GetIntoTeachingApi.Models
             {
                 var attribute = EntityRelationshipAttribute(property);
                 var value = property.GetValue(this);
-                var valueChanged = ChangedPropertyNames.Contains(property.Name);
 
-                if (attribute == null || !valueChanged || value == null)
+                if (attribute == null || value == null)
                 {
                     continue;
                 }
