@@ -25,9 +25,11 @@ namespace GetIntoTeachingApi.Models
 
         public BaseModel()
         {
+            InitChangedPropertyNames();
         }
 
         public BaseModel(Entity entity, ICrmService crm, IValidatorFactory vaidatorFactory)
+            : this()
         {
             Id = entity.Id;
 
@@ -120,6 +122,19 @@ namespace GetIntoTeachingApi.Models
         {
             input = input?.Trim();
             return string.IsNullOrWhiteSpace(input) ? null : input;
+        }
+
+        private void InitChangedPropertyNames()
+        {
+            // Adds any properties that are defined with a value in the model.
+            var nonNullPropertyNames = GetType().GetProperties()
+                .Where(p => p.CanWrite && p.GetValue(this) != null)
+                .Select(p => p.Name);
+
+            foreach (var name in nonNullPropertyNames)
+            {
+                NotifyPropertyChanged(name);
+            }
         }
 
         private void NullifyInvalidFieldAttributes(IValidatorFactory validatorFactory)

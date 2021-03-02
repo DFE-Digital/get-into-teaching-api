@@ -107,32 +107,32 @@ namespace GetIntoTeachingApiTests.Models
         {
             var model = new MockModel();
 
-            // Empty on init.
-            model.ChangedPropertyNames.Should().BeEmpty();
+            // Contains fields defined with a value on init.
+            model.ChangedPropertyNames.Should().ContainSingle("FieldDefinedWithValue");
 
             // Null to value.
             model.Field3 = "test";
-            model.ChangedPropertyNames.Should().ContainSingle("Field3");
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "FieldDefinedWithValue", "Field3" });
 
             // Value to null.
             model.Field3 = null;
-            model.ChangedPropertyNames.Should().ContainSingle("Field3");
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "FieldDefinedWithValue", "Field3" });
 
             // Second property change.
             model.Field2 = 0;
-            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Field3", "Field2" });
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "FieldDefinedWithValue", "Field3", "Field2" });
 
             // Computed attributes.
             model.Field4 = "test";
-            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Field3", "Field2", "Field4", "CompoundField" });
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "FieldDefinedWithValue", "Field3", "Field2", "Field4", "CompoundField" });
 
             // Not changed to null.
             model.Field1 = null;
-            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Field3", "Field2", "Field4", "CompoundField", "Field1" });
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "FieldDefinedWithValue", "Field3", "Field2", "Field4", "CompoundField", "Field1" });
 
             // Init with changes.
             model = new MockModel() { Field3 = "test", Field2 = 0 };
-            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Field3", "Field2" });
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "FieldDefinedWithValue", "Field3", "Field2" });
         }
 
         [Fact]
@@ -143,7 +143,7 @@ namespace GetIntoTeachingApiTests.Models
             // during the deserialization process when writing to attributes).
             var model = new MockModel() { Id = Guid.NewGuid(), Field3 = "test" };
 
-            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3" });
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3", "FieldDefinedWithValue" });
 
             // Test using System.Text.Json as this is the app default (works correctly out of the box with tracking enabled).
             var json = System.Text.Json.JsonSerializer.Serialize(model);
@@ -152,7 +152,7 @@ namespace GetIntoTeachingApiTests.Models
             deserializedModel.Id.Should().Be(model.Id);
             deserializedModel.Field3.Should().Be(model.Field3);
             deserializedModel.Field4.Should().Be(model.Field4);
-            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3" });
+            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3", "FieldDefinedWithValue" });
         }
 
         [Fact]
