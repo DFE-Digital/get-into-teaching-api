@@ -143,11 +143,12 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void Candidate_ChannelIdWhenCandidateIdIsNotNull_IsNull()
+        public void Candidate_ChannelIdWhenCandidateIdIsNotNull_IsNotChanged()
         {
             var request = new MailingListAddMember() { CandidateId = Guid.NewGuid() };
 
             request.Candidate.ChannelId.Should().BeNull();
+            request.Candidate.ChangedPropertyNames.Should().NotContain("ChannelId");
         }
 
         [Fact]

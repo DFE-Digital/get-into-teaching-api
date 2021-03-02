@@ -8,9 +8,9 @@ using FluentValidation;
 using FluentValidation.Results;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
+using GetIntoTeachingApi.Mocks;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
-using GetIntoTeachingApiTests.Mocks;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Moq;
@@ -100,6 +100,72 @@ namespace GetIntoTeachingApiTests.Models
                 var entity = new Entity();
                 Activator.CreateInstance(subType, entity, new Mock<ICrmService>().Object, _mockValidatorFactory.Object);
             }
+        }
+
+        [Fact]
+        public void ChangedPropertyNames_UpdatesAsExpected()
+        {
+            var model = new MockModel();
+
+            // Empty on init.
+            model.ChangedPropertyNames.Should().BeEmpty();
+
+            // Null to value.
+            model.Field3 = "test";
+            model.ChangedPropertyNames.Should().ContainSingle("Field3");
+
+            // Value to null.
+            model.Field3 = null;
+            model.ChangedPropertyNames.Should().ContainSingle("Field3");
+
+            // Second property change.
+            model.Field2 = 0;
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Field3", "Field2" });
+
+            // Computed attributes.
+            model.Field4 = "test";
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Field3", "Field2", "Field4", "CompoundField" });
+
+            // Not changed to null.
+            model.Field1 = null;
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Field3", "Field2", "Field4", "CompoundField", "Field1" });
+
+            // Init with changes.
+            model = new MockModel() { Field3 = "test", Field2 = 0 };
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Field3", "Field2" });
+        }
+
+        [Fact]
+        public void ChangedPropertyNames_DuringDeserialization_IsNotAltered()
+        {
+            // If you deserialize an object with change tracking enabled
+            // all of the attributes are considered 'changed' and the serialized
+            // ChangedPropertyNames are lost, which is not what we want.
+            var model = new MockModel() { Id = Guid.NewGuid(), Field3 = "test" };
+
+            model.ChangeTrackingEnabled = false;
+            model.Field4 = "test";
+            model.ChangeTrackingEnabled = true;
+
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3" });
+
+            // Test using Newtonsoft.Json as Hangfire uses this (we manually disable tracking during deserialization).
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(model);
+            var deserializedModel = Newtonsoft.Json.JsonConvert.DeserializeObject<MockModel>(json);
+
+            deserializedModel.Id.Should().Be(model.Id);
+            deserializedModel.Field3.Should().Be(model.Field3);
+            deserializedModel.Field4.Should().Be(model.Field4);
+            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3" });
+
+            // Test using System.Text.Json as this is the app default (works correctly out of the box with tracking enabled).
+            json = System.Text.Json.JsonSerializer.Serialize(model);
+            deserializedModel = System.Text.Json.JsonSerializer.Deserialize<MockModel>(json);
+
+            deserializedModel.Id.Should().Be(model.Id);
+            deserializedModel.Field3.Should().Be(model.Field3);
+            deserializedModel.Field4.Should().Be(model.Field4);
+            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3" });
         }
 
         [Fact]
@@ -283,7 +349,7 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void ToEntity_NewWithExistingRelationships()
+        public void ToEntity_WithNewThatHasExistingRelationships()
         {
             var mock = new MockModel()
             {
@@ -303,39 +369,47 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void ToEntity_WithNullProperties()
+        public void ToEntity_WritesNullProperties()
         {
             var mock = new MockModel()
             {
                 Id = Guid.NewGuid(),
-                Field1 = Guid.NewGuid(),
-                Field2 = 1,
+                Field1 = null,
+                Field2 = null,
                 Field3 = null,
-                RelatedMock = null,
-                RelatedMocks = null,
             };
 
             var mockEntity = new Entity("mock", (Guid)mock.Id);
-            var relatedMockEntity = new Entity("mock") { EntityState = EntityState.Created };
 
             _mockService.Setup(m => m.BlankExistingEntity("mock", mockEntity.Id, _context)).Returns(mockEntity);
-            _mockService.Setup(m => m.NewEntity("relatedMock", _context)).Returns(relatedMockEntity);
 
             mock.ToEntity(_crm, _context);
 
-            mockEntity.GetAttributeValue<EntityReference>("dfe_field1").Id.Should().Be((Guid)mock.Field1);
-            mockEntity.GetAttributeValue<EntityReference>("dfe_field1").LogicalName.Should().Be("dfe_list");
-            mockEntity.GetAttributeValue<OptionSetValue>("dfe_field2").Value.Should().Be(mock.Field2);
-            mockEntity.GetAttributeValue<string>("dfe_field3").Should().Be(mock.Field3);
+            mockEntity.GetAttributeValue<EntityReference>("dfe_field1").Should().BeNull();
+            mockEntity.GetAttributeValue<OptionSetValue>("dfe_field2").Should().BeNull();
+            mockEntity.GetAttributeValue<string>("dfe_field3").Should().BeNull();
 
-            _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mock"),
-                relatedMockEntity, _context), Times.Never());
-            _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mocks"),
-                relatedMockEntity, _context), Times.Never());
+            var numberOfChangedAttributes = mockEntity.Attributes.Count();
+            numberOfChangedAttributes.Should().Be(3);
         }
 
         [Fact]
-        public void ToEntity_WithNullRelationship()
+        public void ToEntity_DoesNotWriteUnchangedProperties()
+        {
+            var mock = new MockModel() { Id = Guid.NewGuid(), Field1 = null, Field3 = "new value" };
+
+            var mockEntity = new Entity("mock", (Guid)mock.Id);
+
+            _mockService.Setup(m => m.BlankExistingEntity("mock", mockEntity.Id, _context)).Returns(mockEntity);
+
+            mock.ToEntity(_crm, _context);
+
+            var numberOfChangedAttributes = mockEntity.Attributes.Count();
+            numberOfChangedAttributes.Should().Be(2);
+        }
+
+        [Fact]
+        public void ToEntity_DoesNotWriteNullRelationships()
         {
             var mock = new MockModel() { Id = Guid.NewGuid() };
 
@@ -350,7 +424,7 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void ToEntity_RelatedModelToEntityIsNull()
+        public void ToEntity_WhenRelatedModelToEntityReturnsNull_DoesNotWriteNullRelationship()
         {
             var relatedMock = new Mock<MockRelatedModel>();
             var mock = new MockModel()

@@ -91,9 +91,9 @@ namespace GetIntoTeachingApi.Models
                 LastName = LastName,
                 AddressPostcode = AddressPostcode,
                 Telephone = Telephone,
-                ChannelId = CandidateId == null ? (int?)Candidate.Channel.Event : null,
             };
 
+            ConfigureChannel(candidate);
             AddTeachingEventRegistration(candidate);
             AddQualification(candidate);
             AcceptPrivacyPolicy(candidate);
@@ -102,14 +102,25 @@ namespace GetIntoTeachingApi.Models
             return candidate;
         }
 
+        private void ConfigureChannel(Candidate candidate)
+        {
+            if (CandidateId == null)
+            {
+                candidate.ChannelId = (int?)Candidate.Channel.Event;
+            }
+        }
+
         private void AddQualification(Candidate candidate)
         {
-            candidate.Qualifications.Add(new CandidateQualification()
+            if (DegreeStatusId != null)
             {
-                Id = QualificationId,
-                DegreeStatusId = DegreeStatusId,
-                TypeId = (int)CandidateQualification.DegreeType.Degree,
-            });
+                candidate.Qualifications.Add(new CandidateQualification()
+                {
+                    Id = QualificationId,
+                    DegreeStatusId = DegreeStatusId,
+                    TypeId = (int)CandidateQualification.DegreeType.Degree,
+                });
+            }
         }
 
         private void ConfigureSubscriptions(Candidate candidate)
