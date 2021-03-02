@@ -72,5 +72,12 @@ namespace GetIntoTeachingApiTests.Services
             _metrics.VerifiedTotps.Name.Should().Be("api_verified_totps");
             _metrics.VerifiedTotps.LabelNames.Should().BeEquivalentTo(new[] { "candidate_id", "totp", "valid" });
         }
+
+        [Fact]
+        public void TeachingEventSearchResults_ReturnsMetric()
+        {
+            _metrics.TeachingEventSearchResults.Name.Should().Be("api_teaching_event_search_results_count");
+            _metrics.TeachingEventSearchResults.LabelNames.Should().BeEquivalentTo(new[] { "type_id", "radius" });
+        }
     }
 }

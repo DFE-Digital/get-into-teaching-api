@@ -23,6 +23,7 @@ namespace GetIntoTeachingApi.Controllers
         private readonly ICandidateAccessTokenService _tokenService;
         private readonly ICrmService _crm;
         private readonly IStore _store;
+        private readonly IMetricService _metrics;
         private readonly IBackgroundJobClient _jobClient;
         private readonly ILogger<TeachingEventsController> _logger;
 
@@ -31,11 +32,13 @@ namespace GetIntoTeachingApi.Controllers
             IBackgroundJobClient jobClient,
             ICandidateAccessTokenService tokenService,
             ICrmService crm,
-            ILogger<TeachingEventsController> logger)
+            ILogger<TeachingEventsController> logger,
+            IMetricService metrics)
         {
             _store = store;
             _jobClient = jobClient;
             _crm = crm;
+            _metrics = metrics;
             _tokenService = tokenService;
             _logger = logger;
         }
@@ -66,6 +69,9 @@ namespace GetIntoTeachingApi.Controllers
             }
 
             var teachingEvents = await _store.SearchTeachingEventsAsync(request);
+
+            _metrics.TeachingEventSearchResults.WithLabels(request.TypeId.ToString(), request.Radius.ToString()).Observe(teachingEvents.Count());
+
             return Ok(GroupTeachingEventsByType(teachingEvents, quantityPerType));
         }
 
