@@ -6,8 +6,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
@@ -18,13 +16,10 @@ namespace GetIntoTeachingApi.Models
 {
     public class BaseModel : INotifyPropertyChanged
     {
-        private readonly string[] _propertyNamesExcludedFromChangeTracking = new string[] { "ChangeTrackingEnabled", "ChangedPropertyNames" };
+        private readonly string[] _propertyNamesExcludedFromChangeTracking = new string[] { "ChangedPropertyNames" };
 
         [NotMapped]
         public HashSet<string> ChangedPropertyNames { get; set; } = new HashSet<string>();
-        [JsonIgnore]
-        [NotMapped]
-        public bool ChangeTrackingEnabled { get; set; } = true;
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid? Id { get; set; }
 
@@ -99,7 +94,7 @@ namespace GetIntoTeachingApi.Models
 
         protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (ChangeTrackingEnabled && !_propertyNamesExcludedFromChangeTracking.Any(p => p == propertyName))
+            if (!_propertyNamesExcludedFromChangeTracking.Any(p => p == propertyName))
             {
                 ChangedPropertyNames.Add(propertyName);
             }
@@ -152,18 +147,6 @@ namespace GetIntoTeachingApi.Models
                     property.SetValue(this, null);
                 }
             }
-        }
-
-        [OnDeserializing]
-        private void StopChangeTracking(StreamingContext context)
-        {
-            ChangeTrackingEnabled = false;
-        }
-
-        [OnDeserialized]
-        private void StartChangeTracking(StreamingContext context)
-        {
-            ChangeTrackingEnabled = true;
         }
 
         private void MapFieldAttributesFromEntity(Entity entity)

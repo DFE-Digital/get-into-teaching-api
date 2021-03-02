@@ -138,29 +138,16 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void ChangedPropertyNames_DuringDeserialization_IsNotAltered()
         {
-            // If you deserialize an object with change tracking enabled
-            // all of the attributes are considered 'changed' and the serialized
-            // ChangedPropertyNames are lost, which is not what we want.
+            // Ensures the JSON serializer correctly deserializes
+            // ChangedPropertyNames (and doesn't inadvertently change it
+            // during the deserialization process when writing to attributes).
             var model = new MockModel() { Id = Guid.NewGuid(), Field3 = "test" };
-
-            model.ChangeTrackingEnabled = false;
-            model.Field4 = "test";
-            model.ChangeTrackingEnabled = true;
 
             model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3" });
 
-            // Test using Newtonsoft.Json as Hangfire uses this (we manually disable tracking during deserialization).
-            string json = Newtonsoft.Json.JsonConvert.SerializeObject(model);
-            var deserializedModel = Newtonsoft.Json.JsonConvert.DeserializeObject<MockModel>(json);
-
-            deserializedModel.Id.Should().Be(model.Id);
-            deserializedModel.Field3.Should().Be(model.Field3);
-            deserializedModel.Field4.Should().Be(model.Field4);
-            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3" });
-
             // Test using System.Text.Json as this is the app default (works correctly out of the box with tracking enabled).
-            json = System.Text.Json.JsonSerializer.Serialize(model);
-            deserializedModel = System.Text.Json.JsonSerializer.Deserialize<MockModel>(json);
+            var json = System.Text.Json.JsonSerializer.Serialize(model);
+            var deserializedModel = System.Text.Json.JsonSerializer.Deserialize<MockModel>(json);
 
             deserializedModel.Id.Should().Be(model.Id);
             deserializedModel.Field3.Should().Be(model.Field3);
