@@ -85,6 +85,7 @@ namespace GetIntoTeachingApiTests.Models
                 QualificationId = Guid.NewGuid(),
                 PreferredTeachingSubjectId = Guid.NewGuid(),
                 AcceptedPolicyId = Guid.NewGuid(),
+                DegreeStatusId = 1,
                 ConsiderationJourneyStageId = 1,
                 Email = "email@address.com",
                 FirstName = "John",
@@ -145,11 +146,20 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void Candidate_ChannelIdWhenCandidateIdIsNotNull_IsNull()
+        public void Candidate_ChannelIdWhenCandidateIdIsNotNull_IsNotChanged()
         {
             var request = new TeachingEventAddAttendee() { CandidateId = Guid.NewGuid() };
 
             request.Candidate.ChannelId.Should().BeNull();
+            request.Candidate.ChangedPropertyNames.Should().NotContain("ChannelId");
+        }
+
+        [Fact]
+        public void Candidate_DegreeStatusIdIsNull_DoesNotCreateQualification()
+        {
+            var request = new TeachingEventAddAttendee() { DegreeStatusId = null };
+
+            request.Candidate.Qualifications.Should().BeEmpty();
         }
 
         [Fact]

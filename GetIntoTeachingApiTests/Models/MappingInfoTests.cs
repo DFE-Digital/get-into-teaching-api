@@ -2,7 +2,7 @@
 using FluentAssertions;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
-using GetIntoTeachingApiTests.Mocks;
+using GetIntoTeachingApi.Mocks;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Models
@@ -25,7 +25,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Constructor_MapsClass()
         {
-            _mappingInfo.Class.Should().Be("GetIntoTeachingApiTests.Mocks.MockModel");
+            _mappingInfo.Class.Should().Be("GetIntoTeachingApi.Mocks.MockModel");
             _mappingInfo.LogicalName.Should().Be("mock");
         }
 
@@ -41,8 +41,8 @@ namespace GetIntoTeachingApiTests.Models
 
             var relationships = new Dictionary<string, IDictionary<string, string>>()
             {
-                { "RelatedMock", new Dictionary<string, string>() { { "Name", "dfe_mock_dfe_relatedmock_mock" }, { "Type", "GetIntoTeachingApiTests.Mocks.MockRelatedModel" } } },
-                { "RelatedMocks", new Dictionary<string, string>() { { "Name", "dfe_mock_dfe_relatedmock_mocks" }, { "Type", "GetIntoTeachingApiTests.Mocks.MockRelatedModel" } } },
+                { "RelatedMock", new Dictionary<string, string>() { { "Name", "dfe_mock_dfe_relatedmock_mock" }, { "Type", "GetIntoTeachingApi.Mocks.MockRelatedModel" } } },
+                { "RelatedMocks", new Dictionary<string, string>() { { "Name", "dfe_mock_dfe_relatedmock_mocks" }, { "Type", "GetIntoTeachingApi.Mocks.MockRelatedModel" } } },
             };
 
             _mappingInfo.Fields.Should().BeEquivalentTo(fields);

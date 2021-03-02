@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
@@ -12,8 +16,15 @@ using Microsoft.Xrm.Sdk.Client;
 
 namespace GetIntoTeachingApi.Models
 {
-    public class BaseModel
+    public class BaseModel : INotifyPropertyChanged
     {
+        private readonly string[] _propertyNamesExcludedFromChangeTracking = new string[] { "ChangeTrackingEnabled", "ChangedPropertyNames" };
+
+        [NotMapped]
+        public HashSet<string> ChangedPropertyNames { get; set; } = new HashSet<string>();
+        [JsonIgnore]
+        [NotMapped]
+        public bool ChangeTrackingEnabled { get; set; } = true;
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid? Id { get; set; }
 
@@ -27,9 +38,12 @@ namespace GetIntoTeachingApi.Models
 
             MapFieldAttributesFromEntity(entity);
             MapRelationshipAttributesFromEntity(entity, crm, vaidatorFactory);
-
             NullifyInvalidFieldAttributes(vaidatorFactory);
         }
+
+        #pragma warning disable 67
+        public event PropertyChangedEventHandler PropertyChanged;
+        #pragma warning restore 67
 
         public static string[] EntityFieldAttributeNames(Type type)
         {
@@ -83,6 +97,14 @@ namespace GetIntoTeachingApi.Models
             return true;
         }
 
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            if (ChangeTrackingEnabled && !_propertyNamesExcludedFromChangeTracking.Any(p => p == propertyName))
+            {
+                ChangedPropertyNames.Add(propertyName);
+            }
+        }
+
         private static IList NewListOfType(Type type)
         {
             var listType = typeof(List<>).MakeGenericType(type);
@@ -132,6 +154,18 @@ namespace GetIntoTeachingApi.Models
             }
         }
 
+        [OnDeserializing]
+        private void StopChangeTracking(StreamingContext context)
+        {
+            ChangeTrackingEnabled = false;
+        }
+
+        [OnDeserialized]
+        private void StartChangeTracking(StreamingContext context)
+        {
+            ChangeTrackingEnabled = true;
+        }
+
         private void MapFieldAttributesFromEntity(Entity entity)
         {
             foreach (var property in GetProperties(this))
@@ -171,17 +205,18 @@ namespace GetIntoTeachingApi.Models
             {
                 var attribute = EntityFieldAttribute(property);
                 var value = property.GetValue(this);
+                var valueChanged = ChangedPropertyNames.Contains(property.Name);
 
-                if (attribute == null || value == null)
+                if (attribute == null || !valueChanged)
                 {
                     continue;
                 }
 
-                if (attribute.Type == typeof(EntityReference))
+                if (attribute.Type == typeof(EntityReference) && value != null)
                 {
                     entity[attribute.Name] = new EntityReference(attribute.Reference, (Guid)value);
                 }
-                else if (attribute.Type == typeof(OptionSetValue))
+                else if (attribute.Type == typeof(OptionSetValue) && value != null)
                 {
                     entity[attribute.Name] = new OptionSetValue((int)value);
                 }
@@ -198,8 +233,9 @@ namespace GetIntoTeachingApi.Models
             {
                 var attribute = EntityRelationshipAttribute(property);
                 var value = property.GetValue(this);
+                var valueChanged = ChangedPropertyNames.Contains(property.Name);
 
-                if (attribute == null || value == null)
+                if (attribute == null || !valueChanged || value == null)
                 {
                     continue;
                 }
