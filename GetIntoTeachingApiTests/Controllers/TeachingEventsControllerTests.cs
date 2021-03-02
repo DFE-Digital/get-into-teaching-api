@@ -27,6 +27,7 @@ namespace GetIntoTeachingApiTests.Controllers
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly Mock<IStore> _mockStore;
         private readonly Mock<ILogger<TeachingEventsController>> _mockLogger;
+        private readonly IMetricService _metrics;
         private readonly TeachingEventsController _controller;
         private readonly ExistingCandidateRequest _request;
 
@@ -38,8 +39,9 @@ namespace GetIntoTeachingApiTests.Controllers
             _mockStore = new Mock<IStore>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
             _mockLogger = new Mock<ILogger<TeachingEventsController>>();
+            _metrics = new MetricService();
             _controller = new TeachingEventsController(_mockStore.Object, _mockJobClient.Object,
-                _mockTokenService.Object, _mockCrm.Object, _mockLogger.Object);
+                _mockTokenService.Object, _mockCrm.Object, _mockLogger.Object, _metrics);
         }
 
         [Fact]
@@ -131,6 +133,8 @@ namespace GetIntoTeachingApiTests.Controllers
             result.Last().TeachingEvents.Count().Should().Be(1);
 
             _mockLogger.VerifyInformationWasCalled("SearchGroupedByType: KY12 8FG");
+
+            _metrics.TeachingEventSearchResults.WithLabels(new[] { request.TypeId.ToString(), request.Radius.ToString() }).Count.Should().Be(1);
         }
 
         [Fact]
