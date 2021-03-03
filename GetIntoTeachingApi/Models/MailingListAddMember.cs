@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Text.Json.Serialization;
-using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
 {
-    [Loggable]
     public class MailingListAddMember
     {
         public Guid? CandidateId { get; set; }
@@ -21,15 +19,10 @@ namespace GetIntoTeachingApi.Models
         [SwaggerSchema(WriteOnly = true)]
         public int? ChannelId { get; set; }
 
-        [SensitiveData]
         public string Email { get; set; }
-        [SensitiveData]
         public string FirstName { get; set; }
-        [SensitiveData]
         public string LastName { get; set; }
-        [SensitiveData]
         public string AddressPostcode { get; set; }
-        [SensitiveData]
         public string Telephone { get; set; }
         [SwaggerSchema(ReadOnly = true)]
         public bool AlreadySubscribedToEvents { get; set; }

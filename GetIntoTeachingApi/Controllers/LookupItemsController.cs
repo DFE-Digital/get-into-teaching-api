@@ -13,7 +13,6 @@ namespace GetIntoTeachingApi.Controllers
 {
     [Route("api/lookup_items")]
     [ApiController]
-    [LogRequests]
     [PrivateShortTermResponseCache]
     [Authorize]
     public class LookupItemsController : ControllerBase

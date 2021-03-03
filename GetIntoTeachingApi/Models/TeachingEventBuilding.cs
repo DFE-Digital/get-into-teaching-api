@@ -9,7 +9,6 @@ using NetTopologySuite.Geometries;
 
 namespace GetIntoTeachingApi.Models
 {
-    [Loggable]
     [Entity("msevtmgt_building")]
     public class TeachingEventBuilding : BaseModel
     {

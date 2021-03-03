@@ -12,7 +12,6 @@ namespace GetIntoTeachingApi.Controllers
 {
     [Route("api/pick_list_items")]
     [ApiController]
-    [LogRequests]
     [PrivateShortTermResponseCache]
     [Authorize]
     public class PickListItemsController : ControllerBase
