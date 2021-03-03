@@ -92,10 +92,6 @@ namespace GetIntoTeachingApi
             })
             .AddJsonOptions(o =>
             {
-                // Ensures ChangedPropertyNames is deserialized correctly.
-                o.JsonSerializerOptions.IgnoreNullValues = true;
-                o.JsonSerializerOptions.SetupExtensions();
-
                 o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 o.JsonSerializerOptions.Converters.Add(new TrimStringJsonConverter());
                 o.JsonSerializerOptions.Converters.Add(new EmptyStringToNullJsonConverter());
