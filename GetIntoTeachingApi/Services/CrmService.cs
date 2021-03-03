@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
@@ -228,6 +228,12 @@ namespace GetIntoTeachingApi.Services
             var entities = _service.RetrieveMultiple(query);
 
             return entities.Select((entity) => new TeachingEvent(entity, this, _validatorFactory)).ToList();
+        }
+
+        public IEnumerable<TeachingEventBuilding> GetTeachingEventBuildings()
+        {
+            return _service.CreateQuery("msevtmgt_building", Context())
+                .Select((entity) => new TeachingEventBuilding(entity, this, _validatorFactory)).ToList();
         }
 
         private void LoadCandidateRelationships(Entity entity, OrganizationServiceContext context)
