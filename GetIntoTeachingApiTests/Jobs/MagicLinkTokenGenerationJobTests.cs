@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using FluentAssertions;
+﻿using FluentAssertions;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
@@ -45,7 +44,7 @@ namespace GetIntoTeachingApiTests.Jobs
         public void Run_UpsertsCandidatesWithMagicLinkTokens()
         {
             var candidate = new Candidate() { MagicLinkTokenStatusId = (int)Candidate.MagicLinkTokenStatus.Pending };
-            string json = JsonSerializer.Serialize(candidate);
+            string json = candidate.SerializeChangedTracked();
             _mockCrm.Setup(m => m.GetCandidatesPendingMagicLinkTokenGeneration(5000)).Returns(new Candidate[] { candidate });
 
             _job.Run();

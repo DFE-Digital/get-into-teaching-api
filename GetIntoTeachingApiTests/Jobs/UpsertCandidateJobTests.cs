@@ -21,7 +21,6 @@ namespace GetIntoTeachingApiTests.Jobs
         private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<INotifyService> _mockNotifyService;
         private readonly Candidate _candidate;
-        private readonly JsonSerializerOptions _options;
         private readonly IMetricService _metrics;
         private readonly UpsertCandidateJob _job;
         private readonly Mock<ILogger<UpsertCandidateJob>> _mockLogger;
@@ -32,8 +31,6 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockCrm = new Mock<ICrmService>();
             _mockNotifyService = new Mock<INotifyService>();
             _mockLogger = new Mock<ILogger<UpsertCandidateJob>>();
-            _options = new JsonSerializerOptions() { IgnoreNullValues = true };
-            _options.SetupExtensions();
             _metrics = new MetricService();
             _candidate = new Candidate() { Id = Guid.NewGuid(), Email = "test@test.com" };
             _job = new UpsertCandidateJob(new Env(), _mockCrm.Object, _mockNotifyService.Object,
@@ -48,7 +45,7 @@ namespace GetIntoTeachingApiTests.Jobs
         {
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
 
-            _job.Run(JsonSerializer.Serialize(_candidate, _options), null);
+            _job.Run(_candidate.SerializeChangedTracked(), null);
 
             _mockCrm.Verify(mock => mock.Save(It.Is<Candidate>(c => IsMatch(_candidate, c))), Times.Once);
             _mockLogger.VerifyInformationWasCalled("UpsertCandidateJob - Started (1/24)");
@@ -65,7 +62,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
             _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
 
-            _job.Run(JsonSerializer.Serialize(_candidate, _options), null);
+            _job.Run(_candidate.SerializeChangedTracked(), null);
 
             registration.CandidateId = candidateId;
             _mockCrm.Verify(mock => mock.Save(It.Is<TeachingEventRegistration>(r => IsMatch(registration, r))), Times.Once);
@@ -84,7 +81,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
             _mockCrm.Setup(mock => mock.GetCallbackBookingQuota(scheduledAt)).Returns(quota);
 
-            _job.Run(JsonSerializer.Serialize(_candidate, _options), null);
+            _job.Run(_candidate.SerializeChangedTracked(), null);
 
             phoneCall.CandidateId = candidateId.ToString();
             _mockCrm.Verify(mock => mock.Save(It.Is<PhoneCall>(p => IsMatch(phoneCall, p))), Times.Once);
@@ -105,7 +102,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
             _mockCrm.Setup(mock => mock.GetCallbackBookingQuota(scheduledAt)).Returns(quota);
 
-            _job.Run(JsonSerializer.Serialize(_candidate, _options), null);
+            _job.Run(_candidate.SerializeChangedTracked(), null);
 
             _mockCrm.Verify(mock => mock.Save(It.IsAny<CallbackBookingQuota>()), Times.Never);
             quota.NumberOfBookings.Should().Be(5);
@@ -117,7 +114,7 @@ namespace GetIntoTeachingApiTests.Jobs
         {
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(23);
 
-            _job.Run(JsonSerializer.Serialize(_candidate, _options), null);
+            _job.Run(_candidate.SerializeChangedTracked(), null);
 
             _mockCrm.Verify(mock => mock.Save(It.IsAny<Candidate>()), Times.Never);
             _mockNotifyService.Verify(mock => mock.SendEmailAsync(_candidate.Email,
