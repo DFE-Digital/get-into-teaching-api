@@ -11,7 +11,6 @@ using Hangfire.States;
 using Microsoft.AspNetCore.Authorization;
 using Moq;
 using GetIntoTeachingApi.Services;
-using GetIntoTeachingApi.Attributes;
 using System.Text.Json;
 using Dahomey.Json;
 
@@ -44,12 +43,6 @@ namespace GetIntoTeachingApiTests.Controllers
         public void Authorize_IsPresent()
         {
             typeof(MailingListController).Should().BeDecoratedWith<AuthorizeAttribute>(a => a.Roles == "Admin,GetIntoTeaching");
-        }
-
-        [Fact]
-        public void LogRequests_IsPresent()
-        {
-            typeof(MailingListController).Should().BeDecoratedWith<LogRequestsAttribute>();
         }
 
         [Fact]

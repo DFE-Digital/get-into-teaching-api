@@ -18,7 +18,6 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using GetIntoTeachingApiTests.Helpers;
 using System.Text.Json;
-using GetIntoTeachingApi.JsonConverters;
 using Dahomey.Json;
 
 namespace GetIntoTeachingApiTests.Controllers
@@ -49,12 +48,6 @@ namespace GetIntoTeachingApiTests.Controllers
         public void Authorize_IsPresent()
         {
             typeof(TeachingEventsController).Should().BeDecoratedWith<AuthorizeAttribute>(a => a.Roles == "Admin,GetIntoTeaching");
-        }
-
-        [Fact]
-        public void LogRequests_IsPresent()
-        {
-            typeof(TeachingEventsController).Should().BeDecoratedWith<LogRequestsAttribute>();
         }
 
         [Fact]

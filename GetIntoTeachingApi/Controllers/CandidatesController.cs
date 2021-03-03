@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +10,6 @@ namespace GetIntoTeachingApi.Controllers
 {
     [Route("api/candidates")]
     [ApiController]
-    [LogRequests]
     [Authorize(Roles = "Admin,GetIntoTeaching,GetAnAdviser")]
     public class CandidatesController : ControllerBase
     {

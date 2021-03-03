@@ -1,11 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using GetIntoTeachingApi.Attributes;
 using Microsoft.PowerPlatform.Cds.Client;
 
 namespace GetIntoTeachingApi.Models
 {
-    [Loggable]
     public class PickListItem
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
