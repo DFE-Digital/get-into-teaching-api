@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
@@ -52,7 +53,8 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
                 return BadRequest(this.ModelState);
             }
 
-            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(request.Candidate, null));
+            string json = JsonSerializer.Serialize(request.Candidate);
+            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
 
             return NoContent();
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
@@ -59,7 +60,8 @@ namespace GetIntoTeachingApi.Controllers
                 return BadRequest(this.ModelState);
             }
 
-            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(request.Candidate, null));
+            string json = JsonSerializer.Serialize(request.Candidate);
+            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
 
             return NoContent();
         }
@@ -111,7 +113,8 @@ namespace GetIntoTeachingApi.Controllers
                 return Unauthorized(result);
             }
 
-            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(result.Candidate, null));
+            string json = JsonSerializer.Serialize(result.Candidate);
+            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
 
             return Ok(new MailingListAddMember(result.Candidate));
         }

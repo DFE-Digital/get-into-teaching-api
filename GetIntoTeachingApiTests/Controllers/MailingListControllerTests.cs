@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 using Moq;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Attributes;
+using System.Text.Json;
+using Dahomey.Json;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -111,7 +113,7 @@ namespace GetIntoTeachingApiTests.Controllers
 
             _mockJobClient.Verify(x => x.Create(
                 It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-                IsMatch(candidate, (Candidate)job.Args[0])),
+                IsMatch(candidate, (string)job.Args[0])),
                 It.IsAny<EnqueuedState>()));
         }
 
@@ -151,12 +153,16 @@ namespace GetIntoTeachingApiTests.Controllers
             response.Should().BeOfType<NoContentResult>();
             _mockJobClient.Verify(x => x.Create(
                 It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" && 
-                IsMatch(request.Candidate, (Candidate)job.Args[0])),
+                IsMatch(request.Candidate, (string)job.Args[0])),
                 It.IsAny<EnqueuedState>()));
         }
 
-        private static bool IsMatch(Candidate candidateA, Candidate candidateB)
+        private static bool IsMatch(Candidate candidateA, string candidateBJson)
         {
+            var options = new JsonSerializerOptions() { IgnoreNullValues = true };
+            options.SetupExtensions();
+            var candidateB = JsonSerializer.Deserialize<Candidate>(candidateBJson, options);
+
             // Compares ignoring date attributes that are dynamic.
             candidateA.Should().BeEquivalentTo(candidateB, options => options
                 .Excluding(c => c.MailingListSubscriptionStartAt)
