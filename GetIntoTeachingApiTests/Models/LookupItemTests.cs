@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using FluentAssertions;
-using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using Microsoft.Xrm.Sdk;
 using Xunit;
@@ -10,12 +9,6 @@ namespace GetIntoTeachingApiTests.Models
 {
     public class LookupItemTests
     {
-        [Fact]
-        public void Loggable_IsPresent()
-        {
-            typeof(LookupItem).Should().BeDecoratedWith<LoggableAttribute>();
-        }
-
         [Fact]
         public void EntityAttributes()
         {

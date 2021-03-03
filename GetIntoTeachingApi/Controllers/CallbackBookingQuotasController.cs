@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +9,6 @@ namespace GetIntoTeachingApi.Controllers
 {
     [Route("api/callback_booking_quotas")]
     [ApiController]
-    [LogRequests]
     [Authorize(Roles = "Admin,GetAnAdviser")]
     public class CallbackBookingQuotasController : ControllerBase
     {

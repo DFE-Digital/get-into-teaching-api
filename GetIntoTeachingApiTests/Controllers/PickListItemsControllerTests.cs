@@ -31,12 +31,6 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void LogRequests_IsPresent()
-        {
-            typeof(PickListItemsController).Should().BeDecoratedWith<LogRequestsAttribute>();
-        }
-
-        [Fact]
         public void PrivateShortTermResponseCache_IsPresent()
         {
             typeof(PickListItemsController).Should().BeDecoratedWith<PrivateShortTermResponseCacheAttribute>();

@@ -22,14 +22,10 @@ using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.Xrm.Sdk;
 using Prometheus;
@@ -110,25 +106,6 @@ namespace GetIntoTeachingApi
                 // Workaround for https://github.com/dotnet/aspnetcore/issues/8302
                 // caused by Prometheus.HttpMetrics.HttpRequestDurationMiddleware
                 options.AllowSynchronousIO = true;
-            });
-
-            services.PostConfigure<ApiBehaviorOptions>(options =>
-            {
-                var builtInFactory = options.InvalidModelStateResponseFactory;
-
-                options.InvalidModelStateResponseFactory = context =>
-                {
-                    var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
-
-                    var actionExecutingContext = (ActionExecutingContext)context;
-                    var descriptor = (ControllerActionDescriptor)context.ActionDescriptor;
-
-                    var messages = actionExecutingContext.ActionArguments.Select(a => LoggableMessageComposer.LogMessageForObject(a.Value));
-                    var message = LoggableMessageComposer.LogMessage("ValidationFailure", descriptor, messages);
-                    logger.LogWarning(message);
-
-                    return builtInFactory(context);
-                };
             });
 
             services.AddSwaggerGen(c =>

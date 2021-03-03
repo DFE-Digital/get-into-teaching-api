@@ -5,7 +5,6 @@ using GetIntoTeachingApi.Attributes;
 
 namespace GetIntoTeachingApi.Models
 {
-    [Loggable]
     public class HealthCheckResponse
     {
         public const string StatusOk = "ok";

@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using Xunit;
 
@@ -7,12 +6,6 @@ namespace GetIntoTeachingApiTests.Models
 {
     public class TeachingEventSearchRequestTests
     {
-        [Fact]
-        public void Loggable_IsPresent()
-        {
-            typeof(TeachingEventSearchRequest).Should().BeDecoratedWith<LoggableAttribute>();
-        }
-
         [Theory]
         [InlineData(1, 1.6093)]
         [InlineData(-1, -1.6093)]

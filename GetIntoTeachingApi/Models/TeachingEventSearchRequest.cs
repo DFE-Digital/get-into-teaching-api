@@ -1,10 +1,8 @@
 ﻿using System;
-using GetIntoTeachingApi.Attributes;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
 {
-    [Loggable]
     public class TeachingEventSearchRequest : ICloneable
     {
         [SwaggerSchema("Postcode to center search around.")]

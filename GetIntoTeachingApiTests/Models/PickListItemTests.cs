@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using FluentAssertions;
-using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using Microsoft.PowerPlatform.Cds.Client;
 using Xunit;
@@ -9,12 +8,6 @@ namespace GetIntoTeachingApiTests.Models
 {
     public class PickListItemTests
     {
-        [Fact]
-        public void Loggable_IsPresent()
-        {
-            typeof(PickListItem).Should().BeDecoratedWith<LoggableAttribute>();
-        }
-
         [Fact]
         public void EntityAttributes()
         {
