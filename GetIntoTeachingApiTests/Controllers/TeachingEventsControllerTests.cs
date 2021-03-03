@@ -17,6 +17,9 @@ using GetIntoTeachingApi.Attributes;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using GetIntoTeachingApiTests.Helpers;
+using System.Text.Json;
+using GetIntoTeachingApi.JsonConverters;
+using Dahomey.Json;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -96,7 +99,7 @@ namespace GetIntoTeachingApiTests.Controllers
             response.Should().BeOfType<NoContentResult>();
             _mockJobClient.Verify(x => x.Create(
                 It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-                IsMatch(request.Candidate, (Candidate)job.Args[0])),
+                IsMatch(request.Candidate, (string)job.Args[0])),
                 It.IsAny<EnqueuedState>()));
         }
 
@@ -202,8 +205,12 @@ namespace GetIntoTeachingApiTests.Controllers
             return new[] { event1, event2, event3, event4, event5 };
         }
 
-        private static bool IsMatch(Candidate candidateA, Candidate candidateB)
+        private static bool IsMatch(Candidate candidateA, string candidateBJson)
         {
+            var options = new JsonSerializerOptions() { IgnoreNullValues = true };
+            options.SetupExtensions();
+            var candidateB = JsonSerializer.Deserialize<Candidate>(candidateBJson, options);
+
             // Compares ignoring date attributes that are dynamic.
             candidateA.Should().BeEquivalentTo(candidateB, options => options
                 .Excluding(c => c.EventsSubscriptionStartAt)

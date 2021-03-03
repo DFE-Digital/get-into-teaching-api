@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
@@ -33,8 +34,10 @@ namespace GetIntoTeachingApi.Jobs
             _logger = logger;
         }
 
-        public void Run(Candidate candidate, PerformContext context)
+        public void Run(string json, PerformContext context)
         {
+            var candidate = JsonSerializer.Deserialize<Candidate>(json);
+
             _logger.LogInformation($"UpsertCandidateJob - Started ({AttemptInfo(context, _contextAdapter)})");
 
             if (IsLastAttempt(context, _contextAdapter))
@@ -81,6 +84,11 @@ namespace GetIntoTeachingApi.Jobs
 
         private PhoneCall ClearPhoneCall(Candidate candidate)
         {
+            if (candidate.PhoneCall == null)
+            {
+                return null;
+            }
+
             // Due to reasons unknown the phone call relationship can't be deep-inserted
             // in the same way we do for other relationships - we need to explicitly save them against
             // the candidate instead.
