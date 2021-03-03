@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
@@ -17,9 +18,11 @@ namespace GetIntoTeachingApi.Models
     public class BaseModel : INotifyPropertyChanged
     {
         private readonly string[] _propertyNamesExcludedFromChangeTracking = new string[] { "ChangedPropertyNames" };
+        private bool _changeTrackingEnabled = true;
 
+        // Would be better as a HashSet<string>, but: https://github.com/dotnet/runtime/issues/2387
         [NotMapped]
-        public HashSet<string> ChangedPropertyNames { get; set; } = new HashSet<string>();
+        public IList<string> ChangedPropertyNames { get; set; } = new List<string>();
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid? Id { get; set; }
 
@@ -82,6 +85,18 @@ namespace GetIntoTeachingApi.Models
             return entity;
         }
 
+        [OnDeserializing]
+        public void DisableChangeTracking()
+        {
+            _changeTrackingEnabled = false;
+        }
+
+        [OnDeserialized]
+        public void EnableChangeTracking()
+        {
+            _changeTrackingEnabled = true;
+        }
+
         protected virtual bool ShouldMapRelationship(string propertyName, dynamic value, ICrmService crm)
         {
             // Hook.
@@ -96,7 +111,10 @@ namespace GetIntoTeachingApi.Models
 
         protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (!_propertyNamesExcludedFromChangeTracking.Any(p => p == propertyName))
+            var excluded = _propertyNamesExcludedFromChangeTracking.Any(p => p == propertyName);
+            var alreadyContains = ChangedPropertyNames.Contains(propertyName);
+
+            if (_changeTrackingEnabled && !excluded && !alreadyContains)
             {
                 ChangedPropertyNames.Add(propertyName);
             }

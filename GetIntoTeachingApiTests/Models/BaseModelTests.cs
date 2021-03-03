@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
+using Dahomey.Json;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
@@ -145,14 +147,47 @@ namespace GetIntoTeachingApiTests.Models
 
             model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3", "FieldDefinedWithValue" });
 
-            // Test using System.Text.Json as this is the app default (works correctly out of the box with tracking enabled).
-            var json = System.Text.Json.JsonSerializer.Serialize(model);
-            var deserializedModel = System.Text.Json.JsonSerializer.Deserialize<MockModel>(json);
+            // Test serializing/deseriaizing model.
+            var json = JsonSerializer.Serialize(model);
+            var options = new JsonSerializerOptions() { IgnoreNullValues = true };
+            options.SetupExtensions();
+            var deserializedModel = JsonSerializer.Deserialize<MockModel>(json, options);
 
             deserializedModel.Id.Should().Be(model.Id);
             deserializedModel.Field3.Should().Be(model.Field3);
             deserializedModel.Field4.Should().Be(model.Field4);
             deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3", "FieldDefinedWithValue" });
+
+            // Test deserializing model with ChangedPropertyNames in different order/combinations.
+            json = "{\"ChangedPropertyNames\":[\"Id\",\"Field1\"],\"Field3\":null,\"Field2\":123}";
+            deserializedModel = JsonSerializer.Deserialize<MockModel>(json, options);
+
+            deserializedModel.Field2.Should().Be(123);
+            deserializedModel.Field3.Should().BeNull();
+            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field1" });
+
+            json = "{\"Field3\":null,\"Field2\":123,\"ChangedPropertyNames\":[\"Id\",\"Field1\"]}";
+            deserializedModel = JsonSerializer.Deserialize<MockModel>(json, options);
+
+            deserializedModel.Field2.Should().Be(123);
+            deserializedModel.Field3.Should().BeNull();
+            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field1" });
+        }
+
+        [Fact]
+        public void DisableEnableChangeTracking_WorksCorrectly()
+        {
+            var model = new MockModel() { Id = Guid.NewGuid() };
+
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "FieldDefinedWithValue" });
+
+            model.DisableChangeTracking();
+            model.Field4 = "test";
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "FieldDefinedWithValue" });
+
+            model.EnableChangeTracking();
+            model.Field2 = 123;
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "FieldDefinedWithValue", "Field2" });
         }
 
         [Fact]

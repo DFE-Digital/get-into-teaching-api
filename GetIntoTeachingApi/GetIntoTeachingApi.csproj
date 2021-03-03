@@ -48,6 +48,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="PropertyChanged.Fody" Version="3.3.2" PrivateAssets="All" />
+		<PackageReference Include="Dahomey.Json" Version="1.10.3" />
 	</ItemGroup>
 
 	<ItemGroup>
