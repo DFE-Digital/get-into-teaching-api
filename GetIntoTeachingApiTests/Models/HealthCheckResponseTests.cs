@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using Xunit;
 
@@ -7,12 +6,6 @@ namespace GetIntoTeachingApiTests.Models
 {
     public class HealthCheckResponseTests
     {
-        [Fact]
-        public void Loggable_IsPresent()
-        {
-            typeof(HealthCheckResponse).Should().BeDecoratedWith<LoggableAttribute>();
-        }
-
         [Theory]
         [InlineData(true, true, true, true, true, "healthy")]
         [InlineData(true, true, true, false, true, "degraded")]
