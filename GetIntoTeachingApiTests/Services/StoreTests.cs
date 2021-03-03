@@ -479,6 +479,17 @@ namespace GetIntoTeachingApiTests.Services
             result.Building.Should().NotBeNull();
         }
 
+        [Fact]
+        public async Task GetTeachingEventBuildings_ReturnsAll()
+        {
+            var events = await SeedMockTeachingEventsAsync();
+            _mockCrm.Setup(m => m.GetTeachingEvents(It.IsAny<DateTime>())).Returns(events);
+
+            var result = _store.GetTeachingEventBuildings().ToList();
+
+            result.Should().HaveCount(5);
+        }
+
         private static bool CheckGetTeachingEventsAfterDate(DateTime date)
         {
             var afterDate = DateTime.UtcNow.Subtract(Store.TeachingEventArchiveSize);
