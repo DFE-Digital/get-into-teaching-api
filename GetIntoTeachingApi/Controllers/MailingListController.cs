@@ -4,6 +4,7 @@ using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -59,7 +60,8 @@ namespace GetIntoTeachingApi.Controllers
                 return BadRequest(this.ModelState);
             }
 
-            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(request.Candidate, null));
+            string json = request.Candidate.SerializeChangedTracked();
+            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
 
             return NoContent();
         }
@@ -111,7 +113,8 @@ namespace GetIntoTeachingApi.Controllers
                 return Unauthorized(result);
             }
 
-            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(result.Candidate, null));
+            string json = result.Candidate.SerializeChangedTracked();
+            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
 
             return Ok(new MailingListAddMember(result.Candidate));
         }
