@@ -7,7 +7,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
@@ -18,21 +17,22 @@ namespace GetIntoTeachingApi.Models
 {
     public class BaseModel : INotifyPropertyChanged
     {
-        private readonly string[] _propertyNamesExcludedFromChangeTracking = new string[] { "ChangeTrackingEnabled", "ChangedPropertyNames" };
+        private readonly string[] _propertyNamesExcludedFromChangeTracking = new string[] { "ChangedPropertyNames" };
+        private bool _changeTrackingEnabled = true;
 
+        // Would be better as a HashSet<string>, but: https://github.com/dotnet/runtime/issues/2387
         [NotMapped]
-        public HashSet<string> ChangedPropertyNames { get; set; } = new HashSet<string>();
-        [JsonIgnore]
-        [NotMapped]
-        public bool ChangeTrackingEnabled { get; set; } = true;
+        public IList<string> ChangedPropertyNames { get; set; } = new List<string>();
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid? Id { get; set; }
 
         public BaseModel()
         {
+            InitChangedPropertyNames();
         }
 
         public BaseModel(Entity entity, ICrmService crm, IValidatorFactory vaidatorFactory)
+            : this()
         {
             Id = entity.Id;
 
@@ -85,6 +85,18 @@ namespace GetIntoTeachingApi.Models
             return entity;
         }
 
+        [OnDeserializing]
+        public void DisableChangeTracking()
+        {
+            _changeTrackingEnabled = false;
+        }
+
+        [OnDeserialized]
+        public void EnableChangeTracking()
+        {
+            _changeTrackingEnabled = true;
+        }
+
         protected virtual bool ShouldMapRelationship(string propertyName, dynamic value, ICrmService crm)
         {
             // Hook.
@@ -99,7 +111,10 @@ namespace GetIntoTeachingApi.Models
 
         protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (ChangeTrackingEnabled && !_propertyNamesExcludedFromChangeTracking.Any(p => p == propertyName))
+            var excluded = _propertyNamesExcludedFromChangeTracking.Any(p => p == propertyName);
+            var alreadyContains = ChangedPropertyNames.Contains(propertyName);
+
+            if (_changeTrackingEnabled && !excluded && !alreadyContains)
             {
                 ChangedPropertyNames.Add(propertyName);
             }
@@ -127,6 +142,19 @@ namespace GetIntoTeachingApi.Models
             return string.IsNullOrWhiteSpace(input) ? null : input;
         }
 
+        private void InitChangedPropertyNames()
+        {
+            // Adds any properties that are defined with a value in the model.
+            var nonNullPropertyNames = GetType().GetProperties()
+                .Where(p => p.CanWrite && p.GetValue(this) != null)
+                .Select(p => p.Name);
+
+            foreach (var name in nonNullPropertyNames)
+            {
+                NotifyPropertyChanged(name);
+            }
+        }
+
         private void NullifyInvalidFieldAttributes(IValidatorFactory validatorFactory)
         {
             var validator = validatorFactory.GetValidator(GetType());
@@ -152,18 +180,6 @@ namespace GetIntoTeachingApi.Models
                     property.SetValue(this, null);
                 }
             }
-        }
-
-        [OnDeserializing]
-        private void StopChangeTracking(StreamingContext context)
-        {
-            ChangeTrackingEnabled = false;
-        }
-
-        [OnDeserialized]
-        private void StartChangeTracking(StreamingContext context)
-        {
-            ChangeTrackingEnabled = true;
         }
 
         private void MapFieldAttributesFromEntity(Entity entity)

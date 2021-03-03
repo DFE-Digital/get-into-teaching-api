@@ -11,6 +11,7 @@ using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Mocks;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Moq;
@@ -107,65 +108,83 @@ namespace GetIntoTeachingApiTests.Models
         {
             var model = new MockModel();
 
-            // Empty on init.
-            model.ChangedPropertyNames.Should().BeEmpty();
+            // Contains fields defined with a value on init.
+            model.ChangedPropertyNames.Should().ContainSingle("FieldDefinedWithValue");
 
             // Null to value.
             model.Field3 = "test";
-            model.ChangedPropertyNames.Should().ContainSingle("Field3");
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "FieldDefinedWithValue", "Field3" });
 
             // Value to null.
             model.Field3 = null;
-            model.ChangedPropertyNames.Should().ContainSingle("Field3");
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "FieldDefinedWithValue", "Field3" });
 
             // Second property change.
             model.Field2 = 0;
-            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Field3", "Field2" });
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "FieldDefinedWithValue", "Field3", "Field2" });
 
             // Computed attributes.
             model.Field4 = "test";
-            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Field3", "Field2", "Field4", "CompoundField" });
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "FieldDefinedWithValue", "Field3", "Field2", "Field4", "CompoundField" });
 
             // Not changed to null.
             model.Field1 = null;
-            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Field3", "Field2", "Field4", "CompoundField", "Field1" });
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "FieldDefinedWithValue", "Field3", "Field2", "Field4", "CompoundField", "Field1" });
 
             // Init with changes.
             model = new MockModel() { Field3 = "test", Field2 = 0 };
-            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Field3", "Field2" });
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "FieldDefinedWithValue", "Field3", "Field2" });
         }
 
         [Fact]
         public void ChangedPropertyNames_DuringDeserialization_IsNotAltered()
         {
-            // If you deserialize an object with change tracking enabled
-            // all of the attributes are considered 'changed' and the serialized
-            // ChangedPropertyNames are lost, which is not what we want.
+            // Ensures the JSON serializer correctly deserializes
+            // ChangedPropertyNames (and doesn't inadvertently change it
+            // during the deserialization process when writing to attributes).
             var model = new MockModel() { Id = Guid.NewGuid(), Field3 = "test" };
 
-            model.ChangeTrackingEnabled = false;
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3", "FieldDefinedWithValue" });
+
+            // Test serializing/deseriaizing model.
+            var json = model.SerializeChangedTracked();
+            var deserializedModel = json.DeserializeChangedTracked<MockModel>();
+
+            deserializedModel.Id.Should().Be(model.Id);
+            deserializedModel.Field3.Should().Be(model.Field3);
+            deserializedModel.Field4.Should().Be(model.Field4);
+            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3", "FieldDefinedWithValue" });
+
+            // Test deserializing model with ChangedPropertyNames in different order/combinations.
+            json = "{\"ChangedPropertyNames\":[\"Id\",\"Field1\"],\"Field3\":null,\"Field2\":123}";
+            deserializedModel = json.DeserializeChangedTracked<MockModel>();
+
+            deserializedModel.Field2.Should().Be(123);
+            deserializedModel.Field3.Should().BeNull();
+            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field1" });
+
+            json = "{\"Field3\":null,\"Field2\":123,\"ChangedPropertyNames\":[\"Id\",\"Field1\"]}";
+            deserializedModel = json.DeserializeChangedTracked<MockModel>();
+
+            deserializedModel.Field2.Should().Be(123);
+            deserializedModel.Field3.Should().BeNull();
+            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field1" });
+        }
+
+        [Fact]
+        public void DisableEnableChangeTracking_WorksCorrectly()
+        {
+            var model = new MockModel() { Id = Guid.NewGuid() };
+
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "FieldDefinedWithValue" });
+
+            model.DisableChangeTracking();
             model.Field4 = "test";
-            model.ChangeTrackingEnabled = true;
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "FieldDefinedWithValue" });
 
-            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3" });
-
-            // Test using Newtonsoft.Json as Hangfire uses this (we manually disable tracking during deserialization).
-            string json = Newtonsoft.Json.JsonConvert.SerializeObject(model);
-            var deserializedModel = Newtonsoft.Json.JsonConvert.DeserializeObject<MockModel>(json);
-
-            deserializedModel.Id.Should().Be(model.Id);
-            deserializedModel.Field3.Should().Be(model.Field3);
-            deserializedModel.Field4.Should().Be(model.Field4);
-            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3" });
-
-            // Test using System.Text.Json as this is the app default (works correctly out of the box with tracking enabled).
-            json = System.Text.Json.JsonSerializer.Serialize(model);
-            deserializedModel = System.Text.Json.JsonSerializer.Deserialize<MockModel>(json);
-
-            deserializedModel.Id.Should().Be(model.Id);
-            deserializedModel.Field3.Should().Be(model.Field3);
-            deserializedModel.Field4.Should().Be(model.Field4);
-            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3" });
+            model.EnableChangeTracking();
+            model.Field2 = 123;
+            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "FieldDefinedWithValue", "Field2" });
         }
 
         [Fact]

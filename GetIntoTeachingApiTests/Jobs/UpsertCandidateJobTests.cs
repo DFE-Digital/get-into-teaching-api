@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
+using Dahomey.Json;
 using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Jobs;
@@ -43,9 +45,9 @@ namespace GetIntoTeachingApiTests.Jobs
         {
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
 
-            _job.Run(_candidate, null);
+            _job.Run(_candidate.SerializeChangedTracked(), null);
 
-            _mockCrm.Verify(mock => mock.Save(_candidate), Times.Once);
+            _mockCrm.Verify(mock => mock.Save(It.Is<Candidate>(c => IsMatch(_candidate, c))), Times.Once);
             _mockLogger.VerifyInformationWasCalled("UpsertCandidateJob - Started (1/24)");
             _mockLogger.VerifyInformationWasCalled($"UpsertCandidateJob - Succeeded - {_candidate.Id}");
             _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Count.Should().Be(1);
@@ -58,46 +60,32 @@ namespace GetIntoTeachingApiTests.Jobs
             var registration = new TeachingEventRegistration() { EventId = Guid.NewGuid() };
             _candidate.TeachingEventRegistrations.Add(registration);
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
-            _mockCrm.Setup(mock => mock.Save(_candidate)).Callback(() => _candidate.Id = candidateId);
+            _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
 
-            _job.Run(_candidate, null);
+            _job.Run(_candidate.SerializeChangedTracked(), null);
 
-            _mockCrm.Verify(mock => mock.Save(registration), Times.Once);
-            registration.CandidateId.Should().Be(candidateId);
+            registration.CandidateId = candidateId;
+            _mockCrm.Verify(mock => mock.Save(It.Is<TeachingEventRegistration>(r => IsMatch(registration, r))), Times.Once);
             _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Count.Should().Be(1);
         }
 
         [Fact]
-        public void Run_WithPhoneCallOnSuccess_SavesPhoneCall()
-        {
-            var candidateId = Guid.NewGuid();
-            var phoneCall = new PhoneCall();
-            _candidate.PhoneCall = phoneCall;
-            _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
-            _mockCrm.Setup(mock => mock.Save(_candidate)).Callback(() => _candidate.Id = candidateId);
-
-            _job.Run(_candidate, null);
-
-            _mockCrm.Verify(mock => mock.Save(phoneCall), Times.Once);
-            phoneCall.CandidateId.Should().Be(candidateId.ToString());
-            _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Count.Should().Be(1);
-        }
-
-        [Fact]
-        public void Run_WithPhoneCallOnSuccess_IncrementsCallbackBookingQuotaNumberOfBookings()
+        public void Run_WithPhoneCallOnSuccess_SavesPhoneCallAndIncrementsCallbackBookingQuotaNumberOfBookings()
         {
             var candidateId = Guid.NewGuid();
             var scheduledAt = DateTime.UtcNow.AddDays(3);
             var phoneCall = new PhoneCall() { ScheduledAt = scheduledAt };
-            var quota = new CallbackBookingQuota() { StartAt = scheduledAt, NumberOfBookings = 5, Quota = 10 };
             _candidate.PhoneCall = phoneCall;
+            var quota = new CallbackBookingQuota() { StartAt = scheduledAt, NumberOfBookings = 5, Quota = 10 };
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
-            _mockCrm.Setup(mock => mock.Save(_candidate)).Callback(() => _candidate.Id = candidateId);
+            _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
             _mockCrm.Setup(mock => mock.GetCallbackBookingQuota(scheduledAt)).Returns(quota);
 
-            _job.Run(_candidate, null);
+            _job.Run(_candidate.SerializeChangedTracked(), null);
 
-            _mockCrm.Verify(mock => mock.Save(quota), Times.Once);
+            phoneCall.CandidateId = candidateId.ToString();
+            _mockCrm.Verify(mock => mock.Save(It.Is<PhoneCall>(p => IsMatch(phoneCall, p))), Times.Once);
+            _mockCrm.Verify(mock => mock.Save(It.Is<CallbackBookingQuota>(q => IsMatch(quota, q))), Times.Once);
             quota.NumberOfBookings.Should().Be(6);
             _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Count.Should().Be(1);
         }
@@ -111,12 +99,12 @@ namespace GetIntoTeachingApiTests.Jobs
             var quota = new CallbackBookingQuota() { StartAt = scheduledAt, NumberOfBookings = 5, Quota = 5 };
             _candidate.PhoneCall = phoneCall;
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
-            _mockCrm.Setup(mock => mock.Save(_candidate)).Callback(() => _candidate.Id = candidateId);
+            _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
             _mockCrm.Setup(mock => mock.GetCallbackBookingQuota(scheduledAt)).Returns(quota);
 
-            _job.Run(_candidate, null);
+            _job.Run(_candidate.SerializeChangedTracked(), null);
 
-            _mockCrm.Verify(mock => mock.Save(quota), Times.Never);
+            _mockCrm.Verify(mock => mock.Save(It.IsAny<CallbackBookingQuota>()), Times.Never);
             quota.NumberOfBookings.Should().Be(5);
             _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Count.Should().Be(1);
         }
@@ -126,14 +114,20 @@ namespace GetIntoTeachingApiTests.Jobs
         {
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(23);
 
-            _job.Run(_candidate, null);
+            _job.Run(_candidate.SerializeChangedTracked(), null);
 
-            _mockCrm.Verify(mock => mock.Save(_candidate), Times.Never);
+            _mockCrm.Verify(mock => mock.Save(It.IsAny<Candidate>()), Times.Never);
             _mockNotifyService.Verify(mock => mock.SendEmailAsync(_candidate.Email,
                 NotifyService.CandidateRegistrationFailedEmailTemplateId, It.IsAny<Dictionary<string, dynamic>>()));
             _mockLogger.VerifyInformationWasCalled("UpsertCandidateJob - Started (24/24)");
             _mockLogger.VerifyInformationWasCalled("UpsertCandidateJob - Deleted");
             _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Count.Should().Be(1);
+        }
+
+        private bool IsMatch(object objectA, object objectB)
+        {
+            objectA.Should().BeEquivalentTo(objectB);
+            return true;
         }
     }
 }
