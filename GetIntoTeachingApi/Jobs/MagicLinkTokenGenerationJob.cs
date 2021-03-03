@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Text.Json;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
@@ -52,7 +51,7 @@ namespace GetIntoTeachingApi.Jobs
             foreach (var candidate in candidates)
             {
                 _magicLinkTokenService.GenerateToken(candidate);
-                string json = JsonSerializer.Serialize(candidate);
+                string json = candidate.SerializeChangedTracked();
                 _jobClient.Enqueue<UpsertCandidateJob>(x => x.Run(json, null));
             }
         }

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -53,7 +53,7 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
                 return BadRequest(this.ModelState);
             }
 
-            string json = JsonSerializer.Serialize(request.Candidate);
+            string json = request.Candidate.SerializeChangedTracked();
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
 
             return NoContent();
