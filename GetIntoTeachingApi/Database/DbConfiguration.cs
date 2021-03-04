@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Utils;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using Npgsql;
 
 namespace GetIntoTeachingApi.Database
@@ -36,7 +37,8 @@ namespace GetIntoTeachingApi.Database
 
         private static string GenerateConnectionString(IEnv env, string instanceName)
         {
-            var vcap = JsonConvert.DeserializeObject<VcapServices>(env.VcapServices);
+            var options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
+            var vcap = JsonSerializer.Deserialize<VcapServices>(env.VcapServices, options);
             var postgres = vcap.Postgres.First(p => p.InstanceName == instanceName);
 
             var builder = new NpgsqlConnectionStringBuilder
@@ -60,7 +62,7 @@ namespace GetIntoTeachingApi.Database
 
         internal class VcapPostgres
         {
-            [JsonProperty("instance_name")]
+            [JsonPropertyName("instance_name")]
             public string InstanceName { get; set; }
             public VcapCredentials Credentials { get; set; }
         }
