@@ -15,7 +15,7 @@ data azurerm_key_vault_secret monitoring {
 
 locals {
   application_secrets = yamldecode(data.azurerm_key_vault_secret.application.value)
-  monitoring_secrets = yamldecode(data.azurerm_key_vault_secret.monitoring.value)
+  monitoring_secrets  = yamldecode(data.azurerm_key_vault_secret.monitoring.value)
 }
 
 data azurerm_key_vault_secret docker_username {
