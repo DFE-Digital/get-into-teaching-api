@@ -45,3 +45,6 @@ TestResults
 
 # Dotenv
 .env*
+
+# DevOps file
+fetch_config.rb
