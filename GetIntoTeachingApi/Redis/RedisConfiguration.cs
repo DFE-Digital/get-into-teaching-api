@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Utils;
-using Newtonsoft.Json;
 using StackExchange.Redis;
 
 namespace GetIntoTeachingApi.Redis
@@ -10,7 +11,8 @@ namespace GetIntoTeachingApi.Redis
     {
         public static ConfigurationOptions ConfigurationOptions(IEnv env)
         {
-            var vcap = JsonConvert.DeserializeObject<VcapServices>(env.VcapServices);
+            var options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
+            var vcap = JsonSerializer.Deserialize<VcapServices>(env.VcapServices, options);
             var redis = vcap.Redis.First();
             var credentials = redis.Credentials;
 
@@ -38,7 +40,7 @@ namespace GetIntoTeachingApi.Redis
             public string Host { get; set; }
             public string Password { get; set; }
             public int Port { get; set; }
-            [JsonProperty("tls_enabled")]
+            [JsonPropertyName("tls_enabled")]
             public bool TlsEnabled { get; set; }
         }
     }
