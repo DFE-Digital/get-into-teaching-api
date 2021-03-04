@@ -222,7 +222,6 @@ namespace GetIntoTeachingApi.Services
             query.Criteria.AddFilter(filter);
 
             var link = query.AddLink("msevtmgt_building", "msevtmgt_building", "msevtmgt_buildingid", JoinOperator.LeftOuter);
-            link.Columns.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(TeachingEventBuilding)));
             link.EntityAlias = "msevtmgt_event_building";
 
             var entities = _service.RetrieveMultiple(query);
