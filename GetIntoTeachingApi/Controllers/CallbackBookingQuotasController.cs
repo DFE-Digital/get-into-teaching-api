@@ -2,6 +2,7 @@
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -25,7 +26,7 @@ namespace GetIntoTeachingApi.Controllers
             Summary = "Retrieves all callback booking quotas.",
             OperationId = "GetCallbackBookingQuotas",
             Tags = new[] { "Callback Booking Quotas" })]
-        [ProducesResponseType(typeof(IEnumerable<CallbackBookingQuota>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<CallbackBookingQuota>), StatusCodes.Status200OK)]
         public IActionResult GetAll()
         {
             var quotas = _callbackBookingService.GetCallbackBookingQuotas();

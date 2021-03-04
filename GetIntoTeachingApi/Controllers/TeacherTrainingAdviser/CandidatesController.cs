@@ -6,6 +6,7 @@ using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -41,8 +42,8 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
                           "`Candidate.Qualifications[0].DegreeSubject` and `DegreeSubject`.",
             OperationId = "SignUpTeacherTrainingAdviserCandidate",
             Tags = new[] { "Teacher Training Adviser" })]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
         public IActionResult SignUp(
             [FromBody, SwaggerRequestBody("Candidate to sign up for the Teacher Training Adviser service.", Required = true)] TeacherTrainingAdviserSignUp request)
         {
@@ -67,8 +68,8 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
                 exchanged for your token matches the request payload here).",
             OperationId = "ExchangeAccessTokenForTeacherTrainingAdviserSignUp",
             Tags = new[] { "Teacher Training Adviser" })]
-        [ProducesResponseType(typeof(TeacherTrainingAdviserSignUp), 200)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(TeacherTrainingAdviserSignUp), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult ExchangeAccessToken(
             [FromRoute, SwaggerParameter("Access token (PIN code).", Required = true)] string accessToken,
             [FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] ExistingCandidateRequest request)
