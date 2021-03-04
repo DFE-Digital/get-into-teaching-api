@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
@@ -125,7 +126,7 @@ namespace GetIntoTeachingApi.Models
                 AddressLine1 = AddressLine1,
                 AddressLine2 = AddressLine2,
                 AddressCity = AddressCity,
-                AddressPostcode = AddressPostcode,
+                AddressPostcode = AddressPostcode.AsFormattedPostcode(),
                 Telephone = Telephone,
                 TeacherId = TeacherId,
                 TypeId = TypeId,

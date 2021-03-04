@@ -420,5 +420,13 @@ namespace GetIntoTeachingApiTests.Models
             request.Candidate.AdviserEligibilityId.Should().BeNull();
             request.Candidate.AdviserRequirementId.Should().BeNull();
         }
+
+        [Fact]
+        public void Candidate_AddressPostcode_IsFormatted()
+        {
+            var request = new TeacherTrainingAdviserSignUp() { AddressPostcode = "ky119yu" };
+
+            request.Candidate.AddressPostcode.Should().Be("KY11 9YU");
+        }
     }
 }
