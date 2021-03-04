@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using AspNetCoreRateLimit;
 using GetIntoTeachingApi.Utils;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using StackExchange.Redis;
 
 namespace GetIntoTeachingApi.Redis
@@ -55,7 +55,7 @@ namespace GetIntoTeachingApi.Redis
 
                     if (!string.IsNullOrEmpty(value))
                     {
-                        return JsonConvert.DeserializeObject<RateLimitCounter?>(value);
+                        return JsonSerializer.Deserialize<RateLimitCounter>(value) as RateLimitCounter?;
                     }
 
                     return null;
@@ -92,7 +92,7 @@ namespace GetIntoTeachingApi.Redis
             _ = await TryRedisCommandAsync(
                 async () =>
                 {
-                    await RedisDatabase.StringSetAsync(id, JsonConvert.SerializeObject(entry.Value), expirationTime);
+                    await RedisDatabase.StringSetAsync(id, JsonSerializer.Serialize(entry.Value), expirationTime);
 
                     return true;
                 },
