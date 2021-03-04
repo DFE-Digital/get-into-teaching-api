@@ -5,7 +5,7 @@ using Prometheus;
 
 namespace GetIntoTeachingApi.Utils
 {
-    public static class Extensions
+    public static class ApplicationExtensions
     {
         public static IApplicationBuilder UsePrometheusHangfireExporter(this IApplicationBuilder app)
         {
