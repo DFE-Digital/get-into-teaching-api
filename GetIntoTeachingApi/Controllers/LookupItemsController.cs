@@ -5,6 +5,7 @@ using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
@@ -31,7 +32,7 @@ namespace GetIntoTeachingApi.Controllers
             Summary = "Retrieves the list of countries.",
             OperationId = "GetCountries",
             Tags = new[] { "Lookup Items" })]
-        [ProducesResponseType(typeof(IEnumerable<LookupItem>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<LookupItem>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCountries()
         {
             var countries = await _store.GetLookupItems("dfe_country").ToListAsync();
@@ -46,7 +47,7 @@ namespace GetIntoTeachingApi.Controllers
             Summary = "Retrieves the list of teaching subjects.",
             OperationId = "GetTeachingSubjects",
             Tags = new[] { "Lookup Items" })]
-        [ProducesResponseType(typeof(IEnumerable<LookupItem>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<LookupItem>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetTeachingSubjects()
         {
             var subjects = await _store.GetLookupItems("dfe_teachingsubjectlist").ToListAsync();
