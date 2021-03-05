@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using GetIntoTeachingApi.Services;
-using Prometheus;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Services
@@ -49,7 +48,7 @@ namespace GetIntoTeachingApiTests.Services
         public void GoogleApiCalls_ReturnsMetric()
         {
             _metrics.GoogleApiCalls.Name.Should().Be("api_google_api_calls");
-            _metrics.GoogleApiCalls.LabelNames.Should().BeEquivalentTo(new[] { "postcode", "result" });
+            _metrics.GoogleApiCalls.LabelNames.Should().BeEquivalentTo(new[] { "result" });
         }
 
         [Fact]
@@ -63,14 +62,13 @@ namespace GetIntoTeachingApiTests.Services
         public void GeneratedTotps_ReturnsMetric()
         {
             _metrics.GeneratedTotps.Name.Should().Be("api_generated_totps");
-            _metrics.GeneratedTotps.LabelNames.Should().BeEquivalentTo(new[] { "candidate_id", "totp" });
         }
 
         [Fact]
         public void VerifiedTotps_ReturnsMetric()
         {
             _metrics.VerifiedTotps.Name.Should().Be("api_verified_totps");
-            _metrics.VerifiedTotps.LabelNames.Should().BeEquivalentTo(new[] { "candidate_id", "totp", "valid" });
+            _metrics.VerifiedTotps.LabelNames.Should().BeEquivalentTo(new[] { "valid" });
         }
 
         [Fact]

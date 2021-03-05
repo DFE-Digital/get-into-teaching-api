@@ -25,7 +25,7 @@ namespace GetIntoTeachingApi.Services
         private static readonly Counter _googleApiCalls = Metrics
             .CreateCounter("api_google_api_calls", "Number of Google API calls.", new CounterConfiguration
             {
-                LabelNames = new[] { "postcode", "result" },
+                LabelNames = new[] { "result" },
             });
         private static readonly Counter _cacheLookups = Metrics
             .CreateCounter("api_cache_lookups", "Number of cache lookups.", new CounterConfiguration
@@ -33,14 +33,11 @@ namespace GetIntoTeachingApi.Services
                 LabelNames = new[] { "outcome" },
             });
         private static readonly Counter _generatedTotps = Metrics
-            .CreateCounter("api_generated_totps", "Number of generated timed one time passwords.", new CounterConfiguration
-            {
-                LabelNames = new[] { "candidate_id", "totp" },
-            });
+            .CreateCounter("api_generated_totps", "Number of generated timed one time passwords.");
         private static readonly Counter _verifiedTotps = Metrics
             .CreateCounter("api_verified_totps", "Number of verified timed one time passwords.", new CounterConfiguration
             {
-                LabelNames = new[] { "candidate_id", "totp", "valid" },
+                LabelNames = new[] { "valid" },
             });
 
         public Histogram CrmSyncDuration => _crmSyncDuration;
