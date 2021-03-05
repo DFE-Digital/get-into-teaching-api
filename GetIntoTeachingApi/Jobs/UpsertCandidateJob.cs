@@ -36,7 +36,7 @@ namespace GetIntoTeachingApi.Jobs
 
         public void Run(string json, PerformContext context)
         {
-            var candidate = JsonSerializer.Deserialize<Candidate>(json);
+            var candidate = json.DeserializeChangedTracked<Candidate>();
 
             _logger.LogInformation($"UpsertCandidateJob - Started ({AttemptInfo(context, _contextAdapter)})");
 

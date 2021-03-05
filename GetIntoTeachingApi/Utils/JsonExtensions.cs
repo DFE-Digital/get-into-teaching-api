@@ -1,23 +1,22 @@
-﻿using System.Text.Json;
-using Dahomey.Json;
+﻿using Newtonsoft.Json;
 
 namespace GetIntoTeachingApi.Utils
 {
     public static class JsonExtensions
     {
-        private static JsonSerializerOptions _options = new JsonSerializerOptions()
+        private static readonly JsonSerializerSettings _settings = new JsonSerializerSettings()
         {
-            IgnoreNullValues = true,
-        }.SetupExtensions();
+            NullValueHandling = NullValueHandling.Ignore,
+        };
 
         public static T DeserializeChangedTracked<T>(this string json)
         {
-            return JsonSerializer.Deserialize<T>(json, _options);
+            return JsonConvert.DeserializeObject<T>(json, _settings);
         }
 
         public static string SerializeChangedTracked<T>(this T value)
         {
-            return JsonSerializer.Serialize(value, _options);
+            return JsonConvert.SerializeObject(value, Formatting.Indented, _settings);
         }
     }
 }
