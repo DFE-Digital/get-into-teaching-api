@@ -12,7 +12,7 @@ using Hangfire.Common;
 using Hangfire.States;
 using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
-using Dahomey.Json;
+using GetIntoTeachingApi.Utils;
 
 namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
 {
@@ -104,9 +104,7 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
 
         private static bool IsMatch(Candidate candidateA, string candidateBJson)
         {
-            var options = new JsonSerializerOptions() { IgnoreNullValues = true };
-            options.SetupExtensions();
-            var candidateB = JsonSerializer.Deserialize<Candidate>(candidateBJson, options);
+            var candidateB = candidateBJson.DeserializeChangedTracked<Candidate>();
 
             // Compares ignoring date attributes that are dynamic.
             candidateA.Should().BeEquivalentTo(candidateB, options => options

@@ -152,23 +152,22 @@ namespace GetIntoTeachingApiTests.Models
 
             deserializedModel.Id.Should().Be(model.Id);
             deserializedModel.Field3.Should().Be(model.Field3);
-            deserializedModel.Field4.Should().Be(model.Field4);
             deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3", "FieldDefinedWithValue" });
 
             // Test deserializing model with ChangedPropertyNames in different order/combinations.
-            json = "{\"ChangedPropertyNames\":[\"Id\",\"Field1\"],\"Field3\":null,\"Field2\":123}";
+            json = "{\"ChangedPropertyNames\":[\"Id\",\"Field1\"],\"Field3\":\"test\",\"Field2\":123}";
             deserializedModel = json.DeserializeChangedTracked<MockModel>();
 
             deserializedModel.Field2.Should().Be(123);
-            deserializedModel.Field3.Should().BeNull();
-            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field1" });
+            deserializedModel.Field3.Should().Be("test");
+            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field1", "FieldDefinedWithValue" });
 
-            json = "{\"Field3\":null,\"Field2\":123,\"ChangedPropertyNames\":[\"Id\",\"Field1\"]}";
+            json = "{\"Field3\":\"test\",\"Field2\":123,\"ChangedPropertyNames\":[\"Id\",\"Field1\"]}";
             deserializedModel = json.DeserializeChangedTracked<MockModel>();
 
             deserializedModel.Field2.Should().Be(123);
-            deserializedModel.Field3.Should().BeNull();
-            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field1" });
+            deserializedModel.Field3.Should().Be("test");
+            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field1", "FieldDefinedWithValue" });
         }
 
         [Fact]
