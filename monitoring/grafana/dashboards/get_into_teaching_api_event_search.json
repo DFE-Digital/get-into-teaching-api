@@ -1,0 +1,849 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 8,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.2",
+      "targets": [
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_count[$__interval]))",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Total",
+      "type": "stat"
+    },
+    {
+      "aliasColors": {},
+      "breakPoint": "50%",
+      "cacheTimeout": null,
+      "combine": {
+        "label": "Others",
+        "threshold": 0
+      },
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "fontSize": "80%",
+      "format": "short",
+      "gridPos": {
+        "h": 13,
+        "w": 8,
+        "x": 8,
+        "y": 0
+      },
+      "id": 3,
+      "interval": null,
+      "legend": {
+        "show": true,
+        "values": true
+      },
+      "legendType": "Under graph",
+      "links": [],
+      "nullPointMode": "connected",
+      "pieType": "pie",
+      "pluginVersion": "7.2.2",
+      "strokeWidth": 1,
+      "targets": [
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",type_id!~\".+\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "No Type",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",type_id=\"222750001\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "Train to Teach",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",type_id=\"222750008\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "Online",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",type_id=\"222750009\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "School and University",
+          "refId": "D"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Total by Type",
+      "type": "grafana-piechart-panel",
+      "valueName": "total"
+    },
+    {
+      "aliasColors": {},
+      "breakPoint": "50%",
+      "cacheTimeout": null,
+      "combine": {
+        "label": "Others",
+        "threshold": 0
+      },
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "fontSize": "80%",
+      "format": "short",
+      "gridPos": {
+        "h": 13,
+        "w": 8,
+        "x": 16,
+        "y": 0
+      },
+      "id": 4,
+      "interval": null,
+      "legend": {
+        "show": true,
+        "values": true
+      },
+      "legendType": "Under graph",
+      "links": [],
+      "nullPointMode": "connected",
+      "pieType": "pie",
+      "pluginVersion": "7.2.2",
+      "strokeWidth": 1,
+      "targets": [
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius!~\".+\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "No Radius",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"100\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "100 miles",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"50\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "50 miles",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"30\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "30 miles",
+          "refId": "D"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Total by Radius",
+      "type": "grafana-piechart-panel",
+      "valueName": "total"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 73,
+      "panels": [],
+      "title": "Results by Radius (Train to Teach)",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 14
+      },
+      "id": 76,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.2",
+      "targets": [
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius!~\".+\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius!~\".+\",type_id=\"222750001\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "> 10",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius!~\".+\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius!~\".+\",type_id=\"222750001\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "6 - 10",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius!~\".+\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius!~\".+\",type_id=\"222750001\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "1 - 5",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius!~\".+\",type_id=\"222750001\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "0",
+          "refId": "D"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "No Radius",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 14
+      },
+      "id": 69,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.2",
+      "targets": [
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"30\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"30\",type_id=\"222750001\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "> 10",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"30\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"30\",type_id=\"222750001\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "6 - 10",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"30\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"30\",type_id=\"222750001\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "1 - 5",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"30\",type_id=\"222750001\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "0",
+          "refId": "D"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "30 miles",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 22
+      },
+      "id": 78,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.2",
+      "targets": [
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"50\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"50\",type_id=\"222750001\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "> 10",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"50\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"50\",type_id=\"222750001\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "6 - 10",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"50\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"50\",type_id=\"222750001\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "1 - 5",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"50\",type_id=\"222750001\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "0",
+          "refId": "D"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "50 miles",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 22
+      },
+      "id": 79,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.2",
+      "targets": [
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"100\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"100\",type_id=\"222750001\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "> 10",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"100\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"100\",type_id=\"222750001\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "6 - 10",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"100\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"100\",type_id=\"222750001\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "1 - 5",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"100\",type_id=\"222750001\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "0",
+          "refId": "D"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "100 miles",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 30
+      },
+      "id": 6,
+      "title": "Results by Radius",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "super-light-purple",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 31
+      },
+      "id": 68,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.2",
+      "targets": [
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius!~\".+\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius!~\".+\",type_id!~\".+\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "> 10",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius!~\".+\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius!~\".+\",type_id!~\".+\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "6 - 10",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius!~\".+\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius!~\".+\",type_id!~\".+\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "1 - 5",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius!~\".+\",type_id!~\".+\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "0",
+          "refId": "D"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "No Radius",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "super-light-purple",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 31
+      },
+      "id": 77,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.2",
+      "targets": [
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"30\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"30\",type_id!~\".+\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "> 10",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"30\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"30\",type_id!~\".+\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "6 - 10",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"30\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"30\",type_id!~\".+\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "1 - 5",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"30\",type_id!~\".+\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "0",
+          "refId": "D"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "30 miles",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "super-light-purple",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 39
+      },
+      "id": 70,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.2",
+      "targets": [
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"50\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"50\",type_id!~\".+\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "> 10",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"50\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"50\",type_id!~\".+\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "6 - 10",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"50\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"50\",type_id!~\".+\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "1 - 5",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"50\",type_id!~\".+\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "0",
+          "refId": "D"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "50 miles",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "super-light-purple",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 39
+      },
+      "id": 71,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.2",
+      "targets": [
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"100\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"100\",type_id!~\".+\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "> 10",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"100\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"100\",type_id!~\".+\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "6 - 10",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"100\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"100\",type_id!~\".+\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "1 - 5",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"100\",type_id!~\".+\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "0",
+          "refId": "D"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "100 miles",
+      "type": "stat"
+    }
+  ],
+  "schemaVersion": 26,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Get into Teaching Api - Event Search",
+  "uid": null,
+  "version": 0
+}
