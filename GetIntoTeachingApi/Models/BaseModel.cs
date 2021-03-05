@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
@@ -20,9 +21,9 @@ namespace GetIntoTeachingApi.Models
         private readonly string[] _propertyNamesExcludedFromChangeTracking = new string[] { "ChangedPropertyNames" };
         private bool _changeTrackingEnabled = true;
 
-        // Would be better as a HashSet<string>, but: https://github.com/dotnet/runtime/issues/2387
         [NotMapped]
-        public IList<string> ChangedPropertyNames { get; set; } = new List<string>();
+        [JsonIgnore]
+        public HashSet<string> ChangedPropertyNames { get; set; } = new HashSet<string>();
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid? Id { get; set; }
 
@@ -85,13 +86,11 @@ namespace GetIntoTeachingApi.Models
             return entity;
         }
 
-        [OnDeserializing]
         public void DisableChangeTracking()
         {
             _changeTrackingEnabled = false;
         }
 
-        [OnDeserialized]
         public void EnableChangeTracking()
         {
             _changeTrackingEnabled = true;
@@ -112,9 +111,8 @@ namespace GetIntoTeachingApi.Models
         protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             var excluded = _propertyNamesExcludedFromChangeTracking.Any(p => p == propertyName);
-            var alreadyContains = ChangedPropertyNames.Contains(propertyName);
 
-            if (_changeTrackingEnabled && !excluded && !alreadyContains)
+            if (_changeTrackingEnabled && !excluded)
             {
                 ChangedPropertyNames.Add(propertyName);
             }
@@ -140,6 +138,18 @@ namespace GetIntoTeachingApi.Models
         {
             input = input?.Trim();
             return string.IsNullOrWhiteSpace(input) ? null : input;
+        }
+
+        [OnDeserializing]
+        private void DisableChangeTracking(StreamingContext context)
+        {
+            DisableChangeTracking();
+        }
+
+        [OnDeserialized]
+        private void EnableChangeTracking(StreamingContext context)
+        {
+            EnableChangeTracking();
         }
 
         private void InitChangedPropertyNames()

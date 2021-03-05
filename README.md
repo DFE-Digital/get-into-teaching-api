@@ -219,6 +219,20 @@ The content that we cache in Postgres that originates from the CRM is served wit
 
 We use postcodes to support searching for events around a given location. The application pulls a [free CSV data set](https://www.freemaptools.com/download-uk-postcode-lat-lng.htm) weekly and caches it in Postgres; this makes geocoding 99% of postcodes very fast. For the other 1% of postcodes (recent housing developments, for example) we fallback to Google APIs for geocoding.
 
+### JSON Serializers
+
+The application uses two Json serializers; `System.Text.Json` for everything apart from serializing Hangfire payloads (changed tracked objects), for which we use `Newtonsoft.Json`. The reasons for this are:
+
+1. `System.Text.Json` does not support conditional serialization and we want to serialize `ChangedPropertyNames` _only_ when serializing a Hangfire payload (omitting the attribute in API responses).
+2. `System.Text.Json` supports on deserializing/ed but not our particular use case of pausing change tracking during deserialization. `Newtonsoft.Json` supports `System.Runtime.Serialization.OnDeserializing/OnDeserialized` which can be used for this purpose.
+
+In an attempt to isolate `Newtonsoft.Json` there are extensions for serializing/deserializing changed tracked objects:
+
+```
+var myChangedTrackedObject = json.DeserializeChangedTracked<ChangedTrackedObject>();
+var json = myChangeTrackedObject.SerializeChangedTracked();
+```
+
 ## CRM Changes
 
 The application is designed to make supporting new attribtues and entities in the CRM as easy as possible. All of the 'heavy lifting' is done in the `BaseModel` class using reflection to inspect model attributes and relevant `Entity*` annotations.
