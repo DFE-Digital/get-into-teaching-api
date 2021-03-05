@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
@@ -82,7 +83,7 @@ namespace GetIntoTeachingApi.Models
                 Email = Email,
                 FirstName = FirstName,
                 LastName = LastName,
-                AddressPostcode = AddressPostcode,
+                AddressPostcode = AddressPostcode.AsFormattedPostcode(),
                 Telephone = Telephone,
             };
 
