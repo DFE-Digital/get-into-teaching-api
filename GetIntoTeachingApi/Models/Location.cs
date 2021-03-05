@@ -17,6 +17,7 @@ namespace GetIntoTeachingApi.Models
             CSV,
         }
 
+        public static readonly int InwardPostcodeLength = 3;
         public static readonly Regex OutwardOrFullPostcodeRegex = new Regex(
             $@"\A({OutwardPostcodePattern})\Z|\A({FullPostcodePattern})\z", RegexOptions.IgnoreCase);
         public static readonly Regex PostcodeRegex = new Regex(

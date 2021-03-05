@@ -145,5 +145,13 @@ namespace GetIntoTeachingApiTests.Models
             request.Candidate.MailingListSubscriptionChannelId.Should().Be(123);
             request.Candidate.EventsSubscriptionChannelId.Should().Be(123);
         }
+
+        [Fact]
+        public void Candidate_AddressPostcode_IsFormatted()
+        {
+            var request = new MailingListAddMember() { AddressPostcode = "ky119yu" };
+
+            request.Candidate.AddressPostcode.Should().Be("KY11 9YU");
+        }
     }
 }

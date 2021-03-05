@@ -162,5 +162,13 @@ namespace GetIntoTeachingApiTests.Models
 
             request.Candidate.HasEventsSubscription.Should().BeTrue();
         }
+
+        [Fact]
+        public void Candidate_AddressPostcode_IsFormatted()
+        {
+            var request = new TeachingEventAddAttendee() { AddressPostcode = "ky119yu" };
+
+            request.Candidate.AddressPostcode.Should().Be("KY11 9YU");
+        }
     }
 }
