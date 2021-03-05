@@ -69,6 +69,10 @@ variable "redis_1_plan" {
   default = "small-ha-5_x"
 }
 
+variable "influxdb_1_plan" {
+  default = "tiny-1_x"
+}
+
 variable "paas_api_application_name" {
   default = "dfe-teacher-services-api"
 }

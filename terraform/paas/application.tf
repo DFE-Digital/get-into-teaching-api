@@ -1,6 +1,6 @@
 locals {
   environment_map = { DATABASE_INSTANCE_NAME = cloudfoundry_service_instance.postgres_common.name,
-                      HANGFIRE_INSTANCE_NAME = cloudfoundry_service_instance.postgres_common.name }
+  HANGFIRE_INSTANCE_NAME = cloudfoundry_service_instance.postgres_common.name }
 }
 
 resource "cloudfoundry_app" "api_application" {
