@@ -5,8 +5,6 @@ using System;
 using GetIntoTeachingApi.Utils;
 using Moq;
 using Xunit;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace GetIntoTeachingApiTests.Services
 {
@@ -31,12 +29,14 @@ namespace GetIntoTeachingApiTests.Services
         [InlineData("e@a.com", "B", "C")]
         public void GenerateToken_ReturnsAValidToken(string email, string firstName, string lastName)
         {
+            var generatedTotpsCount = _metrics.GeneratedTotps.Value;
+            var verifiedTotpsCount = _metrics.VerifiedTotps.WithLabels(new[] { true.ToString() }).Value;
             var request = new ExistingCandidateRequest { Email = email, FirstName = firstName, LastName = lastName };
             var token = _service.GenerateToken(request, _candidateId);
 
             _service.IsValid(token, request, _candidateId).Should().BeTrue();
-            _metrics.GeneratedTotps.WithLabels(new[] { _candidateId.ToString(), token }).Value.Should().Be(1);
-            _metrics.VerifiedTotps.WithLabels(new[] { _candidateId.ToString(), token, true.ToString() }).Value.Should().Be(1);
+            _metrics.GeneratedTotps.Value.Should().Be(generatedTotpsCount + 1);
+            _metrics.VerifiedTotps.WithLabels(new[] { true.ToString() }).Value.Should().Be(verifiedTotpsCount + 1);
         }
 
         [Fact]
@@ -75,12 +75,14 @@ namespace GetIntoTeachingApiTests.Services
         [InlineData("abcdef")]
         public void IsValid_WithInvalidToken_ReturnsFalse(string invalidToken)
         {
+            var verifiedTotpsCount = _metrics.VerifiedTotps.WithLabels(new[] { false.ToString() }).Value;
+
             var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
             _service.IsValid(invalidToken, request, _candidateId).Should().BeFalse();
 
             if (!string.IsNullOrWhiteSpace(invalidToken))
             {
-                _metrics.VerifiedTotps.WithLabels(new[] { _candidateId.ToString(), invalidToken, false.ToString() }).Value.Should().Be(1);
+                _metrics.VerifiedTotps.WithLabels(new[] { false.ToString() }).Value.Should().Be(verifiedTotpsCount + 1);
             }
         }
 
@@ -88,12 +90,15 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void IsValid_WithExpiredToken_ReturnsFalse()
         {
+            var verifiedTotpsCount = _metrics.VerifiedTotps.WithLabels(new[] { false.ToString() }).Value;
             var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
             var secondsToOutsideOfWindow = (CandidateAccessTokenService.StepInSeconds * CandidateAccessTokenService.VerificationWindow) + 1;
             var dateTimeOutsideOfWindow = DateTime.UtcNow.AddSeconds(-secondsToOutsideOfWindow);
+
             var token = _service.GenerateToken(request, _candidateId);
+
             _service.IsValid(token, request, _candidateId, dateTimeOutsideOfWindow).Should().BeFalse();
-            _metrics.VerifiedTotps.WithLabels(new[] { _candidateId.ToString(), token, false.ToString() }).Value.Should().Be(1);
+            _metrics.VerifiedTotps.WithLabels(new[] { false.ToString() }).Value.Should().Be(verifiedTotpsCount + 1);
         }
     }
 }

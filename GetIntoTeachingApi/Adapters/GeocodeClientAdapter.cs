@@ -31,7 +31,7 @@ namespace GetIntoTeachingApi.Adapters
 
             if (response.Status != GeocodeStatus.Ok)
             {
-                _metrics.GoogleApiCalls.WithLabels(postcode, "error").Inc();
+                _metrics.GoogleApiCalls.WithLabels("error").Inc();
                 return null;
             }
 
@@ -39,11 +39,11 @@ namespace GetIntoTeachingApi.Adapters
 
             if (result == null)
             {
-                _metrics.GoogleApiCalls.WithLabels(postcode, "fail").Inc();
+                _metrics.GoogleApiCalls.WithLabels("fail").Inc();
                 return null;
             }
 
-            _metrics.GoogleApiCalls.WithLabels(postcode, "success").Inc();
+            _metrics.GoogleApiCalls.WithLabels("success").Inc();
 
             var location = result.Geometry.Location;
             var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: DbConfiguration.Wgs84Srid);
