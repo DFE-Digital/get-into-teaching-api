@@ -27,8 +27,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 3,
-  "iteration": 1614867417305,
+  "id": 4,
+  "iteration": 1614940792105,
   "links": [],
   "panels": [
     {
@@ -3163,6 +3163,7 @@
       "fieldConfig": {
         "defaults": {
           "custom": {},
+          "decimals": 0,
           "mappings": [
             {
               "id": 0,
@@ -3221,7 +3222,7 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "expr": "sum(increase(api_google_api_calls[$__range]))",
+          "expr": "sum(increase(api_google_api_calls[$__interval]))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -3326,68 +3327,6 @@
       "type": "stat"
     },
     {
-      "columns": [
-        {
-          "text": "Total",
-          "value": "total"
-        }
-      ],
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "fontSize": "100%",
-      "gridPos": {
-        "h": 10,
-        "w": 8,
-        "x": 8,
-        "y": 140
-      },
-      "id": 57,
-      "pageSize": null,
-      "showHeader": true,
-      "sort": {
-        "col": 1,
-        "desc": true
-      },
-      "styles": [
-        {
-          "alias": "",
-          "align": "auto",
-          "colorMode": null,
-          "colors": [
-            "rgba(50, 172, 45, 0.97)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(245, 54, 54, 0.9)"
-          ],
-          "decimals": 0,
-          "pattern": "/.*/",
-          "thresholds": [
-            "0.1",
-            "0.30"
-          ],
-          "type": "number",
-          "unit": "short"
-        }
-      ],
-      "targets": [
-        {
-          "expr": "sum(increase(api_google_api_calls[$__range])) by (postcode)",
-          "interval": "",
-          "legendFormat": "{{postcode}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Geocode Requests by Postcode",
-      "transform": "timeseries_aggregations",
-      "type": "table-old"
-    },
-    {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -3405,8 +3344,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
-        "w": 8,
-        "x": 16,
+        "w": 16,
+        "x": 8,
         "y": 140
       },
       "hiddenSeries": false,
@@ -3470,7 +3409,7 @@
           "datasource": "Prometheus",
           "expr": "sum(rate(api_google_api_calls{result != \"success\"}[3m])) by (result)",
           "interval": "",
-          "legendFormat": "Google Geocoder - {result}",
+          "legendFormat": "Google Geocoder - {{result}}",
           "refId": "B"
         }
       ],
