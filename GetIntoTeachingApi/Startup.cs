@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Text.Json.Serialization;
 using AspNetCoreRateLimit;
-using Dahomey.Json;
 using dotenv.net;
 using FluentValidation.AspNetCore;
 using GetIntoTeachingApi.Adapters;

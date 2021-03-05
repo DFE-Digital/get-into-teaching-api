@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Moq;
 using GetIntoTeachingApi.Services;
 using System.Text.Json;
-using Dahomey.Json;
+using GetIntoTeachingApi.Utils;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -152,9 +152,7 @@ namespace GetIntoTeachingApiTests.Controllers
 
         private static bool IsMatch(Candidate candidateA, string candidateBJson)
         {
-            var options = new JsonSerializerOptions() { IgnoreNullValues = true };
-            options.SetupExtensions();
-            var candidateB = JsonSerializer.Deserialize<Candidate>(candidateBJson, options);
+            var candidateB = candidateBJson.DeserializeChangedTracked<Candidate>();
 
             // Compares ignoring date attributes that are dynamic.
             candidateA.Should().BeEquivalentTo(candidateB, options => options
