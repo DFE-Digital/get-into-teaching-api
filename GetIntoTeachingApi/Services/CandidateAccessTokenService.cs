@@ -26,7 +26,7 @@ namespace GetIntoTeachingApi.Services
         {
             var totp = CreateTotp(request).ComputeTotp();
 
-            _metrics.GeneratedTotps.WithLabels(candidateId.ToString(), totp).Inc();
+            _metrics.GeneratedTotps.Inc();
 
             return totp;
         }
@@ -51,7 +51,7 @@ namespace GetIntoTeachingApi.Services
                 out _,
                 new VerificationWindow(previous: VerificationWindow, future: 0));
 
-            _metrics.VerifiedTotps.WithLabels(candidateId.ToString(), token, valid.ToString()).Inc();
+            _metrics.VerifiedTotps.WithLabels(valid.ToString()).Inc();
 
             return valid;
         }
