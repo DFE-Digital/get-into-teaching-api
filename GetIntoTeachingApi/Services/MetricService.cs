@@ -20,6 +20,11 @@ namespace GetIntoTeachingApi.Services
             {
                 LabelNames = new[] { "type_id", "radius" },
             });
+        private static readonly Histogram _inPersonTeachingEventResults = Metrics
+            .CreateHistogram("api_in_person_teaching_event_results_count", "Histogram of teaching event search results (in person).", new HistogramConfiguration
+            {
+                LabelNames = new[] { "type_id", "radius" },
+            });
         private static readonly Gauge _hangfireJobs = Metrics
             .CreateGauge("api_hangfire_jobs", "Gauge number of Hangifre jobs.", "state");
         private static readonly Counter _googleApiCalls = Metrics
@@ -45,6 +50,7 @@ namespace GetIntoTeachingApi.Services
         public Histogram MagicLinkTokenGenerationDuration => _magicLinkTokenGenerationDuration;
         public Histogram HangfireJobQueueDuration => _hangfireJobQueueDuration;
         public Histogram TeachingEventSearchResults => _teachingEventSearchResults;
+        public Histogram InPersonTeachingEventResults => _inPersonTeachingEventResults;
         public Gauge HangfireJobs => _hangfireJobs;
         public Counter GoogleApiCalls => _googleApiCalls;
         public Counter CacheLookups => _cacheLookups;
