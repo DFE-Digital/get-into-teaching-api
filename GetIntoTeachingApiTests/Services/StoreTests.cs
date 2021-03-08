@@ -25,12 +25,6 @@ namespace GetIntoTeachingApiTests.Services
         private readonly Mock<IGeocodeClientAdapter> _mockGeocodeClient;
         private readonly Mock<ICrmService> _mockCrm;
 
-        private static readonly Guid eventBuildingGuid1 = new Guid("67ffca5c-5adc-4a63-abb7-632c9ecbf283");
-        private static readonly Guid eventBuildingGuid2 = new Guid("194c0926-5f15-434d-88ba-f76c376ac865");
-        private static readonly Guid eventBuildingGuid3 = new Guid("6dc656a8-50cc-4802-a62a-47576ddbc493");
-        private static readonly Guid eventBuildingGuid4 = new Guid("adc3e6ce-65a8-4752-abcd-781365982a33");
-        private static readonly Guid eventBuildingGuid5 = new Guid("deb12260-84fc-43b5-8682-13aa1015f100");
-
         public StoreTests(DatabaseFixture databaseFixture) : base(databaseFixture)
         {
             _mockGeocodeClient = new Mock<IGeocodeClientAdapter>();
@@ -84,8 +78,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public async void SyncAsync_UpdatesExistingTeachingEvents()
         {
-            await SeedMockTeachingEventBuildingsAsync();
-            var updatedTeachingEvents = (await SeedMockTeachingEventsAsync()).ToList();
+            var updatedTeachingEvents = (await SeedMockTeachingEventsAndBuildingsAsync()).ToList();
             updatedTeachingEvents.ForEach(te =>
             {
                 te.Name += "Updated";
@@ -106,8 +99,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public async void SyncAsync_DeletesOrphanedTeachingEvents()
         {
-            await SeedMockTeachingEventBuildingsAsync();
-            await SeedMockTeachingEventsAsync();
+            await SeedMockTeachingEventsAndBuildingsAsync();
             var teachingEvents = MockTeachingEvents().ToList();
             _mockCrm.Setup(m => m.GetTeachingEvents(It.Is<DateTime>(d => CheckGetTeachingEventsAfterDate(d)))).Returns(teachingEvents.GetRange(0, 1));
 
@@ -321,8 +313,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public async void SearchTeachingEvents_WithoutFilters_ReturnsAll()
         {
-            await SeedMockTeachingEventBuildingsAsync();
-            await SeedMockTeachingEventsAsync();
+            await SeedMockTeachingEventsAndBuildingsAsync();
             var request = new TeachingEventSearchRequest() { };
 
             var result = await _store.SearchTeachingEventsAsync(request);
@@ -336,8 +327,7 @@ namespace GetIntoTeachingApiTests.Services
         public async void SearchTeachingEvents_WithFilters_ReturnsMatching()
         {
             SeedMockLocations();
-            await SeedMockTeachingEventBuildingsAsync();
-            await SeedMockTeachingEventsAsync();
+            await SeedMockTeachingEventsAndBuildingsAsync();
             var request = new TeachingEventSearchRequest()
             {
                 Postcode = "KY6 2NJ",
@@ -358,8 +348,7 @@ namespace GetIntoTeachingApiTests.Services
         public async void SearchTeachingEvents_WithFilters_ReturnsEventNarrowlyInRange()
         {
             SeedMockLocations();
-            await SeedMockTeachingEventBuildingsAsync();
-            await SeedMockTeachingEventsAsync();
+            await SeedMockTeachingEventsAndBuildingsAsync();
             var request = new TeachingEventSearchRequest()
             {
                 Postcode = "KY6 2NJ",
@@ -380,8 +369,7 @@ namespace GetIntoTeachingApiTests.Services
         public async void SearchTeachingEvents_WithFilters_ExcludesEventNarrowlyOutOfRange()
         {
             SeedMockLocations();
-            await SeedMockTeachingEventBuildingsAsync();
-            await SeedMockTeachingEventsAsync();
+            await SeedMockTeachingEventsAndBuildingsAsync();
             var request = new TeachingEventSearchRequest()
             {
                 Postcode = "KY6 2NJ",
@@ -400,8 +388,7 @@ namespace GetIntoTeachingApiTests.Services
         public async void SearchTeachingEvents_FilteredByRadius_ReturnsMatchingAndOnlineEvents()
         {
             SeedMockLocations();
-            await SeedMockTeachingEventBuildingsAsync();
-            await SeedMockTeachingEventsAsync();
+            await SeedMockTeachingEventsAndBuildingsAsync();
             var request = new TeachingEventSearchRequest() { Postcode = "KY6 2NJ", Radius = 15 };
 
             var result = await _store.SearchTeachingEventsAsync(request);
@@ -414,8 +401,7 @@ namespace GetIntoTeachingApiTests.Services
         public async void SearchTeachingEvents_FilteredByRadiusWithOutwardOnlyPostcode_ReturnsMatchingAndOnlineEvents()
         {
             SeedMockLocations();
-            await SeedMockTeachingEventBuildingsAsync();
-            await SeedMockTeachingEventsAsync();
+            await SeedMockTeachingEventsAndBuildingsAsync();
             var request = new TeachingEventSearchRequest() { Postcode = "KY6", Radius = 15 };
 
             var result = await _store.SearchTeachingEventsAsync(request);
@@ -428,8 +414,7 @@ namespace GetIntoTeachingApiTests.Services
         public async void SearchTeachingEvents_FilteredByRadiusWithFailedPostcodeGeocoding_ReturnsEmpty()
         {
             SeedMockLocations();
-            await SeedMockTeachingEventBuildingsAsync();
-            await SeedMockTeachingEventsAsync();
+            await SeedMockTeachingEventsAndBuildingsAsync();
             var request = new TeachingEventSearchRequest() { Postcode = "TE7 1NG", Radius = 15 };
 
             var result = await _store.SearchTeachingEventsAsync(request);
@@ -441,8 +426,7 @@ namespace GetIntoTeachingApiTests.Services
         public async void SearchTeachingEvents_FilteredByType_ReturnsMatching()
         {
             SeedMockLocations();
-            await SeedMockTeachingEventBuildingsAsync();
-            await SeedMockTeachingEventsAsync();
+            await SeedMockTeachingEventsAndBuildingsAsync();
             var request = new TeachingEventSearchRequest() { TypeId = (int)TeachingEvent.EventType.ApplicationWorkshop };
 
             var result = await _store.SearchTeachingEventsAsync(request);
@@ -454,8 +438,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public async void SearchTeachingEvents_FilteredByStartAfter_ReturnsMatching()
         {
-            await SeedMockTeachingEventBuildingsAsync();
-            await SeedMockTeachingEventsAsync();
+            await SeedMockTeachingEventsAndBuildingsAsync();
             var request = new TeachingEventSearchRequest() { StartAfter = DateTime.UtcNow.AddDays(6) };
 
             var result = await _store.SearchTeachingEventsAsync(request);
@@ -467,8 +450,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public async void SearchTeachingEvents_FilteredByStartBefore_ReturnsMatching()
         {
-            await SeedMockTeachingEventBuildingsAsync();
-            await SeedMockTeachingEventsAsync();
+            await SeedMockTeachingEventsAndBuildingsAsync();
             var request = new TeachingEventSearchRequest() { StartBefore = DateTime.UtcNow.AddDays(6) };
 
             var result = await _store.SearchTeachingEventsAsync(request);
@@ -480,8 +462,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public async void GetTeachingEventAsync_WithId_ReturnsMatchingEvent()
         {
-            await SeedMockTeachingEventBuildingsAsync();
-            var events = await SeedMockTeachingEventsAsync();
+            var events = await SeedMockTeachingEventsAndBuildingsAsync();
             var result = await _store.GetTeachingEventAsync((Guid)events.First().Id);
 
             result.Id.Should().Be(events.First().Id);
@@ -491,8 +472,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public async void GetTeachingEventAsync_WithReadableId_ReturnsMatchingEvent()
         {
-            await SeedMockTeachingEventBuildingsAsync();
-            var events = await SeedMockTeachingEventsAsync();
+            var events = await SeedMockTeachingEventsAndBuildingsAsync();
             var result = await _store.GetTeachingEventAsync(events.First().ReadableId);
 
             result.ReadableId.Should().Be(events.First().ReadableId);
@@ -519,10 +499,10 @@ namespace GetIntoTeachingApiTests.Services
             return true;
         }
 
-        private static IEnumerable<TeachingEvent> MockTeachingEvents()
+        private static List<TeachingEvent> MockTeachingEvents()
         {
-            var sharedBuildingId = eventBuildingGuid1;
-
+            var buildings = MockTeachingEventBuildings();
+            var sharedBuildingId = buildings[0].Id;
 
             var event1 = new TeachingEvent()
             {
@@ -542,7 +522,7 @@ namespace GetIntoTeachingApiTests.Services
                 Name = "Event 2",
                 StartAt = DateTime.UtcNow.AddDays(1),
                 TypeId = (int)TeachingEvent.EventType.ApplicationWorkshop,
-                BuildingId = eventBuildingGuid2
+                BuildingId = buildings[1].Id
             };
 
             var event3 = new TeachingEvent()
@@ -552,7 +532,7 @@ namespace GetIntoTeachingApiTests.Services
                 Name = "Event 3",
                 StartAt = DateTime.UtcNow.AddDays(10),
                 TypeId = (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
-                BuildingId = eventBuildingGuid3
+                BuildingId = buildings[2].Id
             };
 
             var event4 = new TeachingEvent()
@@ -562,7 +542,7 @@ namespace GetIntoTeachingApiTests.Services
                 Name = "Event 4",
                 StartAt = DateTime.UtcNow.AddDays(3),
                 TypeId = (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
-                BuildingId = eventBuildingGuid4
+                BuildingId = buildings[3].Id
             };
 
             var event5 = new TeachingEvent()
@@ -592,14 +572,20 @@ namespace GetIntoTeachingApiTests.Services
                 Name = "Event 7",
                 StartAt = DateTime.UtcNow.AddYears(-1),
                 TypeId = (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
-                BuildingId = eventBuildingGuid5
+                BuildingId = buildings[4].Id
             };
 
-            return new TeachingEvent[] { event1, event2, event3, event4, event5, event6, event7 };
+            return new List<TeachingEvent>() { event1, event2, event3, event4, event5, event6, event7 };
         }
 
-        private static IEnumerable<TeachingEventBuilding> MockTeachingEventBuildings()
+        private static List<TeachingEventBuilding> MockTeachingEventBuildings()
         {
+            Guid eventBuildingGuid1 = new Guid("67ffca5c-5adc-4a63-abb7-632c9ecbf283");
+            Guid eventBuildingGuid2 = new Guid("194c0926-5f15-434d-88ba-f76c376ac865");
+            Guid eventBuildingGuid3 = new Guid("6dc656a8-50cc-4802-a62a-47576ddbc493");
+            Guid eventBuildingGuid4 = new Guid("adc3e6ce-65a8-4752-abcd-781365982a33");
+            Guid eventBuildingGuid5 = new Guid("deb12260-84fc-43b5-8682-13aa1015f100");
+
             var building1 = new TeachingEventBuilding()
             {
                 Id = eventBuildingGuid1
@@ -632,7 +618,7 @@ namespace GetIntoTeachingApiTests.Services
                 AddressPostcode = "TE7 9IN"
             };
 
-            return new TeachingEventBuilding[] { building1, building2, building3, building4, building5 };
+            return new List<TeachingEventBuilding> { building1, building2, building3, building4, building5 };
         }
 
         private async Task<IEnumerable<TeachingEventBuilding>> SeedMockTeachingEventBuildingsAsync()
@@ -645,8 +631,10 @@ namespace GetIntoTeachingApiTests.Services
             return buildings;
         }
 
-        private async Task<IEnumerable<TeachingEvent>> SeedMockTeachingEventsAsync()
+        private async Task<IEnumerable<TeachingEvent>> SeedMockTeachingEventsAndBuildingsAsync()
         {
+            await SeedMockTeachingEventBuildingsAsync();
+
             var teachingEvents = MockTeachingEvents().ToList();
             _mockCrm.Setup(m => m.GetTeachingEvents(It.IsAny<DateTime>())).Returns(teachingEvents);
 
