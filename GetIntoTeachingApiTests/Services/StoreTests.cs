@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -99,12 +99,15 @@ namespace GetIntoTeachingApiTests.Services
         public async void SyncAsync_DeletesOrphanedTeachingEvents()
         {
             await SeedMockTeachingEventsAndBuildingsAsync();
-            var teachingEvents = MockTeachingEvents().ToList();
-            _mockCrm.Setup(m => m.GetTeachingEvents(It.Is<DateTime>(d => CheckGetTeachingEventsAfterDate(d)))).Returns(teachingEvents.GetRange(0, 1));
+            var teachingEvent = MockTeachingEvents().ToList().GetRange(0, 1);
+            _mockCrm.Setup(m => m.GetTeachingEvents(It.Is<DateTime>(d => CheckGetTeachingEventsAfterDate(d))))
+                .Returns(teachingEvent);
 
             await _store.SyncAsync();
 
-            DbContext.TeachingEvents.Should().BeEquivalentTo(teachingEvents.GetRange(0, 1));
+            DbContext.TeachingEvents.Should().BeEquivalentTo(teachingEvent);
+
+            DbContext.TeachingEventBuildings.Should().Contain(teachingEvent.Single().Building);
         }
 
         [Fact]
