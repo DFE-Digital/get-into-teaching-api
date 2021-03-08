@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -44,7 +45,7 @@ namespace GetIntoTeachingApi.Controllers
                           "models in the API map to the corresponding entities in Dynamics 365.",
             OperationId = "GenerateMappingInfo",
             Tags = new[] { "Operations" })]
-        [ProducesResponseType(typeof(IEnumerable<MappingInfo>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<MappingInfo>), StatusCodes.Status200OK)]
         public IActionResult GenerateMappingInfo()
         {
             var assembly = typeof(BaseModel).Assembly;
@@ -60,7 +61,7 @@ namespace GetIntoTeachingApi.Controllers
             Summary = "Performs a health check.",
             OperationId = "HealthCheck",
             Tags = new[] { "Operations" })]
-        [ProducesResponseType(typeof(HealthCheckResponse), 200)]
+        [ProducesResponseType(typeof(HealthCheckResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> HealthCheck()
         {
             var response = new HealthCheckResponse()
