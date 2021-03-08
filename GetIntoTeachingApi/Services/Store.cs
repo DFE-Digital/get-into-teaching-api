@@ -163,10 +163,12 @@ namespace GetIntoTeachingApi.Services
         {
             var afterDate = DateTime.UtcNow.Subtract(TeachingEventArchiveSize);
             var teachingEvents = _crm.GetTeachingEvents(afterDate).ToList();
+            var teachingEventBuildings = _crm.GetTeachingEventBuildings();
 
-            foreach (var te in teachingEvents.Where(te => te.Building != null))
+
+            foreach (var te in teachingEvents.Where(te => te.BuildingId != null))
             {
-                te.Building = await _dbContext.TeachingEventBuildings.FindAsync(te.BuildingId);
+                te.Building = teachingEventBuildings.FirstOrDefault(b => b.Id == te.BuildingId);
             }
 
             await SyncModels(teachingEvents, _dbContext.TeachingEvents);
