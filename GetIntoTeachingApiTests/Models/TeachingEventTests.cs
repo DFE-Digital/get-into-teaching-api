@@ -58,6 +58,26 @@ namespace GetIntoTeachingApiTests.Models
             };
 
             teachingEvent.IsVirtual.Should().Be(expected);
-    }
+        }
+
+        [Theory]
+        [InlineData(true, false, false)]
+        [InlineData(true, true, true)]
+        [InlineData(false, true, true)]
+        [InlineData(false, false, true)]
+        public void IsInPerson_ReturnsCorrectly(bool isOnline, bool isVirtual, bool expected)
+        {
+            var teachingEvent = new TeachingEvent()
+            {
+                IsOnline = isOnline,
+            };
+
+            if (isVirtual || !isOnline)
+            {
+                teachingEvent.Building = new TeachingEventBuilding() { AddressPostcode = "KY11 9YU" };
+            }
+
+            teachingEvent.IsInPerson.Should().Be(expected);
+        }
     }
 }
