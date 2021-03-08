@@ -9,7 +9,6 @@ namespace GetIntoTeachingApi.Controllers
 {
     [Route("api/teaching_event_buildings")]
     [ApiController]
-    [LogRequests]
     [Authorize(Roles = "Admin,GetIntoTeaching")]
     public class TeachingEventBuildingsController : ControllerBase
     {
