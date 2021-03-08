@@ -24,7 +24,6 @@ namespace GetIntoTeachingApi.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string AddressPostcode { get; set; }
-        public string Telephone { get; set; }
         [SwaggerSchema(ReadOnly = true)]
         public bool AlreadySubscribedToEvents { get; set; }
         [SwaggerSchema(ReadOnly = true)]
@@ -63,7 +62,6 @@ namespace GetIntoTeachingApi.Models
             FirstName = candidate.FirstName;
             LastName = candidate.LastName;
             AddressPostcode = candidate.AddressPostcode;
-            Telephone = candidate.Telephone;
 
             AlreadySubscribedToMailingList = candidate.HasMailingListSubscription == true;
             AlreadySubscribedToEvents = candidate.HasEventsSubscription == true;
@@ -81,7 +79,6 @@ namespace GetIntoTeachingApi.Models
                 FirstName = FirstName,
                 LastName = LastName,
                 AddressPostcode = AddressPostcode.AsFormattedPostcode(),
-                Telephone = Telephone,
                 EligibilityRulesPassed = "false",
             };
 
