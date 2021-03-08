@@ -165,7 +165,6 @@ namespace GetIntoTeachingApi.Services
             var teachingEvents = _crm.GetTeachingEvents(afterDate).ToList();
             var teachingEventBuildings = _crm.GetTeachingEventBuildings();
 
-
             foreach (var te in teachingEvents.Where(te => te.BuildingId != null))
             {
                 te.Building = teachingEventBuildings.FirstOrDefault(b => b.Id == te.BuildingId);

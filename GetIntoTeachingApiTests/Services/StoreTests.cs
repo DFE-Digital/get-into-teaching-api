@@ -72,7 +72,6 @@ namespace GetIntoTeachingApiTests.Services
             var ids = DbContext.TeachingEvents.Select(te => te.Id);
             ids.Should().BeEquivalentTo(mockTeachingEvents.Select(te => te.Id));
             DbContext.TeachingEvents.Count().Should().Be(7);
-            DbContext.TeachingEventBuildings.Count().Should().Be(5);
         }
 
         [Fact]
@@ -106,6 +105,36 @@ namespace GetIntoTeachingApiTests.Services
             await _store.SyncAsync();
 
             DbContext.TeachingEvents.Should().BeEquivalentTo(teachingEvents.GetRange(0, 1));
+        }
+
+        [Fact]
+        public async void SyncAsync_InsertsNewTeachingEventBuildings()
+        {
+            var mockTeachingEventBuildings = MockTeachingEventBuildings();
+            _mockCrm.Setup(m => m.GetTeachingEventBuildings()).Returns(mockTeachingEventBuildings);
+
+            await _store.SyncAsync();
+
+            var ids = DbContext.TeachingEventBuildings.Select(te => te.Id);
+            ids.Should().BeEquivalentTo(mockTeachingEventBuildings.Select(te => te.Id));
+            DbContext.TeachingEventBuildings.Count().Should().Be(5);
+        }
+
+        [Fact]
+        public async void SyncAsync_UpdatesExistingTeachingEventBuildings()
+        {
+            var updatedTeachingEventBuildings = (await SeedMockTeachingEventBuildingsAsync()).ToList();
+            updatedTeachingEventBuildings.ForEach(building =>
+            {
+                building.AddressLine1 += "Updated";
+            });
+            _mockCrm.Setup(m => m.GetTeachingEventBuildings()).Returns(updatedTeachingEventBuildings);
+
+            await _store.SyncAsync();
+
+            var teachingEventBuildings = DbContext.TeachingEventBuildings;
+            teachingEventBuildings.Select(building => building.AddressLine1).ToList().ForEach(name => name.Should().Contain("Updated"));
+            DbContext.TeachingEventBuildings.Count().Should().Be(5);
         }
 
         [Fact]
@@ -580,41 +609,35 @@ namespace GetIntoTeachingApiTests.Services
 
         private static List<TeachingEventBuilding> MockTeachingEventBuildings()
         {
-            Guid eventBuildingGuid1 = new Guid("67ffca5c-5adc-4a63-abb7-632c9ecbf283");
-            Guid eventBuildingGuid2 = new Guid("194c0926-5f15-434d-88ba-f76c376ac865");
-            Guid eventBuildingGuid3 = new Guid("6dc656a8-50cc-4802-a62a-47576ddbc493");
-            Guid eventBuildingGuid4 = new Guid("adc3e6ce-65a8-4752-abcd-781365982a33");
-            Guid eventBuildingGuid5 = new Guid("deb12260-84fc-43b5-8682-13aa1015f100");
-
             var building1 = new TeachingEventBuilding()
             {
-                Id = eventBuildingGuid1
+                Id = new Guid("67ffca5c-5adc-4a63-abb7-632c9ecbf283")
             };
 
             var building2 = new TeachingEventBuilding()
             {
-                Id = eventBuildingGuid2,
+                Id = new Guid("194c0926-5f15-434d-88ba-f76c376ac865"),
                 AddressLine1 = "Line 1",
                 AddressPostcode = "KY11 9YU"
             };
 
             var building3 = new TeachingEventBuilding()
             {
-                Id = eventBuildingGuid3,
+                Id = new Guid("6dc656a8-50cc-4802-a62a-47576ddbc493"),
                 AddressLine1 = "Line 1",
                 AddressPostcode = "KY6 2NJ",
             };
 
             var building4 = new TeachingEventBuilding()
             {
-                Id = eventBuildingGuid4,
+                Id = new Guid("adc3e6ce-65a8-4752-abcd-781365982a33"),
                 AddressLine1 = "Line 1",
                 AddressPostcode = "CA4 8LE"
             };
 
             var building5 = new TeachingEventBuilding()
             {
-                Id = eventBuildingGuid5,
+                Id = new Guid("deb12260-84fc-43b5-8682-13aa1015f100"),
                 AddressPostcode = "TE7 9IN"
             };
 
