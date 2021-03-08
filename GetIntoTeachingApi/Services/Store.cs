@@ -163,7 +163,7 @@ namespace GetIntoTeachingApi.Services
         {
             var afterDate = DateTime.UtcNow.Subtract(TeachingEventArchiveSize);
             var teachingEvents = _crm.GetTeachingEvents(afterDate).ToList();
-            var teachingEventBuildings = _crm.GetTeachingEventBuildings();
+            var teachingEventBuildings = _dbContext.TeachingEventBuildings.ToList();
 
             foreach (var te in teachingEvents.Where(te => te.BuildingId != null))
             {
