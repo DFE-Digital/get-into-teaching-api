@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
+  "id": 6,
   "links": [],
   "panels": [
     {
@@ -239,7 +239,7 @@
       },
       "id": 73,
       "panels": [],
-      "title": "Results by Radius (Train to Teach)",
+      "title": "In-person Results by Radius (Train to Teach)",
       "type": "row"
     },
     {
@@ -285,25 +285,25 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius!~\".+\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius!~\".+\",type_id=\"222750001\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"+Inf\",radius!~\".+\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"10\",radius!~\".+\",type_id=\"222750001\"}[$__interval]))",
           "interval": "",
           "legendFormat": "> 10",
           "refId": "A"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius!~\".+\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius!~\".+\",type_id=\"222750001\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"10\",radius!~\".+\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"5\",radius!~\".+\",type_id=\"222750001\"}[$__interval]))",
           "interval": "",
           "legendFormat": "6 - 10",
           "refId": "B"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius!~\".+\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius!~\".+\",type_id=\"222750001\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"5\",radius!~\".+\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"0.75\",radius!~\".+\",type_id=\"222750001\"}[$__interval]))",
           "interval": "",
           "legendFormat": "1 - 5",
           "refId": "C"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius!~\".+\",type_id=\"222750001\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"0.75\",radius!~\".+\",type_id=\"222750001\"}[$__interval]))",
           "interval": "",
           "legendFormat": "0",
           "refId": "D"
@@ -357,25 +357,25 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"30\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"30\",type_id=\"222750001\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"30\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"10\",radius=\"30\",type_id=\"222750001\"}[$__interval]))",
           "interval": "",
           "legendFormat": "> 10",
           "refId": "A"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"30\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"30\",type_id=\"222750001\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"10\",radius=\"30\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"5\",radius=\"30\",type_id=\"222750001\"}[$__interval]))",
           "interval": "",
           "legendFormat": "6 - 10",
           "refId": "B"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"30\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"30\",type_id=\"222750001\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"5\",radius=\"30\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"30\",type_id=\"222750001\"}[$__interval]))",
           "interval": "",
           "legendFormat": "1 - 5",
           "refId": "C"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"30\",type_id=\"222750001\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"30\",type_id=\"222750001\"}[$__interval]))",
           "interval": "",
           "legendFormat": "0",
           "refId": "D"
@@ -429,25 +429,25 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"50\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"50\",type_id=\"222750001\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"50\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"10\",radius=\"50\",type_id=\"222750001\"}[$__interval]))",
           "interval": "",
           "legendFormat": "> 10",
           "refId": "A"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"50\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"50\",type_id=\"222750001\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"10\",radius=\"50\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"5\",radius=\"50\",type_id=\"222750001\"}[$__interval]))",
           "interval": "",
           "legendFormat": "6 - 10",
           "refId": "B"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"50\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"50\",type_id=\"222750001\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"5\",radius=\"50\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"50\",type_id=\"222750001\"}[$__interval]))",
           "interval": "",
           "legendFormat": "1 - 5",
           "refId": "C"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"50\",type_id=\"222750001\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"50\",type_id=\"222750001\"}[$__interval]))",
           "interval": "",
           "legendFormat": "0",
           "refId": "D"
@@ -501,25 +501,25 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"100\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"100\",type_id=\"222750001\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"100\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"10\",radius=\"100\",type_id=\"222750001\"}[$__interval]))",
           "interval": "",
           "legendFormat": "> 10",
           "refId": "A"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"100\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"100\",type_id=\"222750001\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"10\",radius=\"100\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"5\",radius=\"100\",type_id=\"222750001\"}[$__interval]))",
           "interval": "",
           "legendFormat": "6 - 10",
           "refId": "B"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"100\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"100\",type_id=\"222750001\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"5\",radius=\"100\",type_id=\"222750001\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"100\",type_id=\"222750001\"}[$__interval]))",
           "interval": "",
           "legendFormat": "1 - 5",
           "refId": "C"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"100\",type_id=\"222750001\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"100\",type_id=\"222750001\"}[$__interval]))",
           "interval": "",
           "legendFormat": "0",
           "refId": "D"
@@ -531,6 +531,7 @@
       "type": "stat"
     },
     {
+      "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
@@ -539,7 +540,8 @@
         "y": 30
       },
       "id": 6,
-      "title": "Results by Radius",
+      "panels": [],
+      "title": "In-person Results by Radius",
       "type": "row"
     },
     {
@@ -585,25 +587,25 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius!~\".+\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius!~\".+\",type_id!~\".+\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"+Inf\",radius!~\".+\",type_id!~\".+\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"10\",radius!~\".+\",type_id!~\".+\"}[$__interval]))",
           "interval": "",
           "legendFormat": "> 10",
           "refId": "A"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius!~\".+\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius!~\".+\",type_id!~\".+\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"10\",radius!~\".+\",type_id!~\".+\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"5\",radius!~\".+\",type_id!~\".+\"}[$__interval]))",
           "interval": "",
           "legendFormat": "6 - 10",
           "refId": "B"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius!~\".+\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius!~\".+\",type_id!~\".+\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"5\",radius!~\".+\",type_id!~\".+\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"0.75\",radius!~\".+\",type_id!~\".+\"}[$__interval]))",
           "interval": "",
           "legendFormat": "1 - 5",
           "refId": "C"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius!~\".+\",type_id!~\".+\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"0.75\",radius!~\".+\",type_id!~\".+\"}[$__interval]))",
           "interval": "",
           "legendFormat": "0",
           "refId": "D"
@@ -657,25 +659,25 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"30\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"30\",type_id!~\".+\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"30\",type_id!~\".+\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"10\",radius=\"30\",type_id!~\".+\"}[$__interval]))",
           "interval": "",
           "legendFormat": "> 10",
           "refId": "A"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"30\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"30\",type_id!~\".+\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"10\",radius=\"30\",type_id!~\".+\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"5\",radius=\"30\",type_id!~\".+\"}[$__interval]))",
           "interval": "",
           "legendFormat": "6 - 10",
           "refId": "B"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"30\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"30\",type_id!~\".+\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"5\",radius=\"30\",type_id!~\".+\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"30\",type_id!~\".+\"}[$__interval]))",
           "interval": "",
           "legendFormat": "1 - 5",
           "refId": "C"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"30\",type_id!~\".+\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"30\",type_id!~\".+\"}[$__interval]))",
           "interval": "",
           "legendFormat": "0",
           "refId": "D"
@@ -729,25 +731,25 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"50\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"50\",type_id!~\".+\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"50\",type_id!~\".+\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"10\",radius=\"50\",type_id!~\".+\"}[$__interval]))",
           "interval": "",
           "legendFormat": "> 10",
           "refId": "A"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"50\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"50\",type_id!~\".+\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"10\",radius=\"50\",type_id!~\".+\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"5\",radius=\"50\",type_id!~\".+\"}[$__interval]))",
           "interval": "",
           "legendFormat": "6 - 10",
           "refId": "B"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"50\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"50\",type_id!~\".+\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"5\",radius=\"50\",type_id!~\".+\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"50\",type_id!~\".+\"}[$__interval]))",
           "interval": "",
           "legendFormat": "1 - 5",
           "refId": "C"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"50\",type_id!~\".+\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"50\",type_id!~\".+\"}[$__interval]))",
           "interval": "",
           "legendFormat": "0",
           "refId": "D"
@@ -801,25 +803,25 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"100\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"100\",type_id!~\".+\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"+Inf\",radius=\"100\",type_id!~\".+\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"10\",radius=\"100\",type_id!~\".+\"}[$__interval]))",
           "interval": "",
           "legendFormat": "> 10",
           "refId": "A"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"10\",radius=\"100\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"100\",type_id!~\".+\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"10\",radius=\"100\",type_id!~\".+\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"5\",radius=\"100\",type_id!~\".+\"}[$__interval]))",
           "interval": "",
           "legendFormat": "6 - 10",
           "refId": "B"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"5\",radius=\"100\",type_id!~\".+\"}[$__interval])) - sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"100\",type_id!~\".+\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"5\",radius=\"100\",type_id!~\".+\"}[$__interval])) - sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"100\",type_id!~\".+\"}[$__interval]))",
           "interval": "",
           "legendFormat": "1 - 5",
           "refId": "C"
         },
         {
-          "expr": "sum(increase(api_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"100\",type_id!~\".+\"}[$__interval]))",
+          "expr": "sum(increase(api_in_person_teaching_event_search_results_count_bucket{le=\"0.75\",radius=\"100\",type_id!~\".+\"}[$__interval]))",
           "interval": "",
           "legendFormat": "0",
           "refId": "D"
@@ -844,6 +846,6 @@
   "timepicker": {},
   "timezone": "",
   "title": "Get into Teaching Api - Event Search",
-  "uid": null,
-  "version": 0
+  "uid": "rSpgdKUGz",
+  "version": 1
 }

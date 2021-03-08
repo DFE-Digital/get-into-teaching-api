@@ -70,7 +70,14 @@ namespace GetIntoTeachingApi.Controllers
 
             var teachingEvents = await _store.SearchTeachingEventsAsync(request);
 
-            _metrics.TeachingEventSearchResults.WithLabels(request.TypeId.ToString(), request.Radius.ToString()).Observe(teachingEvents.Count());
+            _metrics.TeachingEventSearchResults
+                .WithLabels(request.TypeId.ToString(), request.Radius.ToString())
+                .Observe(teachingEvents.Count());
+
+            var inPesonTeachingEvents = teachingEvents.Where(e => e.IsInPerson);
+            _metrics.InPersonTeachingEventResults
+                .WithLabels(request.TypeId.ToString(), request.Radius.ToString())
+                .Observe(inPesonTeachingEvents.Count());
 
             return Ok(GroupTeachingEventsByType(teachingEvents, quantityPerType));
         }
