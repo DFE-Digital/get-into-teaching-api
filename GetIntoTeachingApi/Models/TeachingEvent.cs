@@ -70,6 +70,11 @@ namespace GetIntoTeachingApi.Models
         public Guid? BuildingId { get; set; }
         public bool IsVirtual => IsOnline && !string.IsNullOrWhiteSpace(Building?.AddressPostcode);
 
+        // The department refers to 'virtual' events as "in-person" (as
+        // well as offline events), so whilst virtual events are in fact online,
+        // they are deemed in-person here for consistency.
+        public bool IsInPerson => !IsOnline || IsVirtual;
+
         public TeachingEvent()
             : base()
         {

@@ -131,6 +131,7 @@ namespace GetIntoTeachingApiTests.Controllers
             _mockLogger.VerifyInformationWasCalled("SearchGroupedByType: KY12 8FG");
 
             _metrics.TeachingEventSearchResults.WithLabels(new[] { request.TypeId.ToString(), request.Radius.ToString() }).Count.Should().Be(1);
+            _metrics.TeachingEventSearchResults.WithLabels(new[] { request.TypeId.ToString(), request.Radius.ToString() }).Count.Should().Be(1);
         }
 
         [Fact]
