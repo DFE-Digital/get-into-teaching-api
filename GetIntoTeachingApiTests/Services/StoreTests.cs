@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -511,8 +511,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public async Task GetTeachingEventBuildings_ReturnsAll()
         {
-            var buildings = await SeedMockTeachingEventBuildingsAsync();
-            _mockCrm.Setup(m => m.GetTeachingEventBuildings()).Returns(buildings);
+            await SeedMockTeachingEventBuildingsAsync();
 
             var result = _store.GetTeachingEventBuildings().ToList();
 
