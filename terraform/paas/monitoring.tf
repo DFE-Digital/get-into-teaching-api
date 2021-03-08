@@ -6,13 +6,17 @@ locals {
   datasource_list    = fileset(path.module, "${var.grafana["datasource_directory"]}/*.yml.tmpl")
   configuration_file = "${path.module}/${var.grafana["configuration_file"]}"
 
+  elasticsearch_credentials = {
+    url      = local.monitoring_secrets["LOGIT_URL"]
+    username = local.monitoring_secrets["LOGIT_USERID"]
+    password = local.monitoring_secrets["LOGIT_PASSWORD"]
+  }
+
   template_variable_map = {
     api                               = local.api_endpoint
     git_api                           = "${cloudfoundry_route.api_route_internal.hostname}.${data.cloudfoundry_domain.internal.name}"
     git_tta                           = "${var.tta_application_name}-internal.${data.cloudfoundry_domain.internal.name}"
     git_app                           = "${var.app_application_name}-internal.${data.cloudfoundry_domain.internal.name}"
-    elastic_user                      = local.monitoring_secrets["LOGIT_USERID"]
-    elastic_pass                      = local.monitoring_secrets["LOGIT_PASSWORD"]
     API_ENDPOINT                      = var.api_url
     slack_channel                     = local.monitoring_secrets["SLACK_CHANNEL"]
     slack_url                         = local.monitoring_secrets["SLACK_ALERTMANAGER_HOOK"]
@@ -54,17 +58,18 @@ module "redis_prometheus_exporter" {
 }
 
 module "grafana" {
-  count                    = var.monitoring
-  source                   = "git::https://github.com/DFE-Digital/cf-monitoring.git//grafana"
-  monitoring_space_id      = data.cloudfoundry_space.monitor.id
-  monitoring_instance_name = "${var.environment}-${var.grafana["name"]}"
-  prometheus_endpoint      = module.prometheus[0].endpoint
-  runtime_version          = "7.2.2"
-  google_client_id         = local.monitoring_secrets["GOOGLE_CLIENT_ID"]
-  google_client_secret     = local.monitoring_secrets["GOOGLE_CLIENT_SECRET"]
-  admin_password           = local.monitoring_secrets["GRAFANA_ADMIN_PASSWORD"]
-  google_jwt               = local.monitoring_secrets["GOOGLE_JWT"]
-  influxdb_credentials     = cloudfoundry_service_key.influxdb-key[0].credentials
+  count                     = var.monitoring
+  source                    = "git::https://github.com/DFE-Digital/cf-monitoring.git//grafana"
+  monitoring_space_id       = data.cloudfoundry_space.monitor.id
+  monitoring_instance_name  = "${var.environment}-${var.grafana["name"]}"
+  prometheus_endpoint       = module.prometheus[0].endpoint
+  runtime_version           = "7.2.2"
+  google_client_id          = local.monitoring_secrets["GOOGLE_CLIENT_ID"]
+  google_client_secret      = local.monitoring_secrets["GOOGLE_CLIENT_SECRET"]
+  admin_password            = local.monitoring_secrets["GRAFANA_ADMIN_PASSWORD"]
+  google_jwt                = local.monitoring_secrets["GOOGLE_JWT"]
+  influxdb_credentials      = cloudfoundry_service_key.influxdb-key[0].credentials
+  elasticsearch_credentials = local.elasticsearch_credentials
 
   json_dashboards   = [for f in local.dashboard_list : file(f)]
   extra_datasources = [for f in local.datasource_list : templatefile(f, local.template_variable_map)]
