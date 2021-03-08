@@ -221,9 +221,6 @@ namespace GetIntoTeachingApi.Services
             filter.Conditions.AddRange(new[] { statusCondition, futureDatedCondition, typeCondition, readableIdCondition });
             query.Criteria.AddFilter(filter);
 
-            var link = query.AddLink("msevtmgt_building", "msevtmgt_building", "msevtmgt_buildingid", JoinOperator.LeftOuter);
-            link.EntityAlias = "msevtmgt_event_building";
-
             var entities = _service.RetrieveMultiple(query);
 
             return entities.Select((entity) => new TeachingEvent(entity, this, _validatorFactory)).ToList();
