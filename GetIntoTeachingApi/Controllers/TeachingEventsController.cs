@@ -97,22 +97,6 @@ namespace GetIntoTeachingApi.Controllers
             return Ok(teachingEvent);
         }
 
-        [HttpGet]
-        [CrmETag]
-        [PrivateShortTermResponseCache]
-        [Route("teaching_event_buildings")]
-        [SwaggerOperation(
-         Summary = "Retrieves all event buildings.",
-         OperationId = "GetTeachingEvent",
-         Tags = new[] { "Teaching Events" })]
-        [ProducesResponseType(typeof(TeachingEventBuilding), 200)]
-        public IActionResult GetTeachingEventBuildings()
-        {
-            var teachingEvents = _store.GetTeachingEventBuildings();
-
-            return Ok(teachingEvents);
-        }
-
         [HttpPost]
         [Route("attendees")]
         [SwaggerOperation(
