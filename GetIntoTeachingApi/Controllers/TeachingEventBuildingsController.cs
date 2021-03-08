@@ -22,11 +22,11 @@ namespace GetIntoTeachingApi.Controllers
         [HttpGet]
         [CrmETag]
         [PrivateShortTermResponseCache]
-        [Route("teaching_event_buildings")]
+        [Route("")]
         [SwaggerOperation(
             Summary = "Retrieves all event buildings.",
             OperationId = "GetTeachingEventBuildings",
-            Tags = new[] { "Teaching Events" })]
+            Tags = new[] { "Teaching Event Buildings" })]
         [ProducesResponseType(typeof(TeachingEventBuilding), 200)]
         public IActionResult GetTeachingEventBuildings()
         {
