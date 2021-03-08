@@ -502,9 +502,8 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public async Task GetTeachingEventBuildings_ReturnsAll()
         {
-            await SeedMockTeachingEventBuildingsAsync();
-            var events = await SeedMockTeachingEventsAsync();
-            _mockCrm.Setup(m => m.GetTeachingEvents(It.IsAny<DateTime>())).Returns(events);
+            var buildings = await SeedMockTeachingEventBuildingsAsync();
+            _mockCrm.Setup(m => m.GetTeachingEventBuildings()).Returns(buildings);
 
             var result = _store.GetTeachingEventBuildings().ToList();
 
