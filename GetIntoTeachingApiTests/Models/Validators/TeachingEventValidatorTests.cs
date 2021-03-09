@@ -36,43 +36,43 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_ReadableIdIsNull_HasError()
+        public void Validate_ReadableIdIsNullOrEmpty_HasError()
         {
-            var teachingEvent = new TeachingEvent { ReadableId = null };
-            var validationResult = _validator.TestValidate(teachingEvent);
-            validationResult.ShouldHaveValidationErrorFor(request => request.ReadableId);
+            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.ReadableId, "");
+            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.ReadableId, null as string);
         }
 
         [Fact]
-        public void Validate_NameIsNull_HasError()
+        public void Validate_NameIsNullOrEmpty_HasError()
         {
-            var teachingEvent = new TeachingEvent { Name = null };
-            var validationResult = _validator.TestValidate(teachingEvent);
-            validationResult.ShouldHaveValidationErrorFor(request => request.Name);
+            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.Name, "");
+            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.Name, null as string);
         }
 
         [Fact]
-        public void Validate_SummaryIsNull_HasError()
+        public void Validate_SummaryIsNullOrEmpty_HasError()
         {
-            var teachingEvent = new TeachingEvent { Summary = null };
-            var validationResult = _validator.TestValidate(teachingEvent);
-            validationResult.ShouldHaveValidationErrorFor(request => request.Summary);
+            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.Summary, "");
+            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.Summary, null as string);
         }
 
         [Fact]
-        public void Validate_DescriptionIsNull_HasError()
+        public void Validate_DescriptionIsNullOrEmpty_HasError()
         {
-            var teachingEvent = new TeachingEvent { Description = null };
-            var validationResult = _validator.TestValidate(teachingEvent);
-            validationResult.ShouldHaveValidationErrorFor(request => request.Description);
+            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.Description, "");
+            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.Description, null as string);
+        }
+
+        [Fact]
+        public void Validate_ProviderContactEmailIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(teachingEvent => teachingEvent.ProviderContactEmail, null as string);
         }
 
         [Fact]
         public void Validate_ProviderContactEmailIsPresentAndInvalid_HasError()
         {
-            var teachingEvent = new TeachingEvent { ProviderContactEmail = "invalid email" };
-            var validationResult = _validator.TestValidate(teachingEvent);
-            validationResult.ShouldHaveValidationErrorFor(request => request.ProviderContactEmail);
+            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.ProviderContactEmail, "Invalid email");
         }
 
         [Fact]
