@@ -207,26 +207,15 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void AddTeachingEvent_WhenRequestIsValid_SavesInTheCrm()
+        public void AddTeachingEvent_WhenRequestIsValid_SavesInCrmAndReturnsCreatedEvent()
         {
             const string testName = "test";
             var newTeachingEvent = new TeachingEvent() { Name = testName };
             _mockCrm.Setup(mock => mock.Save(newTeachingEvent)).Verifiable();
 
-            _controller.AddTeachingEvent(newTeachingEvent);
-
-            _mockCrm.Verify();
-        }
-
-        [Fact]
-        public void AddTeachingEvent_WhenRequestIsValid_ReturnsCreatedTeachingEvent()
-        {
-            const string testName = "test";
-            var newTeachingEvent = new TeachingEvent() { Name = testName };
-            _mockCrm.Setup(mock => mock.Save(newTeachingEvent));
-
             var response = _controller.AddTeachingEvent(newTeachingEvent);
 
+            _mockCrm.Verify();
             var created = response.Should().BeOfType<CreatedAtActionResult>().Subject;
             var teachingEvent = created.Value.Should().BeAssignableTo<TeachingEvent>().Subject;
             teachingEvent.Name.Should().Be(testName);
