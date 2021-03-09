@@ -21,6 +21,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var client = new TeachingEvent()
             {
+                ReadableId = "Test",
                 Name = "Test name",
                 Summary = "Test summary",
                 Description = "Test description",
@@ -32,6 +33,14 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var result = _validator.Validate(client);
 
             result.IsValid.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Validate_ReadableIdIsNull_HasError()
+        {
+            var teachingEvent = new TeachingEvent { ReadableId = null };
+            var validationResult = _validator.TestValidate(teachingEvent);
+            validationResult.ShouldHaveValidationErrorFor(request => request.ReadableId);
         }
 
         [Fact]

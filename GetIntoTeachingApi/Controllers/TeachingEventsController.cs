@@ -182,8 +182,7 @@ namespace GetIntoTeachingApi.Controllers
 
             return CreatedAtAction(
                 actionName: nameof(Get),
-                controllerName: "TeachingEvents",
-                routeValues: new { id = teachingEvent.ReadableId },
+                routeValues: new { readableId = teachingEvent.ReadableId },
                 value: teachingEvent);
         }
 

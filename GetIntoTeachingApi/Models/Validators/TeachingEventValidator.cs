@@ -7,6 +7,7 @@ namespace GetIntoTeachingApi.Models.Validators
     {
         public TeachingEventValidator()
         {
+            RuleFor(teachingEvent => teachingEvent.ReadableId).NotEmpty();
             RuleFor(teachingEvent => teachingEvent.Name).NotEmpty();
             RuleFor(teachingEvent => teachingEvent.Summary).NotEmpty();
             RuleFor(teachingEvent => teachingEvent.Description).NotEmpty();
