@@ -191,6 +191,47 @@ namespace GetIntoTeachingApiTests.Controllers
             response.Should().BeOfType<UnauthorizedResult>();
         }
 
+        [Fact]
+        public void AddTeachingEvent_WhenRequestIsInvalid_RepondsWithValidationError()
+        {
+            const string expectedErrorKey = "Name";
+            const string expectedErrorMessage = "Name must be specified";
+            var request = new TeachingEvent();
+            _controller.ModelState.AddModelError(expectedErrorKey, expectedErrorMessage);
+
+            var response = _controller.AddTeachingEvent(request);
+
+            var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
+            var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
+            errors.Should().ContainKey(expectedErrorKey).WhichValue.Should().BeOfType<string[]>().Which.Should().Contain(expectedErrorMessage);
+        }
+
+        [Fact]
+        public void AddTeachingEvent_WhenRequestIsValid_SavesInTheCrm()
+        {
+            const string testName = "test";
+            var newTeachingEvent = new TeachingEvent() { Name = testName };
+            _mockCrm.Setup(mock => mock.Save(newTeachingEvent)).Verifiable();
+
+            _controller.AddTeachingEvent(newTeachingEvent);
+
+            _mockCrm.Verify();
+        }
+
+        [Fact]
+        public void AddTeachingEvent_WhenRequestIsValid_ReturnsCreatedTeachingEvent()
+        {
+            const string testName = "test";
+            var newTeachingEvent = new TeachingEvent() { Name = testName };
+            _mockCrm.Setup(mock => mock.Save(newTeachingEvent));
+
+            var response = _controller.AddTeachingEvent(newTeachingEvent);
+
+            var created = response.Should().BeOfType<CreatedAtActionResult>().Subject;
+            var teachingEvent = created.Value.Should().BeAssignableTo<TeachingEvent>().Subject;
+            teachingEvent.Name.Should().Be(testName);
+        }
+
         private static IEnumerable<TeachingEvent> MockEvents()
         {
             var event1 = new TeachingEvent() { Name = "Event 1", TypeId = 123 };

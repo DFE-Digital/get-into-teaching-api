@@ -5,7 +5,6 @@ namespace GetIntoTeachingApi.Models.Validators
 {
     public class TeachingEventValidator : AbstractValidator<TeachingEvent>
     {
-
         public TeachingEventValidator()
         {
             RuleFor(teachingEvent => teachingEvent.Name).NotEmpty();
