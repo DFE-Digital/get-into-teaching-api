@@ -163,6 +163,30 @@ namespace GetIntoTeachingApi.Controllers
             return Ok(new TeachingEventAddAttendee(candidate));
         }
 
+        [HttpPost]
+        [Route("")]
+        [SwaggerOperation(
+            Summary = "Adds a teaching event.",
+            OperationId = "AddTeachingEvent",
+            Tags = new[] { "Teaching Events" })]
+        [ProducesResponseType(typeof(TeachingEvent), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
+        public IActionResult AddTeachingEvent([FromBody] TeachingEvent teachingEvent)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _crm.Save(teachingEvent);
+
+            return CreatedAtAction(
+                actionName: nameof(Get),
+                controllerName: "TeachingEvents",
+                routeValues: new { id = teachingEvent.ReadableId },
+                value: teachingEvent);
+        }
+
         private static IEnumerable<TeachingEventsByType> GroupTeachingEventsByType(
             IEnumerable<TeachingEvent> teachingEvents,
             int quantityPerType)
