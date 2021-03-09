@@ -78,21 +78,18 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_StartAtIsEarlierThanNow_HasError()
         {
-            var teachingEvent = new TeachingEvent { StartAt = DateTime.UtcNow.AddDays(-1) };
-            var validationResult = _validator.TestValidate(teachingEvent);
-            validationResult.ShouldHaveValidationErrorFor(request => request.StartAt);
+            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.StartAt, DateTime.UtcNow.AddDays(-1));
         }
 
         [Fact]
         public void Validate_EndAtIsEarlierThanStartAt_HasError()
         {
-            var teachingEvent = new TeachingEvent
+            var invalidTeachingEvent = new TeachingEvent
             {
                 StartAt = DateTime.UtcNow.AddDays(2),
                 EndAt = DateTime.UtcNow.AddDays(1)
             };
-            var validationResult = _validator.TestValidate(teachingEvent);
-            validationResult.ShouldHaveValidationErrorFor(request => request.EndAt);
+            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.EndAt, invalidTeachingEvent);
         }
     }
 }
