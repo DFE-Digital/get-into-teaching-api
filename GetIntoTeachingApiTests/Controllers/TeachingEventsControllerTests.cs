@@ -17,7 +17,6 @@ using GetIntoTeachingApi.Attributes;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using GetIntoTeachingApiTests.Helpers;
-using System.Text.Json;
 using GetIntoTeachingApi.Utils;
 
 namespace GetIntoTeachingApiTests.Controllers
@@ -62,7 +61,7 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void CrmETagPrivateShortTermResponseCache_IsPresent()
+        public void PrivateShortTermResponseCache_IsPresent()
         {
             JobStorage.Current = new Mock<JobStorage>().Object;
             var methods = new[] { "Get", "SearchGroupedByType" };
