@@ -1,11 +1,16 @@
 ﻿using FluentAssertions;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Controllers;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
+using Hangfire;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using MoreLinq;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Controllers
@@ -19,6 +24,33 @@ namespace GetIntoTeachingApiTests.Controllers
         {
             _mockStore = new Mock<IStore>();
             _controller = new TeachingEventBuildingsController(_mockStore.Object);
+        }
+
+        [Fact]
+        public void Authorize_IsPresent()
+        {
+            typeof(TeachingEventBuildingsController).Should()
+                .BeDecoratedWith<AuthorizeAttribute>(a => a.Roles == "Admin,GetIntoTeaching");
+        }
+
+        [Fact]
+        public void PrivateShortTermResponseCache_IsPresent()
+        {
+            typeof(TeachingEventBuildingsController).Should()
+                .BeDecoratedWith<PrivateShortTermResponseCacheAttribute>();
+        }
+
+        [Fact]
+        public void CrmETag_IsPresent()
+        {
+            JobStorage.Current = new Mock<JobStorage>().Object;
+
+            var methods = typeof(TeachingEventBuildingsController).GetMethods(
+                BindingFlags.Public |
+                BindingFlags.Instance |
+                BindingFlags.DeclaredOnly);
+
+            methods.ForEach(m => m.Should().BeDecoratedWith<CrmETagAttribute>());
         }
 
         [Fact]

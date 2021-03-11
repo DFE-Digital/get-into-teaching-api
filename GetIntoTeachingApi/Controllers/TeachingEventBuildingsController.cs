@@ -10,6 +10,7 @@ namespace GetIntoTeachingApi.Controllers
     [Route("api/teaching_event_buildings")]
     [ApiController]
     [Authorize(Roles = "Admin,GetIntoTeaching")]
+    [PrivateShortTermResponseCache]
     public class TeachingEventBuildingsController : ControllerBase
     {
         private readonly IStore _store;
@@ -21,7 +22,6 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpGet]
         [CrmETag]
-        [PrivateShortTermResponseCache]
         [Route("")]
         [SwaggerOperation(
             Summary = "Retrieves all event buildings.",
