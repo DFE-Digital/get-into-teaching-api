@@ -1,4 +1,4 @@
-﻿using GetIntoTeachingApi.Controllers;
+using GetIntoTeachingApi.Controllers;
 using GetIntoTeachingApiTests.Helpers;
 using FluentAssertions;
 using GetIntoTeachingApi.Models;
@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using MoreLinq;
 using Xunit;
 using GetIntoTeachingApi.Attributes;
+using Hangfire;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -39,7 +40,12 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void CrmETag_IsPresent()
         {
-            var methods = typeof(PickListItemsController).GetMethods(BindingFlags.DeclaredOnly);
+            JobStorage.Current = new Mock<JobStorage>().Object;
+
+            var methods = typeof(PickListItemsController).GetMethods(
+                BindingFlags.Public |
+                BindingFlags.Instance |
+                BindingFlags.DeclaredOnly);
 
             methods.ForEach(m => m.Should().BeDecoratedWith<CrmETagAttribute>());
         }
