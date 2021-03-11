@@ -141,6 +141,19 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public async void SyncAsync_DeletesOrphanedTeachingEventBuildings()
+        {
+            var buildings = await SeedMockTeachingEventBuildingsAsync();
+            var building = buildings.ToList().GetRange(0, 1);
+
+            _mockCrm.Setup(m => m.GetTeachingEventBuildings()).Returns(building);
+
+            await _store.SyncAsync();
+
+            DbContext.TeachingEventBuildings.Should().BeEquivalentTo(building);
+        }
+
+        [Fact]
         public async void SyncAsync_PopulatesTeachingEventBuildingCoordinates()
         {
             await SeedMockTeachingEventBuildingsAsync();
