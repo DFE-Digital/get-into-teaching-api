@@ -131,7 +131,7 @@ namespace GetIntoTeachingApi.Controllers
                 return BadRequest(this.ModelState);
             }
 
-            string json = request.Candidate.SerializeChangedTracked();
+            string json = request.Candidate.SerializeChangeTracked();
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
 
             return NoContent();

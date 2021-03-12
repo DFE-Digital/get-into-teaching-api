@@ -51,7 +51,7 @@ namespace GetIntoTeachingApi.Jobs
             foreach (var candidate in candidates)
             {
                 _magicLinkTokenService.GenerateToken(candidate);
-                string json = candidate.SerializeChangedTracked();
+                string json = candidate.SerializeChangeTracked();
                 _jobClient.Enqueue<UpsertCandidateJob>(x => x.Run(json, null));
             }
         }
