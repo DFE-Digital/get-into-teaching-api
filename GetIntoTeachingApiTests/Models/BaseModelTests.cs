@@ -11,7 +11,6 @@ using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Mocks;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
-using GetIntoTeachingApi.Utils;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Moq;
@@ -134,40 +133,6 @@ namespace GetIntoTeachingApiTests.Models
             // Init with changes.
             model = new MockModel() { Field3 = "test", Field2 = 0 };
             model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "FieldDefinedWithValue", "Field3", "Field2" });
-        }
-
-        [Fact]
-        public void ChangedPropertyNames_DuringDeserialization_IsNotAltered()
-        {
-            // Ensures the JSON serializer correctly deserializes
-            // ChangedPropertyNames (and doesn't inadvertently change it
-            // during the deserialization process when writing to attributes).
-            var model = new MockModel() { Id = Guid.NewGuid(), Field3 = "test" };
-
-            model.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3", "FieldDefinedWithValue" });
-
-            // Test serializing/deseriaizing model.
-            var json = model.SerializeChangedTracked();
-            var deserializedModel = json.DeserializeChangedTracked<MockModel>();
-
-            deserializedModel.Id.Should().Be(model.Id);
-            deserializedModel.Field3.Should().Be(model.Field3);
-            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field3", "FieldDefinedWithValue" });
-
-            // Test deserializing model with ChangedPropertyNames in different order/combinations.
-            json = "{\"ChangedPropertyNames\":[\"Id\",\"Field1\"],\"Field3\":\"test\",\"Field2\":123}";
-            deserializedModel = json.DeserializeChangedTracked<MockModel>();
-
-            deserializedModel.Field2.Should().Be(123);
-            deserializedModel.Field3.Should().Be("test");
-            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field1", "FieldDefinedWithValue" });
-
-            json = "{\"Field3\":\"test\",\"Field2\":123,\"ChangedPropertyNames\":[\"Id\",\"Field1\"]}";
-            deserializedModel = json.DeserializeChangedTracked<MockModel>();
-
-            deserializedModel.Field2.Should().Be(123);
-            deserializedModel.Field3.Should().Be("test");
-            deserializedModel.ChangedPropertyNames.Should().BeEquivalentTo(new HashSet<string>() { "Id", "Field1", "FieldDefinedWithValue" });
         }
 
         [Fact]
