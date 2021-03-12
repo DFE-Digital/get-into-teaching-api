@@ -187,6 +187,8 @@ The GIT API aims to provide:
 
             app.UseHttpsRedirection();
 
+            app.UseRequestResponseLogging();
+
             var hangfireOptions = new BackgroundJobServerOptions();
             if (!env.IsDevelopment)
             {
