@@ -59,7 +59,7 @@ namespace GetIntoTeachingApi.Controllers
                 return BadRequest(this.ModelState);
             }
 
-            string json = request.Candidate.SerializeChangedTracked();
+            string json = request.Candidate.SerializeChangeTracked();
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
 
             return NoContent();
@@ -112,7 +112,7 @@ namespace GetIntoTeachingApi.Controllers
                 return Unauthorized(result);
             }
 
-            string json = result.Candidate.SerializeChangedTracked();
+            string json = result.Candidate.SerializeChangeTracked();
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
 
             return Ok(new MailingListAddMember(result.Candidate));

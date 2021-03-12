@@ -1,4 +1,4 @@
-# Get into Teaching API 
+﻿# Get into Teaching API 
 ![Build](https://github.com/DFE-Digital/get-into-teaching-api/workflows/Build/badge.svg)
 
 > Provides a RESTful API for integrating with the Get into Teaching CRM.
@@ -229,8 +229,8 @@ The application uses two Json serializers; `System.Text.Json` for everything apa
 In an attempt to isolate `Newtonsoft.Json` there are extensions for serializing/deserializing changed tracked objects:
 
 ```
-var myChangedTrackedObject = json.DeserializeChangedTracked<ChangedTrackedObject>();
-var json = myChangeTrackedObject.SerializeChangedTracked();
+var myChangeTrackedObject = json.DeserializeChangeTracked<ChangeTrackedObject>();
+var json = myChangeTrackedObject.SerializeChangeTracked();
 ```
 
 ## CRM Changes
