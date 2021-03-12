@@ -221,10 +221,11 @@ We use postcodes to support searching for events around a given location. The ap
 
 ### JSON Serializers
 
-The application uses two Json serializers; `System.Text.Json` for everything apart from serializing Hangfire payloads (changed tracked objects), for which we use `Newtonsoft.Json`. The reasons for this are:
+The application uses two Json serializers; `System.Text.Json` for everything apart from serializing Hangfire payloads (changed tracked objects) and redacting personally identifiable information from our logs, for which we use `Newtonsoft.Json`. The reasons for this are:
 
 1. `System.Text.Json` does not support conditional serialization and we want to serialize `ChangedPropertyNames` _only_ when serializing a Hangfire payload (omitting the attribute in API responses).
 2. `System.Text.Json` supports on deserializing/ed but not our particular use case of pausing change tracking during deserialization. `Newtonsoft.Json` supports `System.Runtime.Serialization.OnDeserializing/OnDeserialized` which can be used for this purpose.
+3. `System.Text.Json` does not support JSONPath, which we use to redact PII from logged payloads.
 
 In an attempt to isolate `Newtonsoft.Json` there are extensions for serializing/deserializing changed tracked objects:
 
