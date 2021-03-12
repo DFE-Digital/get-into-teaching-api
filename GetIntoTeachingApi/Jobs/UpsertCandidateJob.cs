@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
@@ -36,9 +35,9 @@ namespace GetIntoTeachingApi.Jobs
 
         public void Run(string json, PerformContext context)
         {
-            var candidate = json.DeserializeChangedTracked<Candidate>();
-
             _logger.LogInformation($"UpsertCandidateJob - Started ({AttemptInfo(context, _contextAdapter)})");
+
+            var candidate = json.DeserializeChangeTracked<Candidate>();
 
             if (IsLastAttempt(context, _contextAdapter))
             {

@@ -104,7 +104,7 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
 
         private static bool IsMatch(Candidate candidateA, string candidateBJson)
         {
-            var candidateB = candidateBJson.DeserializeChangedTracked<Candidate>();
+            var candidateB = candidateBJson.DeserializeChangeTracked<Candidate>();
 
             // Compares ignoring date attributes that are dynamic.
             candidateA.Should().BeEquivalentTo(candidateB, options => options
