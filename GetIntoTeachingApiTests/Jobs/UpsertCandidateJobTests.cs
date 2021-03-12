@@ -43,10 +43,12 @@ namespace GetIntoTeachingApiTests.Jobs
         {
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
 
-            _job.Run(_candidate.SerializeChangeTracked(), null);
+            var json = _candidate.SerializeChangeTracked();
+            _job.Run(json, null);
 
             _mockCrm.Verify(mock => mock.Save(It.Is<Candidate>(c => IsMatch(_candidate, c))), Times.Once);
             _mockLogger.VerifyInformationWasCalled("UpsertCandidateJob - Started (1/24)");
+            _mockLogger.VerifyInformationWasCalled($"UpsertCandidateJob - Payload {Redactor.RedactJson(json)}");
             _mockLogger.VerifyInformationWasCalled($"UpsertCandidateJob - Succeeded - {_candidate.Id}");
             _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Count.Should().Be(1);
         }
