@@ -2,8 +2,6 @@ using System;
 using System.Linq;
 using System.Text.Json.Serialization;
 using AspNetCoreRateLimit;
-using CorrelationId;
-using CorrelationId.DependencyInjection;
 using dotenv.net;
 using FluentValidation.AspNetCore;
 using GetIntoTeachingApi.Adapters;
@@ -76,13 +74,6 @@ namespace GetIntoTeachingApi
             services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
             services.AddSingleton<ICallbackBookingService, CallbackBookingService>();
             services.AddSingleton<IEnv>(env);
-
-            services.AddDefaultCorrelationId((options) =>
-            {
-                options.AddToLoggingScope = true;
-                options.RequestHeader = "X-Request-Id";
-                options.ResponseHeader = "X-Request-Id";
-            });
 
             var connectionString = DbConfiguration.DatabaseConnectionString(env);
             services.AddDbContext<GetIntoTeachingDbContext>(b => DbConfiguration.ConfigPostgres(connectionString, b));
@@ -195,8 +186,6 @@ The GIT API aims to provide:
             app.UseAuthentication();
 
             app.UseHttpsRedirection();
-
-            app.UseCorrelationId();
 
             app.UseRequestResponseLogging();
 
