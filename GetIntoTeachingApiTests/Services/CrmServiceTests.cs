@@ -468,6 +468,29 @@ namespace GetIntoTeachingApiTests.Services
             result.Should().Be(existingEntity);
         }
 
+        [Fact]
+        public void GetTeachingEventBuildings_ReturnsAll()
+        {
+            _mockService.Setup(mock => mock.CreateQuery("msevtmgt_building", _context))
+                .Returns(MockTeachingEventBuildings());
+
+            var result = _crm.GetTeachingEventBuildings();
+
+            result.Select(e => e.Venue).Should().BeEquivalentTo(new string[] { "Venue 1", "Venue 2" },
+                options => options.WithStrictOrdering());
+        }
+
+        private static IQueryable<Entity> MockTeachingEventBuildings()
+        {
+            var building1 = new Entity("msevtmgt_building");
+            building1["msevtmgt_name"] = "Venue 1";
+
+            var building2 = new Entity("msevtmgt_building");
+            building2["msevtmgt_name"] = "Venue 2";
+
+            return new[] { building1, building2 }.AsQueryable();
+        }
+
         private static IQueryable<Entity> MockTeachingEvents()
         {
             var event1 = new Entity("msevtmgt_event");
