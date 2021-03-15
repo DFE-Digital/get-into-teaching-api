@@ -38,6 +38,8 @@ namespace GetIntoTeachingApiTests.Models
 
             type.GetProperty("Building").Should().BeDecoratedWith<EntityRelationshipAttribute>(
                 a => a.Name == "msevtmgt_event_building" && a.Type == typeof(TeachingEventBuilding));
+            type.GetProperty("BuildingId").Should().BeDecoratedWith<EntityFieldAttribute>(
+               a => a.Name == "msevtmgt_building" && a.Type == typeof(EntityReference));
         }
 
         [Theory]
