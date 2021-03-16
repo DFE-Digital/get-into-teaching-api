@@ -1,4 +1,5 @@
-﻿using GetIntoTeachingApi.Attributes;
+﻿using System.Collections.Generic;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -27,7 +28,7 @@ namespace GetIntoTeachingApi.Controllers
             Summary = "Retrieves all event buildings.",
             OperationId = "GetTeachingEventBuildings",
             Tags = new[] { "Teaching Event Buildings" })]
-        [ProducesResponseType(typeof(TeachingEventBuilding), 200)]
+        [ProducesResponseType(typeof(IEnumerable<TeachingEventBuilding>), 200)]
         public IActionResult GetTeachingEventBuildings()
         {
             var buildings = _store.GetTeachingEventBuildings();
