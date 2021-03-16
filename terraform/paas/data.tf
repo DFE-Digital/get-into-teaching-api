@@ -8,14 +8,21 @@ data azurerm_key_vault_secret application {
   name         = "API-KEYS"
 }
 
+data azurerm_key_vault_secret infrastructure {
+  key_vault_id = data.azurerm_key_vault.vault.id
+  name         = "INFRA-KEYS"
+}
+
+
 data azurerm_key_vault_secret monitoring {
   key_vault_id = data.azurerm_key_vault.vault.id
   name         = "MONITORING-KEYS"
 }
 
 locals {
-  application_secrets = yamldecode(data.azurerm_key_vault_secret.application.value)
-  monitoring_secrets  = yamldecode(data.azurerm_key_vault_secret.monitoring.value)
+  application_secrets    = yamldecode(data.azurerm_key_vault_secret.application.value)
+  monitoring_secrets     = yamldecode(data.azurerm_key_vault_secret.monitoring.value)
+  infrastructure_secrets = yamldecode(data.azurerm_key_vault_secret.infrastructure.value)
 }
 
 data azurerm_key_vault_secret docker_username {
