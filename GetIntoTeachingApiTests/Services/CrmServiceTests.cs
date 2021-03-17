@@ -12,7 +12,6 @@ using Microsoft.Xrm.Sdk.Query;
 using Xunit;
 using System.Linq.Dynamic.Core;
 using FluentValidation;
-using FluentValidation.Results;
 
 namespace GetIntoTeachingApiTests.Services
 {
@@ -22,6 +21,7 @@ namespace GetIntoTeachingApiTests.Services
         private static readonly Guid JohnDoeGuid = new Guid("cf927e43-5650-44aa-859a-8297139b8eee");
         private static readonly string JaneDoeMagicLinkToken = "7898be2c4699719c8eca56ebd1fb8e6e";
         private readonly Mock<IOrganizationServiceAdapter> _mockService;
+        private readonly Mock<IAppSettings> _mockAppSettings;
         private readonly OrganizationServiceContext _context;
         private readonly ICrmService _crm;
 
@@ -30,16 +30,18 @@ namespace GetIntoTeachingApiTests.Services
             var mockValidatorFactory = new Mock<IValidatorFactory>();
             mockValidatorFactory.Setup(m => m.GetValidator(It.IsAny<Type>())).Returns<IValidator>(null);
 
+            _mockAppSettings = new Mock<IAppSettings>();
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _context = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
             _mockService.Setup(mock => mock.Context()).Returns(_context);
-            _crm = new CrmService(_mockService.Object, mockValidatorFactory.Object, new DateTimeProvider());
+            _crm = new CrmService(_mockService.Object, mockValidatorFactory.Object, _mockAppSettings.Object, new DateTimeProvider());
         }
 
         [Fact]
         public void CheckStatus_WhenHealthy_ReturnsOk()
         {
-            _mockService.Setup(mock => mock.CheckStatus()).Returns(HealthCheckResponse.StatusOk);
+            _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
+            _mockService.Setup(m => m.CheckStatus()).Returns(HealthCheckResponse.StatusOk);
 
             _crm.CheckStatus().Should().Be(HealthCheckResponse.StatusOk);
         }
@@ -47,9 +49,18 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void IsHealthy_WhenUnhealthy_ReturnsError()
         {
-            _mockService.Setup(mock => mock.CheckStatus()).Returns("this is an error");
+            _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
+            _mockService.Setup(m => m.CheckStatus()).Returns("this is an error");
 
             _crm.CheckStatus().Should().Be("this is an error");
+        }
+
+        [Fact]
+        public void IsHealthy_WhenCrmIntegrationPaused_ReturnsIntegrationPaused()
+        {
+            _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(true);
+
+            _crm.CheckStatus().Should().Be(HealthCheckResponse.StatusIntegrationPaused);
         }
 
         [Fact]

@@ -8,6 +8,8 @@ using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Moq;
 using Xunit;
+using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -19,6 +21,7 @@ namespace GetIntoTeachingApiTests.Controllers
         private readonly Mock<IHangfireService> _mockHangfire;
         private readonly Mock<IRedisService> _mockRedis;
         private readonly Mock<IEnv> _mockEnv;
+        private readonly Mock<IAppSettings> _mockAppSettings;
         private readonly OperationsController _controller;
 
         public OperationsControllerTests()
@@ -29,6 +32,7 @@ namespace GetIntoTeachingApiTests.Controllers
             _mockHangfire = new Mock<IHangfireService>();
             _mockRedis = new Mock<IRedisService>();
             _mockEnv = new Mock<IEnv>();
+            _mockAppSettings = new Mock<IAppSettings>();
 
             _controller = new OperationsController(
                 _mockCrm.Object,
@@ -36,7 +40,8 @@ namespace GetIntoTeachingApiTests.Controllers
                 _mockNotifyService.Object,
                 _mockHangfire.Object,
                 _mockRedis.Object,
-                _mockEnv.Object);
+                _mockEnv.Object,
+                _mockAppSettings.Object);
         }
 
         [Fact]
@@ -50,6 +55,43 @@ namespace GetIntoTeachingApiTests.Controllers
             mappings.Any(m => m.LogicalName == "contact" &&
                               m.Class == "GetIntoTeachingApi.Models.Candidate"
             ).Should().BeTrue();
+        }
+
+        [Fact]
+        public void PauseCrmIntegration_Authorize_IsPresent()
+        {
+            typeof(OperationsController).GetMethod("PauseCrmIntegration")
+                .Should().BeDecoratedWith<AuthorizeAttribute>(a => a.Roles == "Admin,Crm");
+        }
+
+        [Fact]
+        public void PauseCrmIntegration_PausesFor6HoursAndRespondsWithNoContent()
+        {
+            var sixHoursFromNow = DateTime.UtcNow.AddHours(6);
+
+            var response = _controller.PauseCrmIntegration();
+
+            response.Should().BeOfType<NoContentResult>();
+
+            _mockAppSettings.VerifySet(m => m.CrmIntegrationPausedUntil =
+                It.Is<DateTime>(d => VerifyDateIsCloseTo(d, sixHoursFromNow)), Times.Once());
+        }
+
+        [Fact]
+        public void ResumeCrmIntegration_Authorize_IsPresent()
+        {
+            typeof(OperationsController).GetMethod("ResumeCrmIntegration")
+                .Should().BeDecoratedWith<AuthorizeAttribute>(a => a.Roles == "Admin,Crm");
+        }
+
+        [Fact]
+        public void ResumeCrmIntegration_ResumesAndRespondsWithNoContent()
+        {
+            var response = _controller.ResumeCrmIntegration();
+
+            response.Should().BeOfType<NoContentResult>();
+
+            _mockAppSettings.VerifySet(m => m.CrmIntegrationPausedUntil = null, Times.Once());
         }
 
         [Theory]
@@ -95,6 +137,13 @@ namespace GetIntoTeachingApiTests.Controllers
             health.Redis.Should().Be(redisStatus);
             health.Hangfire.Should().Be(hangfireStatus);
             health.Status.Should().Be(expectedStatus);
+        }
+
+        private static bool VerifyDateIsCloseTo(DateTime date, DateTime closeToDate)
+        {
+            date.Should().BeCloseTo(closeToDate);
+
+            return true;
         }
     }
 }
