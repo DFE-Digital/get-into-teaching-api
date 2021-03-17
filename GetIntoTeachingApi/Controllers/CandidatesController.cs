@@ -17,15 +17,18 @@ namespace GetIntoTeachingApi.Controllers
         private readonly ICandidateAccessTokenService _accessTokenService;
         private readonly INotifyService _notifyService;
         private readonly ICrmService _crm;
+        private readonly IAppSettings _appSettings;
 
         public CandidatesController(
             ICandidateAccessTokenService accessTokenService,
             INotifyService notifyService,
-            ICrmService crm)
+            ICrmService crm,
+            IAppSettings appSettings)
         {
             _accessTokenService = accessTokenService;
             _notifyService = notifyService;
             _crm = crm;
+            _appSettings = appSettings;
         }
 
         [HttpPost]
@@ -46,6 +49,11 @@ namespace GetIntoTeachingApi.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(this.ModelState);
+            }
+
+            if (_appSettings.IsCrmIntegrationPaused)
+            {
+                return NotFound();
             }
 
             var candidate = _crm.MatchCandidate(request);
