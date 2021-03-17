@@ -27,11 +27,12 @@ namespace GetIntoTeachingApiTests.Models
 
         public BaseModelTests()
         {
+            var mockAppSettings = new Mock<IAppSettings>();
             _mockValidatorFactory = new Mock<IValidatorFactory>();
             _mockValidatorFactory.Setup(m => m.GetValidator(It.IsAny<Type>())).Returns<IValidator>(null);
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _context = _mockService.Object.Context();
-            _crm = new CrmService(_mockService.Object, _mockValidatorFactory.Object, new DateTimeProvider());
+            _crm = new CrmService(_mockService.Object, _mockValidatorFactory.Object, mockAppSettings.Object, new DateTimeProvider());
         }
 
         [Fact]
