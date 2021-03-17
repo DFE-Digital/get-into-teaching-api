@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -14,12 +16,16 @@ namespace GetIntoTeachingApi.Controllers
     [ApiController]
     public class OperationsController : ControllerBase
     {
+        // Must be a substantial amount longer than the max expected offline duration
+        // of the CRM and less than 24 hours (the point at which we auto-purge any held PII).
+        private static readonly TimeSpan CrmIntegrationAutoResumeInterval = TimeSpan.FromHours(6);
         private readonly IStore _store;
         private readonly ICrmService _crm;
         private readonly INotifyService _notifyService;
         private readonly IHangfireService _hangfire;
         private readonly IRedisService _redis;
         private readonly IEnv _env;
+        private readonly IAppSettings _appSettings;
 
         public OperationsController(
             ICrmService crm,
@@ -27,7 +33,8 @@ namespace GetIntoTeachingApi.Controllers
             INotifyService notifyService,
             IHangfireService hangfire,
             IRedisService redis,
-            IEnv env)
+            IEnv env,
+            IAppSettings appSettings)
         {
             _store = store;
             _crm = crm;
@@ -35,6 +42,7 @@ namespace GetIntoTeachingApi.Controllers
             _hangfire = hangfire;
             _redis = redis;
             _env = env;
+            _appSettings = appSettings;
         }
 
         [HttpGet]
@@ -76,6 +84,39 @@ namespace GetIntoTeachingApi.Controllers
             };
 
             return Ok(response);
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Admin,Crm")]
+        [Route("pause_crm_integration")]
+        [SwaggerOperation(
+            Summary = "Temporarily pauses the integration with the CRM.",
+            Description = "The CRM is taken offline for updates occasionally; this can result " +
+            "in errors when the API attempts to call out to the CRM. The CRM can call this endpoint " +
+            "to pause the API -> CRM integration (if not manually resumed it will auto-resume in 6 hours).",
+            OperationId = "PauseCrmIntegration",
+            Tags = new[] { "Operations" })]
+        [ProducesResponseType(typeof(HealthCheckResponse), StatusCodes.Status204NoContent)]
+        public IActionResult PauseCrmIntegration()
+        {
+            _appSettings.CrmIntegrationPausedUntil = DateTime.UtcNow.AddHours(CrmIntegrationAutoResumeInterval.TotalHours);
+
+            return NoContent();
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Admin,Crm")]
+        [Route("resume_crm_integration")]
+        [SwaggerOperation(
+            Summary = "Resumes the integration with the CRM (after being paused).",
+            OperationId = "ResumeCrmIntegration",
+            Tags = new[] { "Operations" })]
+        [ProducesResponseType(typeof(HealthCheckResponse), StatusCodes.Status204NoContent)]
+        public IActionResult ResumeCrmIntegration()
+        {
+            _appSettings.CrmIntegrationPausedUntil = null;
+
+            return NoContent();
         }
     }
 }

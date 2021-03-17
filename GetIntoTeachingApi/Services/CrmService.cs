@@ -18,9 +18,15 @@ namespace GetIntoTeachingApi.Services
         private readonly IOrganizationServiceAdapter _service;
         private readonly IValidatorFactory _validatorFactory;
         private readonly IDateTimeProvider _dateTime;
+        private readonly IAppSettings _appSettings;
 
-        public CrmService(IOrganizationServiceAdapter service, IValidatorFactory validatorFactory, IDateTimeProvider dateTime)
+        public CrmService(
+            IOrganizationServiceAdapter service,
+            IValidatorFactory validatorFactory,
+            IAppSettings appSettings,
+            IDateTimeProvider dateTime)
         {
+            _appSettings = appSettings;
             _service = service;
             _validatorFactory = validatorFactory;
             _dateTime = dateTime;
@@ -28,6 +34,11 @@ namespace GetIntoTeachingApi.Services
 
         public string CheckStatus()
         {
+            if (_appSettings.IsCrmIntegrationPaused)
+            {
+                return HealthCheckResponse.StatusIntegrationPaused;
+            }
+
             return _service.CheckStatus();
         }
 
