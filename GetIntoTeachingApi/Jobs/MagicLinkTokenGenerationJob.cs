@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
@@ -15,6 +16,7 @@ namespace GetIntoTeachingApi.Jobs
         private readonly ICandidateMagicLinkTokenService _magicLinkTokenService;
         private readonly ILogger<MagicLinkTokenGenerationJob> _logger;
         private readonly IMetricService _metrics;
+        private readonly IAppSettings _appSettings;
 
         public MagicLinkTokenGenerationJob(
             IEnv env,
@@ -22,19 +24,27 @@ namespace GetIntoTeachingApi.Jobs
             ICandidateMagicLinkTokenService magicLinkTokenService,
             ICrmService crm,
             ILogger<MagicLinkTokenGenerationJob> logger,
-            IMetricService metrics)
+            IMetricService metrics,
+            IAppSettings appSettings)
             : base(env)
         {
             _jobClient = jobClient;
             _magicLinkTokenService = magicLinkTokenService;
             _crm = crm;
             _logger = logger;
+            _appSettings = appSettings;
             _metrics = metrics;
         }
 
         [DisableConcurrentExecution(timeoutInSeconds: 10 * 30)]
         public void Run()
         {
+            if (_appSettings.IsCrmIntegrationPaused)
+            {
+                _logger.LogInformation("MagicLinkTokenGenerationJob - Skipping (CRM integration paused)");
+                return;
+            }
+
             using (_metrics.MagicLinkTokenGenerationDuration.NewTimer())
             {
                 _logger.LogInformation("MagicLinkTokenGenerationJob - Started");
