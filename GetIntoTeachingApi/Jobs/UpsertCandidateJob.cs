@@ -15,6 +15,7 @@ namespace GetIntoTeachingApi.Jobs
         private readonly INotifyService _notifyService;
         private readonly IPerformContextAdapter _contextAdapter;
         private readonly IMetricService _metrics;
+        private readonly IAppSettings _appSettings;
         private readonly ILogger<UpsertCandidateJob> _logger;
 
         public UpsertCandidateJob(
@@ -23,7 +24,8 @@ namespace GetIntoTeachingApi.Jobs
             INotifyService notifyService,
             IPerformContextAdapter contextAdapter,
             IMetricService metrics,
-            ILogger<UpsertCandidateJob> logger)
+            ILogger<UpsertCandidateJob> logger,
+            IAppSettings appSettings)
             : base(env)
         {
             _crm = crm;
@@ -31,10 +33,16 @@ namespace GetIntoTeachingApi.Jobs
             _contextAdapter = contextAdapter;
             _metrics = metrics;
             _logger = logger;
+            _appSettings = appSettings;
         }
 
         public void Run(string json, PerformContext context)
         {
+            if (_appSettings.IsCrmIntegrationPaused)
+            {
+                throw new InvalidOperationException("UpsertCandidateJob - Aborting (CRM integration paused).");
+            }
+
             _logger.LogInformation($"UpsertCandidateJob - Started ({AttemptInfo(context, _contextAdapter)})");
             _logger.LogInformation($"UpsertCandidateJob - Payload {Redactor.RedactJson(json)}");
 
