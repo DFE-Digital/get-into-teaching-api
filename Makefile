@@ -11,6 +11,8 @@ help:
 	echo "  print-app-secrets - Display Application specific Secrets."
 	echo "  edit-monitoring-secrets  - Edit Monitoring specific Secrets."
 	echo "  print-monitoring-secrets - Display Monitoring specific Secrets."
+	echo "  edit-infrastructure-secrets  - Edit Infrastructure specific Secrets."
+	echo "  print-infrastructure-secrets - Display Infrastructure specific Secrets."
 	echo ""
 	echo "Parameters:"
 	echo "All commands take the parameter development|review|test|production"
@@ -25,6 +27,7 @@ help:
 
 MONITORING_SECRETS=MONITORING-KEYS
 APPLICATION_SECRETS=API-KEYS
+INFRASTRUCTURE_SECRETS=INFRA-KEYS
 
 .PHONY: development
 development:
@@ -50,6 +53,11 @@ set-azure-account: ${environment}
 	echo "Logging on to ${AZ_SUBSCRIPTION}"
 	az account set -s ${AZ_SUBSCRIPTION}
 
+clean:
+	[ ! -f fetch_config.rb ]  \
+	    rm -f fetch_config.rb \
+	    || true
+
 install-fetch-config: 
 	[ ! -f fetch_config.rb ]  \
 	    && echo "Installing fetch_config.rb" \
@@ -68,3 +76,9 @@ edit-monitoring-secrets: install-fetch-config set-azure-account
 
 print-monitoring-secrets: install-fetch-config set-azure-account 
 	./fetch_config.rb -s azure-key-vault-secret:${KEY_VAULT}/${MONITORING_SECRETS}  -f yaml
+
+edit-infrastructure-secrets: install-fetch-config set-azure-account
+	./fetch_config.rb -s azure-key-vault-secret:${KEY_VAULT}/${INFRASTRUCTURE_SECRETS} -e -d azure-key-vault-secret:${KEY_VAULT}/${INFRASTRUCTURE_SECRETS} -f yaml -c
+
+print-infrastructure-secrets: install-fetch-config set-azure-account 
+	./fetch_config.rb -s azure-key-vault-secret:${KEY_VAULT}/${INFRASTRUCTURE_SECRETS}  -f yaml
