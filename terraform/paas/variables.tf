@@ -49,10 +49,6 @@ variable "paas_logging_name" {
   default = "logit-ssl-drain"
 }
 
-variable "paas_logging_endpoint_port" {
-  default = ""
-}
-
 variable "paas_database_common_name" {
   default = "dfe-teacher-services-sb-common-pg-svc"
 }

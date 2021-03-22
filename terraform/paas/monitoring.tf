@@ -6,13 +6,17 @@ locals {
   datasource_list    = fileset(path.module, "${var.grafana["datasource_directory"]}/*.yml.tmpl")
   configuration_file = "${path.module}/${var.grafana["configuration_file"]}"
 
+  elasticsearch_credentials = {
+    url      = local.monitoring_secrets["LOGIT_URL"]
+    username = local.monitoring_secrets["LOGIT_USERID"]
+    password = local.monitoring_secrets["LOGIT_PASSWORD"]
+  }
+
   template_variable_map = {
     api                               = local.api_endpoint
     git_api                           = "${cloudfoundry_route.api_route_internal.hostname}.${data.cloudfoundry_domain.internal.name}"
     git_tta                           = "${var.tta_application_name}-internal.${data.cloudfoundry_domain.internal.name}"
     git_app                           = "${var.app_application_name}-internal.${data.cloudfoundry_domain.internal.name}"
-    elastic_user                      = local.monitoring_secrets["LOGIT_USERID"]
-    elastic_pass                      = local.monitoring_secrets["LOGIT_PASSWORD"]
     API_ENDPOINT                      = var.api_url
     slack_channel                     = local.monitoring_secrets["SLACK_CHANNEL"]
     slack_url                         = local.monitoring_secrets["SLACK_ALERTMANAGER_HOOK"]
@@ -21,7 +25,7 @@ locals {
 
 module "prometheus" {
    count                              = var.monitoring
-   source                             = "git::https://github.com/DFE-Digital/cf-monitoring.git//prometheus_all?ref=add_redis_exporter_to_all"
+   source                             = "git::https://github.com/DFE-Digital/cf-monitoring.git//prometheus_all"
    monitoring_instance_name           = local.monitoring_org_name
    monitoring_org_name                = var.paas_org_name
    monitoring_space_name              = var.monitor_space
@@ -42,6 +46,5 @@ module "prometheus" {
    prometheus_extra_scrape_config     = templatefile("${path.module}/${var.prometheus["scrape_file"]}", local.template_variable_map)
    influxdb_service_plan              = var.influxdb_1_plan
    redis_service_instance_id          = cloudfoundry_service_instance.redis.id
-
-   depends_on  = [ cloudfoundry_service_instance.redis ]
 }
+

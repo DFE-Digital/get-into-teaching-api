@@ -43,6 +43,7 @@ namespace GetIntoTeachingApi.Services
 
         public async Task SyncAsync()
         {
+            await SyncTeachingEventBuildings();
             await SyncTeachingEvents();
             await SyncPrivacyPolicies();
             await SyncLookupItems();
@@ -113,6 +114,11 @@ namespace GetIntoTeachingApi.Services
             return await _dbContext.TeachingEvents.Include(e => e.Building).FirstOrDefaultAsync(e => e.ReadableId == readableId);
         }
 
+        public IQueryable<TeachingEventBuilding> GetTeachingEventBuildings()
+        {
+            return _dbContext.TeachingEventBuildings;
+        }
+
         private async Task<IEnumerable<TeachingEvent>> FilterTeachingEventsByRadius(
             IQueryable<TeachingEvent> teachingEvents, TeachingEventSearchRequest request)
         {
@@ -145,21 +151,23 @@ namespace GetIntoTeachingApi.Services
             return result.Where(te => te.IsOnline && !te.IsVirtual);
         }
 
+        private async Task SyncTeachingEventBuildings()
+        {
+            var buildings = _crm.GetTeachingEventBuildings();
+            await PopulateTeachingEventCoordinates(buildings);
+
+            await SyncModels(buildings, _dbContext.TeachingEventBuildings);
+        }
+
         private async Task SyncTeachingEvents()
         {
             var afterDate = DateTime.UtcNow.Subtract(TeachingEventArchiveSize);
             var teachingEvents = _crm.GetTeachingEvents(afterDate).ToList();
-            await PopulateTeachingEventCoordinates(teachingEvents);
+            var teachingEventBuildings = _dbContext.TeachingEventBuildings.ToList();
 
-            var buildings = teachingEvents.Where(te => te.Building != null)
-                .Select(te => te.Building).DistinctBy(b => b.Id);
-
-            await SyncModels(buildings, _dbContext.TeachingEventBuildings);
-
-            // Link events with buildings attached to the context prior to sync.
-            foreach (var te in teachingEvents.Where(te => te.Building != null))
+            foreach (var te in teachingEvents.Where(te => te.BuildingId != null))
             {
-                te.Building = await _dbContext.TeachingEventBuildings.FindAsync(te.Building.Id);
+                te.Building = teachingEventBuildings.FirstOrDefault(b => b.Id == te.BuildingId);
             }
 
             await SyncModels(teachingEvents, _dbContext.TeachingEvents);
@@ -243,12 +251,11 @@ namespace GetIntoTeachingApi.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        private async Task PopulateTeachingEventCoordinates(IEnumerable<TeachingEvent> teachingEvents)
+        private async Task PopulateTeachingEventCoordinates(IEnumerable<TeachingEventBuilding> buildings)
         {
-            foreach (var teachingEvent in teachingEvents.Where(te => te.Building?.AddressPostcode != null))
+            foreach (var building in buildings.Where(building => building.AddressPostcode != null))
             {
-                var coordinate = await CoordinateForPostcode(teachingEvent.Building.AddressPostcode);
-                teachingEvent.Building.Coordinate = coordinate;
+                building.Coordinate = await CoordinateForPostcode(building.AddressPostcode);
             }
         }
 

@@ -7,6 +7,10 @@ data cloudfoundry_service redis {
 }
 
 
+locals {
+  logstash_endpoint = local.infrastructure_secrets["LOGSTASH_ENDPOINT"]
+}
+
 resource cloudfoundry_service_instance postgres_common {
   name         = var.paas_database_common_name
   space        = data.cloudfoundry_space.space.id
@@ -18,7 +22,7 @@ resource cloudfoundry_user_provided_service logging {
   count            = var.logging
   name             = var.paas_logging_name
   space            = data.cloudfoundry_space.space.id
-  syslog_drain_url = var.paas_logging_endpoint_port
+  syslog_drain_url = "syslog-tls://${local.logstash_endpoint}"
 }
 
 resource cloudfoundry_service_instance redis {

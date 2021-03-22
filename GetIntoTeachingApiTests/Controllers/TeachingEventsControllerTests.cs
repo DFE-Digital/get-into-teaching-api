@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using FluentAssertions;
 using Xunit;
@@ -17,7 +17,6 @@ using GetIntoTeachingApi.Attributes;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using GetIntoTeachingApiTests.Helpers;
-using System.Text.Json;
 using GetIntoTeachingApi.Utils;
 
 namespace GetIntoTeachingApiTests.Controllers
@@ -62,7 +61,7 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void CrmETagPrivateShortTermResponseCache_IsPresent()
+        public void PrivateShortTermResponseCache_IsPresent()
         {
             JobStorage.Current = new Mock<JobStorage>().Object;
             var methods = new[] { "Get", "SearchGroupedByType" };
@@ -130,6 +129,7 @@ namespace GetIntoTeachingApiTests.Controllers
 
             _mockLogger.VerifyInformationWasCalled("SearchGroupedByType: KY12 8FG");
 
+            _metrics.TeachingEventSearchResults.WithLabels(new[] { request.TypeId.ToString(), request.Radius.ToString() }).Count.Should().Be(1);
             _metrics.TeachingEventSearchResults.WithLabels(new[] { request.TypeId.ToString(), request.Radius.ToString() }).Count.Should().Be(1);
         }
 
@@ -204,7 +204,7 @@ namespace GetIntoTeachingApiTests.Controllers
 
         private static bool IsMatch(Candidate candidateA, string candidateBJson)
         {
-            var candidateB = candidateBJson.DeserializeChangedTracked<Candidate>();
+            var candidateB = candidateBJson.DeserializeChangeTracked<Candidate>();
 
             // Compares ignoring date attributes that are dynamic.
             candidateA.Should().BeEquivalentTo(candidateB, options => options

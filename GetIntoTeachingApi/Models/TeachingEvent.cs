@@ -67,8 +67,14 @@ namespace GetIntoTeachingApi.Models
         [EntityRelationship("msevtmgt_event_building", typeof(TeachingEventBuilding))]
         public TeachingEventBuilding Building { get; set; }
         [JsonIgnore]
+        [EntityField("msevtmgt_building", typeof(EntityReference), "msevtmgt_buildingid")]
         public Guid? BuildingId { get; set; }
         public bool IsVirtual => IsOnline && !string.IsNullOrWhiteSpace(Building?.AddressPostcode);
+
+        // The department refers to 'virtual' events as "in-person" (as
+        // well as offline events), so whilst virtual events are in fact online,
+        // they are deemed in-person here for consistency.
+        public bool IsInPerson => !IsOnline || IsVirtual;
 
         public TeachingEvent()
             : base()

@@ -6,6 +6,7 @@ using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -48,8 +49,8 @@ namespace GetIntoTeachingApi.Controllers
                           "`Candidate.Qualifications[0].UkDegreeGradeId` and `UkDegreeGradeId`.",
             OperationId = "AddMailingListMember",
             Tags = new[] { "Mailing List" })]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
         public IActionResult AddMember(
             [FromBody, SwaggerRequestBody("Member to add to the mailing list.", Required = true)] MailingListAddMember request)
         {
@@ -58,7 +59,7 @@ namespace GetIntoTeachingApi.Controllers
                 return BadRequest(this.ModelState);
             }
 
-            string json = request.Candidate.SerializeChangedTracked();
+            string json = request.Candidate.SerializeChangeTracked();
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
 
             return NoContent();
@@ -74,8 +75,8 @@ namespace GetIntoTeachingApi.Controllers
                 exchanged for your token matches the request payload here).",
             OperationId = "ExchangeAccessTokenForMailingListAddMember",
             Tags = new[] { "Mailing List" })]
-        [ProducesResponseType(typeof(MailingListAddMember), 200)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(MailingListAddMember), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult ExchangeAccessTokenForMember(
             [FromRoute, SwaggerParameter("Access token (PIN code).", Required = true)] string accessToken,
             [FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] ExistingCandidateRequest request)
@@ -99,8 +100,8 @@ namespace GetIntoTeachingApi.Controllers
                 `POST /candidates/magic_link_tokens` request.",
             OperationId = "ExchangeMagicLinkTokenForMailingListAddMember",
             Tags = new[] { "Mailing List" })]
-        [ProducesResponseType(typeof(MailingListAddMember), 200)]
-        [ProducesResponseType(typeof(CandidateMagicLinkExchangeResult), 401)]
+        [ProducesResponseType(typeof(MailingListAddMember), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CandidateMagicLinkExchangeResult), StatusCodes.Status401Unauthorized)]
         public IActionResult ExchangeMagicLinkTokenForMember(
             [FromRoute, SwaggerParameter("Magic link token.", Required = true)] string magicLinkToken)
         {
@@ -111,7 +112,7 @@ namespace GetIntoTeachingApi.Controllers
                 return Unauthorized(result);
             }
 
-            string json = result.Candidate.SerializeChangedTracked();
+            string json = result.Candidate.SerializeChangeTracked();
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
 
             return Ok(new MailingListAddMember(result.Candidate));

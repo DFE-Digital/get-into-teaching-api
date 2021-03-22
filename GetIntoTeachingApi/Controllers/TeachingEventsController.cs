@@ -9,6 +9,7 @@ using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -52,8 +53,8 @@ namespace GetIntoTeachingApi.Controllers
     Description = @"Searches for teaching events. Optionally limit the results by distance (in miles) from a postcode, event type and start date.",
     OperationId = "SearchTeachingEventsGroupedByType",
     Tags = new[] { "Teaching Events" })]
-        [ProducesResponseType(typeof(IEnumerable<TeachingEventsByType>), 200)]
-        [ProducesResponseType(400)]
+        [ProducesResponseType(typeof(IEnumerable<TeachingEventsByType>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> SearchGroupedByType(
     [FromQuery, SwaggerParameter("Event search criteria.", Required = true)] TeachingEventSearchRequest request,
     [FromQuery, SwaggerParameter("Quantity to return (per type).")] int quantityPerType = 3)
@@ -70,7 +71,14 @@ namespace GetIntoTeachingApi.Controllers
 
             var teachingEvents = await _store.SearchTeachingEventsAsync(request);
 
-            _metrics.TeachingEventSearchResults.WithLabels(request.TypeId.ToString(), request.Radius.ToString()).Observe(teachingEvents.Count());
+            _metrics.TeachingEventSearchResults
+                .WithLabels(request.TypeId.ToString(), request.Radius.ToString())
+                .Observe(teachingEvents.Count());
+
+            var inPesonTeachingEvents = teachingEvents.Where(e => e.IsInPerson);
+            _metrics.InPersonTeachingEventResults
+                .WithLabels(request.TypeId.ToString(), request.Radius.ToString())
+                .Observe(inPesonTeachingEvents.Count());
 
             return Ok(GroupTeachingEventsByType(teachingEvents, quantityPerType));
         }
@@ -83,8 +91,8 @@ namespace GetIntoTeachingApi.Controllers
             Summary = "Retrieves an event.",
             OperationId = "GetTeachingEvent",
             Tags = new[] { "Teaching Events" })]
-        [ProducesResponseType(typeof(TeachingEvent), 200)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(TeachingEvent), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get([FromRoute, SwaggerParameter("The `readableId` of the `TeachingEvent`.", Required = true)] string readableId)
         {
             var teachingEvent = await _store.GetTeachingEventAsync(readableId);
@@ -112,9 +120,9 @@ namespace GetIntoTeachingApi.Controllers
                           "`Candidate.PrivacyPolicy.AcceptedPolicyId` and `AcceptedPolicyId`.",
             OperationId = "AddTeachingEventAttendee",
             Tags = new[] { "Teaching Events" })]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult AddAttendee(
             [FromBody, SwaggerRequestBody("Attendee to add to the teaching event.", Required = true)] TeachingEventAddAttendee request)
         {
@@ -123,7 +131,7 @@ namespace GetIntoTeachingApi.Controllers
                 return BadRequest(this.ModelState);
             }
 
-            string json = request.Candidate.SerializeChangedTracked();
+            string json = request.Candidate.SerializeChangeTracked();
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
 
             return NoContent();
@@ -139,8 +147,8 @@ namespace GetIntoTeachingApi.Controllers
                 exchanged for your token matches the request payload here).",
             OperationId = "ExchangeAccessTokenForTeachingEventAddAttendee",
             Tags = new[] { "Teaching Events" })]
-        [ProducesResponseType(typeof(TeachingEventAddAttendee), 200)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(TeachingEventAddAttendee), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult ExchangeAccessTokenForAttendee(
             [FromRoute, SwaggerParameter("Access token (PIN code).", Required = true)] string accessToken,
             [FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] ExistingCandidateRequest request)
