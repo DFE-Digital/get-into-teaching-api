@@ -64,6 +64,8 @@ namespace GetIntoTeachingApi.Models
         public DateTime StartAt { get; set; }
         [EntityField("msevtmgt_eventenddate")]
         public DateTime EndAt { get; set; }
+        [EntityField("dfe_providerslist")]
+        public string ProvidersList { get; set; }
         [EntityRelationship("msevtmgt_event_building", typeof(TeachingEventBuilding))]
         public TeachingEventBuilding Building { get; set; }
         [JsonIgnore]
