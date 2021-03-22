@@ -10,7 +10,6 @@ tta_application_name      = "get-teacher-training-adviser-service-prod"
 application_instances     = 2
 application_memory        = 2048
 monitoring                = 1
-influx                    = 1
 environment               = "prod"
 azure_key_vault           = "s146p01-kv"
 azure_resource_group      = "s146p01-rg"
