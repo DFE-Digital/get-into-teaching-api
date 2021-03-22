@@ -76,13 +76,7 @@ More information on rate limiting can be found [below](#rate-limiting).
 
 The API is an ASP.NET Core web application; to get up and running clone the repository and open `GetIntoTeachingApi.sln` in Visual Studio.
 
-Before you build the app you will need to add a package source for the GOV.UK Notify service:
-
-```
-https://api.bintray.com/nuget/gov-uk-notify/nuget
-```
-
-Next you will need to set up the environment (see the `Environment` section below) before booting up the dependent services in Docker with `docker-compose up`.
+You will need to set up the environment (see the `Environment` section below) before booting up the dependent services in Docker with `docker-compose up`.
 
 When the application runs in development it will open the Swagger documentation by default (the development shared secret for the admin client is `secret-admin`).
 
