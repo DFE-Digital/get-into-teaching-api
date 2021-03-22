@@ -20,6 +20,7 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("AddressLine3").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "msevtmgt_addressline3");
             type.GetProperty("AddressCity").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "msevtmgt_city");
             type.GetProperty("AddressPostcode").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "msevtmgt_postalcode");
+            type.GetProperty("ImageUrl").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_eventvenueimageurl");
         }
     }
 }

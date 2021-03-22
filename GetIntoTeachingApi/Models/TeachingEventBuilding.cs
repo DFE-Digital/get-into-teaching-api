@@ -24,6 +24,8 @@ namespace GetIntoTeachingApi.Models
         public string AddressCity { get; set; }
         [EntityField("msevtmgt_postalcode")]
         public string AddressPostcode { get; set; }
+        [EntityField("dfe_eventvenueimageurl")]
+        public string ImageUrl { get; set; }
         [JsonIgnore]
         [Column(TypeName = "geography")]
         public Point Coordinate { get; set; }
