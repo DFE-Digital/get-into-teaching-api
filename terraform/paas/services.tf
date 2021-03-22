@@ -6,13 +6,6 @@ data cloudfoundry_service redis {
   name = "redis"
 }
 
-data cloudfoundry_service mysql {
-  name = "mysql"
-}
-
-data cloudfoundry_service influxdb {
-  name = "influxdb"
-}
 
 locals {
   logstash_endpoint = local.infrastructure_secrets["LOGSTASH_ENDPOINT"]
@@ -37,18 +30,5 @@ resource cloudfoundry_service_instance redis {
   space        = data.cloudfoundry_space.space.id
   service_plan = data.cloudfoundry_service.redis.service_plans[var.redis_1_plan]
   json_params  = "{\"maxmemory_policy\": \"allkeys-lfu\" }"
-}
-
-resource cloudfoundry_service_instance influxdb {
-  count        = var.influx
-  name         = "influxdb-${local.monitoring_org_name}"
-  space        = data.cloudfoundry_space.monitor.id
-  service_plan = data.cloudfoundry_service.influxdb.service_plans[var.influxdb_1_plan]
-}
-
-resource cloudfoundry_service_key influxdb-key {
-  count            = var.influx
-  name             = "influxdb-prometheus-key"
-  service_instance = cloudfoundry_service_instance.influxdb[0].id
 }
 
