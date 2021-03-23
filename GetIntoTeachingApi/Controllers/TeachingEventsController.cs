@@ -166,12 +166,14 @@ namespace GetIntoTeachingApi.Controllers
         [HttpPost]
         [Route("")]
         [SwaggerOperation(
-            Summary = "Adds a teaching event.",
-            OperationId = "AddTeachingEvent",
+            Summary = "Adds or updates a teaching event.",
+            Description = "If the `id` is specified then the existing teaching event will be " +
+                          "updated, otherwise a new teaching event will be created.",
+            OperationId = "AddOrUpdateTeachingEvent",
             Tags = new[] { "Teaching Events" })]
         [ProducesResponseType(typeof(TeachingEvent), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
-        public IActionResult AddTeachingEvent([FromBody] TeachingEvent teachingEvent)
+        public IActionResult AddOrUpdateTeachingEvent([FromBody] TeachingEvent teachingEvent)
         {
             if (!ModelState.IsValid)
             {
