@@ -173,11 +173,17 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Teaching Events" })]
         [ProducesResponseType(typeof(TeachingEvent), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
-        public IActionResult AddOrUpdateTeachingEvent([FromBody] TeachingEvent teachingEvent)
+        public async Task<IActionResult> AddOrUpdateTeachingEventAsync([FromBody] TeachingEvent teachingEvent)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+
+            if (teachingEvent.Building != null)
+            {
+                _crm.Save(teachingEvent.Building);
+                await _store.SaveAsync(teachingEvent.Building);
             }
 
             _crm.Save(teachingEvent);
