@@ -534,6 +534,26 @@ namespace GetIntoTeachingApiTests.Services
             result.Should().HaveCount(5);
         }
 
+        [Fact]
+        public async Task SaveAsync_WillAddAndSaveGivenEntity()
+        {
+            await SeedMockTeachingEventBuildingsAsync();
+            int initialBuildingCount = _store.GetTeachingEventBuildings().ToList().Count;
+            var newBuilding = new TeachingEventBuilding()
+            {
+                Id = new Guid("5d836cd9-436c-4a20-baf2-62b2c1117197"),
+                AddressPostcode = "M33 3DE"
+            };
+
+            await _store.SaveAsync(newBuilding);
+
+            var buildings = _store.GetTeachingEventBuildings().ToList();
+            int expectedCount = initialBuildingCount + 1;
+
+            buildings.Should().HaveCount(expectedCount);
+            buildings.Contains(newBuilding).Should().Be(true);
+        }
+
         private static bool CheckGetTeachingEventsAfterDate(DateTime date)
         {
             var afterDate = DateTime.UtcNow.Subtract(Store.TeachingEventArchiveSize);

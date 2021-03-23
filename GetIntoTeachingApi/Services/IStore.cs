@@ -10,6 +10,8 @@ namespace GetIntoTeachingApi.Services
     {
         Task<string> CheckStatusAsync();
         Task SyncAsync();
+        Task SaveAsync<T>(T model)
+            where T : BaseModel;
         IQueryable<LookupItem> GetLookupItems(string entityName);
         IQueryable<PickListItem> GetPickListItems(string entityName, string attributeName);
         Task<PrivacyPolicy> GetLatestPrivacyPolicyAsync();
