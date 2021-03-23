@@ -16,6 +16,7 @@ namespace GetIntoTeachingApi.Models
             Open = 222750000,
             Closed = 222750001,
             Draft = 222750002,
+            Pending = 222750003,
         }
 
         public enum EventType
