@@ -199,7 +199,7 @@ namespace GetIntoTeachingApiTests.Controllers
             var request = new TeachingEvent();
             _controller.ModelState.AddModelError(expectedErrorKey, expectedErrorMessage);
 
-            var response = _controller.AddTeachingEvent(request);
+            var response = _controller.AddOrUpdateTeachingEvent(request);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
@@ -213,7 +213,7 @@ namespace GetIntoTeachingApiTests.Controllers
             var newTeachingEvent = new TeachingEvent() { Name = testName };
             _mockCrm.Setup(mock => mock.Save(newTeachingEvent)).Verifiable();
 
-            var response = _controller.AddTeachingEvent(newTeachingEvent);
+            var response = _controller.AddOrUpdateTeachingEvent(newTeachingEvent);
 
             _mockCrm.Verify();
             var created = response.Should().BeOfType<CreatedAtActionResult>().Subject;
