@@ -535,23 +535,23 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async Task SaveAsync_WillAddAndSaveGivenEntity()
+        public async Task SaveAsync_WithModelAndRelatedModel_PersistsBoth()
         {
-            await SeedMockTeachingEventBuildingsAsync();
-            int initialBuildingCount = _store.GetTeachingEventBuildings().ToList().Count;
-            var newBuilding = new TeachingEventBuilding()
+            var building = new TeachingEventBuilding()
             {
-                Id = new Guid("5d836cd9-436c-4a20-baf2-62b2c1117197"),
-                AddressPostcode = "M33 3DE"
+                Id = new Guid("5d836cd9-436c-4a20-baf2-62b2c1117197")
             };
 
-            await _store.SaveAsync(newBuilding);
+            var teachingEvent = new TeachingEvent()
+            {
+                Id = new Guid("db06077d-0034-4c0b-8b32-a585357434d7"),
+                Building = building,
+            };
 
-            var buildings = _store.GetTeachingEventBuildings().ToList();
-            int expectedCount = initialBuildingCount + 1;
+            await _store.SaveAsync(teachingEvent);
 
-            buildings.Should().HaveCount(expectedCount);
-            buildings.Contains(newBuilding).Should().Be(true);
+            var createdEvent = DbContext.TeachingEvents.First(e => e.Id == teachingEvent.Id);
+            createdEvent.Building.Id.Should().Be(building.Id);
         }
 
         private static bool CheckGetTeachingEventsAfterDate(DateTime date)
