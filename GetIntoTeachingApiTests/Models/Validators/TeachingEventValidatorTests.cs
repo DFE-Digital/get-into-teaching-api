@@ -50,20 +50,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_SummaryIsNullOrEmpty_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.Summary, "");
-            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.Summary, null as string);
-        }
-
-        [Fact]
-        public void Validate_DescriptionIsNullOrEmpty_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.Description, "");
-            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.Description, null as string);
-        }
-
-        [Fact]
         public void Validate_ProviderContactEmailIsNull_HasNoError()
         {
             _validator.ShouldNotHaveValidationErrorFor(teachingEvent => teachingEvent.ProviderContactEmail, null as string);

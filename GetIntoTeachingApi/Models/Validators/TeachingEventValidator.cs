@@ -10,8 +10,6 @@ namespace GetIntoTeachingApi.Models.Validators
         {
             RuleFor(teachingEvent => teachingEvent.ReadableId).NotEmpty();
             RuleFor(teachingEvent => teachingEvent.Name).NotEmpty();
-            RuleFor(teachingEvent => teachingEvent.Summary).NotEmpty();
-            RuleFor(teachingEvent => teachingEvent.Description).NotEmpty();
             RuleFor(teachingEvent => teachingEvent.ProviderContactEmail).EmailAddress().EmailAddress(EmailValidationMode.AspNetCoreCompatible).MaximumLength(100);
             RuleFor(teachingEvent => teachingEvent.StartAt).GreaterThan(DateTime.UtcNow);
             RuleFor(teachingEvent => teachingEvent.EndAt).GreaterThanOrEqualTo(rule => rule.StartAt);
