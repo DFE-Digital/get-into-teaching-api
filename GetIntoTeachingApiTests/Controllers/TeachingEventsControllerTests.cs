@@ -200,7 +200,7 @@ namespace GetIntoTeachingApiTests.Controllers
             var request = new TeachingEvent();
             _controller.ModelState.AddModelError(expectedErrorKey, expectedErrorMessage);
 
-            var response = await _controller.AddOrUpdateTeachingEventAsync(request);
+            var response = await _controller.Upsert(request);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
@@ -208,33 +208,40 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async Task AddTeachingEvent_WhenRequestIsValid_SavesInCrmAndReturnsCreatedEvent()
+        public async Task AddTeachingEvent_ValidRequestWithoutBuilding_SavesInCrmAndCaches()
         {
             const string testName = "test";
             var newTeachingEvent = new TeachingEvent() { Name = testName };
             _mockCrm.Setup(mock => mock.Save(newTeachingEvent)).Verifiable();
+            _mockStore.Setup(mock => mock.SaveAsync(newTeachingEvent)).Verifiable();
 
-            var response = await _controller.AddOrUpdateTeachingEventAsync(newTeachingEvent);
+            var response = await _controller.Upsert(newTeachingEvent);
 
             _mockCrm.Verify();
+            _mockStore.Verify();
             var created = response.Should().BeOfType<CreatedAtActionResult>().Subject;
             var teachingEvent = created.Value.Should().BeAssignableTo<TeachingEvent>().Subject;
             teachingEvent.Name.Should().Be(testName);
         }
 
         [Fact]
-        public async Task AddTeachingEvent_WhenRequestContainsBuilding_SavesInCrmAndStore()
+        public async Task AddTeachingEvent_ValidRequestWithBuilding_SavesInCrmAndCaches()
         {
+            const string testName = "test";
             var newBuilding = new TeachingEventBuilding();
-            var newTeachingEvent = new TeachingEvent()
-            {
-                Building = newBuilding,
-            };
-            _mockStore.Setup(mock => mock.SaveAsync(newBuilding)).Verifiable();
+            var newTeachingEvent = new TeachingEvent() { Name = testName, Building = newBuilding };
+            _mockCrm.Setup(mock => mock.Save(newBuilding)).Verifiable();
+            _mockCrm.Setup(mock => mock.Save(newTeachingEvent)).Verifiable();
+            _mockStore.Setup(mock => mock.SaveAsync(newTeachingEvent)).Verifiable();
 
-            await _controller.AddOrUpdateTeachingEventAsync(newTeachingEvent);
+            var response = await _controller.Upsert(newTeachingEvent);
 
+            _mockCrm.Verify();
             _mockStore.Verify();
+            var created = response.Should().BeOfType<CreatedAtActionResult>().Subject;
+            var teachingEvent = created.Value.Should().BeAssignableTo<TeachingEvent>().Subject;
+            teachingEvent.Name.Should().Be(testName);
+            teachingEvent.Building.Should().Be(newBuilding);
         }
 
         private static IEnumerable<TeachingEvent> MockEvents()

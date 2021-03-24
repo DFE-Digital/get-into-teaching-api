@@ -169,11 +169,11 @@ namespace GetIntoTeachingApi.Controllers
             Summary = "Adds or updates a teaching event.",
             Description = "If the `id` is specified then the existing teaching event will be " +
                           "updated, otherwise a new teaching event will be created.",
-            OperationId = "AddOrUpdateTeachingEvent",
+            OperationId = "UpsertTeachingEvent",
             Tags = new[] { "Teaching Events" })]
         [ProducesResponseType(typeof(TeachingEvent), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddOrUpdateTeachingEventAsync([FromBody] TeachingEvent teachingEvent)
+        public async Task<IActionResult> Upsert([FromBody] TeachingEvent teachingEvent)
         {
             if (!ModelState.IsValid)
             {
@@ -183,10 +183,12 @@ namespace GetIntoTeachingApi.Controllers
             if (teachingEvent.Building != null)
             {
                 _crm.Save(teachingEvent.Building);
-                await _store.SaveAsync(teachingEvent.Building);
             }
 
             _crm.Save(teachingEvent);
+
+            // Make the teaching event/building immediately available in the cache
+            await _store.SaveAsync(teachingEvent);
 
             return CreatedAtAction(
                 actionName: nameof(Get),
