@@ -163,6 +163,39 @@ namespace GetIntoTeachingApi.Controllers
             return Ok(new TeachingEventAddAttendee(candidate));
         }
 
+        [HttpPost]
+        [Route("")]
+        [SwaggerOperation(
+            Summary = "Adds or updates a teaching event.",
+            Description = "If the `id` is specified then the existing teaching event will be " +
+                          "updated, otherwise a new teaching event will be created.",
+            OperationId = "UpsertTeachingEvent",
+            Tags = new[] { "Teaching Events" })]
+        [ProducesResponseType(typeof(TeachingEvent), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Upsert([FromBody] TeachingEvent teachingEvent)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (teachingEvent.Building != null)
+            {
+                _crm.Save(teachingEvent.Building);
+            }
+
+            _crm.Save(teachingEvent);
+
+            // Make the teaching event/building immediately available in the cache
+            await _store.SaveAsync(teachingEvent);
+
+            return CreatedAtAction(
+                actionName: nameof(Get),
+                routeValues: new { readableId = teachingEvent.ReadableId },
+                value: teachingEvent);
+        }
+
         private static IEnumerable<TeachingEventsByType> GroupTeachingEventsByType(
             IEnumerable<TeachingEvent> teachingEvents,
             int quantityPerType)
