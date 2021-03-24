@@ -534,6 +534,26 @@ namespace GetIntoTeachingApiTests.Services
             result.Should().HaveCount(5);
         }
 
+        [Fact]
+        public async Task SaveAsync_WithModelAndRelatedModel_PersistsBoth()
+        {
+            var building = new TeachingEventBuilding()
+            {
+                Id = new Guid("5d836cd9-436c-4a20-baf2-62b2c1117197")
+            };
+
+            var teachingEvent = new TeachingEvent()
+            {
+                Id = new Guid("db06077d-0034-4c0b-8b32-a585357434d7"),
+                Building = building,
+            };
+
+            await _store.SaveAsync(teachingEvent);
+
+            var createdEvent = DbContext.TeachingEvents.First(e => e.Id == teachingEvent.Id);
+            createdEvent.Building.Id.Should().Be(building.Id);
+        }
+
         private static bool CheckGetTeachingEventsAfterDate(DateTime date)
         {
             var afterDate = DateTime.UtcNow.Subtract(Store.TeachingEventArchiveSize);
