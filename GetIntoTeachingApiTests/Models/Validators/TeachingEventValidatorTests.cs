@@ -2,6 +2,8 @@
 using FluentValidation.TestHelper;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Validators;
+using GetIntoTeachingApi.Services;
+using Moq;
 using System;
 using Xunit;
 
@@ -10,10 +12,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
     public class TeachingEventValidatorTests
     {
         private readonly TeachingEventValidator _validator;
+        private readonly Mock<ICrmService> _mockCrm;
 
         public TeachingEventValidatorTests()
         {
-            _validator = new TeachingEventValidator();
+            _mockCrm = new Mock<ICrmService>();
+            _validator = new TeachingEventValidator(_mockCrm.Object);
         }
 
         [Fact]
@@ -40,6 +44,32 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.ReadableId, "");
             _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.ReadableId, null as string);
+        }
+
+        [Fact]
+        public void Validate_IdIsNullAndReadableIdIsNotUnique_HasError()
+        {
+            const string nonUniqueReadableId = "not_unique";
+            var existingTeachingEvent = new TeachingEvent
+            {
+                ReadableId = nonUniqueReadableId,
+            };
+
+            _mockCrm
+                .Setup(mock => mock.GetTeachingEvent(nonUniqueReadableId))
+                .Returns(existingTeachingEvent);
+
+            var teachingEvent = new TeachingEvent
+            {
+                Id = null,
+                ReadableId = nonUniqueReadableId,
+            };
+
+            var result = _validator.TestValidate(teachingEvent);
+
+            result
+                .ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.ReadableId)
+                .WithErrorMessage("Must be unique");
         }
 
         [Fact]

@@ -17,6 +17,7 @@ namespace GetIntoTeachingApi.Services
         Candidate GetCandidate(Guid id);
         IEnumerable<Candidate> GetCandidatesPendingMagicLinkTokenGeneration(int limit = 10);
         IEnumerable<TeachingEvent> GetTeachingEvents(DateTime? startAfter = null);
+        TeachingEvent GetTeachingEvent(string readableId);
         IEnumerable<CallbackBookingQuota> GetCallbackBookingQuotas();
         CallbackBookingQuota GetCallbackBookingQuota(DateTime scheduledAt);
         bool CandidateAlreadyHasLocalEventSubscriptionType(Guid candidateId);
