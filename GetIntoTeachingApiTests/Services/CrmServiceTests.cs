@@ -480,6 +480,28 @@ namespace GetIntoTeachingApiTests.Services
                 options => options.WithStrictOrdering());
         }
 
+        [Fact]
+        public void GetTeachingEvent_WhenTeachingEventExists_ReturnsTeachingEvent()
+        {
+            _mockService.Setup(mock => mock.CreateQuery("msevtmgt_event", _context))
+                .Returns(MockTeachingEvents());
+
+            var result = _crm.GetTeachingEvent("event_one");
+
+            result.ReadableId.Should().Be("event_one");
+        }
+
+        [Fact]
+        public void GetTeachingEvent_WhenTeachingEventDoesNotExist_ReturnsNull()
+        {
+            _mockService.Setup(mock => mock.CreateQuery("msevtmgt_event", _context))
+                .Returns(MockTeachingEvents());
+
+            var result = _crm.GetTeachingEvent("wrong");
+
+            result.Should().BeNull();
+        }
+
         private static IQueryable<Entity> MockTeachingEventBuildings()
         {
             var building1 = new Entity("msevtmgt_building");
@@ -495,6 +517,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             var event1 = new Entity("msevtmgt_event");
             event1["dfe_externaleventtitle"] = "Event 1";
+            event1["dfe_websiteeventpartialurl"] = "event_one";
 
             var event2 = new Entity("msevtmgt_event");
             event2["dfe_externaleventtitle"] = "Event 2";
