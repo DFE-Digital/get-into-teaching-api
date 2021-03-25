@@ -226,6 +226,14 @@ namespace GetIntoTeachingApi.Services
             return entities.Select((entity) => new TeachingEvent(entity, this, _validatorFactory)).ToList();
         }
 
+        public TeachingEvent GetTeachingEvent(string readableId)
+        {
+            return _service.CreateQuery("msevtmgt_event", Context())
+                .Where(entity => entity.GetAttributeValue<string>("dfe_websiteeventpartialurl") == readableId)
+                .Select(entity => new TeachingEvent(entity, this, _validatorFactory))
+                .SingleOrDefault();
+        }
+
         public IEnumerable<TeachingEventBuilding> GetTeachingEventBuildings()
         {
             return _service.CreateQuery("msevtmgt_building", Context())
