@@ -14,7 +14,6 @@ locals {
 }
 
 provider "azurerm" {
-  version                    = ">= 2.0"
   skip_provider_registration = true
   features {}
   subscription_id = local.azure_credentials.subscriptionId
@@ -24,7 +23,7 @@ provider "azurerm" {
 }
 
 terraform {
-  required_version = ">= 0.13.4"
+  required_version = "~> 0.14"
 
   required_providers {
     cloudfoundry = {
