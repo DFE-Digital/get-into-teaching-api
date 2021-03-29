@@ -11,21 +11,20 @@ using Xunit;
 namespace GetIntoTeachingApiTests.Integration
 {
     [Collection("Database")]
-    public class RateLimitTests : IClassFixture<GitWebApplicationFactory<Startup>>
+    public class RateLimitTests : DatabaseTests
     {
-        private readonly GitWebApplicationFactory<Startup> _factory;
         private readonly HttpClient _httpClient;
         private readonly StringContent _emptyBody;
 
-        public RateLimitTests(GitWebApplicationFactory<Startup> factory)
+        public RateLimitTests(DatabaseFixture databaseFixture)
+            : base(databaseFixture)
         {
             Environment.SetEnvironmentVariable($"GIT_API_KEY", "git-secret");
             Environment.SetEnvironmentVariable($"ADMIN_API_KEY", "admin-secret");
             Environment.SetEnvironmentVariable($"TTA_API_KEY", "tta-secret");
 
-            _factory = factory;
-
-            _httpClient = _factory.CreateClient();
+            var factory = new GitWebApplicationFactory<Startup>();
+            _httpClient = factory.CreateClient();
             _emptyBody = new StringContent("{}", Encoding.UTF8, "application/json");
         }
 
