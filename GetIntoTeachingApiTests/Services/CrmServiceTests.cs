@@ -33,7 +33,7 @@ namespace GetIntoTeachingApiTests.Services
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _context = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
             _mockService.Setup(mock => mock.Context()).Returns(_context);
-            _crm = new CrmService(_mockService.Object, mockValidatorFactory.Object);
+            _crm = new CrmService(_mockService.Object, mockValidatorFactory.Object, new DateTimeProvider());
         }
 
         [Fact]

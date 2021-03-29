@@ -11,7 +11,6 @@ using Hangfire.States;
 using Microsoft.AspNetCore.Authorization;
 using Moq;
 using GetIntoTeachingApi.Services;
-using System.Text.Json;
 using GetIntoTeachingApi.Utils;
 
 namespace GetIntoTeachingApiTests.Controllers
@@ -22,6 +21,7 @@ namespace GetIntoTeachingApiTests.Controllers
         private readonly Mock<ICandidateMagicLinkTokenService> _mockMagicLinkTokenService;
         private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
+        private readonly Mock<IDateTimeProvider> _mockDateTime;
         private readonly MailingListController _controller;
         private readonly ExistingCandidateRequest _request;
 
@@ -30,13 +30,18 @@ namespace GetIntoTeachingApiTests.Controllers
             _request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
             _mockAccessTokenService = new Mock<ICandidateAccessTokenService>();
             _mockMagicLinkTokenService = new Mock<ICandidateMagicLinkTokenService>();
+            _mockDateTime = new Mock<IDateTimeProvider>();
             _mockCrm = new Mock<ICrmService>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
             _controller = new MailingListController(
                 _mockAccessTokenService.Object,
                 _mockMagicLinkTokenService.Object,
                 _mockCrm.Object,
-                _mockJobClient.Object);
+                _mockJobClient.Object,
+                _mockDateTime.Object);
+
+            // Freeze time.
+            _mockDateTime.Setup(m => m.UtcNow).Returns(DateTime.UtcNow);
         }
 
         [Fact]
@@ -153,12 +158,7 @@ namespace GetIntoTeachingApiTests.Controllers
         private static bool IsMatch(Candidate candidateA, string candidateBJson)
         {
             var candidateB = candidateBJson.DeserializeChangeTracked<Candidate>();
-
-            // Compares ignoring date attributes that are dynamic.
-            candidateA.Should().BeEquivalentTo(candidateB, options => options
-                .Excluding(c => c.MailingListSubscriptionStartAt)
-                .Excluding(c => c.EventsSubscriptionStartAt)
-                .Excluding(c => c.PrivacyPolicy.AcceptedAt));
+            candidateA.Should().BeEquivalentTo(candidateB);
             return true;
         }
     }

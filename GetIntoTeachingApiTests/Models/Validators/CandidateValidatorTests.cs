@@ -19,7 +19,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public CandidateValidatorTests()
         {
             _mockStore = new Mock<IStore>();
-            _validator = new CandidateValidator(_mockStore.Object);
+            _validator = new CandidateValidator(_mockStore.Object, new DateTimeProvider());
         }
 
         [Fact]

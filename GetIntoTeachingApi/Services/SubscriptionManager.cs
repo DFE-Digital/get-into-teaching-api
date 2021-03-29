@@ -5,11 +5,11 @@ namespace GetIntoTeachingApi.Services
 {
     public static class SubscriptionManager
     {
-        public static void SubscribeToMailingList(Candidate candidate, int? channelId = null)
+        public static void SubscribeToMailingList(Candidate candidate, DateTime utcNow, int? channelId = null)
         {
             candidate.HasMailingListSubscription = true;
             candidate.MailingListSubscriptionChannelId = channelId ?? (int)Candidate.SubscriptionChannel.MailingList;
-            candidate.MailingListSubscriptionStartAt = DateTime.UtcNow;
+            candidate.MailingListSubscriptionStartAt = utcNow;
             candidate.MailingListSubscriptionDoNotEmail = false;
             candidate.MailingListSubscriptionDoNotBulkEmail = false;
             candidate.MailingListSubscriptionDoNotBulkPostalMail = true;
@@ -24,11 +24,11 @@ namespace GetIntoTeachingApi.Services
             candidate.DoNotSendMm = ConsentValue(candidate.DoNotSendMm, false);
         }
 
-        public static void SubscribeToEvents(Candidate candidate, int? channelId = null)
+        public static void SubscribeToEvents(Candidate candidate, DateTime utcNow, int? channelId = null)
         {
             candidate.HasEventsSubscription = true;
             candidate.EventsSubscriptionChannelId = channelId ?? (int)Candidate.SubscriptionChannel.Events;
-            candidate.EventsSubscriptionStartAt = DateTime.UtcNow;
+            candidate.EventsSubscriptionStartAt = utcNow;
             candidate.EventsSubscriptionDoNotEmail = false;
             candidate.EventsSubscriptionDoNotBulkEmail = false;
             candidate.EventsSubscriptionDoNotBulkPostalMail = true;
@@ -52,11 +52,11 @@ namespace GetIntoTeachingApi.Services
             candidate.DoNotSendMm = ConsentValue(candidate.DoNotSendMm, true);
         }
 
-        public static void SubscribeToTeacherTrainingAdviser(Candidate candidate)
+        public static void SubscribeToTeacherTrainingAdviser(Candidate candidate, DateTime utcNow)
         {
             candidate.HasTeacherTrainingAdviserSubscription = true;
             candidate.TeacherTrainingAdviserSubscriptionChannelId = (int)Candidate.SubscriptionChannel.TeacherTrainingAdviser;
-            candidate.TeacherTrainingAdviserSubscriptionStartAt = DateTime.UtcNow;
+            candidate.TeacherTrainingAdviserSubscriptionStartAt = utcNow;
             candidate.TeacherTrainingAdviserSubscriptionDoNotEmail = false;
             candidate.TeacherTrainingAdviserSubscriptionDoNotBulkEmail = candidate.IsReturningToTeaching();
             candidate.TeacherTrainingAdviserSubscriptionDoNotBulkPostalMail = true;

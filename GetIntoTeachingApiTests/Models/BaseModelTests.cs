@@ -31,7 +31,7 @@ namespace GetIntoTeachingApiTests.Models
             _mockValidatorFactory.Setup(m => m.GetValidator(It.IsAny<Type>())).Returns<IValidator>(null);
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _context = _mockService.Object.Context();
-            _crm = new CrmService(_mockService.Object, _mockValidatorFactory.Object);
+            _crm = new CrmService(_mockService.Object, _mockValidatorFactory.Object, new DateTimeProvider());
         }
 
         [Fact]

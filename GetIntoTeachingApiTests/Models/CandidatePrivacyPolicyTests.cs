@@ -1,5 +1,4 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using Microsoft.Xrm.Sdk;
@@ -42,12 +41,6 @@ namespace GetIntoTeachingApiTests.Models
         public void Description_DefaultValue_IsCorrect()
         {
             new CandidatePrivacyPolicy().Description.Should().Be("Online consent as part of web registration");
-        }
-
-        [Fact]
-        public void AcceptedAt_DefaultValue_IsNow()
-        {
-            new CandidatePrivacyPolicy().AcceptedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
         }
     }
 }

@@ -16,7 +16,7 @@ namespace GetIntoTeachingApiTests.Services
         public CandidateMagicLinkTokenServiceTests()
         {
             _mockCrm = new Mock<ICrmService>();
-            _service = new CandidateMagicLinkTokenService(_mockCrm.Object);
+            _service = new CandidateMagicLinkTokenService(_mockCrm.Object, new DateTimeProvider());
         }
 
         [Fact]

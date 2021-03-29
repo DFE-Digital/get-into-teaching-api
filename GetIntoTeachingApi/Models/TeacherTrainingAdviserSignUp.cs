@@ -47,6 +47,8 @@ namespace GetIntoTeachingApi.Models
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
+        [JsonIgnore]
+        public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
 
         public TeacherTrainingAdviserSignUp()
         {
@@ -153,7 +155,7 @@ namespace GetIntoTeachingApi.Models
             SetAdviserEligibility(candidate);
             DefaultPreferredEducationPhase(candidate);
             DefaultPreferredTeachingSubjectId(candidate);
-            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate);
+            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate, DateTimeProvider.UtcNow);
 
             return candidate;
         }
@@ -211,7 +213,11 @@ namespace GetIntoTeachingApi.Models
         {
             if (AcceptedPolicyId != null)
             {
-                candidate.PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)AcceptedPolicyId };
+                candidate.PrivacyPolicy = new CandidatePrivacyPolicy()
+                {
+                    AcceptedPolicyId = (Guid)AcceptedPolicyId,
+                    AcceptedAt = DateTimeProvider.UtcNow,
+                };
             }
         }
 
@@ -267,6 +273,7 @@ namespace GetIntoTeachingApi.Models
                 candidate.AssignmentStatusId = (int)Candidate.AssignmentStatus.WaitingToBeAssigned;
                 candidate.AdviserEligibilityId = (int)Candidate.AdviserEligibility.Yes;
                 candidate.AdviserRequirementId = (int)Candidate.AdviserRequirement.Yes;
+                candidate.StatusIsWaitingToBeAssignedAt = DateTimeProvider.UtcNow;
             }
         }
 

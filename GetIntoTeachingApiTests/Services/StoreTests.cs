@@ -29,7 +29,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             _mockGeocodeClient = new Mock<IGeocodeClientAdapter>();
             _mockCrm = new Mock<ICrmService>();
-            _store = new Store(DbContext, _mockGeocodeClient.Object, _mockCrm.Object);
+            _store = new Store(DbContext, _mockGeocodeClient.Object, _mockCrm.Object, new DateTimeProvider());
         }
 
         [Fact]

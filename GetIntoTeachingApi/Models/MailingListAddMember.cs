@@ -33,6 +33,8 @@ namespace GetIntoTeachingApi.Models
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
+        [JsonIgnore]
+        public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
 
         public MailingListAddMember()
         {
@@ -110,11 +112,13 @@ namespace GetIntoTeachingApi.Models
 
         private void ConfigureSubscriptions(Candidate candidate)
         {
-            SubscriptionManager.SubscribeToMailingList(candidate, ChannelId);
+            var utcNow = DateTimeProvider.UtcNow;
+
+            SubscriptionManager.SubscribeToMailingList(candidate, utcNow, ChannelId);
 
             if (!string.IsNullOrWhiteSpace(AddressPostcode))
             {
-                SubscriptionManager.SubscribeToEvents(candidate, ChannelId);
+                SubscriptionManager.SubscribeToEvents(candidate, utcNow, ChannelId);
             }
         }
 
@@ -122,7 +126,11 @@ namespace GetIntoTeachingApi.Models
         {
             if (AcceptedPolicyId != null)
             {
-                candidate.PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)AcceptedPolicyId };
+                candidate.PrivacyPolicy = new CandidatePrivacyPolicy()
+                {
+                    AcceptedPolicyId = (Guid)AcceptedPolicyId,
+                    AcceptedAt = DateTimeProvider.UtcNow,
+                };
             }
         }
     }

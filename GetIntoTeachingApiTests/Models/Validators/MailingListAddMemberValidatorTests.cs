@@ -18,7 +18,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public MailingListAddMemberValidatorTests()
         {
             _mockStore = new Mock<IStore>();
-            _validator = new MailingListAddMemberValidator(_mockStore.Object);
+            _validator = new MailingListAddMemberValidator(_mockStore.Object, new DateTimeProvider());
         }
 
         [Fact]
