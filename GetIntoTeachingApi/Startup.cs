@@ -235,18 +235,22 @@ The GIT API aims to provide:
                 dbConfiguration.Migrate();
             }
 
-            // Configure recurring jobs.
-            const string everyFifthMinute = "*/5 * * * *";
-            const string everyMinute = "* * * * *";
-            RecurringJob.AddOrUpdate<CrmSyncJob>(JobConfiguration.CrmSyncJobId, (x) => x.RunAsync(), everyFifthMinute);
-            RecurringJob.AddOrUpdate<LocationSyncJob>(
-                JobConfiguration.LocationSyncJobId,
-                (x) => x.RunAsync(LocationSyncJob.FreeMapToolsUrl),
-                Cron.Weekly());
-            RecurringJob.AddOrUpdate<MagicLinkTokenGenerationJob>(
-                JobConfiguration.MagicLinkTokenGenerationJobId,
-                (x) => x.Run(),
-                everyMinute);
+            // Don't run recurring jobs in test environment.
+            if (!env.IsTest)
+            {
+                // Configure recurring jobs.
+                const string everyFifthMinute = "*/5 * * * *";
+                const string everyMinute = "* * * * *";
+                RecurringJob.AddOrUpdate<CrmSyncJob>(JobConfiguration.CrmSyncJobId, (x) => x.RunAsync(), everyFifthMinute);
+                RecurringJob.AddOrUpdate<LocationSyncJob>(
+                    JobConfiguration.LocationSyncJobId,
+                    (x) => x.RunAsync(LocationSyncJob.FreeMapToolsUrl),
+                    Cron.Weekly());
+                RecurringJob.AddOrUpdate<MagicLinkTokenGenerationJob>(
+                    JobConfiguration.MagicLinkTokenGenerationJobId,
+                    (x) => x.Run(),
+                    everyMinute);
+            }
 
             // Don't seed test environment.
             if (!env.IsTest)
