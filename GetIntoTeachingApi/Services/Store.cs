@@ -18,12 +18,18 @@ namespace GetIntoTeachingApi.Services
         private readonly GetIntoTeachingDbContext _dbContext;
         private readonly IGeocodeClientAdapter _geocodeClient;
         private readonly ICrmService _crm;
+        private readonly IDateTimeProvider _dateTime;
 
-        public Store(GetIntoTeachingDbContext dbContext, IGeocodeClientAdapter geocodeClient, ICrmService crm)
+        public Store(
+            GetIntoTeachingDbContext dbContext,
+            IGeocodeClientAdapter geocodeClient,
+            ICrmService crm,
+            IDateTimeProvider dateTime)
         {
             _dbContext = dbContext;
             _geocodeClient = geocodeClient;
             _crm = crm;
+            _dateTime = dateTime;
         }
 
         public async Task<string> CheckStatusAsync()
@@ -168,7 +174,7 @@ namespace GetIntoTeachingApi.Services
 
         private async Task SyncTeachingEvents()
         {
-            var afterDate = DateTime.UtcNow.Subtract(TeachingEventArchiveSize);
+            var afterDate = _dateTime.UtcNow.Subtract(TeachingEventArchiveSize);
             var teachingEvents = _crm.GetTeachingEvents(afterDate).ToList();
             var teachingEventBuildings = _dbContext.TeachingEventBuildings.ToList();
 

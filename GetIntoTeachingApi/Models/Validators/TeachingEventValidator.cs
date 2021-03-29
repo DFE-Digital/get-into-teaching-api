@@ -1,5 +1,4 @@
-﻿using System;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Validators;
 using GetIntoTeachingApi.Services;
 
@@ -9,7 +8,7 @@ namespace GetIntoTeachingApi.Models.Validators
     {
         private readonly ICrmService _crm;
 
-        public TeachingEventValidator(ICrmService crm)
+        public TeachingEventValidator(ICrmService crm, IDateTimeProvider dateTime)
         {
             _crm = crm;
 
@@ -20,7 +19,7 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Must be unique");
             RuleFor(teachingEvent => teachingEvent.Name).NotEmpty();
             RuleFor(teachingEvent => teachingEvent.ProviderContactEmail).EmailAddress().EmailAddress(EmailValidationMode.AspNetCoreCompatible).MaximumLength(100);
-            RuleFor(teachingEvent => teachingEvent.StartAt).GreaterThan(DateTime.UtcNow);
+            RuleFor(teachingEvent => teachingEvent.StartAt).GreaterThan(dateTime.UtcNow);
             RuleFor(teachingEvent => teachingEvent.EndAt).GreaterThanOrEqualTo(rule => rule.StartAt);
         }
 

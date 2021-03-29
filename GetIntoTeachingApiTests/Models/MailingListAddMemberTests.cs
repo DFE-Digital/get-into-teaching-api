@@ -95,6 +95,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.EligibilityRulesPassed.Should().Be("false");
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
+            candidate.PrivacyPolicy.AcceptedAt.Should().BeCloseTo(DateTime.UtcNow);
 
             candidate.HasMailingListSubscription.Should().BeTrue();
             candidate.HasEventsSubscription.Should().BeTrue();

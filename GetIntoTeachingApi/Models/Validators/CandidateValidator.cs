@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using FluentValidation.Validators;
@@ -12,12 +11,12 @@ namespace GetIntoTeachingApi.Models.Validators
     {
         private readonly string[] _validEligibilityRulesPassedValues = new[] { "true", "false" };
 
-        public CandidateValidator(IStore store)
+        public CandidateValidator(IStore store, IDateTimeProvider dateTime)
         {
             RuleFor(candidate => candidate.FirstName).NotEmpty().MaximumLength(256);
             RuleFor(candidate => candidate.LastName).NotEmpty().MaximumLength(256);
             RuleFor(candidate => candidate.Email).NotEmpty().EmailAddress(EmailValidationMode.AspNetCoreCompatible).MaximumLength(100);
-            RuleFor(candidate => candidate.DateOfBirth).LessThan(candidate => DateTime.UtcNow);
+            RuleFor(candidate => candidate.DateOfBirth).LessThan(candidate => dateTime.UtcNow);
             RuleFor(candidate => candidate.Telephone).MinimumLength(5).MaximumLength(20).Matches(@"^[^a-zA-Z]+$");
             RuleFor(candidate => candidate.AddressLine1).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressLine2).MaximumLength(1024);

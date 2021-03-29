@@ -313,37 +313,6 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void ToEntity_WithStatusIdOfWaitingToBeAssigned_SetsStatusIsWaitingToBeAssignedAtToNow()
-        {
-            var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context();
-            var mockCrm = new Mock<ICrmService>();
-            var candidate = new Candidate() { AssignmentStatusId = (int)Candidate.AssignmentStatus.WaitingToBeAssigned };
-            var candidateEntity = new Entity("contact");
-            mockCrm.Setup(m => m.MappableEntity("contact", null, context)).Returns(candidateEntity);
-
-            candidate.ToEntity(mockCrm.Object, context);
-
-            candidateEntity.GetAttributeValue<DateTime>("dfe_waitingtobeassigneddate")
-                .Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(20));
-        }
-
-        [Fact]
-        public void ToEntity_WithNullStatusId_DoesNotSetStatusIsWaitingToBeAssigned()
-        {
-            var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context();
-            var mockCrm = new Mock<ICrmService>();
-            var candidate = new Candidate() { AssignmentStatusId = null };
-            var candidateEntity = new Entity("contact");
-            mockCrm.Setup(m => m.MappableEntity("contact", null, context)).Returns(candidateEntity);
-
-            candidate.ToEntity(mockCrm.Object, context);
-
-            candidateEntity.GetAttributeValue<DateTime?>("dfe_waitingtobeassigneddate").Should().BeNull();
-        }
-
-        [Fact]
         public void FullName_ReturnsCorrectly()
         {
             var candidate = new Candidate() { FirstName = "John", LastName = "Doe" };

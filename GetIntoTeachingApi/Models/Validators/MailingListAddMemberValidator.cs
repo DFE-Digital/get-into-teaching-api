@@ -5,7 +5,7 @@ namespace GetIntoTeachingApi.Models.Validators
 {
     public class MailingListAddMemberValidator : AbstractValidator<MailingListAddMember>
     {
-        public MailingListAddMemberValidator(IStore store)
+        public MailingListAddMemberValidator(IStore store, IDateTimeProvider dateTime)
         {
             RuleFor(request => request.FirstName).NotEmpty();
             RuleFor(request => request.LastName).NotEmpty();
@@ -15,7 +15,7 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(request => request.DegreeStatusId).NotNull();
             RuleFor(request => request.PreferredTeachingSubjectId).NotNull();
 
-            RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store));
+            RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store, dateTime));
         }
     }
 }

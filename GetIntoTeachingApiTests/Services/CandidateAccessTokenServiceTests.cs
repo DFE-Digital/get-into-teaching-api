@@ -20,7 +20,7 @@ namespace GetIntoTeachingApiTests.Services
             _metrics = new MetricService();
             var mockEnv = new Mock<IEnv>();
             mockEnv.Setup(m => m.TotpSecretKey).Returns("secret_key");
-            _service = new CandidateAccessTokenService(mockEnv.Object, _metrics);
+            _service = new CandidateAccessTokenService(mockEnv.Object, _metrics, new DateTimeProvider());
         }
 
         [Theory]

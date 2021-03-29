@@ -14,7 +14,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             var candidate = new Candidate();
 
-            SubscriptionManager.SubscribeToMailingList(candidate);
+            SubscriptionManager.SubscribeToMailingList(candidate, DateTime.UtcNow);
 
             candidate.HasMailingListSubscription.Should().BeTrue();
             candidate.MailingListSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.MailingList);
@@ -31,7 +31,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             var candidate = new Candidate();
 
-            SubscriptionManager.SubscribeToMailingList(candidate, 123);
+            SubscriptionManager.SubscribeToMailingList(candidate, DateTime.UtcNow, 123);
 
             candidate.MailingListSubscriptionChannelId.Should().Be(123);
         }
@@ -41,7 +41,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             var candidate = new Candidate();
 
-            SubscriptionManager.SubscribeToMailingList(candidate);
+            SubscriptionManager.SubscribeToMailingList(candidate, DateTime.UtcNow);
 
             candidate.OptOutOfSms.Should().BeFalse();
             candidate.DoNotBulkEmail.Should().BeFalse();
@@ -56,7 +56,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             var candidate = new Candidate() { DoNotBulkPostalMail = false, DoNotPostalMail = false };
 
-            SubscriptionManager.SubscribeToMailingList(candidate);
+            SubscriptionManager.SubscribeToMailingList(candidate, DateTime.UtcNow);
 
             candidate.DoNotBulkPostalMail.Should().BeFalse();
             candidate.DoNotPostalMail.Should().BeFalse();
@@ -67,7 +67,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             var candidate = new Candidate() { AddressPostcode = "TE5 7IN" };
 
-            SubscriptionManager.SubscribeToEvents(candidate);
+            SubscriptionManager.SubscribeToEvents(candidate, DateTime.UtcNow);
 
             candidate.HasEventsSubscription.Should().BeTrue();
             candidate.EventsSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Events);
@@ -85,7 +85,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             var candidate = new Candidate();
 
-            SubscriptionManager.SubscribeToEvents(candidate, 123);
+            SubscriptionManager.SubscribeToEvents(candidate, DateTime.UtcNow, 123);
 
             candidate.EventsSubscriptionChannelId.Should().Be(123);
             candidate.EventsSubscriptionTypeId.Should().Be((int)Candidate.SubscriptionType.SingleEvent);
@@ -96,7 +96,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             var candidate = new Candidate();
 
-            SubscriptionManager.SubscribeToEvents(candidate);
+            SubscriptionManager.SubscribeToEvents(candidate, DateTime.UtcNow);
 
             candidate.OptOutOfSms.Should().BeFalse();
             candidate.DoNotBulkEmail.Should().BeFalse();
@@ -111,7 +111,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             var candidate = new Candidate() { DoNotBulkPostalMail = false, DoNotPostalMail = false };
 
-            SubscriptionManager.SubscribeToEvents(candidate);
+            SubscriptionManager.SubscribeToEvents(candidate, DateTime.UtcNow);
 
             candidate.DoNotBulkPostalMail.Should().BeFalse();
             candidate.DoNotPostalMail.Should().BeFalse();
@@ -125,7 +125,7 @@ namespace GetIntoTeachingApiTests.Services
                 TypeId = (int)Candidate.Type.InterestedInTeacherTraining,
             };
 
-            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate);
+            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate, DateTime.UtcNow);
 
             candidate.HasTeacherTrainingAdviserSubscription.Should().BeTrue();
             candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.TeacherTrainingAdviser);
@@ -145,7 +145,7 @@ namespace GetIntoTeachingApiTests.Services
                 TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
             };
 
-            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate);
+            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate, DateTime.UtcNow);
 
             candidate.HasTeacherTrainingAdviserSubscription.Should().BeTrue();
             candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.TeacherTrainingAdviser);
@@ -162,7 +162,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             var candidate = new Candidate();
 
-            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate);
+            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate, DateTime.UtcNow);
 
             candidate.OptOutOfSms.Should().BeFalse();
             candidate.DoNotBulkEmail.Should().BeFalse();
@@ -177,7 +177,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             var candidate = new Candidate() { TypeId = (int)Candidate.Type.ReturningToTeacherTraining };
 
-            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate);
+            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate, DateTime.UtcNow);
 
             candidate.OptOutOfSms.Should().BeFalse();
             candidate.DoNotBulkEmail.Should().BeTrue();
@@ -199,7 +199,7 @@ namespace GetIntoTeachingApiTests.Services
                 TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
             };
 
-            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate);
+            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate, DateTime.UtcNow);
 
             candidate.DoNotBulkEmail.Should().BeFalse();
             candidate.DoNotBulkPostalMail.Should().BeFalse();
