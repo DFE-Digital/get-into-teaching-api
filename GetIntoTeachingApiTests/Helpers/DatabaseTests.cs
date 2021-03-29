@@ -16,6 +16,7 @@ namespace GetIntoTeachingApiTests.Helpers
 
             CloneTemplateDatabase(databaseFixture, databaseName);
             SetupDbContext(databaseName);
+            SetupIntegrationEnvironment(databaseName);
         }
 
         public void Dispose()
@@ -47,6 +48,16 @@ namespace GetIntoTeachingApiTests.Helpers
 
             using var command = new NpgsqlCommand($"CREATE DATABASE {databaseName} WITH TEMPLATE {databaseFixture.TemplateDatabaseName};", templateConnection);
             command.ExecuteNonQuery();
+        }
+
+        private static void SetupIntegrationEnvironment(string databaseName)
+        {
+            // Set environment for integration tests using the database.
+            Environment.SetEnvironmentVariable("DATABASE_INSTANCE_NAME", databaseName);
+            Environment.SetEnvironmentVariable("VCAP_SERVICES",
+                $"{{\"postgres\": [{{\"instance_name\": \"{databaseName}\",\"credentials\": {{\"host\": \"localhost\"," +
+                $"\"name\": \"{databaseName}\",\"username\": \"docker\",\"password\": \"docker\",\"port\": 5432}}}}]," +
+                $"\"redis\": [{{\"credentials\": {{\"host\": \"0.0.0.0\",\"port\": 6379,\"password\": \"docker\",\"tls_enabled\": false}}}}]}}");
         }
     }
 }
