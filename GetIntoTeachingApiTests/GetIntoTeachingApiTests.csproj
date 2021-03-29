@@ -48,6 +48,105 @@
     <None Update="Fixtures\vcap_services.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Contracts\Data\lookup_items.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\privacy_policy.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Input\returning_to_teaching_with_a_new_candidate_has_a_teacher_reference_number_is_in_the_uk_and_provides_a_telephone.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\lookup_items\lookup_items.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\qualification\pick_list_items.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\candidate\types.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\lookup_items\teaching_subjects.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\qualification\uk_degree_grades.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\lookup_items\countries.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\candidate\adviser_eligibilities.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\candidate\adviser_requirements.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\candidate\assignment_status.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\candidate\channels.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\candidate\consideration_journey_stages.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\candidate\event_subscription_channels.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\candidate\gcse_status.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\candidate\initial_teacher_training_years.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\candidate\mailing_list_subscription_channels.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\candidate\preferred_education_phases.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\candidate\retake_gcse_status.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\past_teaching_position\education_phases.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\phone_call\channels.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\qualification\types.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\qualification\degree_status.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\service_subscription\types.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\teaching_event\status.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\teaching_event\types.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\teaching_event_registrations\channels.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\state.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\teaching_event_registration\channels.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\subscription\types.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\pick_list_items\candidate\journey_stages.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -57,6 +156,19 @@
     <Folder Include="Middleware\" />
     <Folder Include="Controllers\GetIntoTeaching\" />
     <Folder Include="Models\FindApply\" />
+    <Folder Include="Contracts\" />
+    <Folder Include="Contracts\Data\" />
+    <Folder Include="Contracts\Input\" />
+    <Folder Include="Contracts\Output\" />
+    <Folder Include="Contracts\Data\lookup_items\" />
+    <Folder Include="Contracts\Data\pick_list_items\" />
+    <Folder Include="Contracts\Data\pick_list_items\qualification\" />
+    <Folder Include="Contracts\Data\pick_list_items\candidate\" />
+    <Folder Include="Contracts\Data\pick_list_items\past_teaching_position\" />
+    <Folder Include="Contracts\Data\pick_list_items\teaching_event\" />
+    <Folder Include="Contracts\Data\pick_list_items\teaching_event_registration\" />
+    <Folder Include="Contracts\Data\pick_list_items\phone_call\" />
+    <Folder Include="Contracts\Data\pick_list_items\subscription\" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
