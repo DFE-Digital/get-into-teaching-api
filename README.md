@@ -149,6 +149,20 @@ public void UnitOfWork_StateUnderTest_ExpectedBehavior()
 }
 ```
 
+#### Contract Testing
+
+> :warning: **Development of the contract tests is currently in-progress**
+
+We use a variation of 'contract testing' to achieve end-to-end integration tests across all services (API Clients -> API -> CRM).
+
+The API consumes the output of API client service contract tests, which are snapshots of the calls made to the API during test scenarios. Off the back of these requests the API makes calls to the CRM, which are saved as output snapshots of the API contract tests (later consumed by the CRM contract tests).
+
+If a change to the API codebase results in a different call/payload sent to the CRM, then the snapshots will not match and the test will fail. If the change is expected the snapshot should be replaced with the updated version and committed.
+
+A difficulty with these tests is ensuring that the services all have a consistent, global view of the service data state prior to executing the contract tests. We currently maintain the service data in `Contracts/Data` (to be centralised in a GitHub repospitory, but currently duplicated in each service).
+
+Eventually, the `Contracts/Output` will be 'published' to a separate GitHub repository, which will enable other services to pull in their test fixtures from the upstream service. This will enable us to develop features in each service independently and publish only when the change is ready to be reflected in another service.
+
 ### Emails
 
 We send emails using the [GOV.UK Notify](https://www.notifications.service.gov.uk/) service; leveraging the [.Net Client](https://github.com/alphagov/notifications-net-client).
