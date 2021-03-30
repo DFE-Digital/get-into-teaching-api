@@ -535,23 +535,30 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async Task SaveAsync_WithModelAndRelatedModel_PersistsBoth()
+        public async Task SaveAsync_WithNewModel_Adds()
         {
-            var building = new TeachingEventBuilding()
-            {
-                Id = new Guid("5d836cd9-436c-4a20-baf2-62b2c1117197")
-            };
+            var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid(), Name = "TestEvent" };
 
-            var teachingEvent = new TeachingEvent()
-            {
-                Id = new Guid("db06077d-0034-4c0b-8b32-a585357434d7"),
-                Building = building,
-            };
+            await _store.SaveAsync(new TeachingEvent[] { teachingEvent });
 
-            await _store.SaveAsync(teachingEvent);
+            DbContext.TeachingEvents
+                .FirstOrDefault(e => e.Name == teachingEvent.Name)
+                .Should().NotBeNull();
+        }
 
-            var createdEvent = DbContext.TeachingEvents.First(e => e.Id == teachingEvent.Id);
-            createdEvent.Building.Id.Should().Be(building.Id);
+        [Fact]
+        public async Task SaveAsync_WithExistingModel_Updates()
+        {
+            var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid(), Name = "TestEvent" };
+
+            await _store.SaveAsync(new TeachingEvent[] { teachingEvent });
+
+            teachingEvent.Name += "Updated";
+
+            await _store.SaveAsync(new TeachingEvent[] { teachingEvent });
+
+            var teachingEventNames = DbContext.TeachingEvents.Select(e => e.Name).ToList();
+            teachingEventNames.ForEach(name => name.Should().Contain("Updated"));
         }
 
         private static bool CheckGetTeachingEventsAfterDate(DateTime date)

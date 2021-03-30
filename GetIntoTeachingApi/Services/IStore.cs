@@ -10,7 +10,7 @@ namespace GetIntoTeachingApi.Services
     {
         Task<string> CheckStatusAsync();
         Task SyncAsync();
-        Task SaveAsync<T>(T model)
+        Task SaveAsync<T>(IEnumerable<T> models)
             where T : BaseModel;
         IQueryable<LookupItem> GetLookupItems(string entityName);
         IQueryable<PickListItem> GetPickListItems(string entityName, string attributeName);

@@ -213,7 +213,7 @@ namespace GetIntoTeachingApiTests.Controllers
             const string testName = "test";
             var newTeachingEvent = new TeachingEvent() { Name = testName };
             _mockCrm.Setup(mock => mock.Save(newTeachingEvent)).Verifiable();
-            _mockStore.Setup(mock => mock.SaveAsync(newTeachingEvent)).Verifiable();
+            _mockStore.Setup(mock => mock.SaveAsync(new TeachingEvent[] { newTeachingEvent })).Verifiable();
 
             var response = await _controller.Upsert(newTeachingEvent);
 
@@ -232,7 +232,8 @@ namespace GetIntoTeachingApiTests.Controllers
             var newTeachingEvent = new TeachingEvent() { Name = testName, Building = newBuilding };
             _mockCrm.Setup(mock => mock.Save(newBuilding)).Verifiable();
             _mockCrm.Setup(mock => mock.Save(newTeachingEvent)).Verifiable();
-            _mockStore.Setup(mock => mock.SaveAsync(newTeachingEvent)).Verifiable();
+            _mockStore.Setup(mock => mock.SaveAsync(new TeachingEventBuilding[] { newBuilding })).Verifiable();
+            _mockStore.Setup(mock => mock.SaveAsync(new TeachingEvent[] { newTeachingEvent })).Verifiable();
 
             var response = await _controller.Upsert(newTeachingEvent);
 
