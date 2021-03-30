@@ -17,11 +17,13 @@ namespace GetIntoTeachingApi.Services
         private const int MaximumCallbackBookingQuotaDaysInAdvance = 14;
         private readonly IOrganizationServiceAdapter _service;
         private readonly IValidatorFactory _validatorFactory;
+        private readonly IDateTimeProvider _dateTime;
 
-        public CrmService(IOrganizationServiceAdapter service, IValidatorFactory validatorFactory)
+        public CrmService(IOrganizationServiceAdapter service, IValidatorFactory validatorFactory, IDateTimeProvider dateTime)
         {
             _service = service;
             _validatorFactory = validatorFactory;
+            _dateTime = dateTime;
         }
 
         public string CheckStatus()
@@ -43,8 +45,8 @@ namespace GetIntoTeachingApi.Services
         public IEnumerable<CallbackBookingQuota> GetCallbackBookingQuotas()
         {
             return _service.CreateQuery("dfe_callbackbookingquota", Context())
-                .Where((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime") > DateTime.UtcNow &&
-                                   entity.GetAttributeValue<DateTime>("dfe_starttime") < DateTime.UtcNow.AddDays(MaximumCallbackBookingQuotaDaysInAdvance))
+                .Where((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime") > _dateTime.UtcNow &&
+                                   entity.GetAttributeValue<DateTime>("dfe_starttime") < _dateTime.UtcNow.AddDays(MaximumCallbackBookingQuotaDaysInAdvance))
                 .OrderBy((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime"))
                 .Select((entity) => new CallbackBookingQuota(entity, this, _validatorFactory))
                 .ToList()
@@ -205,7 +207,7 @@ namespace GetIntoTeachingApi.Services
         {
             if (startAfter == null)
             {
-                startAfter = DateTime.UtcNow;
+                startAfter = _dateTime.UtcNow;
             }
 
             var query = new QueryExpression("msevtmgt_event");

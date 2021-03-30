@@ -20,7 +20,7 @@ namespace GetIntoTeachingApi.Models
         [EntityField("dfe_name")]
         public string Description { get; set; } = "Online consent as part of web registration";
         [EntityField("dfe_timeofconsent")]
-        public DateTime AcceptedAt { get; set; } = DateTime.UtcNow;
+        public DateTime AcceptedAt { get; set; }
 
         public CandidatePrivacyPolicy()
             : base()

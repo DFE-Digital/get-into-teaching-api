@@ -11,7 +11,6 @@ using Hangfire;
 using Hangfire.Common;
 using Hangfire.States;
 using Microsoft.AspNetCore.Authorization;
-using System.Text.Json;
 using GetIntoTeachingApi.Utils;
 
 namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
@@ -21,6 +20,7 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         private readonly Mock<ICandidateAccessTokenService> _mockTokenService;
         private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
+        private readonly Mock<IDateTimeProvider> _mockDateTime;
         private readonly CandidatesController _controller;
         private readonly ExistingCandidateRequest _request;
 
@@ -29,8 +29,12 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
             _mockTokenService = new Mock<ICandidateAccessTokenService>();
             _mockCrm = new Mock<ICrmService>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
+            _mockDateTime = new Mock<IDateTimeProvider>();
             _request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
-            _controller = new CandidatesController(_mockTokenService.Object, _mockCrm.Object, _mockJobClient.Object);
+            _controller = new CandidatesController(_mockTokenService.Object, _mockCrm.Object, _mockJobClient.Object, _mockDateTime.Object);
+
+            // Freeze time.
+            _mockDateTime.Setup(m => m.UtcNow).Returns(DateTime.UtcNow);
         }
 
         [Fact]
@@ -105,11 +109,7 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         private static bool IsMatch(Candidate candidateA, string candidateBJson)
         {
             var candidateB = candidateBJson.DeserializeChangeTracked<Candidate>();
-
-            // Compares ignoring date attributes that are dynamic.
-            candidateA.Should().BeEquivalentTo(candidateB, options => options
-                .Excluding(c => c.TeacherTrainingAdviserSubscriptionStartAt)
-                .Excluding(c => c.PrivacyPolicy.AcceptedAt));
+            candidateA.Should().BeEquivalentTo(candidateB);
             return true;
         }
     }

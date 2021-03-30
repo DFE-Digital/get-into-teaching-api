@@ -291,11 +291,6 @@ namespace GetIntoTeachingApi.Models
         {
             IsNewRegistrant = Id == null;
 
-            if (AssignmentStatusId == (int)AssignmentStatus.WaitingToBeAssigned)
-            {
-                StatusIsWaitingToBeAssignedAt = DateTime.UtcNow;
-            }
-
             var changingEventSubscriptionType = !IsNewRegistrant && EventsSubscriptionTypeId != null;
 
             if (changingEventSubscriptionType && crm.CandidateAlreadyHasLocalEventSubscriptionType((Guid)Id))

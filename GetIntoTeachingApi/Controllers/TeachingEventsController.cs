@@ -27,6 +27,7 @@ namespace GetIntoTeachingApi.Controllers
         private readonly IMetricService _metrics;
         private readonly IBackgroundJobClient _jobClient;
         private readonly ILogger<TeachingEventsController> _logger;
+        private readonly IDateTimeProvider _dateTime;
 
         public TeachingEventsController(
             IStore store,
@@ -34,7 +35,8 @@ namespace GetIntoTeachingApi.Controllers
             ICandidateAccessTokenService tokenService,
             ICrmService crm,
             ILogger<TeachingEventsController> logger,
-            IMetricService metrics)
+            IMetricService metrics,
+            IDateTimeProvider dateTime)
         {
             _store = store;
             _jobClient = jobClient;
@@ -42,6 +44,7 @@ namespace GetIntoTeachingApi.Controllers
             _metrics = metrics;
             _tokenService = tokenService;
             _logger = logger;
+            _dateTime = dateTime;
         }
 
         [HttpGet]
@@ -131,6 +134,9 @@ namespace GetIntoTeachingApi.Controllers
                 return BadRequest(this.ModelState);
             }
 
+            // This is the only way we can mock/freeze the current date/time
+            // in contract tests (there's no other way to inject it into this class).
+            request.DateTimeProvider = _dateTime;
             string json = request.Candidate.SerializeChangeTracked();
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
 

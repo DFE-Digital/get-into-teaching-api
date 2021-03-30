@@ -8,7 +8,7 @@ namespace GetIntoTeachingApi.Models.Validators
 {
     public class TeacherTrainingAdviserSignUpValidator : AbstractValidator<TeacherTrainingAdviserSignUp>
     {
-        public TeacherTrainingAdviserSignUpValidator(IStore store)
+        public TeacherTrainingAdviserSignUpValidator(IStore store, IDateTimeProvider dateTime)
         {
             RuleFor(request => request.FirstName).NotNull();
             RuleFor(request => request.LastName).NotNull();
@@ -21,7 +21,7 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(request => request.Telephone).NotNull()
                 .When(request => request.PhoneCallScheduledAt != null)
                 .WithMessage("Must be set to schedule a callback.");
-            RuleFor(request => request.PhoneCallScheduledAt).GreaterThan(candidate => DateTime.UtcNow)
+            RuleFor(request => request.PhoneCallScheduledAt).GreaterThan(candidate => dateTime.UtcNow)
                 .When(request => request.PhoneCallScheduledAt != null)
                 .WithMessage("Can only be scheduled for future dates.");
 
@@ -108,7 +108,7 @@ namespace GetIntoTeachingApi.Models.Validators
                 });
             });
 
-            RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store));
+            RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store, dateTime));
         }
 
         private static List<int?> StudyingForADegreeStatus()

@@ -29,6 +29,7 @@ namespace GetIntoTeachingApiTests.Controllers
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly Mock<IStore> _mockStore;
         private readonly Mock<ILogger<TeachingEventsController>> _mockLogger;
+        private readonly Mock<IDateTimeProvider> _mockDateTime;
         private readonly IMetricService _metrics;
         private readonly TeachingEventsController _controller;
         private readonly ExistingCandidateRequest _request;
@@ -41,9 +42,13 @@ namespace GetIntoTeachingApiTests.Controllers
             _mockStore = new Mock<IStore>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
             _mockLogger = new Mock<ILogger<TeachingEventsController>>();
+            _mockDateTime = new Mock<IDateTimeProvider>();
             _metrics = new MetricService();
             _controller = new TeachingEventsController(_mockStore.Object, _mockJobClient.Object,
-                _mockTokenService.Object, _mockCrm.Object, _mockLogger.Object, _metrics);
+                _mockTokenService.Object, _mockCrm.Object, _mockLogger.Object, _metrics, _mockDateTime.Object);
+
+            // Freeze time.
+            _mockDateTime.Setup(m => m.UtcNow).Returns(DateTime.UtcNow);
         }
 
         [Fact]
@@ -258,11 +263,7 @@ namespace GetIntoTeachingApiTests.Controllers
         private static bool IsMatch(Candidate candidateA, string candidateBJson)
         {
             var candidateB = candidateBJson.DeserializeChangeTracked<Candidate>();
-
-            // Compares ignoring date attributes that are dynamic.
-            candidateA.Should().BeEquivalentTo(candidateB, options => options
-                .Excluding(c => c.EventsSubscriptionStartAt)
-                .Excluding(c => c.PrivacyPolicy.AcceptedAt));
+            candidateA.Should().BeEquivalentTo(candidateB);
             return true;
         }
     }

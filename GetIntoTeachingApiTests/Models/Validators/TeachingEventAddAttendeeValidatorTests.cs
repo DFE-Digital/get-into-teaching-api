@@ -18,7 +18,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public TeachingEventAddAttendeeValidatorTests()
         {
             _mockStore = new Mock<IStore>();
-            _validator = new TeachingEventAddAttendeeValidator(_mockStore.Object);
+            _validator = new TeachingEventAddAttendeeValidator(_mockStore.Object, new DateTimeProvider());
         }
 
         [Fact]

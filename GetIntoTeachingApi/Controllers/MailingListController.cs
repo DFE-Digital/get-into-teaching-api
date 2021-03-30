@@ -21,17 +21,20 @@ namespace GetIntoTeachingApi.Controllers
         private readonly ICandidateMagicLinkTokenService _magicLinkTokenService;
         private readonly ICrmService _crm;
         private readonly IBackgroundJobClient _jobClient;
+        private readonly IDateTimeProvider _dateTime;
 
         public MailingListController(
             ICandidateAccessTokenService accessTokenService,
             ICandidateMagicLinkTokenService magicLinkTokenService,
             ICrmService crm,
-            IBackgroundJobClient jobClient)
+            IBackgroundJobClient jobClient,
+            IDateTimeProvider dateTime)
         {
             _crm = crm;
             _accessTokenService = accessTokenService;
             _magicLinkTokenService = magicLinkTokenService;
             _jobClient = jobClient;
+            _dateTime = dateTime;
         }
 
         [HttpPost]
@@ -59,6 +62,9 @@ namespace GetIntoTeachingApi.Controllers
                 return BadRequest(this.ModelState);
             }
 
+            // This is the only way we can mock/freeze the current date/time
+            // in contract tests (there's no other way to inject it into this class).
+            request.DateTimeProvider = _dateTime;
             string json = request.Candidate.SerializeChangeTracked();
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
 
