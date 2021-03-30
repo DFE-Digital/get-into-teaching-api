@@ -71,7 +71,7 @@ namespace GetIntoTeachingApiTests.Services
 
             var ids = DbContext.TeachingEvents.Select(te => te.Id);
             ids.Should().BeEquivalentTo(mockTeachingEvents.Select(te => te.Id));
-            DbContext.TeachingEvents.Count().Should().Be(7);
+            DbContext.TeachingEvents.Count().Should().Be(8);
         }
 
         [Fact]
@@ -91,7 +91,7 @@ namespace GetIntoTeachingApiTests.Services
             teachingEvents.Select(te => te.Name).ToList().ForEach(name => name.Should().Contain("Updated"));
             teachingEvents.Where(te => te.Building != null).Select(te => te.Building.AddressLine1).ToList()
                 .ForEach(line1 => line1.Should().Contain("Updated"));
-            DbContext.TeachingEvents.Count().Should().Be(7);
+            DbContext.TeachingEvents.Count().Should().Be(8);
             DbContext.TeachingEventBuildings.Count().Should().Be(5);
         }
 
@@ -505,6 +505,51 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public async void SearchTeachingEvents_FilteredByDefaultStatusId_ReturnsOpenAndClosedEvents()
+        {
+            await SeedMockTeachingEventsAndBuildingsAsync();
+            var request = new TeachingEventSearchRequest();
+
+            var result = await _store.SearchTeachingEventsAsync(request);
+
+            result.Select(e => e.Name).Should()
+                .Contain(
+                new string[] { "Event 1", "Event 2", "Event 3", "Event 4", "Event 5", "Event 6", "Event 7" });
+        }
+
+        [Fact]
+        public async void SearchTeachingEvents_FilteredByStatusId_ReturnsMatching()
+        {
+            await SeedMockTeachingEventsAndBuildingsAsync();
+            var request = new TeachingEventSearchRequest()
+            {
+                StatusIds = new int[] { (int)TeachingEvent.Status.Pending }
+            };
+
+            var result = await _store.SearchTeachingEventsAsync(request);
+
+            result.Select(e => e.Name).Should()
+                .Contain(
+                new string[] { "Event 8" });
+        }
+
+        [Fact]
+        public async void SearchTeachingEvents_FilteredByMultipleStatusIds_ReturnsMatching()
+        {
+            await SeedMockTeachingEventsAndBuildingsAsync();
+            var request = new TeachingEventSearchRequest()
+            {
+                StatusIds = new int[] { (int)TeachingEvent.Status.Open, (int)TeachingEvent.Status.Pending }
+            };
+
+            var result = await _store.SearchTeachingEventsAsync(request);
+
+            result.Select(e => e.Name).Should()
+                .Contain(
+                new string[] { "Event 1", "Event 2", "Event 3", "Event 4", "Event 5", "Event 6", "Event 8" });
+        }
+
+        [Fact]
         public async void GetTeachingEventAsync_WithId_ReturnsMatchingEvent()
         {
             var events = await SeedMockTeachingEventsAndBuildingsAsync();
@@ -572,6 +617,7 @@ namespace GetIntoTeachingApiTests.Services
             {
                 Id = Guid.NewGuid(),
                 ReadableId = "1",
+                StatusId = (int)TeachingEvent.Status.Open,
                 Name = "Event 1",
                 TypeId = (int)TeachingEvent.EventType.TrainToTeachEvent,
                 IsOnline = true,
@@ -583,6 +629,7 @@ namespace GetIntoTeachingApiTests.Services
             {
                 Id = FindEventGuid,
                 ReadableId = "2",
+                StatusId = (int)TeachingEvent.Status.Open,
                 Name = "Event 2",
                 StartAt = DateTime.UtcNow.AddDays(1),
                 TypeId = (int)TeachingEvent.EventType.ApplicationWorkshop,
@@ -593,6 +640,7 @@ namespace GetIntoTeachingApiTests.Services
             {
                 Id = Guid.NewGuid(),
                 ReadableId = "3",
+                StatusId = (int)TeachingEvent.Status.Open,
                 Name = "Event 3",
                 StartAt = DateTime.UtcNow.AddDays(10),
                 TypeId = (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
@@ -603,6 +651,7 @@ namespace GetIntoTeachingApiTests.Services
             {
                 Id = Guid.NewGuid(),
                 ReadableId = "4",
+                StatusId = (int)TeachingEvent.Status.Open,
                 Name = "Event 4",
                 StartAt = DateTime.UtcNow.AddDays(3),
                 TypeId = (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
@@ -613,6 +662,7 @@ namespace GetIntoTeachingApiTests.Services
             {
                 Id = Guid.NewGuid(),
                 ReadableId = "5",
+                StatusId = (int)TeachingEvent.Status.Open,
                 Name = "Event 5",
                 IsOnline = true,
                 TypeId = (int)TeachingEvent.EventType.OnlineEvent,
@@ -623,6 +673,7 @@ namespace GetIntoTeachingApiTests.Services
             {
                 Id = Guid.NewGuid(),
                 ReadableId = "6",
+                StatusId = (int)TeachingEvent.Status.Open,
                 Name = "Event 6",
                 StartAt = DateTime.UtcNow.AddDays(60),
                 TypeId = (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
@@ -633,13 +684,22 @@ namespace GetIntoTeachingApiTests.Services
             {
                 Id = Guid.NewGuid(),
                 ReadableId = "7",
+                StatusId = (int)TeachingEvent.Status.Closed,
                 Name = "Event 7",
                 StartAt = DateTime.UtcNow.AddYears(-1),
                 TypeId = (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
                 BuildingId = buildings[4].Id
             };
 
-            return new List<TeachingEvent>() { event1, event2, event3, event4, event5, event6, event7 };
+            var event8 = new TeachingEvent()
+            {
+                Id = Guid.NewGuid(),
+                ReadableId = "8",
+                Name = "Event 8",
+                StatusId = (int) TeachingEvent.Status.Pending
+            };
+
+            return new List<TeachingEvent>() { event1, event2, event3, event4, event5, event6, event7, event8 };
         }
 
         private static List<TeachingEventBuilding> MockTeachingEventBuildings()

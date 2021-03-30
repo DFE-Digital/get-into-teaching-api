@@ -26,5 +26,14 @@ namespace GetIntoTeachingApiTests.Models
             clone.Radius.Should().Be(100);
             clone.TypeId.Should().Be(request.TypeId);
         }
+
+        [Fact]
+        public void StatusId_DefaultValue_IsOpenAndClsoedEvents()
+        {
+            var request = new TeachingEventSearchRequest();
+            var expectedDefaults = new int[] { (int)TeachingEvent.Status.Open, (int)TeachingEvent.Status.Closed };
+
+            request.StatusIds.Should().Equal(expectedDefaults);
+        }
     }
 }
