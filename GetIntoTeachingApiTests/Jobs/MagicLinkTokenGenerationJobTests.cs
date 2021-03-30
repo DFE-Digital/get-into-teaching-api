@@ -18,6 +18,7 @@ namespace GetIntoTeachingApiTests.Jobs
         private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly Mock<ICandidateMagicLinkTokenService> _mockMagicLinkTokenService;
+        private readonly Mock<IAppSettings> _mockAppSettings;
         private readonly Mock<ILogger<MagicLinkTokenGenerationJob>> _mockLogger;
         private readonly IMetricService _metrics;
         private readonly MagicLinkTokenGenerationJob _job;
@@ -27,9 +28,17 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockLogger = new Mock<ILogger<MagicLinkTokenGenerationJob>>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
             _mockCrm = new Mock<ICrmService>();
+            _mockAppSettings = new Mock<IAppSettings>();
             _mockMagicLinkTokenService = new Mock<ICandidateMagicLinkTokenService>();
             _metrics = new MetricService();
-            _job = new MagicLinkTokenGenerationJob(new Env(), _mockJobClient.Object, _mockMagicLinkTokenService.Object, _mockCrm.Object, _mockLogger.Object, _metrics);
+            _job = new MagicLinkTokenGenerationJob(
+                new Env(),
+                _mockJobClient.Object,
+                _mockMagicLinkTokenService.Object,
+                _mockCrm.Object,
+                _mockLogger.Object,
+                _metrics,
+                _mockAppSettings.Object);
         }
 
         [Fact]
@@ -61,6 +70,17 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockLogger.VerifyInformationWasCalled("MagicLinkTokenGenerationJob - Succeeded");
 
             _metrics.MagicLinkTokenGenerationDuration.Count.Should().Be(1);
+        }
+
+        [Fact]
+        public void Run_WhenCrmIntegrationPaused_DoesNotLoadCandidates()
+        {
+            _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(true);
+
+            _job.Run();
+
+            _mockCrm.Verify(m => m.GetCandidatesPendingMagicLinkTokenGeneration(It.IsAny<int>()), Times.Never);
+            _mockLogger.VerifyInformationWasCalled("MagicLinkTokenGenerationJob - Skipping (CRM integration paused)");
         }
     }
 }

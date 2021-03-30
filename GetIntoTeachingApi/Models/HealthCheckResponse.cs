@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
-using GetIntoTeachingApi.Attributes;
 
 namespace GetIntoTeachingApi.Models
 {
     public class HealthCheckResponse
     {
         public const string StatusOk = "ok";
+        public const string StatusIntegrationPaused = "integration-paused";
         public string GitCommitSha { get; set; }
         public string Environment { get; set; }
         public string Database { get; set; }

@@ -16,17 +16,20 @@ namespace GetIntoTeachingApiTests.Controllers
         private readonly Mock<ICandidateAccessTokenService> _mockAccessTokenService;
         private readonly Mock<INotifyService> _mockNotifyService;
         private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<IAppSettings> _mockAppSettings;
         private readonly CandidatesController _controller;
 
         public CandidatesControllerTests()
         {
             _mockAccessTokenService = new Mock<ICandidateAccessTokenService>();
             _mockNotifyService = new Mock<INotifyService>();
+            _mockAppSettings = new Mock<IAppSettings>();
             _mockCrm = new Mock<ICrmService>();
             _controller = new CandidatesController(
                 _mockAccessTokenService.Object,
                 _mockNotifyService.Object,
-                _mockCrm.Object);
+                _mockCrm.Object,
+                _mockAppSettings.Object);
         }
 
         [Fact]
@@ -55,6 +58,7 @@ namespace GetIntoTeachingApiTests.Controllers
             var candidate = new Candidate { Id = Guid.NewGuid(), Email = request.Email, FirstName = request.FirstName, LastName = request.LastName };
             _mockAccessTokenService.Setup(mock => mock.GenerateToken(request, (Guid)candidate.Id)).Returns("123456");
             _mockCrm.Setup(mock => mock.MatchCandidate(request)).Returns(candidate);
+            _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
 
             var response = _controller.CreateAccessToken(request);
 
@@ -73,6 +77,23 @@ namespace GetIntoTeachingApiTests.Controllers
         {
             var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
             _mockCrm.Setup(mock => mock.MatchCandidate(request)).Returns<Candidate>(null);
+            _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
+
+            var response = _controller.CreateAccessToken(request);
+
+            response.Should().BeOfType<NotFoundResult>();
+
+            _mockNotifyService.Verify(mock =>
+                mock.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, dynamic>>()),
+                Times.Never()
+            );
+        }
+
+        [Fact]
+        public void CreateAccessToken_CrmIntegrationIsPaused_ReturnsNotFound()
+        {
+            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
+            _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(true);
 
             var response = _controller.CreateAccessToken(request);
 

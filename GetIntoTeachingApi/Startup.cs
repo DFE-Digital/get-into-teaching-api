@@ -10,6 +10,7 @@ using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.JsonConverters;
 using GetIntoTeachingApi.ModelBinders;
+using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.OperationFilters;
 using GetIntoTeachingApi.RateLimiting;
 using GetIntoTeachingApi.Redis;
@@ -52,6 +53,8 @@ namespace GetIntoTeachingApi
             {
                 DotEnv.Config(true, ".env.development");
             }
+
+            services.AddSingleton<IAppSettings, AppSettings>();
 
             services.AddSingleton<CdsServiceClientWrapper, CdsServiceClientWrapper>();
             services.AddTransient<IOrganizationService>(sp => sp.GetService<CdsServiceClientWrapper>().CdsServiceClient?.Clone());

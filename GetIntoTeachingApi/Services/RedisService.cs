@@ -12,6 +12,8 @@ namespace GetIntoTeachingApi.Services
         private readonly ConnectionMultiplexer _redis;
         private readonly ConfigurationOptions _options;
 
+        public IDatabase Database => _redis.GetDatabase();
+
         public RedisService(IEnv env)
         {
             _options = RedisConfiguration.ConfigurationOptions(env);
