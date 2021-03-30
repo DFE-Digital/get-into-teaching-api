@@ -119,10 +119,13 @@ namespace GetIntoTeachingApi.Services
             return _dbContext.TeachingEventBuildings;
         }
 
-        public async Task SaveAsync<T>(T model)
+        public async Task SaveAsync<T>(IEnumerable<T> models)
             where T : BaseModel
         {
-            await _dbContext.AddAsync(model);
+            var existingIds = _dbContext.Set<T>().Select(m => m.Id);
+
+            _dbContext.UpdateRange(models.Where(m => existingIds.Contains(m.Id)));
+            await _dbContext.AddRangeAsync(models.Where(m => !existingIds.Contains(m.Id)));
             await _dbContext.SaveChangesAsync();
         }
 
