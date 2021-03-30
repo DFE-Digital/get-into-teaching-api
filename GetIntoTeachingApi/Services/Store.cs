@@ -102,6 +102,12 @@ namespace GetIntoTeachingApi.Services
                 teachingEvents = teachingEvents.Where(te => request.StartBefore > te.StartAt);
             }
 
+            if (request.StatusIds != null)
+            {
+                teachingEvents = teachingEvents.Where(te =>
+                    request.StatusIds.Contains(te.StatusId));
+            }
+
             if (request.Radius == null)
             {
                 return await teachingEvents.ToListAsync();
