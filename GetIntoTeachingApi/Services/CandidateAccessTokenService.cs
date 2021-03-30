@@ -15,11 +15,13 @@ namespace GetIntoTeachingApi.Services
         private const int Length = 6;
         private readonly IEnv _env;
         private readonly IMetricService _metrics;
+        private readonly IDateTimeProvider _dateTime;
 
-        public CandidateAccessTokenService(IEnv env, IMetricService metrics)
+        public CandidateAccessTokenService(IEnv env, IMetricService metrics, IDateTimeProvider dateTime)
         {
             _env = env;
             _metrics = metrics;
+            _dateTime = dateTime;
         }
 
         public string GenerateToken(ExistingCandidateRequest request, Guid candidateId)
@@ -33,7 +35,7 @@ namespace GetIntoTeachingApi.Services
 
         public bool IsValid(string token, ExistingCandidateRequest request, Guid candidateId)
         {
-            return IsValid(token, request, candidateId, DateTime.UtcNow);
+            return IsValid(token, request, candidateId, _dateTime.UtcNow);
         }
 
         public bool IsValid(string token, ExistingCandidateRequest request, Guid candidateId, DateTime timestamp)

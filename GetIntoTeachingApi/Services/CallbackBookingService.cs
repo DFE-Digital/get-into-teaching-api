@@ -14,11 +14,13 @@ namespace GetIntoTeachingApi.Services
         public static readonly TimeSpan FallbackBookingQuotaLastTimeSpan = new TimeSpan(16, 30, 0);
         private readonly ICrmService _crm;
         private readonly ILogger<CallbackBookingService> _logger;
+        private readonly IDateTimeProvider _dateTime;
 
-        public CallbackBookingService(ICrmService crm, ILogger<CallbackBookingService> logger)
+        public CallbackBookingService(ICrmService crm, ILogger<CallbackBookingService> logger, IDateTimeProvider dateTime)
         {
             _crm = crm;
             _logger = logger;
+            _dateTime = dateTime;
         }
 
         public IEnumerable<CallbackBookingQuota> GetCallbackBookingQuotas()
@@ -87,7 +89,7 @@ namespace GetIntoTeachingApi.Services
         private IEnumerable<CallbackBookingQuota> FallbackBookingQuotas()
         {
             var quotasByDay = new Dictionary<DateTime, IEnumerable<CallbackBookingQuota>>();
-            var day = DateTime.UtcNow.AddDays(1);
+            var day = _dateTime.UtcNow.AddDays(1);
 
             while (quotasByDay.Count < FallbackBookingQuotaWeekdays)
             {

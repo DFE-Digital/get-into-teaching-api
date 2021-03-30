@@ -180,6 +180,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.DoNotSendMm.Should().BeTrue();
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
+            candidate.PrivacyPolicy.AcceptedAt.Should().BeCloseTo(DateTime.UtcNow);
 
             candidate.PhoneCall.ScheduledAt.Should().Be((DateTime)request.PhoneCallScheduledAt);
             candidate.PhoneCall.Telephone.Should().Be(request.Telephone);
@@ -408,6 +409,7 @@ namespace GetIntoTeachingApiTests.Models
             request.Candidate.AssignmentStatusId.Should().Be((int)Candidate.AssignmentStatus.WaitingToBeAssigned);
             request.Candidate.AdviserEligibilityId.Should().Be((int)Candidate.AdviserEligibility.Yes);
             request.Candidate.AdviserRequirementId.Should().Be((int)Candidate.AdviserRequirement.Yes);
+            request.Candidate.StatusIsWaitingToBeAssignedAt.Should().BeCloseTo(DateTime.UtcNow);
         }
 
         [Fact]
@@ -419,6 +421,7 @@ namespace GetIntoTeachingApiTests.Models
             request.Candidate.AssignmentStatusId.Should().BeNull();
             request.Candidate.AdviserEligibilityId.Should().BeNull();
             request.Candidate.AdviserRequirementId.Should().BeNull();
+            request.Candidate.StatusIsWaitingToBeAssignedAt.Should().BeNull();
         }
 
         [Fact]

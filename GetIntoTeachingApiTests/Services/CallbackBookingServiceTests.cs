@@ -21,7 +21,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             _mockCrm = new Mock<ICrmService>();
             _mockLogger = new Mock<ILogger<CallbackBookingService>>();
-            _service = new CallbackBookingService(_mockCrm.Object, _mockLogger.Object);
+            _service = new CallbackBookingService(_mockCrm.Object, _mockLogger.Object, new DateTimeProvider());
         }
 
         [Fact]

@@ -18,7 +18,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public TeacherTrainingAdviserSignUpValidatorTests()
         {
             _request = new TeacherTrainingAdviserSignUp();
-            _validator = new TeacherTrainingAdviserSignUpValidator(new Mock<IStore>().Object);
+            _validator = new TeacherTrainingAdviserSignUpValidator(new Mock<IStore>().Object, new DateTimeProvider());
         }
 
         [Fact]
@@ -134,7 +134,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
             public ReturningToTeacherTraining()
             {
-                _validator = new TeacherTrainingAdviserSignUpValidator(new Mock<IStore>().Object);
+                _validator = new TeacherTrainingAdviserSignUpValidator(new Mock<IStore>().Object, new DateTimeProvider());
                 _request = new TeacherTrainingAdviserSignUp() { TypeId = (int)Candidate.Type.ReturningToTeacherTraining };
             }
 
@@ -186,7 +186,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
             public InterestedInTeacherTraining()
             {
-                _validator = new TeacherTrainingAdviserSignUpValidator(new Mock<IStore>().Object);
+                _validator = new TeacherTrainingAdviserSignUpValidator(new Mock<IStore>().Object, new DateTimeProvider());
                 _request = new TeacherTrainingAdviserSignUp() { TypeId = (int)Candidate.Type.InterestedInTeacherTraining };
             }
 

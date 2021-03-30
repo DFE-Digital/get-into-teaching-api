@@ -1,10 +1,10 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using FluentValidation.TestHelper;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Validators;
 using GetIntoTeachingApi.Services;
 using Moq;
-using System;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Models.Validators
@@ -17,7 +17,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public TeachingEventValidatorTests()
         {
             _mockCrm = new Mock<ICrmService>();
-            _validator = new TeachingEventValidator(_mockCrm.Object);
+            _validator = new TeachingEventValidator(_mockCrm.Object, new DateTimeProvider());
         }
 
         [Fact]

@@ -37,6 +37,8 @@ namespace GetIntoTeachingApi.Models
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
+        [JsonIgnore]
+        public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
 
         public TeachingEventAddAttendee()
         {
@@ -119,11 +121,13 @@ namespace GetIntoTeachingApi.Models
 
         private void ConfigureSubscriptions(Candidate candidate)
         {
-            SubscriptionManager.SubscribeToEvents(candidate);
+            var utcNow = DateTimeProvider.UtcNow;
+
+            SubscriptionManager.SubscribeToEvents(candidate, utcNow);
 
             if (SubscribeToMailingList)
             {
-                SubscriptionManager.SubscribeToMailingList(candidate);
+                SubscriptionManager.SubscribeToMailingList(candidate, utcNow);
             }
         }
 
@@ -145,7 +149,11 @@ namespace GetIntoTeachingApi.Models
         {
             if (AcceptedPolicyId != null)
             {
-                candidate.PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)AcceptedPolicyId };
+                candidate.PrivacyPolicy = new CandidatePrivacyPolicy()
+                {
+                    AcceptedPolicyId = (Guid)AcceptedPolicyId,
+                    AcceptedAt = DateTimeProvider.UtcNow,
+                };
             }
         }
     }

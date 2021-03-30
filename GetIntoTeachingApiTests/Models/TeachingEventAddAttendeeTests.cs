@@ -100,6 +100,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.DoNotSendMm.Should().BeFalse();
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
+            candidate.PrivacyPolicy.AcceptedAt.Should().BeCloseTo(DateTime.UtcNow);
 
             candidate.HasEventsSubscription.Should().BeTrue();
             candidate.HasMailingListSubscription.Should().BeTrue();

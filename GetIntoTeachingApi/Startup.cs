@@ -73,6 +73,7 @@ namespace GetIntoTeachingApi
             services.AddSingleton<IRedisService, RedisService>();
             services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
             services.AddSingleton<ICallbackBookingService, CallbackBookingService>();
+            services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             services.AddSingleton<IEnv>(env);
 
             var connectionString = DbConfiguration.DatabaseConnectionString(env);

@@ -2,6 +2,7 @@
 using FluentValidation.TestHelper;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Validators;
+using GetIntoTeachingApi.Services;
 using System;
 using Xunit;
 
@@ -13,7 +14,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
         public ExistingCandidateRequestValidatorTests()
         {
-            _validator = new ExistingCandidateRequestValidator();
+            _validator = new ExistingCandidateRequestValidator(new DateTimeProvider());
         }
 
         [Fact]
