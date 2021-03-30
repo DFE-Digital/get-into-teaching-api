@@ -505,13 +505,10 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEvents_FilteredByDefaultStatusId_ReturnsOpenEvents()
+        public async void SearchTeachingEvents_FilteredByDefaultStatusId_ReturnsOpenAndClosedEvents()
         {
             await SeedMockTeachingEventsAndBuildingsAsync();
-            var request = new TeachingEventSearchRequest()
-            {
-                StatusIds = new int[] { (int)TeachingEvent.Status.Open }
-            };
+            var request = new TeachingEventSearchRequest();
 
             var result = await _store.SearchTeachingEventsAsync(request);
 
@@ -549,7 +546,7 @@ namespace GetIntoTeachingApiTests.Services
 
             result.Select(e => e.Name).Should()
                 .Contain(
-                new string[] { "Event 1", "Event 2", "Event 3", "Event 4", "Event 5", "Event 6", "Event 7", "Event 8" });
+                new string[] { "Event 1", "Event 2", "Event 3", "Event 4", "Event 5", "Event 6", "Event 8" });
         }
 
         [Fact]
@@ -687,7 +684,7 @@ namespace GetIntoTeachingApiTests.Services
             {
                 Id = Guid.NewGuid(),
                 ReadableId = "7",
-                StatusId = (int)TeachingEvent.Status.Open,
+                StatusId = (int)TeachingEvent.Status.Closed,
                 Name = "Event 7",
                 StartAt = DateTime.UtcNow.AddYears(-1),
                 TypeId = (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
