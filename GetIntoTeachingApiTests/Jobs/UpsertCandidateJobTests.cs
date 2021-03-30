@@ -18,6 +18,7 @@ namespace GetIntoTeachingApiTests.Jobs
         private readonly Mock<IPerformContextAdapter> _mockContext;
         private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<INotifyService> _mockNotifyService;
+        private readonly Mock<IAppSettings> _mockAppSettings;
         private readonly Candidate _candidate;
         private readonly IMetricService _metrics;
         private readonly UpsertCandidateJob _job;
@@ -29,13 +30,16 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockCrm = new Mock<ICrmService>();
             _mockNotifyService = new Mock<INotifyService>();
             _mockLogger = new Mock<ILogger<UpsertCandidateJob>>();
+            _mockAppSettings = new Mock<IAppSettings>();
             _metrics = new MetricService();
             _candidate = new Candidate() { Id = Guid.NewGuid(), Email = "test@test.com" };
             _job = new UpsertCandidateJob(new Env(), _mockCrm.Object, _mockNotifyService.Object,
-                _mockContext.Object, _metrics, _mockLogger.Object);
+                _mockContext.Object, _metrics, _mockLogger.Object, _mockAppSettings.Object);
 
             _metrics.HangfireJobQueueDuration.RemoveLabelled(new[] { "UpsertCandidateJob" });
             _mockContext.Setup(m => m.GetJobCreatedAt(null)).Returns(DateTime.UtcNow.AddDays(-1));
+
+            _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
         }
 
         [Fact]
@@ -122,6 +126,18 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockLogger.VerifyInformationWasCalled("UpsertCandidateJob - Started (24/24)");
             _mockLogger.VerifyInformationWasCalled("UpsertCandidateJob - Deleted");
             _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Count.Should().Be(1);
+        }
+
+        [Fact]
+        public void Run_WhenCrmIntegrationPaused_Aborts()
+        {
+            _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(true);
+
+            var json = _candidate.SerializeChangeTracked();
+            Action action = () => _job.Run(json, null);
+
+            action.Should().Throw<InvalidOperationException>()
+                .WithMessage("UpsertCandidateJob - Aborting (CRM integration paused).");
         }
 
         private bool IsMatch(object objectA, object objectB)

@@ -20,3 +20,8 @@
   description: "A service to enable candidates to sign up for a Teacher Training Adviser (TTA)"
   api_key_prefix: TTA
   role: GetAnAdviser
+-
+  name: CRM
+  description: "The Microsoft Dynamics CRM (GiTiS)"
+  api_key_prefix: CRM
+  role: Crm
