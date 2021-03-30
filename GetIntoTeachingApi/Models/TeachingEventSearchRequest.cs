@@ -15,6 +15,8 @@ namespace GetIntoTeachingApi.Models
         public DateTime? StartAfter { get; set; }
         [SwaggerSchema("Set to filter results to those that start before a given date.")]
         public DateTime? StartBefore { get; set; }
+        [SwaggerSchema("Set to filter results by event status.")]
+        public int[] StatusIds { get; set; } = new int[] { (int)TeachingEvent.Status.Open, (int)TeachingEvent.Status.Closed };
 
         public double? RadiusInKm() => Radius * 1.60934;
 
