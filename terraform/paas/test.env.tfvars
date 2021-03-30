@@ -10,5 +10,3 @@ alerts                    = {}
 azure_key_vault           = "s146t01-kv"
 azure_resource_group      = "s146t01-rg"
 environment               = "test"
-
-
