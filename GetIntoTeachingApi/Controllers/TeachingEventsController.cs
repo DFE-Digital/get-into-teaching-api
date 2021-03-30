@@ -186,15 +186,16 @@ namespace GetIntoTeachingApi.Controllers
                 return BadRequest(ModelState);
             }
 
+            // Save independently so that the building gets an Id populated immediately.
+            // We also persist in the cache so it is immediately available.
             if (teachingEvent.Building != null)
             {
                 _crm.Save(teachingEvent.Building);
+                await _store.SaveAsync(new TeachingEventBuilding[] { teachingEvent.Building });
             }
 
             _crm.Save(teachingEvent);
-
-            // Make the teaching event/building immediately available in the cache
-            await _store.SaveAsync(teachingEvent);
+            await _store.SaveAsync(new TeachingEvent[] { teachingEvent });
 
             return CreatedAtAction(
                 actionName: nameof(Get),
