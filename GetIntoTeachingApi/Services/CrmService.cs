@@ -224,7 +224,7 @@ namespace GetIntoTeachingApi.Services
             var query = new QueryExpression("msevtmgt_event");
             query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(TeachingEvent)));
 
-            var status = new[] { (int)TeachingEvent.Status.Open, (int)TeachingEvent.Status.Closed };
+            var status = new[] { (int)TeachingEvent.Status.Open, (int)TeachingEvent.Status.Closed, (int)TeachingEvent.Status.Pending };
             var statusCondition = new ConditionExpression("dfe_eventstatus", ConditionOperator.In, status);
             var futureDatedCondition = new ConditionExpression("msevtmgt_eventenddate", ConditionOperator.GreaterThan, startAfter);
             var types = Enum.GetValues(typeof(TeachingEvent.EventType)).Cast<int>().ToArray();
