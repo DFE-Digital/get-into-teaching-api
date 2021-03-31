@@ -109,7 +109,11 @@ namespace GetIntoTeachingApiTests.Services
         {
             var hasEntityName = query.EntityName == "msevtmgt_event";
             var conditions = query.Criteria.Filters.First().Conditions;
-            var status = new HashSet<object> { (int)TeachingEvent.Status.Open, (int)TeachingEvent.Status.Closed };
+            var status = new HashSet<object> {
+                (int)TeachingEvent.Status.Open,
+                (int)TeachingEvent.Status.Closed,
+                (int)TeachingEvent.Status.Pending
+            };
             var hasStatusCondition = conditions.Where(c => c.AttributeName == "dfe_eventstatus" &&
                 c.Operator == ConditionOperator.In && c.Values.ToHashSet().IsSubsetOf(status)).Any();
             var hasFutureDatedCondition = conditions.Where(c => c.AttributeName == "msevtmgt_eventenddate" &&
@@ -343,8 +347,8 @@ namespace GetIntoTeachingApiTests.Services
         {
             var request = new ExistingCandidateRequest
             {
-                Email = "master@record.com", 
-                LastName = "Record", 
+                Email = "master@record.com",
+                LastName = "Record",
                 DateOfBirth = new DateTime(2000, 1, 1)
             };
             _mockService.Setup(mock => mock.CreateQuery("contact", _context)).Returns(MockCandidates());
@@ -617,11 +621,11 @@ namespace GetIntoTeachingApiTests.Services
 
             return new[]
             {
-                candidate1, 
+                candidate1,
                 candidate2,
-                candidate3, 
-                candidate4, 
-                candidate5, 
+                candidate3,
+                candidate4,
+                candidate5,
                 candidate6,
                 candidate7
             }.AsQueryable();
