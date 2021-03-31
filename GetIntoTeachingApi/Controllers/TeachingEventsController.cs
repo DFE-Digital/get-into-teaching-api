@@ -179,7 +179,8 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Teaching Events" })]
         [ProducesResponseType(typeof(TeachingEvent), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Upsert([FromBody] TeachingEvent teachingEvent)
+        public async Task<IActionResult> Upsert(
+            [FromBody, SwaggerRequestBody("Teaching event to upsert.", Required = true)] TeachingEvent teachingEvent)
         {
             if (!ModelState.IsValid)
             {
