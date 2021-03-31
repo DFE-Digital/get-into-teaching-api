@@ -1,13 +1,13 @@
 # These settings are for the sandbox and should mainly be overriden by TF_VARS 
 # or set with environment variables TF_VAR_xxxx
 
-variable api_url {
+variable "api_url" {
   default = "https://api.london.cloud.service.gov.uk"
 }
 
-variable AZURE_CREDENTIALS {}
-variable azure_key_vault {}
-variable azure_resource_group {}
+variable "AZURE_CREDENTIALS" {}
+variable "azure_key_vault" {}
+variable "azure_resource_group" {}
 
 variable "logging" {
   default = 1
@@ -73,14 +73,6 @@ variable "paas_api_application_name" {
   default = "dfe-teacher-services-api"
 }
 
-variable "tta_application_name" {
-  default = ""
-}
-
-variable "app_application_name" {
-  default = ""
-}
-
 variable "paas_api_docker_image" {
   default = "dfedigital/get-into-teaching-api:latest"
 }
@@ -98,12 +90,16 @@ variable "monitor_space" {
 }
 
 variable "alerts" {
-  type = map
+  type = map(any)
 }
 
 ### Monitoring
+variable "monitor_scrape_applications" {
+  default = []
+}
+
 variable "prometheus" {
-  type = map
+  type = map(any)
   default = {
     "name"        = "get-into-teaching"
     "username"    = "username"
@@ -114,7 +110,7 @@ variable "prometheus" {
 }
 
 variable "grafana" {
-  type = map
+  type = map(any)
   default = {
     "name"                 = "get-into-teaching"
     "dashboard_directory"  = "../../monitoring/grafana/dashboards"
@@ -124,7 +120,7 @@ variable "grafana" {
 }
 
 variable "alertmanager" {
-  type = map
+  type = map(any)
   default = {
     "name"   = "get-into-teaching"
     "config" = "../../monitoring/alertmanager/alertmanager.yml.tmpl"

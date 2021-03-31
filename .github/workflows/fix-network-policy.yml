@@ -48,7 +48,8 @@ jobs:
             cf target -s get-into-teaching-monitoring
             cf add-network-policy prometheus-prod-get-into-teaching  get-into-teaching-api-test -s get-into-teaching-test --protocol tcp --port 8080
             cf add-network-policy prometheus-prod-get-into-teaching  get-into-teaching-app-test -s get-into-teaching-test --protocol tcp --port 3000
-            cf add-network-policy prometheus-prod-get-into-teaching get-teacher-training-adviser-service-test -s get-into-teaching-test --protocol tcp --port 3000
+            cf add-network-policy prometheus-prod-get-into-teaching  get-teacher-training-adviser-service-test -s get-into-teaching-test --protocol tcp --port 3000
+            cf add-network-policy prometheus-prod-get-into-teaching  get-into-teaching-app-pagespeed -s get-into-teaching-test --protocol tcp --port 3000
 
       - name: Fix Production Policies 
         if:   github.event.inputs.environment == 'Production'
@@ -56,5 +57,5 @@ jobs:
             cf target -s get-into-teaching-monitoring
             cf add-network-policy prometheus-prod-get-into-teaching  get-into-teaching-api-prod -s get-into-teaching-production --protocol tcp --port 8080
             cf add-network-policy prometheus-prod-get-into-teaching  get-into-teaching-app-prod -s get-into-teaching-production --protocol tcp --port 3000
-            cf add-network-policy prometheus-prod-get-into-teaching get-teacher-training-adviser-service-prod -s get-into-teaching-production --protocol tcp --port 3000
+            cf add-network-policy prometheus-prod-get-into-teaching  get-teacher-training-adviser-service-prod -s get-into-teaching-production --protocol tcp --port 3000
 
