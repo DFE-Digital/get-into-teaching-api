@@ -14,9 +14,7 @@ locals {
 
   template_variable_map = {
     api           = local.api_endpoint
-    git_api       = "${cloudfoundry_route.api_route_internal.hostname}.${data.cloudfoundry_domain.internal.name}"
-    git_tta       = "${var.tta_application_name}-internal.${data.cloudfoundry_domain.internal.name}"
-    git_app       = "${var.app_application_name}-internal.${data.cloudfoundry_domain.internal.name}"
+    applications  = var.monitor_scrape_applications
     API_ENDPOINT  = var.api_url
     slack_channel = local.monitoring_secrets["SLACK_CHANNEL"]
     slack_url     = local.monitoring_secrets["SLACK_ALERTMANAGER_HOOK"]

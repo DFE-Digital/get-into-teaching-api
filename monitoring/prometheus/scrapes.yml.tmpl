@@ -1,18 +1,8 @@
-- job_name: Application
+%{ for app in applications ~}
+- job_name: ${ app.name }
   dns_sd_configs:
     - names: 
-       - ${git_app}
+       - ${app.name}-internal.apps.internal
       type: 'A'
-      port: 3000
-- job_name: TTA
-  dns_sd_configs:
-    - names: 
-       - ${git_tta}
-      type: 'A'
-      port: 3000
-- job_name: API
-  dns_sd_configs:
-    - names: 
-       - ${git_api}
-      type: 'A'
-      port: 8080
+      port: ${app.port}
+%{ endfor ~}
