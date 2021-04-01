@@ -233,10 +233,11 @@ namespace GetIntoTeachingApiTests.Controllers
         public async Task AddTeachingEvent_ValidRequestWithBuilding_SavesInCrmAndCaches()
         {
             const string testName = "test";
-            var newBuilding = new TeachingEventBuilding();
+            var buildingId = Guid.NewGuid();
+            var newBuilding = new TeachingEventBuilding() { Id = buildingId };
             var newTeachingEvent = new TeachingEvent() { Name = testName, Building = newBuilding };
             _mockCrm.Setup(mock => mock.Save(newBuilding)).Verifiable();
-            _mockCrm.Setup(mock => mock.Save(newTeachingEvent)).Verifiable();
+            _mockCrm.Setup(mock => mock.Save(It.Is<TeachingEvent>(e => e.BuildingId == buildingId))).Verifiable();
             _mockStore.Setup(mock => mock.SaveAsync(new TeachingEventBuilding[] { newBuilding })).Verifiable();
             _mockStore.Setup(mock => mock.SaveAsync(new TeachingEvent[] { newTeachingEvent })).Verifiable();
 
