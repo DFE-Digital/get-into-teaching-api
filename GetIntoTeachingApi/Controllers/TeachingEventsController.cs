@@ -192,6 +192,7 @@ namespace GetIntoTeachingApi.Controllers
             {
                 _crm.Save(teachingEvent.Building);
                 await _store.SaveAsync(new TeachingEventBuilding[] { teachingEvent.Building });
+                teachingEvent.BuildingId = teachingEvent.Building.Id;
             }
 
             _crm.Save(teachingEvent);
