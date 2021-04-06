@@ -36,7 +36,7 @@ namespace GetIntoTeachingApi.Jobs
             _metrics = metrics;
         }
 
-        [DisableConcurrentExecution(timeoutInSeconds: 10 * 30)]
+        [DisableConcurrentExecution(timeoutInSeconds: 60)]
         public void Run()
         {
             if (_appSettings.IsCrmIntegrationPaused)
