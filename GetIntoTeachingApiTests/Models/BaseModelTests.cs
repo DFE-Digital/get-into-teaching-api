@@ -348,8 +348,10 @@ namespace GetIntoTeachingApiTests.Models
 
             mock.ToEntity(_crm, _context);
 
+            // Ensure a pre-existing related entity is linked (if it is already linked to the entity this
+            // will have no effect, which is desirable).
             _mockService.Verify(m => m.AddLink(mockEntity, new Relationship("dfe_mock_dfe_relatedmock_mock"),
-                relatedMockEntity, _context), Times.Never);
+                relatedMockEntity, _context), Times.Once);
         }
 
         [Fact]
