@@ -274,10 +274,7 @@ namespace GetIntoTeachingApi.Models
                     }
 
                     var target = relatedModel.ToEntity(crm, context);
-                    if (target?.EntityState == EntityState.Created)
-                    {
-                        crm.AddLink(source, new Relationship(attribute.Name), target, context);
-                    }
+                    crm.AddLink(source, new Relationship(attribute.Name), target, context);
                 }
             }
         }
