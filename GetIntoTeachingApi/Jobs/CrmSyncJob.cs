@@ -29,7 +29,7 @@ namespace GetIntoTeachingApi.Jobs
             _appSettings = appSettings;
         }
 
-        [DisableConcurrentExecution(timeoutInSeconds: 10 * 60)]
+        [DisableConcurrentExecution(timeoutInSeconds: 60)]
         public async Task RunAsync()
         {
             if (_appSettings.IsCrmIntegrationPaused)
