@@ -37,7 +37,7 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("EndAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "msevtmgt_eventenddate");
             type.GetProperty("ProvidersList").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_providerslist");
             type.GetProperty("BuildingId").Should().BeDecoratedWith<EntityFieldAttribute>(
-                a => a.Name == "msevtmgt_building" && a.Type == typeof(EntityReference));
+                a => a.Name == "msevtmgt_building" && a.Type == typeof(EntityReference) && a.Reference == "msevtmgt_building");
 
             type.GetProperty("Building").Should().BeDecoratedWith<EntityRelationshipAttribute>(
                 a => a.Name == "msevtmgt_event_building" && a.Type == typeof(TeachingEventBuilding));
