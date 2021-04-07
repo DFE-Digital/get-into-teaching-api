@@ -11,12 +11,12 @@ groups:
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#TooManyRequests-HIGH
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=27&orgId=1
       - alert: HighNotFound
-        expr: 'sum(increase(app_requests_total{path=~".+",status=~"404"}[10m])) > 15'
+        expr: 'sum(increase(app_requests_total{path=~".+",status=~"404"}[10m])) > 30'
         labels:
           severity: medium
         annotations:
-          summary: Alerts when the app is serving a high number of 404 responses (more than 15 in any 10 minute period).
-          description: Alerts when the app is serving a high number of 404 responses (more than 15 in any 10 minute period).
+          summary: Alerts when the app is serving a high number of 404 responses (more than 30 in any 10 minute period).
+          description: Alerts when the app is serving a high number of 404 responses (more than 30 in any 10 minute period).
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighNotFound-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=27&orgId=1
       - alert: HighCpu
@@ -49,12 +49,12 @@ groups:
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#TooManyRequests-HIGH
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=27&orgId=1
       - alert: HighNotFound
-        expr: 'sum(increase(tta_requests_total{path=~".+",status=~"404"}[10m])) > 15'
+        expr: 'sum(increase(tta_requests_total{path=~".+",status=~"404"}[10m])) > 30'
         labels:
           severity: medium
         annotations:
-          summary: Alerts when the app is serving a high number of 404 responses (more than 15 in any 10 minute period).
-          description: Alerts when the app is serving a high number of 404 responses (more than 15 in any 10 minute period).
+          summary: Alerts when the app is serving a high number of 404 responses (more than 30 in any 10 minute period).
+          description: Alerts when the app is serving a high number of 404 responses (more than 30 in any 10 minute period).
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighNotFound-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=27&orgId=1 
       - alert: HighCpu
