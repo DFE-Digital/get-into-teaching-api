@@ -19,7 +19,6 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Must be unique");
             RuleFor(teachingEvent => teachingEvent.Name).NotEmpty();
             RuleFor(teachingEvent => teachingEvent.ProviderContactEmail).EmailAddress().EmailAddress(EmailValidationMode.AspNetCoreCompatible).MaximumLength(100);
-            RuleFor(teachingEvent => teachingEvent.StartAt).GreaterThan(dateTime.UtcNow);
             RuleFor(teachingEvent => teachingEvent.EndAt).GreaterThanOrEqualTo(rule => rule.StartAt);
         }
 
