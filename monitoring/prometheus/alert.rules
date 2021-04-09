@@ -11,7 +11,7 @@ groups:
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2727739405/Infrastructure+Alerts#Disk-Usage
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/eF19g4RZx/cf-apps?orgId=1
       - alert: MemoryUsage
-        expr: 'max(memory_utilization) > 80's
+        expr: 'max(memory_utilization) > 80'
         labels:
           severity: high
         annotations:
