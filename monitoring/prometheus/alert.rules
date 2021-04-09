@@ -3,23 +3,22 @@ groups:
     rules:
       - alert: DiskUsage
         expr: 'max(disk_utilization) > 80'
-        labels
+        labels:
           severity: high
         annotations:
           summary: Disk usage exceeds 80% on one of the applications
-          description: One of the applications has exceeded 80% of it's disk allocation.
+          description: One of the applications has exceeded 80% of its disk allocation.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2727739405/Infrastructure+Alerts#Disk-Usage
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/eF19g4RZx/cf-apps?orgId=1
       - alert: MemoryUsage
-        expr: 'max(memory_utilization) > 80'
-        labels
+        expr: 'max(memory_utilization) > 80's
+        labels:
           severity: high
         annotations:
           summary: Memory usage exceeds 80% on one of the applications
-          description: One of the applications has exceeded 80% of it's Memory allocation.
+          description: One of the applications has exceeded 80% of its Memory allocation.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2727739405/Infrastructure+Alerts#Memory-Usage
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/eF19g4RZx/cf-apps?orgId=1
-
   - name: App
     rules:
       - alert: TooManyRequests
