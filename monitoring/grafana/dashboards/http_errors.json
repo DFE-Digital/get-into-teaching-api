@@ -1,0 +1,1141 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 12,
+  "iteration": 1618572339964,
+  "links": [],
+  "panels": [
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Elasticseach",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 427
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "access.host"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 291
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "access.method"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 119
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "access.url"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 1069
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "message"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 83
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "@timestamp"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 169
+              }
+            ]
+          }
+        ]
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 18,
+        "x": 0,
+        "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 3,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.2.2",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "Client Errors",
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:62",
+              "field": "@timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:128",
+              "field": "select field",
+              "id": "1",
+              "meta": {},
+              "settings": {},
+              "type": "count"
+            }
+          ],
+          "query": "cf.space: \"$Space\" AND cf.app:\"$Application\" AND access.response_code: [400 TO 499]",
+          "refId": "A",
+          "timeField": "@timestamp"
+        },
+        {
+          "alias": "Server Errors",
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:1257",
+              "field": "@timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:1255",
+              "field": "select field",
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "cf.space: \"$Space\" AND cf.app:\"$Application\" AND access.response_code: [500 TO 599]",
+          "refId": "B",
+          "timeField": "@timestamp"
+        },
+        {
+          "alias": "Responses",
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:1275",
+              "field": "@timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:1273",
+              "field": "select field",
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "cf.space: \"$Space\" AND cf.app:\"$Application\"",
+          "refId": "C",
+          "timeField": "@timestamp"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Frequency",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "@version": true,
+              "_id": true,
+              "_index": true,
+              "_type": true,
+              "access.agent": true,
+              "access.body_received.bytes": true,
+              "access.body_sent.bytes": true,
+              "access.http_version": true,
+              "access.referrer": true,
+              "access.remote_ip_and_port": true,
+              "access.response_code": true,
+              "access.upstream_ip_and_port": true,
+              "access.user_agent.build": true,
+              "access.user_agent.device": true,
+              "access.user_agent.name": true,
+              "access.user_agent.os": true,
+              "access.user_agent.os_name": true,
+              "cf.app": true,
+              "cf.org": true,
+              "cf.space": true,
+              "host": true,
+              "message": true,
+              "port": true,
+              "proxy_host": true,
+              "proxy_port": true,
+              "received_at": true,
+              "received_from": true,
+              "router.app_id": true,
+              "router.app_index": true,
+              "router.b3": true,
+              "router.gorouter_time": true,
+              "router.response_time": true,
+              "router.vcap_request_id": true,
+              "router.x_b3_parentspanid": true,
+              "router.x_b3_spanid": true,
+              "router.x_b3_traceid": true,
+              "router.x_cf_routererror": true,
+              "router.x_forwarded_for": true,
+              "router.x_forwarded_proto": true,
+              "router_timestamp": true,
+              "source_host": true,
+              "syslog5424_pri": true,
+              "syslog_app": true,
+              "syslog_facility": true,
+              "syslog_facility_code": true,
+              "syslog_proc": true,
+              "syslog_sd": true,
+              "syslog_severity": true,
+              "syslog_severity_code": true,
+              "syslog_timestamp": true,
+              "syslog_ver": true,
+              "tags": true,
+              "type": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:77",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:78",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "datasource": "Elasticseach",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Count"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "/^Count$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.2",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:755",
+              "field": "@timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:753",
+              "field": "select field",
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "cf.space: \"$Space\" AND cf.app:\"$Application\"",
+          "refId": "A",
+          "timeField": "@timestamp"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Total Responses",
+      "type": "stat"
+    },
+    {
+      "datasource": "Elasticseach",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Count"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 30
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 18,
+        "y": 3
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "/^Count$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.2",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:755",
+              "field": "@timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:753",
+              "field": "select field",
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "cf.space: \"$Space\" AND cf.app:\"$Application\" AND access.response_code:[400 TO 499]",
+          "refId": "A",
+          "timeField": "@timestamp"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Total Client Errors",
+      "type": "stat"
+    },
+    {
+      "datasource": "Elasticseach",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Count"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 30
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 21,
+        "y": 3
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "/^Count$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.2",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:755",
+              "field": "@timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:753",
+              "field": "select field",
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "cf.space: \"$Space\" AND cf.app:\"$Application\" AND access.response_code:[500 TO 599]",
+          "refId": "A",
+          "timeField": "@timestamp"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Total Server Errors",
+      "type": "stat"
+    },
+    {
+      "datasource": "Elasticseach",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Count"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 30
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 18,
+        "y": 6
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "/^Count$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.2",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:755",
+              "field": "@timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:753",
+              "field": "select field",
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "cf.space: \"$Space\" AND cf.app:\"$Application\" AND access.response_code:404",
+          "refId": "A",
+          "timeField": "@timestamp"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Total. 404's ",
+      "type": "stat"
+    },
+    {
+      "datasource": "Elasticseach",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 171
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "access.host"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 374
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "access.method"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 119
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "access.url"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 1069
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "message"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 83
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "@timestamp"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 169
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Method"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 118
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Response Code"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 132
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "URL"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 1002
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
+      "id": 2,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "7.2.2",
+      "targets": [
+        {
+          "bucketAggs": [],
+          "metrics": [
+            {
+              "$$hashKey": "object:128",
+              "field": "select field",
+              "id": "1",
+              "meta": {},
+              "settings": {
+                "size": 500
+              },
+              "type": "raw_data"
+            }
+          ],
+          "query": "cf.space: \"$Space\" AND cf.app:\"$Application\" AND access.response_code: [400 TO 499]",
+          "refId": "A",
+          "timeField": "@timestamp"
+        },
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:1308",
+              "field": "@timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:1306",
+              "field": "select field",
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "cf.space: \"$Space\" AND cf.app:\"$Application\" AND access.response_code: [500 TO 599]",
+          "refId": "B",
+          "timeField": "@timestamp"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Error Logs",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "@version": true,
+              "_id": true,
+              "_index": true,
+              "_type": true,
+              "access.agent": true,
+              "access.body_received.bytes": true,
+              "access.body_sent.bytes": true,
+              "access.http_version": true,
+              "access.referrer": true,
+              "access.remote_ip_and_port": true,
+              "access.response_code": false,
+              "access.upstream_ip_and_port": true,
+              "access.user_agent.build": true,
+              "access.user_agent.device": true,
+              "access.user_agent.name": true,
+              "access.user_agent.os": true,
+              "access.user_agent.os_name": true,
+              "cf.app": true,
+              "cf.org": true,
+              "cf.space": true,
+              "host": true,
+              "message": true,
+              "port": true,
+              "proxy_host": true,
+              "proxy_port": true,
+              "received_at": true,
+              "received_from": true,
+              "router.app_id": true,
+              "router.app_index": true,
+              "router.b3": true,
+              "router.gorouter_time": true,
+              "router.response_time": true,
+              "router.vcap_request_id": true,
+              "router.x_b3_parentspanid": true,
+              "router.x_b3_spanid": true,
+              "router.x_b3_traceid": true,
+              "router.x_cf_routererror": true,
+              "router.x_forwarded_for": true,
+              "router.x_forwarded_proto": true,
+              "router_timestamp": true,
+              "source_host": true,
+              "syslog5424_pri": true,
+              "syslog_app": true,
+              "syslog_facility": true,
+              "syslog_facility_code": true,
+              "syslog_proc": true,
+              "syslog_sd": true,
+              "syslog_severity": true,
+              "syslog_severity_code": true,
+              "syslog_timestamp": true,
+              "syslog_ver": true,
+              "tags": true,
+              "type": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "@timestamp": "Time",
+              "_id": "",
+              "access.host": "Host",
+              "access.method": "Method",
+              "access.referrer": "",
+              "access.response_code": "Response Code",
+              "access.url": "URL"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 26,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "get-into-teaching-production",
+          "value": "get-into-teaching-production"
+        },
+        "datasource": "Prometheus",
+        "definition": "label_values(space)",
+        "hide": 1,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "Space",
+        "options": [
+          {
+            "selected": false,
+            "text": "get-into-teaching",
+            "value": "get-into-teaching"
+          },
+          {
+            "selected": false,
+            "text": "get-into-teaching-monitoring",
+            "value": "get-into-teaching-monitoring"
+          },
+          {
+            "selected": true,
+            "text": "get-into-teaching-production",
+            "value": "get-into-teaching-production"
+          },
+          {
+            "selected": false,
+            "text": "get-into-teaching-test",
+            "value": "get-into-teaching-test"
+          },
+          {
+            "selected": false,
+            "text": "sandbox",
+            "value": "sandbox"
+          }
+        ],
+        "query": "label_values(space)",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": "*",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "Prometheus",
+        "definition": "label_values(memory_utilization{space =~\"$Space\"},app)",
+        "hide": 1,
+        "includeAll": true,
+        "label": null,
+        "multi": false,
+        "name": "Application",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "get-into-teaching-api-prod",
+            "value": "get-into-teaching-api-prod"
+          },
+          {
+            "selected": false,
+            "text": "get-into-teaching-app-prod",
+            "value": "get-into-teaching-app-prod"
+          },
+          {
+            "selected": false,
+            "text": "get-teacher-training-adviser-service-prod",
+            "value": "get-teacher-training-adviser-service-prod"
+          }
+        ],
+        "query": "label_values(memory_utilization{space =~\"$Space\"},app)",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "HTTP Errors",
+  "uid": "C8Xe9QlMz",
+  "version": 3
+}
