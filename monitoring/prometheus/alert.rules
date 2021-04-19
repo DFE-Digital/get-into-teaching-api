@@ -126,6 +126,15 @@ groups:
           description: Alerts when the API makes more than 5 requests to the Google Geocoding API in the space of 10 minutes.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#HighGoogleApiCalls-high
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=57&orgId=1&var-App=get-into-teaching-api-prod
+      - alert: GoogleApiErrors
+        expr: 'sum(rate(api_google_api_calls{result != "success"}[1m])) > 0'
+        labels:
+          severity: medium
+        annotations:
+          summary: Alerts when the Google Geocoding API returns a non-success response.
+          description: Alerts when the Google Geocoding API returns a non-success response.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#GoogleApiErrors-MEDIUM
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=57&orgId=1&var-App=get-into-teaching-api-prod
       - alert: ClientApproachingRateLimit
         expr: 'max(increase(http_request_duration_seconds_sum{controller=~"Candidates|MailingList|TeachingEvents",action=~"AddMember|AddAttendee|SignUp",code=~".+"}[1m])) by (controller, action) > 175'
         labels:
