@@ -13,11 +13,13 @@ namespace GetIntoTeachingApiTests.Models.Validators
     {
         private readonly TeachingEventValidator _validator;
         private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<IStore> _mockStore;
 
         public TeachingEventValidatorTests()
         {
             _mockCrm = new Mock<ICrmService>();
-            _validator = new TeachingEventValidator(_mockCrm.Object, new DateTimeProvider());
+            _mockStore = new Mock<IStore>();
+            _validator = new TeachingEventValidator(_mockCrm.Object, _mockStore.Object);
         }
 
         [Fact]
@@ -62,6 +64,38 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var teachingEvent = new TeachingEvent
             {
                 Id = null,
+                ReadableId = nonUniqueReadableId,
+            };
+
+            var result = _validator.TestValidate(teachingEvent);
+
+            result
+                .ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.ReadableId)
+                .WithErrorMessage("Must be unique");
+        }
+
+        [Fact]
+        public void Validate_IdIsNotNullAndReadableIdHasChanged_HasError()
+        {
+            const string nonUniqueReadableId = "not_unique";
+            Guid teachingEventId = Guid.NewGuid();
+            var existingTeachingEvent = new TeachingEvent
+            {
+                Id = teachingEventId,
+                ReadableId = "unique",
+            };
+
+            _mockCrm
+                .Setup(mock => mock.GetTeachingEvent(nonUniqueReadableId))
+                .Returns(existingTeachingEvent);
+
+            _mockStore
+                .Setup(mock => mock.GetTeachingEventAsync(teachingEventId))
+                .ReturnsAsync(existingTeachingEvent);
+
+            var teachingEvent = new TeachingEvent
+            {
+                Id = teachingEventId,
                 ReadableId = nonUniqueReadableId,
             };
 
