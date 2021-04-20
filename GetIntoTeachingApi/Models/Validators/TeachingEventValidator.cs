@@ -33,16 +33,8 @@ namespace GetIntoTeachingApi.Models.Validators
                 return true;
             }
 
-            var existingTeachingEvent = _store.GetTeachingEventAsync((Guid)teachingEvent.Id).GetAwaiter().GetResult();
-
-            // Should never happen, but can if an event is created in the CRM but not yet synced.
-            // As the readable id is unlikey to be changed we skip the unique check in this case.
-            if (existingTeachingEvent == null)
-            {
-                return false;
-            }
-
-            return existingTeachingEvent.ReadableId != teachingEvent.ReadableId;
+            // Best effort check - Checking the CRM is much slower
+            return !_store.TeachingEventExistsWithReadableId(teachingEvent.Id.Value, teachingEvent.ReadableId);
         }
 
         private bool BeUnique(string readableId)
