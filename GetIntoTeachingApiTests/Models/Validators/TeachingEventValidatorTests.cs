@@ -13,11 +13,13 @@ namespace GetIntoTeachingApiTests.Models.Validators
     {
         private readonly TeachingEventValidator _validator;
         private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<IStore> _mockStore;
 
         public TeachingEventValidatorTests()
         {
             _mockCrm = new Mock<ICrmService>();
-            _validator = new TeachingEventValidator(_mockCrm.Object, new DateTimeProvider());
+            _mockStore = new Mock<IStore>();
+            _validator = new TeachingEventValidator(_mockCrm.Object, _mockStore.Object);
         }
 
         [Fact]
@@ -49,20 +51,54 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_IdIsNullAndReadableIdIsNotUnique_HasError()
         {
-            const string nonUniqueReadableId = "not_unique";
             var existingTeachingEvent = new TeachingEvent
             {
-                ReadableId = nonUniqueReadableId,
+                ReadableId = "not_unique",
             };
 
             _mockCrm
-                .Setup(mock => mock.GetTeachingEvent(nonUniqueReadableId))
+                .Setup(mock => mock.GetTeachingEvent("not_unique"))
                 .Returns(existingTeachingEvent);
+
+            var newTeachingEvent = new TeachingEvent
+            {
+                ReadableId = "not_unique",
+            };
+
+            var result = _validator.TestValidate(newTeachingEvent);
+
+            result
+                .ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.ReadableId)
+                .WithErrorMessage("Must be unique");
+        }
+
+        [Fact]
+        public void Validate_IdIsNotNullAndReadableIdHasChanged_HasError()
+        {
+            var existingTeachingEvent1 = new TeachingEvent
+            {
+                Id = Guid.NewGuid(),
+                ReadableId = "unique",
+            };
+
+            var existingTeachingEvent2 = new TeachingEvent
+            {
+                ReadableId = "not_unique",
+            };
+
+            _mockStore
+                .Setup(mock => mock.TeachingEventExistsWithReadableId(
+                    (Guid)existingTeachingEvent1.Id, existingTeachingEvent2.ReadableId))
+                .Returns(false);
+
+            _mockCrm
+                .Setup(mock => mock.GetTeachingEvent("not_unique"))
+                .Returns(existingTeachingEvent2);
 
             var teachingEvent = new TeachingEvent
             {
-                Id = null,
-                ReadableId = nonUniqueReadableId,
+                Id = existingTeachingEvent1.Id,
+                ReadableId = "not_unique",
             };
 
             var result = _validator.TestValidate(teachingEvent);
