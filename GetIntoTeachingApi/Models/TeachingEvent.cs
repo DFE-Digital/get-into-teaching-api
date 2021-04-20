@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using FluentValidation;
 using GetIntoTeachingApi.Attributes;
@@ -11,6 +12,8 @@ namespace GetIntoTeachingApi.Models
     [Entity("msevtmgt_event")]
     public class TeachingEvent : BaseModel
     {
+        private string _name;
+
         public enum Status
         {
             Open = 222750000,
@@ -40,7 +43,20 @@ namespace GetIntoTeachingApi.Models
         [EntityField("dfe_isonlineevent")]
         public bool IsOnline { get; set; }
         [EntityField("dfe_externaleventtitle")]
-        public string Name { get; set; }
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                _name = value;
+                InternalName = value;
+            }
+        }
+
+        [NotMapped]
+        [JsonIgnore]
+        [EntityField("msevtmgt_name")]
+        public string InternalName { get; set; }
         [EntityField("dfe_eventsummary_ml")]
         public string Summary { get; set; }
         [EntityField("dfe_miscellaneousmessage_ml")]
