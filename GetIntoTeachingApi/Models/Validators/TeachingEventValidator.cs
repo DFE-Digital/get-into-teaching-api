@@ -18,7 +18,7 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(teachingEvent => teachingEvent.ReadableId)
                 .NotEmpty()
                 .Must(BeUnique)
-                .When(teachingEvent => teachingEvent.Id == null || ReadableIdHasChanged(teachingEvent))
+                .When(teachingEvent => ReadableIdHasChanged(teachingEvent))
                 .WithMessage("Must be unique");
             RuleFor(teachingEvent => teachingEvent.Name).NotEmpty();
             RuleFor(teachingEvent => teachingEvent.ProviderContactEmail).EmailAddress(EmailValidationMode.AspNetCoreCompatible).MaximumLength(100);
@@ -27,19 +27,22 @@ namespace GetIntoTeachingApi.Models.Validators
 
         private bool ReadableIdHasChanged(TeachingEvent teachingEvent)
         {
+            // Always changes on creation.
             if (teachingEvent.Id == null)
+            {
+                return true;
+            }
+
+            var existingTeachingEvent = _store.GetTeachingEventAsync((Guid)teachingEvent.Id).GetAwaiter().GetResult();
+
+            // Should never happen, but can if an event is created in the CRM but not yet synced.
+            // As the readable id is unlikey to be changed we skip the unique check in this case.
+            if (existingTeachingEvent == null)
             {
                 return false;
             }
 
-            // Possible to have duplicate readableIds but chances are low and checking the CRM is slow
-            var existingTeachingEvent = _store.GetTeachingEventAsync((Guid)teachingEvent.Id).GetAwaiter().GetResult();
-            if (existingTeachingEvent != null)
-            {
-                return existingTeachingEvent.ReadableId != teachingEvent.ReadableId;
-            }
-
-            return false;
+            return existingTeachingEvent.ReadableId != teachingEvent.ReadableId;
         }
 
         private bool BeUnique(string readableId)

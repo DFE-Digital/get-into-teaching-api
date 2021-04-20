@@ -51,23 +51,21 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_IdIsNullAndReadableIdIsNotUnique_HasError()
         {
-            const string nonUniqueReadableId = "not_unique";
             var existingTeachingEvent = new TeachingEvent
             {
-                ReadableId = nonUniqueReadableId,
+                ReadableId = "not_unique",
             };
 
             _mockCrm
-                .Setup(mock => mock.GetTeachingEvent(nonUniqueReadableId))
+                .Setup(mock => mock.GetTeachingEvent("not_unique"))
                 .Returns(existingTeachingEvent);
 
-            var teachingEvent = new TeachingEvent
+            var newTeachingEvent = new TeachingEvent
             {
-                Id = null,
-                ReadableId = nonUniqueReadableId,
+                ReadableId = "not_unique",
             };
 
-            var result = _validator.TestValidate(teachingEvent);
+            var result = _validator.TestValidate(newTeachingEvent);
 
             result
                 .ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.ReadableId)
@@ -75,28 +73,45 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
+        public void Validate_IdIsNotNullAndEventNotInStore_HasNoError()
+        {
+            var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid(), ReadableId = "readable-id" };
+
+            _mockStore
+                .Setup(mock => mock.GetTeachingEventAsync((Guid)teachingEvent.Id))
+                .ReturnsAsync(null as TeachingEvent);
+
+            var result = _validator.TestValidate(teachingEvent);
+
+            result.ShouldNotHaveValidationErrorFor(teachingEvent => teachingEvent.ReadableId);
+        }
+
+        [Fact]
         public void Validate_IdIsNotNullAndReadableIdHasChanged_HasError()
         {
-            const string nonUniqueReadableId = "not_unique";
-            Guid teachingEventId = Guid.NewGuid();
-            var existingTeachingEvent = new TeachingEvent
+            var existingTeachingEvent1 = new TeachingEvent
             {
-                Id = teachingEventId,
+                Id = Guid.NewGuid(),
                 ReadableId = "unique",
             };
 
-            _mockCrm
-                .Setup(mock => mock.GetTeachingEvent(nonUniqueReadableId))
-                .Returns(existingTeachingEvent);
+            var existingTeachingEvent2 = new TeachingEvent
+            {
+                ReadableId = "not_unique",
+            };
 
             _mockStore
-                .Setup(mock => mock.GetTeachingEventAsync(teachingEventId))
-                .ReturnsAsync(existingTeachingEvent);
+                .Setup(mock => mock.GetTeachingEventAsync((Guid)existingTeachingEvent1.Id))
+                .ReturnsAsync(existingTeachingEvent1);
+
+            _mockCrm
+                .Setup(mock => mock.GetTeachingEvent("not_unique"))
+                .Returns(existingTeachingEvent2);
 
             var teachingEvent = new TeachingEvent
             {
-                Id = teachingEventId,
-                ReadableId = nonUniqueReadableId,
+                Id = existingTeachingEvent1.Id,
+                ReadableId = "not_unique",
             };
 
             var result = _validator.TestValidate(teachingEvent);
