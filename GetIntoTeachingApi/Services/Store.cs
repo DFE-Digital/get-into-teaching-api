@@ -141,6 +141,11 @@ namespace GetIntoTeachingApi.Services
             await _dbContext.SaveChangesAsync();
         }
 
+        public bool TeachingEventExistsWithReadableId(Guid id, string readableId)
+        {
+            return _dbContext.TeachingEvents.Any(te => te.Id == id && te.ReadableId == readableId);
+        }
+
         private async Task<IEnumerable<TeachingEvent>> FilterTeachingEventsByRadius(
             IQueryable<TeachingEvent> teachingEvents, TeachingEventSearchRequest request)
         {

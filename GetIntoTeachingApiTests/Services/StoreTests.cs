@@ -606,6 +606,39 @@ namespace GetIntoTeachingApiTests.Services
             teachingEventNames.ForEach(name => name.Should().Contain("Updated"));
         }
 
+        [Fact]
+        public async Task TeachingEventExistsWithReadableId_EventExistsWithReadableId_ReturnsTrue()
+        {
+            var events = await SeedMockTeachingEventsAndBuildingsAsync();
+            var existingEvent = await _store.GetTeachingEventAsync((Guid)events.First().Id);
+
+            bool result = _store.TeachingEventExistsWithReadableId(existingEvent.Id.Value, existingEvent.ReadableId);
+
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task TeachingEventExistsWithReadableId_WhenEventExistsWithDifferentId_ReturnsFalse()
+        {
+            var events = await SeedMockTeachingEventsAndBuildingsAsync();
+            var existingEvent = await _store.GetTeachingEventAsync((Guid)events.First().Id);
+
+            bool result = _store.TeachingEventExistsWithReadableId(Guid.NewGuid(), existingEvent.ReadableId);
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task TeachingEventExistsWithReadableId_WhenEventExistsWithDifferentReadableId_ReturnsFalse()
+        {
+            var events = await SeedMockTeachingEventsAndBuildingsAsync();
+            var existingEvent = await _store.GetTeachingEventAsync((Guid)events.First().Id);
+
+            bool result = _store.TeachingEventExistsWithReadableId(existingEvent.Id.Value, "Different_readable_id");
+
+            result.Should().BeFalse();
+        }
+
         private static bool CheckGetTeachingEventsAfterDate(DateTime date)
         {
             var afterDate = DateTime.UtcNow.Subtract(Store.TeachingEventArchiveSize);
@@ -703,7 +736,7 @@ namespace GetIntoTeachingApiTests.Services
                 Id = Guid.NewGuid(),
                 ReadableId = "8",
                 Name = "Event 8",
-                StatusId = (int) TeachingEvent.Status.Pending
+                StatusId = (int)TeachingEvent.Status.Pending
             };
 
             return new List<TeachingEvent>() { event1, event2, event3, event4, event5, event6, event7, event8 };
