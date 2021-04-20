@@ -14,7 +14,7 @@ namespace GetIntoTeachingApiTests.Models
             var type = typeof(TeachingEvent);
 
             type.Should().BeDecoratedWith<EntityAttribute>(a => a.LogicalName == "msevtmgt_event");
-            
+
             type.GetProperty("TypeId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_event_type" && a.Type == typeof(OptionSetValue));
             type.GetProperty("StatusId").Should().BeDecoratedWith<EntityFieldAttribute>(
@@ -24,6 +24,7 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("WebFeedId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_eventwebfeedid");
             type.GetProperty("IsOnline").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_isonlineevent");
             type.GetProperty("Name").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_externaleventtitle");
+            type.GetProperty("InternalName").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "msevtmgt_name");
             type.GetProperty("Description").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "msevtmgt_description");
             type.GetProperty("Summary").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_eventsummary_ml");
             type.GetProperty("VideoUrl").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_videolink");
@@ -81,6 +82,13 @@ namespace GetIntoTeachingApiTests.Models
             }
 
             teachingEvent.IsInPerson.Should().Be(expected);
+        }
+
+        [Fact]
+        public void InternalName_Set_ReturnsName()
+        {
+            var teachingEvent = new TeachingEvent() { Name = "name" };
+            teachingEvent.InternalName.Should().Be(teachingEvent.Name);
         }
     }
 }
