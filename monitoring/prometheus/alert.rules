@@ -2,21 +2,39 @@ groups:
   - name: Infrastructure
     rules:
       - alert: DiskUsage
-        expr: 'max(disk_utilization) > 80'
+        expr: 'max(disk_utilization{space="get-into-teaching-production"}) > 80'
         labels:
           severity: high
         annotations:
-          summary: Disk usage exceeds 80% on one of the applications
+          summary: Disk Usage usage exceeds 80% in Production
           description: One of the applications has exceeded 80% of its disk allocation.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2727739405/Infrastructure+Alerts#Disk-Usage
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/eF19g4RZx/cf-apps?orgId=1
       - alert: MemoryUsage
-        expr: 'max(memory_utilization) > 80'
+        expr: 'max(memory_utilization{space="get-into-teaching-production"}) > 80'
         labels:
           severity: high
         annotations:
-          summary: Memory usage exceeds 80% on one of the applications
+          summary: Memory usage exceeds 80% in Production
           description: One of the applications has exceeded 80% of its Memory allocation.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2727739405/Infrastructure+Alerts#Memory-Usage
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/eF19g4RZx/cf-apps?orgId=1
+      - alert: MonDiskUsage
+        expr: 'max(disk_utilization{space="get-into-teaching-monitoring"}) > 80'
+        labels:
+          severity: high
+        annotations:
+          summary: Disk Usage usage exceeds 80% in Monitoring
+          description: One of the monitoring applications has exceeded 80% of its disk allocation.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2727739405/Infrastructure+Alerts#Disk-Usage
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/eF19g4RZx/cf-apps?orgId=1
+      - alert: MonMemoryUsage
+        expr: 'max(memory_utilization{space="get-into-teaching-monitoring"}) > 80'
+        labels:
+          severity: high
+        annotations:
+          summary: Memory usage exceeds 80% in Monitoring
+          description: One of the monitoring applications has exceeded 80% of its Memory allocation.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2727739405/Infrastructure+Alerts#Memory-Usage
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/eF19g4RZx/cf-apps?orgId=1
   - name: App
