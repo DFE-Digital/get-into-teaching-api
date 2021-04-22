@@ -90,5 +90,12 @@ namespace GetIntoTeachingApiTests.Models
             var teachingEvent = new TeachingEvent() { Name = "name" };
             teachingEvent.InternalName.Should().Be(teachingEvent.Name);
         }
+
+        [Fact]
+        public void InternalTimeZone_Default_ReturnsGmtCode()
+        {
+            var teachingEvent = new TeachingEvent();
+            teachingEvent.InternalTimeZone.Should().Be(85);
+        }
     }
 }
