@@ -25,7 +25,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("candidate/initial_teacher_training_years")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate initial teacher training years.",
@@ -38,7 +37,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("candidate/preferred_education_phases")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate preferred education phases.",
@@ -51,7 +49,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("candidate/channels")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate channels.",
@@ -64,7 +61,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("candidate/mailing_list_subscription_channels")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate mailing list subscription channels.",
@@ -77,7 +73,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("candidate/event_subscription_channels")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate event subscription channels.",
@@ -90,7 +85,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("candidate/gcse_status")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate GCSE status.",
@@ -103,7 +97,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("candidate/retake_gcse_status")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate retake GCSE status.",
@@ -116,7 +109,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("candidate/consideration_journey_stages")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate consideration journey stages.",
@@ -129,7 +121,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("candidate/adviser_eligibilities")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate adviser eligibilities.",
@@ -142,7 +133,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("candidate/adviser_requirements")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate adviser requirements.",
@@ -155,7 +145,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("candidate/types")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate types.",
@@ -168,7 +157,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("candidate/assignment_status")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate assignment status.",
@@ -181,7 +169,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("qualification/degree_status")]
         [SwaggerOperation(
             Summary = "Retrieves the list of qualification degree status.",
@@ -194,7 +181,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("qualification/types")]
         [SwaggerOperation(
             Summary = "Retrieves the list of qualification types.",
@@ -207,7 +193,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("qualification/uk_degree_grades")]
         [SwaggerOperation(
             Summary = "Retrieves the list of qualification UK degree grades.",
@@ -220,7 +205,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("past_teaching_position/education_phases")]
         [SwaggerOperation(
             Summary = "Retrieves the list of past teaching position education phases.",
@@ -233,7 +217,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("teaching_event/types")]
         [SwaggerOperation(
             Summary = "Retrieves the list of teaching event types.",
@@ -246,7 +229,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("teaching_event/status")]
         [SwaggerOperation(
             Summary = "Retrieves the list of teaching event status.",
@@ -259,7 +241,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("teaching_event_registration/channels")]
         [SwaggerOperation(
             Summary = "Retrieves the list of teaching event registration channels.",
@@ -272,7 +253,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("phone_call/channels")]
         [SwaggerOperation(
             Summary = "Retrieves the list of phone call channels.",
@@ -285,7 +265,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("service_subscription/types")]
         [SwaggerOperation(
             Summary = "Retrieves the list of subscription types.",

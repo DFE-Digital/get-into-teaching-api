@@ -50,7 +50,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [PrivateShortTermResponseCache]
         [Route("search_grouped_by_type")]
         [SwaggerOperation(
@@ -89,7 +88,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [PrivateShortTermResponseCache]
         [Route("{readableId}")]
         [SwaggerOperation(
