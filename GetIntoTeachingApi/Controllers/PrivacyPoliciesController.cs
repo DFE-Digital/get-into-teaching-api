@@ -24,7 +24,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("latest")]
         [SwaggerOperation(
             Summary = "Retrieves the latest privacy policy.",
@@ -38,7 +37,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("{id}")]
         [SwaggerOperation(
             Summary = "Retrieves a privacy policy.",

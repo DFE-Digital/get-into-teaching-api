@@ -38,19 +38,6 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void CrmETag_IsPresent()
-        {
-            JobStorage.Current = new Mock<JobStorage>().Object;
-
-            var methods = typeof(PickListItemsController).GetMethods(
-                BindingFlags.Public |
-                BindingFlags.Instance |
-                BindingFlags.DeclaredOnly);
-
-            methods.ForEach(m => m.Should().BeDecoratedWith<CrmETagAttribute>());
-        }
-
-        [Fact]
         public async void GetCandidateInitialTeacherTrainingYears_ReturnsAllYears()
         {
             var mockItems = MockPickListItems();
