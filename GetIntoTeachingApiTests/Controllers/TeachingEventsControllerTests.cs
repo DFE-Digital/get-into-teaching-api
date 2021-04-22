@@ -58,15 +58,6 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void CrmETag_IsPresent()
-        {
-            JobStorage.Current = new Mock<JobStorage>().Object;
-            var methods = new[] { "Get", "SearchGroupedByType" };
-
-            methods.ForEach(m => typeof(TeachingEventsController).GetMethod(m).Should().BeDecoratedWith<CrmETagAttribute>());
-        }
-
-        [Fact]
         public void PrivateShortTermResponseCache_IsPresent()
         {
             JobStorage.Current = new Mock<JobStorage>().Object;

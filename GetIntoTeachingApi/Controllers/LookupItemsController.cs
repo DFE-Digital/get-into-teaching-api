@@ -26,7 +26,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("countries")]
         [SwaggerOperation(
             Summary = "Retrieves the list of countries.",
@@ -41,7 +40,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("teaching_subjects")]
         [SwaggerOperation(
             Summary = "Retrieves the list of teaching subjects.",
