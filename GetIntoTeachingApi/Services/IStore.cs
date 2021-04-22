@@ -21,6 +21,5 @@ namespace GetIntoTeachingApi.Services
         Task<TeachingEvent> GetTeachingEventAsync(Guid id);
         Task<TeachingEvent> GetTeachingEventAsync(string readableId);
         IQueryable<TeachingEventBuilding> GetTeachingEventBuildings();
-        bool TeachingEventExistsWithReadableId(Guid id, string readableId);
     }
 }
