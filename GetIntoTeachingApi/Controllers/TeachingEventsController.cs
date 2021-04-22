@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Validators;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
@@ -181,6 +183,12 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Upsert([FromBody] TeachingEvent teachingEvent)
         {
+            var operation = new TeachingEventUpsertOperation(teachingEvent);
+            var validator = new TeachingEventUpsertOperationValidator(_crm);
+            var result = validator.Validate(operation);
+
+            result.AddToModelState(ModelState, null);
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

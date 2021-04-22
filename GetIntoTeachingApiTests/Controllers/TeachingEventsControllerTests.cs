@@ -198,7 +198,7 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async Task AddTeachingEvent_WhenRequestIsInvalid_RepondsWithValidationErrorAsync()
+        public async Task Upsert_WhenRequestIsInvalid_RepondsWithValidationErrorAsync()
         {
             const string expectedErrorKey = "Name";
             const string expectedErrorMessage = "Name must be specified";
@@ -213,7 +213,22 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async Task AddTeachingEvent_ValidRequestWithoutBuilding_SavesInCrmAndCaches()
+        public async Task Upsert_WhenReadableIdIsNotUnique_RepondsWithValidationErrorAsync()
+        {
+            var existingTeachingEvent = new TeachingEvent() { Id = Guid.NewGuid(), ReadableId = "existing" };
+            _mockCrm.Setup(m => m.GetTeachingEvent("existing")).Returns(existingTeachingEvent);
+
+            var request = new TeachingEvent() { ReadableId = "existing" };
+
+            var response = await _controller.Upsert(request);
+
+            var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
+            var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
+            errors.Should().ContainKey("ReadableId").WhichValue.Should().BeOfType<string[]>().Which.Should().Contain("Must be unique");
+        }
+
+        [Fact]
+        public async Task Upsert_ValidRequestWithoutBuilding_SavesInCrmAndCaches()
         {
             const string testName = "test";
             var newTeachingEvent = new TeachingEvent() { Name = testName };
@@ -230,7 +245,7 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async Task AddTeachingEvent_ValidRequestWithBuilding_SavesInCrmAndCaches()
+        public async Task Upsert_ValidRequestWithBuilding_SavesInCrmAndCaches()
         {
             const string testName = "test";
             var buildingId = Guid.NewGuid();
