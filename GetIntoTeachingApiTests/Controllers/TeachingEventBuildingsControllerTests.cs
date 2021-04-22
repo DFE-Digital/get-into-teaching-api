@@ -41,19 +41,6 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void CrmETag_IsPresent()
-        {
-            JobStorage.Current = new Mock<JobStorage>().Object;
-
-            var methods = typeof(TeachingEventBuildingsController).GetMethods(
-                BindingFlags.Public |
-                BindingFlags.Instance |
-                BindingFlags.DeclaredOnly);
-
-            methods.ForEach(m => m.Should().BeDecoratedWith<CrmETagAttribute>());
-        }
-
-        [Fact]
         public void GetTeachingEventBuildings_ReturnsAllTeachingEventBuildings()
         {
             var mockBuildings = new List<TeachingEventBuilding>()

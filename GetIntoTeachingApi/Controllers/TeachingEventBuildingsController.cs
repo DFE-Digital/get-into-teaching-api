@@ -22,7 +22,6 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [CrmETag]
         [Route("")]
         [SwaggerOperation(
             Summary = "Retrieves all event buildings.",

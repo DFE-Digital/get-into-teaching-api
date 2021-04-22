@@ -36,13 +36,6 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void CrmETag_IsPresent()
-        {
-            JobStorage.Current = new Mock<JobStorage>().Object;
-            typeof(PrivacyPoliciesController).GetMethod("GetLatest").Should().BeDecoratedWith<CrmETagAttribute>();
-        }
-
-        [Fact]
         public async void Get_ReturnsPrivacyPolicy()
         {
             var policy = new PrivacyPolicy() { Id = Guid.NewGuid() };
