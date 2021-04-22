@@ -12,6 +12,8 @@ namespace GetIntoTeachingApi.Models
     [Entity("msevtmgt_event")]
     public class TeachingEvent : BaseModel
     {
+        private const int GmtTimeZoneCode = 85;
+
         private string _name;
 
         public enum Status
@@ -77,6 +79,10 @@ namespace GetIntoTeachingApi.Models
         public string ProviderOrganiser { get; set; }
         [EntityField("dfe_providercontactemailaddress")]
         public string ProviderContactEmail { get; set; }
+        [NotMapped]
+        [JsonIgnore]
+        [EntityField("msevtmgt_eventtimezone")]
+        public int InternalTimeZone { get; set; } = GmtTimeZoneCode;
         [EntityField("msevtmgt_eventstartdate")]
         public DateTime StartAt { get; set; }
         [EntityField("msevtmgt_eventenddate")]
