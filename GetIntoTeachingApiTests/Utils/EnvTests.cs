@@ -141,15 +141,15 @@ namespace GetIntoTeachingApiTests.Utils
         [Fact]
         public void ApplicationServices_All_ReturnCorrectly()
         {
-            var previous = Environment.GetEnvironmentVariable("APPLICATION_SERVICES");
-            Environment.SetEnvironmentVariable("APPLICATION_SERVICES",
+            var previous = Environment.GetEnvironmentVariable("VCAP_APPLICATION");
+            Environment.SetEnvironmentVariable("VCAP_APPLICATION",
                 "{\"application_name\":\"app-name\",\"space_name\":\"space-name\",\"organization_name\":\"org-name\"}");
 
             _env.AppName.Should().Be("app-name");
             _env.Space.Should().Be("space-name");
             _env.Organization.Should().Be("org-name");
 
-            Environment.SetEnvironmentVariable("APPLICATION_SERVICES", previous);
+            Environment.SetEnvironmentVariable("VCAP_APPLICATION", previous);
         }
 
         [Fact]

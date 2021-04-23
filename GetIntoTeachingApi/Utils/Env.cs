@@ -56,7 +56,7 @@ namespace GetIntoTeachingApi.Utils
             get
             {
                 return JsonSerializer.Deserialize<ApplicationServices>(
-                    Environment.GetEnvironmentVariable("APPLICATION_SERVICES"));
+                    Environment.GetEnvironmentVariable("VCAP_APPLICATION"));
             }
         }
 
