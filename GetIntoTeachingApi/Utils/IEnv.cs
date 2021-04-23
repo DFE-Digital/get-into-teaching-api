@@ -13,6 +13,9 @@
         string EnvironmentName { get; }
         string TotpSecretKey { get; }
         string VcapServices { get; }
+        string AppName { get; }
+        string Organization { get; }
+        string Space { get; }
         string CrmServiceUrl { get; }
         string CrmClientId { get; }
         string CrmClientSecret { get; }

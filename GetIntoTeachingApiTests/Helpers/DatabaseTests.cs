@@ -2,6 +2,7 @@
 using GetIntoTeachingApi.Database;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using Prometheus;
 
 namespace GetIntoTeachingApiTests.Helpers
 {
@@ -58,6 +59,8 @@ namespace GetIntoTeachingApiTests.Helpers
                 $"{{\"postgres\": [{{\"instance_name\": \"{databaseName}\",\"credentials\": {{\"host\": \"localhost\"," +
                 $"\"name\": \"{databaseName}\",\"username\": \"docker\",\"password\": \"docker\",\"port\": 5432}}}}]," +
                 $"\"redis\": [{{\"credentials\": {{\"host\": \"0.0.0.0\",\"port\": 6379,\"password\": \"docker\",\"tls_enabled\": false}}}}]}}");
+            Environment.SetEnvironmentVariable("APPLICATION_SERVICES",
+                "{\"application_name\":\"app-name\",\"space_name\":\"space-name\",\"organization_name\":\"org-name\"}");
         }
     }
 }
