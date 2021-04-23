@@ -5,6 +5,7 @@ paas_redis_1_name         = "get-into-teaching-dev-redis-svc"
 paas_api_application_name = "get-into-teaching-api-dev"
 monitor_scrape_applications = [{ name : "get-into-teaching-api-dev", port : 8080 }, { name : "get-into-teaching-app-dev", port : 3000 }, { name : "get-teacher-training-adviser-service-dev", port : 3000 }]
 application_instances = 1
+logging               = 0
 monitoring            = 1
 influx                = 1
 environment           = "dev"
