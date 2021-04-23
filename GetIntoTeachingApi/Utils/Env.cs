@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace GetIntoTeachingApi.Utils
 {
@@ -19,6 +21,9 @@ namespace GetIntoTeachingApi.Utils
         public string CrmClientSecret => Environment.GetEnvironmentVariable("CRM_CLIENT_SECRET");
         public string NotifyApiKey => Environment.GetEnvironmentVariable("NOTIFY_API_KEY");
         public string GoogleApiKey => Environment.GetEnvironmentVariable("GOOGLE_API_KEY");
+        public string AppName => AppServices.ApplicationName;
+        public string Organization => AppServices.OrganizationName;
+        public string Space => AppServices.SpaceName;
 
         // The master instance boots first on deploy.
         public bool IsMasterInstance
@@ -44,6 +49,25 @@ namespace GetIntoTeachingApi.Utils
         public string Get(string variable)
         {
             return Environment.GetEnvironmentVariable(variable);
+        }
+
+        private ApplicationServices AppServices
+        {
+            get
+            {
+                return JsonSerializer.Deserialize<ApplicationServices>(
+                    Environment.GetEnvironmentVariable("APPLICATION_SERVICES"));
+            }
+        }
+
+        private class ApplicationServices
+        {
+            [JsonPropertyName("application_name")]
+            public string ApplicationName { get; set; }
+            [JsonPropertyName("organization_name")]
+            public string OrganizationName { get; set; }
+            [JsonPropertyName("space_name")]
+            public string SpaceName { get; set; }
         }
     }
 }
