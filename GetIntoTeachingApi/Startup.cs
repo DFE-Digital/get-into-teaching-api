@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 using AspNetCoreRateLimit;
@@ -176,6 +177,19 @@ The GIT API aims to provide:
         {
             using var serviceScope = app.ApplicationServices.CreateScope();
             var env = serviceScope.ServiceProvider.GetService<IEnv>();
+
+            // We can't do this in test as the DefaultRegistry is shared between runs
+            // and we get an error trying to set static labels once metrics have been registed.
+            // There doesn't appear to be a way to clear the DefaultRegistry between tests.
+            if (!env.IsTest && !Metrics.DefaultRegistry.StaticLabels.Any())
+            {
+                Metrics.DefaultRegistry.SetStaticLabels(new Dictionary<string, string>
+                {
+                    { "app", env.AppName },
+                    { "organization", env.Organization },
+                    { "space", env.Space },
+                });
+            }
 
             if (!env.IsStaging)
             {
