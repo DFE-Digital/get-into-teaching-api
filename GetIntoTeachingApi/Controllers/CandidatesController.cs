@@ -5,6 +5,7 @@ using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Controllers
@@ -18,17 +19,20 @@ namespace GetIntoTeachingApi.Controllers
         private readonly INotifyService _notifyService;
         private readonly ICrmService _crm;
         private readonly IAppSettings _appSettings;
+        private readonly ILogger<CandidatesController> _logger;
 
         public CandidatesController(
             ICandidateAccessTokenService accessTokenService,
             INotifyService notifyService,
             ICrmService crm,
-            IAppSettings appSettings)
+            IAppSettings appSettings,
+            ILogger<CandidatesController> logger)
         {
             _accessTokenService = accessTokenService;
             _notifyService = notifyService;
             _crm = crm;
             _appSettings = appSettings;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -53,10 +57,21 @@ namespace GetIntoTeachingApi.Controllers
 
             if (_appSettings.IsCrmIntegrationPaused)
             {
+                _logger.LogInformation("CandidatesController - potential duplicate (CRM integration paused)");
                 return NotFound();
             }
 
-            var candidate = _crm.MatchCandidate(request);
+            Candidate candidate = null;
+
+            try
+            {
+                candidate = _crm.MatchCandidate(request);
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation($"CandidatesController - potential duplicate (CRM exception) - {e.Message}");
+            }
+
             if (candidate == null)
             {
                 return NotFound();

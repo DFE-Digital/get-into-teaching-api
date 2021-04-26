@@ -8,6 +8,8 @@ using GetIntoTeachingApi.Services;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using System;
+using Microsoft.Extensions.Logging;
+using GetIntoTeachingApiTests.Helpers;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -17,6 +19,7 @@ namespace GetIntoTeachingApiTests.Controllers
         private readonly Mock<INotifyService> _mockNotifyService;
         private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<IAppSettings> _mockAppSettings;
+        private readonly Mock<ILogger<CandidatesController>> _mockLogger;
         private readonly CandidatesController _controller;
 
         public CandidatesControllerTests()
@@ -25,11 +28,13 @@ namespace GetIntoTeachingApiTests.Controllers
             _mockNotifyService = new Mock<INotifyService>();
             _mockAppSettings = new Mock<IAppSettings>();
             _mockCrm = new Mock<ICrmService>();
+            _mockLogger = new Mock<ILogger<CandidatesController>>();
             _controller = new CandidatesController(
                 _mockAccessTokenService.Object,
                 _mockNotifyService.Object,
                 _mockCrm.Object,
-                _mockAppSettings.Object);
+                _mockAppSettings.Object,
+                _mockLogger.Object);
         }
 
         [Fact]
@@ -90,6 +95,24 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
+        public void CreateAccessToken_CrmThrowsException_ReturnsNotFound()
+        {
+            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
+            _mockCrm.Setup(m => m.MatchCandidate(request)).Throws(new Exception("Error"));
+            _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
+
+            var response = _controller.CreateAccessToken(request);
+
+            response.Should().BeOfType<NotFoundResult>();
+
+            _mockNotifyService.Verify(mock =>
+                mock.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, dynamic>>()),
+                Times.Never()
+            );
+            _mockLogger.VerifyInformationWasCalled("CandidatesController - potential duplicate (CRM exception) - Error");
+        }
+
+        [Fact]
         public void CreateAccessToken_CrmIntegrationIsPaused_ReturnsNotFound()
         {
             var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
@@ -103,6 +126,7 @@ namespace GetIntoTeachingApiTests.Controllers
                 mock.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, dynamic>>()),
                 Times.Never()
             );
+            _mockLogger.VerifyInformationWasCalled("CandidatesController - potential duplicate (CRM integration paused)");
         }
     }
 }
