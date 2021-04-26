@@ -69,7 +69,7 @@ jobs:
              dotnet sonarscanner end /d:sonar.login="${{ steps.azSecret.outputs.SONAR-TOKEN }}"
 
       - name: Slack Notification
-        if: failure()
+        if: failure() && github.ref == 'refs/heads/master'
         uses: rtCamp/action-slack-notify@master
         env:
            SLACK_COLOR:   ${{env.SLACK_FAILURE }}
