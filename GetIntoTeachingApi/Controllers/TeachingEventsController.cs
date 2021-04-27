@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Controllers
@@ -179,7 +180,7 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Teaching Events" })]
         [ProducesResponseType(typeof(TeachingEvent), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Upsert([FromBody] TeachingEvent teachingEvent)
+        public async Task<IActionResult> Upsert([FromBody] TeachingEvent teachingEvent, [FromServices] IOptions<ApiBehaviorOptions> apiBehaviorOptions)
         {
             var operation = new TeachingEventUpsertOperation(teachingEvent);
             var validator = new TeachingEventUpsertOperationValidator(_crm);
@@ -189,7 +190,7 @@ namespace GetIntoTeachingApi.Controllers
 
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
             }
 
             // Save independently so that the building gets an Id populated immediately.

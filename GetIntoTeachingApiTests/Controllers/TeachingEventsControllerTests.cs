@@ -19,6 +19,7 @@ using Microsoft.Extensions.Logging;
 using GetIntoTeachingApiTests.Helpers;
 using GetIntoTeachingApi.Utils;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -195,8 +196,12 @@ namespace GetIntoTeachingApiTests.Controllers
             const string expectedErrorMessage = "Name must be specified";
             var request = new TeachingEvent();
             _controller.ModelState.AddModelError(expectedErrorKey, expectedErrorMessage);
+            var apiBehaviorOptions = new ApiBehaviorOptions
+            {
+                InvalidModelStateResponseFactory = (context) => new BadRequestObjectResult(_controller.ModelState)
+            };
 
-            var response = await _controller.Upsert(request);
+            var response = await _controller.Upsert(request, Options.Create(apiBehaviorOptions));
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
@@ -208,10 +213,13 @@ namespace GetIntoTeachingApiTests.Controllers
         {
             var existingTeachingEvent = new TeachingEvent() { Id = Guid.NewGuid(), ReadableId = "existing" };
             _mockCrm.Setup(m => m.GetTeachingEvent("existing")).Returns(existingTeachingEvent);
-
             var request = new TeachingEvent() { ReadableId = "existing" };
+            var apiBehaviorOptions = new ApiBehaviorOptions
+            {
+                InvalidModelStateResponseFactory = (context) => new BadRequestObjectResult(_controller.ModelState)
+            };
 
-            var response = await _controller.Upsert(request);
+            var response = await _controller.Upsert(request, Options.Create(apiBehaviorOptions));
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
@@ -226,7 +234,7 @@ namespace GetIntoTeachingApiTests.Controllers
             _mockCrm.Setup(mock => mock.Save(newTeachingEvent)).Verifiable();
             _mockStore.Setup(mock => mock.SaveAsync(new TeachingEvent[] { newTeachingEvent })).Verifiable();
 
-            var response = await _controller.Upsert(newTeachingEvent);
+            var response = await _controller.Upsert(newTeachingEvent, null);
 
             _mockCrm.Verify();
             _mockStore.Verify();
@@ -247,7 +255,7 @@ namespace GetIntoTeachingApiTests.Controllers
             _mockStore.Setup(mock => mock.SaveAsync(new TeachingEventBuilding[] { newBuilding })).Verifiable();
             _mockStore.Setup(mock => mock.SaveAsync(new TeachingEvent[] { newTeachingEvent })).Verifiable();
 
-            var response = await _controller.Upsert(newTeachingEvent);
+            var response = await _controller.Upsert(newTeachingEvent, null);
 
             _mockCrm.Verify();
             _mockStore.Verify();
