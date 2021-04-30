@@ -59,32 +59,15 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_WhenPhoneCallScheduledAtIsNotNull_AndCountryIsNotUk_OrDegreeTypeIsNotDegreeEquivalent_HasError()
+        public void Validate_WhenPhoneCallScheduledAtIsNotNull_AndDegreeTypeIsNotDegreeEquivalent_HasError()
         {
             _request.PhoneCallScheduledAt = DateTime.UtcNow.AddDays(1);
-            _request.CountryId = Guid.NewGuid();
-            _request.DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent;
+            _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
 
             var result = _validator.TestValidate(_request);
 
             result.ShouldHaveValidationErrorFor(request => request.PhoneCallScheduledAt)
-                .WithErrorMessage("Can only be set for UK candidates with an equivalent degree.");
-
-            _request.CountryId = LookupItem.UnitedKingdomCountryId;
-            _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
-
-            result = _validator.TestValidate(_request);
-
-            result.ShouldHaveValidationErrorFor(request => request.PhoneCallScheduledAt)
-                .WithErrorMessage("Can only be set for UK candidates with an equivalent degree.");
-
-            _request.CountryId = Guid.NewGuid();
-            _request.DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent;
-
-            result = _validator.TestValidate(_request);
-
-            result.ShouldHaveValidationErrorFor(request => request.PhoneCallScheduledAt)
-                .WithErrorMessage("Can only be set for UK candidates with an equivalent degree.");
+                .WithErrorMessage("Can only be set for candidates with an equivalent degree.");
 
             _request.PhoneCallScheduledAt = null;
 
