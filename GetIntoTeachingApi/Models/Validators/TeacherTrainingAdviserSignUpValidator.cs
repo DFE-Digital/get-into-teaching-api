@@ -26,9 +26,8 @@ namespace GetIntoTeachingApi.Models.Validators
                 .WithMessage("Can only be scheduled for future dates.");
 
             RuleFor(request => request.PhoneCallScheduledAt).Null()
-                .When(request => request.CountryId != LookupItem.UnitedKingdomCountryId ||
-                    request.DegreeTypeId != (int)CandidateQualification.DegreeType.DegreeEquivalent)
-                .WithMessage("Can only be set for UK candidates with an equivalent degree.");
+                .Unless(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent)
+                .WithMessage("Can only be set for candidates with an equivalent degree.");
 
             When(request => request.CountryId == LookupItem.UnitedKingdomCountryId, () =>
             {
