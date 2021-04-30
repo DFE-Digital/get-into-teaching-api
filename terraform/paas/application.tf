@@ -21,11 +21,6 @@ resource "cloudfoundry_app" "api_application" {
     route = cloudfoundry_route.api_route_internal.id
   }
 
-  docker_credentials = {
-    username = data.azurerm_key_vault_secret.docker_username.value
-    password = data.azurerm_key_vault_secret.docker_password.value
-  }
-
   service_binding {
     service_instance = cloudfoundry_service_instance.redis.id
   }

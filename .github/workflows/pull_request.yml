@@ -2,17 +2,11 @@ name: Run .NET tests and Lint Dockerfile
 on:
   pull_request:
     types: [assigned, opened, synchronize, reopened]
-env:
-  DOCKERHUB_REPOSITORY:  dfedigital/get-into-teaching-api
-  DOMAIN:                london.cloudapps.digital
-  APPLICATION:           Get Into Teaching API Service
-  PAAS_APPLICATION_NAME: get-into-teaching-api
 
 jobs:
 
   test_dot_net:
     runs-on: ubuntu-latest
-    environment: Development
     steps:
 
     - uses: actions/checkout@v2
