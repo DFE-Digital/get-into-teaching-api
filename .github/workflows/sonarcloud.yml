@@ -8,7 +8,6 @@ on:
 jobs:
   sonarcloud:
     runs-on: ubuntu-latest
-    environment: Development
     steps:
       - uses: actions/checkout@v2
         with:

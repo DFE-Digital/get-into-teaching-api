@@ -1,4 +1,4 @@
-  DOCKERHUB_REPOSITORY:  dfedigital/get-into-teaching-api
+  DOCKER_REPOSITORY:     ghcr.io/dfe-digital/get-into-teaching-api
   DOMAIN:                london.cloudapps.digital
   APPLICATION:           Get Into Teaching API Service
   PAAS_APPLICATION_NAME: get-into-teaching-api

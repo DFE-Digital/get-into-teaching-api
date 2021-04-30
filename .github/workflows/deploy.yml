@@ -61,6 +61,16 @@ jobs:
        - name: set-up-environment
          uses: DFE-Digital/github-actions/set-up-environment@master
 
+       - uses: Azure/login@v1
+         with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+       - uses: Azure/get-keyvault-secrets@v1
+         id:   azSecret
+         with:
+            keyvault: ${{ secrets.KEY_VAULT}}
+            secrets: 'LOGIT-API'
+
        - name: Get Short SHA
          id: sha
          run: echo ::set-output name=short::$(echo "${{ github.event.inputs.sha }}" | cut -c -7)
@@ -73,7 +83,7 @@ jobs:
                  echo ::set-output name=control::$(echo "dev" )
                  echo ::set-output name=healthcheck::$(echo "${{env.PAAS_APPLICATION_NAME}}-dev" )
                  echo ::set-output name=key::"api.dev.terraform"
-                 echo ::set-output name=docker_image::"${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}}"
+                 echo ::set-output name=docker_image::"${{env.DOCKER_REPOSITORY}}:sha-${{ steps.sha.outputs.short}}"
 
              fi
 
@@ -82,7 +92,7 @@ jobs:
                  echo ::set-output name=control::$(echo "test" )
                  echo ::set-output name=healthcheck::$(echo "${{env.PAAS_APPLICATION_NAME}}-test" )
                  echo ::set-output name=key::"api.test.terraform"
-                 echo ::set-output name=docker_image::"${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}}"
+                 echo ::set-output name=docker_image::"${{env.DOCKER_REPOSITORY}}:sha-${{ steps.sha.outputs.short}}"
 
              fi
 
@@ -91,7 +101,7 @@ jobs:
                  echo ::set-output name=control::$(echo "production" )
                  echo ::set-output name=healthcheck::$(echo "${{env.PAAS_APPLICATION_NAME}}-prod" )
                  echo ::set-output name=key::"api.production.terraform"
-                 echo ::set-output name=docker_image::"${{env.DOCKERHUB_REPOSITORY}}:sha-${{ steps.sha.outputs.short}}"
+                 echo ::set-output name=docker_image::"${{env.DOCKER_REPOSITORY}}:sha-${{ steps.sha.outputs.short}}"
 
              fi
 
@@ -130,3 +140,17 @@ jobs:
            token: ${{ secrets.GITHUB_TOKEN }}
            status: ${{ job.status }}
            deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+
+
+       - name: Log Deployment
+         if: always()
+         uses: DFE-Digital/github-actions/SendToLogit@master
+         with:
+            LOGIT-API-KEY: ${{ steps.azSecret.outputs.LOGIT-API }}
+            logtype: "github"
+            JSON: |
+                '{"Application" : "${{env.PAAS_APPLICATION_NAME}}",
+                  "Status"      : "${{ job.status }}",
+                  "Action"      : "Deploy",
+                  "Environment" : "${{github.event.inputs.environment}}",
+                  "Version"     : "${{ github.event.inputs.sha }}" }'
