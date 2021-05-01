@@ -58,12 +58,12 @@ namespace GetIntoTeachingApi.Services
 
         public IQueryable<LookupItem> GetLookupItems(string entityName)
         {
-            return _dbContext.LookupItems.Where(t => t.EntityName == entityName).OrderBy(t => t.Id);
+            return _dbContext.LookupItems.AsNoTracking().Where(t => t.EntityName == entityName).OrderBy(t => t.Id);
         }
 
         public IQueryable<PickListItem> GetPickListItems(string entityName, string attributeName)
         {
-            return _dbContext.PickListItems.Where(t => t.EntityName == entityName && t.AttributeName == attributeName).OrderBy(t => t.Id);
+            return _dbContext.PickListItems.AsNoTracking().Where(t => t.EntityName == entityName && t.AttributeName == attributeName).OrderBy(t => t.Id);
         }
 
         public async Task<PrivacyPolicy> GetLatestPrivacyPolicyAsync()
@@ -78,12 +78,13 @@ namespace GetIntoTeachingApi.Services
 
         public IQueryable<PrivacyPolicy> GetPrivacyPolicies()
         {
-            return _dbContext.PrivacyPolicies;
+            return _dbContext.PrivacyPolicies.AsNoTracking();
         }
 
         public async Task<IEnumerable<TeachingEvent>> SearchTeachingEventsAsync(TeachingEventSearchRequest request)
         {
             IQueryable<TeachingEvent> teachingEvents = _dbContext.TeachingEvents
+                .AsNoTracking()
                 .Include(te => te.Building)
                 .OrderBy(te => te.StartAt);
 
@@ -118,17 +119,17 @@ namespace GetIntoTeachingApi.Services
 
         public async Task<TeachingEvent> GetTeachingEventAsync(Guid id)
         {
-            return await _dbContext.TeachingEvents.Include(e => e.Building).FirstOrDefaultAsync(e => e.Id == id);
+            return await _dbContext.TeachingEvents.AsNoTracking().Include(e => e.Building).FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<TeachingEvent> GetTeachingEventAsync(string readableId)
         {
-            return await _dbContext.TeachingEvents.Include(e => e.Building).FirstOrDefaultAsync(e => e.ReadableId == readableId);
+            return await _dbContext.TeachingEvents.AsNoTracking().Include(e => e.Building).FirstOrDefaultAsync(e => e.ReadableId == readableId);
         }
 
         public IQueryable<TeachingEventBuilding> GetTeachingEventBuildings()
         {
-            return _dbContext.TeachingEventBuildings;
+            return _dbContext.TeachingEventBuildings.AsNoTracking();
         }
 
         public async Task SaveAsync<T>(IEnumerable<T> models)
