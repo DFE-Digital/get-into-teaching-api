@@ -15,6 +15,7 @@ namespace GetIntoTeachingApi.Services
     public class Store : IStore
     {
         public static readonly TimeSpan TeachingEventArchiveSize = TimeSpan.FromDays(31 * 4);
+        public static readonly HashSet<string> FailedPostcodeLookupCache = new HashSet<string>();
         private readonly GetIntoTeachingDbContext _dbContext;
         private readonly IGeocodeClientAdapter _geocodeClient;
         private readonly ICrmService _crm;
@@ -286,6 +287,12 @@ namespace GetIntoTeachingApi.Services
         {
             var sanitizedPostcode = Location.SanitizePostcode(postcode);
 
+            // Avoid the expense (Google API call) to re-check known lookup failures.
+            if (FailedPostcodeLookupCache.Contains(postcode))
+            {
+                return null;
+            }
+
             var coordinate = await GeocodePostcodeWithLocalLookup(sanitizedPostcode);
 
             if (coordinate != null)
@@ -298,6 +305,10 @@ namespace GetIntoTeachingApi.Services
             if (coordinate != null)
             {
                 await CacheLocation(postcode, coordinate);
+            }
+            else
+            {
+                FailedPostcodeLookupCache.Add(postcode);
             }
 
             return coordinate;

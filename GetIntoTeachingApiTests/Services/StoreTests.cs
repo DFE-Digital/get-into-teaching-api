@@ -30,6 +30,8 @@ namespace GetIntoTeachingApiTests.Services
             _mockGeocodeClient = new Mock<IGeocodeClientAdapter>();
             _mockCrm = new Mock<ICrmService>();
             _store = new Store(DbContext, _mockGeocodeClient.Object, _mockCrm.Object, new DateTimeProvider());
+
+            Store.FailedPostcodeLookupCache.Clear();
         }
 
         [Fact]
@@ -158,6 +160,9 @@ namespace GetIntoTeachingApiTests.Services
         {
             await SeedMockTeachingEventBuildingsAsync();
             SeedMockLocations();
+
+            Store.FailedPostcodeLookupCache.Clear();
+
             _mockCrm.Setup(m => m.GetTeachingEvents(It.Is<DateTime>(d => CheckGetTeachingEventsAfterDate(d)))).Returns(MockTeachingEvents);
 
             await _store.SyncAsync();
@@ -171,6 +176,9 @@ namespace GetIntoTeachingApiTests.Services
         {
             await SeedMockTeachingEventBuildingsAsync();
             SeedMockLocations();
+
+            Store.FailedPostcodeLookupCache.Clear();
+
             _mockCrm.Setup(m => m.GetTeachingEvents(It.Is<DateTime>(d => CheckGetTeachingEventsAfterDate(d)))).Returns(MockTeachingEvents);
             var postcode = "TE7 9IN";
             var coordinate = new Point(1, 2);
@@ -366,6 +374,20 @@ namespace GetIntoTeachingApiTests.Services
             result.Select(e => e.Name).Should().BeEquivalentTo(
                 new string[] { "Event 7", "Event 2", "Event 4", "Event 1", "Event 3", "Event 5", "Event 6" },
                 options => options.WithStrictOrdering());
+        }
+
+        [Fact]
+        public async void SearchTeachingEventsAsync_WithInvalidPostcode_IsCached()
+        {
+            var request = new TeachingEventSearchRequest() { Postcode = "TE7 1NG", Radius = 100 };
+            var sanitizedPostcode = Location.SanitizePostcode(request.Postcode);
+
+            _mockGeocodeClient.Setup(m => m.GeocodePostcodeAsync(sanitizedPostcode)).ReturnsAsync(null as Point);
+
+            await _store.SearchTeachingEventsAsync(request);
+            await _store.SearchTeachingEventsAsync(request);
+
+            _mockGeocodeClient.Verify(m => m.GeocodePostcodeAsync(sanitizedPostcode), Times.Once);
         }
 
         [Fact]
