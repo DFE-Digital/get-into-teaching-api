@@ -10,6 +10,7 @@ using GetIntoTeachingApi.Auth;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.JsonConverters;
+using GetIntoTeachingApi.Middleware;
 using GetIntoTeachingApi.ModelBinders;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.OperationFilters;
@@ -79,6 +80,7 @@ namespace GetIntoTeachingApi
             services.AddSingleton<ICallbackBookingService, CallbackBookingService>();
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             services.AddSingleton<IEnv>(env);
+            services.AddSingleton<IRequestResponseLoggingConfiguration, RequestResponseLoggingConfiguration>();
 
             var connectionString = DbConfiguration.DatabaseConnectionString(env);
             services.AddDbContext<GetIntoTeachingDbContext>(b => DbConfiguration.ConfigPostgres(connectionString, b));

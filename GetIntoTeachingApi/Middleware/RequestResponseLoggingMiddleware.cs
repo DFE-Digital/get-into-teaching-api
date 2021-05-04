@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Utils;
 using Microsoft.AspNetCore.Http;
@@ -12,13 +13,17 @@ namespace GetIntoTeachingApi.Middleware
         private readonly RequestDelegate _next;
         private readonly ILogger<RequestResponseLoggingMiddleware> _logger;
         private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
+        private readonly IRequestResponseLoggingConfiguration _config;
 
         public RequestResponseLoggingMiddleware(
-            RequestDelegate next, ILogger<RequestResponseLoggingMiddleware> logger)
+            RequestDelegate next,
+            ILogger<RequestResponseLoggingMiddleware> logger,
+            IRequestResponseLoggingConfiguration config)
         {
             _next = next;
             _logger = logger;
             _recyclableMemoryStreamManager = new RecyclableMemoryStreamManager();
+            _config = config;
         }
 
         public async Task Invoke(HttpContext context)
@@ -48,18 +53,34 @@ namespace GetIntoTeachingApi.Middleware
             return writer.ToString();
         }
 
-        private void LogInformation(string identifier, string payload, HttpContext context)
+        private void LogInformation(string identifier, string payload, HttpRequest request)
         {
             var info = new
             {
-                context.Request.Scheme,
-                context.Request.Host,
-                context.Request.Path,
-                context.Request.QueryString,
-                Payload = Redactor.RedactJson(payload),
+                request.Scheme,
+                request.Host,
+                request.Path,
+                request.QueryString,
+                Payload = ConstructPayload(request, payload),
             };
 
             _logger.LogInformation($"{identifier}: {info}");
+        }
+
+        private string ConstructPayload(HttpRequest request, string payload)
+        {
+            if (!ShouldLogPayload(request.Method, request.Path))
+            {
+                return string.Empty;
+            }
+
+            return Redactor.RedactJson(payload);
+        }
+
+        private bool ShouldLogPayload(string method, string path)
+        {
+            var input = $"{method} {path}";
+            return _config.CompactLoggingPatterns.All(regex => !regex.IsMatch(input));
         }
 
         private async Task LogRequest(HttpContext context)
@@ -71,7 +92,7 @@ namespace GetIntoTeachingApi.Middleware
             await context.Request.Body.CopyToAsync(stream);
             context.Request.Body.Position = 0;
 
-            LogInformation("HTTP Request", ReadStream(stream), context);
+            LogInformation("HTTP Request", ReadStream(stream), context.Request);
         }
 
         private async Task LogResponse(HttpContext context)
@@ -91,7 +112,7 @@ namespace GetIntoTeachingApi.Middleware
             var text = await new StreamReader(stream).ReadToEndAsync();
             stream.Seek(0, SeekOrigin.Begin);
 
-            LogInformation("HTTP Response", text, context);
+            LogInformation("HTTP Response", text, context.Request);
 
             // Copy back into the original response body stream.
             await stream.CopyToAsync(bodyStream);
