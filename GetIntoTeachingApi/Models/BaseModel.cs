@@ -268,21 +268,13 @@ namespace GetIntoTeachingApi.Models
 
                 try
                 {
-                    if (value == null)
+                    if (value == null && source.RelatedEntities.Values.Count > 0)
                     {
-
                         var relationship = new Relationship(attribute.Name);
-                        context.LoadProperty(source, relationship);
 
+                        Entity relatedEntity = source.RelatedEntities.Values.First().Entities.First();
 
-                        var target = (BaseModel)Activator.CreateInstance(property.PropertyType);
-
-                        var relatedEntity = source.RelatedEntities;
-
-                        Entity entity = relatedEntity.Values.First().Entities.First();
-
-                        // crm.DeleteLink(source, relationship, target.ToEntity(crm, context), context);
-                        crm.DeleteLink(source, relationship, entity, context);
+                        crm.DeleteLink(source, relationship, target: relatedEntity, context);
                         continue;
                     }
                 }
