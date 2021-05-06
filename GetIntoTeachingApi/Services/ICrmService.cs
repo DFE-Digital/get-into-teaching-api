@@ -25,6 +25,7 @@ namespace GetIntoTeachingApi.Services
         bool CandidateYetToRegisterForTeachingEvent(Guid candidateId, Guid teachingEventId);
         void Save(BaseModel model);
         void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);
+        void DeleteLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);
         IEnumerable<Entity> RelatedEntities(Entity entity, string relationshipName, string logicalName);
         Entity MappableEntity(string entityName, Guid? id, OrganizationServiceContext context);
         IEnumerable<TeachingEventBuilding> GetTeachingEventBuildings();
