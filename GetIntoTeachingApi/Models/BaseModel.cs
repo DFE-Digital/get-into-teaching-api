@@ -42,9 +42,9 @@ namespace GetIntoTeachingApi.Models
             NullifyInvalidFieldAttributes(vaidatorFactory);
         }
 
-        #pragma warning disable 67
+#pragma warning disable 67
         public event PropertyChangedEventHandler PropertyChanged;
-        #pragma warning restore 67
+#pragma warning restore 67
 
         public static string[] EntityFieldAttributeNames(Type type)
         {
@@ -260,10 +260,38 @@ namespace GetIntoTeachingApi.Models
                 var attribute = EntityRelationshipAttribute(property);
                 var value = property.GetValue(this);
 
-                if (attribute == null || value == null)
+                if (attribute == null)
                 {
+
                     continue;
                 }
+
+                try
+                {
+                    if (value == null)
+                    {
+
+                        var relationship = new Relationship(attribute.Name);
+                        context.LoadProperty(source, relationship);
+
+
+                        var target = (BaseModel)Activator.CreateInstance(property.PropertyType);
+
+                        var relatedEntity = source.RelatedEntities;
+
+                        Entity entity = relatedEntity.Values.First().Entities.First();
+
+                        // crm.DeleteLink(source, relationship, target.ToEntity(crm, context), context);
+                        crm.DeleteLink(source, relationship, entity, context);
+                        continue;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+
 
                 foreach (var relatedModel in EnumerableRelationshipModels(value))
                 {

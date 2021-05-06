@@ -102,5 +102,10 @@ namespace GetIntoTeachingApi.Adapters
         {
             context.AddLink(source, relationship, target);
         }
+
+        public void DeleteLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context)
+        {
+            context.DeleteLink(source, relationship, target);
+        }
     }
 }
