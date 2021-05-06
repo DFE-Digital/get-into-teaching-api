@@ -273,7 +273,7 @@ namespace GetIntoTeachingApi.Models
 
                     if (source.RelatedEntities.ContainsKey(relationship))
                     {
-                        Entity relatedEntity = source.RelatedEntities.Values.First().Entities.First();
+                        Entity relatedEntity = source.RelatedEntities.First(entity => entity.Key == relationship).Value.Entities.First();
                         crm.DeleteLink(source, relationship, target: relatedEntity, context);
                     }
 
