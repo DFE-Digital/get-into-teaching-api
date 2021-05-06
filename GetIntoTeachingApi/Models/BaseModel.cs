@@ -262,28 +262,23 @@ namespace GetIntoTeachingApi.Models
 
                 if (attribute == null)
                 {
-
                     continue;
                 }
 
-                try
+                var relationship = new Relationship(attribute.Name);
+
+                if (value == null)
                 {
-                    if (value == null && source.RelatedEntities.Values.Count > 0)
+                    context.LoadProperty(source, relationship);
+
+                    if (source.RelatedEntities.ContainsKey(relationship))
                     {
-                        var relationship = new Relationship(attribute.Name);
-
                         Entity relatedEntity = source.RelatedEntities.Values.First().Entities.First();
-
                         crm.DeleteLink(source, relationship, target: relatedEntity, context);
-                        continue;
                     }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    throw;
-                }
 
+                    continue;
+                }
 
                 foreach (var relatedModel in EnumerableRelationshipModels(value))
                 {
@@ -294,7 +289,7 @@ namespace GetIntoTeachingApi.Models
                     }
 
                     var target = relatedModel.ToEntity(crm, context);
-                    crm.AddLink(source, new Relationship(attribute.Name), target, context);
+                    crm.AddLink(source, relationship, target, context);
                 }
             }
         }
