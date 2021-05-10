@@ -1,0 +1,58 @@
+# This is the main input for unit testing.
+# Only this file is passed as command line argument.
+
+rule_files:
+    - alert.rules
+
+evaluation_interval: 1m
+
+tests:
+    # Test 1.
+    - interval: 1m
+      # Series data.
+      input_series:
+          - series: 'disk_utilization{app="get-into-teaching-app-prod",instance="0",organisation="dfe",space="get-into-teaching"}'
+            values: '10 10 81'
+          - series: 'disk_utilization{app="get-into-teaching-app-dev"}'
+            values: '10 10 81'
+          - series: 'disk_utilization{app="get-teacher-training-adviser-service-prod"}'
+            values: '10 10 81'
+          - series: 'disk_utilization{app="get-into-teaching-api-prod"}'
+            values: '10 10 81'
+          - series: 'memory_utilization{app="get-into-teaching-app-prod"}'
+            values: '10 10 81'
+          - series: 'memory_utilization{app="get-teacher-training-adviser-service-prod"}'
+            values: '10 10 81'
+          - series: 'memory_utilization{app="get-into-teaching-api-prod"}'
+            values: '10 10 81'
+
+
+      # Unit test for alerting rules.
+      alert_rule_test:
+          - alertname: DiskUsage
+            eval_time: 1m
+          - alertname: DiskUsage
+            eval_time: 3m
+            exp_alerts:
+              - exp_labels:
+                    alertname:    DiskUsage
+                    severity:     high
+                exp_annotations:
+                    dashboard:   https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/eF19g4RZx/cf-apps?orgId=1
+                    description: One of the applications has exceeded 80% of its disk allocation.
+                    runbook:     https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2727739405/Infrastructure+Alerts#Disk-Usage 
+                    summary:     Disk usage exceeds 80% on one of the applications
+
+          - alertname: MemoryUsage
+            eval_time: 1m
+          - alertname: MemoryUsage
+            eval_time: 3m
+            exp_alerts:
+              - exp_labels:
+                    alertname:    MemoryUsage
+                    severity:     high
+                exp_annotations:
+                    dashboard:   https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/eF19g4RZx/cf-apps?orgId=1
+                    description: One of the applications has exceeded 80% of its Memory allocation.
+                    runbook:     https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2727739405/Infrastructure+Alerts#Memory-Usage 
+                    summary:     Memory usage exceeds 80% on one of the applications
