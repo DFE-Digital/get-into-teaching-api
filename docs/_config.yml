@@ -1,1 +1,2 @@
-theme: jekyll-theme-tactile
+remote_theme: frankieroberto/govuk-jekyll-theme
+markdown: kramdown
