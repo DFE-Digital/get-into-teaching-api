@@ -1,5 +1,5 @@
 ﻿# Get into Teaching API 
-![Build](https://github.com/DFE-Digital/get-into-teaching-api/workflows/Build/badge.svg)
+[![Build and Deploy](https://github.com/DFE-Digital/get-into-teaching-api/actions/workflows/devops.yml/badge.svg)](https://github.com/DFE-Digital/get-into-teaching-api/actions/workflows/devops.yml)
 
 > Provides a RESTful API for integrating with the Get into Teaching CRM.
 
