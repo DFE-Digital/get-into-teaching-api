@@ -26,10 +26,6 @@ jobs:
            keyvault: ${{ secrets.KEY_VAULT}}
            secrets: 'SLACK-WEBHOOK, SONAR-TOKEN'
 
-      - uses: actions/setup-java@v2
-        with:
-          java-version: '11'
-
       - name: Install dotnet-sonarscanner
         run:  dotnet tool install --global dotnet-sonarscanner --version 4.8.0
 
