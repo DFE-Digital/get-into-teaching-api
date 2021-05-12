@@ -36,6 +36,7 @@ namespace GetIntoTeachingApi.Models
         public string TeacherId { get; set; }
         public string DegreeSubject { get; set; }
         public string Telephone { get; set; }
+        public string AddressTelephone { get; set; }
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
         public string AddressCity { get; set; }
@@ -85,7 +86,8 @@ namespace GetIntoTeachingApi.Models
             LastName = candidate.LastName;
             DateOfBirth = candidate.DateOfBirth;
             TeacherId = candidate.TeacherId;
-            Telephone = candidate.Telephone;
+            Telephone = candidate.AddressTelephone;
+            AddressTelephone = candidate.AddressTelephone;
             AddressLine1 = candidate.AddressLine1;
             AddressLine2 = candidate.AddressLine2;
             AddressCity = candidate.AddressCity;
@@ -129,7 +131,7 @@ namespace GetIntoTeachingApi.Models
                 AddressLine2 = AddressLine2,
                 AddressCity = AddressCity,
                 AddressPostcode = AddressPostcode.AsFormattedPostcode(),
-                Telephone = Telephone,
+                AddressTelephone = Telephone ?? AddressTelephone,
                 TeacherId = TeacherId,
                 TypeId = TypeId,
                 InitialTeacherTrainingYearId = InitialTeacherTrainingYearId,
@@ -228,8 +230,8 @@ namespace GetIntoTeachingApi.Models
                 candidate.EligibilityRulesPassed = "true";
                 candidate.PhoneCall = new PhoneCall()
                 {
-                    Telephone = Telephone,
-                    DestinationId = DestinationForTelephone(Telephone),
+                    Telephone = Telephone ?? AddressTelephone,
+                    DestinationId = DestinationForTelephone(Telephone ?? AddressTelephone),
                     ScheduledAt = (DateTime)PhoneCallScheduledAt,
                     ChannelId = (int)PhoneCall.Channel.CallbackRequest,
                     Subject = $"Scheduled phone call requested by {candidate.FullName}",
