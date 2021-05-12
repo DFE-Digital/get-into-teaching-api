@@ -81,7 +81,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 LastName = "last",
                 Email = "email@candidate.com",
                 DateOfBirth = DateTime.UtcNow.AddYears(-18),
-                Telephone = "07584 734 576",
+                AddressTelephone = "07584 734 576",
                 AddressLine1 = "line1",
                 AddressLine2 = "line2",
                 AddressCity = "city",
@@ -242,21 +242,21 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_TelephoneIsNull_HasNoError()
+        public void Validate_AddressTelephoneIsNull_HasNoError()
         {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.Telephone, null as string);
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressTelephone, null as string);
         }
 
         [Fact]
-        public void Validate_TelephoneTooLong_HasError()
+        public void Validate_AddressTelephoneTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.Telephone, new string('1', 21));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressTelephone, new string('1', 21));
         }
 
         [Fact]
-        public void Validate_TelephoneTooShort_HasError()
+        public void Validate_AddressTelephoneTooShort_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.Telephone, new string('1', 4));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressTelephone, new string('1', 4));
         }
 
         [Theory]
@@ -270,15 +270,15 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [InlineData("abc2451215", true)]
         [InlineData("42154h53151", true)]
         [InlineData("5325.56fs326.32", true)]
-        public void Validate_TelephoneFormat_ValidatesCorrectly(string telephone, bool hasError)
+        public void Validate_AddressTelephoneFormat_ValidatesCorrectly(string telephone, bool hasError)
         {
             if (hasError)
             {
-                _validator.ShouldHaveValidationErrorFor(candidate => candidate.Telephone, telephone);
+                _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressTelephone, telephone);
             }
             else
             {
-                _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.Telephone, telephone);
+                _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressTelephone, telephone);
             }
         }
 

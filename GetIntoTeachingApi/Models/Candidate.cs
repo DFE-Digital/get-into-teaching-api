@@ -149,7 +149,7 @@ namespace GetIntoTeachingApi.Models
         [EntityField("birthdate")]
         public DateTime? DateOfBirth { get; set; }
         [EntityField("address1_telephone1")]
-        public string Telephone { get; set; }
+        public string AddressTelephone { get; set; }
         [EntityField("address1_line1")]
         public string AddressLine1 { get; set; }
         [EntityField("address1_line2")]

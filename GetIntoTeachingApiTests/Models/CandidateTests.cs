@@ -68,7 +68,7 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("FirstName").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "firstname");
             type.GetProperty("LastName").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "lastname");
             type.GetProperty("DateOfBirth").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "birthdate");
-            type.GetProperty("Telephone").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_telephone1");
+            type.GetProperty("AddressTelephone").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_telephone1");
             type.GetProperty("AddressLine1").Should()
                 .BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_line1");
             type.GetProperty("AddressLine2").Should()
