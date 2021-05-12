@@ -17,7 +17,7 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.LastName).NotEmpty().MaximumLength(256);
             RuleFor(candidate => candidate.Email).NotEmpty().EmailAddress(EmailValidationMode.AspNetCoreCompatible).MaximumLength(100);
             RuleFor(candidate => candidate.DateOfBirth).LessThan(candidate => dateTime.UtcNow);
-            RuleFor(candidate => candidate.Telephone).MinimumLength(5).MaximumLength(20).Matches(@"^[^a-zA-Z]+$");
+            RuleFor(candidate => candidate.AddressTelephone).MinimumLength(5).MaximumLength(20).Matches(@"^[^a-zA-Z]+$");
             RuleFor(candidate => candidate.AddressLine1).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressLine2).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressCity).MaximumLength(128);

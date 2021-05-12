@@ -61,7 +61,7 @@ namespace GetIntoTeachingApiTests.Models
                 FirstName = "John",
                 LastName = "Doe",
                 DateOfBirth = DateTime.UtcNow,
-                Telephone = "1234567",
+                AddressTelephone = "1234567",
                 TeacherId = "abc123",
                 AddressLine1 = "Address 1",
                 AddressLine2 = "Address 2",
@@ -88,7 +88,8 @@ namespace GetIntoTeachingApiTests.Models
             response.FirstName.Should().Be(candidate.FirstName);
             response.LastName.Should().Be(candidate.LastName);
             response.TeacherId.Should().Be(candidate.TeacherId);
-            response.Telephone.Should().Be(candidate.Telephone);
+            response.Telephone.Should().Be(candidate.AddressTelephone);
+            response.AddressTelephone.Should().Be(candidate.AddressTelephone);
             response.AddressLine1.Should().Be(candidate.AddressLine1);
             response.AddressLine2.Should().Be(candidate.AddressLine2);
             response.AddressCity.Should().Be(candidate.AddressCity);
@@ -164,7 +165,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.LastName.Should().Be(request.LastName);
             candidate.DateOfBirth.Should().Be(request.DateOfBirth);
             candidate.AddressPostcode.Should().Be(request.AddressPostcode);
-            candidate.Telephone.Should().Be(request.Telephone);
+            candidate.AddressTelephone.Should().Be(request.Telephone);
             candidate.TeacherId.Should().Be(request.TeacherId);
             candidate.AddressLine1.Should().Be(request.AddressLine1);
             candidate.AddressLine2.Should().Be(request.AddressLine2);
