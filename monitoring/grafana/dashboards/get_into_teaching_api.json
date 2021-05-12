@@ -27,8 +27,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 1,
-  "iteration": 1614952059614,
+  "id": 2,
+  "iteration": 1620634650491,
   "links": [],
   "panels": [
     {
@@ -128,7 +128,7 @@
               "type": "count"
             }
           ],
-          "query": "\"api/teacher_training_adviser/candidates\" AND access.method: POST AND access.response_code: 200 AND cf.app:\"$App\"",
+          "query": "access.url:\"api/teacher_training_adviser/candidates\" AND access.method: POST AND access.response_code: 204 AND cf.app:\"$App\"",
           "refId": "A",
           "timeField": "@timestamp"
         }
@@ -221,7 +221,7 @@
               "type": "count"
             }
           ],
-          "query": "\"api/teaching_events/attendees\" AND access.method: POST AND access.response_code: 200 AND cf.app:\"$App\"",
+          "query": "access.url:\"api/teaching_events/attendees\" AND access.method: POST AND access.response_code: 204 AND cf.app:\"$App\"",
           "refId": "A",
           "timeField": "@timestamp"
         }
@@ -314,7 +314,7 @@
               "type": "count"
             }
           ],
-          "query": "\"api/mailing_list/members\" AND access.method: POST AND access.response_code: 200 AND cf.app:\"$App\"",
+          "query": "access.url:\"api/mailing_list/members\" AND access.method: POST AND access.response_code: 204 AND cf.app:\"$App\"",
           "refId": "A",
           "timeField": "@timestamp"
         }
@@ -382,7 +382,7 @@
               "type": "count"
             }
           ],
-          "query": "\"api/candidates/access_tokens\" AND access.method: POST AND access.response_code: 404 AND cf.app:\"$App\"",
+          "query": "access.url:\"api/candidates/access_tokens\" AND access.method: POST AND access.response_code: 404 AND cf.app:\"$App\"",
           "refId": "A",
           "timeField": "@timestamp"
         },
@@ -407,7 +407,7 @@
               "type": "count"
             }
           ],
-          "query": "\"api/teacher_training_adviser/candidates/\" AND access.method: POST AND access.response_code: 200 AND cf.app:\"$App\"",
+          "query": "access.url:\"api/teacher_training_adviser/candidates/exchange_access_token\" AND access.method: POST AND access.response_code: 200 AND cf.app:\"$App\"",
           "refId": "B",
           "timeField": "@timestamp"
         },
@@ -432,7 +432,7 @@
               "type": "count"
             }
           ],
-          "query": "\"api/mailing_list/members/\" AND access.method: POST AND access.response_code: 200 AND cf.app:\"$App\"",
+          "query": "access.url:\"api/mailing_list/members/exchange_access_token\" AND access.method: POST AND access.response_code: 200 AND cf.app:\"$App\"",
           "refId": "C",
           "timeField": "@timestamp"
         },
@@ -457,7 +457,7 @@
               "type": "count"
             }
           ],
-          "query": "\"api/teaching_events/attendees/\" AND access.method: POST AND access.response_code: 200 AND cf.app:\"$App\"",
+          "query": "access.url:\"api/teaching_events/attendees/exchange_access_token\" AND access.method: POST AND access.response_code: 200 AND cf.app:\"$App\"",
           "refId": "D",
           "timeField": "@timestamp"
         }
