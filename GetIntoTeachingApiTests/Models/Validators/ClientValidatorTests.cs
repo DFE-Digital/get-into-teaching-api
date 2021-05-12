@@ -45,6 +45,8 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Theory]
+        [InlineData("K")]
+        [InlineData("KE")]
         [InlineData("KEY")]
         [InlineData("KE_Y")]
         [InlineData("KEY_KEY_KEY")]
