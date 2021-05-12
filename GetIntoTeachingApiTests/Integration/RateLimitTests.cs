@@ -22,6 +22,7 @@ namespace GetIntoTeachingApiTests.Integration
             Environment.SetEnvironmentVariable($"GIT_API_KEY", "git-secret");
             Environment.SetEnvironmentVariable($"ADMIN_API_KEY", "admin-secret");
             Environment.SetEnvironmentVariable($"TTA_API_KEY", "tta-secret");
+            Environment.SetEnvironmentVariable($"SE_API_KEY", "se-secret");
 
             var factory = new GitWebApplicationFactory<Startup>();
             _httpClient = factory.CreateClient();
@@ -34,6 +35,7 @@ namespace GetIntoTeachingApiTests.Integration
         [InlineData("/api/teaching_events/attendees", "GIT", 250)]
         [InlineData("/api/candidates/access_tokens", "TTA", 500)]
         [InlineData("/api/teacher_training_adviser/candidates", "TTA", 250)]
+        [InlineData("/api/candidates/access_tokens", "SE", 500)]
         public async Task Post_Endpoint_AppliesRateLimit(string path, string client, int limit)
         {
             var apiKey = $"{client.ToLower()}-secret";
