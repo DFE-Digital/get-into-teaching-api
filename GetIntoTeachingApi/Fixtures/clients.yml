@@ -25,3 +25,8 @@
   description: "The Microsoft Dynamics CRM (GiTiS)"
   api_key_prefix: CRM
   role: Crm
+-
+  name: Schools Experience
+  description: "A service that allows candidates to book school experience"
+  api_key_prefix: SE
+  role: SchoolsExperience
