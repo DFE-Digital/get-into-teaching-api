@@ -16,6 +16,7 @@ namespace GetIntoTeachingApi.Utils
             "firstName",
             "lastName",
             "telephone",
+            "addressTelephone",
             "dateOfBirth",
             "teacherId",
             "addressLine1",

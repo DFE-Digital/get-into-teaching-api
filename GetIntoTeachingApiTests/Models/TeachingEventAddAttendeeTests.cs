@@ -34,7 +34,7 @@ namespace GetIntoTeachingApiTests.Models
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
-                Telephone = "1234567",
+                AddressTelephone = "1234567",
                 AddressPostcode = "KY11 9YU",
                 Qualifications = qualifications,
                 HasEventsSubscription = true,
@@ -49,7 +49,8 @@ namespace GetIntoTeachingApiTests.Models
             response.Email.Should().Be(candidate.Email);
             response.FirstName.Should().Be(candidate.FirstName);
             response.LastName.Should().Be(candidate.LastName);
-            response.Telephone.Should().Be(candidate.Telephone);
+            response.Telephone.Should().Be(candidate.AddressTelephone);
+            response.AddressTelephone.Should().Be(candidate.AddressTelephone);
             response.AddressPostcode.Should().Be(candidate.AddressPostcode);
 
             response.QualificationId.Should().Be(latestQualification.Id);
@@ -90,7 +91,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.FirstName.Should().Be(request.FirstName);
             candidate.LastName.Should().Be(request.LastName);
             candidate.AddressPostcode.Should().Be(request.AddressPostcode);
-            candidate.Telephone.Should().Be(request.Telephone);
+            candidate.AddressTelephone.Should().Be(request.Telephone);
             candidate.ChannelId.Should().BeNull();
             candidate.OptOutOfSms.Should().BeFalse();
             candidate.DoNotBulkEmail.Should().BeFalse();
