@@ -13,7 +13,7 @@ jobs:
     timeout-minutes: 60
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
 
       - name: set-up-environment
         uses: DFE-Digital/github-actions/set-up-environment@master
@@ -53,7 +53,7 @@ jobs:
        image: ${{steps.docker_image.outputs.IMAGE}}
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
 
       - name: set-up-environment
         uses: DFE-Digital/github-actions/set-up-environment@master
@@ -122,7 +122,7 @@ jobs:
       release_sha: ${{github.sha}}
     steps:
        - name: Check out the repo
-         uses: actions/checkout@v2
+         uses: actions/checkout@v2.3.4
 
        - name: set-up-environment
          uses: DFE-Digital/github-actions/set-up-environment@master
@@ -199,7 +199,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
        - name: Check out the repo
-         uses: actions/checkout@v2
+         uses: actions/checkout@v2.3.4
 
        - name: set-up-environment
          uses: DFE-Digital/github-actions/set-up-environment@master
@@ -249,7 +249,7 @@ jobs:
     needs: qa
     steps:
        - name: Check out the repo
-         uses: actions/checkout@v2
+         uses: actions/checkout@v2.3.4
 
        - name: set-up-environment
          uses: DFE-Digital/github-actions/set-up-environment@master
