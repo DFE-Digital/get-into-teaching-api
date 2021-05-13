@@ -39,7 +39,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
-                Telephone = "1234567",
+                AddressTelephone = "1234567",
                 AddressPostcode = "KY11 9YU",
             };
 

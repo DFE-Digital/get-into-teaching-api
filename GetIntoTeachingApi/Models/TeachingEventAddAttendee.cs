@@ -25,7 +25,6 @@ namespace GetIntoTeachingApi.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string AddressPostcode { get; set; }
-        public string Telephone { get; set; }
         public string AddressTelephone { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public bool SubscribeToMailingList { get; set; }
@@ -69,7 +68,6 @@ namespace GetIntoTeachingApi.Models
             FirstName = candidate.FirstName;
             LastName = candidate.LastName;
             AddressPostcode = candidate.AddressPostcode;
-            Telephone = candidate.AddressTelephone;
             AddressTelephone = candidate.AddressTelephone;
 
             AlreadySubscribedToMailingList = candidate.HasMailingListSubscription == true;
@@ -88,7 +86,7 @@ namespace GetIntoTeachingApi.Models
                 FirstName = FirstName,
                 LastName = LastName,
                 AddressPostcode = AddressPostcode.AsFormattedPostcode(),
-                AddressTelephone = Telephone ?? AddressTelephone,
+                AddressTelephone = AddressTelephone,
             };
 
             ConfigureChannel(candidate);

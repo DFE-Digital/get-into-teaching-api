@@ -35,7 +35,6 @@ namespace GetIntoTeachingApi.Models
         public DateTime? DateOfBirth { get; set; }
         public string TeacherId { get; set; }
         public string DegreeSubject { get; set; }
-        public string Telephone { get; set; }
         public string AddressTelephone { get; set; }
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
@@ -86,7 +85,6 @@ namespace GetIntoTeachingApi.Models
             LastName = candidate.LastName;
             DateOfBirth = candidate.DateOfBirth;
             TeacherId = candidate.TeacherId;
-            Telephone = candidate.AddressTelephone;
             AddressTelephone = candidate.AddressTelephone;
             AddressLine1 = candidate.AddressLine1;
             AddressLine2 = candidate.AddressLine2;
@@ -131,7 +129,7 @@ namespace GetIntoTeachingApi.Models
                 AddressLine2 = AddressLine2,
                 AddressCity = AddressCity,
                 AddressPostcode = AddressPostcode.AsFormattedPostcode(),
-                AddressTelephone = Telephone ?? AddressTelephone,
+                AddressTelephone = AddressTelephone,
                 TeacherId = TeacherId,
                 TypeId = TypeId,
                 InitialTeacherTrainingYearId = InitialTeacherTrainingYearId,
@@ -230,8 +228,8 @@ namespace GetIntoTeachingApi.Models
                 candidate.EligibilityRulesPassed = "true";
                 candidate.PhoneCall = new PhoneCall()
                 {
-                    Telephone = Telephone ?? AddressTelephone,
-                    DestinationId = DestinationForTelephone(Telephone ?? AddressTelephone),
+                    Telephone = AddressTelephone,
+                    DestinationId = DestinationForTelephone(AddressTelephone),
                     ScheduledAt = (DateTime)PhoneCallScheduledAt,
                     ChannelId = (int)PhoneCall.Channel.CallbackRequest,
                     Subject = $"Scheduled phone call requested by {candidate.FullName}",
