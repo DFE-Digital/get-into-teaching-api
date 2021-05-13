@@ -47,6 +47,7 @@
     <Folder Include="Validators\" />
     <Folder Include="JsonConverters\" />
     <Folder Include="Middleware\" />
+    <Folder Include="Controllers\SchoolsExperience\" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
