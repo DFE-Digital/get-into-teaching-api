@@ -36,26 +36,26 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_WhenTelephoneIsNull_AndPhoneCallScheduledAtIsNotNull_HasError()
         {
-            _request.Telephone = null;
+            _request.AddressTelephone = null;
             _request.PhoneCallScheduledAt = DateTime.UtcNow.AddDays(1);
 
             var result = _validator.TestValidate(_request);
 
-            result.ShouldHaveValidationErrorFor(request => request.Telephone)
+            result.ShouldHaveValidationErrorFor(request => request.AddressTelephone)
                 .WithErrorMessage("Must be set to schedule a callback.");
 
-            _request.Telephone = "123456789";
+            _request.AddressTelephone = "123456789";
 
             result = _validator.TestValidate(_request);
 
-            result.ShouldNotHaveValidationErrorFor(request => request.Telephone);
+            result.ShouldNotHaveValidationErrorFor(request => request.AddressTelephone);
 
-            _request.Telephone = null;
+            _request.AddressTelephone = null;
             _request.PhoneCallScheduledAt = null;
 
             result = _validator.TestValidate(_request);
 
-            result.ShouldNotHaveValidationErrorFor(request => request.Telephone);
+            result.ShouldNotHaveValidationErrorFor(request => request.AddressTelephone);
         }
 
         [Fact]
@@ -73,7 +73,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
 
             result = _validator.TestValidate(_request);
 
-            result.ShouldNotHaveValidationErrorFor(request => request.Telephone);
+            result.ShouldNotHaveValidationErrorFor(request => request.AddressTelephone);
         }
 
         [Fact]
@@ -135,7 +135,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 _request.Email = "email@address.com";
                 _request.DateOfBirth = DateTime.UtcNow;
                 _request.TeacherId = "abc123";
-                _request.Telephone = "1234567";
+                _request.AddressTelephone = "1234567";
                 _request.AddressLine1 = "Line 1";
                 _request.AddressLine2 = "Line 2";
                 _request.AddressCity = "City";
@@ -191,7 +191,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 _request.LastName = "Doe";
                 _request.Email = "email@address.com";
                 _request.DateOfBirth = DateTime.UtcNow;
-                _request.Telephone = "1234567";
+                _request.AddressTelephone = "1234567";
 
                 var result = _validator.TestValidate(_request);
 
@@ -414,26 +414,26 @@ namespace GetIntoTeachingApiTests.Models.Validators
             [Fact]
             public void Validate_WhenTelephoneIsNull_AndDegreeTypeIsDegreeEquivalent_HasError()
             {
-                _request.Telephone = null;
+                _request.AddressTelephone = null;
                 _request.DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent;
 
                 var result = _validator.TestValidate(_request);
 
-                result.ShouldHaveValidationErrorFor(request => request.Telephone)
+                result.ShouldHaveValidationErrorFor(request => request.AddressTelephone)
                     .WithErrorMessage("Must be set for candidates with an equivalent degree.");
 
-                _request.Telephone = "123456789";
+                _request.AddressTelephone = "123456789";
 
                 result = _validator.TestValidate(_request);
 
-                result.ShouldNotHaveValidationErrorFor(request => request.Telephone);
+                result.ShouldNotHaveValidationErrorFor(request => request.AddressTelephone);
 
-                _request.Telephone = null;
+                _request.AddressTelephone = null;
                 _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
 
                 result = _validator.TestValidate(_request);
 
-                result.ShouldNotHaveValidationErrorFor(request => request.Telephone);
+                result.ShouldNotHaveValidationErrorFor(request => request.AddressTelephone);
             }
 
             [Fact]
