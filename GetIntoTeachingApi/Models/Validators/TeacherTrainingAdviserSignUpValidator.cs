@@ -20,6 +20,11 @@ namespace GetIntoTeachingApi.Models.Validators
 
             RuleFor(request => request.Telephone).NotNull()
                 .When(request => request.PhoneCallScheduledAt != null)
+                .Unless(request => request.AddressTelephone != null)
+                .WithMessage("Must be set to schedule a callback.");
+            RuleFor(request => request.AddressTelephone).NotNull()
+                .When(request => request.PhoneCallScheduledAt != null)
+                .Unless(request => request.Telephone != null)
                 .WithMessage("Must be set to schedule a callback.");
             RuleFor(request => request.PhoneCallScheduledAt).GreaterThan(candidate => dateTime.UtcNow)
                 .When(request => request.PhoneCallScheduledAt != null)
@@ -100,6 +105,10 @@ namespace GetIntoTeachingApi.Models.Validators
                 When(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent, () =>
                 {
                     RuleFor(request => request.Telephone).NotNull()
+                        .Unless(request => request.AddressTelephone != null)
+                        .WithMessage("Must be set for candidates with an equivalent degree.");
+                    RuleFor(request => request.AddressTelephone).NotNull()
+                        .Unless(request => request.Telephone != null)
                         .WithMessage("Must be set for candidates with an equivalent degree.");
                     RuleFor(request => request.PhoneCallScheduledAt).NotNull()
                         .When(request => request.CountryId == LookupItem.UnitedKingdomCountryId)
