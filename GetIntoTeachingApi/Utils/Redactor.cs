@@ -12,15 +12,20 @@ namespace GetIntoTeachingApi.Utils
         {
             "password",
             "email",
+            "secondaryEmail",
             "fullName",
             "firstName",
             "lastName",
             "telephone",
+            "secondaryTelephone",
             "addressTelephone",
+            "mobileTelephone",
             "dateOfBirth",
             "teacherId",
             "addressLine1",
             "addressLine2",
+            "addressLine3",
+            "classroomExperienceNotes",
         };
 
         public static string RedactJson(string json)

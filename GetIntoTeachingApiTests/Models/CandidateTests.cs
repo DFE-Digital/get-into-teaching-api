@@ -23,6 +23,9 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("PreferredTeachingSubjectId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_preferredteachingsubject01" && a.Type == typeof(EntityReference) &&
                      a.Reference == "dfe_teachingsubjectlist");
+            type.GetProperty("SecondaryPreferredTeachingSubjectId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "dfe_preferredteachingsubject02" && a.Type == typeof(EntityReference) &&
+                     a.Reference == "dfe_teachingsubjectlist");
             type.GetProperty("CountryId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_country" && a.Type == typeof(EntityReference) &&
                      a.Reference == "dfe_country");
@@ -65,6 +68,7 @@ namespace GetIntoTeachingApiTests.Models
 
 
             type.GetProperty("Email").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "emailaddress1");
+            type.GetProperty("SecondaryEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "emailaddress2");
             type.GetProperty("FirstName").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "firstname");
             type.GetProperty("LastName").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "lastname");
             type.GetProperty("DateOfBirth").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "birthdate");
@@ -73,10 +77,20 @@ namespace GetIntoTeachingApiTests.Models
                 .BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_line1");
             type.GetProperty("AddressLine2").Should()
                 .BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_line2");
+            type.GetProperty("AddressLine3").Should()
+                .BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_line3");
             type.GetProperty("AddressCity").Should()
                 .BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_city");
+            type.GetProperty("AddressStateOrProvince").Should()
+                .BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_stateorprovince");
             type.GetProperty("AddressPostcode").Should()
                 .BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "address1_postalcode");
+            type.GetProperty("Telephone").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "telephone1");
+            type.GetProperty("SecondaryTelephone").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "telephone2");
+            type.GetProperty("MobileTelephone").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "mobilephone");
+            type.GetProperty("HasDbsCertificate").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_hasdbscertificate");
+            type.GetProperty("DbsCertificateIssuedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_dateofissueofdbscertificate");
+            type.GetProperty("ClassroomExperienceNotes").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_notesforclassroomexperience");
             type.GetProperty("StatusIsWaitingToBeAssignedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_waitingtobeassigneddate");
             type.GetProperty("DoNotBulkEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotbulkemail");
             type.GetProperty("DoNotBulkPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotbulkpostalmail");
