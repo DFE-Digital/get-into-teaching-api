@@ -80,6 +80,7 @@ namespace GetIntoTeachingApi.Models
             MailingList = 222750028,
             Event = 222750029,
             TeacherTrainingAdviser = 222750027,
+            SchoolsExperience = 222750021,
         }
 
         public enum GcseStatus

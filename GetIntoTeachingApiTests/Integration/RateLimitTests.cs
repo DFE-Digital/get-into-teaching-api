@@ -36,6 +36,7 @@ namespace GetIntoTeachingApiTests.Integration
         [InlineData("/api/candidates/access_tokens", "TTA", 500)]
         [InlineData("/api/teacher_training_adviser/candidates", "TTA", 250)]
         [InlineData("/api/candidates/access_tokens", "SE", 500)]
+        [InlineData("/api/schools_experience/candidates", "SE", 250)]
         public async Task Post_Endpoint_AppliesRateLimit(string path, string client, int limit)
         {
             var apiKey = $"{client.ToLower()}-secret";
