@@ -6,7 +6,7 @@ on:
 jobs:
   attach-to-trello:
     name: Link Trello card to this PR
-    if: "!contains( 'dependabot[bot] snyk' , github.actor )" 
+    if: "!contains( 'dependabot[bot] snyk-bot' , github.actor )"  
     runs-on: ubuntu-latest
     environment: Development
     steps:
