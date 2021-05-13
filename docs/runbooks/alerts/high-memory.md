@@ -1,14 +1,14 @@
-#HighMemory  
+# HighMemory  
 
-##Description
+## Description
 
 Alerts when any of the API instances exceed ~70% memory utilisation (768MB/1GB).
 
-##Potential Causes
+## Potential Causes
 
 See the potential causes in the HighCpu alert.
 
-##Resolutions
+## Resolutions
 
 Check the Grafana panel for an indication of what’s going on.
 
