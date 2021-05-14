@@ -25,7 +25,6 @@ namespace GetIntoTeachingApi.Utils
             "addressLine1",
             "addressLine2",
             "addressLine3",
-            "classroomExperienceNotes",
         };
 
         public static string RedactJson(string json)
