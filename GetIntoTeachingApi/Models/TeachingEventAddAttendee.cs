@@ -87,6 +87,10 @@ namespace GetIntoTeachingApi.Models
                 LastName = LastName,
                 AddressPostcode = AddressPostcode.AsFormattedPostcode(),
                 AddressTelephone = AddressTelephone,
+                PreferredPhoneNumberTypeId = (int)Candidate.PhoneNumberType.Home,
+                PreferredContactMethodId = (int)Candidate.ContactMethod.Any,
+                GdprConsentId = (int)Candidate.GdprConsent.Consent,
+                OptOutOfGdpr = false,
             };
 
             ConfigureChannel(candidate);

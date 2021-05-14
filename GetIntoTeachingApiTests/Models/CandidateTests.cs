@@ -359,30 +359,6 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void PreferredPhoneNumberType_DefaultValue_IsCorrect()
-        {
-            new Candidate().PreferredPhoneNumberTypeId.Should().Be((int)Candidate.PhoneNumberType.Home);
-        }
-
-        [Fact]
-        public void PreferredContactMethod_DefaultValue_IsCorrect()
-        {
-            new Candidate().PreferredContactMethodId.Should().Be((int)Candidate.ContactMethod.Any);
-        }
-
-        [Fact]
-        public void GdprConsentId_DefaultValue_IsCorrect()
-        {
-            new Candidate().GdprConsentId.Should().Be((int)Candidate.GdprConsent.Consent);
-        }
-
-        [Fact]
-        public void OptOutOfGdpr_DefaultValue_IsCorrect()
-        {
-            new Candidate().OptOutOfGdpr.Should().BeFalse();
-        }
-
-        [Fact]
         public void IsReturningToTeaching_WhenTypeIsReturningToTeaching_ReturnsTrue()
         {
             var candidate = new Candidate() { TypeId = (int)Candidate.Type.ReturningToTeacherTraining };
