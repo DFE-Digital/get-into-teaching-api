@@ -88,7 +88,6 @@ namespace GetIntoTeachingApiTests.Models
             response.FirstName.Should().Be(candidate.FirstName);
             response.LastName.Should().Be(candidate.LastName);
             response.TeacherId.Should().Be(candidate.TeacherId);
-            response.Telephone.Should().Be(candidate.AddressTelephone);
             response.AddressTelephone.Should().Be(candidate.AddressTelephone);
             response.AddressLine1.Should().Be(candidate.AddressLine1);
             response.AddressLine2.Should().Be(candidate.AddressLine2);
@@ -133,7 +132,7 @@ namespace GetIntoTeachingApiTests.Models
                 FirstName = "John",
                 LastName = "Doe",
                 DateOfBirth = DateTime.UtcNow,
-                Telephone = "1234567",
+                AddressTelephone = "1234567",
                 TeacherId = "abc123",
                 DegreeSubject = "Maths",
                 AddressLine1 = "Address 1",
@@ -165,7 +164,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.LastName.Should().Be(request.LastName);
             candidate.DateOfBirth.Should().Be(request.DateOfBirth);
             candidate.AddressPostcode.Should().Be(request.AddressPostcode);
-            candidate.AddressTelephone.Should().Be(request.Telephone);
+            candidate.AddressTelephone.Should().Be(request.AddressTelephone);
             candidate.TeacherId.Should().Be(request.TeacherId);
             candidate.AddressLine1.Should().Be(request.AddressLine1);
             candidate.AddressLine2.Should().Be(request.AddressLine2);
@@ -184,7 +183,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.PrivacyPolicy.AcceptedAt.Should().BeCloseTo(DateTime.UtcNow);
 
             candidate.PhoneCall.ScheduledAt.Should().Be((DateTime)request.PhoneCallScheduledAt);
-            candidate.PhoneCall.Telephone.Should().Be(request.Telephone);
+            candidate.PhoneCall.Telephone.Should().Be(request.AddressTelephone);
             candidate.PhoneCall.ChannelId.Should().Be((int)PhoneCall.Channel.CallbackRequest);
             candidate.PhoneCall.DestinationId.Should().Be((int)PhoneCall.Destination.Uk);
             candidate.PhoneCall.Subject.Should().Be("Scheduled phone call requested by John Doe");
@@ -342,7 +341,7 @@ namespace GetIntoTeachingApiTests.Models
         [InlineData("+447564 375 482")]
         public void Candidate_UkTelephone_PhoneCallDestinationIsCorrect(string telephone)
         {
-            var request = new TeacherTrainingAdviserSignUp() { Telephone = telephone, PhoneCallScheduledAt = DateTime.UtcNow };
+            var request = new TeacherTrainingAdviserSignUp() { AddressTelephone = telephone, PhoneCallScheduledAt = DateTime.UtcNow };
 
             request.Candidate.PhoneCall.DestinationId.Should().Be((int)PhoneCall.Destination.Uk);
         }
@@ -352,7 +351,7 @@ namespace GetIntoTeachingApiTests.Models
         [InlineData("+57564 375 482")]
         public void Candidate_InternationalTelephone_PhoneCallDestinationIsCorrect(string telephone)
         {
-            var request = new TeacherTrainingAdviserSignUp() { Telephone = telephone, PhoneCallScheduledAt = DateTime.UtcNow };
+            var request = new TeacherTrainingAdviserSignUp() { AddressTelephone = telephone, PhoneCallScheduledAt = DateTime.UtcNow };
 
             request.Candidate.PhoneCall.DestinationId.Should().Be((int)PhoneCall.Destination.International);
         }
@@ -360,7 +359,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Candidate_NullTelephone_PhoneCallDestinationIsCorrect()
         {
-            var request = new TeacherTrainingAdviserSignUp() { Telephone = null, PhoneCallScheduledAt = DateTime.UtcNow };
+            var request = new TeacherTrainingAdviserSignUp() { AddressTelephone = null, PhoneCallScheduledAt = DateTime.UtcNow };
 
             request.Candidate.PhoneCall.DestinationId.Should().BeNull();
         }
