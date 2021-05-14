@@ -75,7 +75,6 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
             OperationId = "ExchangeAccessTokenForSchoolsExperienceSignUp",
             Tags = new[] { "Schools Experience" })]
         [ProducesResponseType(typeof(SchoolsExperienceSignUp), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult ExchangeAccessToken(
             [FromRoute, SwaggerParameter("Access token (PIN code).", Required = true)] string accessToken,
             [FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] ExistingCandidateRequest request)
@@ -88,6 +87,47 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
             }
 
             return Ok(new SchoolsExperienceSignUp(candidate));
+        }
+
+        [HttpPost]
+        [Route("{id}/classroom_experience_notes")]
+        [SwaggerOperation(
+           Summary = "Add a classroom experience note to the candidate.",
+           Description = @"Adds a new classroom experience note to the candidate record",
+           OperationId = "AddClassroomExperienceNote",
+           Tags = new[] { "Schools Experience" })]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult AddClassroomExperienceNote(
+           [FromRoute, SwaggerParameter("The `id` of the `Candidate`.", Required = true)] Guid id,
+           [FromBody, SwaggerRequestBody("Classroom experience note.", Required = true)] ClassroomExperienceNote note)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var existingCandidate = _crm.GetCandidate(id);
+
+            if (existingCandidate == null)
+            {
+                return NotFound();
+            }
+
+            // Create a new candidate to encapsulate the actual changes - avoids writing
+            // all the existingCandidate fields back to the CRM.
+            var candidate = new Candidate()
+            {
+                Id = id,
+                ClassroomExperienceNotesRaw = existingCandidate.ClassroomExperienceNotesRaw,
+            };
+
+            candidate.AddClassroomExperienceNote(note);
+
+            string json = candidate.SerializeChangeTracked();
+            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
+
+            return NoContent();
         }
     }
 }

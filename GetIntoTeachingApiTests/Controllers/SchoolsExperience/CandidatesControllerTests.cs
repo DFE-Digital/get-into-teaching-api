@@ -106,6 +106,49 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
                 It.IsAny<EnqueuedState>()));
         }
 
+        [Fact]
+        public void AddClassroomExperienceNote_InvalidRequest_RespondsWithValidationErrors()
+        {
+            var candidateId = Guid.NewGuid();
+            var note = new ClassroomExperienceNote { SchoolUrn = null };
+            _controller.ModelState.AddModelError("SchoolUrn", "SchoolUrn must be set.");
+
+            var response = _controller.AddClassroomExperienceNote(candidateId, note);
+
+            var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
+            var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
+            errors.Should().ContainKey("SchoolUrn").WhichValue.Should().BeOfType<string[]>().Which.Should().Contain("SchoolUrn must be set.");
+        }
+
+        [Fact]
+        public void AddClassroomExperienceNote_CandidateNotFound_RespondsWithNotFound()
+        {
+            var candidateId = Guid.NewGuid();
+            var note = new ClassroomExperienceNote() { Action = "REQUESTED", SchoolName = "School Name", SchoolUrn = "123456" };
+            _mockCrm.Setup(m => m.GetCandidate(candidateId)).Returns(null as Candidate);
+
+            var response = _controller.AddClassroomExperienceNote(candidateId, note);
+
+            response.Should().BeOfType<NotFoundResult>();
+        }
+
+        [Fact]
+        public void AddClassroomExperienceNote_ValidRequest_EnqueuesJobAndRespondsWithSuccess()
+        {
+            var candidate = new Candidate() { Id = Guid.NewGuid() };
+            var note = new ClassroomExperienceNote() { Action = "REQUESTED", SchoolName = "School Name", SchoolUrn = "123456" };
+            _mockCrm.Setup(m => m.GetCandidate((Guid)candidate.Id)).Returns(candidate);
+
+            var response = _controller.AddClassroomExperienceNote((Guid)candidate.Id, note);
+
+            candidate.AddClassroomExperienceNote(note);
+            response.Should().BeOfType<NoContentResult>();
+            _mockJobClient.Verify(x => x.Create(
+                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
+                IsMatch(candidate, (string)job.Args[0])),
+                It.IsAny<EnqueuedState>()));
+        }
+
         private static bool IsMatch(Candidate candidateA, string candidateBJson)
         {
             var candidateB = candidateBJson.DeserializeChangeTracked<Candidate>();
