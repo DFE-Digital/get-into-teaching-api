@@ -135,11 +135,11 @@ namespace GetIntoTeachingApi.Models
         [EntityField("dfe_isadvisorrequiredos", typeof(OptionSetValue))]
         public int? AdviserRequirementId { get; set; }
         [EntityField("dfe_preferredphonenumbertype", typeof(OptionSetValue))]
-        public int? PreferredPhoneNumberTypeId { get; set; } = (int)PhoneNumberType.Home;
+        public int? PreferredPhoneNumberTypeId { get; set; }
         [EntityField("preferredcontactmethodcode", typeof(OptionSetValue))]
-        public int? PreferredContactMethodId { get; set; } = (int)ContactMethod.Any;
+        public int? PreferredContactMethodId { get; set; }
         [EntityField("msgdpr_gdprconsent", typeof(OptionSetValue))]
-        public int? GdprConsentId { get; set; } = (int)GdprConsent.Consent;
+        public int? GdprConsentId { get; set; }
         [EntityField("dfe_websitemltokenstatus", typeof(OptionSetValue))]
         public int? MagicLinkTokenStatusId { get; set; }
         [EntityField("dfe_waitingtobeassigneddate")]
@@ -197,7 +197,7 @@ namespace GetIntoTeachingApi.Models
         [EntityField("dfe_optoutsms")]
         public bool? OptOutOfSms { get; set; }
         [EntityField("msdyn_gdproptout")]
-        public bool? OptOutOfGdpr { get; set; } = false;
+        public bool? OptOutOfGdpr { get; set; }
         [EntityField("dfe_newregistrant")]
         public bool IsNewRegistrant { get; set; }
         [EntityField("dfe_websitemltoken")]
