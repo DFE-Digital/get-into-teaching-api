@@ -91,7 +91,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 Telephone = "07584 734 576",
                 SecondaryTelephone = "07584 734 576",
                 MobileTelephone = "07584 734 576",
-                ClassroomExperienceNotes = "notes",
+                ClassroomExperienceNotesRaw = "notes",
                 HasDbsCertificate = true,
                 DbsCertificateIssuedAt = DateTime.UtcNow.AddYears(-1),
                 HasGcseMathsId = mockPickListItem.Id,
@@ -665,9 +665,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_ClassroomExperienceNotesIsTooLong_HasError()
+        public void Validate_ClassroomExperienceNotesRawIsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.ClassroomExperienceNotes, new string('a', 10001));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.ClassroomExperienceNotesRaw, new string('a', 10001));
         }
     }
 }

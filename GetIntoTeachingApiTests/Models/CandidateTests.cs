@@ -90,7 +90,7 @@ namespace GetIntoTeachingApiTests.Models
             type.GetProperty("MobileTelephone").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "mobilephone");
             type.GetProperty("HasDbsCertificate").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_hasdbscertificate");
             type.GetProperty("DbsCertificateIssuedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_dateofissueofdbscertificate");
-            type.GetProperty("ClassroomExperienceNotes").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_notesforclassroomexperience");
+            type.GetProperty("ClassroomExperienceNotesRaw").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_notesforclassroomexperience");
             type.GetProperty("StatusIsWaitingToBeAssignedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_waitingtobeassigneddate");
             type.GetProperty("DoNotBulkEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotbulkemail");
             type.GetProperty("DoNotBulkPostalMail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "donotbulkpostalmail");
@@ -459,6 +459,59 @@ namespace GetIntoTeachingApiTests.Models
             };
 
             candidate.MagicLinkTokenAlreadyExchanged().Should().Be(expected);
+        }
+
+        [Fact]
+        public void AddClassroomExperienceNote_WhenRawIsNull_PrependsHeader()
+        {
+            var candidate = new Candidate() { ClassroomExperienceNotesRaw = null };
+            var note = new ClassroomExperienceNote()
+            {
+                Action = "REQUESTED",
+                Date = new DateTime(2020, 2, 1),
+                RecordedAt = new DateTime(2020, 3, 2),
+                SchoolName = "School Name",
+                SchoolUrn = "123456",
+            };
+
+            candidate.AddClassroomExperienceNote(note);
+
+            candidate.ClassroomExperienceNotesRaw.Should().Be(
+                "RECORDED   ACTION                 EXP DATE   URN    NAME\r\n\r\n" +
+                "02/03/2020 REQUESTED              01/02/2020 123456 School Name\r\n");
+        }
+
+        [Fact]
+        public void AddClassroomExperienceNote_WithExistingNotes_AppendsNote()
+        {
+            var candidate = new Candidate() { ClassroomExperienceNotesRaw = null };
+            var firstNote = new ClassroomExperienceNote()
+            {
+                Action = "REQUESTED",
+                Date = new DateTime(2020, 2, 1),
+                RecordedAt = new DateTime(2020, 3, 2),
+                SchoolName = "School Name",
+                SchoolUrn = "123456",
+            };
+
+            candidate.AddClassroomExperienceNote(firstNote);
+
+
+            var secondNote = new ClassroomExperienceNote()
+            {
+                Action = "CANCELLED BY SCHOOL",
+                Date = new DateTime(2021, 10, 11),
+                RecordedAt = new DateTime(2021, 12, 4),
+                SchoolName = "School Name",
+                SchoolUrn = "654321",
+            };
+
+            candidate.AddClassroomExperienceNote(secondNote);
+
+            candidate.ClassroomExperienceNotesRaw.Should().Be(
+                "RECORDED   ACTION                 EXP DATE   URN    NAME\r\n\r\n" +
+                "02/03/2020 REQUESTED              01/02/2020 123456 School Name\r\n" +
+                "04/12/2021 CANCELLED BY SCHOOL    11/10/2021 654321 School Name\r\n");
         }
     }
 }

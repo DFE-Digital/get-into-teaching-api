@@ -4,6 +4,7 @@ using System.Linq;
 using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using Microsoft.Xrm.Sdk;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -96,7 +97,7 @@ namespace GetIntoTeachingApi.Models
             Exchanged = 222750004,
         }
 
-        public string FullName => $"{this.FirstName} {this.LastName}";
+        public string FullName => $"{FirstName} {LastName}".NullIfEmptyOrWhitespace();
         [EntityField("dfe_preferredteachingsubject01", typeof(EntityReference), "dfe_teachingsubjectlist")]
         public Guid? PreferredTeachingSubjectId { get; set; }
         [EntityField("dfe_preferredteachingsubject02", typeof(EntityReference), "dfe_teachingsubjectlist")]
@@ -178,7 +179,7 @@ namespace GetIntoTeachingApi.Models
         [EntityField("dfe_dateofissueofdbscertificate")]
         public DateTime? DbsCertificateIssuedAt { get; set; }
         [EntityField("dfe_notesforclassroomexperience")]
-        public string ClassroomExperienceNotes { get; set; }
+        public string ClassroomExperienceNotesRaw { get; set; }
         [EntityField("dfe_dfesnumber")]
         public string TeacherId { get; set; }
         [EntityField("dfe_eligibilityrulespassed")]
@@ -278,6 +279,16 @@ namespace GetIntoTeachingApi.Models
         public Candidate(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
             : base(entity, crm, validatorFactory)
         {
+        }
+
+        public void AddClassroomExperienceNote(ClassroomExperienceNote note)
+        {
+            if (string.IsNullOrWhiteSpace(ClassroomExperienceNotesRaw))
+            {
+                ClassroomExperienceNotesRaw = ClassroomExperienceNote.Header;
+            }
+
+            ClassroomExperienceNotesRaw += note.ToString();
         }
 
         public bool HasTeacherTrainingAdviser()
