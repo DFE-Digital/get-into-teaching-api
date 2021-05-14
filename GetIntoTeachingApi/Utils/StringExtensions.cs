@@ -15,5 +15,10 @@ namespace GetIntoTeachingApi.Utils
 
             return str.ToUpper().Insert(str.Length - Location.InwardPostcodeLength, " ");
         }
+
+        public static string NullIfEmptyOrWhitespace(this string str)
+        {
+            return string.IsNullOrWhiteSpace(str) ? null : str;
+        }
     }
 }
