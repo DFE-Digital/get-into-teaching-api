@@ -93,6 +93,10 @@ namespace GetIntoTeachingApiTests.Models
             candidate.DoNotPostalMail.Should().BeTrue();
             candidate.DoNotSendMm.Should().BeFalse();
             candidate.EligibilityRulesPassed.Should().Be("false");
+            candidate.PreferredPhoneNumberTypeId.Should().Be((int)Candidate.PhoneNumberType.Home);
+            candidate.PreferredContactMethodId.Should().Be((int)Candidate.ContactMethod.Any);
+            candidate.GdprConsentId.Should().Be((int)Candidate.GdprConsent.Consent);
+            candidate.OptOutOfGdpr.Should().BeFalse();
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
             candidate.PrivacyPolicy.AcceptedAt.Should().BeCloseTo(DateTime.UtcNow);
