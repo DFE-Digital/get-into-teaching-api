@@ -144,6 +144,10 @@ namespace GetIntoTeachingApi.Models
                 AdviserRequirementId = null,
                 AdviserEligibilityId = null,
                 AssignmentStatusId = null,
+                PreferredPhoneNumberTypeId = (int)Candidate.PhoneNumberType.Home,
+                PreferredContactMethodId = (int)Candidate.ContactMethod.Any,
+                GdprConsentId = (int)Candidate.GdprConsent.Consent,
+                OptOutOfGdpr = false,
             };
 
             ConfigureChannel(candidate);

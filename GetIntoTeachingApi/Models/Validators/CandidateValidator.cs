@@ -9,6 +9,7 @@ namespace GetIntoTeachingApi.Models.Validators
 {
     public class CandidateValidator : AbstractValidator<Candidate>
     {
+        private static readonly string TelephoneRegex = @"^[^a-zA-Z]+$";
         private readonly string[] _validEligibilityRulesPassedValues = new[] { "true", "false" };
 
         public CandidateValidator(IStore store, IDateTimeProvider dateTime)
@@ -16,11 +17,19 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.FirstName).NotEmpty().MaximumLength(256);
             RuleFor(candidate => candidate.LastName).NotEmpty().MaximumLength(256);
             RuleFor(candidate => candidate.Email).NotEmpty().EmailAddress(EmailValidationMode.AspNetCoreCompatible).MaximumLength(100);
+            RuleFor(candidate => candidate.SecondaryEmail).EmailAddress(EmailValidationMode.AspNetCoreCompatible).MaximumLength(100);
             RuleFor(candidate => candidate.DateOfBirth).LessThan(candidate => dateTime.UtcNow);
             RuleFor(candidate => candidate.AddressTelephone).MinimumLength(5).MaximumLength(20).Matches(@"^[^a-zA-Z]+$");
             RuleFor(candidate => candidate.AddressLine1).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressLine2).MaximumLength(1024);
+            RuleFor(candidate => candidate.AddressLine3).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressCity).MaximumLength(128);
+            RuleFor(candidate => candidate.AddressStateOrProvince).MaximumLength(100);
+            RuleFor(candidate => candidate.DbsCertificateIssuedAt).NotNull().When(c => c.HasDbsCertificate == true);
+            RuleFor(candidate => candidate.ClassroomExperienceNotesRaw).MaximumLength(10000);
+            RuleFor(candidate => candidate.MobileTelephone).MinimumLength(5).MaximumLength(20).Matches(TelephoneRegex);
+            RuleFor(candidate => candidate.Telephone).MinimumLength(5).MaximumLength(20).Matches(TelephoneRegex);
+            RuleFor(candidate => candidate.SecondaryTelephone).MinimumLength(5).MaximumLength(20).Matches(TelephoneRegex);
             RuleFor(candidate => candidate.AddressPostcode)
                 .SetValidator(new PostcodeValidator())
                 .Unless(candidate => candidate.AddressPostcode == null);
@@ -38,6 +47,9 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.PreferredTeachingSubjectId)
                 .SetValidator(new LookupItemIdValidator("dfe_teachingsubjectlist", store))
                 .Unless(candidate => candidate.PreferredTeachingSubjectId == null);
+            RuleFor(candidate => candidate.SecondaryPreferredTeachingSubjectId)
+                .SetValidator(new LookupItemIdValidator("dfe_teachingsubjectlist", store))
+                .Unless(candidate => candidate.SecondaryPreferredTeachingSubjectId == null);
             RuleFor(candidate => candidate.CountryId)
                 .SetValidator(new LookupItemIdValidator("dfe_country", store))
                 .Unless(candidate => candidate.CountryId == null);

@@ -59,6 +59,7 @@
 	  <Folder Include="JsonConverters\" />
 	  <Folder Include="Mocks\" />
 	  <Folder Include="Middleware\" />
+	  <Folder Include="Controllers\SchoolsExperience\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="Fixtures\clients.yml">

@@ -19,5 +19,16 @@ namespace GetIntoTeachingApiTests.Utils
         {
             input.AsFormattedPostcode().Should().Be(expected);
         }
+
+        [Theory]
+        [InlineData(null, null)]
+        [InlineData("", null)]
+        [InlineData("  ", null)]
+        [InlineData("test", "test")]
+        [InlineData(" test ", " test ")]
+        public void NullIfEmptyOrWhitespace_ReturnsConrrectly(string input, string expected)
+        {
+            input.NullIfEmptyOrWhitespace().Should().Be(expected);
+        }
     }
 }

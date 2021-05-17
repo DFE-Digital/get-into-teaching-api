@@ -84,8 +84,16 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 AddressTelephone = "07584 734 576",
                 AddressLine1 = "line1",
                 AddressLine2 = "line2",
+                AddressLine3 = "line3",
                 AddressCity = "city",
+                AddressStateOrProvince = "county",
                 AddressPostcode = "KY119YU",
+                Telephone = "07584 734 576",
+                SecondaryTelephone = "07584 734 576",
+                MobileTelephone = "07584 734 576",
+                ClassroomExperienceNotesRaw = "notes",
+                HasDbsCertificate = true,
+                DbsCertificateIssuedAt = DateTime.UtcNow.AddYears(-1),
                 HasGcseMathsId = mockPickListItem.Id,
                 HasGcseEnglishId = mockPickListItem.Id,
                 AdviserEligibilityId = mockPickListItem.Id,
@@ -206,6 +214,36 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
+        public void Validate_SecondaryEmailAddressIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.SecondaryEmail, null as string);
+        }
+
+        [Fact]
+        public void Validate_SecondaryEmailAddressIsEmpty_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.SecondaryEmail, "");
+        }
+
+        [Fact]
+        public void Validate_SecondaryEmailAddressIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.SecondaryEmail, "invalid-email@");
+        }
+
+        [Fact]
+        public void Validate_SecondaryEmailAddressTooLong_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.SecondaryEmail, $"{new string('a', 50)}@{new string('a', 50)}.com");
+        }
+
+        [Fact]
+        public void Validate_SecondaryEmailAddressPresent_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.SecondaryEmail, "valid@email.com");
+        }
+
+        [Fact]
         public void Validate_DateOfBirthIsNull_HasNoError()
         {
             _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.DateOfBirth, null as DateTime?);
@@ -242,21 +280,30 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_AddressTelephoneIsNull_HasNoError()
+        public void Validate_TelephoneIsNull_HasNoError()
         {
             _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressTelephone, null as string);
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.MobileTelephone, null as string);
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.Telephone, null as string);
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.SecondaryTelephone, null as string);
         }
 
         [Fact]
-        public void Validate_AddressTelephoneTooLong_HasError()
+        public void Validate_TelephoneTooLong_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressTelephone, new string('1', 21));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.MobileTelephone, new string('1', 21));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.Telephone, new string('1', 21));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.SecondaryTelephone, new string('1', 21));
         }
 
         [Fact]
-        public void Validate_AddressTelephoneTooShort_HasError()
+        public void Validate_TelephoneTooShort_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressTelephone, new string('1', 4));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.MobileTelephone, new string('1', 4));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.Telephone, new string('1', 4));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.SecondaryTelephone, new string('1', 4));
         }
 
         [Theory]
@@ -270,15 +317,21 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [InlineData("abc2451215", true)]
         [InlineData("42154h53151", true)]
         [InlineData("5325.56fs326.32", true)]
-        public void Validate_AddressTelephoneFormat_ValidatesCorrectly(string telephone, bool hasError)
+        public void Validate_TelephoneFormat_ValidatesCorrectly(string telephone, bool hasError)
         {
             if (hasError)
             {
                 _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressTelephone, telephone);
+                _validator.ShouldHaveValidationErrorFor(candidate => candidate.MobileTelephone, telephone);
+                _validator.ShouldHaveValidationErrorFor(candidate => candidate.Telephone, telephone);
+                _validator.ShouldHaveValidationErrorFor(candidate => candidate.SecondaryTelephone, telephone);
             }
             else
             {
                 _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressTelephone, telephone);
+                _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.MobileTelephone, telephone);
+                _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.Telephone, telephone);
+                _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.SecondaryTelephone, telephone);
             }
         }
 
@@ -301,6 +354,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
+        public void Validate_AddressLine3IsTooLong_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressLine3, new string('a', 1025));
+        }
+
+        [Fact]
         public void Validate_AddressCityIsNull_HasNoError()
         {
             _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressCity, null as string);
@@ -310,6 +369,18 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_AddressCityIsTooLong_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressCity, new string('a', 129));
+        }
+
+        [Fact]
+        public void Validate_AddressStateOrProvinceIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressStateOrProvince, null as string);
+        }
+
+        [Fact]
+        public void Validate_AddressStateOrProvinceIsTooLong_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressStateOrProvince, new string('a', 101));
         }
 
         [Fact]
@@ -363,6 +434,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
+        public void Validate_SecondaryPreferredTeachingSubjectIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.SecondaryPreferredTeachingSubjectId, Guid.NewGuid());
+        }
+
+        [Fact]
         public void Validate_CountryIdIsNull_HasNoError()
         {
             _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.CountryId, null as Guid?);
@@ -378,6 +455,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_PreferredTeachingSubjectIdIsNull_HasNoError()
         {
             _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.PreferredTeachingSubjectId, null as Guid?);
+        }
+
+        [Fact]
+        public void Validate_SecondaryPreferredTeachingSubjectIdIsNull_HasNoError()
+        {
+            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.SecondaryPreferredTeachingSubjectId, null as Guid?);
         }
 
         [Fact]
@@ -570,6 +653,21 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_ConsiderationJourneyStageIdIsNull_HasNoError()
         {
             _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.ConsiderationJourneyStageId, null as int?);
+        }
+
+        [Fact]
+        public void Validate_HasDbsCertificateAndDbsCertificateIssuedAtIsNull_HasError()
+        {
+            var candidate = new Candidate() { HasDbsCertificate = true, DbsCertificateIssuedAt = null };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor("DbsCertificateIssuedAt");
+        }
+
+        [Fact]
+        public void Validate_ClassroomExperienceNotesRawIsTooLong_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.ClassroomExperienceNotesRaw, new string('a', 10001));
         }
     }
 }

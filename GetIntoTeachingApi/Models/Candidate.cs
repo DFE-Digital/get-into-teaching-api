@@ -4,6 +4,7 @@ using System.Linq;
 using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using Microsoft.Xrm.Sdk;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -80,6 +81,7 @@ namespace GetIntoTeachingApi.Models
             MailingList = 222750028,
             Event = 222750029,
             TeacherTrainingAdviser = 222750027,
+            SchoolsExperience = 222750021,
         }
 
         public enum GcseStatus
@@ -95,9 +97,11 @@ namespace GetIntoTeachingApi.Models
             Exchanged = 222750004,
         }
 
-        public string FullName => $"{this.FirstName} {this.LastName}";
+        public string FullName => $"{FirstName} {LastName}".NullIfEmptyOrWhitespace();
         [EntityField("dfe_preferredteachingsubject01", typeof(EntityReference), "dfe_teachingsubjectlist")]
         public Guid? PreferredTeachingSubjectId { get; set; }
+        [EntityField("dfe_preferredteachingsubject02", typeof(EntityReference), "dfe_teachingsubjectlist")]
+        public Guid? SecondaryPreferredTeachingSubjectId { get; set; }
         [EntityField("dfe_country", typeof(EntityReference), "dfe_country")]
         public Guid? CountryId { get; set; }
         [EntityField("owningbusinessunit", typeof(EntityReference), "businessunit")]
@@ -131,33 +135,51 @@ namespace GetIntoTeachingApi.Models
         [EntityField("dfe_isadvisorrequiredos", typeof(OptionSetValue))]
         public int? AdviserRequirementId { get; set; }
         [EntityField("dfe_preferredphonenumbertype", typeof(OptionSetValue))]
-        public int? PreferredPhoneNumberTypeId { get; set; } = (int)PhoneNumberType.Home;
+        public int? PreferredPhoneNumberTypeId { get; set; }
         [EntityField("preferredcontactmethodcode", typeof(OptionSetValue))]
-        public int? PreferredContactMethodId { get; set; } = (int)ContactMethod.Any;
+        public int? PreferredContactMethodId { get; set; }
         [EntityField("msgdpr_gdprconsent", typeof(OptionSetValue))]
-        public int? GdprConsentId { get; set; } = (int)GdprConsent.Consent;
+        public int? GdprConsentId { get; set; }
         [EntityField("dfe_websitemltokenstatus", typeof(OptionSetValue))]
         public int? MagicLinkTokenStatusId { get; set; }
         [EntityField("dfe_waitingtobeassigneddate")]
         public DateTime? StatusIsWaitingToBeAssignedAt { get; set; }
         [EntityField("emailaddress1")]
         public string Email { get; set; }
+        [EntityField("emailaddress2")]
+        public string SecondaryEmail { get; set; }
         [EntityField("firstname")]
         public string FirstName { get; set; }
         [EntityField("lastname")]
         public string LastName { get; set; }
         [EntityField("birthdate")]
         public DateTime? DateOfBirth { get; set; }
+        [EntityField("mobilephone")]
+        public string MobileTelephone { get; set; }
         [EntityField("address1_telephone1")]
         public string AddressTelephone { get; set; }
         [EntityField("address1_line1")]
         public string AddressLine1 { get; set; }
         [EntityField("address1_line2")]
         public string AddressLine2 { get; set; }
+        [EntityField("address1_line3")]
+        public string AddressLine3 { get; set; }
         [EntityField("address1_city")]
         public string AddressCity { get; set; }
+        [EntityField("address1_stateorprovince")]
+        public string AddressStateOrProvince { get; set; }
         [EntityField("address1_postalcode")]
         public string AddressPostcode { get; set; }
+        [EntityField("telephone1")]
+        public string Telephone { get; set; }
+        [EntityField("telephone2")]
+        public string SecondaryTelephone { get; set; }
+        [EntityField("dfe_hasdbscertificate")]
+        public bool? HasDbsCertificate { get; set; }
+        [EntityField("dfe_dateofissueofdbscertificate")]
+        public DateTime? DbsCertificateIssuedAt { get; set; }
+        [EntityField("dfe_notesforclassroomexperience")]
+        public string ClassroomExperienceNotesRaw { get; set; }
         [EntityField("dfe_dfesnumber")]
         public string TeacherId { get; set; }
         [EntityField("dfe_eligibilityrulespassed")]
@@ -175,7 +197,7 @@ namespace GetIntoTeachingApi.Models
         [EntityField("dfe_optoutsms")]
         public bool? OptOutOfSms { get; set; }
         [EntityField("msdyn_gdproptout")]
-        public bool? OptOutOfGdpr { get; set; } = false;
+        public bool? OptOutOfGdpr { get; set; }
         [EntityField("dfe_newregistrant")]
         public bool IsNewRegistrant { get; set; }
         [EntityField("dfe_websitemltoken")]
@@ -257,6 +279,16 @@ namespace GetIntoTeachingApi.Models
         public Candidate(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
             : base(entity, crm, validatorFactory)
         {
+        }
+
+        public void AddClassroomExperienceNote(ClassroomExperienceNote note)
+        {
+            if (string.IsNullOrWhiteSpace(ClassroomExperienceNotesRaw))
+            {
+                ClassroomExperienceNotesRaw = ClassroomExperienceNote.Header;
+            }
+
+            ClassroomExperienceNotesRaw += note.ToString();
         }
 
         public bool HasTeacherTrainingAdviser()
