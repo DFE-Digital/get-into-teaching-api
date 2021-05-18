@@ -3,6 +3,7 @@ using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
 
 namespace GetIntoTeachingApi.Models
 {
@@ -35,7 +36,7 @@ namespace GetIntoTeachingApi.Models
         {
         }
 
-        protected override bool ShouldMap(ICrmService crm)
+        protected override bool ShouldMap(ICrmService crm, OrganizationServiceContext context)
         {
             var alreadyRegistered = !crm.CandidateYetToRegisterForTeachingEvent(CandidateId, EventId);
 
@@ -44,7 +45,7 @@ namespace GetIntoTeachingApi.Models
                 return false;
             }
 
-            return base.ShouldMap(crm);
+            return base.ShouldMap(crm, context);
         }
     }
 }

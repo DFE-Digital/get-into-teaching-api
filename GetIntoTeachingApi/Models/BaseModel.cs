@@ -75,7 +75,7 @@ namespace GetIntoTeachingApi.Models
 
         public virtual Entity ToEntity(ICrmService crm, OrganizationServiceContext context)
         {
-            if (!ShouldMap(crm))
+            if (!ShouldMap(crm, context))
             {
                 return null;
             }
@@ -102,7 +102,7 @@ namespace GetIntoTeachingApi.Models
             return true;
         }
 
-        protected virtual bool ShouldMap(ICrmService crm)
+        protected virtual bool ShouldMap(ICrmService crm, OrganizationServiceContext context)
         {
             // Hook.
             return true;

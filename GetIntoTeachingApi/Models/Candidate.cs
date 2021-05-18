@@ -6,6 +6,7 @@ using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
@@ -319,7 +320,7 @@ namespace GetIntoTeachingApi.Models
         public bool MagicLinkTokenExpired() => MagicLinkTokenExpiresAt == null || MagicLinkTokenExpiresAt < DateTime.UtcNow;
         public bool MagicLinkTokenAlreadyExchanged() => MagicLinkTokenStatusId == (int)MagicLinkTokenStatus.Exchanged;
 
-        protected override bool ShouldMap(ICrmService crm)
+        protected override bool ShouldMap(ICrmService crm, OrganizationServiceContext context)
         {
             IsNewRegistrant = Id == null;
 
@@ -332,7 +333,7 @@ namespace GetIntoTeachingApi.Models
                 EventsSubscriptionTypeId = (int)SubscriptionType.LocalEvent;
             }
 
-            return base.ShouldMap(crm);
+            return base.ShouldMap(crm, context);
         }
 
         protected override bool ShouldMapRelationship(string propertyName, dynamic value, ICrmService crm)
