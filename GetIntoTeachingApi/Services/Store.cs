@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -191,7 +191,7 @@ namespace GetIntoTeachingApi.Services
 
             foreach (var te in teachingEvents.Where(te => te.BuildingId != null))
             {
-                te.Building = teachingEventBuildings.FirstOrDefault(b => b.Id == te.BuildingId);
+                te.Building = teachingEventBuildings.Find(b => b.Id == te.BuildingId);
             }
 
             await SyncModels(teachingEvents, _dbContext.TeachingEvents);
