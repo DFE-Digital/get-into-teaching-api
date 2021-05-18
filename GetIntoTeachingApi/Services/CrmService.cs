@@ -170,6 +170,11 @@ namespace GetIntoTeachingApi.Services
             _service.AddLink(source, relationship, target, context);
         }
 
+        public void DeleteLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context)
+        {
+            _service.DeleteLink(source, relationship, target, context);
+        }
+
         public IEnumerable<Entity> RelatedEntities(Entity entity, string relationshipName, string logicalName)
         {
             var relatedEntityKeys = entity.Attributes.Keys.Where(k => k.StartsWith($"{relationshipName}.")).ToList();
