@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -57,14 +57,14 @@ namespace GetIntoTeachingApi.Models
 
         public static EntityFieldAttribute EntityFieldAttribute(ICustomAttributeProvider property)
         {
-            return (EntityFieldAttribute)property.GetCustomAttributes(false)
-                .FirstOrDefault(a => a.GetType() == typeof(EntityFieldAttribute) && !((EntityFieldAttribute)a).Ignored);
+            return (EntityFieldAttribute)Array.Find(property.GetCustomAttributes(false), a =>
+              a.GetType() == typeof(EntityFieldAttribute) && !((EntityFieldAttribute)a).Ignored);
         }
 
         public static EntityRelationshipAttribute EntityRelationshipAttribute(ICustomAttributeProvider property)
         {
-            return (EntityRelationshipAttribute)property.GetCustomAttributes(false)
-                .FirstOrDefault(a => a.GetType() == typeof(EntityRelationshipAttribute));
+            return (EntityRelationshipAttribute)Array.Find(property.GetCustomAttributes(false), a =>
+              a.GetType() == typeof(EntityRelationshipAttribute));
         }
 
         public static string LogicalName(MemberInfo type)
