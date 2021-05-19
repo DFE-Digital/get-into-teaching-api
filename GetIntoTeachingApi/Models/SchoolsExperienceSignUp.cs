@@ -11,7 +11,6 @@ namespace GetIntoTeachingApi.Models
         public Guid? CandidateId { get; set; }
         public Guid? PreferredTeachingSubjectId { get; set; }
         public Guid? SecondaryPreferredTeachingSubjectId { get; set; }
-        public Guid? CountryId { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public Guid? AcceptedPolicyId { get; set; }
 
@@ -53,7 +52,6 @@ namespace GetIntoTeachingApi.Models
             CandidateId = candidate.Id;
             PreferredTeachingSubjectId = candidate.PreferredTeachingSubjectId;
             SecondaryPreferredTeachingSubjectId = candidate.SecondaryPreferredTeachingSubjectId;
-            CountryId = candidate.CountryId;
 
             Email = candidate.Email;
             SecondaryEmail = candidate.SecondaryEmail;
@@ -81,7 +79,7 @@ namespace GetIntoTeachingApi.Models
                 Id = CandidateId,
                 PreferredTeachingSubjectId = PreferredTeachingSubjectId,
                 SecondaryPreferredTeachingSubjectId = SecondaryPreferredTeachingSubjectId,
-                CountryId = CountryId,
+                CountryId = LookupItem.UnitedKingdomCountryId,
                 Email = Email,
                 SecondaryEmail = SecondaryEmail,
                 FirstName = FirstName,
