@@ -93,7 +93,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 MobileTelephone = "07584 734 576",
                 ClassroomExperienceNotesRaw = "notes",
                 HasDbsCertificate = true,
-                DbsCertificateIssuedAt = DateTime.UtcNow.AddYears(-1),
                 HasGcseMathsId = mockPickListItem.Id,
                 HasGcseEnglishId = mockPickListItem.Id,
                 AdviserEligibilityId = mockPickListItem.Id,
@@ -653,15 +652,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_ConsiderationJourneyStageIdIsNull_HasNoError()
         {
             _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.ConsiderationJourneyStageId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_HasDbsCertificateAndDbsCertificateIssuedAtIsNull_HasError()
-        {
-            var candidate = new Candidate() { HasDbsCertificate = true, DbsCertificateIssuedAt = null };
-            var result = _validator.TestValidate(candidate);
-
-            result.ShouldHaveValidationErrorFor("DbsCertificateIssuedAt");
         }
 
         [Fact]

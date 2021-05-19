@@ -15,7 +15,6 @@ namespace GetIntoTeachingApiTests.Models
                 Id = Guid.NewGuid(),
                 PreferredTeachingSubjectId = Guid.NewGuid(),
                 SecondaryPreferredTeachingSubjectId = Guid.NewGuid(),
-                CountryId = Guid.NewGuid(),
                 Email = "email@address.com",
                 SecondaryEmail = "email2@address.com",
                 FirstName = "John",
@@ -40,7 +39,6 @@ namespace GetIntoTeachingApiTests.Models
             response.CandidateId.Should().Be(candidate.Id);
             response.PreferredTeachingSubjectId.Should().Be(candidate.PreferredTeachingSubjectId);
             response.SecondaryPreferredTeachingSubjectId.Should().Be(candidate.SecondaryPreferredTeachingSubjectId);
-            response.CountryId.Should().Be(candidate.CountryId);
             response.Email.Should().Be(candidate.Email);
             response.SecondaryEmail.Should().Be(candidate.SecondaryEmail);
             response.FirstName.Should().Be(candidate.FirstName);
@@ -61,6 +59,50 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
+        public void Constructor_CandidateSecondaryEmail_SetsCorrectly()
+        {
+            var candidate = new Candidate() { Email = "email@address.com" };
+
+            var response = new SchoolsExperienceSignUp(candidate);
+
+            response.SecondaryEmail.Should().Be(candidate.Email);
+
+            candidate.SecondaryEmail = "email2@address.com";
+
+            response = new SchoolsExperienceSignUp(candidate);
+
+            response.SecondaryTelephone.Should().Be(candidate.SecondaryTelephone);
+        }
+
+        [Fact]
+        public void Constructor_SecondaryTelephone_SetsCorrectly()
+        {
+            var candidate = new Candidate() { Telephone = "111111" };
+
+            var response = new SchoolsExperienceSignUp(candidate);
+
+            response.SecondaryTelephone.Should().Be(candidate.Telephone);
+
+            candidate.AddressTelephone = "222222";
+
+            response = new SchoolsExperienceSignUp(candidate);
+
+            response.SecondaryTelephone.Should().Be(candidate.AddressTelephone);
+
+            candidate.MobileTelephone = "333333";
+
+            response = new SchoolsExperienceSignUp(candidate);
+
+            response.SecondaryTelephone.Should().Be(candidate.MobileTelephone);
+
+            candidate.SecondaryTelephone = "444444";
+
+            response = new SchoolsExperienceSignUp(candidate);
+
+            response.SecondaryTelephone.Should().Be(candidate.SecondaryTelephone);
+        }
+
+        [Fact]
         public void Candidate_MapsCorrectly()
         {
             var request = new SchoolsExperienceSignUp()
@@ -68,7 +110,6 @@ namespace GetIntoTeachingApiTests.Models
                 CandidateId = Guid.NewGuid(),
                 PreferredTeachingSubjectId = Guid.NewGuid(),
                 SecondaryPreferredTeachingSubjectId = Guid.NewGuid(),
-                CountryId = Guid.NewGuid(),
                 AcceptedPolicyId = Guid.NewGuid(),
                 Email = "email@address.com",
                 SecondaryEmail = "email2@address.com",
@@ -94,7 +135,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.Id.Should().Equals(request.CandidateId);
             candidate.PreferredTeachingSubjectId.Should().Equals(request.PreferredTeachingSubjectId);
             candidate.SecondaryPreferredTeachingSubjectId.Should().Equals(request.SecondaryPreferredTeachingSubjectId);
-            candidate.CountryId.Should().Equals(request.CountryId);
+            candidate.CountryId.Should().Equals(LookupItem.UnitedKingdomCountryId);
             candidate.Email.Should().Be(request.Email);
             candidate.SecondaryEmail.Should().Be(request.SecondaryEmail);
             candidate.FirstName.Should().Be(request.FirstName);
