@@ -43,5 +43,6 @@ module "prometheus" {
   prometheus_extra_scrape_config    = templatefile("${path.module}/${var.prometheus["scrape_file"]}", local.template_variable_map)
   influxdb_service_plan             = var.influxdb_1_plan
   redis_services                    = ["${var.paas_space}/${var.paas_redis_1_name}"]
+  postgres_services                 = ["${var.paas_space}/${var.paas_database_common_name}"]
 }
 
