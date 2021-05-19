@@ -59,6 +59,50 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
+        public void Constructor_CandidateSecondaryEmail_SetsCorrectly()
+        {
+            var candidate = new Candidate() { Email = "email@address.com" };
+
+            var response = new SchoolsExperienceSignUp(candidate);
+
+            response.SecondaryEmail.Should().Be(candidate.Email);
+
+            candidate.SecondaryEmail = "email2@address.com";
+
+            response = new SchoolsExperienceSignUp(candidate);
+
+            response.SecondaryTelephone.Should().Be(candidate.SecondaryTelephone);
+        }
+
+        [Fact]
+        public void Constructor_SecondaryTelephone_SetsCorrectly()
+        {
+            var candidate = new Candidate() { Telephone = "111111" };
+
+            var response = new SchoolsExperienceSignUp(candidate);
+
+            response.SecondaryTelephone.Should().Be(candidate.Telephone);
+
+            candidate.AddressTelephone = "222222";
+
+            response = new SchoolsExperienceSignUp(candidate);
+
+            response.SecondaryTelephone.Should().Be(candidate.AddressTelephone);
+
+            candidate.MobileTelephone = "333333";
+
+            response = new SchoolsExperienceSignUp(candidate);
+
+            response.SecondaryTelephone.Should().Be(candidate.MobileTelephone);
+
+            candidate.SecondaryTelephone = "444444";
+
+            response = new SchoolsExperienceSignUp(candidate);
+
+            response.SecondaryTelephone.Should().Be(candidate.SecondaryTelephone);
+        }
+
+        [Fact]
         public void Candidate_MapsCorrectly()
         {
             var request = new SchoolsExperienceSignUp()
