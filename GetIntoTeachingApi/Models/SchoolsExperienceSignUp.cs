@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
@@ -54,7 +56,7 @@ namespace GetIntoTeachingApi.Models
             SecondaryPreferredTeachingSubjectId = candidate.SecondaryPreferredTeachingSubjectId;
 
             Email = candidate.Email;
-            SecondaryEmail = candidate.SecondaryEmail;
+            SecondaryEmail = candidate.SecondaryEmail ?? candidate.Email;
             FirstName = candidate.FirstName;
             LastName = candidate.LastName;
             DateOfBirth = candidate.DateOfBirth;
@@ -66,7 +68,10 @@ namespace GetIntoTeachingApi.Models
             AddressPostcode = candidate.AddressPostcode;
             AddressTelephone = candidate.AddressTelephone;
             Telephone = candidate.Telephone;
-            SecondaryTelephone = candidate.SecondaryTelephone;
+
+            var secondaryTelephoneDefaults = new List<string> { candidate.MobileTelephone, candidate.AddressTelephone, candidate.Telephone };
+            SecondaryTelephone = candidate.SecondaryTelephone ?? secondaryTelephoneDefaults.FirstOrDefault(t => !string.IsNullOrWhiteSpace(t));
+
             MobileTelephone = candidate.MobileTelephone;
             HasDbsCertificate = candidate.HasDbsCertificate;
             DbsCertificateIssuedAt = candidate.DbsCertificateIssuedAt;
