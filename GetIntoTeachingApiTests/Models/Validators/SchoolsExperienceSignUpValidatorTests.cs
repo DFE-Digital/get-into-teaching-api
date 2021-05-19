@@ -33,7 +33,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 CandidateId = null,
                 PreferredTeachingSubjectId = mockLookupItem.Id,
                 SecondaryPreferredTeachingSubjectId = mockLookupItem.Id,
-                CountryId = (Guid)mockLookupItem.Id,
                 AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id,
                 Email = "email@address.com",
                 FirstName = "John",
@@ -159,12 +158,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_SecondaryPreferredTeachingSubjectIdIsNull_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(request => request.SecondaryPreferredTeachingSubjectId, null as Guid?);
-        }
-
-        [Fact]
-        public void Validate_CountryIdIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.CountryId, null as Guid?);
         }
     }
 }

@@ -15,7 +15,6 @@ namespace GetIntoTeachingApiTests.Models
                 Id = Guid.NewGuid(),
                 PreferredTeachingSubjectId = Guid.NewGuid(),
                 SecondaryPreferredTeachingSubjectId = Guid.NewGuid(),
-                CountryId = Guid.NewGuid(),
                 Email = "email@address.com",
                 SecondaryEmail = "email2@address.com",
                 FirstName = "John",
@@ -40,7 +39,6 @@ namespace GetIntoTeachingApiTests.Models
             response.CandidateId.Should().Be(candidate.Id);
             response.PreferredTeachingSubjectId.Should().Be(candidate.PreferredTeachingSubjectId);
             response.SecondaryPreferredTeachingSubjectId.Should().Be(candidate.SecondaryPreferredTeachingSubjectId);
-            response.CountryId.Should().Be(candidate.CountryId);
             response.Email.Should().Be(candidate.Email);
             response.SecondaryEmail.Should().Be(candidate.SecondaryEmail);
             response.FirstName.Should().Be(candidate.FirstName);
@@ -68,7 +66,6 @@ namespace GetIntoTeachingApiTests.Models
                 CandidateId = Guid.NewGuid(),
                 PreferredTeachingSubjectId = Guid.NewGuid(),
                 SecondaryPreferredTeachingSubjectId = Guid.NewGuid(),
-                CountryId = Guid.NewGuid(),
                 AcceptedPolicyId = Guid.NewGuid(),
                 Email = "email@address.com",
                 SecondaryEmail = "email2@address.com",
@@ -94,7 +91,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.Id.Should().Equals(request.CandidateId);
             candidate.PreferredTeachingSubjectId.Should().Equals(request.PreferredTeachingSubjectId);
             candidate.SecondaryPreferredTeachingSubjectId.Should().Equals(request.SecondaryPreferredTeachingSubjectId);
-            candidate.CountryId.Should().Equals(request.CountryId);
+            candidate.CountryId.Should().Equals(LookupItem.UnitedKingdomCountryId);
             candidate.Email.Should().Be(request.Email);
             candidate.SecondaryEmail.Should().Be(request.SecondaryEmail);
             candidate.FirstName.Should().Be(request.FirstName);
