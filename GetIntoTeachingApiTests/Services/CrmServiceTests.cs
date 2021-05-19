@@ -442,6 +442,17 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void LoadProperty_ProxiesToService()
+        {
+            var entity = new Entity("parent");
+            var relationship = new Relationship("child");
+
+            _crm.LoadProperty(entity, relationship, _context);
+
+            _mockService.Verify(mock => mock.LoadProperty(entity, relationship, _context));
+        }
+
+        [Fact]
         public void RelatedEntities_ProxiesToService()
         {
             var entity = new Entity("parent");

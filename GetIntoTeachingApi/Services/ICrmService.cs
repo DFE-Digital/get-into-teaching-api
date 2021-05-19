@@ -29,5 +29,6 @@ namespace GetIntoTeachingApi.Services
         IEnumerable<Entity> RelatedEntities(Entity entity, string relationshipName, string logicalName);
         Entity MappableEntity(string entityName, Guid? id, OrganizationServiceContext context);
         IEnumerable<TeachingEventBuilding> GetTeachingEventBuildings();
+        void LoadProperty(Entity entity, Relationship relationship, OrganizationServiceContext context);
     }
 }

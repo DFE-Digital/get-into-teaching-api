@@ -1,10 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Reflection;
 using System.Text.Json.Serialization;
 using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
@@ -109,6 +112,41 @@ namespace GetIntoTeachingApi.Models
         public TeachingEvent(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
             : base(entity, crm, validatorFactory)
         {
+        }
+
+        protected override bool ShouldMap(ICrmService crm, OrganizationServiceContext context)
+        {
+            if (Building == null)
+            {
+                var eventEntity = crm.MappableEntity(LogicalName(GetType()), Id, context);
+
+                var buildingRelationship = LoadBuildingRelationship(eventEntity, context, crm);
+
+                var related = crm.RelatedEntities(eventEntity, "msevtmgt_event_building", "msevtmgt_event").ToList();
+
+                if (related.Count > 0)
+                {
+                    Entity buildingEntity = related[0];
+
+                    crm.DeleteLink(eventEntity, buildingRelationship, target: buildingEntity, context);
+                }
+
+                context.SaveChanges();
+            }
+
+            return base.ShouldMap(crm, context);
+        }
+
+        private Relationship LoadBuildingRelationship(Entity eventEntity, OrganizationServiceContext context, ICrmService crm)
+        {
+            Type eventType = typeof(TeachingEvent);
+            PropertyInfo building = eventType.GetProperty("Building");
+            var attribute = EntityRelationshipAttribute(building);
+            var relationship = new Relationship(attribute.Name);
+
+            crm.LoadProperty(eventEntity, relationship, context);
+
+            return relationship;
         }
     }
 }

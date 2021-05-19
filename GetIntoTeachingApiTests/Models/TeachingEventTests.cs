@@ -1,13 +1,31 @@
 ﻿using FluentAssertions;
+using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
+using Moq;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Models
 {
     public class TeachingEventTests
     {
+        private readonly Mock<IOrganizationServiceAdapter> _mockService;
+        private readonly OrganizationServiceContext _context;
+        private readonly Mock<ICrmService> _mockCrm;
+
+        public TeachingEventTests()
+        {
+            _mockService = new Mock<IOrganizationServiceAdapter>();
+            _context = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
+            _mockService.Setup(mock => mock.Context()).Returns(_context);
+            _mockCrm = new Mock<ICrmService>();
+        }
+
         [Fact]
         public void EntityAttributes()
         {
@@ -96,6 +114,69 @@ namespace GetIntoTeachingApiTests.Models
         {
             var teachingEvent = new TeachingEvent();
             teachingEvent.InternalTimeZone.Should().Be(85);
+        }
+
+        [Fact]
+        public void ToEntity_WhenBuildingIsRemoved_CallsDeleteLink()
+        {
+            var eventGuid = Guid.NewGuid();
+
+            var updatedEvent = new TeachingEvent()
+            {
+                Id = eventGuid,
+                Building = null,
+            };
+
+            var mockEventEntity = new Entity("msevtmgt_event");
+            var mockBuildingEntity = new Entity("msevtmgt_building");
+
+            _mockCrm.Setup(m => m.MappableEntity("msevtmgt_event", eventGuid, _context)).Returns(mockEventEntity);
+            _mockCrm.Setup(mock => mock.LoadProperty(mockEventEntity,
+                new Relationship("msevtmgt_event_building"), _context));
+            _mockCrm.Setup(m => m.RelatedEntities(mockEventEntity, "msevtmgt_event_building", "msevtmgt_event"))
+              .Returns(new List<Entity> { mockBuildingEntity });
+
+            updatedEvent.ToEntity(_mockCrm.Object, _context);
+
+            _mockCrm.Verify(m => m.DeleteLink(mockEventEntity, new Relationship("msevtmgt_event_building"),
+                mockBuildingEntity, _context), Times.Once);
+        }
+
+        [Fact]
+        public void ToEntity_WhenBuildingIsNotNull_DoesNotCallDeleteLink()
+        {
+            var updatedEvent = new TeachingEvent { Building = new TeachingEventBuilding() };
+            _mockCrm.Setup(m => m.MappableEntity("msevtmgt_event", null, _context))
+                .Returns(new Entity("msevtmgt_event"));
+
+            updatedEvent.ToEntity(_mockCrm.Object, _context);
+
+            _mockCrm.Verify(m => m.DeleteLink(It.IsAny<Entity>(), It.IsAny<Relationship>(),
+                It.IsAny<Entity>(), _context), Times.Never);
+        }
+
+        [Fact]
+        public void ToEntity_WhenThereIsNoPreexistingRelationship_DoesNotCallDeleteLink()
+        {
+            var eventGuid = Guid.NewGuid();
+
+            var updatedEvent = new TeachingEvent()
+            {
+                Id = eventGuid,
+                Building = null,
+            };
+
+            var mockEventEntity = new Entity("msevtmgt_event");
+            var mockBuildingEntity = new Entity("msevtmgt_building");
+
+            _mockCrm.Setup(m => m.MappableEntity("msevtmgt_event", eventGuid, _context)).Returns(mockEventEntity);
+            _mockCrm.Setup(mock => mock.LoadProperty(mockEventEntity,
+                new Relationship("msevtmgt_event_building"), _context));
+
+            updatedEvent.ToEntity(_mockCrm.Object, _context);
+
+            _mockCrm.Verify(m => m.DeleteLink(mockEventEntity, new Relationship("msevtmgt_event_building"),
+                mockBuildingEntity, _context), Times.Never);
         }
     }
 }
