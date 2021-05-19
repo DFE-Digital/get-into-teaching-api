@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
@@ -11,7 +13,6 @@ namespace GetIntoTeachingApi.Models
         public Guid? CandidateId { get; set; }
         public Guid? PreferredTeachingSubjectId { get; set; }
         public Guid? SecondaryPreferredTeachingSubjectId { get; set; }
-        public Guid? CountryId { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public Guid? AcceptedPolicyId { get; set; }
 
@@ -53,10 +54,9 @@ namespace GetIntoTeachingApi.Models
             CandidateId = candidate.Id;
             PreferredTeachingSubjectId = candidate.PreferredTeachingSubjectId;
             SecondaryPreferredTeachingSubjectId = candidate.SecondaryPreferredTeachingSubjectId;
-            CountryId = candidate.CountryId;
 
             Email = candidate.Email;
-            SecondaryEmail = candidate.SecondaryEmail;
+            SecondaryEmail = candidate.SecondaryEmail ?? candidate.Email;
             FirstName = candidate.FirstName;
             LastName = candidate.LastName;
             DateOfBirth = candidate.DateOfBirth;
@@ -68,7 +68,10 @@ namespace GetIntoTeachingApi.Models
             AddressPostcode = candidate.AddressPostcode;
             AddressTelephone = candidate.AddressTelephone;
             Telephone = candidate.Telephone;
-            SecondaryTelephone = candidate.SecondaryTelephone;
+
+            var secondaryTelephoneDefaults = new List<string> { candidate.MobileTelephone, candidate.AddressTelephone, candidate.Telephone };
+            SecondaryTelephone = candidate.SecondaryTelephone ?? secondaryTelephoneDefaults.FirstOrDefault(t => !string.IsNullOrWhiteSpace(t));
+
             MobileTelephone = candidate.MobileTelephone;
             HasDbsCertificate = candidate.HasDbsCertificate;
             DbsCertificateIssuedAt = candidate.DbsCertificateIssuedAt;
@@ -81,7 +84,7 @@ namespace GetIntoTeachingApi.Models
                 Id = CandidateId,
                 PreferredTeachingSubjectId = PreferredTeachingSubjectId,
                 SecondaryPreferredTeachingSubjectId = SecondaryPreferredTeachingSubjectId,
-                CountryId = CountryId,
+                CountryId = LookupItem.UnitedKingdomCountryId,
                 Email = Email,
                 SecondaryEmail = SecondaryEmail,
                 FirstName = FirstName,

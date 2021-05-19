@@ -9,7 +9,6 @@ namespace GetIntoTeachingApi.Models.Validators
         {
             RuleFor(request => request.PreferredTeachingSubjectId).NotNull();
             RuleFor(request => request.SecondaryPreferredTeachingSubjectId).NotNull();
-            RuleFor(request => request.CountryId).NotNull();
             RuleFor(request => request.AcceptedPolicyId).NotNull();
 
             RuleFor(request => request.Email).NotEmpty();
