@@ -61,13 +61,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
         {
             var request = new SchoolsExperienceSignUp
             {
-                HasDbsCertificate = true,
-                DbsCertificateIssuedAt = null,
+                Telephone = "123",
             };
 
             var result = _validator.TestValidate(request);
 
-            result.ShouldHaveValidationErrorFor("Candidate.DbsCertificateIssuedAt");
+            result.ShouldHaveValidationErrorFor("Candidate.Telephone");
         }
 
         [Fact]
