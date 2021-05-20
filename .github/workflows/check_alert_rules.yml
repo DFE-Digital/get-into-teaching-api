@@ -1,0 +1,24 @@
+name: Check Prometheus Alert rules
+
+on:
+  pull_request:
+    paths:
+    - 'monitoring/prometheus/alert.rules
+
+jobs:
+  on-pull-request:
+    name: On Pull Request
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@master
+
+    - name: Check Prometheus alert rules
+      uses: peimanja/promtool-github-actions@master
+      with:
+        promtool_actions_subcommand: 'rules'
+        promtool_actions_files: 'monitoring/prometheus/alert.rules'
+        promtool_actions_version: '2.14.0'
+        promtool_actions_comment: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
