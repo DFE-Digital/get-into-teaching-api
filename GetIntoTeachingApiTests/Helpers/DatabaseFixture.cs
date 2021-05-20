@@ -12,7 +12,7 @@ namespace GetIntoTeachingApiTests.Helpers
         public DatabaseFixture()
         {
             TemplateDatabaseName = $"gis_test";
-            ConnectionString = $"Host=localhost;Database={TemplateDatabaseName};Username=docker;Password=docker";
+            ConnectionString = $"Host=localhost;Database={TemplateDatabaseName};Username=docker;Password=docker;Port=4432";
 
             var builder = new DbContextOptionsBuilder<GetIntoTeachingDbContext>();
             DbConfiguration.ConfigPostgres(ConnectionString, builder);

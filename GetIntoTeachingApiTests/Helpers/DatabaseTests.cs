@@ -2,7 +2,6 @@
 using GetIntoTeachingApi.Database;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
-using Prometheus;
 
 namespace GetIntoTeachingApiTests.Helpers
 {
@@ -34,7 +33,7 @@ namespace GetIntoTeachingApiTests.Helpers
 
         private void SetupDbContext(string databaseName)
         {
-            var connectionString = $"Host=localhost;Database={databaseName};Username=docker;Password=docker";
+            var connectionString = $"Host=localhost;Database={databaseName};Username=docker;Password=docker;Port=4432";
             var builder = new DbContextOptionsBuilder<GetIntoTeachingDbContext>();
 
             DbConfiguration.ConfigPostgres(connectionString, builder);
@@ -57,8 +56,8 @@ namespace GetIntoTeachingApiTests.Helpers
             Environment.SetEnvironmentVariable("DATABASE_INSTANCE_NAME", databaseName);
             Environment.SetEnvironmentVariable("VCAP_SERVICES",
                 $"{{\"postgres\": [{{\"instance_name\": \"{databaseName}\",\"credentials\": {{\"host\": \"localhost\"," +
-                $"\"name\": \"{databaseName}\",\"username\": \"docker\",\"password\": \"docker\",\"port\": 5432}}}}]," +
-                $"\"redis\": [{{\"credentials\": {{\"host\": \"0.0.0.0\",\"port\": 6379,\"password\": \"docker\",\"tls_enabled\": false}}}}]}}");
+                $"\"name\": \"{databaseName}\",\"username\": \"docker\",\"password\": \"docker\",\"port\": 4432}}}}]," +
+                $"\"redis\": [{{\"credentials\": {{\"host\": \"0.0.0.0\",\"port\": 5379,\"password\": \"docker\",\"tls_enabled\": false}}}}]}}");
             Environment.SetEnvironmentVariable("VCAP_APPLICATION",
                 "{\"application_name\":\"app-name\",\"space_name\":\"space-name\",\"organization_name\":\"org-name\"}");
         }
