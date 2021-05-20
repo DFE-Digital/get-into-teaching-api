@@ -76,6 +76,7 @@ namespace GetIntoTeachingApi
             services.AddSingleton<IClientManager, ClientManager>();
             services.AddSingleton<IHangfireService, HangfireService>();
             services.AddSingleton<IRedisService, RedisService>();
+            services.AddSingleton<ICandidateUpserter, CandidateUpserter>();
             services.AddSingleton<IPerformContextAdapter, PerformContextAdapter>();
             services.AddSingleton<ICallbackBookingService, CallbackBookingService>();
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();

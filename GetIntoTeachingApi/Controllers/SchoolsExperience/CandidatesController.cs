@@ -19,19 +19,19 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
     {
         private readonly ICandidateAccessTokenService _tokenService;
         private readonly ICrmService _crm;
+        private readonly ICandidateUpserter _upserter;
         private readonly IBackgroundJobClient _jobClient;
-        private readonly IDateTimeProvider _dateTime;
 
         public CandidatesController(
             ICandidateAccessTokenService tokenService,
             ICrmService crm,
-            IBackgroundJobClient jobClient,
-            IDateTimeProvider dateTime)
+            ICandidateUpserter upserter,
+            IBackgroundJobClient jobClient)
         {
             _crm = crm;
+            _upserter = upserter;
             _tokenService = tokenService;
             _jobClient = jobClient;
-            _dateTime = dateTime;
         }
 
         [HttpPost]
@@ -45,23 +45,49 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
                           "`Candidate.Qualifications[0].DegreeSubject` and `DegreeSubject`.",
             OperationId = "SignUpSchoolsExperienceCandidate",
             Tags = new[] { "Schools Experience" })]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
         public IActionResult SignUp(
-            [FromBody, SwaggerRequestBody("Candidate to sign up for the Schools Experience service.", Required = true)] SchoolsExperienceSignUp request)
+            [FromBody, SwaggerRequestBody("Candidate to sign up for the Schools Experience service.", Required = true)] SchoolsExperienceSignUp request,
+            [FromServices] IAppSettings appSettings)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            // This is the only way we can mock/freeze the current date/time
-            // in contract tests (there's no other way to inject it into this class).
-            request.DateTimeProvider = _dateTime;
-            string json = request.Candidate.SerializeChangeTracked();
-            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
+            if (appSettings.IsCrmIntegrationPaused)
+            {
+                throw new InvalidOperationException("CandidatesController#SignUp - Aborting (CRM integration paused).");
+            }
 
-            return NoContent();
+            var candidate = request.Candidate;
+            _upserter.Upsert(candidate);
+
+            return CreatedAtAction(
+                actionName: nameof(Get),
+                routeValues: new { id = candidate.Id },
+                value: candidate);
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        [SwaggerOperation(
+            Summary = "Retrieves an existing SchoolsExperienceSignUp for the candidate.",
+            OperationId = "GetSchoolsExperienceSignUp",
+            Tags = new[] { "Schools Experience" })]
+        [ProducesResponseType(typeof(SchoolsExperienceSignUp), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult Get([FromRoute, SwaggerParameter("The `id` of the `Candidate`.", Required = true)] Guid id)
+        {
+            var candidate = _crm.GetCandidate(id);
+
+            if (candidate == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new SchoolsExperienceSignUp(candidate));
         }
 
         [HttpPost]
