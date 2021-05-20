@@ -430,6 +430,18 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void DeleteLink_ProxiesToService()
+        {
+            var source = new Entity("parent");
+            var target = new Entity("child");
+            var relationship = new Relationship("child");
+
+            _crm.DeleteLink(source, relationship, target, _context);
+
+            _mockService.Verify(mock => mock.DeleteLink(source, relationship, target, _context));
+        }
+
+        [Fact]
         public void RelatedEntities_ProxiesToService()
         {
             var entity = new Entity("parent");
