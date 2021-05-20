@@ -20,7 +20,7 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
         private readonly Mock<ICandidateAccessTokenService> _mockTokenService;
         private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
-        private readonly Mock<IDateTimeProvider> _mockDateTime;
+        private readonly Mock<ICandidateUpserter> _mockUpserter;
         private readonly CandidatesController _controller;
         private readonly ExistingCandidateRequest _request;
 
@@ -29,12 +29,13 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
             _mockTokenService = new Mock<ICandidateAccessTokenService>();
             _mockCrm = new Mock<ICrmService>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
-            _mockDateTime = new Mock<IDateTimeProvider>();
+            _mockUpserter = new Mock<ICandidateUpserter>();
             _request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
-            _controller = new CandidatesController(_mockTokenService.Object, _mockCrm.Object, _mockJobClient.Object, _mockDateTime.Object);
-
-            // Freeze time.
-            _mockDateTime.Setup(m => m.UtcNow).Returns(DateTime.UtcNow);
+            _controller = new CandidatesController(
+                _mockTokenService.Object,
+                _mockCrm.Object,
+                _mockUpserter.Object,
+                _mockJobClient.Object);
         }
 
         [Fact]
@@ -82,10 +83,12 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
         [Fact]
         public void SignUp_InvalidRequest_RespondsWithValidationErrors()
         {
+            var mockAppSettings = new Mock<IAppSettings>();
+            mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
             var request = new SchoolsExperienceSignUp { Email = "invalid-email@" };
             _controller.ModelState.AddModelError("Email", "Email is invalid.");
 
-            var response = _controller.SignUp(request);
+            var response = _controller.SignUp(request, mockAppSettings.Object);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
@@ -93,17 +96,54 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
         }
 
         [Fact]
-        public void SignUp_ValidRequest_EnqueuesJobAndRespondsWithSuccess()
+        public void SignUp_ValidRequest_UpsertsCandidateAndRespondsWithSuccess()
         {
+            var mockAppSettings = new Mock<IAppSettings>();
+            mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
             var request = new SchoolsExperienceSignUp { FirstName = "first" };
 
-            var response = _controller.SignUp(request);
+            var response = _controller.SignUp(request, mockAppSettings.Object);
 
-            response.Should().BeOfType<NoContentResult>();
-            _mockJobClient.Verify(x => x.Create(
-                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-                IsMatch(request.Candidate, (string)job.Args[0])),
-                It.IsAny<EnqueuedState>()));
+            var created = response.Should().BeOfType<CreatedAtActionResult>().Subject;
+            var candidate = created.Value.Should().BeAssignableTo<Candidate>().Subject;
+            IsMatch(candidate, request.Candidate).Should().BeTrue();
+
+            _mockUpserter.Verify(m => m.Upsert(It.IsAny<Candidate>()), Times.Once);
+        }
+
+        [Fact]
+        public void SignUp_WhenCrmIntegrationIsPaused_RaisesError()
+        {
+            var mockAppSettings = new Mock<IAppSettings>();
+            mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(true);
+            var request = new SchoolsExperienceSignUp { FirstName = "first" };
+
+            _controller.Invoking(c => c.SignUp(request, mockAppSettings.Object))
+                .Should().Throw<InvalidOperationException>()
+                .WithMessage("CandidatesController#SignUp - Aborting (CRM integration paused).");
+        }
+
+        [Fact]
+        public void Get_WhenFound_ReturnsSchoolsExperienceSignUp()
+        {
+            var candidate = new Candidate() { Id = Guid.NewGuid() };
+            _mockCrm.Setup(mock => mock.GetCandidate((Guid)candidate.Id)).Returns(candidate);
+
+            var response = _controller.Get((Guid)candidate.Id);
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            var signUp = ok.Value.Should().BeAssignableTo<SchoolsExperienceSignUp>().Subject;
+            signUp.CandidateId.Should().Be(candidate.Id);
+        }
+
+        [Fact]
+        public void Get_WhenNotFound_ReturnsNotFound()
+        {
+            _mockCrm.Setup(mock => mock.GetCandidate(It.IsAny<Guid>())).Returns(null as Candidate);
+
+            var response = _controller.Get(Guid.NewGuid());
+
+            response.Should().BeOfType<NotFoundResult>();
         }
 
         [Fact]
@@ -154,6 +194,12 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
             var candidateB = candidateBJson.DeserializeChangeTracked<Candidate>();
             candidateA.Should().BeEquivalentTo(candidateB);
             return true;
+        }
+
+        private static bool IsMatch(Candidate candidateA, Candidate candidateB)
+        {
+            var candidateBJson = candidateB.SerializeChangeTracked();
+            return IsMatch(candidateA, candidateBJson);
         }
     }
 }
