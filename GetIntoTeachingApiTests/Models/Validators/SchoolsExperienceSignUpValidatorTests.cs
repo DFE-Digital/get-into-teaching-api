@@ -154,9 +154,9 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_SecondaryPreferredTeachingSubjectIdIsNull_HasError()
+        public void Validate_SecondaryPreferredTeachingSubjectIdIsNull_HasNoError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.SecondaryPreferredTeachingSubjectId, null as Guid?);
+            _validator.ShouldNotHaveValidationErrorFor(request => request.SecondaryPreferredTeachingSubjectId, null as Guid?);
         }
     }
 }
