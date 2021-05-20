@@ -101,12 +101,15 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
             var mockAppSettings = new Mock<IAppSettings>();
             mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
             var request = new SchoolsExperienceSignUp { FirstName = "first" };
+            var candidateId = Guid.NewGuid();
+            _mockUpserter.Setup(m => m.Upsert(It.IsAny<Candidate>())).Callback<Candidate>((c) => c.Id = candidateId);
 
             var response = _controller.SignUp(request, mockAppSettings.Object);
 
             var created = response.Should().BeOfType<CreatedAtActionResult>().Subject;
-            var candidate = created.Value.Should().BeAssignableTo<Candidate>().Subject;
-            IsMatch(candidate, request.Candidate).Should().BeTrue();
+            var signUp = created.Value.Should().BeAssignableTo<SchoolsExperienceSignUp>().Subject;
+            signUp.FirstName.Should().Be(request.FirstName);
+            signUp.CandidateId.Should().Be(candidateId);
 
             _mockUpserter.Verify(m => m.Upsert(It.IsAny<Candidate>()), Times.Once);
         }
@@ -194,12 +197,6 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
             var candidateB = candidateBJson.DeserializeChangeTracked<Candidate>();
             candidateA.Should().BeEquivalentTo(candidateB);
             return true;
-        }
-
-        private static bool IsMatch(Candidate candidateA, Candidate candidateB)
-        {
-            var candidateBJson = candidateB.SerializeChangeTracked();
-            return IsMatch(candidateA, candidateBJson);
         }
     }
 }
