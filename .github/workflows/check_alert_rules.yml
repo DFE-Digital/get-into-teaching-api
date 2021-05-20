@@ -3,7 +3,7 @@ name: Check Prometheus Alert rules
 on:
   pull_request:
     paths:
-    - 'monitoring/prometheus/alert.rules
+    - 'monitoring/prometheus/alert.rules'
 
 jobs:
   on-pull-request:
