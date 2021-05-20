@@ -10,14 +10,14 @@ services:
     healthcheck:
         test: "exit 0"
     ports:
-      - '5432:5432'
+      - '4432:5432'
 
   redis:
     image: redis:6.0.9-alpine
     volumes:
       - redis:/data
     ports:
-      - '6379:6379'
+      - '5379:6379'
     command: >
       --requirepass docker
 
