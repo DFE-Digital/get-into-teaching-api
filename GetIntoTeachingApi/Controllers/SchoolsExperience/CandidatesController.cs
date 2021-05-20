@@ -45,7 +45,7 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
                           "`Candidate.Qualifications[0].DegreeSubject` and `DegreeSubject`.",
             OperationId = "SignUpSchoolsExperienceCandidate",
             Tags = new[] { "Schools Experience" })]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(SchoolsExperienceSignUp), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
         public IActionResult SignUp(
             [FromBody, SwaggerRequestBody("Candidate to sign up for the Schools Experience service.", Required = true)] SchoolsExperienceSignUp request,
@@ -67,7 +67,7 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
             return CreatedAtAction(
                 actionName: nameof(Get),
                 routeValues: new { id = candidate.Id },
-                value: candidate);
+                value: new SchoolsExperienceSignUp(candidate));
         }
 
         [HttpGet]
