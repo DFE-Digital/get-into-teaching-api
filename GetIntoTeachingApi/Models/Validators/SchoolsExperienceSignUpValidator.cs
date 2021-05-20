@@ -8,7 +8,6 @@ namespace GetIntoTeachingApi.Models.Validators
         public SchoolsExperienceSignUpValidator(IStore store, IDateTimeProvider dateTime)
         {
             RuleFor(request => request.PreferredTeachingSubjectId).NotNull();
-            RuleFor(request => request.SecondaryPreferredTeachingSubjectId).NotNull();
             RuleFor(request => request.AcceptedPolicyId).NotNull();
 
             RuleFor(request => request.Email).NotEmpty();
