@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 14,
+  "id": 15,
   "links": [],
   "panels": [
     {
@@ -41,7 +41,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
+        "h": 6,
         "w": 24,
         "x": 0,
         "y": 0
@@ -96,6 +96,125 @@
       "type": "stat"
     },
     {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Elasticseach",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 4,
+        "w": 22,
+        "x": 1,
+        "y": 6
+      },
+      "hiddenSeries": false,
+      "id": 18,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.2.2",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "$$hashKey": "object:126",
+              "field": "@timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "$$hashKey": "object:124",
+              "field": "select field",
+              "id": "1",
+              "meta": {},
+              "settings": {},
+              "type": "count"
+            }
+          ],
+          "query": "github.Action: Deploy",
+          "refId": "A",
+          "timeField": "@timestamp"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Deployments",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:88",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:89",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
       "datasource": "Elasticseach",
       "description": "",
       "fieldConfig": {
@@ -120,9 +239,9 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 9,
+        "w": 12,
         "x": 0,
-        "y": 5
+        "y": 10
       },
       "id": 3,
       "options": {
@@ -193,38 +312,13 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Failure"
-            },
-            "properties": [
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green",
-                      "value": null
-                    },
-                    {
-                      "color": "red",
-                      "value": 1
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 5,
-        "w": 7,
-        "x": 9,
-        "y": 5
+        "w": 12,
+        "x": 12,
+        "y": 10
       },
       "id": 8,
       "options": {
@@ -244,7 +338,6 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "alias": "Failure",
           "bucketAggs": [
             {
               "$$hashKey": "object:106",
@@ -277,120 +370,29 @@
       "type": "stat"
     },
     {
-      "aliasColors": {
-        "Failure": "#F2495C"
-      },
-      "breakPoint": "50%",
-      "cacheTimeout": null,
-      "combine": {
-        "label": "Others",
-        "threshold": 0
-      },
-      "datasource": "Elasticseach",
+      "datasource": null,
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
+          "custom": {}
         },
         "overrides": []
       },
-      "fontSize": "80%",
-      "format": "short",
       "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 16,
-        "y": 5
+        "h": 2,
+        "w": 4,
+        "x": 0,
+        "y": 15
       },
-      "id": 24,
-      "interval": null,
-      "legend": {
-        "show": false,
-        "values": false
+      "id": 10,
+      "options": {
+        "content": "<h1 style=\"color: #5e9ca0;\"><span style=\"color: #00ccff;\">DEVELOPMENT</span></h1>\n",
+        "mode": "html"
       },
-      "legendType": "Right side",
-      "links": [],
-      "nullPointMode": "connected",
-      "pieType": "pie",
-      "pluginVersion": "7.2.2",
-      "strokeWidth": 1,
-      "targets": [
-        {
-          "alias": "Success",
-          "bucketAggs": [
-            {
-              "$$hashKey": "object:1971",
-              "field": "@timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": 0,
-                "trimEdges": 0
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "metrics": [
-            {
-              "$$hashKey": "object:1969",
-              "field": "select metric",
-              "id": "1",
-              "meta": {},
-              "pipelineAgg": "select metric",
-              "settings": {},
-              "type": "count"
-            }
-          ],
-          "query": "github.Action: Deploy AND github.Status : success",
-          "refId": "A",
-          "timeField": "@timestamp"
-        },
-        {
-          "alias": "Failure",
-          "bucketAggs": [
-            {
-              "$$hashKey": "object:2099",
-              "field": "@timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": 0,
-                "trimEdges": 0
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "metrics": [
-            {
-              "$$hashKey": "object:2097",
-              "field": "select field",
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "github.Action: Deploy AND github.Status : failure",
-          "refId": "B",
-          "timeField": "@timestamp"
-        }
-      ],
+      "pluginVersion": "7.1.0",
       "timeFrom": null,
       "timeShift": null,
-      "title": "Overview",
-      "type": "grafana-piechart-panel",
-      "valueName": "total"
+      "title": "",
+      "type": "text"
     },
     {
       "datasource": "Elasticseach",
@@ -413,38 +415,13 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Failure"
-            },
-            "properties": [
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green",
-                      "value": null
-                    },
-                    {
-                      "color": "red",
-                      "value": 1
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 2,
         "w": 4,
-        "x": 5,
-        "y": 10
+        "x": 4,
+        "y": 15
       },
       "id": 4,
       "options": {
@@ -464,10 +441,9 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "alias": "Success",
           "bucketAggs": [
             {
-              "$$hashKey": "object:1151",
+              "$$hashKey": "object:204",
               "field": "@timestamp",
               "id": "2",
               "settings": {
@@ -483,46 +459,17 @@
               "$$hashKey": "object:202",
               "field": "select field",
               "id": "1",
-              "meta": {},
-              "settings": {},
               "type": "count"
             }
           ],
           "query": "github.Action: Deploy AND github.Status : success AND github.Environment: Development AND github.Application: \"get-teacher-training-adviser-service\"",
           "refId": "B",
           "timeField": "@timestamp"
-        },
-        {
-          "alias": "Failure",
-          "bucketAggs": [
-            {
-              "$$hashKey": "object:1136",
-              "field": "@timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": 0,
-                "trimEdges": 0
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "metrics": [
-            {
-              "$$hashKey": "object:1134",
-              "field": "select field",
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "github.Action: Deploy AND github.Status : failure AND github.Environment: Development AND github.Application: \"get-teacher-training-adviser-service\"",
-          "refId": "A",
-          "timeField": "@timestamp"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Development  Adviser",
+      "title": "Adviser",
       "type": "stat"
     },
     {
@@ -550,8 +497,8 @@
       "gridPos": {
         "h": 2,
         "w": 4,
-        "x": 9,
-        "y": 10
+        "x": 8,
+        "y": 15
       },
       "id": 6,
       "options": {
@@ -571,7 +518,6 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "alias": "Success",
           "bucketAggs": [
             {
               "$$hashKey": "object:204",
@@ -596,38 +542,11 @@
           "query": "github.Action: Deploy AND github.Status : success AND github.Environment: Development AND github.Application: \"get-into-teaching-app\"",
           "refId": "B",
           "timeField": "@timestamp"
-        },
-        {
-          "alias": "Failure",
-          "bucketAggs": [
-            {
-              "$$hashKey": "object:204",
-              "field": "@timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": 0,
-                "trimEdges": 0
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "metrics": [
-            {
-              "$$hashKey": "object:202",
-              "field": "select field",
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "github.Action: Deploy AND github.Status : failure AND github.Environment: Development AND github.Application: \"get-into-teaching-app\"",
-          "refId": "A",
-          "timeField": "@timestamp"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": " Development Application",
+      "title": "Application",
       "type": "stat"
     },
     {
@@ -650,38 +569,13 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Failure"
-            },
-            "properties": [
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green",
-                      "value": null
-                    },
-                    {
-                      "color": "red",
-                      "value": 1
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 2,
         "w": 4,
-        "x": 13,
-        "y": 10
+        "x": 12,
+        "y": 15
       },
       "id": 7,
       "options": {
@@ -701,7 +595,6 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "alias": "Success",
           "bucketAggs": [
             {
               "$$hashKey": "object:204",
@@ -726,39 +619,37 @@
           "query": "github.Action: Deploy AND github.Status : success AND github.Environment: Development AND github.Application: \"get-into-teaching-api\"",
           "refId": "B",
           "timeField": "@timestamp"
-        },
-        {
-          "alias": "Failure",
-          "bucketAggs": [
-            {
-              "$$hashKey": "object:204",
-              "field": "@timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": 0,
-                "trimEdges": 0
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "metrics": [
-            {
-              "$$hashKey": "object:202",
-              "field": "select field",
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "github.Action: Deploy AND github.Status : failure AND github.Environment: Development AND github.Application: \"get-into-teaching-api\"",
-          "refId": "A",
-          "timeField": "@timestamp"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": " Development API",
+      "title": "API",
       "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 4,
+        "x": 0,
+        "y": 17
+      },
+      "id": 11,
+      "options": {
+        "content": "<h1 style=\"color: #5e9ca0;\"><span style=\"color: #00ccff;\">REVIEW</span></h1>\n",
+        "mode": "html"
+      },
+      "pluginVersion": "7.1.0",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "text"
     },
     {
       "datasource": "Elasticseach",
@@ -786,8 +677,8 @@
       "gridPos": {
         "h": 2,
         "w": 4,
-        "x": 5,
-        "y": 12
+        "x": 4,
+        "y": 17
       },
       "id": 14,
       "options": {
@@ -807,7 +698,6 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "alias": "Success",
           "bucketAggs": [
             {
               "$$hashKey": "object:204",
@@ -832,38 +722,11 @@
           "query": "github.Action: Deploy AND github.Status : success AND github.Environment: Review AND github.Application: \"get-teacher-training-adviser-service\"",
           "refId": "B",
           "timeField": "@timestamp"
-        },
-        {
-          "alias": "Failure",
-          "bucketAggs": [
-            {
-              "$$hashKey": "object:204",
-              "field": "@timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": 0,
-                "trimEdges": 0
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "metrics": [
-            {
-              "$$hashKey": "object:202",
-              "field": "select field",
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "github.Action: Deploy AND github.Status : failure AND github.Environment: Review AND github.Application: \"get-teacher-training-adviser-service\"",
-          "refId": "A",
-          "timeField": "@timestamp"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Review Adviser",
+      "title": "Adviser",
       "type": "stat"
     },
     {
@@ -886,40 +749,15 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Failure"
-            },
-            "properties": [
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green",
-                      "value": null
-                    },
-                    {
-                      "color": "red",
-                      "value": 1
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 2,
         "w": 4,
-        "x": 9,
-        "y": 12
+        "x": 8,
+        "y": 17
       },
-      "id": 17,
+      "id": 19,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
@@ -937,7 +775,6 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "alias": "Success",
           "bucketAggs": [
             {
               "$$hashKey": "object:204",
@@ -962,38 +799,11 @@
           "query": "github.Action: Deploy AND github.Status : success AND github.Environment: Review AND github.Application: \"get-into-teaching-app\"",
           "refId": "B",
           "timeField": "@timestamp"
-        },
-        {
-          "alias": "Failure",
-          "bucketAggs": [
-            {
-              "$$hashKey": "object:204",
-              "field": "@timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": 0,
-                "trimEdges": 0
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "metrics": [
-            {
-              "$$hashKey": "object:202",
-              "field": "select field",
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "github.Action: Deploy AND github.Status : failure AND github.Environment: Review AND github.Application: \"get-into-teaching-app\"",
-          "refId": "A",
-          "timeField": "@timestamp"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Review Application",
+      "title": "Application",
       "type": "stat"
     },
     {
@@ -1016,40 +826,15 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Failure"
-            },
-            "properties": [
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green",
-                      "value": null
-                    },
-                    {
-                      "color": "red",
-                      "value": 1
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 2,
         "w": 4,
-        "x": 13,
-        "y": 12
+        "x": 12,
+        "y": 17
       },
-      "id": 20,
+      "id": 22,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
@@ -1067,7 +852,6 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "alias": "Success",
           "bucketAggs": [
             {
               "$$hashKey": "object:204",
@@ -1092,39 +876,37 @@
           "query": "github.Action: Deploy AND github.Status : success AND github.Environment: Review AND github.Application: \"get-into-teaching-api\"",
           "refId": "B",
           "timeField": "@timestamp"
-        },
-        {
-          "alias": "Failure",
-          "bucketAggs": [
-            {
-              "$$hashKey": "object:204",
-              "field": "@timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": 0,
-                "trimEdges": 0
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "metrics": [
-            {
-              "$$hashKey": "object:202",
-              "field": "select field",
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "github.Action: Deploy AND github.Status : failure AND github.Environment: Review AND github.Application: \"get-into-teaching-api\"",
-          "refId": "A",
-          "timeField": "@timestamp"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Review API",
+      "title": "API",
       "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 4,
+        "x": 0,
+        "y": 19
+      },
+      "id": 12,
+      "options": {
+        "content": "<h1 style=\"color: #5e9ca0;\"><span style=\"color: #00ccff;\">TEST</span></h1>\n",
+        "mode": "html"
+      },
+      "pluginVersion": "7.1.0",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "text"
     },
     {
       "datasource": "Elasticseach",
@@ -1152,8 +934,8 @@
       "gridPos": {
         "h": 2,
         "w": 4,
-        "x": 5,
-        "y": 14
+        "x": 4,
+        "y": 19
       },
       "id": 15,
       "options": {
@@ -1173,7 +955,6 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "alias": "Success",
           "bucketAggs": [
             {
               "$$hashKey": "object:204",
@@ -1198,38 +979,11 @@
           "query": "github.Action: Deploy AND github.Status : success AND github.Environment: Test AND github.Application: \"get-teacher-training-adviser-service\"",
           "refId": "B",
           "timeField": "@timestamp"
-        },
-        {
-          "alias": "Failure",
-          "bucketAggs": [
-            {
-              "$$hashKey": "object:204",
-              "field": "@timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": 0,
-                "trimEdges": 0
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "metrics": [
-            {
-              "$$hashKey": "object:202",
-              "field": "select field",
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "github.Action: Deploy AND github.Status : failure AND github.Environment: Test AND github.Application: \"get-teacher-training-adviser-service\"",
-          "refId": "A",
-          "timeField": "@timestamp"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Test Adviser",
+      "title": "Adviser",
       "type": "stat"
     },
     {
@@ -1252,40 +1006,15 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Failure"
-            },
-            "properties": [
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green",
-                      "value": null
-                    },
-                    {
-                      "color": "red",
-                      "value": 1
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 2,
         "w": 4,
-        "x": 9,
-        "y": 14
+        "x": 8,
+        "y": 19
       },
-      "id": 18,
+      "id": 20,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
@@ -1303,7 +1032,6 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "alias": "Success",
           "bucketAggs": [
             {
               "$$hashKey": "object:204",
@@ -1328,38 +1056,11 @@
           "query": "github.Action: Deploy AND github.Status : success AND github.Environment: Test AND github.Application: \"get-into-teaching-app\"",
           "refId": "B",
           "timeField": "@timestamp"
-        },
-        {
-          "alias": "Failure",
-          "bucketAggs": [
-            {
-              "$$hashKey": "object:204",
-              "field": "@timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": 0,
-                "trimEdges": 0
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "metrics": [
-            {
-              "$$hashKey": "object:202",
-              "field": "select field",
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "github.Action: Deploy AND github.Status : failure AND github.Environment: Test AND github.Application: \"get-into-teaching-app\"",
-          "refId": "A",
-          "timeField": "@timestamp"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Test Application",
+      "title": "Application",
       "type": "stat"
     },
     {
@@ -1382,40 +1083,15 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Failure"
-            },
-            "properties": [
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green",
-                      "value": null
-                    },
-                    {
-                      "color": "red",
-                      "value": 1
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 2,
         "w": 4,
-        "x": 13,
-        "y": 14
+        "x": 12,
+        "y": 19
       },
-      "id": 21,
+      "id": 23,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
@@ -1433,7 +1109,6 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "alias": "Success",
           "bucketAggs": [
             {
               "$$hashKey": "object:204",
@@ -1458,39 +1133,37 @@
           "query": "github.Action: Deploy AND github.Status : success AND github.Environment: Test AND github.Application: \"get-into-teaching-api\"",
           "refId": "B",
           "timeField": "@timestamp"
-        },
-        {
-          "alias": "Failure",
-          "bucketAggs": [
-            {
-              "$$hashKey": "object:204",
-              "field": "@timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": 0,
-                "trimEdges": 0
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "metrics": [
-            {
-              "$$hashKey": "object:202",
-              "field": "select field",
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "github.Action: Deploy AND github.Status : failure AND github.Environment: Test AND github.Application: \"get-into-teaching-api\"",
-          "refId": "A",
-          "timeField": "@timestamp"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Test API",
+      "title": "API",
       "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 4,
+        "x": 0,
+        "y": 21
+      },
+      "id": 13,
+      "options": {
+        "content": "<h1 style=\"color: #5e9ca0;\"><span style=\"color: #00ccff;\">PRODUCTION</span></h1>\n",
+        "mode": "html"
+      },
+      "pluginVersion": "7.1.0",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "text"
     },
     {
       "datasource": "Elasticseach",
@@ -1518,8 +1191,8 @@
       "gridPos": {
         "h": 2,
         "w": 4,
-        "x": 5,
-        "y": 16
+        "x": 4,
+        "y": 21
       },
       "id": 16,
       "options": {
@@ -1539,7 +1212,6 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "alias": "Success",
           "bucketAggs": [
             {
               "$$hashKey": "object:204",
@@ -1564,38 +1236,11 @@
           "query": "github.Action: Deploy AND github.Status : success AND github.Environment: Production  AND github.Application: \"get-teacher-training-adviser-service\"",
           "refId": "B",
           "timeField": "@timestamp"
-        },
-        {
-          "alias": "Failure",
-          "bucketAggs": [
-            {
-              "$$hashKey": "object:204",
-              "field": "@timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": 0,
-                "trimEdges": 0
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "metrics": [
-            {
-              "$$hashKey": "object:202",
-              "field": "select field",
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "github.Action: Deploy AND github.Status : failure AND github.Environment: Production  AND github.Application: \"get-teacher-training-adviser-service\"",
-          "refId": "A",
-          "timeField": "@timestamp"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Production Adviser",
+      "title": "Adviser",
       "type": "stat"
     },
     {
@@ -1623,10 +1268,10 @@
       "gridPos": {
         "h": 2,
         "w": 4,
-        "x": 9,
-        "y": 16
+        "x": 8,
+        "y": 21
       },
-      "id": 19,
+      "id": 21,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
@@ -1644,7 +1289,6 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "alias": "Success",
           "bucketAggs": [
             {
               "$$hashKey": "object:204",
@@ -1669,38 +1313,11 @@
           "query": "github.Action: Deploy AND github.Status : success AND github.Environment: Production AND github.Application: \"get-into-teaching-app\"",
           "refId": "B",
           "timeField": "@timestamp"
-        },
-        {
-          "alias": "Failure",
-          "bucketAggs": [
-            {
-              "$$hashKey": "object:204",
-              "field": "@timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": 0,
-                "trimEdges": 0
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "metrics": [
-            {
-              "$$hashKey": "object:202",
-              "field": "select field",
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "github.Action: Deploy AND github.Status : failure AND github.Environment: Production AND github.Application: \"get-into-teaching-app\"",
-          "refId": "A",
-          "timeField": "@timestamp"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Production Application",
+      "title": "Application",
       "type": "stat"
     },
     {
@@ -1723,40 +1340,15 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Failure"
-            },
-            "properties": [
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green",
-                      "value": null
-                    },
-                    {
-                      "color": "red",
-                      "value": 1
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 2,
         "w": 4,
-        "x": 13,
-        "y": 16
+        "x": 12,
+        "y": 21
       },
-      "id": 22,
+      "id": 24,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
@@ -1774,7 +1366,6 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "alias": "Success",
           "bucketAggs": [
             {
               "$$hashKey": "object:204",
@@ -1799,42 +1390,15 @@
           "query": "github.Action: Deploy AND github.Status : success AND github.Environment: Production AND github.Application: \"get-into-teaching-api\"",
           "refId": "B",
           "timeField": "@timestamp"
-        },
-        {
-          "alias": "Failure",
-          "bucketAggs": [
-            {
-              "$$hashKey": "object:204",
-              "field": "@timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": 0,
-                "trimEdges": 0
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "metrics": [
-            {
-              "$$hashKey": "object:202",
-              "field": "select field",
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "github.Action: Deploy AND github.Status : failure AND github.Environment: Production AND github.Application: \"get-into-teaching-api\"",
-          "refId": "A",
-          "timeField": "@timestamp"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Production API",
+      "title": "API",
       "type": "stat"
     }
   ],
-  "refresh": "1m",
+  "refresh": false,
   "schemaVersion": 26,
   "style": "dark",
   "tags": [],
@@ -1842,12 +1406,12 @@
     "list": []
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-30d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Deployments Copy",
+  "title": "Deployments",
   "uid": "1gaerJrMz",
-  "version": 6
+  "version": 3
 }
