@@ -130,11 +130,19 @@ namespace GetIntoTeachingApi.Services
 
         public Candidate GetCandidate(Guid id)
         {
-            var entity = _service.CreateQuery("contact", Context())
-                .FirstOrDefault(c => c.GetAttributeValue<EntityReference>("contactid") != null &&
-                c.GetAttributeValue<EntityReference>("contactid").Id == id);
+            return GetCandidates(new Guid[] { id }).FirstOrDefault();
+        }
 
-            return entity == null ? null : new Candidate(entity, this, _validatorFactory);
+        public IEnumerable<Candidate> GetCandidates(IEnumerable<Guid> ids)
+        {
+            var query = new QueryExpression("contact");
+            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
+
+            query.Criteria.AddCondition(new ConditionExpression("contactid", ConditionOperator.In, ids.ToArray()));
+
+            var entities = _service.RetrieveMultiple(query);
+
+            return entities.Select((entity) => new Candidate(entity, this, _validatorFactory));
         }
 
         public IEnumerable<Candidate> GetCandidatesPendingMagicLinkTokenGeneration(int limit = 10)
