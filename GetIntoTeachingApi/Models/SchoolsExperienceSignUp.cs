@@ -16,6 +16,8 @@ namespace GetIntoTeachingApi.Models
         [SwaggerSchema(WriteOnly = true)]
         public Guid? AcceptedPolicyId { get; set; }
 
+        [SwaggerSchema(ReadOnly = true)]
+        public string FullName { get; set; }
         public string Email { get; set; }
         public string SecondaryEmail { get; set; }
         public string FirstName { get; set; }
@@ -55,6 +57,7 @@ namespace GetIntoTeachingApi.Models
             PreferredTeachingSubjectId = candidate.PreferredTeachingSubjectId;
             SecondaryPreferredTeachingSubjectId = candidate.SecondaryPreferredTeachingSubjectId;
 
+            FullName = candidate.FullName;
             Email = candidate.Email;
             SecondaryEmail = candidate.SecondaryEmail ?? candidate.Email;
             FirstName = candidate.FirstName;
