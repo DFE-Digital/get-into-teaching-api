@@ -177,8 +177,10 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void CandidateAlreadyHasLocalEventSubscriptionType_WhenHasLocalEventSubscription_ReturnsTrue()
         {
-            _mockService.Setup(m => m.CreateQuery("contact", _context))
-                .Returns(MockCandidates);
+            var ids = new Guid[] { JaneDoeGuid };
+            var janeDoeEntity = MockCandidates().First(c => c.Id == JaneDoeGuid);
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyGetCandidatesQueryExpression(q, ids)))).Returns(new Entity[] { janeDoeEntity });
 
             var result = _crm.CandidateAlreadyHasLocalEventSubscriptionType(JaneDoeGuid);
 
@@ -188,8 +190,10 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void CandidateAlreadyHasLocalEventSubscriptionType_WhenHasSingleEventSubscription_ReturnsFalse()
         {
-            _mockService.Setup(m => m.CreateQuery("contact", _context))
-                            .Returns(MockCandidates);
+            var ids = new Guid[] { JohnDoeGuid };
+            var johnDoeEntity = MockCandidates().First(c => c.Id == JohnDoeGuid);
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyGetCandidatesQueryExpression(q, ids)))).Returns(new Entity[] { johnDoeEntity });
 
             var result = _crm.CandidateAlreadyHasLocalEventSubscriptionType(JohnDoeGuid);
 
@@ -271,23 +275,61 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void GetCandidate_WithId_ReturnsCorrectly()
         {
-            _mockService.Setup(m => m.CreateQuery("contact", _context))
-                .Returns(MockCandidates);
+            var ids = new Guid[] { JaneDoeGuid };
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyGetCandidatesQueryExpression(q, ids)))).Returns(MockCandidates());
 
             var result = _crm.GetCandidate(JaneDoeGuid);
 
-            result.Id.Should().Be(JaneDoeGuid);
+            result.Should().NotBeNull();
         }
 
         [Fact]
         public void GetCandidate_WithNonExistentId_ReturnsNull()
         {
-            _mockService.Setup(m => m.CreateQuery("contact", _context))
-                          .Returns(MockCandidates);
+            var ids = new Guid[] { Guid.NewGuid() };
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyGetCandidatesQueryExpression(q, ids)))).Returns(new Entity[0]);
 
-            var result = _crm.GetCandidate(Guid.NewGuid());
+            var result = _crm.GetCandidate(ids.First());
 
             result.Should().BeNull();
+        }
+
+        [Fact]
+        public void GetCandidates_WithIds_ReturnsCorrectly()
+        {
+            var ids = new Guid[] { JaneDoeGuid, JohnDoeGuid };
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyGetCandidatesQueryExpression(q, ids)))).Returns(MockCandidates());
+
+            var result = _crm.GetCandidates(ids);
+
+            result.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void GetCandidates_WithNonExistantId_OmitsFromResults()
+        {
+            var ids = new Guid[] { JaneDoeGuid, Guid.NewGuid() };
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyGetCandidatesQueryExpression(q, ids)))).Returns(MockCandidates());
+
+            var result = _crm.GetCandidates(ids);
+
+            result.Select(c => c.Id).Should().NotContain(ids.Last());
+        }
+
+        [Fact]
+        public void GetCandidates_WithEmptyArray_ReturnsEmpty()
+        {
+            var ids = new Guid[0];
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyGetCandidatesQueryExpression(q, ids)))).Returns(new Entity[0]);
+
+            var result = _crm.GetCandidates(ids);
+
+            result.Should().BeEmpty();
         }
 
         [Fact]
@@ -310,6 +352,18 @@ namespace GetIntoTeachingApiTests.Services
             var result = _crm.GetCandidatesPendingMagicLinkTokenGeneration(1);
 
             result.Count().Should().Be(1);
+        }
+
+        private static bool VerifyGetCandidatesQueryExpression(QueryExpression query, IEnumerable<Guid> ids)
+        {
+            var hasEntityName = query.EntityName == "contact";
+            var conditions = query.Criteria.Conditions;
+
+            var objectIds = ids.Select(id => (object)id);
+            var hasIdCondition = conditions.Where(c => c.AttributeName == "contactid" &&
+                c.Operator == ConditionOperator.In && c.Values.ToHashSet().IsSubsetOf(objectIds)).Any();
+            
+            return hasEntityName && hasIdCondition;
         }
 
         [Theory]
