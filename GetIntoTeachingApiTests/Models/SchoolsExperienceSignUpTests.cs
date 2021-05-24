@@ -41,6 +41,7 @@ namespace GetIntoTeachingApiTests.Models
             response.SecondaryPreferredTeachingSubjectId.Should().Be(candidate.SecondaryPreferredTeachingSubjectId);
             response.Email.Should().Be(candidate.Email);
             response.SecondaryEmail.Should().Be(candidate.SecondaryEmail);
+            response.FullName.Should().Be(candidate.FullName);
             response.FirstName.Should().Be(candidate.FirstName);
             response.LastName.Should().Be(candidate.LastName);
             response.AddressTelephone.Should().Be(candidate.AddressTelephone);
