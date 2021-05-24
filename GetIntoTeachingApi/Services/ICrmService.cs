@@ -15,6 +15,7 @@ namespace GetIntoTeachingApi.Services
         Candidate MatchCandidate(ExistingCandidateRequest request);
         IEnumerable<Candidate> MatchCandidates(string magicLinkToken);
         Candidate GetCandidate(Guid id);
+        IEnumerable<Candidate> GetCandidates(IEnumerable<Guid> ids);
         IEnumerable<Candidate> GetCandidatesPendingMagicLinkTokenGeneration(int limit = 10);
         IEnumerable<TeachingEvent> GetTeachingEvents(DateTime? startAfter = null);
         TeachingEvent GetTeachingEvent(string readableId);

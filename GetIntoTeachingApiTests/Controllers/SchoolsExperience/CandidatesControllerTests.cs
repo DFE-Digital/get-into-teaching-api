@@ -12,6 +12,8 @@ using Hangfire.Common;
 using Hangfire.States;
 using Microsoft.AspNetCore.Authorization;
 using GetIntoTeachingApi.Utils;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
 {
@@ -147,6 +149,36 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
             var response = _controller.Get(Guid.NewGuid());
 
             response.Should().BeOfType<NotFoundResult>();
+        }
+
+        [Fact]
+        public void GetMultiple_WithIds_ReturnsSchoolsExperienceSignUps()
+        {
+            var candidates = new Candidate[]
+            {
+                new Candidate() { Id = Guid.NewGuid() },
+                new Candidate() { Id = Guid.NewGuid() },
+            };
+            var ids = candidates.Select(c => (Guid)c.Id);
+            _mockCrm.Setup(mock => mock.GetCandidates(ids)).Returns(candidates);
+
+            var response = _controller.GetMultiple(ids);
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            var signUps = ok.Value.Should().BeAssignableTo<IEnumerable<SchoolsExperienceSignUp>>().Subject;
+            signUps.Select(c => c.CandidateId).Should().BeEquivalentTo(ids);
+        }
+
+        [Fact]
+        public void Get_WhenNotFound_ReturnsEmpty()
+        {
+            _mockCrm.Setup(mock => mock.GetCandidates(It.IsAny<IEnumerable<Guid>>())).Returns(new Candidate[0]);
+
+            var response = _controller.GetMultiple(new Guid[] { Guid.NewGuid() });
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            var signUps = ok.Value.Should().BeAssignableTo<IEnumerable<SchoolsExperienceSignUp>>().Subject;
+            signUps.Should().BeEmpty();
         }
 
         [Fact]
