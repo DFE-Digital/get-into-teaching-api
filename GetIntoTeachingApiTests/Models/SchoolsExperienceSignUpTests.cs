@@ -16,6 +16,7 @@ namespace GetIntoTeachingApiTests.Models
                 PreferredTeachingSubjectId = Guid.NewGuid(),
                 SecondaryPreferredTeachingSubjectId = Guid.NewGuid(),
                 MasterId = Guid.NewGuid(),
+                Merged = true,
                 Email = "email@address.com",
                 SecondaryEmail = "email2@address.com",
                 FirstName = "John",
@@ -43,6 +44,7 @@ namespace GetIntoTeachingApiTests.Models
             response.MasterId.Should().Be(candidate.MasterId);
             response.Email.Should().Be(candidate.Email);
             response.SecondaryEmail.Should().Be(candidate.SecondaryEmail);
+            response.Merged.Should().Be(candidate.Merged);
             response.FullName.Should().Be(candidate.FullName);
             response.FirstName.Should().Be(candidate.FirstName);
             response.LastName.Should().Be(candidate.LastName);
