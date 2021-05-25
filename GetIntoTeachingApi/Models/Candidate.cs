@@ -106,6 +106,8 @@ namespace GetIntoTeachingApi.Models
         public Guid? CountryId { get; set; }
         [EntityField("owningbusinessunit", typeof(EntityReference), "businessunit")]
         public Guid? OwningBusinessUnitId { get; set; }
+        [EntityField("masterid", typeof(EntityReference), "contact")]
+        public Guid? MasterId { get; set; }
         [EntityField("dfe_preferrededucationphase01", typeof(OptionSetValue))]
         public int? PreferredEducationPhaseId { get; set; }
         [EntityField("dfe_ittyear", typeof(OptionSetValue))]
