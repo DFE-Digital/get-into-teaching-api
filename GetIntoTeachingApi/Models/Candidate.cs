@@ -146,6 +146,8 @@ namespace GetIntoTeachingApi.Models
         public int? MagicLinkTokenStatusId { get; set; }
         [EntityField("dfe_waitingtobeassigneddate")]
         public DateTime? StatusIsWaitingToBeAssignedAt { get; set; }
+        [EntityField("merged")]
+        public bool Merged { get; set; }
         [EntityField("emailaddress1")]
         public string Email { get; set; }
         [EntityField("emailaddress2")]
