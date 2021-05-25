@@ -19,6 +19,8 @@ namespace GetIntoTeachingApi.Models
         public Guid? MasterId { get; set; }
 
         [SwaggerSchema(ReadOnly = true)]
+        public bool Merged { get; set; }
+        [SwaggerSchema(ReadOnly = true)]
         public string FullName { get; set; }
         public string Email { get; set; }
         public string SecondaryEmail { get; set; }
@@ -60,6 +62,7 @@ namespace GetIntoTeachingApi.Models
             SecondaryPreferredTeachingSubjectId = candidate.SecondaryPreferredTeachingSubjectId;
             MasterId = candidate.MasterId;
 
+            Merged = candidate.Merged;
             FullName = candidate.FullName;
             Email = candidate.Email;
             SecondaryEmail = candidate.SecondaryEmail ?? candidate.Email;
