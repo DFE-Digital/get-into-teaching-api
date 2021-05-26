@@ -19,10 +19,9 @@ namespace GetIntoTeachingApi.Models.Validators
         public ClassroomExperienceNoteValidator()
         {
             RuleFor(request => request.Action).NotEmpty().Must(a => _validActions.Contains(a));
-            RuleFor(request => request.SchoolUrn).Must(urn => urn.ToString().Length == _urnLength);
+            RuleFor(request => request.SchoolUrn).NotEmpty().Must(urn => urn.ToString().Length == _urnLength);
             RuleFor(request => request.SchoolName).NotEmpty();
             RuleFor(request => request.RecordedAt).NotNull();
-            RuleFor(request => request.Date).NotNull();
         }
     }
 }
