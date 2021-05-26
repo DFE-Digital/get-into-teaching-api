@@ -14,7 +14,7 @@ namespace GetIntoTeachingApi.Models
         public string Action { get; set; }
         [SwaggerSchema(Format = "date")]
         public DateTime? Date { get; set; }
-        public string SchoolUrn { get; set; }
+        public int SchoolUrn { get; set; }
         public string SchoolName { get; set; }
 
         public ClassroomExperienceNote()
