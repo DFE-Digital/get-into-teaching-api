@@ -185,21 +185,21 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
         public void AddClassroomExperienceNote_InvalidRequest_RespondsWithValidationErrors()
         {
             var candidateId = Guid.NewGuid();
-            var note = new ClassroomExperienceNote { SchoolUrn = null };
-            _controller.ModelState.AddModelError("SchoolUrn", "SchoolUrn must be set.");
+            var note = new ClassroomExperienceNote { SchoolName = null };
+            _controller.ModelState.AddModelError("SchoolName", "SchoolName must be set.");
 
             var response = _controller.AddClassroomExperienceNote(candidateId, note);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
-            errors.Should().ContainKey("SchoolUrn").WhichValue.Should().BeOfType<string[]>().Which.Should().Contain("SchoolUrn must be set.");
+            errors.Should().ContainKey("SchoolName").WhichValue.Should().BeOfType<string[]>().Which.Should().Contain("SchoolName must be set.");
         }
 
         [Fact]
         public void AddClassroomExperienceNote_CandidateNotFound_RespondsWithNotFound()
         {
             var candidateId = Guid.NewGuid();
-            var note = new ClassroomExperienceNote() { Action = "REQUESTED", SchoolName = "School Name", SchoolUrn = "123456" };
+            var note = new ClassroomExperienceNote() { Action = "REQUESTED", SchoolName = "School Name", SchoolUrn = 123456 };
             _mockCrm.Setup(m => m.GetCandidate(candidateId)).Returns(null as Candidate);
 
             var response = _controller.AddClassroomExperienceNote(candidateId, note);
@@ -211,7 +211,7 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
         public void AddClassroomExperienceNote_ValidRequest_EnqueuesJobAndRespondsWithSuccess()
         {
             var candidate = new Candidate() { Id = Guid.NewGuid() };
-            var note = new ClassroomExperienceNote() { Action = "REQUESTED", SchoolName = "School Name", SchoolUrn = "123456" };
+            var note = new ClassroomExperienceNote() { Action = "REQUESTED", SchoolName = "School Name", SchoolUrn = 123456 };
             _mockCrm.Setup(m => m.GetCandidate((Guid)candidate.Id)).Returns(candidate);
 
             var response = _controller.AddClassroomExperienceNote((Guid)candidate.Id, note);

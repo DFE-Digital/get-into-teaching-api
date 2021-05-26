@@ -25,7 +25,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
                 RecordedAt = DateTime.UtcNow.AddDays(-5),
                 Date = DateTime.UtcNow,
                 SchoolName = "John Reed Primary",
-                SchoolUrn = "123456",
+                SchoolUrn = 123456,
             };
 
             var result = _validator.TestValidate(request);
@@ -83,13 +83,13 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_SchoolUrnIsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.SchoolUrn, "1234567");
+            _validator.ShouldHaveValidationErrorFor(request => request.SchoolUrn, 1234567);
         }
 
         [Fact]
-        public void Validate_SchoolUrnIsEmpty_HasError()
+        public void Validate_SchoolUrnIsWrongLength_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.SchoolUrn, "");
+            _validator.ShouldHaveValidationErrorFor(request => request.SchoolUrn, 11);
         }
     }
 }
