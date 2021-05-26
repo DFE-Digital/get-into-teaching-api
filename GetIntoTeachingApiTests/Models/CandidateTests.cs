@@ -451,7 +451,7 @@ namespace GetIntoTeachingApiTests.Models
                 Date = new DateTime(2020, 2, 1),
                 RecordedAt = new DateTime(2020, 3, 2),
                 SchoolName = "School Name",
-                SchoolUrn = "123456",
+                SchoolUrn = 123456,
             };
 
             candidate.AddClassroomExperienceNote(note);
@@ -471,7 +471,7 @@ namespace GetIntoTeachingApiTests.Models
                 Date = new DateTime(2020, 2, 1),
                 RecordedAt = new DateTime(2020, 3, 2),
                 SchoolName = "School Name",
-                SchoolUrn = "123456",
+                SchoolUrn = 123456,
             };
 
             candidate.AddClassroomExperienceNote(firstNote);
@@ -483,7 +483,7 @@ namespace GetIntoTeachingApiTests.Models
                 Date = new DateTime(2021, 10, 11),
                 RecordedAt = new DateTime(2021, 12, 4),
                 SchoolName = "School Name",
-                SchoolUrn = "654321",
+                SchoolUrn = 654321,
             };
 
             candidate.AddClassroomExperienceNote(secondNote);
