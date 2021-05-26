@@ -26,6 +26,10 @@ namespace GetIntoTeachingApiTests.Models
             note.SchoolName = "Test";
 
             note.ToString().Should().Be("01/01/2020 CANCELLED BY SCHOOL    02/03/2020 123    Test\r\n");
+
+            note.Date = null;
+
+            note.ToString().Should().Be("01/01/2020 CANCELLED BY SCHOOL               123    Test\r\n");
         }
     }
 }
