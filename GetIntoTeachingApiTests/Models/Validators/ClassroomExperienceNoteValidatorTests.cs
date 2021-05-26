@@ -40,12 +40,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_DateIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.Date, null as DateTime?);
-        }
-
-        [Fact]
         public void Validate_RecordedAtIsNull_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(request => request.RecordedAt, null as DateTime?);
@@ -90,6 +84,12 @@ namespace GetIntoTeachingApiTests.Models.Validators
         public void Validate_SchoolUrnIsWrongLength_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(request => request.SchoolUrn, 11);
+        }
+
+        [Fact]
+        public void Validate_SchoolUrnIsNull_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(request => request.SchoolUrn, null as int?);
         }
     }
 }
