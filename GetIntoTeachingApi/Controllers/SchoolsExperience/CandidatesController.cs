@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
@@ -99,7 +100,7 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
             Tags = new[] { "Schools Experience" })]
         [ProducesResponseType(typeof(IEnumerable<SchoolsExperienceSignUp>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetMultiple([FromQuery, SwaggerParameter("A collection of `Candidate` `id`s.", Required = true)] IEnumerable<Guid> ids)
+        public IActionResult GetMultiple([FromQuery, CommaSeparated, SwaggerParameter("A collection of `Candidate` `id`s.", Required = true)] IEnumerable<Guid> ids)
         {
             var candidates = _crm.GetCandidates(ids);
             var signUps = candidates.Select(c => new SchoolsExperienceSignUp(c));
