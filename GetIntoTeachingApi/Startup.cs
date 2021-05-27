@@ -89,6 +89,11 @@ namespace GetIntoTeachingApi
             services.AddAuthentication("ApiClientHandler")
                 .AddScheme<ApiClientSchemaOptions, ApiClientHandler>("ApiClientHandler", op => { });
 
+            services.AddMvc(o =>
+            {
+                o.Conventions.Add(new CommaSeparatedQueryStringConvention());
+            });
+
             services.AddControllers(o =>
             {
                 o.ModelBinderProviders.Insert(0, new TrimStringModelBinderProvider());
