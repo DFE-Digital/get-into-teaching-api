@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GetIntoTeachingApi.Models;
-using Microsoft.PowerPlatform.Cds.Client;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
@@ -11,18 +11,18 @@ namespace GetIntoTeachingApi.Adapters
 {
     public class OrganizationServiceAdapter : IOrganizationServiceAdapter
     {
-        private readonly CdsServiceClient _client;
+        private readonly ServiceClient _client;
 
         public OrganizationServiceAdapter(IOrganizationService client)
         {
-            _client = (CdsServiceClient)client;
+            _client = (ServiceClient)client;
         }
 
         public string CheckStatus()
         {
             try
             {
-                _client.GetMyCdsUserId();
+                _client.GetMyUserId();
             }
             catch (Exception e)
             {
@@ -65,7 +65,7 @@ namespace GetIntoTeachingApi.Adapters
             return result;
         }
 
-        public IEnumerable<CdsServiceClient.PickListItem> GetPickListItemsForAttribute(
+        public IEnumerable<ServiceClient.PickListItem> GetPickListItemsForAttribute(
             string entityName,
             string attributeName)
         {
