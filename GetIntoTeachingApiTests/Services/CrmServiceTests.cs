@@ -12,6 +12,7 @@ using Microsoft.Xrm.Sdk.Query;
 using Xunit;
 using System.Linq.Dynamic.Core;
 using FluentValidation;
+using Microsoft.PowerPlatform.Dataverse.Client;
 
 namespace GetIntoTeachingApiTests.Services
 {
@@ -775,13 +776,13 @@ namespace GetIntoTeachingApiTests.Services
             return new[] { country1, country2, country3 }.AsQueryable();
         }
 
-        private static IEnumerable<Microsoft.PowerPlatform.Cds.Client.CdsServiceClient.PickListItem> MockInitialTeacherTrainingYears()
+        private static IEnumerable<ServiceClient.PickListItem> MockInitialTeacherTrainingYears()
         {
-            var year1 = new Microsoft.PowerPlatform.Cds.Client.CdsServiceClient.PickListItem { PickListItemId = 1, DisplayLabel = "2010" };
-            var year2 = new Microsoft.PowerPlatform.Cds.Client.CdsServiceClient.PickListItem { PickListItemId = 2, DisplayLabel = "2011" };
-            var year3 = new Microsoft.PowerPlatform.Cds.Client.CdsServiceClient.PickListItem { PickListItemId = 3, DisplayLabel = "2012" };
+            var year1 = new ServiceClient.PickListItem { PickListItemId = 1, DisplayLabel = "2010" };
+            var year2 = new ServiceClient.PickListItem { PickListItemId = 2, DisplayLabel = "2011" };
+            var year3 = new ServiceClient.PickListItem { PickListItemId = 3, DisplayLabel = "2012" };
 
-            return new List<Microsoft.PowerPlatform.Cds.Client.CdsServiceClient.PickListItem> { year1, year2, year3 };
+            return new List<ServiceClient.PickListItem> { year1, year2, year3 };
         }
     }
 }
