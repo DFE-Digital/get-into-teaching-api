@@ -178,6 +178,11 @@ namespace GetIntoTeachingApi.Services
             _service.AddLink(source, relationship, target, context);
         }
 
+        public void DeleteLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context)
+        {
+            _service.DeleteLink(source, relationship, target, context);
+        }
+
         public IEnumerable<Entity> RelatedEntities(Entity entity, string relationshipName, string logicalName)
         {
             var relatedEntityKeys = entity.Attributes.Keys.Where(k => k.StartsWith($"{relationshipName}.")).ToList();
@@ -249,10 +254,14 @@ namespace GetIntoTeachingApi.Services
 
         public TeachingEvent GetTeachingEvent(string readableId)
         {
-            return _service.CreateQuery("msevtmgt_event", Context())
-                .Where(entity => entity.GetAttributeValue<string>("dfe_websiteeventpartialurl") == readableId)
-                .Select(entity => new TeachingEvent(entity, this, _validatorFactory))
-                .SingleOrDefault();
+            var context = Context();
+            var entity = _service.CreateQuery("msevtmgt_event", context)
+                             .Where(entity => entity.GetAttributeValue<string>("dfe_websiteeventpartialurl") == readableId)
+                             .FirstOrDefault();
+
+            _service.LoadProperty(entity, new Relationship("msevtmgt_event_building"), context);
+
+            return entity != null ? new TeachingEvent(entity, this, _validatorFactory) : null;
         }
 
         public IEnumerable<TeachingEventBuilding> GetTeachingEventBuildings()
