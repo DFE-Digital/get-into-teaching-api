@@ -1,21 +1,20 @@
 ﻿using System;
 using GetIntoTeachingApi.Utils;
-using Microsoft.PowerPlatform.Dataverse.Client;
+using Microsoft.PowerPlatform.Cds.Client;
 
 namespace GetIntoTeachingApi.Adapters
 {
     public class CdsServiceClientWrapper
     {
-        public readonly ServiceClient CdsServiceClient;
+        public readonly CdsServiceClient CdsServiceClient;
 
         public CdsServiceClientWrapper(IEnv env)
         {
             // We don't want to try and connect to Dynamics when integration testing.
             if (!env.IsTest)
             {
-                ServiceClient.MaxConnectionTimeout = TimeSpan.FromSeconds(30);
-                CdsServiceClient = new ServiceClient(ConnectionString(env));
-                CdsServiceClient.MaxRetryCount = 3;
+                CdsServiceClient = new CdsServiceClient(ConnectionString(env));
+                CdsServiceClient.MaxConnectionTimeout = TimeSpan.FromSeconds(30);
             }
         }
 
