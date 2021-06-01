@@ -516,6 +516,8 @@ namespace GetIntoTeachingApiTests.Services
             var result = _crm.GetTeachingEvent("event_one");
 
             result.ReadableId.Should().Be("event_one");
+            _mockService.Verify(mock => mock.LoadProperty(It.IsAny<Entity>(),
+               new Relationship("msevtmgt_event_building"), _context), Times.Once);
         }
 
         [Fact]
@@ -527,19 +529,6 @@ namespace GetIntoTeachingApiTests.Services
             var result = _crm.GetTeachingEvent("wrong");
 
             result.Should().BeNull();
-        }
-
-        [Fact]
-        public void GetTeachingEvent_CallLoadProperty()
-        {
-            _mockService.Setup(mock => mock.CreateQuery("msevtmgt_event", _context))
-                .Returns(MockTeachingEvents());
-
-            var result = _crm.GetTeachingEvent("event_one");
-
-            result.ReadableId.Should().Be("event_one");
-            _mockService.Verify(mock => mock.LoadProperty(It.IsAny<Entity>(),
-               new Relationship("msevtmgt_event_building"), _context), Times.Once);
         }
 
         private static IQueryable<Entity> MockTeachingEventBuildings()

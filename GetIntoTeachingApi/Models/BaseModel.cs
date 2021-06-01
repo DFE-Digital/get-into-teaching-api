@@ -83,6 +83,7 @@ namespace GetIntoTeachingApi.Models
             var entity = crm.MappableEntity(LogicalName(GetType()), Id, context);
             MapFieldAttributesToEntity(entity);
             MapRelationshipAttributesToEntity(entity, crm, context);
+            FinaliseEntity(entity, crm, context);
             return entity;
         }
 
@@ -108,6 +109,11 @@ namespace GetIntoTeachingApi.Models
             return true;
         }
 
+        protected virtual void FinaliseEntity(Entity source, ICrmService crm, OrganizationServiceContext context)
+        {
+            // Hook.
+        }
+
         protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             var excluded = _propertyNamesExcludedFromChangeTracking.Any(p => p == propertyName);
@@ -116,6 +122,14 @@ namespace GetIntoTeachingApi.Models
             {
                 ChangedPropertyNames.Add(propertyName);
             }
+        }
+
+        protected void DeleteLink(Entity source, ICrmService crm, OrganizationServiceContext context, BaseModel modelToRemove, string modelToRemovePropertyName)
+        {
+            PropertyInfo property = GetType().GetProperty(modelToRemovePropertyName);
+            var attribute = EntityRelationshipAttribute(property);
+            var target = modelToRemove.ToEntity(crm, context);
+            crm.DeleteLink(source, new Relationship(attribute.Name), target, context);
         }
 
         private static IList NewListOfType(Type type)
