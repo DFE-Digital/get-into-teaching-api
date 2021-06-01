@@ -21,5 +21,6 @@ namespace GetIntoTeachingApi.Adapters
         Entity NewEntity(string entityName, OrganizationServiceContext context);
         void SaveChanges(OrganizationServiceContext context);
         void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);
+        void DeleteLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);
     }
 }

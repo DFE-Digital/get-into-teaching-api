@@ -5,6 +5,7 @@ using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models
@@ -109,6 +110,18 @@ namespace GetIntoTeachingApi.Models
         public TeachingEvent(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
             : base(entity, crm, validatorFactory)
         {
+        }
+
+        protected override void FinaliseEntity(Entity source, ICrmService crm, OrganizationServiceContext context)
+        {
+            var existingEvent = crm.GetTeachingEvent(ReadableId);
+
+            bool removeBuilding = Building == null && existingEvent.Building != null;
+
+            if (removeBuilding)
+            {
+                DeleteLink(source, crm, context, existingEvent.Building, nameof(existingEvent.Building));
+            }
         }
     }
 }
