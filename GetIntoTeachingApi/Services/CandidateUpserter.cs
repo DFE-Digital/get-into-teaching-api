@@ -17,8 +17,15 @@ namespace GetIntoTeachingApi.Services
         {
             var registrations = ClearTeachingEventRegistrations(candidate);
             var phoneCall = ClearPhoneCall(candidate);
+            var privacyPolicy = ClearPrivacyPolicy(candidate);
+            var qualifications = ClearQualifications(candidate);
+            var pastTeachingPositions = ClearPastTeachingPositions(candidate);
+
             SaveCandidate(candidate);
+            SaveQualifications(qualifications, candidate);
+            SavePastTeachingPositions(pastTeachingPositions, candidate);
             SaveTeachingEventRegistrations(registrations, candidate);
+            SavePrivacyPolicy(privacyPolicy, candidate);
             SavePhoneCall(phoneCall, candidate);
             IncrementCallbackBookingQuotaNumberOfBookings(phoneCall);
         }
@@ -38,6 +45,20 @@ namespace GetIntoTeachingApi.Services
             return teachingEventRegistrations;
         }
 
+        private IEnumerable<CandidatePastTeachingPosition> ClearPastTeachingPositions(Candidate candidate)
+        {
+            var pastTeachingPositions = new List<CandidatePastTeachingPosition>(candidate.PastTeachingPositions);
+            candidate.PastTeachingPositions.Clear();
+            return pastTeachingPositions;
+        }
+
+        private IEnumerable<CandidateQualification> ClearQualifications(Candidate candidate)
+        {
+            var qualifications = new List<CandidateQualification>(candidate.Qualifications);
+            candidate.Qualifications.Clear();
+            return qualifications;
+        }
+
         private PhoneCall ClearPhoneCall(Candidate candidate)
         {
             if (candidate.PhoneCall == null)
@@ -53,12 +74,42 @@ namespace GetIntoTeachingApi.Services
             return phoneCall;
         }
 
+        private CandidatePrivacyPolicy ClearPrivacyPolicy(Candidate candidate)
+        {
+            if (candidate.PrivacyPolicy == null)
+            {
+                return null;
+            }
+
+            var privacyPolicy = candidate.PrivacyPolicy;
+            candidate.PrivacyPolicy = null;
+            return privacyPolicy;
+        }
+
         private void SaveTeachingEventRegistrations(IEnumerable<TeachingEventRegistration> registrations, Candidate candidate)
         {
             foreach (var registration in registrations)
             {
                 registration.CandidateId = (Guid)candidate.Id;
                 _crm.Save(registration);
+            }
+        }
+
+        private void SaveQualifications(IEnumerable<CandidateQualification> qualifications, Candidate candidate)
+        {
+            foreach (var qualification in qualifications)
+            {
+                qualification.CandidateId = (Guid)candidate.Id;
+                _crm.Save(qualification);
+            }
+        }
+
+        private void SavePastTeachingPositions(IEnumerable<CandidatePastTeachingPosition> pastTeachingPositions, Candidate candidate)
+        {
+            foreach (var pastTeachingPosition in pastTeachingPositions)
+            {
+                pastTeachingPosition.CandidateId = (Guid)candidate.Id;
+                _crm.Save(pastTeachingPosition);
             }
         }
 
@@ -90,6 +141,17 @@ namespace GetIntoTeachingApi.Services
 
             phoneCall.CandidateId = candidate.Id.ToString();
             _crm.Save(phoneCall);
+        }
+
+        private void SavePrivacyPolicy(CandidatePrivacyPolicy privacyPolicy, Candidate candidate)
+        {
+            if (privacyPolicy == null)
+            {
+                return;
+            }
+
+            privacyPolicy.CandidateId = (Guid)candidate.Id;
+            _crm.Save(privacyPolicy);
         }
     }
 }
