@@ -15,6 +15,9 @@ namespace GetIntoTeachingApiTests.Models
 
             type.Should().BeDecoratedWith<EntityAttribute>(a => a.LogicalName == "dfe_candidateprivacypolicy");
 
+            type.GetProperty("CandidateId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_candidate" &&
+                a.Type == typeof(EntityReference) && a.Reference == "contact");
+
             type.GetProperty("AcceptedPolicyId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_privacypolicynumber" && a.Type == typeof(EntityReference) && a.Reference == "dfe_privacypolicy");
 

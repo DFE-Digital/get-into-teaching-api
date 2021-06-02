@@ -11,6 +11,8 @@ namespace GetIntoTeachingApi.Models
     {
         public const int Consent = 222750001;
 
+        [EntityField("dfe_candidate", typeof(EntityReference), "contact")]
+        public Guid CandidateId { get; set; }
         [EntityField("dfe_privacypolicynumber", typeof(EntityReference), "dfe_privacypolicy")]
         public Guid AcceptedPolicyId { get; set; }
         [EntityField("dfe_consentreceivedby", typeof(OptionSetValue))]
