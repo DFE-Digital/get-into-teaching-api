@@ -15,6 +15,10 @@ namespace GetIntoTeachingApi
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .UseDefaultServiceProvider((_, options) =>
+                {
+                    options.ValidateScopes = false;
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseSentry();
