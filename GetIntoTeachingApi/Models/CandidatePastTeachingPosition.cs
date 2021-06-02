@@ -14,6 +14,8 @@ namespace GetIntoTeachingApi.Models
             Secondary = 222750001,
         }
 
+        [EntityField("dfe_contactid", typeof(EntityReference), "contact")]
+        public Guid CandidateId { get; set; }
         [EntityField("dfe_subjecttaught", typeof(EntityReference), "dfe_teachingsubjectlist")]
         public Guid? SubjectTaughtId { get; set; }
         [EntityField("dfe_educationphase", typeof(OptionSetValue))]
