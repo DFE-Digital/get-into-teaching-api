@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
@@ -9,6 +10,8 @@ namespace GetIntoTeachingApi.Models
 {
     public class TeacherTrainingAdviserSignUp
     {
+        private string _addressTelephone;
+
         public Guid? CandidateId { get; set; }
         public Guid? QualificationId { get; set; }
         public Guid? SubjectTaughtId { get; set; }
@@ -35,7 +38,18 @@ namespace GetIntoTeachingApi.Models
         public DateTime? DateOfBirth { get; set; }
         public string TeacherId { get; set; }
         public string DegreeSubject { get; set; }
-        public string AddressTelephone { get; set; }
+        public string AddressTelephone
+        {
+            get
+            {
+                return SanitizeTelephone(_addressTelephone);
+            }
+            set
+            {
+                _addressTelephone = value;
+            }
+        }
+
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
         public string AddressCity { get; set; }
@@ -164,6 +178,25 @@ namespace GetIntoTeachingApi.Models
             return candidate;
         }
 
+        private string SanitizeTelephone(string telephone)
+        {
+            var international = CountryId != LookupItem.UnitedKingdomCountryId;
+
+            if (international && telephone != null)
+            {
+                // Remove non-digit characters.
+                telephone = Regex.Replace(telephone, "[^0-9]", string.Empty);
+
+                // Prefix the 00 exit code.
+                telephone = $"00{telephone}";
+
+                // Replace UK dial-in code with a 0.
+                telephone = Regex.Replace(telephone, "^0044", "0");
+            }
+
+            return telephone;
+        }
+
         private void ConfigureChannel(Candidate candidate)
         {
             if (CandidateId == null)
@@ -233,7 +266,7 @@ namespace GetIntoTeachingApi.Models
                 candidate.PhoneCall = new PhoneCall()
                 {
                     Telephone = AddressTelephone,
-                    DestinationId = DestinationForTelephone(AddressTelephone),
+                    DestinationId = TelephoneDestination(),
                     ScheduledAt = (DateTime)PhoneCallScheduledAt,
                     ChannelId = (int)PhoneCall.Channel.CallbackRequest,
                     Subject = $"Scheduled phone call requested by {candidate.FullName}",
@@ -281,21 +314,16 @@ namespace GetIntoTeachingApi.Models
             }
         }
 
-        private int? DestinationForTelephone(string telephone)
+        private int? TelephoneDestination()
         {
-            if (telephone == null)
+            if (AddressTelephone == null)
             {
                 return null;
             }
 
-            var sanitizedTelephone = telephone.Replace(" ", string.Empty);
+            var international = CountryId != LookupItem.UnitedKingdomCountryId;
 
-            if (sanitizedTelephone.StartsWith("+") && !sanitizedTelephone.StartsWith("+44"))
-            {
-                return (int)PhoneCall.Destination.International;
-            }
-
-            return (int)PhoneCall.Destination.Uk;
+            return international ? (int)PhoneCall.Destination.International : (int)PhoneCall.Destination.Uk;
         }
 
         private bool ContainsQualification()
