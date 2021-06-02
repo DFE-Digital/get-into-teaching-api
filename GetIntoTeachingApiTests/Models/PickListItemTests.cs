@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using FluentAssertions;
 using GetIntoTeachingApi.Models;
-using Microsoft.PowerPlatform.Cds.Client;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Models
@@ -20,7 +20,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void Constructor_WithPickListItem()
         {
-            var pickListItem = new CdsServiceClient.PickListItem { PickListItemId = 123, DisplayLabel = "name" };
+            var pickListItem = new ServiceClient.PickListItem { PickListItemId = 123, DisplayLabel = "name" };
 
             var typeEntity = new PickListItem(pickListItem, "entityName", "attributeName");
 
