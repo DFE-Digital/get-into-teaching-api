@@ -216,7 +216,6 @@ namespace GetIntoTeachingApiTests.Models
             };
 
             mockCrm.Setup(m => m.MappableEntity("contact", null, context)).Returns(new Entity("contact"));
-            mockCrm.Setup(m => m.MappableEntity("dfe_candidatequalification", null, context)).Returns(new Entity("dfe_candidatequalification"));
 
             candidate.ToEntity(mockCrm.Object, context);
 
