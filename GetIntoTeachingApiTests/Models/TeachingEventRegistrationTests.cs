@@ -20,9 +20,9 @@ namespace GetIntoTeachingApiTests.Models
             type.Should().BeDecoratedWith<EntityAttribute>(a => a.LogicalName == "msevtmgt_eventregistration");
 
             type.GetProperty("CandidateId").Should().BeDecoratedWith<EntityFieldAttribute>(
-                a => a.Name == "msevtmgt_contactid" && a.Type == typeof(EntityReference));
+                a => a.Name == "msevtmgt_contactid" && a.Type == typeof(EntityReference) && a.Reference == "contact");
             type.GetProperty("EventId").Should().BeDecoratedWith<EntityFieldAttribute>(
-                a => a.Name == "msevtmgt_eventid" && a.Type == typeof(EntityReference));
+                a => a.Name == "msevtmgt_eventid" && a.Type == typeof(EntityReference) && a.Reference == "msevtmgt_event");
 
             type.GetProperty("ChannelId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_channelcreation" && a.Type == typeof(OptionSetValue));
