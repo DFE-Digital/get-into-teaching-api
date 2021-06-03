@@ -73,6 +73,20 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
+        public void Run_OnError_LogsAndReRaises()
+        {
+            _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
+            var message = "boom!";
+            var exception = new Exception(message);
+            _mockUpserter.Setup(m => m.Upsert(It.IsAny<Candidate>())).Throws(exception);
+
+            _job.Invoking(j => j.Run(_candidate.SerializeChangeTracked(), null))
+                .Should().Throw<Exception>().WithMessage(message);
+
+            _mockLogger.VerifyErrorWasCalled($"UpsertCandidateJob - Exception - System.Exception: {message}");
+        }
+
+        [Fact]
         public void Run_WhenCrmIntegrationPaused_Aborts()
         {
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(true);
