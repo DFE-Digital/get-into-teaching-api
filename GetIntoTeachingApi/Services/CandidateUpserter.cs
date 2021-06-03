@@ -17,12 +17,7 @@ namespace GetIntoTeachingApi.Services
         {
             var registrations = ClearTeachingEventRegistrations(candidate);
             var phoneCall = ClearPhoneCall(candidate);
-            var qualifications = ClearQualifications(candidate);
-            var pastTeachingPositions = ClearPastTeachingPositions(candidate);
-
             SaveCandidate(candidate);
-            SaveQualifications(qualifications, candidate);
-            SavePastTeachingPositions(pastTeachingPositions, candidate);
             SaveTeachingEventRegistrations(registrations, candidate);
             SavePhoneCall(phoneCall, candidate);
             IncrementCallbackBookingQuotaNumberOfBookings(phoneCall);
@@ -41,20 +36,6 @@ namespace GetIntoTeachingApi.Services
             var teachingEventRegistrations = new List<TeachingEventRegistration>(candidate.TeachingEventRegistrations);
             candidate.TeachingEventRegistrations.Clear();
             return teachingEventRegistrations;
-        }
-
-        private IEnumerable<CandidatePastTeachingPosition> ClearPastTeachingPositions(Candidate candidate)
-        {
-            var pastTeachingPositions = new List<CandidatePastTeachingPosition>(candidate.PastTeachingPositions);
-            candidate.PastTeachingPositions.Clear();
-            return pastTeachingPositions;
-        }
-
-        private IEnumerable<CandidateQualification> ClearQualifications(Candidate candidate)
-        {
-            var qualifications = new List<CandidateQualification>(candidate.Qualifications);
-            candidate.Qualifications.Clear();
-            return qualifications;
         }
 
         private PhoneCall ClearPhoneCall(Candidate candidate)
@@ -78,24 +59,6 @@ namespace GetIntoTeachingApi.Services
             {
                 registration.CandidateId = (Guid)candidate.Id;
                 _crm.Save(registration);
-            }
-        }
-
-        private void SaveQualifications(IEnumerable<CandidateQualification> qualifications, Candidate candidate)
-        {
-            foreach (var qualification in qualifications)
-            {
-                qualification.CandidateId = (Guid)candidate.Id;
-                _crm.Save(qualification);
-            }
-        }
-
-        private void SavePastTeachingPositions(IEnumerable<CandidatePastTeachingPosition> pastTeachingPositions, Candidate candidate)
-        {
-            foreach (var pastTeachingPosition in pastTeachingPositions)
-            {
-                pastTeachingPosition.CandidateId = (Guid)candidate.Id;
-                _crm.Save(pastTeachingPosition);
             }
         }
 

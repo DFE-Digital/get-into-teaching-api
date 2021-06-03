@@ -25,8 +25,6 @@ namespace GetIntoTeachingApi.Models
             DegreeEquivalent = 222750005,
         }
 
-        [EntityField("dfe_contactid", typeof(EntityReference), "contact")]
-        public Guid CandidateId { get; set; }
         [EntityField("dfe_type", typeof(OptionSetValue))]
         public int? TypeId { get; set; }
         [EntityField("dfe_ukdegreegrade", typeof(OptionSetValue))]
