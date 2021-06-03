@@ -29,34 +29,6 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void Upsert_WithQualifications_SavesQualifications()
-        {
-            var candidateId = Guid.NewGuid();
-            var qualification = new CandidateQualification();
-            _candidate.Qualifications.Add(qualification);
-            _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
-
-            _upserter.Upsert(_candidate);
-
-            qualification.CandidateId = candidateId;
-            _mockCrm.Verify(mock => mock.Save(It.Is<CandidateQualification>(q => IsMatch(qualification, q))), Times.Once);
-        }
-
-        [Fact]
-        public void Upsert_WithPastTeachingPositions_SavesPastTeachingPositions()
-        {
-            var candidateId = Guid.NewGuid();
-            var pastTeachingPosition = new CandidatePastTeachingPosition();
-            _candidate.PastTeachingPositions.Add(pastTeachingPosition);
-            _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
-
-            _upserter.Upsert(_candidate);
-
-            pastTeachingPosition.CandidateId = candidateId;
-            _mockCrm.Verify(mock => mock.Save(It.Is<CandidatePastTeachingPosition>(p => IsMatch(pastTeachingPosition, p))), Times.Once);
-        }
-
-        [Fact]
         public void Upsert_WithTeachingEventRegistrations_SavesTeachingEventRegistrations()
         {
             var candidateId = Guid.NewGuid();
