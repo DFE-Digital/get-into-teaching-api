@@ -19,16 +19,16 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.Email).NotEmpty().EmailAddress(EmailValidationMode.AspNetCoreCompatible).MaximumLength(100);
             RuleFor(candidate => candidate.SecondaryEmail).EmailAddress(EmailValidationMode.AspNetCoreCompatible).MaximumLength(100);
             RuleFor(candidate => candidate.DateOfBirth).LessThan(candidate => dateTime.UtcNow);
-            RuleFor(candidate => candidate.AddressTelephone).MinimumLength(5).MaximumLength(20).Matches(@"^[^a-zA-Z]+$");
+            RuleFor(candidate => candidate.AddressTelephone).MinimumLength(5).MaximumLength(25).Matches(@"^[^a-zA-Z]+$");
             RuleFor(candidate => candidate.AddressLine1).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressLine2).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressLine3).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressCity).MaximumLength(128);
             RuleFor(candidate => candidate.AddressStateOrProvince).MaximumLength(100);
             RuleFor(candidate => candidate.ClassroomExperienceNotesRaw).MaximumLength(10000);
-            RuleFor(candidate => candidate.MobileTelephone).MinimumLength(5).MaximumLength(20).Matches(TelephoneRegex);
-            RuleFor(candidate => candidate.Telephone).MinimumLength(5).MaximumLength(20).Matches(TelephoneRegex);
-            RuleFor(candidate => candidate.SecondaryTelephone).MinimumLength(5).MaximumLength(20).Matches(TelephoneRegex);
+            RuleFor(candidate => candidate.MobileTelephone).MinimumLength(5).MaximumLength(25).Matches(TelephoneRegex);
+            RuleFor(candidate => candidate.Telephone).MinimumLength(5).MaximumLength(25).Matches(TelephoneRegex);
+            RuleFor(candidate => candidate.SecondaryTelephone).MinimumLength(5).MaximumLength(25).Matches(TelephoneRegex);
             RuleFor(candidate => candidate.AddressPostcode)
                 .SetValidator(new PostcodeValidator())
                 .Unless(candidate => candidate.AddressPostcode == null);

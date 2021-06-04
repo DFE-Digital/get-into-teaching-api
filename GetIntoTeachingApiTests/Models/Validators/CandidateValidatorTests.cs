@@ -290,10 +290,10 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_TelephoneTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressTelephone, new string('1', 21));
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.MobileTelephone, new string('1', 21));
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.Telephone, new string('1', 21));
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.SecondaryTelephone, new string('1', 21));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressTelephone, new string('1', 26));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.MobileTelephone, new string('1', 26));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.Telephone, new string('1', 26));
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.SecondaryTelephone, new string('1', 26));
         }
 
         [Fact]
