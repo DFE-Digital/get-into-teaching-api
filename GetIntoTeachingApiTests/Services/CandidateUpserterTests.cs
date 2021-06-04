@@ -29,6 +29,34 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void Upsert_WithQualifications_SavesQualifications()
+        {
+            var candidateId = Guid.NewGuid();
+            var qualification = new CandidateQualification();
+            _candidate.Qualifications.Add(qualification);
+            _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
+
+            _upserter.Upsert(_candidate);
+
+            qualification.CandidateId = candidateId;
+            _mockCrm.Verify(mock => mock.Save(It.Is<CandidateQualification>(q => IsMatch(qualification, q))), Times.Once);
+        }
+
+        [Fact]
+        public void Upsert_WithPastTeachingPositions_SavesPastTeachingPositions()
+        {
+            var candidateId = Guid.NewGuid();
+            var pastTeachingPosition = new CandidatePastTeachingPosition();
+            _candidate.PastTeachingPositions.Add(pastTeachingPosition);
+            _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
+
+            _upserter.Upsert(_candidate);
+
+            pastTeachingPosition.CandidateId = candidateId;
+            _mockCrm.Verify(mock => mock.Save(It.Is<CandidatePastTeachingPosition>(p => IsMatch(pastTeachingPosition, p))), Times.Once);
+        }
+
+        [Fact]
         public void Upsert_WithTeachingEventRegistrations_SavesTeachingEventRegistrations()
         {
             var candidateId = Guid.NewGuid();
@@ -59,6 +87,20 @@ namespace GetIntoTeachingApiTests.Services
             _mockCrm.Verify(mock => mock.Save(It.Is<PhoneCall>(p => IsMatch(phoneCall, p))), Times.Once);
             _mockCrm.Verify(mock => mock.Save(It.Is<CallbackBookingQuota>(q => IsMatch(quota, q))), Times.Once);
             quota.NumberOfBookings.Should().Be(6);
+        }
+
+        [Fact]
+        public void Upsert_WithPrivacyPolicy_SavesPrivacyPolicy()
+        {
+            var candidateId = Guid.NewGuid();
+            var policy = new CandidatePrivacyPolicy() { AcceptedPolicyId = Guid.NewGuid() };
+            _candidate.PrivacyPolicy = policy;
+            _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
+
+            _upserter.Upsert(_candidate);
+
+            policy.CandidateId = candidateId;
+            _mockCrm.Verify(mock => mock.Save(It.Is<CandidatePrivacyPolicy>(p => IsMatch(policy, p))), Times.Once);
         }
 
         [Fact]
