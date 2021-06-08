@@ -120,6 +120,22 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
+        public void Candidate_ConsiderationJourneyStageIdIsNull_DoesNotSet()
+        {
+            var request = new TeachingEventAddAttendee() { ConsiderationJourneyStageId = null };
+
+            request.Candidate.ChangedPropertyNames.Should().NotContain("ConsiderationJourneyStageId");
+        }
+
+        [Fact]
+        public void Candidate_PreferredTeachingSubjectIdIsNull_DoesNotSet()
+        {
+            var request = new TeachingEventAddAttendee() { ConsiderationJourneyStageId = null };
+
+            request.Candidate.ChangedPropertyNames.Should().NotContain("PreferredTeachingSubjectId");
+        }
+
+        [Fact]
         public void Candidate_SubscribeToMailingListIsFalse_ConsentIsCorrect()
         {
             var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, AddressPostcode = null };
