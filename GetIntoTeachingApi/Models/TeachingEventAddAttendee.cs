@@ -80,8 +80,6 @@ namespace GetIntoTeachingApi.Models
             var candidate = new Candidate()
             {
                 Id = CandidateId,
-                ConsiderationJourneyStageId = ConsiderationJourneyStageId,
-                PreferredTeachingSubjectId = PreferredTeachingSubjectId,
                 Email = Email,
                 FirstName = FirstName,
                 LastName = LastName,
@@ -92,6 +90,16 @@ namespace GetIntoTeachingApi.Models
                 GdprConsentId = (int)Candidate.GdprConsent.Consent,
                 OptOutOfGdpr = false,
             };
+
+            if (ConsiderationJourneyStageId != null)
+            {
+                candidate.ConsiderationJourneyStageId = ConsiderationJourneyStageId;
+            }
+
+            if (PreferredTeachingSubjectId != null)
+            {
+                candidate.PreferredTeachingSubjectId = PreferredTeachingSubjectId;
+            }
 
             ConfigureChannel(candidate);
             AddTeachingEventRegistration(candidate);
