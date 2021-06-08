@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
@@ -10,8 +9,6 @@ namespace GetIntoTeachingApi.Models
 {
     public class TeacherTrainingAdviserSignUp
     {
-        private string _addressTelephone;
-
         public Guid? CandidateId { get; set; }
         public Guid? QualificationId { get; set; }
         public Guid? SubjectTaughtId { get; set; }
@@ -38,17 +35,7 @@ namespace GetIntoTeachingApi.Models
         public DateTime? DateOfBirth { get; set; }
         public string TeacherId { get; set; }
         public string DegreeSubject { get; set; }
-        public string AddressTelephone
-        {
-            get
-            {
-                return SanitizeTelephone(_addressTelephone);
-            }
-            set
-            {
-                _addressTelephone = value;
-            }
-        }
+        public string AddressTelephone { get; set; }
 
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
@@ -63,6 +50,8 @@ namespace GetIntoTeachingApi.Models
         public Candidate Candidate => CreateCandidate();
         [JsonIgnore]
         public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
+        [JsonIgnore]
+        private bool IsOverseas => CountryId != LookupItem.UnitedKingdomCountryId;
 
         public TeacherTrainingAdviserSignUp()
         {
@@ -99,7 +88,7 @@ namespace GetIntoTeachingApi.Models
             LastName = candidate.LastName;
             DateOfBirth = candidate.DateOfBirth;
             TeacherId = candidate.TeacherId;
-            AddressTelephone = candidate.AddressTelephone;
+            AddressTelephone = candidate.AddressTelephone.StripExitCode();
             AddressLine1 = candidate.AddressLine1;
             AddressLine2 = candidate.AddressLine2;
             AddressCity = candidate.AddressCity;
@@ -143,7 +132,7 @@ namespace GetIntoTeachingApi.Models
                 AddressLine2 = AddressLine2,
                 AddressCity = AddressCity,
                 AddressPostcode = AddressPostcode.AsFormattedPostcode(),
-                AddressTelephone = AddressTelephone,
+                AddressTelephone = AddressTelephone.AsFormattedTelephone(IsOverseas),
                 TeacherId = TeacherId,
                 TypeId = TypeId,
                 InitialTeacherTrainingYearId = InitialTeacherTrainingYearId,
@@ -176,25 +165,6 @@ namespace GetIntoTeachingApi.Models
             SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate, DateTimeProvider.UtcNow);
 
             return candidate;
-        }
-
-        private string SanitizeTelephone(string telephone)
-        {
-            var international = CountryId != LookupItem.UnitedKingdomCountryId;
-
-            if (international && telephone != null)
-            {
-                // Remove non-digit characters.
-                telephone = Regex.Replace(telephone, "[^0-9]", string.Empty);
-
-                // Prefix the 00 exit code.
-                telephone = $"00{telephone}";
-
-                // Replace UK dial-in code with a 0.
-                telephone = Regex.Replace(telephone, "^0044", "0");
-            }
-
-            return telephone;
         }
 
         private void ConfigureChannel(Candidate candidate)
@@ -265,7 +235,7 @@ namespace GetIntoTeachingApi.Models
                 candidate.EligibilityRulesPassed = "true";
                 candidate.PhoneCall = new PhoneCall()
                 {
-                    Telephone = AddressTelephone,
+                    Telephone = candidate.AddressTelephone,
                     DestinationId = TelephoneDestination(),
                     ScheduledAt = (DateTime)PhoneCallScheduledAt,
                     ChannelId = (int)PhoneCall.Channel.CallbackRequest,
@@ -321,9 +291,7 @@ namespace GetIntoTeachingApi.Models
                 return null;
             }
 
-            var international = CountryId != LookupItem.UnitedKingdomCountryId;
-
-            return international ? (int)PhoneCall.Destination.International : (int)PhoneCall.Destination.Uk;
+            return IsOverseas ? (int)PhoneCall.Destination.International : (int)PhoneCall.Destination.Uk;
         }
 
         private bool ContainsQualification()

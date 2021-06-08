@@ -30,5 +30,27 @@ namespace GetIntoTeachingApiTests.Utils
         {
             input.NullIfEmptyOrWhitespace().Should().Be(expected);
         }
+
+        [Theory]
+        [InlineData("001234567", "1234567")]
+        [InlineData("0001234567", "01234567")]
+        [InlineData("1234567", "1234567")]
+        [InlineData(null, null)]
+        public void StripExitCode_ReturnsCorrectly(string input, string expected)
+        {
+            input.StripExitCode().Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData("(65).234.543.435", "0065234543435", true)]
+        [InlineData("+818495394", "00818495394", true)]
+        [InlineData("+(81) 849 5394", "00818495394", true)]
+        [InlineData("+44756483443", "0756483443", true)]
+        [InlineData("+440756483443", "0756483443", true)]
+        [InlineData("07584758473", "07584758473", false)]
+        public void AsFormattedTelephone_IsSanitizedCorrectly(string input, string expected, bool international)
+        {
+            input.AsFormattedTelephone(international).Should().Be(expected);
+        }
     }
 }

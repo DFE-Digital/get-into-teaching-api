@@ -68,7 +68,7 @@ namespace GetIntoTeachingApi.Models
             FirstName = candidate.FirstName;
             LastName = candidate.LastName;
             AddressPostcode = candidate.AddressPostcode;
-            AddressTelephone = candidate.AddressTelephone;
+            AddressTelephone = candidate.AddressTelephone.StripExitCode();
 
             AlreadySubscribedToMailingList = candidate.HasMailingListSubscription == true;
             AlreadySubscribedToEvents = candidate.HasEventsSubscription == true;
