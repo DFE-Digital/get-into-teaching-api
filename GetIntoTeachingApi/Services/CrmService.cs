@@ -259,9 +259,14 @@ namespace GetIntoTeachingApi.Services
                              .Where(entity => entity.GetAttributeValue<string>("dfe_websiteeventpartialurl") == readableId)
                              .FirstOrDefault();
 
+            if (entity == null)
+            {
+                return null;
+            }
+
             _service.LoadProperty(entity, new Relationship("msevtmgt_event_building"), context);
 
-            return entity != null ? new TeachingEvent(entity, this, _validatorFactory) : null;
+            return new TeachingEvent(entity, this, _validatorFactory);
         }
 
         public IEnumerable<TeachingEventBuilding> GetTeachingEventBuildings()
