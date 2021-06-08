@@ -584,6 +584,8 @@ namespace GetIntoTeachingApiTests.Services
             var result = _crm.GetTeachingEvent("wrong");
 
             result.Should().BeNull();
+            _mockService.Verify(mock => mock.LoadProperty(It.IsAny<Entity>(),
+              new Relationship("msevtmgt_event_building"), _context), Times.Never);
         }
 
         private static IQueryable<Entity> MockTeachingEventBuildings()

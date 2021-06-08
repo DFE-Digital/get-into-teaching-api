@@ -116,7 +116,7 @@ namespace GetIntoTeachingApi.Models
         {
             var existingEvent = crm.GetTeachingEvent(ReadableId);
 
-            bool removeBuilding = Building == null && existingEvent.Building != null;
+            bool removeBuilding = Building == null && existingEvent?.Building != null;
 
             if (removeBuilding)
             {
