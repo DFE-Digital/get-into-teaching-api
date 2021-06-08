@@ -137,6 +137,26 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
+        public void ToEntity_WhenEventIsNew_ReturnsEntity()
+        {
+            _mockBuilding.Setup(mock => mock.ToEntity(It.IsAny<ICrmService>(), _context)).Returns(new Entity());
+            _mockCrm.Setup(m => m.MappableEntity("msevtmgt_event", null, _context)).Returns(new Entity());
+            _mockCrm.Setup(mock => mock.GetTeachingEvent("readableId"))
+                .Returns<TeachingEvent>(null);
+
+            var newEvent = new TeachingEvent
+            {
+                ReadableId = "readableId",
+                Building = new TeachingEventBuilding()
+            };
+
+            var entity = newEvent.ToEntity(_mockCrm.Object, _context);
+
+            entity.Should().BeOfType<Entity>();
+            entity.Should().NotBeNull();
+        }
+
+        [Fact]
         public void ToEntity_WhenBuildingIsNotRemoved_DoesNotDeleteLink()
         {
             _mockBuilding.Setup(mock => mock.ToEntity(It.IsAny<ICrmService>(), _context)).Returns(new Entity());
