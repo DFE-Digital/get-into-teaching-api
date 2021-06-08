@@ -11,8 +11,11 @@ monitoring                = 1
 environment               = "prod"
 azure_key_vault           = "s146p01-kv"
 azure_resource_group      = "s146p01-rg"
-monitor_scrape_applications = [{ name : "get-into-teaching-api-prod", port : 8080 }, { name : "get-into-teaching-app-prod", port : 3000 }, { name : "get-teacher-training-adviser-service-prod", port : 3000 },
-                               { name : "get-into-teaching-api-test", port : 8080 }, { name : "get-into-teaching-app-test", port : 3000 }, { name : "get-teacher-training-adviser-service-test", port : 3000 },
-                               { name : "get-into-teaching-app-pagespeed" , port: 3000 }]
-
+monitor_scrape_applications = [ "get-into-teaching-api-prod-internal.apps.internal:8080" ,
+                                "get-into-teaching-app-prod-internal.apps.internal:3000" ,
+                                "get-teacher-training-adviser-service-prod-internal.apps.internal:3000" ,
+                                "get-into-teaching-api-test-internal.apps.internal:8080" ,
+                                "get-into-teaching-app-test-internal.apps.internal:3000" ,
+                                "get-teacher-training-adviser-service-test-internal.apps.internal:3000" ,
+                                "get-into-teaching-app-pagespeed-internal.apps.internal:3000" ]
 alerts = {}

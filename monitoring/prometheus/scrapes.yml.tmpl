@@ -1,8 +1,0 @@
-%{ for app in applications ~}
-- job_name: ${ app.name }
-  dns_sd_configs:
-    - names: 
-       - ${app.name}-internal.apps.internal
-      type: 'A'
-      port: ${app.port}
-%{ endfor ~}
