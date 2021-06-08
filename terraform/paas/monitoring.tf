@@ -14,14 +14,13 @@ locals {
 
   template_variable_map = {
     api           = local.api_endpoint
-    applications  = var.monitor_scrape_applications
     API_ENDPOINT  = var.api_url
   }
 }
 
 module "prometheus" {
   count  = var.monitoring
-  source                             = "git::https://github.com/DFE-Digital/cf-monitoring.git//prometheus_all"
+  source                            = "git::https://github.com/DFE-Digital/cf-monitoring.git//prometheus_all"
   monitoring_instance_name          = local.monitoring_org_name
   monitoring_org_name               = var.paas_org_name
   monitoring_space_name             = var.monitor_space
@@ -40,7 +39,7 @@ module "prometheus" {
   grafana_runtime_version           = "7.2.2"
   prometheus_memory                 = 5120
   prometheus_disk_quota             = 5120
-  prometheus_extra_scrape_config    = templatefile("${path.module}/${var.prometheus["scrape_file"]}", local.template_variable_map)
+  internal_apps                     = var.monitor_scrape_applications
   influxdb_service_plan             = var.influxdb_1_plan
   redis_services                    = ["${var.paas_space}/${var.paas_redis_1_name}"]
   postgres_services                 = ["${var.paas_space}/${var.paas_database_common_name}"]
