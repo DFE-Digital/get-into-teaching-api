@@ -436,6 +436,7 @@ namespace GetIntoTeachingApiTests.Models
         [InlineData("+818495394", "00818495394")]
         [InlineData("+(81) 849 5394", "00818495394")]
         [InlineData("+44756483443", "0756483443")]
+        [InlineData("+440756483443", "0756483443")]
         public void PhoneCallScheduledAt_InternationalCallback_IsSanitized(string input, string expected)
         {
             var request = new TeacherTrainingAdviserSignUp()

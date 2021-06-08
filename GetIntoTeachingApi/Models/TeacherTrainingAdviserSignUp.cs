@@ -191,7 +191,7 @@ namespace GetIntoTeachingApi.Models
                 telephone = $"00{telephone}";
 
                 // Replace UK dial-in code with a 0.
-                telephone = Regex.Replace(telephone, "^0044", "0");
+                telephone = Regex.Replace(telephone, "^00440?", "0");
             }
 
             return telephone;
