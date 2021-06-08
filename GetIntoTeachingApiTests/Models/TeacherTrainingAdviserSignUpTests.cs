@@ -61,7 +61,7 @@ namespace GetIntoTeachingApiTests.Models
                 FirstName = "John",
                 LastName = "Doe",
                 DateOfBirth = DateTime.UtcNow,
-                AddressTelephone = "1234567",
+                AddressTelephone = "001234567",
                 TeacherId = "abc123",
                 AddressLine1 = "Address 1",
                 AddressLine2 = "Address 2",
@@ -88,7 +88,7 @@ namespace GetIntoTeachingApiTests.Models
             response.FirstName.Should().Be(candidate.FirstName);
             response.LastName.Should().Be(candidate.LastName);
             response.TeacherId.Should().Be(candidate.TeacherId);
-            response.AddressTelephone.Should().Be($"00{candidate.AddressTelephone}");
+            response.AddressTelephone.Should().Be(candidate.AddressTelephone[2..]);
             response.AddressLine1.Should().Be(candidate.AddressLine1);
             response.AddressLine2.Should().Be(candidate.AddressLine2);
             response.AddressCity.Should().Be(candidate.AddressCity);
@@ -116,7 +116,7 @@ namespace GetIntoTeachingApiTests.Models
                 SubjectTaughtId = Guid.NewGuid(),
                 PastTeachingPositionId = Guid.NewGuid(),
                 PreferredTeachingSubjectId = Guid.NewGuid(),
-                CountryId = LookupItem.UnitedKingdomCountryId,
+                CountryId = Guid.NewGuid(),
                 AcceptedPolicyId = Guid.NewGuid(),
                 TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
                 UkDegreeGradeId = 0,
@@ -164,7 +164,7 @@ namespace GetIntoTeachingApiTests.Models
             candidate.LastName.Should().Be(request.LastName);
             candidate.DateOfBirth.Should().Be(request.DateOfBirth);
             candidate.AddressPostcode.Should().Be(request.AddressPostcode);
-            candidate.AddressTelephone.Should().Be(request.AddressTelephone);
+            candidate.AddressTelephone.Should().Be("00" + request.AddressTelephone);
             candidate.TeacherId.Should().Be(request.TeacherId);
             candidate.AddressLine1.Should().Be(request.AddressLine1);
             candidate.AddressLine2.Should().Be(request.AddressLine2);
@@ -187,9 +187,9 @@ namespace GetIntoTeachingApiTests.Models
             candidate.PrivacyPolicy.AcceptedAt.Should().BeCloseTo(DateTime.UtcNow);
 
             candidate.PhoneCall.ScheduledAt.Should().Be((DateTime)request.PhoneCallScheduledAt);
-            candidate.PhoneCall.Telephone.Should().Be(request.AddressTelephone);
+            candidate.PhoneCall.Telephone.Should().Be("00" + request.AddressTelephone);
             candidate.PhoneCall.ChannelId.Should().Be((int)PhoneCall.Channel.CallbackRequest);
-            candidate.PhoneCall.DestinationId.Should().Be((int)PhoneCall.Destination.Uk);
+            candidate.PhoneCall.DestinationId.Should().Be((int)PhoneCall.Destination.International);
             candidate.PhoneCall.Subject.Should().Be("Scheduled phone call requested by John Doe");
 
             candidate.PastTeachingPositions.First().Id.Should().Be(request.PastTeachingPositionId);

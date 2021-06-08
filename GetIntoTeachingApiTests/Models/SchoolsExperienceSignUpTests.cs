@@ -28,10 +28,10 @@ namespace GetIntoTeachingApiTests.Models
                 AddressCity = "City",
                 AddressStateOrProvince = "County",
                 AddressPostcode = "KY11 9YU",
-                AddressTelephone = "123456789",
-                Telephone = "234567890",
-                SecondaryTelephone = "345678901",
-                MobileTelephone = "456789012",
+                AddressTelephone = "00123456789",
+                Telephone = "00234567890",
+                SecondaryTelephone = "00345678901",
+                MobileTelephone = "00456789012",
                 HasDbsCertificate = true,
                 DbsCertificateIssuedAt = DateTime.UtcNow,
             };
@@ -48,17 +48,16 @@ namespace GetIntoTeachingApiTests.Models
             response.FullName.Should().Be(candidate.FullName);
             response.FirstName.Should().Be(candidate.FirstName);
             response.LastName.Should().Be(candidate.LastName);
-            response.AddressTelephone.Should().Be(candidate.AddressTelephone);
             response.AddressLine1.Should().Be(candidate.AddressLine1);
             response.AddressLine2.Should().Be(candidate.AddressLine2);
             response.AddressLine3.Should().Be(candidate.AddressLine3);
             response.AddressCity.Should().Be(candidate.AddressCity);
             response.AddressStateOrProvince.Should().Be(candidate.AddressStateOrProvince);
             response.AddressPostcode.Should().Be(candidate.AddressPostcode);
-            response.AddressTelephone.Should().Be(candidate.AddressTelephone);
-            response.Telephone.Should().Be(candidate.Telephone);
-            response.SecondaryTelephone.Should().Be(candidate.SecondaryTelephone);
-            response.MobileTelephone.Should().Be(candidate.MobileTelephone);
+            response.AddressTelephone.Should().Be(candidate.AddressTelephone[2..]);
+            response.Telephone.Should().Be(candidate.Telephone[2..]);
+            response.SecondaryTelephone.Should().Be(candidate.SecondaryTelephone[2..]);
+            response.MobileTelephone.Should().Be(candidate.MobileTelephone[2..]);
             response.HasDbsCertificate.Should().Be(candidate.HasDbsCertificate);
             response.DbsCertificateIssuedAt.Should().Be(candidate.DbsCertificateIssuedAt);
         }

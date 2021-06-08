@@ -75,13 +75,13 @@ namespace GetIntoTeachingApi.Models
             AddressCity = candidate.AddressCity;
             AddressStateOrProvince = candidate.AddressStateOrProvince;
             AddressPostcode = candidate.AddressPostcode;
-            AddressTelephone = candidate.AddressTelephone;
-            Telephone = candidate.Telephone;
+            AddressTelephone = candidate.AddressTelephone.StripExitCode();
+            Telephone = candidate.Telephone.StripExitCode();
+            MobileTelephone = candidate.MobileTelephone.StripExitCode();
 
-            var secondaryTelephoneDefaults = new List<string> { candidate.MobileTelephone, candidate.AddressTelephone, candidate.Telephone };
-            SecondaryTelephone = candidate.SecondaryTelephone ?? secondaryTelephoneDefaults.FirstOrDefault(t => !string.IsNullOrWhiteSpace(t));
+            var secondaryTelephoneDefaults = new List<string> { MobileTelephone, AddressTelephone, Telephone };
+            SecondaryTelephone = candidate.SecondaryTelephone.StripExitCode() ?? secondaryTelephoneDefaults.FirstOrDefault(t => !string.IsNullOrWhiteSpace(t));
 
-            MobileTelephone = candidate.MobileTelephone;
             HasDbsCertificate = candidate.HasDbsCertificate;
             DbsCertificateIssuedAt = candidate.DbsCertificateIssuedAt;
         }
