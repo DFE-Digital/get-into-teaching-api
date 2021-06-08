@@ -3,7 +3,9 @@ monitor_space             = "get-into-teaching"
 paas_database_common_name = "get-into-teaching-api-dev-pg-common-svc"
 paas_redis_1_name         = "get-into-teaching-dev-redis-svc"
 paas_api_application_name = "get-into-teaching-api-dev"
-monitor_scrape_applications = [{ name : "get-into-teaching-api-dev", port : 8080 }, { name : "get-into-teaching-app-dev", port : 3000 }, { name : "get-teacher-training-adviser-service-dev", port : 3000 }]
+monitor_scrape_applications = [ "get-into-teaching-api-dev-internal.apps.internal:8080" ,
+                                "get-into-teaching-app-dev-internal.apps.internal:3000" ,
+                                "get-teacher-training-adviser-service-dev-internal.apps.internal:3000" ]
 application_instances = 1
 logging               = 0
 monitoring            = 1
