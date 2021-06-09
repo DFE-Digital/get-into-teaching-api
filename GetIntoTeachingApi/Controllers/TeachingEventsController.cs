@@ -195,6 +195,8 @@ namespace GetIntoTeachingApi.Controllers
                 return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
             }
 
+            var tempBuilding = teachingEvent.Building;
+
             // Save independently so that the building gets an Id populated immediately.
             // We also persist in the cache so it is immediately available.
             if (teachingEvent.Building != null)
@@ -202,9 +204,11 @@ namespace GetIntoTeachingApi.Controllers
                 _crm.Save(teachingEvent.Building);
                 await _store.SaveAsync(new TeachingEventBuilding[] { teachingEvent.Building });
                 teachingEvent.BuildingId = teachingEvent.Building.Id;
+                teachingEvent.Building = null;
             }
 
             _crm.Save(teachingEvent);
+            teachingEvent.Building = tempBuilding;
             await _store.SaveAsync(new TeachingEvent[] { teachingEvent });
 
             return CreatedAtAction(
