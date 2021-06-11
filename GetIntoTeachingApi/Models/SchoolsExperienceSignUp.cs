@@ -91,8 +91,6 @@ namespace GetIntoTeachingApi.Models
             var candidate = new Candidate()
             {
                 Id = CandidateId,
-                PreferredTeachingSubjectId = PreferredTeachingSubjectId,
-                SecondaryPreferredTeachingSubjectId = SecondaryPreferredTeachingSubjectId,
                 CountryId = LookupItem.UnitedKingdomCountryId,
                 Email = Email,
                 SecondaryEmail = SecondaryEmail,
@@ -112,6 +110,16 @@ namespace GetIntoTeachingApi.Models
                 HasDbsCertificate = HasDbsCertificate,
                 DbsCertificateIssuedAt = DbsCertificateIssuedAt,
             };
+
+            if (PreferredTeachingSubjectId != null)
+            {
+                candidate.PreferredTeachingSubjectId = PreferredTeachingSubjectId;
+            }
+
+            if (SecondaryPreferredTeachingSubjectId != null)
+            {
+                candidate.SecondaryPreferredTeachingSubjectId = SecondaryPreferredTeachingSubjectId;
+            }
 
             ConfigureChannel(candidate);
             AcceptPrivacyPolicy(candidate);

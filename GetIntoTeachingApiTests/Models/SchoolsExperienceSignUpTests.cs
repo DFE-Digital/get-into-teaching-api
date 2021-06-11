@@ -186,5 +186,21 @@ namespace GetIntoTeachingApiTests.Models
 
             request.Candidate.AddressPostcode.Should().Be("KY11 9YU");
         }
+
+        [Fact]
+        public void Candidate_WhenPreferredTeachingSubjectIdIsNull_DoesNotChange()
+        {
+            var request = new SchoolsExperienceSignUp() { PreferredTeachingSubjectId = null };
+
+            request.Candidate.ChangedPropertyNames.Should().NotContain("PreferredTeachingSubjectId");
+        }
+
+        [Fact]
+        public void Candidate_WhenSecondaryPreferredTeachingSubjectIdIsNull_DoesNotChange()
+        {
+            var request = new SchoolsExperienceSignUp() { SecondaryPreferredTeachingSubjectId = null };
+
+            request.Candidate.ChangedPropertyNames.Should().NotContain("SecondaryPreferredTeachingSubjectId");
+        }
     }
 }
