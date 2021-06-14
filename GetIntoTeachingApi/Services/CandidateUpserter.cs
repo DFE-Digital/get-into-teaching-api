@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Utils;
+using Hangfire;
 
 namespace GetIntoTeachingApi.Services
 {
     public class CandidateUpserter : ICandidateUpserter
     {
         private readonly ICrmService _crm;
+        private readonly IBackgroundJobClient _jobClient;
 
-        public CandidateUpserter(ICrmService crm)
+        public CandidateUpserter(ICrmService crm, IBackgroundJobClient jobClient)
         {
             _crm = crm;
+            _jobClient = jobClient;
         }
 
         public void Upsert(Candidate candidate)
@@ -22,11 +27,13 @@ namespace GetIntoTeachingApi.Services
             var pastTeachingPositions = ClearPastTeachingPositions(candidate);
 
             SaveCandidate(candidate);
+
             SaveQualifications(qualifications, candidate);
             SavePastTeachingPositions(pastTeachingPositions, candidate);
             SaveTeachingEventRegistrations(registrations, candidate);
             SavePrivacyPolicy(privacyPolicy, candidate);
             SavePhoneCall(phoneCall, candidate);
+
             IncrementCallbackBookingQuotaNumberOfBookings(phoneCall);
         }
 
@@ -91,7 +98,8 @@ namespace GetIntoTeachingApi.Services
             foreach (var registration in registrations)
             {
                 registration.CandidateId = (Guid)candidate.Id;
-                _crm.Save(registration);
+                string json = registration.SerializeChangeTracked();
+                _jobClient.Enqueue<UpsertModelJob<TeachingEventRegistration>>((x) => x.Run(json, null));
             }
         }
 
@@ -100,7 +108,8 @@ namespace GetIntoTeachingApi.Services
             foreach (var qualification in qualifications)
             {
                 qualification.CandidateId = (Guid)candidate.Id;
-                _crm.Save(qualification);
+                string json = qualification.SerializeChangeTracked();
+                _jobClient.Enqueue<UpsertModelJob<CandidateQualification>>((x) => x.Run(json, null));
             }
         }
 
@@ -109,27 +118,17 @@ namespace GetIntoTeachingApi.Services
             foreach (var pastTeachingPosition in pastTeachingPositions)
             {
                 pastTeachingPosition.CandidateId = (Guid)candidate.Id;
-                _crm.Save(pastTeachingPosition);
+                string json = pastTeachingPosition.SerializeChangeTracked();
+                _jobClient.Enqueue<UpsertModelJob<CandidatePastTeachingPosition>>((x) => x.Run(json, null));
             }
         }
 
         private void IncrementCallbackBookingQuotaNumberOfBookings(PhoneCall phoneCall)
         {
-            if (phoneCall == null)
+            if (phoneCall != null)
             {
-                return;
+                _jobClient.Enqueue<ClaimCallbackBookingSlotJob>((x) => x.Run(phoneCall.ScheduledAt, null));
             }
-
-            var quota = _crm.GetCallbackBookingQuota(phoneCall.ScheduledAt);
-
-            if (quota == null || !quota.IsAvailable)
-            {
-                return;
-            }
-
-            quota.NumberOfBookings += 1;
-
-            _crm.Save(quota);
         }
 
         private void SavePhoneCall(PhoneCall phoneCall, Candidate candidate)
@@ -140,7 +139,8 @@ namespace GetIntoTeachingApi.Services
             }
 
             phoneCall.CandidateId = candidate.Id.ToString();
-            _crm.Save(phoneCall);
+            string json = phoneCall.SerializeChangeTracked();
+            _jobClient.Enqueue<UpsertModelJob<PhoneCall>>((x) => x.Run(json, null));
         }
 
         private void SavePrivacyPolicy(CandidatePrivacyPolicy privacyPolicy, Candidate candidate)
@@ -151,7 +151,8 @@ namespace GetIntoTeachingApi.Services
             }
 
             privacyPolicy.CandidateId = (Guid)candidate.Id;
-            _crm.Save(privacyPolicy);
+            string json = privacyPolicy.SerializeChangeTracked();
+            _jobClient.Enqueue<UpsertModelJob<CandidatePrivacyPolicy>>((x) => x.Run(json, null));
         }
     }
 }

@@ -1,9 +1,14 @@
 ﻿using System;
 using FluentAssertions;
+using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
+using Hangfire;
+using Hangfire.Common;
+using Hangfire.States;
 using Moq;
 using Xunit;
+using GetIntoTeachingApi.Utils;
 
 namespace GetIntoTeachingApiTests.Services
 {
@@ -11,12 +16,14 @@ namespace GetIntoTeachingApiTests.Services
     {
         private readonly ICandidateUpserter _upserter;
         private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly Candidate _candidate;
 
         public CandidateUpserterTests()
         {
             _mockCrm = new Mock<ICrmService>();
-            _upserter = new CandidateUpserter(_mockCrm.Object);
+            _mockJobClient = new Mock<IBackgroundJobClient>();
+            _upserter = new CandidateUpserter(_mockCrm.Object, _mockJobClient.Object);
             _candidate = new Candidate() { Id = Guid.NewGuid(), Email = "test@test.com" };
         }
 
@@ -39,7 +46,11 @@ namespace GetIntoTeachingApiTests.Services
             _upserter.Upsert(_candidate);
 
             qualification.CandidateId = candidateId;
-            _mockCrm.Verify(mock => mock.Save(It.Is<CandidateQualification>(q => IsMatch(qualification, q))), Times.Once);
+
+            _mockJobClient.Verify(x => x.Create(
+                           It.Is<Job>(job => job.Type == typeof(UpsertModelJob<CandidateQualification>) && job.Method.Name == "Run" &&
+                           IsMatch(qualification, (string)job.Args[0])),
+                           It.IsAny<EnqueuedState>()));
         }
 
         [Fact]
@@ -53,7 +64,11 @@ namespace GetIntoTeachingApiTests.Services
             _upserter.Upsert(_candidate);
 
             pastTeachingPosition.CandidateId = candidateId;
-            _mockCrm.Verify(mock => mock.Save(It.Is<CandidatePastTeachingPosition>(p => IsMatch(pastTeachingPosition, p))), Times.Once);
+
+            _mockJobClient.Verify(x => x.Create(
+               It.Is<Job>(job => job.Type == typeof(UpsertModelJob<CandidatePastTeachingPosition>) && job.Method.Name == "Run" &&
+               IsMatch(pastTeachingPosition, (string)job.Args[0])),
+               It.IsAny<EnqueuedState>()));
         }
 
         [Fact]
@@ -67,7 +82,11 @@ namespace GetIntoTeachingApiTests.Services
             _upserter.Upsert(_candidate);
 
             registration.CandidateId = candidateId;
-            _mockCrm.Verify(mock => mock.Save(It.Is<TeachingEventRegistration>(r => IsMatch(registration, r))), Times.Once);
+
+            _mockJobClient.Verify(x => x.Create(
+               It.Is<Job>(job => job.Type == typeof(UpsertModelJob<TeachingEventRegistration>) && job.Method.Name == "Run" &&
+               IsMatch(registration, (string)job.Args[0])),
+               It.IsAny<EnqueuedState>()));
         }
 
         [Fact]
@@ -77,16 +96,21 @@ namespace GetIntoTeachingApiTests.Services
             var scheduledAt = DateTime.UtcNow.AddDays(3);
             var phoneCall = new PhoneCall() { ScheduledAt = scheduledAt };
             _candidate.PhoneCall = phoneCall;
-            var quota = new CallbackBookingQuota() { StartAt = scheduledAt, NumberOfBookings = 5, Quota = 10 };
             _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
-            _mockCrm.Setup(mock => mock.GetCallbackBookingQuota(scheduledAt)).Returns(quota);
 
             _upserter.Upsert(_candidate);
 
             phoneCall.CandidateId = candidateId.ToString();
-            _mockCrm.Verify(mock => mock.Save(It.Is<PhoneCall>(p => IsMatch(phoneCall, p))), Times.Once);
-            _mockCrm.Verify(mock => mock.Save(It.Is<CallbackBookingQuota>(q => IsMatch(quota, q))), Times.Once);
-            quota.NumberOfBookings.Should().Be(6);
+
+            _mockJobClient.Verify(x => x.Create(
+               It.Is<Job>(job => job.Type == typeof(UpsertModelJob<PhoneCall>) && job.Method.Name == "Run" &&
+               IsMatch(phoneCall, (string)job.Args[0])),
+               It.IsAny<EnqueuedState>()));
+
+            _mockJobClient.Verify(x => x.Create(
+               It.Is<Job>(job => job.Type == typeof(ClaimCallbackBookingSlotJob) && job.Method.Name == "Run" &&
+               scheduledAt == (DateTime)job.Args[0]),
+               It.IsAny<EnqueuedState>()));
         }
 
         [Fact]
@@ -100,29 +124,23 @@ namespace GetIntoTeachingApiTests.Services
             _upserter.Upsert(_candidate);
 
             policy.CandidateId = candidateId;
-            _mockCrm.Verify(mock => mock.Save(It.Is<CandidatePrivacyPolicy>(p => IsMatch(policy, p))), Times.Once);
+
+            _mockJobClient.Verify(x => x.Create(
+               It.Is<Job>(job => job.Type == typeof(UpsertModelJob<CandidatePrivacyPolicy>) && job.Method.Name == "Run" &&
+               IsMatch(policy, (string)job.Args[0])),
+               It.IsAny<EnqueuedState>()));
         }
 
-        [Fact]
-        public void Upsert_WithPhoneCallButMatchingQuotaIsAlreadyFull_DoesNotIncrementsCallbackBookingQuotaNumberOfBookings()
-        {
-            var candidateId = Guid.NewGuid();
-            var scheduledAt = DateTime.UtcNow.AddDays(3);
-            var phoneCall = new PhoneCall() { ScheduledAt = scheduledAt };
-            var quota = new CallbackBookingQuota() { StartAt = scheduledAt, NumberOfBookings = 5, Quota = 5 };
-            _candidate.PhoneCall = phoneCall;
-            _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
-            _mockCrm.Setup(mock => mock.GetCallbackBookingQuota(scheduledAt)).Returns(quota);
-
-            _upserter.Upsert(_candidate);
-
-            _mockCrm.Verify(mock => mock.Save(It.IsAny<CallbackBookingQuota>()), Times.Never);
-            quota.NumberOfBookings.Should().Be(5);
-        }
-
-        private bool IsMatch(object objectA, object objectB)
+        private static bool IsMatch(object objectA, object objectB)
         {
             objectA.Should().BeEquivalentTo(objectB);
+            return true;
+        }
+
+        private static bool IsMatch<T>(T modelA, string modelBJson)
+        {
+            var candidateB = modelBJson.DeserializeChangeTracked<T>();
+            modelA.Should().BeEquivalentTo(candidateB);
             return true;
         }
     }

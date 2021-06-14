@@ -61,15 +61,7 @@ namespace GetIntoTeachingApi.Jobs
             }
             else
             {
-                try
-                {
-                    _upserter.Upsert(candidate);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError($"UpsertCandidateJob - Exception - {e}");
-                    throw;
-                }
+                _upserter.Upsert(candidate);
 
                 _logger.LogInformation($"UpsertCandidateJob - Succeeded - {candidate.Id}");
             }
