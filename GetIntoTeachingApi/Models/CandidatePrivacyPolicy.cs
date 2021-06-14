@@ -7,7 +7,7 @@ using Microsoft.Xrm.Sdk;
 namespace GetIntoTeachingApi.Models
 {
     [Entity("dfe_candidateprivacypolicy")]
-    public class CandidatePrivacyPolicy : BaseModel
+    public class CandidatePrivacyPolicy : BaseModel, IHasCandidateId
     {
         public const int Consent = 222750001;
 

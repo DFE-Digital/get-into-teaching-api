@@ -7,7 +7,7 @@ using Microsoft.Xrm.Sdk;
 namespace GetIntoTeachingApi.Models
 {
     [Entity("dfe_candidatepastteachingposition")]
-    public class CandidatePastTeachingPosition : BaseModel
+    public class CandidatePastTeachingPosition : BaseModel, IHasCandidateId
     {
         public enum EducationPhase
         {
