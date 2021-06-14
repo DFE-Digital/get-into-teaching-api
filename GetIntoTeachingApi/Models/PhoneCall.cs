@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
@@ -7,7 +8,7 @@ using Microsoft.Xrm.Sdk;
 namespace GetIntoTeachingApi.Models
 {
     [Entity("phonecall")]
-    public class PhoneCall : BaseModel
+    public class PhoneCall : BaseModel, IHasCandidateId
     {
         public enum Channel
         {
@@ -38,6 +39,7 @@ namespace GetIntoTeachingApi.Models
         public bool AppointmentRequired { get; set; } = false;
         [EntityField("directioncode")]
         public bool IsDirectionCode { get; set; } = true;
+        Guid IHasCandidateId.CandidateId { get => new Guid(CandidateId); }
 
         public PhoneCall()
             : base()

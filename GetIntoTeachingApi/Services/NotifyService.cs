@@ -12,6 +12,7 @@ namespace GetIntoTeachingApi.Services
         public const string CandidateRegistrationFailedEmailTemplateId = "00ea3516-17b0-4e09-8a92-ddec606310fd";
         public const string TeachingEventRegistrationFailedEmailTemplateId = "b4084e28-60a6-417d-bd66-42112bd7ad09";
         public const string MailingListAddMemberFailedEmailTemplateId = "4b3653b4-e524-42b8-bfed-201cb6bb8a25";
+        public const string SignUpPartiallyFailedTemplateId = "26402650-942d-4d6a-84dc-fe5cfdfb501c";
         private readonly ILogger<NotifyService> _logger;
         private readonly INotificationClientAdapter _client;
         private readonly IEnv _env;
