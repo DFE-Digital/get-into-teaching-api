@@ -7,7 +7,7 @@ using Microsoft.Xrm.Sdk;
 namespace GetIntoTeachingApi.Models
 {
     [Entity("dfe_candidatequalification")]
-    public class CandidateQualification : BaseModel
+    public class CandidateQualification : BaseModel, IHasCandidateId
     {
         public enum DegreeStatus
         {

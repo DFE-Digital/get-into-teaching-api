@@ -7,7 +7,7 @@ using Microsoft.Xrm.Sdk;
 namespace GetIntoTeachingApi.Models
 {
     [Entity("msevtmgt_eventregistration")]
-    public class TeachingEventRegistration : BaseModel
+    public class TeachingEventRegistration : BaseModel, IHasCandidateId
     {
         public enum Channel
         {
