@@ -85,23 +85,24 @@ namespace GetIntoTeachingApi.Services
 
         public Candidate MatchCandidate(ExistingCandidateRequest request)
         {
-            var context = Context();
-            var entity = _service.CreateQuery("contact", context)
-                .Where(e =>
-                    e.GetAttributeValue<int>("statecode") == (int)Candidate.Status.Active &&
+            var query = new QueryExpression("contact");
+            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
+            query.Criteria.AddCondition(new ConditionExpression("statecode", ConditionOperator.Equal, (int)Candidate.Status.Active));
+            query.Criteria.AddCondition(new ConditionExpression("emailaddress1", ConditionOperator.Equal, request.Email));
+            query.Orders.Add(new OrderExpression("dfe_duplicatescorecalculated", OrderType.Descending));
+            query.Orders.Add(new OrderExpression("modifiedon", OrderType.Descending));
+            query.TopCount = MaximumNumberOfCandidatesToMatch;
 
-                    // Will perform a case-insensitive comparison.
-                    // Contains is used to ensure we match emails with white space (request.Match does an exact match in-memory).
-                    e.GetAttributeValue<string>("emailaddress1").Contains(request.Email))
-                .OrderByDescending(e => e.GetAttributeValue<double>("dfe_duplicatescorecalculated"))
-                .ThenByDescending(e => e.GetAttributeValue<DateTime>("modifiedon"))
-                .Take(MaximumNumberOfCandidatesToMatch)
-                .FirstOrDefault(request.Match);
+            var entities = _service.RetrieveMultiple(query);
+            var entity = entities.FirstOrDefault(request.Match);
 
             if (entity == null)
             {
                 return null;
             }
+
+            var context = Context();
+            context.Attach(entity);
 
             LoadCandidateRelationships(entity, context);
 
@@ -116,12 +117,16 @@ namespace GetIntoTeachingApi.Services
                 return new Candidate[0];
             }
 
+            var query = new QueryExpression("contact");
+            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
+            query.Criteria.AddCondition(new ConditionExpression("dfe_websitemltoken", ConditionOperator.Equal, magicLinkToken));
+
+            var entities = _service.RetrieveMultiple(query);
             var context = Context();
-            var entities = _service.CreateQuery("contact", context)
-                .Where(c => c.GetAttributeValue<string>("dfe_websitemltoken") == magicLinkToken);
 
             foreach (var entity in entities)
             {
+                context.Attach(entity);
                 LoadCandidateRelationships(entity, context);
             }
 
