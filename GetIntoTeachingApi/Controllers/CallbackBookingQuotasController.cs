@@ -10,7 +10,7 @@ namespace GetIntoTeachingApi.Controllers
 {
     [Route("api/callback_booking_quotas")]
     [ApiController]
-    [Authorize(Roles = "Admin,GetAnAdviser")]
+    [Authorize(Roles = "Admin,GetAnAdviser,GetIntoTeaching")]
     public class CallbackBookingQuotasController : ControllerBase
     {
         private readonly ICallbackBookingService _callbackBookingService;
