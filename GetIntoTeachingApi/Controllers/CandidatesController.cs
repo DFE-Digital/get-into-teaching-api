@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Sentry;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Controllers
@@ -69,6 +70,7 @@ namespace GetIntoTeachingApi.Controllers
             }
             catch (Exception e)
             {
+                SentrySdk.CaptureException(e);
                 _logger.LogInformation($"CandidatesController - potential duplicate (CRM exception) - {e.Message}");
             }
 
