@@ -106,6 +106,36 @@ namespace GetIntoTeachingApiTests.Services
                 options => options.WithStrictOrdering());
         }
 
+        private static bool VerifyMatchCandidatesWithExistingCandidateRequestExpression(QueryExpression query, string email)
+        {
+            var hasEntityName = query.EntityName == "contact";
+            var conditions = query.Criteria.Conditions;
+            var orders = query.Orders;
+
+            var hasStateCodeCondition = conditions.Any(c => c.AttributeName == "statecode" &&
+                c.Operator == ConditionOperator.Equal && (int)c.Values[0] == (int)Candidate.Status.Active);
+            var hasEmailAddressCondition = conditions.Any(c => c.AttributeName == "emailaddress1" &&
+                c.Operator == ConditionOperator.Equal && c.Values[0].ToString() == email);
+
+            var hasDuplicateScoreOrder = orders.Any(o => o.AttributeName == "dfe_duplicatescorecalculated" && o.OrderType == OrderType.Descending);
+            var hasModifiedOnOrder = orders.Any(o => o.AttributeName == "modifiedon" && o.OrderType == OrderType.Descending);
+
+            var hasTopCount = query.TopCount == 20;
+
+            return hasEntityName && hasStateCodeCondition && hasEmailAddressCondition && hasDuplicateScoreOrder && hasModifiedOnOrder && hasTopCount;
+        }
+
+        private static bool VerifyMatchCandidatesWithMagicLinkQueryExpression(QueryExpression query, string magicLink)
+        {
+            var hasEntityName = query.EntityName == "contact";
+            var conditions = query.Criteria.Conditions;
+
+            var hasMagicLinkCondition = conditions.Any(c => c.AttributeName == "dfe_websitemltoken" &&
+                c.Operator == ConditionOperator.Equal && c.Values[0].ToString() == magicLink);
+
+            return hasEntityName && hasMagicLinkCondition;
+        }
+
         private static bool VerifyTeachingEventsQueryExpression(QueryExpression query)
         {
             var hasEntityName = query.EntityName == "msevtmgt_event";
@@ -382,7 +412,12 @@ namespace GetIntoTeachingApiTests.Services
         )
         {
             var request = new ExistingCandidateRequest { Email = email, FirstName = firstName, LastName = lastName };
-            _mockService.Setup(mock => mock.CreateQuery("contact", _context)).Returns(MockCandidates());
+            var candidates = MockCandidates().Where(c => c.GetAttributeValue<int>("statecode") == (int)Candidate.Status.Active
+                && c.GetAttributeValue<string>("emailaddress1").Contains(email));
+
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyMatchCandidatesWithExistingCandidateRequestExpression(q, email)))).Returns(candidates);
+
             _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
                 new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), _context));
             _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
@@ -430,7 +465,11 @@ namespace GetIntoTeachingApiTests.Services
         [InlineData("duplicated-token", new string[] { "Old John", "New John" })]
         public void MatchCandidates_WithMagicLinkToken_ReturnsMatchingCandidates(string token, IEnumerable<string> expectedFirstNames)
         {
-            _mockService.Setup(mock => mock.CreateQuery("contact", _context)).Returns(MockCandidates());
+            var candidates = MockCandidates().Where(c => c.GetAttributeValue<string>("dfe_websitemltoken") == token);
+
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyMatchCandidatesWithMagicLinkQueryExpression(q, token)))).Returns(candidates);
+
             _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
                 new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), _context));
             _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
@@ -646,7 +685,10 @@ namespace GetIntoTeachingApiTests.Services
             candidate2["dfe_duplicatescorecalculated"] = 9.5;
             candidate2["dfe_gitiseventsservicesubscriptiontype"] = new OptionSetValue((int)Candidate.SubscriptionType.SingleEvent);
 
-            var candidate3 = new Entity("contact");
+            var candidate3 = new Entity("contact")
+            {
+                Id = Guid.NewGuid()
+            };
             candidate3["statecode"] = Candidate.Status.Active;
             candidate3["emailaddress1"] = "john@doe.com";
             candidate3["firstname"] = "Old John";
@@ -655,7 +697,10 @@ namespace GetIntoTeachingApiTests.Services
             candidate3["modifiedon"] = DateTime.UtcNow.AddDays(-5);
             candidate3["dfe_duplicatescorecalculated"] = 8.3;
 
-            var candidate4 = new Entity("contact");
+            var candidate4 = new Entity("contact")
+            {
+                Id = Guid.NewGuid()
+            };
             candidate4["statecode"] = Candidate.Status.Inactive;
             candidate4["emailaddress1"] = "inactive@doe.com";
             candidate4["firstname"] = "Inactive";
@@ -663,7 +708,10 @@ namespace GetIntoTeachingApiTests.Services
             candidate4["modifiedon"] = DateTime.UtcNow;
             candidate4["dfe_duplicatescorecalculated"] = 7.1;
 
-            var candidate5 = new Entity("contact");
+            var candidate5 = new Entity("contact")
+            {
+                Id = Guid.NewGuid()
+            };
             candidate5["statecode"] = Candidate.Status.Inactive;
             candidate5["emailaddress1"] = "master@record.com";
             candidate5["firstname"] = "Child";
@@ -672,7 +720,10 @@ namespace GetIntoTeachingApiTests.Services
             candidate5["birthdate"] = new DateTime(2000, 1, 1);
             candidate5["dfe_duplicatescorecalculated"] = 2.4;
 
-            var candidate6 = new Entity("contact");
+            var candidate6 = new Entity("contact")
+            {
+                Id = Guid.NewGuid()
+            };
             candidate6["statecode"] = Candidate.Status.Inactive;
             candidate6["emailaddress1"] = "master@record.com";
             candidate6["firstname"] = "Child1";
@@ -681,7 +732,10 @@ namespace GetIntoTeachingApiTests.Services
             candidate6["birthdate"] = new DateTime(2000, 1, 1);
             candidate6["dfe_duplicatescorecalculated"] = null;
 
-            var candidate7 = new Entity("contact");
+            var candidate7 = new Entity("contact")
+            {
+                Id = Guid.NewGuid()
+            };
             candidate7["statecode"] = Candidate.Status.Inactive;
             candidate7["emailaddress1"] = "master@record.com";
             candidate7["firstname"] = "Master";
