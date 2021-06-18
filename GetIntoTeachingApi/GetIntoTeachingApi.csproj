@@ -60,6 +60,10 @@
 	  <Folder Include="Mocks\" />
 	  <Folder Include="Middleware\" />
 	  <Folder Include="Controllers\SchoolsExperience\" />
+	  <Folder Include="Controllers\GetIntoTeaching\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="Controllers\GetIntoTeaching\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="Fixtures\clients.yml">
