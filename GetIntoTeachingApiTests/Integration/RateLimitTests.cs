@@ -34,6 +34,7 @@ namespace GetIntoTeachingApiTests.Integration
         [InlineData("/api/mailing_list/members", "GIT", 250)]
         [InlineData("/api/teaching_events/attendees", "GIT", 250)]
         [InlineData("/api/teaching_events", "GIT", 100)]
+        [InlineData("/api/get_into_teaching/callbacks", "GIT", 250)]
         [InlineData("/api/candidates/access_tokens", "TTA", 500)]
         [InlineData("/api/teacher_training_adviser/candidates", "TTA", 250)]
         [InlineData("/api/candidates/access_tokens", "SE", 500)]
