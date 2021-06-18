@@ -82,6 +82,7 @@ namespace GetIntoTeachingApi.Models
             Event = 222750029,
             TeacherTrainingAdviser = 222750027,
             SchoolsExperience = 222750021,
+            GetIntoTeachingCallback = 222750043,
         }
 
         public enum GcseStatus
