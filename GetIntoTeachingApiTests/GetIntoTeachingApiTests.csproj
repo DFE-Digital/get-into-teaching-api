@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Controllers\GetIntoTeaching\" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
@@ -47,6 +50,7 @@
     <Folder Include="Validators\" />
     <Folder Include="JsonConverters\" />
     <Folder Include="Middleware\" />
+    <Folder Include="Controllers\GetIntoTeaching\" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
