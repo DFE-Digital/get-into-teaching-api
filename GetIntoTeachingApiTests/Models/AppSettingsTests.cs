@@ -69,5 +69,27 @@ namespace GetIntoTeachingApiTests.Models
 
             _settings.IsCrmIntegrationPaused.Should().BeFalse();
         }
+
+        [Fact]
+        public void FindApplyLastSyncAt_SetAndGetWithDate_WorkCorrectly()
+        {
+            var date = DateTime.UtcNow;
+            var dateStr = date.ToString("O");
+            _database.Setup(m => m.StringSet("app_settings.find_apply_last_sync_at", dateStr, null, When.Always, CommandFlags.None));
+            _database.Setup(m => m.StringGet("app_settings.find_apply_last_sync_at", CommandFlags.None)).Returns(dateStr);
+
+            _settings.FindApplyLastSyncAt = date;
+            _settings.FindApplyLastSyncAt.Should().Be(date);
+        }
+
+        [Fact]
+        public void FindApplyLastSyncAt_SetAndGetWithNull_WorkCorrectly()
+        {
+            _database.Setup(m => m.StringSet("app_settings.find_apply_last_sync_at", null as string, null, When.Always, CommandFlags.None));
+            _database.Setup(m => m.StringGet("app_settings.find_apply_last_sync_at", CommandFlags.None)).Returns(null as string);
+
+            _settings.FindApplyLastSyncAt = null;
+            _settings.FindApplyLastSyncAt.Should().BeNull();
+        }
     }
 }
