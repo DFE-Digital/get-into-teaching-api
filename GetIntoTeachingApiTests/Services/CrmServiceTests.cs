@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
@@ -604,27 +604,40 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void GetTeachingEvent_WhenTeachingEventExists_ReturnsTeachingEvent()
         {
-            _mockService.Setup(mock => mock.CreateQuery("msevtmgt_event", _context))
-                .Returns(MockTeachingEvents());
+            var teachingEvent = MockTeachingEvents().Where(c => c.GetAttributeValue<string>("dfe_websiteeventpartialurl") == "event_one");
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+               q => VerifyMatchEventWithReadableIdQueryExpression(q, "event_one")))).Returns(teachingEvent);
 
             var result = _crm.GetTeachingEvent("event_one");
 
             result.ReadableId.Should().Be("event_one");
             _mockService.Verify(mock => mock.LoadProperty(It.IsAny<Entity>(),
-               new Relationship("msevtmgt_event_building"), _context), Times.Once);
+                new Relationship("msevtmgt_event_building"), _context), Times.Once);
         }
 
         [Fact]
         public void GetTeachingEvent_WhenTeachingEventDoesNotExist_ReturnsNull()
         {
-            _mockService.Setup(mock => mock.CreateQuery("msevtmgt_event", _context))
-                .Returns(MockTeachingEvents());
+            var emptyResult = new List<Entity>();
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+               q => VerifyMatchEventWithReadableIdQueryExpression(q, "does_not_exist")))).Returns(emptyResult);
 
-            var result = _crm.GetTeachingEvent("wrong");
+            var result = _crm.GetTeachingEvent("does_not_exist");
 
             result.Should().BeNull();
             _mockService.Verify(mock => mock.LoadProperty(It.IsAny<Entity>(),
-              new Relationship("msevtmgt_event_building"), _context), Times.Never);
+                new Relationship("msevtmgt_event_building"), _context), Times.Never);
+        }
+
+        private static bool VerifyMatchEventWithReadableIdQueryExpression(QueryExpression query, string readableId)
+        {
+            var hasEntityName = query.EntityName == "msevtmgt_event";
+            var conditions = query.Criteria.Conditions;
+
+            var hasReadabileIdCondition = conditions.Any(c => c.AttributeName == "dfe_websiteeventpartialurl" &&
+                c.Operator == ConditionOperator.Equal && c.Values[0].ToString() == readableId);
+
+            return hasEntityName && hasReadabileIdCondition;
         }
 
         private static IQueryable<Entity> MockTeachingEventBuildings()
@@ -640,7 +653,10 @@ namespace GetIntoTeachingApiTests.Services
 
         private static IQueryable<Entity> MockTeachingEvents()
         {
-            var event1 = new Entity("msevtmgt_event");
+            var event1 = new Entity("msevtmgt_event")
+            {
+                Id = Guid.NewGuid()
+            };
             event1["dfe_externaleventtitle"] = "Event 1";
             event1["dfe_websiteeventpartialurl"] = "event_one";
 
