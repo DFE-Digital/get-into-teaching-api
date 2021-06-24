@@ -61,9 +61,11 @@
 	  <Folder Include="Middleware\" />
 	  <Folder Include="Controllers\SchoolsExperience\" />
 	  <Folder Include="Controllers\GetIntoTeaching\" />
+	  <Folder Include="Models\FindApply\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="Controllers\GetIntoTeaching\" />
+	  <None Remove="Models\FindApply\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="Fixtures\clients.yml">
