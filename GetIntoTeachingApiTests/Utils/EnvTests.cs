@@ -153,6 +153,28 @@ namespace GetIntoTeachingApiTests.Utils
         }
 
         [Fact]
+        public void FindApplyApiUrl_ReturnsCorrectly()
+        {
+            var previous = Environment.GetEnvironmentVariable("FIND_APPLY_API_URL");
+            Environment.SetEnvironmentVariable("FIND_APPLY_API_URL", "find-apply-api-url");
+
+            _env.FindApplyApiUrl.Should().Be("find-apply-api-url");
+
+            Environment.SetEnvironmentVariable("FIND_APPLY_API_URL", previous);
+        }
+
+        [Fact]
+        public void FindApplyApiKey_ReturnsCorrectly()
+        {
+            var previous = Environment.GetEnvironmentVariable("FIND_APPLY_API_KEY");
+            Environment.SetEnvironmentVariable("FIND_APPLY_API_KEY", "find-apply-api-key");
+
+            _env.FindApplyApiKey.Should().Be("find-apply-api-key");
+
+            Environment.SetEnvironmentVariable("FIND_APPLY_API_KEY", previous);
+        }
+
+        [Fact]
         public void CrmServiceUrl_ReturnsCorrectly()
         {
             var previous = Environment.GetEnvironmentVariable("CRM_SERVICE_URL");
