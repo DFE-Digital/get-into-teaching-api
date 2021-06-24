@@ -11,5 +11,6 @@ namespace GetIntoTeachingApi.Jobs
         public static string CrmSyncJobId => "crm-sync";
         public static string LocationSyncJobId => "location-sync";
         public static string MagicLinkTokenGenerationJobId => "magic-link-token-generation";
+        public static string FindApplySyncJobId => "find-apply-sync";
     }
 }
