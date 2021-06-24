@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <None Remove="Controllers\GetIntoTeaching\" />
+    <None Remove="Models\FindApply\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
@@ -51,6 +52,7 @@
     <Folder Include="JsonConverters\" />
     <Folder Include="Middleware\" />
     <Folder Include="Controllers\GetIntoTeaching\" />
+    <Folder Include="Models\FindApply\" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
