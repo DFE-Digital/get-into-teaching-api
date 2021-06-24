@@ -259,16 +259,20 @@ namespace GetIntoTeachingApi.Services
 
         public TeachingEvent GetTeachingEvent(string readableId)
         {
-            var context = Context();
-            var entity = _service.CreateQuery("msevtmgt_event", context)
-                             .Where(entity => entity.GetAttributeValue<string>("dfe_websiteeventpartialurl") == readableId)
-                             .FirstOrDefault();
+            var query = new QueryExpression("msevtmgt_event");
+            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(TeachingEvent)));
+            var readableIdCondition = new ConditionExpression("dfe_websiteeventpartialurl", ConditionOperator.Equal, readableId);
+            query.Criteria.AddCondition(readableIdCondition);
+
+            var entity = _service.RetrieveMultiple(query).FirstOrDefault();
 
             if (entity == null)
             {
                 return null;
             }
 
+            var context = Context();
+            context.Attach(entity);
             _service.LoadProperty(entity, new Relationship("msevtmgt_event_building"), context);
 
             return new TeachingEvent(entity, this, _validatorFactory);
