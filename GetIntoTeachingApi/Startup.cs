@@ -266,7 +266,6 @@ The GIT API aims to provide:
             {
                 // Configure recurring jobs.
                 const string everyFifthMinute = "*/5 * * * *";
-                const string everyMinute = "* * * * *";
                 RecurringJob.AddOrUpdate<CrmSyncJob>(JobConfiguration.CrmSyncJobId, (x) => x.RunAsync(), everyFifthMinute);
                 RecurringJob.AddOrUpdate<LocationSyncJob>(
                     JobConfiguration.LocationSyncJobId,
@@ -275,7 +274,7 @@ The GIT API aims to provide:
                 RecurringJob.AddOrUpdate<MagicLinkTokenGenerationJob>(
                     JobConfiguration.MagicLinkTokenGenerationJobId,
                     (x) => x.Run(),
-                    everyMinute);
+                    Cron.Hourly());
             }
 
             // Don't seed test environment.
