@@ -149,6 +149,8 @@ namespace GetIntoTeachingApi.Models
         public DateTime? StatusIsWaitingToBeAssignedAt { get; set; }
         [EntityField("merged")]
         public bool Merged { get; set; }
+        [EntityField("dfe_applyid")]
+        public string FindApplyId { get; set; }
         [EntityField("emailaddress1")]
         public string Email { get; set; }
         [EntityField("emailaddress2")]
