@@ -275,6 +275,15 @@ The GIT API aims to provide:
                     JobConfiguration.MagicLinkTokenGenerationJobId,
                     (x) => x.Run(),
                     Cron.Hourly());
+
+                // Only run FindApplySyncJob in dev/staging environments for now.
+                if (!env.IsProduction)
+                {
+                    RecurringJob.AddOrUpdate<FindApplySyncJob>(
+                        JobConfiguration.FindApplySyncJobId,
+                        (x) => x.RunAsync(),
+                        Cron.Hourly());
+                }
             }
 
             // Don't seed test environment.
