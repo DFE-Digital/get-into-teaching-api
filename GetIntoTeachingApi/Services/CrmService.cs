@@ -85,12 +85,7 @@ namespace GetIntoTeachingApi.Services
 
         public Candidate MatchCandidate(ExistingCandidateRequest request)
         {
-            var query = new QueryExpression("contact");
-            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
-            query.Criteria.AddCondition(new ConditionExpression("statecode", ConditionOperator.Equal, (int)Candidate.Status.Active));
-            query.Criteria.AddCondition(new ConditionExpression("emailaddress1", ConditionOperator.Equal, request.Email));
-            query.Orders.Add(new OrderExpression("dfe_duplicatescorecalculated", OrderType.Descending));
-            query.Orders.Add(new OrderExpression("modifiedon", OrderType.Descending));
+            var query = MatchBackQuery(request.Email);
             query.TopCount = MaximumNumberOfCandidatesToMatch;
 
             var entities = _service.RetrieveMultiple(query);
@@ -105,6 +100,22 @@ namespace GetIntoTeachingApi.Services
             context.Attach(entity);
 
             LoadCandidateRelationships(entity, context);
+
+            return new Candidate(entity, this, _validatorFactory);
+        }
+
+        public Candidate MatchCandidate(string email)
+        {
+            var query = MatchBackQuery(email);
+            query.TopCount = 1;
+
+            var entities = _service.RetrieveMultiple(query);
+            var entity = entities.FirstOrDefault();
+
+            if (entity == null)
+            {
+                return null;
+            }
 
             return new Candidate(entity, this, _validatorFactory);
         }
@@ -282,6 +293,18 @@ namespace GetIntoTeachingApi.Services
         {
             return _service.CreateQuery("msevtmgt_building", Context())
                 .Select((entity) => new TeachingEventBuilding(entity, this, _validatorFactory)).ToList();
+        }
+
+        private static QueryExpression MatchBackQuery(string email)
+        {
+            var query = new QueryExpression("contact");
+            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
+            query.Criteria.AddCondition(new ConditionExpression("statecode", ConditionOperator.Equal, (int)Candidate.Status.Active));
+            query.Criteria.AddCondition(new ConditionExpression("emailaddress1", ConditionOperator.Equal, email));
+            query.Orders.Add(new OrderExpression("dfe_duplicatescorecalculated", OrderType.Descending));
+            query.Orders.Add(new OrderExpression("modifiedon", OrderType.Descending));
+
+            return query;
         }
 
         private void LoadCandidateRelationships(Entity entity, OrganizationServiceContext context)

@@ -6,6 +6,8 @@ namespace GetIntoTeachingApi.Services
     {
         private static readonly Histogram _crmSyncDuration = Metrics
             .CreateHistogram("api_crm_sync_duration_seconds", "Histogram of CRM sync durations.");
+        private static readonly Histogram _findApplySyncDuration = Metrics
+            .CreateHistogram("api_find_apply_sync_duration_seconds", "Histogram of Find & Apply sync durations.");
         private static readonly Histogram _locationSyncDuration = Metrics
             .CreateHistogram("api_location_sync_duration_seconds", "Histogram of location sync durations.");
         private static readonly Histogram _magicLinkTokenGenerationDuration = Metrics
@@ -45,6 +47,7 @@ namespace GetIntoTeachingApi.Services
                 LabelNames = new[] { "valid" },
             });
 
+        public Histogram FindApplySyncDuration => _findApplySyncDuration;
         public Histogram CrmSyncDuration => _crmSyncDuration;
         public Histogram LocationSyncDuration => _locationSyncDuration;
         public Histogram MagicLinkTokenGenerationDuration => _magicLinkTokenGenerationDuration;

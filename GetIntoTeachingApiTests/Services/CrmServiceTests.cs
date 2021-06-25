@@ -106,6 +106,26 @@ namespace GetIntoTeachingApiTests.Services
                 options => options.WithStrictOrdering());
         }
 
+        
+        private static bool VerifyMatchCandidatesWithEmailExpression(QueryExpression query, string email)
+        {
+            var hasEntityName = query.EntityName == "contact";
+            var conditions = query.Criteria.Conditions;
+            var orders = query.Orders;
+
+            var hasStateCodeCondition = conditions.Any(c => c.AttributeName == "statecode" &&
+                c.Operator == ConditionOperator.Equal && (int)c.Values[0] == (int)Candidate.Status.Active);
+            var hasEmailAddressCondition = conditions.Any(c => c.AttributeName == "emailaddress1" &&
+                c.Operator == ConditionOperator.Equal && c.Values[0].ToString() == email);
+
+            var hasDuplicateScoreOrder = orders.Any(o => o.AttributeName == "dfe_duplicatescorecalculated" && o.OrderType == OrderType.Descending);
+            var hasModifiedOnOrder = orders.Any(o => o.AttributeName == "modifiedon" && o.OrderType == OrderType.Descending);
+
+            var hasTopCount = query.TopCount == 1;
+
+            return hasEntityName && hasStateCodeCondition && hasEmailAddressCondition && hasDuplicateScoreOrder && hasModifiedOnOrder && hasTopCount;
+        }
+
         private static bool VerifyMatchCandidatesWithExistingCandidateRequestExpression(QueryExpression query, string email)
         {
             var hasEntityName = query.EntityName == "contact";
@@ -398,10 +418,26 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Theory]
+        [InlineData("john@doe.com", "New John")]
+        [InlineData("jane@doe.com", "Jane")]
+        [InlineData("bob@doe.com", null)]
+        [InlineData("inactive@doe.com", null)]
+        public void MatchCandidate_WithEmail_MatchesOnNewsetActiveByDuplicateScoreWithEmail(string email, string expectedFirstName)
+        {
+            var candidates = MockCandidates().Where(c => c.GetAttributeValue<int>("statecode") == (int)Candidate.Status.Active
+                && c.GetAttributeValue<string>("emailaddress1").Equals(email));
+
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyMatchCandidatesWithEmailExpression(q, email)))).Returns(candidates);
+
+            var result = _crm.MatchCandidate(email);
+
+            result?.FirstName.Should().Be(expectedFirstName);
+        }
+
+        [Theory]
         [InlineData("john@doe.com", "New John", "Doe", "New John")]
-        [InlineData("JOHN@doe.com", "New John", "Doe", "New John")]
         [InlineData("jane@doe.com", "Jane", "Doe", "Jane")]
-        [InlineData(" jane@doe.com ", " Jane ", " Doe ", "Jane")]
         [InlineData("bob@doe.com", "Bob", "Doe", null)]
         [InlineData("inactive@doe.com", "Inactive", "Doe", null)]
         public void MatchCandidate_WithExistingCandidateRequest_MatchesOnNewestCandidateWithEmail(

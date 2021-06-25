@@ -21,6 +21,8 @@ namespace GetIntoTeachingApi.Utils
         public string CrmClientSecret => Environment.GetEnvironmentVariable("CRM_CLIENT_SECRET");
         public string NotifyApiKey => Environment.GetEnvironmentVariable("NOTIFY_API_KEY");
         public string GoogleApiKey => Environment.GetEnvironmentVariable("GOOGLE_API_KEY");
+        public string FindApplyApiUrl => Environment.GetEnvironmentVariable("FIND_APPLY_API_URL");
+        public string FindApplyApiKey => Environment.GetEnvironmentVariable("FIND_APPLY_API_KEY");
         public string AppName => AppServices.ApplicationName;
         public string Organization => AppServices.OrganizationName;
         public string Space => AppServices.SpaceName;
