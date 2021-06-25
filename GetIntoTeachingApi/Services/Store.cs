@@ -143,6 +143,12 @@ namespace GetIntoTeachingApi.Services
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task SaveAsync<T>(T model)
+            where T : BaseModel
+        {
+            await SaveAsync(new T[] { model });
+        }
+
         private async Task<IEnumerable<TeachingEvent>> FilterTeachingEventsByRadius(
             IQueryable<TeachingEvent> teachingEvents, TeachingEventSearchRequest request)
         {
