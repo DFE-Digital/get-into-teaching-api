@@ -55,7 +55,7 @@ namespace GetIntoTeachingApiTests.Jobs
         {
             var candidate = new Candidate() { Id = Guid.NewGuid(), MagicLinkTokenStatusId = (int)Candidate.MagicLinkTokenStatus.Pending };
             string json = candidate.SerializeChangeTracked();
-            _mockCrm.Setup(m => m.GetCandidatesPendingMagicLinkTokenGeneration(5000)).Returns(new Candidate[] { candidate });
+            _mockCrm.Setup(m => m.GetCandidatesPendingMagicLinkTokenGeneration(500)).Returns(new Candidate[] { candidate });
 
             _job.Run();
 
