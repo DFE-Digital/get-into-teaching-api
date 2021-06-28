@@ -163,11 +163,14 @@ namespace GetIntoTeachingApi.Services
 
         public IEnumerable<Candidate> GetCandidatesPendingMagicLinkTokenGeneration(int limit = 10)
         {
-            return _service.CreateQuery("contact", Context())
-                .Where(entity => entity.GetAttributeValue<OptionSetValue>("dfe_websitemltokenstatus") != null &&
-                    entity.GetAttributeValue<OptionSetValue>("dfe_websitemltokenstatus").Value == (int)Candidate.MagicLinkTokenStatus.Pending)
-                .Take(limit)
-                .Select(e => new Candidate(e, this, _validatorFactory));
+            var query = new QueryExpression("contact");
+            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
+            query.Criteria.AddCondition(new ConditionExpression("dfe_websitemltokenstatus", ConditionOperator.Equal, (int)Candidate.MagicLinkTokenStatus.Pending));
+            query.TopCount = limit;
+
+            var entities = _service.RetrieveMultiple(query);
+
+            return entities.Select(e => new Candidate(e, this, _validatorFactory));
         }
 
         public bool CandidateAlreadyHasLocalEventSubscriptionType(Guid candidateId)
