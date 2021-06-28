@@ -22,6 +22,7 @@ using Hangfire;
 using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -31,6 +32,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.Xrm.Sdk;
 using Prometheus;
+using StackExchange.Redis;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace GetIntoTeachingApi
@@ -88,6 +90,10 @@ namespace GetIntoTeachingApi
 
             services.AddAuthentication("ApiClientHandler")
                 .AddScheme<ApiClientSchemaOptions, ApiClientHandler>("ApiClientHandler", op => { });
+
+            var redisOptions = RedisConfiguration.ConfigurationOptions(env);
+            var redis = ConnectionMultiplexer.Connect(redisOptions);
+            services.AddDataProtection().PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
 
             services.AddMvc(o =>
             {
