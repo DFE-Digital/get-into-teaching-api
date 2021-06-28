@@ -386,23 +386,39 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void GetCandidatesPendingMagicLinkTokenGeneration_ReturnsCorrectly()
         {
-            _mockService.Setup(m => m.CreateQuery("contact", _context))
-                .Returns(MockCandidates());
+            var candidates = MockCandidates();
+
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyGetCandidatesPendingMagicLinkTokenGenerationExpression(q, 10)))).Returns(candidates);
 
             var result = _crm.GetCandidatesPendingMagicLinkTokenGeneration();
 
-            result.Select(c => c.MagicLinkTokenStatusId).Should().AllBeEquivalentTo((int)Candidate.MagicLinkTokenStatus.Pending);
+            result.Count().Should().Be(candidates.Count());
         }
 
         [Fact]
         public void GetCandidatesPendingMagicLinkTokenGeneration_WithLimit_ReturnsCorrectly()
         {
-            _mockService.Setup(m => m.CreateQuery("contact", _context))
-                .Returns(MockCandidates());
+            var candidates = MockCandidates();
+
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyGetCandidatesPendingMagicLinkTokenGenerationExpression(q, 1)))).Returns(candidates);
 
             var result = _crm.GetCandidatesPendingMagicLinkTokenGeneration(1);
 
-            result.Count().Should().Be(1);
+            result.Count().Should().Be(candidates.Count());
+        }
+
+        private static bool VerifyGetCandidatesPendingMagicLinkTokenGenerationExpression(QueryExpression query, int limit)
+        {
+            var hasEntityName = query.EntityName == "contact";
+            var conditions = query.Criteria.Conditions;
+
+            var hasPendingCondition = conditions.Where(c => c.AttributeName == "dfe_websitemltokenstatus" &&
+                c.Operator == ConditionOperator.Equal && int.Parse(c.Values.First().ToString()) == (int)Candidate.MagicLinkTokenStatus.Pending).Any();
+            var hasLimit = query.TopCount == limit;
+
+            return hasEntityName && hasPendingCondition && hasLimit;
         }
 
         private static bool VerifyGetCandidatesQueryExpression(QueryExpression query, IEnumerable<Guid> ids)
