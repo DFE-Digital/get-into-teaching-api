@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
@@ -52,17 +53,16 @@ namespace GetIntoTeachingApiTests.Jobs
         [Fact]
         public void Run_UpsertsCandidatesWithMagicLinkTokens()
         {
-            var candidate = new Candidate() { MagicLinkTokenStatusId = (int)Candidate.MagicLinkTokenStatus.Pending };
+            var candidate = new Candidate() { Id = Guid.NewGuid(), MagicLinkTokenStatusId = (int)Candidate.MagicLinkTokenStatus.Pending };
             string json = candidate.SerializeChangeTracked();
             _mockCrm.Setup(m => m.GetCandidatesPendingMagicLinkTokenGeneration(5000)).Returns(new Candidate[] { candidate });
 
             _job.Run();
 
-            _mockMagicLinkTokenService.Verify(m => m.GenerateToken(candidate));
+            _mockMagicLinkTokenService.Verify(m => m.GenerateToken(It.Is<Candidate>(c => c.Id == candidate.Id)));
 
             _mockJobClient.Verify(x => x.Create(
-                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-                json == (string)job.Args[0]),
+                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run"),
                 It.IsAny<EnqueuedState>()));
 
             _mockLogger.VerifyInformationWasCalled("MagicLinkTokenGenerationJob - Started");
