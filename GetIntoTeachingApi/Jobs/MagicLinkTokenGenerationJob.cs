@@ -58,8 +58,11 @@ namespace GetIntoTeachingApi.Jobs
             var candidates = _crm.GetCandidatesPendingMagicLinkTokenGeneration(BatchSize);
             _logger.LogInformation($"MagicLinkTokenGenerationJob - Processing ({candidates.Count()})");
 
-            foreach (var candidate in candidates)
+            foreach (var match in candidates)
             {
+                // We create a new Candidate and populate only the fields
+                // we want to write back to the CRM (via GenerateToken).
+                var candidate = new Candidate() { Id = match.Id };
                 _magicLinkTokenService.GenerateToken(candidate);
                 string json = candidate.SerializeChangeTracked();
                 _jobClient.Enqueue<UpsertCandidateJob>(x => x.Run(json, null));
