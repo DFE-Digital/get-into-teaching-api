@@ -231,7 +231,7 @@ The GIT API aims to provide:
 
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
-                Authorization = new[] { new HangfireDashboardAuthorizationFilter(env) },
+                Authorization = new[] { new HangfireDashboardEnvironmentAuthorizationFilter(env) },
             });
 
             app.UseSwagger(c =>

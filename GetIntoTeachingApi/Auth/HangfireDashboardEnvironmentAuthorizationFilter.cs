@@ -4,11 +4,11 @@ using Hangfire.Dashboard;
 
 namespace GetIntoTeachingApi.Auth
 {
-    public class HangfireDashboardAuthorizationFilter : IDashboardAuthorizationFilter
+    public class HangfireDashboardEnvironmentAuthorizationFilter : IDashboardAuthorizationFilter
     {
         private readonly IEnv _env;
 
-        public HangfireDashboardAuthorizationFilter(IEnv env)
+        public HangfireDashboardEnvironmentAuthorizationFilter(IEnv env)
         {
             _env = env;
         }
