@@ -51,6 +51,7 @@
 		<PackageReference Include="JWT" Version="7.3.1" />
 		<PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="0.4.12" />
 		<PackageReference Include="Flurl.Http" Version="3.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="5.0.7" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -69,6 +70,7 @@
 	  <None Remove="Flurl" />
 	  <None Remove="Flurl.Http" />
 	  <None Remove="Models\FindApply\" />
+	  <None Remove="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="Fixtures\clients.yml">
