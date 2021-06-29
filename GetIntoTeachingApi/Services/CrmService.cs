@@ -314,7 +314,6 @@ namespace GetIntoTeachingApi.Services
         {
             _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), context);
             _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), context);
-            _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_servicesubscription_contact"), context);
             _service.LoadProperty(entity, new Relationship("msevtmgt_contact_msevtmgt_eventregistration_Contact"), context);
         }
 
