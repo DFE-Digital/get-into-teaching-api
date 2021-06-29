@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
@@ -52,7 +52,6 @@
 		<PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="0.4.12" />
 		<PackageReference Include="Flurl.Http" Version="3.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="5.0.7" />
-		<PackageReference Include="Hangfire.Dashboard.BasicAuthorization" Version="1.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -72,7 +71,6 @@
 	  <None Remove="Flurl.Http" />
 	  <None Remove="Models\FindApply\" />
 	  <None Remove="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" />
-	  <None Remove="Hangfire.Dashboard.BasicAuthorization" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="Fixtures\clients.yml">
