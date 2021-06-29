@@ -606,7 +606,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid(), Name = "TestEvent" };
 
-            await _store.SaveAsync(teachingEvent);
+            await _store.SaveAsync(new TeachingEvent[] { teachingEvent });
 
             DbContext.TeachingEvents
                 .FirstOrDefault(e => e.Name == teachingEvent.Name)
@@ -618,26 +618,14 @@ namespace GetIntoTeachingApiTests.Services
         {
             var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid(), Name = "TestEvent" };
 
-            await _store.SaveAsync(teachingEvent);
+            await _store.SaveAsync(new TeachingEvent[] { teachingEvent });
 
             teachingEvent.Name += "Updated";
 
-            await _store.SaveAsync(teachingEvent);
+            await _store.SaveAsync(new TeachingEvent[] { teachingEvent });
 
             var teachingEventNames = DbContext.TeachingEvents.Select(e => e.Name).ToList();
             teachingEventNames.ForEach(name => name.Should().Contain("Updated"));
-        }
-
-        [Fact]
-        public async Task SaveAsync_WithModels_Adds()
-        {
-            var teachingEvent1 = new TeachingEvent() { Id = Guid.NewGuid(), Name = "TestEvent1" };
-            var teachingEvent2 = new TeachingEvent() { Id = Guid.NewGuid(), Name = "TestEvent2" };
-
-            await _store.SaveAsync(new TeachingEvent[] { teachingEvent1, teachingEvent2 });
-
-            DbContext.TeachingEvents.FirstOrDefault(e => e.Id == teachingEvent1.Id).Should().NotBeNull();
-            DbContext.TeachingEvents.FirstOrDefault(e => e.Id == teachingEvent2.Id).Should().NotBeNull();
         }
 
         private static bool CheckGetTeachingEventsAfterDate(DateTime date)
