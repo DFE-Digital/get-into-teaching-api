@@ -6,15 +6,15 @@ using Xunit;
 
 namespace GetIntoTeachingApiTests.Auth
 {
-    public class HangfireDashboardEnvironmentAuthorizationFilterTests
+    public class HangfireDashboardAuthorizationFilterTests
     {
-        private readonly HangfireDashboardEnvironmentAuthorizationFilter _filter;
+        private readonly HangfireDashboardAuthorizationFilter _filter;
         private readonly Mock<IEnv> _mockEnv;
 
-        public HangfireDashboardEnvironmentAuthorizationFilterTests()
+        public HangfireDashboardAuthorizationFilterTests()
         {
             _mockEnv = new Mock<IEnv>();
-            _filter = new HangfireDashboardEnvironmentAuthorizationFilter(_mockEnv.Object);
+            _filter = new HangfireDashboardAuthorizationFilter(_mockEnv.Object);
         }
 
         [Fact]
