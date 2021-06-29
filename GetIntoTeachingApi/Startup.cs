@@ -19,6 +19,8 @@ using GetIntoTeachingApi.Redis;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
+using Hangfire.Dashboard;
+using Hangfire.Dashboard.BasicAuthorization;
 using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Builder;
@@ -221,18 +223,7 @@ The GIT API aims to provide:
 
             app.UseRequestResponseLogging();
 
-            var hangfireOptions = new BackgroundJobServerOptions();
-            if (!env.IsDevelopment)
-            {
-                hangfireOptions.WorkerCount = 20;
-            }
-
-            app.UseHangfireServer(hangfireOptions);
-
-            app.UseHangfireDashboard("/hangfire", new DashboardOptions
-            {
-                Authorization = new[] { new HangfireDashboardAuthorizationFilter(env) },
-            });
+            ConfigureHangfire(app, env);
 
             app.UseSwagger(c =>
             {
@@ -344,6 +335,42 @@ The GIT API aims to provide:
 
             // Configuration (resolvers, counter key builders).
             services.AddSingleton<IRateLimitConfiguration, ApiClientRateLimitConfiguration>();
+        }
+
+        private void ConfigureHangfire(IApplicationBuilder app, IEnv env)
+        {
+            var hangfireOptions = new BackgroundJobServerOptions();
+            if (!env.IsDevelopment)
+            {
+                hangfireOptions.WorkerCount = 20;
+            }
+
+            app.UseHangfireServer(hangfireOptions);
+
+            var filters = new List<IDashboardAuthorizationFilter> { new HangfireDashboardEnvironmentAuthorizationFilter(env) };
+
+            if (env.IsStaging)
+            {
+                filters.Add(new BasicAuthAuthorizationFilter(
+                new BasicAuthAuthorizationFilterOptions
+                {
+                    RequireSsl = true,
+                    LoginCaseSensitive = true,
+                    Users = new[]
+                    {
+                        new BasicAuthAuthorizationUser
+                        {
+                            Login = env.HangfireUsername,
+                            PasswordClear = env.HangfirePassword,
+                        },
+                    },
+                }));
+            }
+
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = filters,
+            });
         }
     }
 }
