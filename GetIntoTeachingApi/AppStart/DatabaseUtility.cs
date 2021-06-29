@@ -1,27 +1,46 @@
 ﻿using System.Linq;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
+using GetIntoTeachingApi.Utils;
 using Hangfire;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GetIntoTeachingApi.AppStart
 {
-    public static class DatabaseUtility
+    public class DatabaseUtility
     {
-        //public static void Seed(service)
-        //{
-        //    var dbContext = serviceScope.ServiceProvider.GetService<GetIntoTeachingDbContext>();
+        private readonly IServiceScope _serviceScope;
 
-        //    // Initial CRM sync.
-        //    if (!dbContext.PickListItems.Any())
-        //    {
-        //        RecurringJob.Trigger(JobConfiguration.CrmSyncJobId);
-        //    }
+        public DatabaseUtility(IServiceScope serviceScope)
+        {
+            _serviceScope = serviceScope;
+        }
 
-        //    // Initial locations sync.s
-        //    if (!dbContext.Locations.Any())
-        //    {
-        //        RecurringJob.Trigger(JobConfiguration.LocationSyncJobId);
-        //    }
-        //}
+        public void Migrate(IEnv env)
+        {
+            var dbConfiguration = _serviceScope.ServiceProvider.GetRequiredService<DbConfiguration>();
+
+            if (env.IsMasterInstance)
+            {
+                dbConfiguration.Migrate();
+            }
+        }
+
+        public void Seed()
+        {
+            var dbContext = _serviceScope.ServiceProvider.GetService<GetIntoTeachingDbContext>();
+
+            // Initial CRM sync.
+            if (!dbContext.PickListItems.Any())
+            {
+                RecurringJob.Trigger(JobConfiguration.CrmSyncJobId);
+            }
+
+            // Initial locations sync.s
+            if (!dbContext.Locations.Any())
+            {
+                RecurringJob.Trigger(JobConfiguration.LocationSyncJobId);
+            }
+        }
     }
 }

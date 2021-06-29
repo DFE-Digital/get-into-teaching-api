@@ -1,11 +1,8 @@
-using System.Linq;
 using System.Text.Json.Serialization;
 using AspNetCoreRateLimit;
 using FluentValidation.AspNetCore;
 using GetIntoTeachingApi.AppStart.Extensions;
 using GetIntoTeachingApi.Auth;
-using GetIntoTeachingApi.Database;
-using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.JsonConverters;
 using GetIntoTeachingApi.ModelBinders;
 using GetIntoTeachingApi.Utils;
@@ -29,7 +26,6 @@ namespace GetIntoTeachingApi.AppStart
         public IConfiguration Configuration { get; }
         protected IEnv Env { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public virtual void ConfigureServices(IServiceCollection services)
         {
             services.RegisterServices(Configuration, Env);
@@ -61,11 +57,8 @@ namespace GetIntoTeachingApi.AppStart
             services.AddApiHangfire(Env);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public virtual void Configure(IApplicationBuilder app)
         {
-            using var serviceScope = app.ApplicationServices.CreateScope();
-
             app.UseAuthentication();
 
             app.UseHttpsRedirection();
@@ -91,41 +84,22 @@ namespace GetIntoTeachingApi.AppStart
 
             app.UseAuthorization();
 
-            // Configure the database.
-            var dbConfiguration = serviceScope.ServiceProvider.GetRequiredService<DbConfiguration>();
-
-            if (Env.IsMasterInstance)
-            {
-                dbConfiguration.Migrate();
-            }
-
-            // Don't seed test environment.
-            if (!Env.IsTest)
-            {
-                var dbContext = serviceScope.ServiceProvider.GetService<GetIntoTeachingDbContext>();
-
-                // Initial CRM sync.
-                if (!dbContext.PickListItems.Any())
-                {
-                    RecurringJob.Trigger(JobConfiguration.CrmSyncJobId);
-                }
-
-                // Initial locations sync.s
-                if (!dbContext.Locations.Any())
-                {
-                    RecurringJob.Trigger(JobConfiguration.LocationSyncJobId);
-                }
-            }
-
-            // Configure rate limiting.
-            var clientPolicyStore = serviceScope.ServiceProvider.GetRequiredService<IClientPolicyStore>();
-            clientPolicyStore.SeedAsync().GetAwaiter().GetResult();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapMetrics();
                 endpoints.MapControllers();
             });
+        }
+
+        protected IServiceScope CreateScope(IApplicationBuilder app)
+        {
+            return app.ApplicationServices.CreateScope();
+        }
+
+        protected void ConfigureRateLimiting(IServiceScope scope)
+        {
+            var clientPolicyStore = scope.ServiceProvider.GetRequiredService<IClientPolicyStore>();
+            clientPolicyStore.SeedAsync().GetAwaiter().GetResult();
         }
     }
 }
