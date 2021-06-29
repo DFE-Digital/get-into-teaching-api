@@ -106,28 +106,6 @@ namespace GetIntoTeachingApiTests.Utils
         }
 
         [Fact]
-        public void HangfireUsername_ReturnsCorrectly()
-        {
-            var previous = Environment.GetEnvironmentVariable("HANGFIRE_USERNAME");
-            Environment.SetEnvironmentVariable("HANGFIRE_USERNAME", "hangfire-username");
-
-            _env.HangfireUsername.Should().Be("hangfire-username");
-
-            Environment.SetEnvironmentVariable("HANGFIRE_USERNAME", previous);
-        }
-
-        [Fact]
-        public void HangfirePassword_ReturnsCorrectly()
-        {
-            var previous = Environment.GetEnvironmentVariable("HANGFIRE_PASSWORD");
-            Environment.SetEnvironmentVariable("HANGFIRE_PASSWORD", "hangfire-password");
-
-            _env.HangfirePassword.Should().Be("hangfire-password");
-
-            Environment.SetEnvironmentVariable("HANGFIRE_PASSWORD", previous);
-        }
-
-        [Fact]
         public void TotpSecretKey_ReturnsCorrectly()
         {
             var previous = Environment.GetEnvironmentVariable("TOTP_SECRET_KEY");
