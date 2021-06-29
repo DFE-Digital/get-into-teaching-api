@@ -24,34 +24,31 @@ namespace GetIntoTeachingApi.Jobs
             _appSettings = appSettings;
         }
 
-        public void Run(Candidate findApplyCandidate)
+        public void Run(Candidate candidate)
         {
             if (_appSettings.IsCrmIntegrationPaused)
             {
                 throw new InvalidOperationException("FindApplyCandidateSyncJob - Aborting (CRM integration paused).");
             }
 
-            _logger.LogInformation($"FindApplyCandidateSyncJob - Started - {findApplyCandidate.Id}");
-            SyncCandidate(findApplyCandidate);
-            _logger.LogInformation($"FindApplyCandidateSyncJob - Succeeded - {findApplyCandidate.Id}");
+            _logger.LogInformation($"FindApplyCandidateSyncJob - Started - {candidate.Id}");
+            SyncCandidate(candidate);
+            _logger.LogInformation($"FindApplyCandidateSyncJob - Succeeded - {candidate.Id}");
         }
 
-        public void SyncCandidate(Candidate findApplyCandidate)
+        public void SyncCandidate(Candidate candidate)
         {
-            var match = _crm.MatchCandidate(findApplyCandidate.Attributes.Email);
+            var match = _crm.MatchCandidate(candidate.Attributes.Email);
 
             if (match != null)
             {
-                _logger.LogInformation($"FindApplyCandidateSyncJob - Hit - {findApplyCandidate.Id}");
-
-                // We persist a new Candidate to ensure we only write the FindApplyId
-                // back to the CRM and not existing attributes on the match.
-                var candidate = new Models.Candidate() { Id = match.Id, FindApplyId = findApplyCandidate.Id };
-                _crm.Save(candidate);
+                _logger.LogInformation($"FindApplyCandidateSyncJob - Hit - {candidate.Id}");
+                match.FindApplyId = candidate.Id;
+                _crm.Save(match);
             }
             else
             {
-                _logger.LogInformation($"FindApplyCandidateSyncJob - Miss - {findApplyCandidate.Id}");
+                _logger.LogInformation($"FindApplyCandidateSyncJob - Miss - {candidate.Id}");
             }
         }
     }
