@@ -44,7 +44,7 @@ namespace GetIntoTeachingApiTests.Services
         public async void CheckStatusAsync_WhenUnhealthy_ReturnsError()
         {
             await DbContext.DisposeAsync();
-            (await _store.CheckStatusAsync()).Should().Contain("Cannot access a disposed object.");
+            (await _store.CheckStatusAsync()).Should().Contain("Cannot access a disposed context instance.");
         }
 
         [Fact]

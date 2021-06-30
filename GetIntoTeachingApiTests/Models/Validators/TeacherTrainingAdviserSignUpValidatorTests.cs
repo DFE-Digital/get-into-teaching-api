@@ -478,7 +478,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         protected static void ShouldOnlyHaveValidationErrorsOnCandidateAttribute(
-            TestValidationResult<TeacherTrainingAdviserSignUp, TeacherTrainingAdviserSignUp> result)
+            TestValidationResult<TeacherTrainingAdviserSignUp> result)
         {
             // Ensure no validation errors on the request model itself.
             // We expect errors on the Candidate properties as we avoid mocking them.

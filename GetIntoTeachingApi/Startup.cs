@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 using AspNetCoreRateLimit;
+using AspNetCoreRateLimit.Redis;
 using dotenv.net;
 using FluentValidation.AspNetCore;
 using GetIntoTeachingApi.Adapters;
@@ -21,10 +22,10 @@ using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,7 +34,6 @@ using Microsoft.OpenApi.Models;
 using Microsoft.Xrm.Sdk;
 using Prometheus;
 using StackExchange.Redis;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace GetIntoTeachingApi
 {
@@ -55,7 +55,7 @@ namespace GetIntoTeachingApi
 
             if (env.IsDevelopment)
             {
-                DotEnv.Config(true, ".env.development");
+                DotEnv.Load(options: new DotEnvOptions(ignoreExceptions: false, envFilePaths: new[] { ".env.development" }));
             }
 
             services.AddSingleton<IAppSettings, AppSettings>();
@@ -85,15 +85,16 @@ namespace GetIntoTeachingApi
             services.AddSingleton<IEnv>(env);
             services.AddSingleton<IRequestResponseLoggingConfiguration, RequestResponseLoggingConfiguration>();
 
+            var redisOptions = RedisConfiguration.ConfigurationOptions(env);
+            services.AddSingleton<IConnectionMultiplexer>(provider => ConnectionMultiplexer.Connect(redisOptions));
+
             var connectionString = DbConfiguration.DatabaseConnectionString(env);
             services.AddDbContext<GetIntoTeachingDbContext>(b => DbConfiguration.ConfigPostgres(connectionString, b));
 
             services.AddAuthentication("ApiClientHandler")
                 .AddScheme<ApiClientSchemaOptions, ApiClientHandler>("ApiClientHandler", op => { });
 
-            var redisOptions = RedisConfiguration.ConfigurationOptions(env);
-            var redis = ConnectionMultiplexer.Connect(redisOptions);
-            services.AddDataProtection().PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
+            services.AddDataProtection().PersistKeysToStackExchangeRedis(ConnectionMultiplexer.Connect(redisOptions), "DataProtection-Keys");
 
             services.AddMvc(o =>
             {
@@ -157,8 +158,9 @@ The GIT API aims to provide:
 
                 c.OperationFilter<AuthOperationFilter>();
                 c.EnableAnnotations();
-                c.AddFluentValidationRules();
             });
+
+            services.AddFluentValidationRulesToSwagger();
 
             services.AddHangfire((provider, config) =>
             {
@@ -333,14 +335,9 @@ The GIT API aims to provide:
             services.Configure<ClientRateLimitOptions>(Configuration.GetSection("ClientRateLimiting"));
             services.Configure<ClientRateLimitPolicies>(Configuration.GetSection("ClientRateLimitPolicies"));
 
-            // Inject counter and rules stores.
-            services.AddSingleton<IClientPolicyStore, MemoryCacheClientPolicyStore>();
-            services.AddSingleton<IRateLimitCounterStore, RedisRateLimitCounterStore>();
-
-            // https://github.com/aspnet/Hosting/issues/793
-            // The IHttpContextAccessor service is not registered by default.
-            // The clientId/clientIp resolvers use it.
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            // Setup Redis.
+            services.AddDistributedRateLimiting<RedisProcessingStrategy>();
+            services.AddRedisRateLimiting();
 
             // Configuration (resolvers, counter key builders).
             services.AddSingleton<IRateLimitConfiguration, ApiClientRateLimitConfiguration>();

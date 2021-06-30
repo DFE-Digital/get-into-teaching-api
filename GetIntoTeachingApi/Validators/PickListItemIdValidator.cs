@@ -1,28 +1,27 @@
 ﻿using System.Linq;
+using FluentValidation;
 using FluentValidation.Validators;
 using GetIntoTeachingApi.Services;
 
 namespace GetIntoTeachingApi.Validators
 {
-    public class PickListItemIdValidator : PropertyValidator
+    public class PickListItemIdValidator<T> : PropertyValidator<T, int?>
     {
         private readonly string _entityName;
         private readonly string _attributeName;
         private readonly IStore _store;
 
         public PickListItemIdValidator(string entityName, string attributeName, IStore store)
-            : base("{PropertyName} must be a valid {EntityName}/{AttributeName} item.")
+            : base()
         {
             _entityName = entityName;
             _attributeName = attributeName;
             _store = store;
         }
 
-        protected override bool IsValid(PropertyValidatorContext context)
+        public override bool IsValid(ValidationContext<T> context, int? value)
         {
-            var id = (int?)context.PropertyValue;
-
-            var exists = _store.GetPickListItems(_entityName, _attributeName).Any(i => i.Id == id);
+            var exists = _store.GetPickListItems(_entityName, _attributeName).Any(i => i.Id == value);
 
             if (exists)
             {
@@ -35,5 +34,9 @@ namespace GetIntoTeachingApi.Validators
 
             return false;
         }
+
+        public override string Name => "PickListItemIdValidator";
+
+        protected override string GetDefaultMessageTemplate(string errorCode) => "{PropertyName} must be a valid {EntityName}/{AttributeName} item.";
     }
 }

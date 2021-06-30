@@ -1,27 +1,26 @@
 ﻿using System;
 using System.Linq;
+using FluentValidation;
 using FluentValidation.Validators;
 using GetIntoTeachingApi.Services;
 
 namespace GetIntoTeachingApi.Validators
 {
-    public class LookupItemIdValidator : PropertyValidator
+    public class LookupItemIdValidator<T> : PropertyValidator<T, Guid?>
     {
         private readonly string _entityName;
         private readonly IStore _store;
 
         public LookupItemIdValidator(string entityName, IStore store)
-            : base("{PropertyName} must be a valid {EntityName} item.")
+            : base()
         {
             _entityName = entityName;
             _store = store;
         }
 
-        protected override bool IsValid(PropertyValidatorContext context)
+        public override bool IsValid(ValidationContext<T> context, Guid? value)
         {
-            var id = (Guid?)context.PropertyValue;
-
-            var exists = _store.GetLookupItems(_entityName).Any(i => i.Id == id);
+            var exists = _store.GetLookupItems(_entityName).Any(i => i.Id == value);
 
             if (exists)
             {
@@ -33,5 +32,9 @@ namespace GetIntoTeachingApi.Validators
 
             return false;
         }
+
+        public override string Name => "LookupItemIdValidator";
+
+        protected override string GetDefaultMessageTemplate(string errorCode) => "{PropertyName} must be a valid {EntityName} item.";
     }
 }

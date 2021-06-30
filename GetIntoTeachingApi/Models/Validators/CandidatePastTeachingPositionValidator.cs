@@ -9,10 +9,10 @@ namespace GetIntoTeachingApi.Models.Validators
         public CandidatePastTeachingPositionValidator(IStore store)
         {
             RuleFor(position => position.EducationPhaseId)
-                .SetValidator(new PickListItemIdValidator("dfe_candidatepastteachingposition", "dfe_educationphase", store))
+                .SetValidator(new PickListItemIdValidator<CandidatePastTeachingPosition>("dfe_candidatepastteachingposition", "dfe_educationphase", store))
                 .Unless(position => position.EducationPhaseId == null);
             RuleFor(position => position.SubjectTaughtId)
-                .SetValidator(new LookupItemIdValidator("dfe_teachingsubjectlist", store))
+                .SetValidator(new LookupItemIdValidator<CandidatePastTeachingPosition>("dfe_teachingsubjectlist", store))
                 .Unless(position => position.SubjectTaughtId == null);
         }
     }

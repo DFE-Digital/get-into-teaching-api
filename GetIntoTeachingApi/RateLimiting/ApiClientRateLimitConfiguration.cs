@@ -1,5 +1,4 @@
 ﻿using AspNetCoreRateLimit;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
 namespace GetIntoTeachingApi.RateLimiting
@@ -7,16 +6,15 @@ namespace GetIntoTeachingApi.RateLimiting
     public class ApiClientRateLimitConfiguration : RateLimitConfiguration
     {
         public ApiClientRateLimitConfiguration(
-            IHttpContextAccessor httpContextAccessor,
             IOptions<IpRateLimitOptions> ipOptions,
             IOptions<ClientRateLimitOptions> clientOptions)
-            : base(httpContextAccessor, ipOptions, clientOptions)
+            : base(ipOptions, clientOptions)
         {
         }
 
-        protected override void RegisterResolvers()
+        public override void RegisterResolvers()
         {
-            ClientResolvers.Add(new ApiClientResolveContributor(HttpContextAccessor, ClientRateLimitOptions.ClientIdHeader));
+            ClientResolvers.Add(new ApiClientResolveContributor(ClientRateLimitOptions.ClientIdHeader));
         }
     }
 }

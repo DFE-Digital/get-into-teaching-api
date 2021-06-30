@@ -1,20 +1,17 @@
 ﻿using GetIntoTeachingApi.Validators;
 using Xunit;
 using FluentValidation;
-using FluentValidation.Internal;
-using FluentValidation.Validators;
-using System.Linq;
 using FluentAssertions;
 
 namespace GetIntoTeachingApiTests.Validators
 {
     public class PostcodeValidatorTests
     {
-        private readonly PostcodeValidator _validator;
+        private readonly PostcodeValidator<object> _validator;
 
         public PostcodeValidatorTests()
         {
-            _validator = new PostcodeValidator();
+            _validator = new PostcodeValidator<object>();
         }
 
         [Theory]
@@ -29,21 +26,11 @@ namespace GetIntoTeachingApiTests.Validators
         [InlineData(null, false)]
         public void IsValid_WithPostcode_ReturnsCorectly(string postcode, bool expectedValid)
         {
-            var selector = ValidatorOptions.ValidatorSelectors.DefaultValidatorSelectorFactory();
-            var validationContext = new ValidationContext(postcode, new PropertyChain(), selector);
-            var propertyValidatorContext = new PropertyValidatorContext(validationContext, PropertyRule.Create<string, string>(t => t), "Prop");
+            var context = new ValidationContext<object>(this);
 
-            var errors = _validator.Validate(propertyValidatorContext);
+            var valid =_validator.IsValid(context, postcode);
 
-            if (expectedValid)
-            {
-                errors.Should().BeEmpty();
-            }
-            else
-            {
-                errors.Should().NotBeEmpty();
-                errors.First().ErrorMessage.Should().Equals("Prop must be a valid postcode.");
-            }
+            valid.Should().Be(expectedValid);
         }
     }
 }
