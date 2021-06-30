@@ -1,25 +1,28 @@
-﻿using FluentValidation.Validators;
+﻿using FluentValidation;
+using FluentValidation.Validators;
 using GetIntoTeachingApi.Models;
 
 namespace GetIntoTeachingApi.Validators
 {
-    public class PostcodeValidator : PropertyValidator
+    public class PostcodeValidator<T> : PropertyValidator<T, string>
     {
         public PostcodeValidator()
-            : base("{PropertyName} must be a valid postcode.")
+            : base()
         {
         }
 
-        protected override bool IsValid(PropertyValidatorContext context)
+        public override bool IsValid(ValidationContext<T> context, string value)
         {
-            var postcode = (string)context.PropertyValue;
-
-            if (postcode != null && Location.PostcodeRegex.IsMatch(postcode))
+            if (value != null && Location.PostcodeRegex.IsMatch(value))
             {
                 return true;
             }
 
             return false;
         }
+
+        public override string Name => "PostcodeValidator";
+
+        protected override string GetDefaultMessageTemplate(string errorCode) => "{PropertyName} must be a valid postcode.";
     }
 }

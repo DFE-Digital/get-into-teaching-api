@@ -3,8 +3,6 @@ using GetIntoTeachingApi.Validators;
 using Moq;
 using Xunit;
 using FluentValidation;
-using FluentValidation.Internal;
-using FluentValidation.Validators;
 using GetIntoTeachingApi.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,12 +14,12 @@ namespace GetIntoTeachingApiTests.Validators
     {
         private readonly Mock<IStore> _mockStore;
         private readonly PickListItem _item;
-        private readonly PickListItemIdValidator _validator;
+        private readonly PickListItemIdValidator<object> _validator;
 
         public PickListItemIdValidatorTests()
         {
             _mockStore = new Mock<IStore>();
-            _validator = new PickListItemIdValidator("contact", "dfe_channel", _mockStore.Object);
+            _validator = new PickListItemIdValidator<object>("contact", "dfe_channel", _mockStore.Object);
             _item = new PickListItem() { Id = 123 };
 
             _mockStore.Setup(m => m.GetPickListItems("contact", "dfe_channel")).Returns(new List<PickListItem>() { _item }.AsQueryable());
@@ -30,26 +28,21 @@ namespace GetIntoTeachingApiTests.Validators
         [Fact]
         public void IsValid_WhenValidId_ReturnsTrue()
         {
-            var selector = ValidatorOptions.ValidatorSelectors.DefaultValidatorSelectorFactory();
-            var validationContext = new ValidationContext(_item.Id, new PropertyChain(), selector);
-            var propertyValidatorContext = new PropertyValidatorContext(validationContext, PropertyRule.Create<int?, int?>(t => t), "Prop");
+            var context = new ValidationContext<object>(this);
 
-            var errors = _validator.Validate(propertyValidatorContext);
+            var valid = _validator.IsValid(context, _item.Id);
 
-            errors.Should().BeEmpty();
+            valid.Should().BeTrue();
         }
 
         [Fact]
         public void IsValid_WhenInvalidId_ReturnsFalse()
         {
-            var selector = ValidatorOptions.ValidatorSelectors.DefaultValidatorSelectorFactory();
-            var validationContext = new ValidationContext(456, new PropertyChain(), selector);
-            var propertyValidatorContext = new PropertyValidatorContext(validationContext, PropertyRule.Create<int?, int?>(t => t), "Prop");
+            var context = new ValidationContext<object>(this);
 
-            var errors = _validator.Validate(propertyValidatorContext);
+            var valid = _validator.IsValid(context, 456);
 
-            errors.Should().NotBeEmpty();
-            errors.First().ErrorMessage.Should().Equals("Prop must be a valid contact/dfe_channel item.");
+            valid.Should().BeFalse();
         }
     }
 }

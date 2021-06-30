@@ -30,7 +30,7 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(candidate => candidate.Telephone).MinimumLength(5).MaximumLength(25).Matches(TelephoneRegex);
             RuleFor(candidate => candidate.SecondaryTelephone).MinimumLength(5).MaximumLength(25).Matches(TelephoneRegex);
             RuleFor(candidate => candidate.AddressPostcode)
-                .SetValidator(new PostcodeValidator())
+                .SetValidator(new PostcodeValidator<Candidate>())
                 .Unless(candidate => candidate.AddressPostcode == null);
             RuleFor(candidate => candidate.EligibilityRulesPassed)
                 .Must(value => _validEligibilityRulesPassedValues.Contains(value))
@@ -44,61 +44,61 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleForEach(candidate => candidate.TeachingEventRegistrations).SetValidator(new TeachingEventRegistrationValidator(store));
 
             RuleFor(candidate => candidate.PreferredTeachingSubjectId)
-                .SetValidator(new LookupItemIdValidator("dfe_teachingsubjectlist", store))
+                .SetValidator(new LookupItemIdValidator<Candidate>("dfe_teachingsubjectlist", store))
                 .Unless(candidate => candidate.PreferredTeachingSubjectId == null);
             RuleFor(candidate => candidate.SecondaryPreferredTeachingSubjectId)
-                .SetValidator(new LookupItemIdValidator("dfe_teachingsubjectlist", store))
+                .SetValidator(new LookupItemIdValidator<Candidate>("dfe_teachingsubjectlist", store))
                 .Unless(candidate => candidate.SecondaryPreferredTeachingSubjectId == null);
             RuleFor(candidate => candidate.CountryId)
-                .SetValidator(new LookupItemIdValidator("dfe_country", store))
+                .SetValidator(new LookupItemIdValidator<Candidate>("dfe_country", store))
                 .Unless(candidate => candidate.CountryId == null);
             RuleFor(candidate => candidate.PreferredEducationPhaseId)
-                .SetValidator(new PickListItemIdValidator("contact", "dfe_preferrededucationphase01", store))
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_preferrededucationphase01", store))
                 .Unless(candidate => candidate.PreferredEducationPhaseId == null);
             RuleFor(candidate => candidate.InitialTeacherTrainingYearId)
-                .SetValidator(new PickListItemIdValidator("contact", "dfe_ittyear", store))
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_ittyear", store))
                 .Unless(candidate => candidate.InitialTeacherTrainingYearId == null);
             RuleFor(candidate => candidate.ChannelId)
-                .SetValidator(new PickListItemIdValidator("contact", "dfe_channelcreation", store))
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_channelcreation", store))
                 .Unless(candidate => candidate.Id != null);
             RuleFor(candidate => candidate.HasGcseEnglishId)
-                .SetValidator(new PickListItemIdValidator("contact", "dfe_websitehasgcseenglish", store))
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_websitehasgcseenglish", store))
                 .Unless(candidate => candidate.HasGcseEnglishId == null);
             RuleFor(candidate => candidate.HasGcseMathsId)
-                .SetValidator(new PickListItemIdValidator("contact", "dfe_websitehasgcseenglish", store))
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_websitehasgcseenglish", store))
                 .Unless(candidate => candidate.HasGcseMathsId == null);
             RuleFor(candidate => candidate.HasGcseScienceId)
-                .SetValidator(new PickListItemIdValidator("contact", "dfe_websitehasgcseenglish", store))
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_websitehasgcseenglish", store))
                 .Unless(candidate => candidate.HasGcseScienceId == null);
             RuleFor(candidate => candidate.PlanningToRetakeGcseScienceId)
-                .SetValidator(new PickListItemIdValidator("contact", "dfe_websiteplanningretakeenglishgcse", store))
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_websiteplanningretakeenglishgcse", store))
                 .Unless(candidate => candidate.PlanningToRetakeGcseScienceId == null);
             RuleFor(candidate => candidate.PlanningToRetakeGcseEnglishId)
-                .SetValidator(new PickListItemIdValidator("contact", "dfe_websiteplanningretakeenglishgcse", store))
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_websiteplanningretakeenglishgcse", store))
                 .Unless(candidate => candidate.PlanningToRetakeGcseEnglishId == null);
             RuleFor(candidate => candidate.PlanningToRetakeGcseMathsId)
-                .SetValidator(new PickListItemIdValidator("contact", "dfe_websiteplanningretakeenglishgcse", store))
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_websiteplanningretakeenglishgcse", store))
                 .Unless(candidate => candidate.PlanningToRetakeGcseMathsId == null);
             RuleFor(candidate => candidate.ConsiderationJourneyStageId)
-                .SetValidator(new PickListItemIdValidator("contact", "dfe_websitewhereinconsiderationjourney", store))
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_websitewhereinconsiderationjourney", store))
                 .Unless(candidate => candidate.ConsiderationJourneyStageId == null);
             RuleFor(candidate => candidate.TypeId)
-                .SetValidator(new PickListItemIdValidator("contact", "dfe_typeofcandidate", store))
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_typeofcandidate", store))
                 .Unless(candidate => candidate.TypeId == null);
             RuleFor(candidate => candidate.AssignmentStatusId)
-                .SetValidator(new PickListItemIdValidator("contact", "dfe_candidatestatus", store))
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_candidatestatus", store))
                 .Unless(candidate => candidate.AssignmentStatusId == null);
             RuleFor(candidate => candidate.AdviserEligibilityId)
-                .SetValidator(new PickListItemIdValidator("contact", "dfe_iscandidateeligibleforadviser", store))
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_iscandidateeligibleforadviser", store))
                 .Unless(candidate => candidate.AdviserEligibilityId == null);
             RuleFor(candidate => candidate.AdviserRequirementId)
-                .SetValidator(new PickListItemIdValidator("contact", "dfe_websitewhereinconsiderationjourney", store))
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_websitewhereinconsiderationjourney", store))
                 .Unless(candidate => candidate.AdviserRequirementId == null);
             RuleFor(candidate => candidate.EventsSubscriptionChannelId)
-                .SetValidator(new PickListItemIdValidator("contact", "dfe_gitiseventsservicesubscriptionchannel", store))
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_gitiseventsservicesubscriptionchannel", store))
                 .Unless(candidate => candidate.EventsSubscriptionChannelId == null);
             RuleFor(candidate => candidate.MailingListSubscriptionChannelId)
-                .SetValidator(new PickListItemIdValidator("contact", "dfe_gitismlservicesubscriptionchannel", store))
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_gitismlservicesubscriptionchannel", store))
                 .Unless(candidate => candidate.MailingListSubscriptionChannelId == null);
         }
     }
