@@ -188,7 +188,8 @@ namespace GetIntoTeachingApi.Models
                 return;
             }
 
-            var result = validator.Validate(this);
+            var context = new ValidationContext<BaseModel>(this);
+            var result = validator.Validate(context);
 
             foreach (var property in GetProperties(this))
             {

@@ -213,7 +213,7 @@ namespace GetIntoTeachingApiTests.Models
             var mockValidator = new Mock<IValidator>();
             var validationResult = new ValidationResult();
             _mockValidatorFactory.Setup(m => m.GetValidator(It.IsAny<Type>())).Returns(mockValidator.Object);
-            mockValidator.Setup(m => m.Validate(It.IsAny<BaseModel>())).Returns(validationResult);
+            mockValidator.Setup(m => m.Validate(It.IsAny<ValidationContext<BaseModel>>())).Returns(validationResult);
             validationResult.Errors.Add(new ValidationFailure("Field3", "this value is not valid!"));
 
             var mock = new MockModel(entity, _crm, _mockValidatorFactory.Object);
@@ -234,7 +234,7 @@ namespace GetIntoTeachingApiTests.Models
             var mockValidator = new Mock<IValidator>();
             var validationResult = new ValidationResult();
             _mockValidatorFactory.Setup(m => m.GetValidator(It.IsAny<Type>())).Returns(mockValidator.Object);
-            mockValidator.Setup(m => m.Validate(It.IsAny<BaseModel>())).Returns(validationResult);
+            mockValidator.Setup(m => m.Validate(It.IsAny<ValidationContext<BaseModel>>())).Returns(validationResult);
             validationResult.Errors.Add(new ValidationFailure("RelatedMock", "this value is not valid!"));
 
             var mock = new MockModel(entity, _crm, _mockValidatorFactory.Object);
