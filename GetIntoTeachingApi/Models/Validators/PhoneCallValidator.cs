@@ -9,7 +9,7 @@ namespace GetIntoTeachingApi.Models.Validators
         public PhoneCallValidator(IStore store)
         {
             RuleFor(phoneCall => phoneCall.ChannelId)
-                .SetValidator(new PickListItemIdValidator("phonecall", "dfe_channelcreation", store))
+                .SetValidator(new PickListItemIdValidator<PhoneCall>("phonecall", "dfe_channelcreation", store))
                 .Unless(phoneCall => phoneCall.ChannelId == null);
         }
     }

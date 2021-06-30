@@ -21,7 +21,7 @@ namespace GetIntoTeachingApi.Models.Validators
                 .Must(id => BeAvailableForOnlineRegistrations(id))
                 .WithMessage("Attendence cannot be registered for this event via the API (it has no WebFeedId).");
             RuleFor(regigstration => regigstration.ChannelId)
-                .SetValidator(new PickListItemIdValidator("msevtmgt_eventregistration", "dfe_channelcreation", _store))
+                .SetValidator(new PickListItemIdValidator<TeachingEventRegistration>("msevtmgt_eventregistration", "dfe_channelcreation", _store))
                 .Unless(regigstration => regigstration.Id != null);
             RuleFor(regigstration => regigstration.ChannelId)
                 .Must(id => id == null)
