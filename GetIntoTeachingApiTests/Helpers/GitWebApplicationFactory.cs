@@ -2,7 +2,6 @@
 using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace GetIntoTeachingApiTests.Helpers
 {
@@ -13,10 +12,12 @@ namespace GetIntoTeachingApiTests.Helpers
         {
             builder.ConfigureServices(services =>
             {
-                // Use in-memory rate limit counters for tests.
+                // Remove Redis rate limiting.
                 services.Remove(services.First(d => d.ServiceType == typeof(IRateLimitCounterStore)));
-                var descriptor = new ServiceDescriptor(typeof(IRateLimitCounterStore), typeof(MemoryCacheRateLimitCounterStore), ServiceLifetime.Singleton);
-                services.Add(descriptor);
+                services.Remove(services.First(d => d.ServiceType == typeof(IClientPolicyStore)));
+                services.Remove(services.First(d => d.ServiceType == typeof(IProcessingStrategy)));
+                // Use in-memory rate limiting.
+                services.AddInMemoryRateLimiting();
             });
         }
     }
