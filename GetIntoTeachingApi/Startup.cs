@@ -20,8 +20,10 @@ using GetIntoTeachingApi.Redis;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
+using Hangfire.Dashboard;
 using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
+using HangfireBasicAuthenticationFilter;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -223,18 +225,7 @@ The GIT API aims to provide:
 
             app.UseRequestResponseLogging();
 
-            var hangfireOptions = new BackgroundJobServerOptions();
-            if (!env.IsDevelopment)
-            {
-                hangfireOptions.WorkerCount = 20;
-            }
-
-            app.UseHangfireServer(hangfireOptions);
-
-            app.UseHangfireDashboard("/hangfire", new DashboardOptions
-            {
-                Authorization = new[] { new HangfireDashboardEnvironmentAuthorizationFilter(env) },
-            });
+            ConfigureHangfire(app, env);
 
             app.UseSwagger(c =>
             {
@@ -320,6 +311,35 @@ The GIT API aims to provide:
             {
                 endpoints.MapMetrics();
                 endpoints.MapControllers();
+            });
+        }
+
+        private static void ConfigureHangfire(IApplicationBuilder app, IEnv env)
+        {
+            var hangfireOptions = new BackgroundJobServerOptions();
+            if (!env.IsDevelopment)
+            {
+                hangfireOptions.WorkerCount = 20;
+            }
+
+            app.UseHangfireServer(hangfireOptions);
+
+            var filters = new List<IDashboardAuthorizationFilter> { new HangfireDashboardEnvironmentAuthorizationFilter(env) };
+
+            if (env.IsStaging)
+            {
+                var basicAuthFilter = new HangfireCustomBasicAuthenticationFilter()
+                {
+                    User = env.HangfireUsername,
+                    Pass = env.HangfirePassword,
+                };
+
+                filters.Add(basicAuthFilter);
+            }
+
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = filters,
             });
         }
 
