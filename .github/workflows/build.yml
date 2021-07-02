@@ -195,7 +195,6 @@ jobs:
            
   qa:
     name: Quality Assurance Deployment
-    needs: [ Development ]
     runs-on: ubuntu-latest
     steps:
        - name: Check out the repo
