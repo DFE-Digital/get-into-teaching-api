@@ -14,6 +14,8 @@ namespace GetIntoTeachingApi.Utils
         public bool ExportHangireToPrometheus => Environment.GetEnvironmentVariable("CF_INSTANCE_INDEX") == "0";
         public string DatabaseInstanceName => Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME");
         public string HangfireInstanceName => Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME");
+        public string HangfireUsername => Environment.GetEnvironmentVariable("HANGFIRE_USERNAME");
+        public string HangfirePassword => Environment.GetEnvironmentVariable("HANGFIRE_PASSWORD");
         public string TotpSecretKey => Environment.GetEnvironmentVariable("TOTP_SECRET_KEY");
         public string VcapServices => Environment.GetEnvironmentVariable("VCAP_SERVICES");
         public string CrmServiceUrl => Environment.GetEnvironmentVariable("CRM_SERVICE_URL");
