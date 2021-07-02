@@ -10,6 +10,8 @@
         string GitCommitSha { get; }
         string DatabaseInstanceName { get; }
         string HangfireInstanceName { get; }
+        string HangfireUsername { get; }
+        string HangfirePassword { get; }
         string EnvironmentName { get; }
         string TotpSecretKey { get; }
         string VcapServices { get; }

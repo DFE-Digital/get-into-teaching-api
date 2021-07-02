@@ -52,6 +52,7 @@
 		<PackageReference Include="Flurl.Http" Version="3.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="5.0.7" />
 		<PackageReference Include="AspNetCoreRateLimit.Redis" Version="1.0.0" />
+		<PackageReference Include="Hangfire.Dashboard.Basic.Authentication" Version="5.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -72,6 +73,7 @@
 	  <None Remove="Models\FindApply\" />
 	  <None Remove="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" />
 	  <None Remove="AspNetCoreRateLimit.Redis" />
+	  <None Remove="Hangfire.Dashboard.Basic.Authentication" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="Fixtures\clients.yml">
