@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using GetIntoTeachingApi.Auth;
+using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Hangfire.Dashboard;
 using HangfireBasicAuthenticationFilter;
 using Microsoft.AspNetCore.Builder;
+using Prometheus;
 
 namespace GetIntoTeachingApi.AppStart
 {
@@ -37,6 +39,15 @@ namespace GetIntoTeachingApi.AppStart
             {
                 Authorization = filters,
             });
+        }
+
+        public static void UsePrometheusHangfireExporter(this IApplicationBuilder app)
+        {
+            var jobStorage = (JobStorage)app.ApplicationServices.GetService(typeof(JobStorage));
+            var metrics = (IMetricService)app.ApplicationServices.GetService(typeof(IMetricService));
+            var exporter = new HangfirePrometheusExporter(jobStorage, metrics);
+
+            Metrics.DefaultRegistry.AddBeforeCollectCallback(() => exporter.ExportHangfireStatistics());
         }
     }
 }
