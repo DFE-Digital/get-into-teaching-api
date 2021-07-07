@@ -232,6 +232,30 @@ namespace GetIntoTeachingApi.Services
             return id != null ? _service.BlankExistingEntity(entityName, (Guid)id, context) : _service.NewEntity(entityName, context);
         }
 
+        public void SaveRelated(BaseModel source, BaseModel target, string foreignKeyName)
+        {
+            if (target == null || foreignKeyName == null)
+            {
+                Save(source);
+                return;
+            }
+
+            using var context = Context();
+
+            var secondaryEntity = target.ToEntity(this, context);
+            source.GetType().GetProperty(foreignKeyName).SetValue(source, secondaryEntity?.Id, null);
+            var primaryEntity = source.ToEntity(this, context);
+
+            if (primaryEntity == null || secondaryEntity == null)
+            {
+                return;
+            }
+
+            _service.SaveChanges(context);
+            AssignEntityIdToModelId(source, primaryEntity);
+            AssignEntityIdToModelId(target, secondaryEntity);
+        }
+
         public void Save(BaseModel model)
         {
             using var context = Context();
@@ -243,7 +267,7 @@ namespace GetIntoTeachingApi.Services
             }
 
             _service.SaveChanges(context);
-            model.Id = entity.Id;
+            AssignEntityIdToModelId(model, entity);
         }
 
         public IEnumerable<TeachingEvent> GetTeachingEvents(DateTime? startAfter = null)
@@ -296,6 +320,11 @@ namespace GetIntoTeachingApi.Services
         {
             return _service.CreateQuery("msevtmgt_building", Context())
                 .Select((entity) => new TeachingEventBuilding(entity, this, _validatorFactory)).ToList();
+        }
+
+        private void AssignEntityIdToModelId(BaseModel model, Entity entity)
+        {
+            model.Id = entity.Id;
         }
 
         private static QueryExpression MatchBackQuery(string email)
