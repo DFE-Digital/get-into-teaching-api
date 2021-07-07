@@ -106,7 +106,7 @@ namespace GetIntoTeachingApiTests.Services
                 options => options.WithStrictOrdering());
         }
 
-        
+
         private static bool VerifyMatchCandidatesWithEmailExpression(QueryExpression query, string email)
         {
             var hasEntityName = query.EntityName == "contact";
@@ -429,7 +429,7 @@ namespace GetIntoTeachingApiTests.Services
             var objectIds = ids.Select(id => (object)id);
             var hasIdCondition = conditions.Where(c => c.AttributeName == "contactid" &&
                 c.Operator == ConditionOperator.In && c.Values.ToHashSet().IsSubsetOf(objectIds)).Any();
-            
+
             return hasEntityName && hasIdCondition;
         }
 
@@ -547,7 +547,6 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void Save_WhenToEntityReturnsNull_DoesNotSaveContext()
         {
-            var entity = new Entity() { Id = Guid.NewGuid() };
             var mockCandidate = new Mock<Candidate>();
             mockCandidate.Setup(m => m.ToEntity(_crm, _context)).Returns<Entity>(null);
 
@@ -555,6 +554,80 @@ namespace GetIntoTeachingApiTests.Services
 
             _mockService.Verify(mock => mock.SaveChanges(_context), Times.Never);
             mockCandidate.Object.Id.Should().BeNull();
+        }
+
+        [Fact]
+        public void SaveRelated_WhenRelatedModelIsNull_SavesModelOnly()
+        {
+            var entity = new Entity() { Id = Guid.NewGuid() };
+            var mockCandidate = new Mock<Candidate>();
+            mockCandidate.Setup(mock => mock.ToEntity(_crm, _context)).Returns(entity);
+
+            _crm.SaveRelated(mockCandidate.Object, null, "navigation_Property_name");
+
+            _mockService.Verify(mock => mock.SaveChanges(_context), Times.Once);
+            mockCandidate.Object.Id.Should().Be(entity.Id);
+        }
+
+        [Fact]
+        public void SaveRelated_WhenNavigationPropetyNameIsNull_SavesModelOnly()
+        {
+            var entity = new Entity() { Id = Guid.NewGuid() };
+            var mockTeachingEvent = new Mock<TeachingEvent>();
+            var mockTeachingEventBuilding = new Mock<TeachingEventBuilding>();
+            mockTeachingEvent.Setup(mock => mock.ToEntity(_crm, _context)).Returns(entity);
+
+            _crm.SaveRelated(mockTeachingEvent.Object, mockTeachingEventBuilding.Object, null);
+
+            _mockService.Verify(mock => mock.SaveChanges(_context), Times.Once);
+            mockTeachingEvent.Object.Id.Should().Be(entity.Id);
+        }
+
+        [Fact]
+        public void SaveRelated_WhenToEntityForModelReturnsNull_DoesNotSaveContext()
+        {
+            var mockTeachingEvent = new Mock<TeachingEvent>();
+            var mockTeachingEventBuilding = new Mock<TeachingEventBuilding>();
+            var relatedEntity = new Entity() { Id = Guid.NewGuid() };
+            mockTeachingEvent.Setup(m => m.ToEntity(_crm, _context)).Returns<Entity>(null);
+            mockTeachingEventBuilding.Setup(mock => mock.ToEntity(_crm, _context)).Returns(relatedEntity);
+
+            _crm.SaveRelated(mockTeachingEvent.Object, mockTeachingEventBuilding.Object, nameof(mockTeachingEvent.Object.BuildingId));
+
+            _mockService.Verify(mock => mock.SaveChanges(_context), Times.Never);
+            mockTeachingEvent.Object.Id.Should().BeNull();
+        }
+
+        [Fact]
+        public void SaveRelated_WhenToEntityForRelatedModelReturnsNull_DoesNotSaveContext()
+        {
+            var mockTeachingEvent = new Mock<TeachingEvent>();
+            var mockTeachingEventBuilding = new Mock<TeachingEventBuilding>();
+            var entity = new Entity() { Id = Guid.NewGuid() };
+            mockTeachingEvent.Setup(mock => mock.ToEntity(_crm, _context)).Returns(entity);
+            mockTeachingEventBuilding.Setup(m => m.ToEntity(_crm, _context)).Returns<Entity>(null);
+
+            _crm.SaveRelated(mockTeachingEvent.Object, mockTeachingEventBuilding.Object, nameof(mockTeachingEvent.Object.BuildingId));
+
+            _mockService.Verify(mock => mock.SaveChanges(_context), Times.Never);
+            mockTeachingEvent.Object.Id.Should().BeNull();
+        }
+
+        [Fact]
+        public void SaveRelated_WithModelAndRelatedModel_SetsNavigationPropertyAndSavesModels()
+        {
+            var entity = new Entity() { Id = Guid.NewGuid() };
+            var relatedEntity = new Entity() { Id = Guid.NewGuid() };
+            var mockTeachingEvent = new Mock<TeachingEvent>();
+            var mockTeachingEventBuilding = new Mock<TeachingEventBuilding>();
+            mockTeachingEvent.Setup(mock => mock.ToEntity(_crm, _context)).Returns(entity);
+            mockTeachingEventBuilding.Setup(mock => mock.ToEntity(_crm, _context)).Returns(relatedEntity);
+
+            _crm.SaveRelated(mockTeachingEvent.Object, mockTeachingEventBuilding.Object, nameof(mockTeachingEvent.Object.BuildingId));
+
+            _mockService.Verify(mock => mock.SaveChanges(_context), Times.Once);
+            mockTeachingEvent.Object.Id.Should().Be(entity.Id);
+            mockTeachingEvent.Object.BuildingId.Should().Be(relatedEntity.Id);
         }
 
         [Fact]

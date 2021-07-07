@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
-using FluentValidation.Results;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
@@ -192,15 +191,20 @@ namespace GetIntoTeachingApi.Controllers
                 return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
             }
 
-            // Persist the building independently first so that we
-            // can populate the building id on the event prior to persisting.
-            await PersistBuildingAsync(teachingEvent);
-            await PersistEventAsync(teachingEvent);
+            _crm.SaveRelated(teachingEvent, teachingEvent.Building, nameof(teachingEvent.BuildingId));
+
+            if (teachingEvent.Building != null)
+            {
+                await _store.SaveAsync(teachingEvent.Building);
+                teachingEvent.BuildingId = teachingEvent.Building.Id;
+            }
+
+            await _store.SaveAsync(teachingEvent);
 
             return CreatedAtAction(
-                actionName: nameof(Get),
-                routeValues: new { readableId = teachingEvent.ReadableId },
-                value: teachingEvent);
+            actionName: nameof(Get),
+            routeValues: new { readableId = teachingEvent.ReadableId },
+            value: teachingEvent);
         }
 
         private static IEnumerable<TeachingEventsByType> GroupTeachingEventsByType(
@@ -213,30 +217,6 @@ namespace GetIntoTeachingApi.Controllers
                     TypeId = typeId,
                     TeachingEvents = events.Take(quantityPerType),
                 });
-        }
-
-        private async Task PersistBuildingAsync(TeachingEvent teachingEvent)
-        {
-            if (teachingEvent.Building == null)
-            {
-                return;
-            }
-
-            _crm.Save(teachingEvent.Building);
-            await _store.SaveAsync(teachingEvent.Building);
-            teachingEvent.BuildingId = teachingEvent.Building.Id;
-        }
-
-        private async Task PersistEventAsync(TeachingEvent teachingEvent)
-        {
-            // Remove building before persisting to prevent error.
-            var tempBuilding = teachingEvent.Building;
-            teachingEvent.Building = null;
-            _crm.Save(teachingEvent);
-
-            // Restore building before persiting to cache.
-            teachingEvent.Building = tempBuilding;
-            await _store.SaveAsync(teachingEvent);
         }
 
         private void ValidateForUpsertOperation(TeachingEvent teachingEvent)
