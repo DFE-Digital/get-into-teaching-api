@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using FluentValidation;
 using GetIntoTeachingApi.Adapters;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
@@ -259,6 +261,24 @@ namespace GetIntoTeachingApi.Services
         public void Save(BaseModel model)
         {
             using var context = Context();
+
+            foreach (var relatedModel in FindRelatedModels(model))
+            {
+                if (relatedModel.GetValue(model) != null)
+                {
+                    var relatedEntity = ((BaseModel)relatedModel.GetValue(model)).ToEntity(this, context);
+
+                    if (relatedEntity == null)
+                    {
+                        return;
+                    }
+                    _service.SaveChanges(context);
+
+                    var foreignKey = FindForeignKey(model, relatedModel.Name);
+                    foreignKey.SetValue(model, relatedEntity.Id);
+                }
+            }
+
             var entity = model.ToEntity(this, context);
 
             if (entity == null)
@@ -268,6 +288,18 @@ namespace GetIntoTeachingApi.Services
 
             _service.SaveChanges(context);
             AssignEntityIdToModelId(model, entity);
+        }
+
+        private static IEnumerable<PropertyInfo> FindRelatedModels(BaseModel model)
+        {
+            return model.GetType().GetProperties().Where(
+                property => Attribute.IsDefined(property, typeof(EntityRelationshipAttribute)));
+        }
+
+        private static PropertyInfo FindForeignKey(BaseModel model, string relatedModelName)
+        {
+            return model.GetType().GetProperties().FirstOrDefault(
+                property => property.GetCustomAttribute<EntityForeignKeyAttribute>()?.NavigationProperty == relatedModelName);
         }
 
         public IEnumerable<TeachingEvent> GetTeachingEvents(DateTime? startAfter = null)
