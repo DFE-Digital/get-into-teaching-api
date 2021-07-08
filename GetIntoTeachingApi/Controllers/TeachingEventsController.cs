@@ -191,7 +191,7 @@ namespace GetIntoTeachingApi.Controllers
                 return apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
             }
 
-            _crm.SaveRelated(teachingEvent, teachingEvent.Building, nameof(teachingEvent.BuildingId));
+            _crm.Save(teachingEvent);
 
             if (teachingEvent.Building != null)
             {

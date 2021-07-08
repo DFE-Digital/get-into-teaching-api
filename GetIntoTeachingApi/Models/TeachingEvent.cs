@@ -93,6 +93,7 @@ namespace GetIntoTeachingApi.Models
         [EntityRelationship("msevtmgt_event_building", typeof(TeachingEventBuilding))]
         public TeachingEventBuilding Building { get; set; }
         [JsonIgnore]
+        [EntityForeignKey(nameof(Building))]
         [EntityField("msevtmgt_building", typeof(EntityReference), "msevtmgt_building")]
         public Guid? BuildingId { get; set; }
         public bool IsVirtual => IsOnline && !string.IsNullOrWhiteSpace(Building?.AddressPostcode);
