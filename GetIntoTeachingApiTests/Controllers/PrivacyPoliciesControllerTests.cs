@@ -4,7 +4,6 @@ using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
-using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Xunit;
 using GetIntoTeachingApi.Attributes;
