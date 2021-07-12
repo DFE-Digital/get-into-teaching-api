@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
-using FluentValidation.Results;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
