@@ -13,6 +13,7 @@ using Moq;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Models.GetIntoTeaching;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
