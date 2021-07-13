@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Models.GetIntoTeaching;
 
 namespace GetIntoTeachingApi.Services
 {

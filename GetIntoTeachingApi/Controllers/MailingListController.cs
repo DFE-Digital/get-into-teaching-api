@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.GetIntoTeaching;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
