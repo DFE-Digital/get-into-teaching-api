@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
 using Microsoft.EntityFrameworkCore;
 using MoreLinq;
 using NetTopologySuite.Geometries;

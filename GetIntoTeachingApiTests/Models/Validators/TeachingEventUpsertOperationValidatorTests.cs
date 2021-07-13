@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.Validators;
 using GetIntoTeachingApi.Services;
 using Moq;

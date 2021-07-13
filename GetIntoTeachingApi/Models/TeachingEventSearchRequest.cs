@@ -1,4 +1,5 @@
 ﻿using System;
+using GetIntoTeachingApi.Models.Crm;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models

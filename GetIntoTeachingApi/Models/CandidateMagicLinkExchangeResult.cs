@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using GetIntoTeachingApi.Models.Crm;
+using System.Text.Json.Serialization;
 
 namespace GetIntoTeachingApi.Models
 {
