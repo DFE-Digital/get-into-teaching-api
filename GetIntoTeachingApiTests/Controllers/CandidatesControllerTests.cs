@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using System;
 using Microsoft.Extensions.Logging;
 using GetIntoTeachingApiTests.Helpers;
+using GetIntoTeachingApi.Models.Crm;
 
 namespace GetIntoTeachingApiTests.Controllers
 {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using GetIntoTeachingApi.Attributes;
-using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

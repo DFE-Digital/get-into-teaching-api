@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
 using System;
 using System.Collections.Generic;
 using System.Linq;

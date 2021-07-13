@@ -12,6 +12,7 @@ using Hangfire.States;
 using Microsoft.AspNetCore.Authorization;
 using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApi.Controllers.GetIntoTeaching;
+using GetIntoTeachingApi.Models.Crm;
 
 namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
 {

@@ -1,7 +1,6 @@
 ﻿using System;
 using FluentAssertions;
 using GetIntoTeachingApi.Jobs;
-using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using Hangfire;
 using Hangfire.Common;
@@ -9,6 +8,7 @@ using Hangfire.States;
 using Moq;
 using Xunit;
 using GetIntoTeachingApi.Utils;
+using GetIntoTeachingApi.Models.Crm;
 
 namespace GetIntoTeachingApiTests.Services
 {

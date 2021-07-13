@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
+using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Models.Validators.Crm;
 using GetIntoTeachingApi.Services;
 
 namespace GetIntoTeachingApi.Models.Validators
