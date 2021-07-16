@@ -4,6 +4,8 @@ using System.Linq;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Models.SchoolsExperience;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;

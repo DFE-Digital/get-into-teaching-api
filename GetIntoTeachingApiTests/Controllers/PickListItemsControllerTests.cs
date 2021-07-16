@@ -5,12 +5,9 @@ using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System.Reflection;
 using Microsoft.AspNetCore.Authorization;
-using MoreLinq;
 using Xunit;
 using GetIntoTeachingApi.Attributes;
-using Hangfire;
 
 namespace GetIntoTeachingApiTests.Controllers
 {

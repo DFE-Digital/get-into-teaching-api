@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire.Server;

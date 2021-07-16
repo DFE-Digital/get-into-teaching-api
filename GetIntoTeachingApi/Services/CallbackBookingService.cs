@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
 using Microsoft.Extensions.Logging;
 
 namespace GetIntoTeachingApi.Services

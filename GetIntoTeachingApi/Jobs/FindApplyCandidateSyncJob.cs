@@ -46,7 +46,7 @@ namespace GetIntoTeachingApi.Jobs
 
                 // We persist a new Candidate to ensure we only write the FindApplyId
                 // back to the CRM and not existing attributes on the match.
-                var candidate = new Models.Candidate() { Id = match.Id, FindApplyId = findApplyCandidate.Id };
+                var candidate = new Models.Crm.Candidate() { Id = match.Id, FindApplyId = findApplyCandidate.Id };
                 _crm.Save(candidate);
             }
             else

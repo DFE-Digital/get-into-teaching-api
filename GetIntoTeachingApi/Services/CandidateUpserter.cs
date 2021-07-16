@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GetIntoTeachingApi.Jobs;
-using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
 

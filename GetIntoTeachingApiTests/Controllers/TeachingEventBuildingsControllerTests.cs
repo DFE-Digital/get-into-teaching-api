@@ -1,16 +1,13 @@
 ﻿using FluentAssertions;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Controllers;
-using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
-using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using MoreLinq;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Controllers

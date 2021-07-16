@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using FluentAssertions;
+﻿using FluentAssertions;
 using FluentValidation.TestHelper;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Validators;

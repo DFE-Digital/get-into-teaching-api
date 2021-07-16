@@ -4,7 +4,6 @@ using FluentAssertions;
 using GetIntoTeachingApi.Auth;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
-using GetIntoTeachingApiTests.Helpers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;

@@ -20,6 +20,8 @@ using GetIntoTeachingApiTests.Helpers;
 using GetIntoTeachingApi.Utils;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Models.GetIntoTeaching;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
