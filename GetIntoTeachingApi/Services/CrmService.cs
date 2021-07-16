@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using FluentValidation;
 using GetIntoTeachingApi.Adapters;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
@@ -232,18 +234,93 @@ namespace GetIntoTeachingApi.Services
             return id != null ? _service.BlankExistingEntity(entityName, (Guid)id, context) : _service.NewEntity(entityName, context);
         }
 
-        public void Save(BaseModel model)
+        public void SaveRelated(BaseModel source, BaseModel target, string foreignKeyName)
         {
-            using var context = Context();
-            var entity = model.ToEntity(this, context);
+            if (target == null || foreignKeyName == null)
+            {
+                Save(source);
+                return;
+            }
 
-            if (entity == null)
+            using var context = Context();
+
+            var secondaryEntity = target.ToEntity(this, context);
+            source.GetType().GetProperty(foreignKeyName).SetValue(source, secondaryEntity?.Id, null);
+            var primaryEntity = source.ToEntity(this, context);
+
+            if (primaryEntity == null || secondaryEntity == null)
             {
                 return;
             }
 
             _service.SaveChanges(context);
-            model.Id = entity.Id;
+            AssignEntityIdToModelId(source, primaryEntity);
+            AssignEntityIdToModelId(target, secondaryEntity);
+        }
+
+        public void Save(BaseModel model)
+        {
+            using var context = Context();
+
+            DeepSave(model, null, null, context);
+        }
+
+        private void DeepSave(
+            BaseModel model, BaseModel parent, string navigationPropertyName, OrganizationServiceContext context)
+        {
+            var relatedModelProperties = FindRelatedModels(model);
+
+            if (!relatedModelProperties.Any())
+            {
+                var childEntity = SaveModelAsEntity(model, context);
+
+                if (parent != null)
+                {
+                    var foreignKey = FindForeignKey(parent, navigationPropertyName);
+                    foreignKey.SetValue(parent, childEntity.Id);
+
+                    SaveModelAsEntity(parent, context);
+                }
+            }
+            else
+            {
+                foreach (var relatedProperty in relatedModelProperties)
+                {
+                    var (relatedModel, propertyName) = relatedProperty;
+                    DeepSave(relatedModel, model, propertyName, context);
+                }
+            }
+        }
+
+        private Entity SaveModelAsEntity(BaseModel model, OrganizationServiceContext context)
+        {
+            var entity = model.ToEntity(this, context);
+
+            if (entity == null)
+            {
+                return null;
+            }
+
+            _service.SaveChanges(context);
+            AssignEntityIdToModelId(model, entity);
+
+            return entity;
+        }
+
+        private static IEnumerable<(BaseModel, string)> FindRelatedModels(BaseModel model)
+        {
+            var relationshipProps = model.GetType().GetProperties().Where(
+                property => Attribute.IsDefined(property, typeof(EntityRelationshipAttribute)));
+
+            return relationshipProps
+                .Where(prop => prop.GetValue(model) != null)
+                .Select(prop => ((BaseModel)prop.GetValue(model), prop.Name));
+        }
+
+        private static PropertyInfo FindForeignKey(BaseModel model, string relatedModelName)
+        {
+            return model.GetType().GetProperties().FirstOrDefault(
+                property => property.GetCustomAttribute<EntityForeignKeyAttribute>()?.NavigationProperty == relatedModelName);
         }
 
         public IEnumerable<TeachingEvent> GetTeachingEvents(DateTime? startAfter = null)
@@ -296,6 +373,11 @@ namespace GetIntoTeachingApi.Services
         {
             return _service.CreateQuery("msevtmgt_building", Context())
                 .Select((entity) => new TeachingEventBuilding(entity, this, _validatorFactory)).ToList();
+        }
+
+        private void AssignEntityIdToModelId(BaseModel model, Entity entity)
+        {
+            model.Id = entity.Id;
         }
 
         private static QueryExpression MatchBackQuery(string email)

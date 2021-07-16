@@ -26,6 +26,7 @@ namespace GetIntoTeachingApi.Services
         bool CandidateYetToAcceptPrivacyPolicy(Guid candidateId, Guid privacyPolicyId);
         bool CandidateYetToRegisterForTeachingEvent(Guid candidateId, Guid teachingEventId);
         void Save(BaseModel model);
+        void SaveRelated(BaseModel source, BaseModel target, string foreignKeyName);
         void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);
         void DeleteLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);
         IEnumerable<Entity> RelatedEntities(Entity entity, string relationshipName, string logicalName);

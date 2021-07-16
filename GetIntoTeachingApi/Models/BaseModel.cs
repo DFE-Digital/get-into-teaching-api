@@ -82,7 +82,6 @@ namespace GetIntoTeachingApi.Models
 
             var entity = crm.MappableEntity(LogicalName(GetType()), Id, context);
             MapFieldAttributesToEntity(entity);
-            MapRelationshipAttributesToEntity(entity, crm, context);
             FinaliseEntity(entity, crm, context);
             return entity;
         }
@@ -136,11 +135,6 @@ namespace GetIntoTeachingApi.Models
         {
             var listType = typeof(List<>).MakeGenericType(type);
             return (IList)Activator.CreateInstance(listType);
-        }
-
-        private static IEnumerable<BaseModel> EnumerableRelationshipModels(object relationship)
-        {
-            return relationship is BaseModel model ? new List<BaseModel> { model } : (IEnumerable<BaseModel>)relationship;
         }
 
         private static IEnumerable<PropertyInfo> GetProperties(object model)
@@ -264,32 +258,6 @@ namespace GetIntoTeachingApi.Models
                 else
                 {
                     entity[attribute.Name] = value;
-                }
-            }
-        }
-
-        private void MapRelationshipAttributesToEntity(Entity source, ICrmService crm, OrganizationServiceContext context)
-        {
-            foreach (var property in GetProperties(this))
-            {
-                var attribute = EntityRelationshipAttribute(property);
-                var value = property.GetValue(this);
-
-                if (attribute == null || value == null)
-                {
-                    continue;
-                }
-
-                foreach (var relatedModel in EnumerableRelationshipModels(value))
-                {
-                    var shouldMap = ShouldMapRelationship(property.Name, relatedModel, crm);
-                    if (!shouldMap)
-                    {
-                        continue;
-                    }
-
-                    var target = relatedModel.ToEntity(crm, context);
-                    crm.AddLink(source, new Relationship(attribute.Name), target, context);
                 }
             }
         }
