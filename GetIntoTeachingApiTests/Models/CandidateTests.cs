@@ -186,45 +186,6 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void ToEntity_WhenRelationshipIsNull_DoesNotCreateEntity()
-        {
-            var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context();
-            var mockCrm = new Mock<ICrmService>();
-
-            var candidate = new Candidate()
-            {
-                Qualifications = new List<CandidateQualification>() { null }
-            };
-
-            mockCrm.Setup(m => m.MappableEntity("contact", null, context)).Returns(new Entity("contact"));
-
-            candidate.ToEntity(mockCrm.Object, context);
-
-            mockService.Verify(m => m.NewEntity("dfe_candidatequalification", context), Times.Never);
-        }
-
-        [Fact]
-        public void ToEntity_WithPropertyUsingDefaultMappingLogic_CreatesEntity()
-        {
-            var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context();
-            var mockCrm = new Mock<ICrmService>();
-
-            var candidate = new Candidate()
-            {
-                Qualifications = new List<CandidateQualification>() { new CandidateQualification() }
-            };
-
-            mockCrm.Setup(m => m.MappableEntity("contact", null, context)).Returns(new Entity("contact"));
-            mockCrm.Setup(m => m.MappableEntity("dfe_candidatequalification", null, context)).Returns(new Entity("dfe_candidatequalification"));
-
-            candidate.ToEntity(mockCrm.Object, context);
-
-            mockCrm.Verify(m => m.MappableEntity("dfe_candidatequalification", null, context), Times.Once);
-        }
-
-        [Fact]
         public void ToEntity_WhenPrivacyPolicyAlreadyAccepted_DoesNotCreatePrivacyPolicyEntity()
         {
             var mockService = new Mock<IOrganizationServiceAdapter>();
@@ -244,26 +205,6 @@ namespace GetIntoTeachingApiTests.Models
             candidate.ToEntity(mockCrm.Object, context);
 
             mockService.Verify(m => m.NewEntity("dfe_candidateprivacypolicy", context), Times.Never);
-        }
-
-        [Fact]
-        public void ToEntity_WithNewCandidateAndPrivacyPolicy_CreatesPrivacyPolicyEntity()
-        {
-            var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context();
-            var mockCrm = new Mock<ICrmService>();
-
-            var candidate = new Candidate()
-            {
-                PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = Guid.NewGuid() }
-            };
-
-            mockCrm.Setup(m => m.MappableEntity("contact", null, context)).Returns(new Entity("contact"));
-            mockCrm.Setup(m => m.MappableEntity("dfe_candidateprivacypolicy", null, context)).Returns(new Entity("dfe_candidateprivacypolicy"));
-
-            candidate.ToEntity(mockCrm.Object, context);
-
-            mockCrm.Verify(m => m.MappableEntity("dfe_candidateprivacypolicy", null, context), Times.Once);
         }
 
         [Fact]
