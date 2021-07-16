@@ -14,7 +14,7 @@ namespace GetIntoTeachingApi.Services
 {
     public class Store : IStore
     {
-        public static readonly TimeSpan TeachingEventArchiveSize = TimeSpan.FromDays(31 * 4);
+        public static readonly TimeSpan TeachingEventArchiveSize = TimeSpan.FromDays(31 * 9);
         public static readonly HashSet<string> FailedPostcodeLookupCache = new HashSet<string>();
         private readonly GetIntoTeachingDbContext _dbContext;
         private readonly IGeocodeClientAdapter _geocodeClient;
