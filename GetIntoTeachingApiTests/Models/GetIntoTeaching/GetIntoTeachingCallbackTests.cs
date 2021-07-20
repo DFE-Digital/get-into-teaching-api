@@ -53,7 +53,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
 
             candidate.PhoneCall.ScheduledAt.Should().Be((DateTime)request.PhoneCallScheduledAt);
             candidate.PhoneCall.Telephone.Should().Be(request.AddressTelephone);
-            candidate.PhoneCall.ChannelId.Should().Be((int)PhoneCall.Channel.CallbackRequest);
+            candidate.PhoneCall.ChannelId.Should().Be((int)PhoneCall.Channel.WebsiteCallbackRequest);
             candidate.PhoneCall.DestinationId.Should().Be((int)PhoneCall.Destination.Uk);
             candidate.PhoneCall.Subject.Should().Be("Scheduled phone call requested by John Doe");
 
