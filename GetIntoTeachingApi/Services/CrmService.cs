@@ -262,49 +262,46 @@ namespace GetIntoTeachingApi.Services
         {
             using var context = Context();
 
-            DeepSave(model, null, null, context);
+            DeepSave(model, context);
         }
 
-        private void DeepSave(
-            BaseModel model, BaseModel parent, string navigationPropertyName, OrganizationServiceContext context)
+        private void DeepSave(BaseModel model, OrganizationServiceContext context)
         {
-            var relatedModelProperties = FindRelatedModels(model);
+            string relatedPropertyName = null;
 
-            if (!relatedModelProperties.Any())
+            foreach (var relatedProperty in FindRelatedModels(model))
             {
-                var childEntity = SaveModelAsEntity(model, context);
-
-                if (parent != null)
-                {
-                    var foreignKey = FindForeignKey(parent, navigationPropertyName);
-                    foreignKey.SetValue(parent, childEntity.Id);
-
-                    SaveModelAsEntity(parent, context);
-                }
+                var (relatedModel, propertyName) = relatedProperty;
+                relatedPropertyName = propertyName;
+                DeepSave(relatedModel, context);
             }
-            else
+
+            if (relatedPropertyName != null)
             {
-                foreach (var relatedProperty in relatedModelProperties)
-                {
-                    var (relatedModel, propertyName) = relatedProperty;
-                    DeepSave(relatedModel, model, propertyName, context);
-                }
+                var childId = FindChildId(model, relatedPropertyName);
+                var foreignKey = FindForeignKey(model, relatedPropertyName);
+                foreignKey.SetValue(model, childId);
             }
+
+            SaveModelAsEntity(model, context);
         }
 
-        private Entity SaveModelAsEntity(BaseModel model, OrganizationServiceContext context)
+        private static Guid? FindChildId(BaseModel model, string relatedModelName)
+        {
+            return ((BaseModel)model.GetType().GetProperty(relatedModelName).GetValue(model)).Id;
+        }
+
+        private void SaveModelAsEntity(BaseModel model, OrganizationServiceContext context)
         {
             var entity = model.ToEntity(this, context);
 
             if (entity == null)
             {
-                return null;
+                return;
             }
 
             _service.SaveChanges(context);
             AssignEntityIdToModelId(model, entity);
-
-            return entity;
         }
 
         private static IEnumerable<(BaseModel, string)> FindRelatedModels(BaseModel model)
