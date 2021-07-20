@@ -30,6 +30,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
             _validator.ShouldHaveValidationErrorFor(request => request.AddressTelephone, null as string);
             _validator.ShouldHaveValidationErrorFor(request => request.PhoneCallScheduledAt, null as DateTime?);
             _validator.ShouldHaveValidationErrorFor(request => request.AcceptedPolicyId, null as Guid?);
+            _validator.ShouldHaveValidationErrorFor(request => request.TalkingPoints, null as string);
         }
 
         [Fact]

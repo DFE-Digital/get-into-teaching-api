@@ -22,6 +22,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching.Validators
                 .NotNull()
                 .GreaterThan(_ => dateTime.UtcNow)
                     .WithMessage("Can only be scheduled for future dates.");
+            RuleFor(request => request.TalkingPoints).NotEmpty();
 
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store, dateTime));
         }
