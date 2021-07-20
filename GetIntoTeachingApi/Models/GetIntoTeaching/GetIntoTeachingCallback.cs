@@ -19,6 +19,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public string AddressTelephone { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public DateTime? PhoneCallScheduledAt { get; set; }
+        public string TalkingPoints { get; set; }
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
@@ -73,6 +74,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                     ScheduledAt = (DateTime)PhoneCallScheduledAt,
                     ChannelId = (int)PhoneCall.Channel.WebsiteCallbackRequest,
                     Subject = $"Scheduled phone call requested by {candidate.FullName}",
+                    TalkingPoints = TalkingPoints,
                 };
             }
         }

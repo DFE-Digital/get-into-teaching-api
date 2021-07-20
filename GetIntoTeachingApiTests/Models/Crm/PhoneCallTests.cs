@@ -28,6 +28,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
             type.GetProperty("IsAppointment").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_appointmentflag");
             type.GetProperty("AppointmentRequired").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_appointmentrequired");
             type.GetProperty("IsDirectionCode").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "directioncode");
+            type.GetProperty("TalkingPoints").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_talkingpoints");
         }
 
         [Fact]
