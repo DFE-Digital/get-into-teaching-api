@@ -616,7 +616,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void SaveRelated_WithModelAndRelatedModel_SetsForeignKeyAndSavesModels()
+        public void Save_WithModelAndRelatedModel_SetsForeignKeyAndSavesModels()
         {
             var entity = new Entity() { Id = Guid.NewGuid() };
             var relatedEntity = new Entity() { Id = Guid.NewGuid() };
