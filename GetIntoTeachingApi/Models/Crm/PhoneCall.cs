@@ -13,6 +13,7 @@ namespace GetIntoTeachingApi.Models.Crm
         public enum Channel
         {
             CallbackRequest = 222750003,
+            WebsiteCallbackRequest = 222750004,
         }
 
         public enum Destination

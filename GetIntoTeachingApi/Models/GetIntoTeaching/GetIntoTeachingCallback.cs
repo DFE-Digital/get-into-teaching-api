@@ -71,7 +71,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                     Telephone = candidate.AddressTelephone,
                     DestinationId = (int)PhoneCall.Destination.Uk,
                     ScheduledAt = (DateTime)PhoneCallScheduledAt,
-                    ChannelId = (int)PhoneCall.Channel.CallbackRequest,
+                    ChannelId = (int)PhoneCall.Channel.WebsiteCallbackRequest,
                     Subject = $"Scheduled phone call requested by {candidate.FullName}",
                 };
             }
