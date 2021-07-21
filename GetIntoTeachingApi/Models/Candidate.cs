@@ -11,6 +11,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace GetIntoTeachingApi.Models
 {
     [Entity("contact")]
+    [SwaggerIgnore]
     public class Candidate : BaseModel
     {
         public static readonly Guid AdviserBusinessUnitId = new Guid("1A61F629-F502-E911-A972-000D3A23443B");
