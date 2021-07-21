@@ -14,6 +14,7 @@ namespace GetIntoTeachingApiTests.Models
             var type = typeof(CandidateQualification);
 
             type.Should().BeDecoratedWith<EntityAttribute>(a => a.LogicalName == "dfe_candidatequalification");
+            type.Should().BeDecoratedWith<SwaggerIgnoreAttribute>();
 
             type.GetProperty("CandidateId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_contactid" &&
                 a.Type == typeof(EntityReference) && a.Reference == "contact");

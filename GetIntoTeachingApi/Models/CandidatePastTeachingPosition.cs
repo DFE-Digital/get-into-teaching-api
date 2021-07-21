@@ -6,6 +6,7 @@ using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
+    [SwaggerIgnore]
     [Entity("dfe_candidatepastteachingposition")]
     public class CandidatePastTeachingPosition : BaseModel, IHasCandidateId
     {
