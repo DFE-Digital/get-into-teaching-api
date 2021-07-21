@@ -21,7 +21,7 @@ namespace GetIntoTeachingApiTests.Helpers
 
         public IQueryable<Entity> CreateQuery(string entityName, OrganizationServiceContext context)
         {
-            throw new NotImplementedException();
+            return new List<Entity>().AsQueryable();
         }
 
         public IEnumerable<Entity> RetrieveMultiple(QueryBase query)
