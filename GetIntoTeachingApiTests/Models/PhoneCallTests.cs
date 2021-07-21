@@ -14,6 +14,7 @@ namespace GetIntoTeachingApiTests.Models
             var type = typeof(PhoneCall);
 
             type.Should().BeDecoratedWith<EntityAttribute>(a => a.LogicalName == "phonecall");
+            type.Should().BeDecoratedWith<SwaggerIgnoreAttribute>();
 
             type.GetProperty("ChannelId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_channelcreation" && a.Type == typeof(OptionSetValue));

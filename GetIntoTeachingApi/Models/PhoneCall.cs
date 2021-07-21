@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.Json.Serialization;
 using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
@@ -7,6 +6,7 @@ using Microsoft.Xrm.Sdk;
 
 namespace GetIntoTeachingApi.Models
 {
+    [SwaggerIgnore]
     [Entity("phonecall")]
     public class PhoneCall : BaseModel, IHasCandidateId
     {

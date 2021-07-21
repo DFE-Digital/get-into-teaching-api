@@ -103,9 +103,9 @@ The GIT API aims to provide:
                 });
 
                 c.OperationFilter<AuthOperationFilter>();
+                c.DocumentFilter<SwaggerDefinitionsFilter>();
                 c.EnableAnnotations();
             });
-
             services.AddFluentValidationRulesToSwagger();
         }
 
