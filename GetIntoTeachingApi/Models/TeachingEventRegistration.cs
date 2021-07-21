@@ -7,6 +7,7 @@ using Microsoft.Xrm.Sdk;
 namespace GetIntoTeachingApi.Models
 {
     [Entity("msevtmgt_eventregistration")]
+    [SwaggerIgnore]
     public class TeachingEventRegistration : BaseModel, IHasCandidateId
     {
         public enum Channel
