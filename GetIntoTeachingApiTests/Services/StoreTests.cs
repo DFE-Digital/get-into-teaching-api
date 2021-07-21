@@ -77,6 +77,19 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public async void SyncAsync_ChangesQuestionTimeEventsToBeTrainToTeachEvents()
+        {
+            await SeedMockTeachingEventBuildingsAsync();
+            var mockTeachingEvents = MockTeachingEvents().ToList();
+            _mockCrm.Setup(m => m.GetTeachingEvents(It.Is<DateTime>(d => CheckGetTeachingEventsAfterDate(d)))).Returns(mockTeachingEvents);
+            mockTeachingEvents.FirstOrDefault(e => e.TypeId == (int)TeachingEvent.EventType.QuestionTime).Should().NotBeNull();
+
+            await _store.SyncAsync();
+
+            DbContext.TeachingEvents.FirstOrDefault(e => e.TypeId == (int)TeachingEvent.EventType.QuestionTime).Should().BeNull();
+        }
+
+        [Fact]
         public async void SyncAsync_UpdatesExistingTeachingEvents()
         {
             var updatedTeachingEvents = (await SeedMockTeachingEventsAndBuildingsAsync()).ToList();
@@ -737,6 +750,7 @@ namespace GetIntoTeachingApiTests.Services
                 Id = Guid.NewGuid(),
                 ReadableId = "8",
                 Name = "Event 8",
+                TypeId = (int)TeachingEvent.EventType.QuestionTime,
                 StatusId = (int)TeachingEvent.Status.Pending
             };
 
