@@ -31,6 +31,7 @@ namespace GetIntoTeachingApi.Models
             TrainToTeachEvent = 222750001,
             OnlineEvent = 222750008,
             SchoolOrUniversityEvent = 222750009,
+            QuestionTime = 222750007,
         }
 
         [EntityField("dfe_event_type", typeof(OptionSetValue))]
