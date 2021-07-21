@@ -195,9 +195,20 @@ namespace GetIntoTeachingApi.Services
             var teachingEvents = _crm.GetTeachingEvents(afterDate).ToList();
             var teachingEventBuildings = _dbContext.TeachingEventBuildings.ToList();
 
-            foreach (var te in teachingEvents.Where(te => te.BuildingId != null))
+            foreach (var te in teachingEvents)
             {
-                te.Building = teachingEventBuildings.FirstOrDefault(b => b.Id == te.BuildingId);
+                // This horrible bit of misdirection is so that we can quickly lump the QT
+                // events in with TTT events on the GiT website for an immediate need. We
+                // should update the GiT website to handle QT events explicitly and remove this.
+                if (te.TypeId == (int)TeachingEvent.EventType.QuestionTime)
+                {
+                    te.TypeId = (int)TeachingEvent.EventType.TrainToTeachEvent;
+                }
+
+                if (te.BuildingId != null)
+                {
+                    te.Building = teachingEventBuildings.FirstOrDefault(b => b.Id == te.BuildingId);
+                }
             }
 
             await SyncModels(teachingEvents, _dbContext.TeachingEvents);
