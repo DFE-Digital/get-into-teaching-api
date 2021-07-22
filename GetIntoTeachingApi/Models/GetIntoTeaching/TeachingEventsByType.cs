@@ -1,5 +1,5 @@
-﻿using GetIntoTeachingApi.Models.Crm;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using GetIntoTeachingApi.Models.Crm;
 
 namespace GetIntoTeachingApi.Models.GetIntoTeaching
 {

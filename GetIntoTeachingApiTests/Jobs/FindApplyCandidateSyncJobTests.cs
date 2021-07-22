@@ -1,8 +1,6 @@
 ﻿using System;
 using FluentAssertions;
-using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Jobs;
-using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.FindApply;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;

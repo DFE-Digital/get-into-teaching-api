@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using FluentValidation.Validators;
-using GetIntoTeachingApi.Models.Crm;
 
 namespace GetIntoTeachingApi.Models.Crm.Validators
 {

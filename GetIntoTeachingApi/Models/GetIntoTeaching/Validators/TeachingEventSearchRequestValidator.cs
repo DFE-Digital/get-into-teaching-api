@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using GetIntoTeachingApi.Models.GetIntoTeaching;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Validators;
 

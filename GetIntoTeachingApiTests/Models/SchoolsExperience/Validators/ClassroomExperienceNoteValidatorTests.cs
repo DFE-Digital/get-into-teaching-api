@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using FluentValidation.TestHelper;
-using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.SchoolsExperience;
 using GetIntoTeachingApi.Models.SchoolsExperience.Validators;
 using System;
