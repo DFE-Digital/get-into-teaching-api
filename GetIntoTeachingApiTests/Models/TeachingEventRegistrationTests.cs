@@ -16,6 +16,7 @@ namespace GetIntoTeachingApiTests.Models
         public void EntityAttributes()
         {
             var type = typeof(TeachingEventRegistration);
+            type.Should().BeDecoratedWith<SwaggerIgnoreAttribute>();
 
             type.Should().BeDecoratedWith<EntityAttribute>(a => a.LogicalName == "msevtmgt_eventregistration");
 
