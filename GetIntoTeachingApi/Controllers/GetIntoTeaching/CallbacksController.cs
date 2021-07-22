@@ -37,12 +37,7 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
         [HttpPost]
         [SwaggerOperation(
             Summary = "Schedule a callback for the candidate.",
-            Description = "Validation errors may be present on the `GetIntoTeachingCallback` object as " +
-                          "well as the hidden `Candidate` model that is mapped to; property names are " +
-                          "consistent, so you should check for inclusion of the field in the key " +
-                          "when linking an error message back to a property on the request model. For " +
-                          "example, an error on `AddressTelephone` can return under the keys " +
-                          "`Candidate.AddressTelephone` and `AddressTelephone`.",
+            Description = "Queues a candidate upsert job.",
             OperationId = "BookGetIntoTeachingCallback",
             Tags = new[] { "Get into Teaching" })]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

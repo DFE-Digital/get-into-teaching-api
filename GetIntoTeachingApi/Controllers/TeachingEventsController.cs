@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
-using FluentValidation.Results;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
@@ -114,15 +113,9 @@ namespace GetIntoTeachingApi.Controllers
         [Route("attendees")]
         [SwaggerOperation(
             Summary = "Adds an attendee to a teaching event.",
-            Description = "If the `CandidateId` is specified then the existing candidate will be " +
-                          "registered for the event, otherwise a new candidate will be created." +
-                          "\n\n" +
-                          "Validation errors may be present on the `TeachingEventAddAttendee` object as " +
-                          "well as the hidden `Candidate` model that is mapped to; property names are " +
-                          "consistent, so you should check for inclusion of the field in the key " +
-                          "when linking an error message back to a property on the request model. For " +
-                          "example, an error on `AcceptedPolicyId` can return under the keys " +
-                          "`Candidate.PrivacyPolicy.AcceptedPolicyId` and `AcceptedPolicyId`.",
+            Description = @"
+                If the `CandidateId` is specified then the existing candidate will be 
+                registered for the event, otherwise a new candidate will be created.",
             OperationId = "AddTeachingEventAttendee",
             Tags = new[] { "Teaching Events" })]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
