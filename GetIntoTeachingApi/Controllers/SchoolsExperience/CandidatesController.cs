@@ -39,13 +39,9 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
         [HttpPost]
         [SwaggerOperation(
             Summary = "Sign up a candidate for the Schools Experience service.",
-            Description = "Validation errors may be present on the `SchoolsExperienceSignUp` object as " +
-                          "well as the hidden `Candidate` model that is mapped to; property names are " +
-                          "consistent, so you should check for inclusion of the field in the key " +
-                          "when linking an error message back to a property on the request model. For " +
-                          "example, an error on `DegreeSubject` can return under the keys " +
-                          "`Candidate.Qualifications[0].DegreeSubject` and `DegreeSubject`.",
-            OperationId = "SignUpSchoolsExperienceCandidate",
+            Description = @"
+                Upsert a candidate. Returns the updated candidate information in the body of the response along 
+                with a Location header which specifies the location of the candidate",
             Tags = new[] { "Schools Experience" })]
         [ProducesResponseType(typeof(SchoolsExperienceSignUp), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]

@@ -1,9 +1,13 @@
 ﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using FluentValidation.Results;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GetIntoTeachingApi.Models.Validators
 {
-    public class GetIntoTeachingCallbackValidator : AbstractValidator<GetIntoTeachingCallback>
+    public class GetIntoTeachingCallbackValidator : AbstractValidator<GetIntoTeachingCallback>, IValidatorInterceptor
     {
         public GetIntoTeachingCallbackValidator(IStore store, IDateTimeProvider dateTime)
         {
@@ -15,10 +19,20 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(request => request.AddressTelephone).NotNull();
             RuleFor(request => request.PhoneCallScheduledAt)
                 .NotNull()
-                .GreaterThan(candidate => dateTime.UtcNow)
+                .GreaterThan(_ => dateTime.UtcNow)
                     .WithMessage("Can only be scheduled for future dates.");
 
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store, dateTime));
+        }
+
+        public IValidationContext BeforeAspNetValidation(ActionContext actionContext, IValidationContext commonContext)
+        {
+            return commonContext;
+        }
+
+        public ValidationResult AfterAspNetValidation(ActionContext actionContext, IValidationContext validationContext, ValidationResult result)
+        {
+            return result.SurfaceErrorsOnMatchingProperties(validationContext);
         }
     }
 }

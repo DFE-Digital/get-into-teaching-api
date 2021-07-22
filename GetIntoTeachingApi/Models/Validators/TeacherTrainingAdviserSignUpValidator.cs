@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
+using FluentValidation.AspNetCore;
+using FluentValidation.Results;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GetIntoTeachingApi.Models.Validators
 {
-    public class TeacherTrainingAdviserSignUpValidator : AbstractValidator<TeacherTrainingAdviserSignUp>
+    public class TeacherTrainingAdviserSignUpValidator : AbstractValidator<TeacherTrainingAdviserSignUp>, IValidatorInterceptor
     {
         public TeacherTrainingAdviserSignUpValidator(IStore store, IDateTimeProvider dateTime)
         {
@@ -108,6 +111,16 @@ namespace GetIntoTeachingApi.Models.Validators
             });
 
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store, dateTime));
+        }
+
+        public IValidationContext BeforeAspNetValidation(ActionContext actionContext, IValidationContext commonContext)
+        {
+            return commonContext;
+        }
+
+        public ValidationResult AfterAspNetValidation(ActionContext actionContext, IValidationContext validationContext, ValidationResult result)
+        {
+            return result.SurfaceErrorsOnMatchingProperties(validationContext);
         }
 
         private static List<int?> StudyingForADegreeStatus()
