@@ -1,4 +1,4 @@
-﻿# Get into Teaching API 
+# Get into Teaching API 
 [![Build and Deploy](https://github.com/DFE-Digital/get-into-teaching-api/actions/workflows/devops.yml/badge.svg)](https://github.com/DFE-Digital/get-into-teaching-api/actions/workflows/devops.yml)
 
 > Provides a RESTful API for integrating with the Get into Teaching CRM.
@@ -338,6 +338,8 @@ Supporting to-many relationships is as simple as making sure the property is a `
 [EntityRelationship("dfe_contact_dfe_candidatequalification_ContactId", typeof(CandidateQualification))]
 public List<CandidateQualification> Qualifications { get; set; }
 ```
+
+> **Currently, the `BaseModel` does not create links between related entities when mapping to an `Entity` type. Instead, the relationship must be defined by assigning a value to the foreign key property, and saving each model independently. See `CandidateUpserter`**
 
 ### Customising the Mapping Behaviour
 
