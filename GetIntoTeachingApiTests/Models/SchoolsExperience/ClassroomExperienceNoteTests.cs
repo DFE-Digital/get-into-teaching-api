@@ -1,6 +1,5 @@
 ﻿using System;
 using FluentAssertions;
-using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.SchoolsExperience;
 using Xunit;
 

@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using FluentValidation;
-using GetIntoTeachingApi.Models.SchoolsExperience;
 
 namespace GetIntoTeachingApi.Models.SchoolsExperience.Validators
 {

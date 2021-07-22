@@ -2,7 +2,6 @@
 using FluentValidation.AspNetCore;
 using FluentValidation.Results;
 using GetIntoTeachingApi.Models.Crm.Validators;
-using GetIntoTeachingApi.Models.GetIntoTeaching;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Microsoft.AspNetCore.Mvc;

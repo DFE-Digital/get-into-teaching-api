@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
-using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.SchoolsExperience;
 using GetIntoTeachingApi.Services;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using FluentAssertions;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
