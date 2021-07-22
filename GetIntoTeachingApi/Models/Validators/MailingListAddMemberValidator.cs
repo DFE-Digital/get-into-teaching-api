@@ -1,9 +1,13 @@
 ﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using FluentValidation.Results;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GetIntoTeachingApi.Models.Validators
 {
-    public class MailingListAddMemberValidator : AbstractValidator<MailingListAddMember>
+    public class MailingListAddMemberValidator : AbstractValidator<MailingListAddMember>, IValidatorInterceptor
     {
         public MailingListAddMemberValidator(IStore store, IDateTimeProvider dateTime)
         {
@@ -16,6 +20,16 @@ namespace GetIntoTeachingApi.Models.Validators
             RuleFor(request => request.PreferredTeachingSubjectId).NotNull();
 
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store, dateTime));
+        }
+
+        public IValidationContext BeforeAspNetValidation(ActionContext actionContext, IValidationContext commonContext)
+        {
+            return commonContext;
+        }
+
+        public ValidationResult AfterAspNetValidation(ActionContext actionContext, IValidationContext validationContext, ValidationResult result)
+        {
+            return result.SurfaceErrorsOnMatchingProperties(validationContext);
         }
     }
 }

@@ -130,7 +130,7 @@ The majority of the validation should be performed against the core models linke
 
 We also call registered validators for subclasses of `BaseModel` when mapping CRM entities into our API models. If the CRM returns an invalid value according to our validation logic it will be nullified. An example of where this can happen is with postcodes; if the CRM returns an invalid postcode we will nullify it (otherwise the client may re-post the invalid postcode back to the API without checking it and receive a 400 bad request response unexpectedly).
 
-Property names in request models should be consistent with any hidden `BaseModel` models they encapsulate and map to; this way the client can resolve the validation error messages back to the original request attributes. For example, the `MailingListAddMember.UkDegreeGradeId` maps to and is consistent with `MailingListAddMember.Candidate.Qualifications[0].UkDegreeGradeId`.
+Property names in request models should be consistent with any hidden `BaseModel` models they encapsulate and map to. When consistent, we can intercept validation results in order surface these back to the original request model. For example, the `MailingListAddMember.UkDegreeGradeId` is consistent with `MailingListAddMember.Candidate.Qualifications[0].UkDegreeGradeId`. Any errors that appear on the `MailingListAddMember.Candidate.Qualifications[0].UkDegreeGradeId` property will be intercepted in the `MailingListAddMemberValidator` mapped back to `MailingListAddMember.UkDegreeGradeId`.
 
 ### Testing
 
