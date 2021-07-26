@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using GetIntoTeachingApi.Utils;
 using System.Linq;
 using System.Collections.Generic;
+using GetIntoTeachingApi.Models.Crm;
 
 namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
 {

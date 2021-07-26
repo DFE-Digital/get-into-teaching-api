@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
 
 namespace GetIntoTeachingApi.Services
 {
