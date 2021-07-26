@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using Newtonsoft.Json;
 

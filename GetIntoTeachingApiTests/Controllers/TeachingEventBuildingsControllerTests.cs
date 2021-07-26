@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Controllers;
-using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;

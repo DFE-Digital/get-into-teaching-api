@@ -6,6 +6,7 @@ using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApiTests.Helpers;
 using Microsoft.EntityFrameworkCore;
