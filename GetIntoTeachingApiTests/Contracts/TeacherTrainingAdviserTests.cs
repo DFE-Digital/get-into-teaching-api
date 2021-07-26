@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using GetIntoTeachingApi.AppStart;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApiTests.Helpers;
 using Hangfire;
 using Newtonsoft.Json;

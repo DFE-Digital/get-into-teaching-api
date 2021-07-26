@@ -1,4 +1,5 @@
 ﻿using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
 using Microsoft.EntityFrameworkCore;
 
 namespace GetIntoTeachingApi.Database
