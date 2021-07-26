@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
 using Xunit;
 using static GetIntoTeachingApi.Models.CandidateMagicLinkExchangeResult;
 

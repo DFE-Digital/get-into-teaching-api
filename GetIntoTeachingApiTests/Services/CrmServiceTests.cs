@@ -13,6 +13,7 @@ using Xunit;
 using System.Linq.Dynamic.Core;
 using FluentValidation;
 using Microsoft.PowerPlatform.Dataverse.Client;
+using GetIntoTeachingApi.Models.Crm;
 
 namespace GetIntoTeachingApiTests.Services
 {

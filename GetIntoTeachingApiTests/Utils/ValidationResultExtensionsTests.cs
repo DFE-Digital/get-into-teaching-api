@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
-using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.GetIntoTeaching;
 using GetIntoTeachingApi.Utils;
 using System.Collections.Generic;
 using Xunit;
