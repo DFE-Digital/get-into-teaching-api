@@ -5,6 +5,7 @@ using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Models.SchoolsExperience;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
 using Moq;
