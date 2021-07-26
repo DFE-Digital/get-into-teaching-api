@@ -13,6 +13,7 @@ namespace GetIntoTeachingApi.Models.Crm
         public enum Channel
         {
             CallbackRequest = 222750003,
+            WebsiteCallbackRequest = 222750004,
         }
 
         public enum Destination
@@ -40,6 +41,8 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityField("directioncode")]
         public bool IsDirectionCode { get; set; } = true;
         Guid IHasCandidateId.CandidateId { get => new Guid(CandidateId); }
+        [EntityField("dfe_talkingpoints")]
+        public string TalkingPoints { get; set; }
 
         public PhoneCall()
             : base()
