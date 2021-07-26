@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using GetIntoTeachingApi.Attributes;
+using GetIntoTeachingApi.Models.SchoolsExperience;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Microsoft.Xrm.Sdk;

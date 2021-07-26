@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApi.Controllers.GetIntoTeaching;
 using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Models.GetIntoTeaching;
 
 namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
 {
