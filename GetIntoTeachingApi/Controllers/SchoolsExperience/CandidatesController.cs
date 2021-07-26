@@ -42,6 +42,7 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
             Description = @"
                 Upsert a candidate. Returns the updated candidate information in the body of the response along 
                 with a Location header which specifies the location of the candidate",
+            OperationId = "SignUpSchoolsExperienceCandidate",
             Tags = new[] { "Schools Experience" })]
         [ProducesResponseType(typeof(SchoolsExperienceSignUp), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
