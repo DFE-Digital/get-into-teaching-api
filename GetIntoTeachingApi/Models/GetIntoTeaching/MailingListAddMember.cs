@@ -57,18 +57,12 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
             }
 
             CandidateId = candidate.Id;
-            PreferredTeachingSubjectId = candidate.PreferredTeachingSubjectId;
-
-            ConsiderationJourneyStageId = candidate.ConsiderationJourneyStageId;
-
-            Email = candidate.Email;
-            FirstName = candidate.FirstName;
-            LastName = candidate.LastName;
-            AddressPostcode = candidate.AddressPostcode;
 
             AlreadySubscribedToMailingList = candidate.HasMailingListSubscription == true;
             AlreadySubscribedToEvents = candidate.HasEventsSubscription == true;
             AlreadySubscribedToTeacherTrainingAdviser = candidate.HasTeacherTrainingAdviser();
+
+            AutoMapperUtil.MapMatchingProperties(candidate, this);
         }
 
         private Candidate CreateCandidate()
