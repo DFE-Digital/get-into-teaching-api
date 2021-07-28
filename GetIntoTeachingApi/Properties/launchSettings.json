@@ -32,6 +32,7 @@
         "GIT_API_KEY": "secret-git",
         "TTA_API_KEY": "secret-tta",
         "SE_API_KEY": "secret-se",
+        "PT_API_KEY": "secret-pt",
         "TOTP_SECRET_KEY": "def456"
       }
     }
