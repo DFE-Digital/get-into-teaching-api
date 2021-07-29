@@ -105,7 +105,6 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             response.PastTeachingPositionId.Should().Be(latestPastTeachingPosition.Id);
             response.SubjectTaughtId.Should().Be(latestPastTeachingPosition.SubjectTaughtId);
 
-            response.AlreadySubscribedToTeacherTrainingAdviser.Should().BeTrue();
             response.CanSubscribeToTeacherTrainingAdviser.Should().BeFalse();
         }
 
