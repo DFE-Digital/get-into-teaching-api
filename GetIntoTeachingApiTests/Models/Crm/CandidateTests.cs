@@ -69,7 +69,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
                 a => a.Name == "msgdpr_gdprconsent" && a.Type == typeof(OptionSetValue));
             type.GetProperty("MagicLinkTokenStatusId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_websitemltokenstatus" && a.Type == typeof(OptionSetValue));
-            type.GetProperty("AdviserStatus").Should().BeDecoratedWith<EntityFieldAttribute>(
+            type.GetProperty("AdviserStatusId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_candidateadviserstatusreason" && a.Type == typeof(OptionSetValue));
 
 

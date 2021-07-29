@@ -458,11 +458,11 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
         [InlineData(true, null, false)]
         [InlineData(false, null, true)]
         [InlineData(true, -12345, false)]
-        public void CanSubscribeToTeacherTrainingAdviser_ReturnsCorrectly(bool hasAdviser, int? adviserStatus, bool expected)
+        public void CanSubscribeToTeacherTrainingAdviser_ReturnsCorrectly(bool hasAdviser, int? adviserStatusId, bool expected)
         {
             var candidate = new Candidate() {
                 HasTeacherTrainingAdviserSubscription = hasAdviser,
-                AdviserStatus = adviserStatus
+                AdviserStatusId = adviserStatusId
             };
 
             var response = new TeacherTrainingAdviserSignUp(candidate);

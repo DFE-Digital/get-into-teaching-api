@@ -61,6 +61,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         public int? HasGcseScienceId { get; set; }
         public int? PlanningToRetakeGcseMathsAndEnglishId { get; set; }
         public int? PlanningToRetakeGcseScienceId { get; set; }
+        public int? AdviserStatusId { get; set; }
 
         public string Email { get; set; }
         public string FirstName { get; set; }
@@ -105,12 +106,12 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                 return true;
             }
 
-            if (candidate.AdviserStatus == null)
+            if (candidate.AdviserStatusId == null)
             {
                 return false;
             }
 
-            return Enum.IsDefined(typeof(ResubscribableAdviserStatus), candidate.AdviserStatus);
+            return Enum.IsDefined(typeof(ResubscribableAdviserStatus), candidate.AdviserStatusId);
         }
 
         private void PopulateWithCandidate(Candidate candidate)
