@@ -10,6 +10,39 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
 {
     public class TeacherTrainingAdviserSignUp
     {
+        public enum ResubscribableAdviserStatus
+        {
+            AcceptedIttOffer = 222750000,
+            AcceptedRttTeachingPosition = 222750004,
+            AlreadyHasQts = 222750005,
+            AskedToBeLeftAlone = 222750006,
+            IncorrectlyAllocated = 222750007,
+            NoLongerPursuingTeaching = 222750008,
+            DoesNotWantToTrainInEngland = 222750010,
+            FeHeRoute = 222750011,
+            IncompleteContactDetailsUnableToTraceFurther = 222750012,
+            MovedAbroad = 222750013,
+            ForeignQualificationsNotEquivalent = 222750014,
+            NoLongerPursuingTeachingDueToFinancialCircumstances = 222750015,
+            NoLongerPursuingTeachingDueToNewEmployment = 222750016,
+            NoLongerPursuingTeachingDueToPersonalCircumstances = 222750017,
+            NoLongerPursuingTeachingFollowingSchoolExperience = 222750018,
+            NoQts = 222750019,
+            NoResponseToContactFromAdviser = 222750020,
+            NonEligibleDegree = 222750021,
+            NotEligibleForFunding = 222750022,
+            NotEligibleForSupportFromAdviser = 222750023,
+            ReferredToTeachingOutsideOfEngland = 222750024,
+            NoRightToStudyInUkAndReceiveFunding = 222750025,
+            WantsToApplyInFutureIttYear = 222750026,
+            OfferedIttPlaceButNotTakingItUp = 222750027,
+            Unsuccessful = 222750029,
+            PostponingOrCancellingDueToCoronaVirusConcerns = 222750030,
+            AcceptedIttTeachingPosition = 222750031,
+            GainedIttPlaceBeforeAdviserAllocation = 222750034,
+            SubjectClosedThisAcademicYear = 222750035,
+        }
+
         public Guid? CandidateId { get; set; }
         public Guid? QualificationId { get; set; }
         public Guid? SubjectTaughtId { get; set; }
@@ -46,6 +79,8 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         public DateTime? PhoneCallScheduledAt { get; set; }
         [SwaggerSchema(ReadOnly = true)]
         public bool AlreadySubscribedToTeacherTrainingAdviser { get; set; }
+        [SwaggerSchema(ReadOnly = true)]
+        public bool CanSubscribeToTeacherTrainingAdviser { get; set; }
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
@@ -61,6 +96,21 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         public TeacherTrainingAdviserSignUp(Candidate candidate)
         {
             PopulateWithCandidate(candidate);
+        }
+
+        private static bool CanSubscribe(Candidate candidate)
+        {
+            if (!candidate.HasTeacherTrainingAdviser())
+            {
+                return true;
+            }
+
+            if (candidate.AdviserStatus == null)
+            {
+                return false;
+            }
+
+            return Enum.IsDefined(typeof(ResubscribableAdviserStatus), candidate.AdviserStatus);
         }
 
         private void PopulateWithCandidate(Candidate candidate)
@@ -97,6 +147,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
             TypeId = candidate.TypeId;
 
             AlreadySubscribedToTeacherTrainingAdviser = candidate.HasTeacherTrainingAdviser();
+            CanSubscribeToTeacherTrainingAdviser = CanSubscribe(candidate);
 
             var latestQualification = candidate.Qualifications.OrderByDescending(q => q.CreatedAt).FirstOrDefault();
 
