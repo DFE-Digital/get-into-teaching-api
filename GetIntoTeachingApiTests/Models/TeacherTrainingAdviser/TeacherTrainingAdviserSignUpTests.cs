@@ -106,6 +106,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             response.SubjectTaughtId.Should().Be(latestPastTeachingPosition.SubjectTaughtId);
 
             response.AlreadySubscribedToTeacherTrainingAdviser.Should().BeTrue();
+            response.CanSubscribeToTeacherTrainingAdviser.Should().BeFalse();
         }
 
         [Fact]
@@ -449,6 +450,24 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             };
 
             request.Candidate.PhoneCall.Telephone.Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData(true, (int)TeacherTrainingAdviserSignUp.ResubscribableAdviserStatus.NoLongerPursuingTeaching, true)]
+        [InlineData(false, -12345, true)]
+        [InlineData(true, null, false)]
+        [InlineData(false, null, true)]
+        [InlineData(true, -12345, false)]
+        public void CanSubscribeToTeacherTrainingAdviser_ReturnsCorrectly(bool hasAdviser, int? adviserStatus, bool expected)
+        {
+            var candidate = new Candidate() {
+                HasTeacherTrainingAdviserSubscription = hasAdviser,
+                AdviserStatus = adviserStatus
+            };
+
+            var response = new TeacherTrainingAdviserSignUp(candidate);
+
+            response.CanSubscribeToTeacherTrainingAdviser.Should().Be(expected);
         }
     }
 }
