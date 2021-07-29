@@ -147,6 +147,8 @@ namespace GetIntoTeachingApi.Models.Crm
         public int? GdprConsentId { get; set; }
         [EntityField("dfe_websitemltokenstatus", typeof(OptionSetValue))]
         public int? MagicLinkTokenStatusId { get; set; }
+        [EntityField("dfe_candidateadviserstatusreason", typeof(OptionSetValue))]
+        public int? AdviserStatus { get; set; }
         [EntityField("dfe_waitingtobeassigneddate")]
         public DateTime? StatusIsWaitingToBeAssignedAt { get; set; }
         [EntityField("merged")]
