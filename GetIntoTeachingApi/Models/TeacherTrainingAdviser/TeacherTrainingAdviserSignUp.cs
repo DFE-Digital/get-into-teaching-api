@@ -146,6 +146,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
             AddressCity = candidate.AddressCity;
             AddressPostcode = candidate.AddressPostcode;
             TypeId = candidate.TypeId;
+            AdviserStatusId = candidate.AdviserStatusId;
 
             AlreadySubscribedToTeacherTrainingAdviser = candidate.HasTeacherTrainingAdviser();
             CanSubscribeToTeacherTrainingAdviser = CanSubscribe(candidate);
@@ -204,6 +205,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                 PreferredContactMethodId = (int)Candidate.ContactMethod.Any,
                 GdprConsentId = (int)Candidate.GdprConsent.Consent,
                 OptOutOfGdpr = false,
+                AdviserStatusId = AdviserStatusId,
             };
 
             ConfigureChannel(candidate);
