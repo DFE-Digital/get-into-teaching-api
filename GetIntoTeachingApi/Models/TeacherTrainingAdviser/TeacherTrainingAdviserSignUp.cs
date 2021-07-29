@@ -146,7 +146,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
             AddressCity = candidate.AddressCity;
             AddressPostcode = candidate.AddressPostcode;
             TypeId = candidate.TypeId;
-            AdviserStatusId = candidate.AdviserStatusId;
 
             AlreadySubscribedToTeacherTrainingAdviser = candidate.HasTeacherTrainingAdviser();
             CanSubscribeToTeacherTrainingAdviser = CanSubscribe(candidate);
@@ -205,7 +204,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                 PreferredContactMethodId = (int)Candidate.ContactMethod.Any,
                 GdprConsentId = (int)Candidate.GdprConsent.Consent,
                 OptOutOfGdpr = false,
-                AdviserStatusId = AdviserStatusId,
             };
 
             ConfigureChannel(candidate);
@@ -217,9 +215,24 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
             SetAdviserEligibility(candidate);
             DefaultPreferredEducationPhase(candidate);
             DefaultPreferredTeachingSubjectId(candidate);
+            UpdateClosedAdviserStatus(candidate);
+
             SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate, DateTimeProvider.UtcNow);
 
             return candidate;
+        }
+
+        private void UpdateClosedAdviserStatus(Candidate candidate)
+        {
+            // Ignore if not a closed reason.
+            if (AdviserStatusId == null || !Enum.IsDefined(typeof(ResubscribableAdviserStatus), AdviserStatusId))
+            {
+                return;
+            }
+
+            candidate.AssignmentStatusId = (int)Candidate.AssignmentStatus.WaitingToBeAssigned;
+            candidate.RegistrationStatusId = (int)Candidate.RegistrationStatus.ReRegistered;
+            candidate.StatusIsWaitingToBeAssignedAt = DateTimeProvider.UtcNow;
         }
 
         private void ConfigureChannel(Candidate candidate)

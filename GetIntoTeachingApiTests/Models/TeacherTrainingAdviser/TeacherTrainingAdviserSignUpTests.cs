@@ -59,7 +59,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
                 PlanningToRetakeGcseEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 PlanningToRetakeGcseMathsId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 PlanningToRetakeGcseScienceId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
-                AdviserStatusId = (int)TeacherTrainingAdviserSignUp.ResubscribableAdviserStatus.AcceptedIttTeachingPosition,
+                AdviserStatusId = null,
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
@@ -87,7 +87,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             response.PlanningToRetakeGcseScienceId.Should().Be(candidate.PlanningToRetakeGcseScienceId);
             response.PlanningToRetakeGcseMathsAndEnglishId.Should().Be((int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking);
             response.TypeId.Should().Be((int)Candidate.Type.ReturningToTeacherTraining);
-            response.AdviserStatusId.Should().Be((int)TeacherTrainingAdviserSignUp.ResubscribableAdviserStatus.AcceptedIttTeachingPosition);
+            response.AdviserStatusId.Should().BeNull();
             response.Email.Should().Be(candidate.Email);
             response.FirstName.Should().Be(candidate.FirstName);
             response.LastName.Should().Be(candidate.LastName);
@@ -133,7 +133,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
                 HasGcseScienceId = 7,
                 PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 PlanningToRetakeGcseScienceId = 9,
-                AdviserStatusId = 10,
+                AdviserStatusId = null,
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
@@ -161,7 +161,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             candidate.PlanningToRetakeGcseEnglishId.Should().Equals(request.PlanningToRetakeGcseMathsAndEnglishId);
             candidate.PlanningToRetakeGcseMathsId.Should().Equals(request.PlanningToRetakeGcseMathsAndEnglishId);
             candidate.PlanningToRetakeGcseScienceId.Should().Equals(request.PlanningToRetakeGcseScienceId);
-            candidate.AdviserStatusId.Should().Equals(request.AdviserStatusId);
+            candidate.AdviserStatusId.Should().BeNull();
             candidate.AdviserRequirementId.Should().Be((int)Candidate.AdviserRequirement.Yes);
             candidate.AdviserEligibilityId.Should().Be((int)Candidate.AdviserEligibility.Yes);
             candidate.AssignmentStatusId.Should().Be((int)Candidate.AssignmentStatus.WaitingToBeAssigned);
@@ -189,6 +189,8 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             candidate.PreferredContactMethodId.Should().Be((int)Candidate.ContactMethod.Any);
             candidate.GdprConsentId.Should().Be((int)Candidate.GdprConsent.Consent);
             candidate.OptOutOfGdpr.Should().BeFalse();
+
+            candidate.RegistrationStatusId.Should().BeNull();
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
             candidate.PrivacyPolicy.AcceptedAt.Should().BeCloseTo(DateTime.UtcNow);
@@ -436,6 +438,16 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             var request = new TeacherTrainingAdviserSignUp() { AddressPostcode = "ky119yu" };
 
             request.Candidate.AddressPostcode.Should().Be("KY11 9YU");
+        }
+
+        [Fact]
+        public void Candidate_WithClosedAdviserStatusId_UpdatesAssignmentAndRegistrationStatus()
+        {
+            var request = new TeacherTrainingAdviserSignUp() { AdviserStatusId = (int)TeacherTrainingAdviserSignUp.ResubscribableAdviserStatus.AlreadyHasQts };
+
+            request.Candidate.AssignmentStatusId.Should().Be((int)Candidate.AssignmentStatus.WaitingToBeAssigned);
+            request.Candidate.RegistrationStatusId.Should().Be((int)Candidate.RegistrationStatus.ReRegistered);
+            request.Candidate.StatusIsWaitingToBeAssignedAt.Should().BeCloseTo(DateTime.UtcNow);
         }
 
         [Theory]
