@@ -96,15 +96,15 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void CreateAccessToken_CrmThrowsException_ReturnsNotFound()
+        public void CreateAccessToken_CrmThrowsException_LogsAndReRaises()
         {
             var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
             _mockCrm.Setup(m => m.MatchCandidate(request)).Throws(new Exception("Error"));
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
 
-            var response = _controller.CreateAccessToken(request);
-
-            response.Should().BeOfType<NotFoundResult>();
+            _controller.Invoking(c => c.CreateAccessToken(request))
+                .Should().Throw<Exception>()
+                .WithMessage("Error");
 
             _mockNotifyService.Verify(mock =>
                 mock.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, dynamic>>()),
