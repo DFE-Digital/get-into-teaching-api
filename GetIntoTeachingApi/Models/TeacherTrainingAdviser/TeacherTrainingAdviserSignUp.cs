@@ -61,7 +61,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         public int? HasGcseScienceId { get; set; }
         public int? PlanningToRetakeGcseMathsAndEnglishId { get; set; }
         public int? PlanningToRetakeGcseScienceId { get; set; }
-        public int? AdviserStatusId { get; set; }
 
         public string Email { get; set; }
         public string FirstName { get; set; }
@@ -106,12 +105,12 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                 return true;
             }
 
-            if (candidate.AdviserStatusId == null)
+            if (candidate.AdviserStatus == null)
             {
                 return false;
             }
 
-            return Enum.IsDefined(typeof(ResubscribableAdviserStatus), candidate.AdviserStatusId);
+            return Enum.IsDefined(typeof(ResubscribableAdviserStatus), candidate.AdviserStatus);
         }
 
         private void PopulateWithCandidate(Candidate candidate)
@@ -215,24 +214,9 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
             SetAdviserEligibility(candidate);
             DefaultPreferredEducationPhase(candidate);
             DefaultPreferredTeachingSubjectId(candidate);
-            UpdateClosedAdviserStatus(candidate);
-
             SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate, DateTimeProvider.UtcNow);
 
             return candidate;
-        }
-
-        private void UpdateClosedAdviserStatus(Candidate candidate)
-        {
-            // Ignore if not a closed reason.
-            if (AdviserStatusId == null || !Enum.IsDefined(typeof(ResubscribableAdviserStatus), AdviserStatusId))
-            {
-                return;
-            }
-
-            candidate.AssignmentStatusId = (int)Candidate.AssignmentStatus.WaitingToBeAssigned;
-            candidate.RegistrationStatusId = (int)Candidate.RegistrationStatus.ReRegistered;
-            candidate.StatusIsWaitingToBeAssignedAt = DateTimeProvider.UtcNow;
         }
 
         private void ConfigureChannel(Candidate candidate)
