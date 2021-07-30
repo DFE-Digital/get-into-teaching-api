@@ -23,7 +23,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
 		<PackageReference Include="morelinq" Version="3.3.2" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.7" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="5.0.7" />
@@ -48,7 +48,7 @@
 		<PackageReference Include="PropertyChanged.Fody" Version="3.4.0" PrivateAssets="All" />
 		<PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="2.1.2" />
 		<PackageReference Include="GovukNotify" Version="4.0.1" />
-		<PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="0.4.12" />
+		<PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="0.4.19" />
 		<PackageReference Include="Flurl.Http" Version="3.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="5.0.7" />
 		<PackageReference Include="AspNetCoreRateLimit.Redis" Version="1.0.0" />
