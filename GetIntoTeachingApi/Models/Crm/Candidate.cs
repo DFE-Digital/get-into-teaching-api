@@ -100,11 +100,6 @@ namespace GetIntoTeachingApi.Models.Crm
             Exchanged = 222750004,
         }
 
-        public enum RegistrationStatus
-        {
-            ReRegistered = 222750000,
-        }
-
         public string FullName => $"{FirstName} {LastName}".NullIfEmptyOrWhitespace();
         [EntityField("dfe_preferredteachingsubject01", typeof(EntityReference), "dfe_teachingsubjectlist")]
         public Guid? PreferredTeachingSubjectId { get; set; }
@@ -153,9 +148,7 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityField("dfe_websitemltokenstatus", typeof(OptionSetValue))]
         public int? MagicLinkTokenStatusId { get; set; }
         [EntityField("dfe_candidateadviserstatusreason", typeof(OptionSetValue))]
-        public int? AdviserStatusId { get; set; }
-        [EntityField("dfe_candidatereregisterstatus", typeof(OptionSetValue))]
-        public int? RegistrationStatusId { get; set; }
+        public int? AdviserStatus { get; set; }
         [EntityField("dfe_waitingtobeassigneddate")]
         public DateTime? StatusIsWaitingToBeAssignedAt { get; set; }
         [EntityField("merged")]
