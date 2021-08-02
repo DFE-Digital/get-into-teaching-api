@@ -27,6 +27,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public string LastName { get; set; }
         public string AddressPostcode { get; set; }
         public string AddressTelephone { get; set; }
+        public bool IsWalkIn { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public bool SubscribeToMailingList { get; set; }
         [SwaggerSchema(ReadOnly = true)]
