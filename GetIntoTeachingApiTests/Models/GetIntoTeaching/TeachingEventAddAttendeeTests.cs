@@ -79,6 +79,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
                 AddressTelephone = "1234567",
                 AddressPostcode = "KY11 9YU",
                 SubscribeToMailingList = true,
+                IsWalkIn = false,
             };
 
             var candidate = request.Candidate;
@@ -191,6 +192,14 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
             var request = new TeachingEventAddAttendee() { AddressPostcode = "ky119yu" };
 
             request.Candidate.AddressPostcode.Should().Be("KY11 9YU");
+        }
+
+        [Fact]
+        public void Candidate_WhenWalkIn_HasCorrectChannel()
+        {
+            var request = new TeachingEventAddAttendee() { IsWalkIn = true, EventId = Guid.NewGuid() };
+
+            request.Candidate.TeachingEventRegistrations.First().ChannelId.Should().Be((int)TeachingEventRegistration.Channel.EventWalkIn);
         }
     }
 }

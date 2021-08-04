@@ -13,6 +13,7 @@ namespace GetIntoTeachingApi.Models.Crm
         public enum Channel
         {
             Event = 222750003,
+            EventWalkIn = 222750004,
         }
 
         [EntityField("msevtmgt_contactid", typeof(EntityReference), "contact")]
