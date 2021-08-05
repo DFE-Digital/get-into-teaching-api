@@ -59,7 +59,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
                 PlanningToRetakeGcseEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 PlanningToRetakeGcseMathsId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 PlanningToRetakeGcseScienceId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
-                AdviserStatusId = null,
+                AdviserStatusId = (int)TeacherTrainingAdviserSignUp.ResubscribableAdviserStatus.AcceptedIttOffer,
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
@@ -87,7 +87,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             response.PlanningToRetakeGcseScienceId.Should().Be(candidate.PlanningToRetakeGcseScienceId);
             response.PlanningToRetakeGcseMathsAndEnglishId.Should().Be((int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking);
             response.TypeId.Should().Be((int)Candidate.Type.ReturningToTeacherTraining);
-            response.AdviserStatusId.Should().BeNull();
+            response.AdviserStatusId.Should().Be((int)TeacherTrainingAdviserSignUp.ResubscribableAdviserStatus.AcceptedIttOffer);
             response.Email.Should().Be(candidate.Email);
             response.FirstName.Should().Be(candidate.FirstName);
             response.LastName.Should().Be(candidate.LastName);
@@ -108,7 +108,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             response.SubjectTaughtId.Should().Be(latestPastTeachingPosition.SubjectTaughtId);
 
             response.AlreadySubscribedToTeacherTrainingAdviser.Should().BeTrue();
-            response.CanSubscribeToTeacherTrainingAdviser.Should().BeFalse();
+            response.CanSubscribeToTeacherTrainingAdviser.Should().BeTrue();
         }
 
         [Fact]
