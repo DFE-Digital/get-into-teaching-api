@@ -152,7 +152,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                 candidate.TeachingEventRegistrations.Add(new TeachingEventRegistration()
                 {
                     EventId = (Guid)EventId,
-                    ChannelId = (int)TeachingEventRegistration.Channel.Event,
+                    ChannelId = IsWalkIn ? (int)TeachingEventRegistration.Channel.EventWalkIn : (int)TeachingEventRegistration.Channel.Event,
                     IsCancelled = false,
                     RegistrationNotificationSeen = false,
                 });
