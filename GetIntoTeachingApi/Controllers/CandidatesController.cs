@@ -63,7 +63,7 @@ namespace GetIntoTeachingApi.Controllers
                 return NotFound();
             }
 
-            Candidate candidate = null;
+            Candidate candidate;
 
             try
             {
@@ -71,8 +71,8 @@ namespace GetIntoTeachingApi.Controllers
             }
             catch (Exception e)
             {
-                SentrySdk.CaptureException(e);
                 _logger.LogInformation($"CandidatesController - potential duplicate (CRM exception) - {e.Message}");
+                throw;
             }
 
             if (candidate == null)
