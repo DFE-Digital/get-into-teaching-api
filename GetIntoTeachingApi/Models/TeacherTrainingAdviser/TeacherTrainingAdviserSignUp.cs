@@ -146,6 +146,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
             AddressCity = candidate.AddressCity;
             AddressPostcode = candidate.AddressPostcode;
             TypeId = candidate.TypeId;
+            AdviserStatusId = candidate.AdviserStatusId;
 
             AlreadySubscribedToTeacherTrainingAdviser = candidate.HasTeacherTrainingAdviser();
             CanSubscribeToTeacherTrainingAdviser = CanSubscribe(candidate);
