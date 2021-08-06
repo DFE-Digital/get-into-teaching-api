@@ -30,8 +30,3 @@
   description: "A service that allows candidates to book school experience"
   api_key_prefix: SE
   role: SchoolsExperience
--
-  name: Penetration Test
-  description: "A cient for external pen testers (access to dev/test only)"
-  api_key_prefix: PT
-  role: Admin
