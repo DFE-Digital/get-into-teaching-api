@@ -79,8 +79,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         [SwaggerSchema(WriteOnly = true)]
         public DateTime? PhoneCallScheduledAt { get; set; }
         [SwaggerSchema(ReadOnly = true)]
-        public bool AlreadySubscribedToTeacherTrainingAdviser { get; set; }
-        [SwaggerSchema(ReadOnly = true)]
         public bool CanSubscribeToTeacherTrainingAdviser { get; set; }
 
         [JsonIgnore]
@@ -148,7 +146,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
             TypeId = candidate.TypeId;
             AdviserStatusId = candidate.AdviserStatusId;
 
-            AlreadySubscribedToTeacherTrainingAdviser = candidate.HasTeacherTrainingAdviser();
             CanSubscribeToTeacherTrainingAdviser = CanSubscribe(candidate);
 
             var latestQualification = candidate.Qualifications.OrderByDescending(q => q.CreatedAt).FirstOrDefault();
