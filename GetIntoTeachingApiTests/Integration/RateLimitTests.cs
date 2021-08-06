@@ -23,6 +23,7 @@ namespace GetIntoTeachingApiTests.Integration
             Environment.SetEnvironmentVariable($"ADMIN_API_KEY", "admin-secret");
             Environment.SetEnvironmentVariable($"TTA_API_KEY", "tta-secret");
             Environment.SetEnvironmentVariable($"SE_API_KEY", "se-secret");
+            Environment.SetEnvironmentVariable($"ADMIN_API_KEY", "admin-secret");
 
             var factory = new GitWebApplicationFactory<Startup>();
             _httpClient = factory.CreateClient();
@@ -39,6 +40,13 @@ namespace GetIntoTeachingApiTests.Integration
         [InlineData("/api/teacher_training_adviser/candidates", "TTA", 250)]
         [InlineData("/api/candidates/access_tokens", "SE", 500)]
         [InlineData("/api/schools_experience/candidates", "SE", 250)]
+        [InlineData("/api/candidates/access_tokens", "ADMIN", 60)]
+        [InlineData("/api/mailing_list/members", "ADMIN", 60)]
+        [InlineData("/api/teaching_events/attendees", "ADMIN", 60)]
+        [InlineData("/api/teaching_events", "ADMIN", 60)]
+        [InlineData("/api/get_into_teaching/callbacks", "ADMIN", 60)]
+        [InlineData("/api/teacher_training_adviser/candidates", "ADMIN", 60)]
+        [InlineData("/api/schools_experience/candidates", "ADMIN", 60)]
         public async Task Post_Endpoint_AppliesRateLimit(string path, string client, int limit)
         {
             var apiKey = $"{client.ToLower()}-secret";
