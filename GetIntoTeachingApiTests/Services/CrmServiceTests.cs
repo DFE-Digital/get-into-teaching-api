@@ -350,6 +350,16 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void GetCandidates_WithNoIds_ReturnsEmpty()
+        {
+            var ids = Array.Empty<Guid>();
+
+            var result = _crm.GetCandidates(ids);
+
+            result.Should().BeEmpty();
+        }
+
+        [Fact]
         public void GetCandidates_WithIds_ReturnsCorrectly()
         {
             var ids = new Guid[] { JaneDoeGuid, JohnDoeGuid };

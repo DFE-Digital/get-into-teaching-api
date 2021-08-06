@@ -152,6 +152,11 @@ namespace GetIntoTeachingApi.Services
 
         public IEnumerable<Candidate> GetCandidates(IEnumerable<Guid> ids)
         {
+            if (!ids.Any())
+            {
+                return Array.Empty<Candidate>();
+            }
+
             var query = new QueryExpression("contact");
             query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
 
