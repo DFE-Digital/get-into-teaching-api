@@ -117,6 +117,8 @@ namespace GetIntoTeachingApi.AppStart
 
             app.UseAuthorization();
 
+            ResponseHeaders.SetupSecureHeaders(app);
+
             DatabaseUtility.Migrate(serviceScope, _env);
 
             if (!_env.IsTest)
