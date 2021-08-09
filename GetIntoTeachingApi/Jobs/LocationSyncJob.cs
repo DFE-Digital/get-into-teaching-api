@@ -149,13 +149,18 @@ namespace GetIntoTeachingApi.Jobs
 
             try
             {
+                ZipFileChecker.AssureNoBombs(zipPath);
                 ZipFile.ExtractToDirectory(zipPath, csvPath);
-                _logger.LogInformation($"LocationSyncJob - CSV Extracted");
+                _logger.LogInformation("LocationSyncJob - CSV Extracted");
+            }
+            catch (BombFoundException bombFoundException)
+            {
+                _logger.LogError($"LocationSyncJob - Zip bomb found: ${bombFoundException}");
             }
             finally
             {
                 File.Delete(zipPath);
-                _logger.LogInformation($"LocationSyncJob - ZIP Deleted");
+                _logger.LogInformation("LocationSyncJob - ZIP Deleted");
             }
 
             return Path.Combine(csvPath, UkPostcodeCsvFilename);
