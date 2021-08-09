@@ -40,6 +40,8 @@ namespace GetIntoTeachingApiTests.Contracts
         [ContractTestInputs("./Contracts/Input/TeacherTrainingAdviser")]
         public async void Contract(string scenario)
         {
+            await FlushState();
+
             var filename = $"{scenario.Replace(" ", "_")}.json";
 
             await SeedDatabase();
@@ -128,8 +130,26 @@ namespace GetIntoTeachingApiTests.Contracts
 
             await DbContext.SaveChangesAsync();
         }
+        
+        private async Task FlushState()
+        {
+            ClearJobQueue();
+            await WaitForAllJobsToComplete();
+            _factory.ContractOrganizationServiceAdapter.TrackedEntities.Clear();
+        }
 
-        private async Task WaitForAllJobsToComplete()
+        private static void ClearJobQueue()
+        {
+            var monitoringApi = JobStorage.Current.GetMonitoringApi();
+            var queues = monitoringApi.Queues();
+
+            foreach (var queue in queues)
+            {
+                monitoringApi.EnqueuedJobs(queue.Name, 0, int.MaxValue).ForEach(t => BackgroundJob.Delete(t.Key));
+            }
+        }
+
+        private static async Task WaitForAllJobsToComplete()
         {
             var allJobsComplete = false;
             var timeWaited = 0;
