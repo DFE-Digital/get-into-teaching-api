@@ -20,6 +20,7 @@ namespace GetIntoTeachingApi
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseSentry();
+                    webBuilder.UseKestrel(opts => opts.AddServerHeader = false);
                     webBuilder.UseStartup<Startup>();
                 });
     }
