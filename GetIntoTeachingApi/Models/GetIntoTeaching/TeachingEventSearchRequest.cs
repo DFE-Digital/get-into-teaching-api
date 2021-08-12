@@ -11,7 +11,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         [SwaggerSchema("Set to filter results to a radius (in miles) around the postcode.")]
         public int? Radius { get; set; }
         [SwaggerSchema("Set to filter results to a type of teaching event. Must match an `typeId` of the `TeachingEvent` schema.")]
-        public int? TypeId { get; set; }
+        public int[] TypeIds { get; set; }
         [SwaggerSchema("Set to filter results to those that start after a given date.")]
         public DateTime? StartAfter { get; set; }
         [SwaggerSchema("Set to filter results to those that start before a given date.")]

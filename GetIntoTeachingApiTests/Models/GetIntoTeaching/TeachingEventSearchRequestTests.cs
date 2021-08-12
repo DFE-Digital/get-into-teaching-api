@@ -21,11 +21,11 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         [Fact]
         public void Clone_WithBlock_ClonesAndCallsBlock()
         {
-            var request = new TeachingEventSearchRequest() { Radius = 10, TypeId = 123 };
+            var request = new TeachingEventSearchRequest() { Radius = 10, TypeIds = new int[] { 123 } };
             var clone = request.Clone((te) => te.Radius = 100);
 
             clone.Radius.Should().Be(100);
-            clone.TypeId.Should().Be(request.TypeId);
+            clone.TypeIds.Should().BeEquivalentTo(request.TypeIds);
         }
 
         [Fact]
