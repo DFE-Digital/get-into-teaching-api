@@ -91,9 +91,10 @@ namespace GetIntoTeachingApi.Services
                 .Include(te => te.Building)
                 .OrderBy(te => te.StartAt);
 
-            if (request.TypeId != null)
+            if (request.TypeIds != null)
             {
-                teachingEvents = teachingEvents.Where(te => te.TypeId == request.TypeId);
+                teachingEvents = teachingEvents.Where(te =>
+                    request.TypeIds.Contains(te.TypeId));
             }
 
             if (request.StartAfter != null)

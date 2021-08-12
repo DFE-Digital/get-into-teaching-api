@@ -35,7 +35,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
             {
                 Postcode = "KY11 9HF",
                 Radius = 10,
-                TypeId = mockPickListItem.Id,
+                TypeIds = new int[] { mockPickListItem.Id },
                 StartAfter = DateTime.UtcNow.AddDays(-1),
                 StartBefore = DateTime.UtcNow.AddDays(1)
             };
@@ -102,15 +102,17 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         }
 
         [Fact]
-        public void Validate_TypeIdIsInvalid_HasError()
+        public void Validate_TypeIdsAreInvalid_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.TypeId, 123);
+            _validator
+                .ShouldHaveValidationErrorFor(request => request.TypeIds, new int[] { 123 })
+                .WithErrorMessage("Type Ids must be valid msevtmgt_event/dfe_event_type items.");
         }
 
         [Fact]
         public void Validate_TypeIdIsNull_HasNoError()
         {
-            _validator.ShouldNotHaveValidationErrorFor(request => request.TypeId, null as int?);
+            _validator.ShouldNotHaveValidationErrorFor(request => request.TypeIds, null as int[]);
         }
 
         [Fact]

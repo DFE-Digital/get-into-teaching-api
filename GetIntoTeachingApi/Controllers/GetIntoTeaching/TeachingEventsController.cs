@@ -78,13 +78,19 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
 
             var teachingEvents = await _store.SearchTeachingEventsAsync(request);
 
+            // TODO: Fix. Prometheus can only be passed two labels currently. Don't know how we would want to handle multiple type IDs.
+            List<string> labels = new ();
+            var typeIds = request.TypeIds?.Select(id => id.ToString());
+            labels.Add(typeIds == null ? string.Empty : typeIds.First());
+            labels.Add(request.Radius.ToString());
+
             _metrics.TeachingEventSearchResults
-                .WithLabels(request.TypeId.ToString(), request.Radius.ToString())
+                .WithLabels(labels.ToArray())
                 .Observe(teachingEvents.Count());
 
             var inPesonTeachingEvents = teachingEvents.Where(e => e.IsInPerson);
             _metrics.InPersonTeachingEventResults
-                .WithLabels(request.TypeId.ToString(), request.Radius.ToString())
+                .WithLabels(labels.ToArray())
                 .Observe(inPesonTeachingEvents.Count());
 
             return Ok(GroupTeachingEventsByType(teachingEvents, quantityPerType));
