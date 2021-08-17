@@ -20,8 +20,9 @@ namespace GetIntoTeachingApiTests.Contracts
     [Collection("Database")]
     public class TeacherTrainingAdviserTests : DatabaseTests
     {
-        private static readonly int maxWaitDuration = 600000;
+        private static readonly int maxWaitDurationInSeconds = 60;
         private static readonly int waitInterval = 200;
+        private static readonly int VerifyChallenges = 3;
         private readonly HttpClient _httpClient;
         private readonly ContractTestGitWebApplicationFactory<Startup> _factory;
 
@@ -151,19 +152,52 @@ namespace GetIntoTeachingApiTests.Contracts
 
         private static async Task WaitForAllJobsToComplete()
         {
-            var allJobsComplete = false;
-            var timeWaited = 0;
+            var startWaitTime = DateTime.UtcNow;
 
-            while (!allJobsComplete)
+            while (!await VerifyJobsAreComplete())
             {
                 await Task.Delay(waitInterval);
 
-                var jobStats = JobStorage.Current.GetMonitoringApi().GetStatistics();
-                allJobsComplete = jobStats.Enqueued + jobStats.Processing == 0;
-
-                timeWaited += waitInterval;
-                timeWaited.Should().BeLessOrEqualTo(maxWaitDuration);
+                (DateTime.UtcNow - startWaitTime).TotalSeconds.Should().BeLessOrEqualTo(maxWaitDurationInSeconds);
             }
+        }
+
+        /*
+         * As we have multiple jobs - and jobs that spawn other jobs - we need
+         * to be certain all jobs have been scheduled and are complete before continuing.
+         * 
+         * If there are pending/enqueued jobs we can immediately return false (and the calling code
+         * is expected to wait a short period before checking again).
+         * 
+         * If there are no pending/enqueued jobs we need to perform repeat, delayed checks
+         * as one may be in the process of being queued (asynchronously). If after multiple checks
+         * there are still no pending/enqueued jobs it should be safe to assume they're all finished.
+         */
+        private async static Task<bool> VerifyJobsAreComplete()
+        {
+            if (JobsPending())
+            {
+                return false;
+            }
+
+            for (var attmept = 0; attmept < VerifyChallenges; attmept++)
+            {
+                await Task.Delay(waitInterval);
+
+                if (JobsPending())
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool JobsPending()
+        {
+            var jobStats = JobStorage.Current.GetMonitoringApi().GetStatistics();
+
+            return jobStats.Enqueued + jobStats.Processing != 0;
         }
 
         private async Task SeedPrivacyPolicy()
