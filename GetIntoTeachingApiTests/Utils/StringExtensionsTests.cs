@@ -52,5 +52,14 @@ namespace GetIntoTeachingApiTests.Utils
         {
             input.AsFormattedTelephone(international).Should().Be(expected);
         }
+
+        [Theory]
+        [InlineData("one_two_three", "OneTwoThree")]
+        [InlineData("ONE_TWO_THREE", "OneTwoThree")]
+        [InlineData("One Two Three", "OneTwoThree")]
+        public void ToPascalCase_IsConvertedCorrectly(string input, string expected)
+        {
+            input.ToPascalCase().Should().Be(expected);
+        }
     }
 }
