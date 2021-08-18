@@ -242,6 +242,8 @@ namespace GetIntoTeachingApi.Services
             await SyncPickListItem("contact", "dfe_isadvisorrequiredos");
             await SyncPickListItem("contact", "dfe_gitismlservicesubscriptionchannel");
             await SyncPickListItem("contact", "dfe_gitiseventsservicesubscriptionchannel");
+            await SyncPickListItem("contact", "dfe_candidateapplystatus");
+            await SyncPickListItem("contact", "dfe_candidateapplyphase");
             await SyncPickListItem("dfe_candidatequalification", "dfe_degreestatus");
             await SyncPickListItem("dfe_candidatequalification", "dfe_ukdegreegrade");
             await SyncPickListItem("dfe_candidatequalification", "dfe_type");
@@ -251,6 +253,7 @@ namespace GetIntoTeachingApi.Services
             await SyncPickListItem("msevtmgt_eventregistration", "dfe_channelcreation");
             await SyncPickListItem("phonecall", "dfe_channelcreation");
             await SyncPickListItem("dfe_servicesubscription", "dfe_servicesubscriptiontype");
+            await SyncPickListItem("dfe_applyapplicationform", "dfe_candidateapplyphase");
         }
 
         private async Task SyncModels<T>(IEnumerable<T> models, IQueryable<T> dbSet)
