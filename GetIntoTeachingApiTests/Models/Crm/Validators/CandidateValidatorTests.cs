@@ -73,6 +73,12 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_isadvisorrequiredos"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_candidateapplystatus"))
+                .Returns(new[] { mockPickListItem }.AsQueryable());
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_candidateapplyphase"))
+                .Returns(new[] { mockPickListItem }.AsQueryable());
+            _mockStore
                 .Setup(mock => mock.GetPrivacyPolicies())
                 .Returns(new[] { mockPrivacyPolicy }.AsQueryable());
 
@@ -111,6 +117,8 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 ChannelId = mockPickListItem.Id,
                 MailingListSubscriptionChannelId = mockPickListItem.Id,
                 EventsSubscriptionChannelId = mockPickListItem.Id,
+                FindApplyPhaseId = mockPickListItem.Id,
+                FindApplyStatusId = mockPickListItem.Id,
                 PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id }
             };
 
@@ -659,6 +667,18 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         public void Validate_ClassroomExperienceNotesRawIsTooLong_HasError()
         {
             _validator.ShouldHaveValidationErrorFor(candidate => candidate.ClassroomExperienceNotesRaw, new string('a', 10001));
+        }
+
+        [Fact]
+        public void Validate_FindApplyPhaseIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.FindApplyPhaseId, 123);
+        }
+
+        [Fact]
+        public void Validate_FindApplyStatusIdIsInvalid_HasError()
+        {
+            _validator.ShouldHaveValidationErrorFor(candidate => candidate.FindApplyStatusId, 123);
         }
     }
 }
