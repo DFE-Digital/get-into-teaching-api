@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
 using GetIntoTeachingApi.Models;
 
 namespace GetIntoTeachingApi.Utils
@@ -47,6 +48,13 @@ namespace GetIntoTeachingApi.Utils
         public static string NullIfEmptyOrWhitespace(this string str)
         {
             return string.IsNullOrWhiteSpace(str) ? null : str;
+        }
+
+        public static string ToPascalCase(this string str)
+        {
+            str = str.ToLower().Replace("_", " ");
+            var info = CultureInfo.CurrentCulture.TextInfo;
+            return info.ToTitleCase(str).Replace(" ", string.Empty);
         }
     }
 }
