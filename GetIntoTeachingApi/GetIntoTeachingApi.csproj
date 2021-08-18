@@ -48,7 +48,7 @@
 		<PackageReference Include="PropertyChanged.Fody" Version="3.4.0" PrivateAssets="All" />
 		<PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="2.1.2" />
 		<PackageReference Include="GovukNotify" Version="4.0.1" />
-		<PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="0.4.12" />
+		<PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="0.4.21" />
 		<PackageReference Include="Flurl.Http" Version="3.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="5.0.7" />
 		<PackageReference Include="AspNetCoreRateLimit.Redis" Version="1.0.0" />
