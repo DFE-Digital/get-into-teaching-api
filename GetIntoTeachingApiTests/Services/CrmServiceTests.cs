@@ -214,6 +214,30 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void GetApplicationForm_WithExistingFindApplyId_ReturnsMatchingForm()
+        {
+            var findApplyId = "12345";
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyGetApplicationFormQueryExpression(q, findApplyId)))).Returns(MockApplicationForms());
+
+            var result = _crm.GetApplicationForm(findApplyId);
+
+            result.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void GetApplicationForm_WithUnknownFindApplyId_ReturnsNull()
+        {
+            var findApplyId = "12345";
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyGetApplicationFormQueryExpression(q, findApplyId)))).Returns(Array.Empty<Entity>());
+
+            var result = _crm.GetApplicationForm(findApplyId);
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
         public void GetPrivacyPolicies_Returns3MostRecentActiveWebPrivacyPolicies()
         {
             var queryablePrivacyPolicies = MockPrivacyPolicies();
@@ -431,6 +455,17 @@ namespace GetIntoTeachingApiTests.Services
             var hasLimit = query.TopCount == limit;
 
             return hasEntityName && hasPendingCondition && hasLimit;
+        }
+
+        private static bool VerifyGetApplicationFormQueryExpression(QueryExpression query, string findApplyId)
+        {
+            var hasEntityName = query.EntityName == "dfe_applyapplicationform";
+            var conditions = query.Criteria.Conditions;
+
+            var hasFindApplyIdCondition = conditions.Where(c => c.AttributeName == "dfe_applicationformid" &&
+                c.Operator == ConditionOperator.Equal && c.Values.FirstOrDefault().ToString() == findApplyId).Any();
+
+            return hasEntityName && hasFindApplyIdCondition;
         }
 
         private static bool VerifyGetCandidatesQueryExpression(QueryExpression query, IEnumerable<Guid> ids)
@@ -827,6 +862,21 @@ namespace GetIntoTeachingApiTests.Services
                 candidate5,
                 candidate6,
                 candidate7
+            }.AsQueryable();
+        }
+
+        private static IQueryable<Entity> MockApplicationForms()
+        {
+            var form1 = new Entity("dfe_applyapplicationform")
+            {
+                Id = Guid.NewGuid()
+            };
+            form1["dfe_createdon"] = DateTime.UtcNow;
+            form1["dfe_modifiedon"] = DateTime.UtcNow;
+
+            return new[]
+            {
+                form1
             }.AsQueryable();
         }
 
