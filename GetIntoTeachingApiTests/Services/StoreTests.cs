@@ -56,8 +56,7 @@ namespace GetIntoTeachingApiTests.Services
             var countBefore = DbContext.PrivacyPolicies.Count();
             _mockCrm.Setup(m => m.GetPrivacyPolicies()).Throws<Exception>();
 
-            _store.Invoking(s => s.SyncAsync())
-                .Should().Throw<Exception>();
+            await _store.Awaiting(s => s.SyncAsync()).Should().ThrowAsync<Exception>();
 
             var countAfter = DbContext.PrivacyPolicies.Count();
             countBefore.Should().BeGreaterThan(0);
@@ -659,7 +658,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             var afterDate = DateTime.UtcNow.Subtract(Store.TeachingEventArchiveSize);
 
-            date.Should().BeCloseTo(afterDate);
+            date.Should().BeCloseTo(afterDate, TimeSpan.FromSeconds(30));
 
             return true;
         }

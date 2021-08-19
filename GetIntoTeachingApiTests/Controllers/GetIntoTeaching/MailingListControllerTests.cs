@@ -140,7 +140,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
-            errors.Should().ContainKey("FirstName").WhichValue.Should().BeOfType<string[]>().Which.Should().Contain("First name must be specified.");
+            errors.Should().ContainKey("FirstName").WhoseValue.Should().BeOfType<string[]>().Which.Should().Contain("First name must be specified.");
         }
 
         [Fact]

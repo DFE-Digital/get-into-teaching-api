@@ -192,7 +192,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             candidate.RegistrationStatusId.Should().BeNull();
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
-            candidate.PrivacyPolicy.AcceptedAt.Should().BeCloseTo(DateTime.UtcNow);
+            candidate.PrivacyPolicy.AcceptedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(30));
 
             candidate.PhoneCall.ScheduledAt.Should().Be((DateTime)request.PhoneCallScheduledAt);
             candidate.PhoneCall.Telephone.Should().Be("00" + request.AddressTelephone);
@@ -416,7 +416,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             request.Candidate.AssignmentStatusId.Should().Be((int)Candidate.AssignmentStatus.WaitingToBeAssigned);
             request.Candidate.AdviserEligibilityId.Should().Be((int)Candidate.AdviserEligibility.Yes);
             request.Candidate.AdviserRequirementId.Should().Be((int)Candidate.AdviserRequirement.Yes);
-            request.Candidate.StatusIsWaitingToBeAssignedAt.Should().BeCloseTo(DateTime.UtcNow);
+            request.Candidate.StatusIsWaitingToBeAssignedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(30));
         }
 
         [Fact]
@@ -446,7 +446,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
 
             request.Candidate.AssignmentStatusId.Should().Be((int)Candidate.AssignmentStatus.WaitingToBeAssigned);
             request.Candidate.RegistrationStatusId.Should().Be((int)Candidate.RegistrationStatus.ReRegistered);
-            request.Candidate.StatusIsWaitingToBeAssignedAt.Should().BeCloseTo(DateTime.UtcNow);
+            request.Candidate.StatusIsWaitingToBeAssignedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(30));
         }
 
         [Theory]
