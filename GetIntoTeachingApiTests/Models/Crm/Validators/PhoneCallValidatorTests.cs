@@ -45,13 +45,9 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         [Fact]
         public void Validate_ChannelIdIsInvalid_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(phoneCall => phoneCall.ChannelId, 123);
-        }
+            var result = _validator.TestValidate(new PhoneCall() { ChannelId = 123 });
 
-        [Fact]
-        public void Validate_ChannelIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(phoneCall => phoneCall.ChannelId, null as int?);
+            result.ShouldHaveValidationErrorFor(r => r.ChannelId);
         }
     }
 }

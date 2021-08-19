@@ -49,7 +49,9 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         [Fact]
         public void Validate_EventIdIsInvalid_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(registration => registration.EventId, Guid.NewGuid());
+            var result = _validator.TestValidate(new TeachingEventRegistration() { EventId = Guid.NewGuid() });
+
+            result.ShouldHaveValidationErrorFor(r => r.EventId);
         }
 
         [Fact]
@@ -82,7 +84,9 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         [Fact]
         public void Validate_ChannelIdIsInvalid_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(registration => registration.ChannelId, 123);
+            var result = _validator.TestValidate(new TeachingEventRegistration() { ChannelId = 123 });
+
+            result.ShouldHaveValidationErrorFor(r => r.ChannelId);
         }
 
         [Fact]

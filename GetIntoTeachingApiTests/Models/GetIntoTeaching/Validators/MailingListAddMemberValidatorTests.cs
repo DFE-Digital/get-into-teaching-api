@@ -65,51 +65,27 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         }
 
         [Fact]
-        public void Validate_FirstNameIsNull_HasError()
+        public void Validate_RequiredFieldsWhenNull_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.FirstName, null as string);
-        }
+            var member = new MailingListAddMember()
+            {
+                FirstName = null,
+                LastName = null,
+                Email = null,
+                AcceptedPolicyId = null,
+                ConsiderationJourneyStageId = null,
+                DegreeStatusId = null,
+                PreferredTeachingSubjectId = null,
+            };
+            var result = _validator.TestValidate(member);
 
-        [Fact]
-        public void Validate_LastNameIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.LastName, null as string);
-        }
-
-        [Fact]
-        public void Validate_EmailIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.Email, null as string);
-        }
-
-        [Fact]
-        public void Validate_AddressPostcodeIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(request => request.AddressPostcode, null as string);
-        }
-
-        [Fact]
-        public void Validate_AcceptedPolicyIdIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.AcceptedPolicyId, null as Guid?);
-        }
-
-        [Fact]
-        public void Validate_ConsiderationJourneyStageIdIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.ConsiderationJourneyStageId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_DegreeStatusIdIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.DegreeStatusId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_PreferredTeachingSubjectIdIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.PreferredTeachingSubjectId, null as Guid?);
+            result.ShouldHaveValidationErrorFor(m => m.FirstName);
+            result.ShouldHaveValidationErrorFor(m => m.LastName);
+            result.ShouldHaveValidationErrorFor(m => m.Email);
+            result.ShouldHaveValidationErrorFor(m => m.AcceptedPolicyId);
+            result.ShouldHaveValidationErrorFor(m => m.ConsiderationJourneyStageId);
+            result.ShouldHaveValidationErrorFor(m => m.DegreeStatusId);
+            result.ShouldHaveValidationErrorFor(m => m.PreferredTeachingSubjectId);
         }
     }
 }
