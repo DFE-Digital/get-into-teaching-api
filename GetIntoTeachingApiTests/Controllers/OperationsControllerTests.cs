@@ -141,7 +141,7 @@ namespace GetIntoTeachingApiTests.Controllers
 
         private static bool VerifyDateIsCloseTo(DateTime date, DateTime closeToDate)
         {
-            date.Should().BeCloseTo(closeToDate);
+            date.Should().BeCloseTo(closeToDate, TimeSpan.FromSeconds(30));
 
             return true;
         }
