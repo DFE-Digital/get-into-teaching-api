@@ -38,9 +38,15 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [InlineData("KE _Y")]
         [InlineData("_KEY")]
         [InlineData("KEY_")]
+        [InlineData("")]
+        [InlineData("  ")]
+        [InlineData(null)]
         public void Validate_ApiKeyPrefixInvalidFormat_HasErrors(string value)
         {
-            _validator.ShouldHaveValidationErrorFor(client => client.ApiKeyPrefix, value);
+            var request = new Client() { ApiKeyPrefix = value };
+            var result = _validator.TestValidate(request);
+
+            result.ShouldHaveValidationErrorFor(c => c.ApiKeyPrefix);
         }
 
         [Theory]
@@ -51,7 +57,10 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [InlineData("KEY_KEY_KEY")]
         public void Validate_ApiKeyPrefixValidFormat_HasNoErrors(string value)
         {
-            _validator.ShouldNotHaveValidationErrorFor(client => client.ApiKeyPrefix, value);
+            var request = new Client() { ApiKeyPrefix = value };
+            var result = _validator.TestValidate(request);
+
+            result.ShouldNotHaveValidationErrorFor(c => c.ApiKeyPrefix);
         }
 
         [Theory]
@@ -60,9 +69,15 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [InlineData("Admin Role")]
         [InlineData("Admin_Role")]
         [InlineData("admin_role")]
+        [InlineData("")]
+        [InlineData("  ")]
+        [InlineData(null)]
         public void Validate_RoleInvalidFormat_HasErrors(string value)
         {
-            _validator.ShouldHaveValidationErrorFor(client => client.Role, value);
+            var request = new Client() { Role = value };
+            var result = _validator.TestValidate(request);
+
+            result.ShouldHaveValidationErrorFor(c => c.Role);
         }
 
         [Theory]
@@ -70,7 +85,10 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [InlineData("AdminRole")]
         public void Validate_RoleValidFormat_HasNoErrors(string value)
         {
-            _validator.ShouldNotHaveValidationErrorFor(client => client.Role, value);
+            var request = new Client() { Role = value };
+            var result = _validator.TestValidate(request);
+
+            result.ShouldNotHaveValidationErrorFor(c => c.Role);
         }
 
         [Theory]
@@ -79,7 +97,10 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [InlineData(null)]
         public void Validate_InvalidName_HasError(string value)
         {
-            _validator.ShouldHaveValidationErrorFor(client => client.Name, value);
+            var request = new Client() { Name = value };
+            var result = _validator.TestValidate(request);
+
+            result.ShouldHaveValidationErrorFor(c => c.Name);
         }
 
         [Theory]
@@ -88,25 +109,10 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [InlineData(null)]
         public void Validate_InvalidDescription_HasError(string value)
         {
-            _validator.ShouldHaveValidationErrorFor(client => client.Description, value);
-        }
+            var request = new Client() { Description = value };
+            var result = _validator.TestValidate(request);
 
-        [Theory]
-        [InlineData("")]
-        [InlineData("  ")]
-        [InlineData(null)]
-        public void Validate_InvalidApiKeyPrefixHasError(string value)
-        {
-            _validator.ShouldHaveValidationErrorFor(client => client.ApiKeyPrefix, value);
-        }
-
-        [Theory]
-        [InlineData("")]
-        [InlineData("  ")]
-        [InlineData(null)]
-        public void Validate_InvalidRole_HasError(string value)
-        {
-            _validator.ShouldHaveValidationErrorFor(client => client.Role, value);
+            result.ShouldHaveValidationErrorFor(c => c.Description);
         }
     }
 }

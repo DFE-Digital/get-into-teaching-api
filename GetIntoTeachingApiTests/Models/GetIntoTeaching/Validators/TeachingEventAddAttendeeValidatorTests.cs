@@ -66,34 +66,25 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
             result.ShouldHaveValidationErrorFor("Candidate.FirstName");
         }
 
-        [Fact]
-        public void Validate_FirstNameIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.FirstName, null as string);
-        }
 
         [Fact]
-        public void Validate_LastNameIsNull_HasError()
+        public void Validate_RequiredFieldsWhenNull_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.LastName, null as string);
-        }
+            var attendee = new TeachingEventAddAttendee()
+            {
+                FirstName = null,
+                LastName = null,
+                Email = null,
+                AcceptedPolicyId = null,
+                EventId = null,
+            };
+            var result = _validator.TestValidate(attendee);
 
-        [Fact]
-        public void Validate_EmailIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.Email, null as string);
-        }
-
-        [Fact]
-        public void Validate_AcceptedPolicyIdIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.AcceptedPolicyId, null as Guid?);
-        }
-
-        [Fact]
-        public void Validate_EventIdIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.EventId, null as Guid?);
+            result.ShouldHaveValidationErrorFor(a => a.FirstName);
+            result.ShouldHaveValidationErrorFor(a => a.LastName);
+            result.ShouldHaveValidationErrorFor(a => a.Email);
+            result.ShouldHaveValidationErrorFor(a => a.AcceptedPolicyId);
+            result.ShouldHaveValidationErrorFor(a => a.EventId);
         }
 
         [Fact]

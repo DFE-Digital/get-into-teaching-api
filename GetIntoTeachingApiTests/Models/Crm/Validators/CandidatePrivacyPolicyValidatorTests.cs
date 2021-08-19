@@ -43,7 +43,9 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         [Fact]
         public void Validate_AcceptedPolicyIdIsInvalid_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(policy => policy.AcceptedPolicyId, Guid.NewGuid());
+            var result = _validator.TestValidate(new CandidatePrivacyPolicy() { AcceptedPolicyId = Guid.NewGuid() });
+
+            result.ShouldHaveValidationErrorFor(p => p.AcceptedPolicyId);
         }
     }
 }

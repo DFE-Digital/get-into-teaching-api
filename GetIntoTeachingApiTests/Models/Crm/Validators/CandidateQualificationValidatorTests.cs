@@ -50,45 +50,27 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         }
 
         [Fact]
-        public void Validate_UkDegreeGradeIdIsInvalid_HasError()
+        public void Validate_IdFieldWithInvalidPickListItemId_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(qualification => qualification.UkDegreeGradeId, 123);
-        }
+            var qualification = new CandidateQualification()
+            {
+                UkDegreeGradeId = 123,
+                DegreeStatusId = 123,
+                TypeId = 123,
+            };
+            var result = _validator.TestValidate(qualification);
 
-        [Fact]
-        public void Validate_UkDegreeGradeIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(qualification => qualification.UkDegreeGradeId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_DegreeStatusIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(qualification => qualification.DegreeStatusId, 123);
-        }
-
-        [Fact]
-        public void Validate_DegreeStatusIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(qualification => qualification.DegreeStatusId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_TypeIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(qualification => qualification.TypeId, 123);
-        }
-
-        [Fact]
-        public void Validate_TypeIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(qualification => qualification.TypeId, null as int?);
+            result.ShouldHaveValidationErrorFor(c => c.UkDegreeGradeId);
+            result.ShouldHaveValidationErrorFor(c => c.DegreeStatusId);
+            result.ShouldHaveValidationErrorFor(c => c.TypeId);
         }
 
         [Fact]
         public void Validate_SubjectTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(qualification => qualification.DegreeSubject, new string('a', 601));
+            var result = _validator.TestValidate(new CandidateQualification() { DegreeSubject = new string('a', 601) });
+
+            result.ShouldHaveValidationErrorFor(c => c.DegreeSubject);
         }
     }
 }

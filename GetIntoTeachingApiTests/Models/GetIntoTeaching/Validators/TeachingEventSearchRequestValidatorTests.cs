@@ -104,19 +104,17 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         [Fact]
         public void Validate_TypeIdIsInvalid_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.TypeId, 123);
-        }
+            var result = _validator.TestValidate(new TeachingEventSearchRequest() { TypeId = 123 });
 
-        [Fact]
-        public void Validate_TypeIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(request => request.TypeId, null as int?);
+            result.ShouldHaveValidationErrorFor(r => r.TypeId);
         }
 
         [Fact]
         public void Validate_PostcodeIsEmpty_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.Postcode, "");
+            var result = _validator.TestValidate(new TeachingEventSearchRequest() { Postcode = "" });
+
+            result.ShouldHaveValidationErrorFor(r => r.Postcode);
         }
 
         [Theory]
@@ -132,32 +130,24 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         [InlineData("TE57 ING", true)]
         public void Validate_PostcodeFormat_ValidatesCorrectly(string postcode, bool hasError)
         {
+            var result = _validator.TestValidate(new TeachingEventSearchRequest() { Postcode = postcode });
+
             if (hasError)
             {
-                _validator.ShouldHaveValidationErrorFor(request => request.Postcode, postcode);
+                result.ShouldHaveValidationErrorFor(r => r.Postcode);
             }
             else
             {
-                _validator.ShouldNotHaveValidationErrorFor(request => request.Postcode, postcode);
+                result.ShouldNotHaveValidationErrorFor(r => r.Postcode);
             }
-        }
-
-        [Fact]
-        public void Validate_PostcodeIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(request => request.Postcode, null as string);
-        }
-
-        [Fact]
-        public void Validate_RadiusIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(request => request.Radius, null as int?);
         }
 
         [Fact]
         public void Validate_RadiusIsNegative_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.Radius, -1);
+            var result = _validator.TestValidate(new TeachingEventSearchRequest() { Radius = -1 });
+
+            result.ShouldHaveValidationErrorFor(r => r.Radius);
         }
     }
 }

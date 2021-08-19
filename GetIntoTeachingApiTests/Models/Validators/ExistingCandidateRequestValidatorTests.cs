@@ -30,43 +30,53 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_EmailAddressIsEmpty_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.Email, "");
+            var result = _validator.TestValidate(new ExistingCandidateRequest() { Email = "" });
+
+            result.ShouldHaveValidationErrorFor(r => r.Email);
         }
+
 
         [Fact]
         public void Validate_EmailAddressIsInvalid_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.Email, "invalid-email@");
+            var result = _validator.TestValidate(new ExistingCandidateRequest() { Email = "invalid-email@" });
+
+            result.ShouldHaveValidationErrorFor(r => r.Email);
         }
 
         [Fact]
         public void Validate_EmailAddressTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.Email, $"{new string('a', 50)}@{new string('a', 50)}.com");
+            var result = _validator.TestValidate(new ExistingCandidateRequest() { Email = $"{new string('a', 50)}@{new string('a', 50)}.com" });
+
+            result.ShouldHaveValidationErrorFor(r => r.Email);
         }
 
         [Fact]
         public void Validate_EmailAddressPresent_HasNoError()
         {
-            _validator.ShouldNotHaveValidationErrorFor(request => request.Email, "valid@email.com");
+            var result = _validator.TestValidate(new ExistingCandidateRequest() { Email = "valid@email.com" });
+
+            result.ShouldNotHaveValidationErrorFor(r => r.Email);
         }
 
         [Fact]
         public void Validate_DateOfBirthInFuture_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.DateOfBirth, DateTime.UtcNow.AddDays(1));
+            var result = _validator.TestValidate(new ExistingCandidateRequest() { DateOfBirth = DateTime.UtcNow.AddDays(1) });
+
+            result.ShouldHaveValidationErrorFor(r => r.DateOfBirth);
         }
 
         [Fact]
-        public void Validate_FirstNameTooLong_HasError()
+        public void Validate_NameIsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.FirstName, new string('a', 257));
-        }
+            var tooLongName = new string('a', 257);
+            var request = new ExistingCandidateRequest() { FirstName = tooLongName, LastName = tooLongName };
+            var result = _validator.TestValidate(request);
 
-        [Fact]
-        public void Validate_LastNameTooLong_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.LastName, new string('a', 257));
+            result.ShouldHaveValidationErrorFor(r => r.FirstName);
+            result.ShouldHaveValidationErrorFor(r => r.LastName);
         }
 
         [Fact]
