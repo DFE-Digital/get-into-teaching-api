@@ -61,5 +61,24 @@ namespace GetIntoTeachingApiTests.Utils
         {
             input.ToPascalCase().Should().Be(expected);
         }
+
+        [Theory]
+        [InlineData(null, false)]
+        [InlineData("  ", false)]
+        [InlineData("true", true)]
+        [InlineData("True", true)]
+        [InlineData("TRUE", true)]
+        [InlineData("1", true)]
+        [InlineData("on", true)]
+        [InlineData("ON", true)]
+        [InlineData(" on ", true)]
+        [InlineData("false", false)]
+        [InlineData("f", false)]
+        [InlineData("off", false)]
+        [InlineData("Banana", false)]
+        public void ToBool_ReturnsCorrectly(string input, bool expected)
+        {
+            input.ToBool().Should().Be(expected);
+        }
     }
 }

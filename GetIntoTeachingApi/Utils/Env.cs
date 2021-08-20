@@ -50,6 +50,18 @@ namespace GetIntoTeachingApi.Utils
             }
         }
 
+        public bool IsFeatureOn(string feature)
+        {
+            var value = Environment.GetEnvironmentVariable($"{feature}_FEATURE");
+
+            return value.ToBool();
+        }
+
+        public bool IsFeatureOff(string feature)
+        {
+            return !IsFeatureOn(feature);
+        }
+
         public string Get(string variable)
         {
             return Environment.GetEnvironmentVariable(variable);
