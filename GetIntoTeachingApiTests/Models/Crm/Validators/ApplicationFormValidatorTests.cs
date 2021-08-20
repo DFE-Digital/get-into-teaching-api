@@ -46,19 +46,19 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         [Fact]
         public void Validate_FindApplyIdIsEmpty_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(form => form.FindApplyId, "");
-        }
+            var form = new ApplicationForm() { FindApplyId = "" };
+            var result = _validator.TestValidate(form);
 
-        [Fact]
-        public void Validate_PhaseIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(form => form.PhaseId, null as int?);
+            result.ShouldHaveValidationErrorFor("FindApplyId");
         }
 
         [Fact]
         public void Validate_PhaseIdIsNotValid_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(form => form.PhaseId, 456);
+            var form = new ApplicationForm() { PhaseId = 456 };
+            var result = _validator.TestValidate(form);
+
+            result.ShouldHaveValidationErrorFor("PhaseId");
         }
     }
 }
