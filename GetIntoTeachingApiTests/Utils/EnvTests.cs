@@ -274,9 +274,12 @@ namespace GetIntoTeachingApiTests.Utils
         [InlineData("Production", "Production")]
         public void EnvironmentName_ReturnsCorrectly(string environment, string expected)
         {
+            var previous = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", environment);
 
             _env.EnvironmentName.Should().Be(expected);
+
+            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", previous);
         }
 
         [Fact]
@@ -294,6 +297,27 @@ namespace GetIntoTeachingApiTests.Utils
         public void Get_WhenVariableDoesNotExist_ReturnsNull()
         {
             _env.Get("NON_EXISTANT").Should().BeNull();
+        }
+
+        [Theory]
+        [InlineData("TEST", "on", true)]
+        [InlineData("TEST", "true", true)]
+        [InlineData("TEST", "1", true)]
+        [InlineData("TEST", "off", false)]
+        [InlineData("TEST", "false", false)]
+        [InlineData("TEST", "0", false)]
+        [InlineData("TEST", " ", false)]
+        [InlineData("TEST", null, false)]
+        public void IsFeatureOnOff_ReturnsCorrectly(string feature, string value, bool expected)
+        {
+            var envVariable = $"{feature}_FEATURE";
+            var previous = Environment.GetEnvironmentVariable(envVariable);
+            Environment.SetEnvironmentVariable(envVariable, value);
+
+            _env.IsFeatureOn(feature).Should().Be(expected);
+            _env.IsFeatureOff(feature).Should().Be(!expected);
+
+            Environment.SetEnvironmentVariable(envVariable, previous);
         }
     }
 }
