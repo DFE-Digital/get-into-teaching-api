@@ -36,29 +36,28 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         }
 
         [Fact]
-        public void Validate_ReadableIdIsNullOrEmpty_HasError()
+        public void Validate_WhenRequiredAttributesAreNullOrEmpty_HasErrors()
         {
-            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.ReadableId, "");
-            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.ReadableId, null as string);
+            var teachingEvent = new TeachingEvent()
+            {
+                ReadableId = "",
+                Name = "",
+                ProviderContactEmail = "",
+            };
+            var result = _validator.TestValidate(teachingEvent);
+
+            result.ShouldHaveValidationErrorFor(e => e.ReadableId);
+            result.ShouldHaveValidationErrorFor(e => e.Name);
+            result.ShouldHaveValidationErrorFor(e => e.ProviderContactEmail);
         }
 
-        [Fact]
-        public void Validate_NameIsNullOrEmpty_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.Name, "");
-            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.Name, null as string);
-        }
-
-        [Fact]
-        public void Validate_ProviderContactEmailIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(teachingEvent => teachingEvent.ProviderContactEmail, null as string);
-        }
 
         [Fact]
         public void Validate_ProviderContactEmailIsPresentAndInvalid_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.ProviderContactEmail, "Invalid email");
+            var result = _validator.TestValidate(new TeachingEvent() { ProviderContactEmail = "invalid-email@" });
+
+            result.ShouldHaveValidationErrorFor(c => c.ProviderContactEmail);
         }
 
         [Fact]
@@ -69,7 +68,9 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 StartAt = DateTime.UtcNow.AddDays(2),
                 EndAt = DateTime.UtcNow.AddDays(1)
             };
-            _validator.ShouldHaveValidationErrorFor(teachingEvent => teachingEvent.EndAt, invalidTeachingEvent);
+            var result = _validator.TestValidate(invalidTeachingEvent);
+
+            result.ShouldHaveValidationErrorFor(c => c.EndAt);
         }
     }
 }

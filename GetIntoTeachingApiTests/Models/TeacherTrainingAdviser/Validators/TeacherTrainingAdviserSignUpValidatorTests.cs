@@ -26,13 +26,23 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
         [Fact]
         public void Validate_WhenRequiredAttributesAreNull_HasErrors()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.FirstName, null as string);
-            _validator.ShouldHaveValidationErrorFor(request => request.LastName, null as string);
-            _validator.ShouldHaveValidationErrorFor(request => request.Email, null as string);
-            _validator.ShouldHaveValidationErrorFor(request => request.DateOfBirth, null as DateTime?);
-            _validator.ShouldHaveValidationErrorFor(request => request.AcceptedPolicyId, null as Guid?);
-            _validator.ShouldHaveValidationErrorFor(request => request.CountryId, null as Guid?);
-            _validator.ShouldHaveValidationErrorFor(request => request.TypeId, null as int?);
+            _request.FirstName = null;
+            _request.LastName = null;
+            _request.Email = null;
+            _request.DateOfBirth = null;
+            _request.AcceptedPolicyId = null;
+            _request.CountryId = null;
+            _request.TypeId = null;
+
+            var result = _validator.TestValidate(_request);
+
+            result.ShouldHaveValidationErrorFor(c => c.FirstName);
+            result.ShouldHaveValidationErrorFor(c => c.LastName);
+            result.ShouldHaveValidationErrorFor(c => c.Email);
+            result.ShouldHaveValidationErrorFor(c => c.DateOfBirth);
+            result.ShouldHaveValidationErrorFor(c => c.AcceptedPolicyId);
+            result.ShouldHaveValidationErrorFor(c => c.CountryId);
+            result.ShouldHaveValidationErrorFor(c => c.TypeId);
         }
 
         [Fact]

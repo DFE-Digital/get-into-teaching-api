@@ -22,15 +22,27 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         }
 
         [Fact]
-        public void Validate_WhenRequiredAttributesAreNull_HasErrors()
+        public void Validate_RequiredFieldsWhenNull_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.FirstName, null as string);
-            _validator.ShouldHaveValidationErrorFor(request => request.LastName, null as string);
-            _validator.ShouldHaveValidationErrorFor(request => request.Email, null as string);
-            _validator.ShouldHaveValidationErrorFor(request => request.AddressTelephone, null as string);
-            _validator.ShouldHaveValidationErrorFor(request => request.PhoneCallScheduledAt, null as DateTime?);
-            _validator.ShouldHaveValidationErrorFor(request => request.AcceptedPolicyId, null as Guid?);
-            _validator.ShouldHaveValidationErrorFor(request => request.TalkingPoints, null as string);
+            var callback = new GetIntoTeachingCallback()
+            {
+                FirstName = null,
+                LastName = null,
+                Email = null,
+                AcceptedPolicyId = null,
+                AddressTelephone = null,
+                PhoneCallScheduledAt = null,
+                TalkingPoints = null,
+            };
+            var result = _validator.TestValidate(callback);
+
+            result.ShouldHaveValidationErrorFor(c => c.FirstName);
+            result.ShouldHaveValidationErrorFor(c => c.LastName);
+            result.ShouldHaveValidationErrorFor(c => c.Email);
+            result.ShouldHaveValidationErrorFor(c => c.AddressTelephone);
+            result.ShouldHaveValidationErrorFor(c => c.PhoneCallScheduledAt);
+            result.ShouldHaveValidationErrorFor(c => c.AcceptedPolicyId);
+            result.ShouldHaveValidationErrorFor(c => c.TalkingPoints);
         }
 
         [Fact]
