@@ -73,8 +73,14 @@ namespace GetIntoTeachingApiTests.Models.Crm
                 a => a.Name == "dfe_candidateadviserstatusreason" && a.Type == typeof(OptionSetValue));
             type.GetProperty("RegistrationStatusId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_candidatereregisterstatus" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("FindApplyStatusId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "dfe_candidateapplystatus" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("FindApplyPhaseId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "dfe_candidateapplyphase" && a.Type == typeof(OptionSetValue));
 
             type.GetProperty("FindApplyId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applyid");
+            type.GetProperty("FindApplyUpdatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applylastmodifiedon");
+            type.GetProperty("FindApplyCreatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applycreatedon");
             type.GetProperty("Merged").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "merged");
             type.GetProperty("Email").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "emailaddress1");
             type.GetProperty("SecondaryEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "emailaddress2");

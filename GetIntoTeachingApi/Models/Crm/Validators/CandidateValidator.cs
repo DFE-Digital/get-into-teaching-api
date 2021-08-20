@@ -100,6 +100,12 @@ namespace GetIntoTeachingApi.Models.Crm.Validators
             RuleFor(candidate => candidate.MailingListSubscriptionChannelId)
                 .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_gitismlservicesubscriptionchannel", store))
                 .Unless(candidate => candidate.MailingListSubscriptionChannelId == null);
+            RuleFor(candidate => candidate.FindApplyPhaseId)
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_candidateapplystatus", store))
+                .Unless(candidate => candidate.FindApplyPhaseId == null);
+            RuleFor(candidate => candidate.FindApplyStatusId)
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_candidateapplyphase", store))
+                .Unless(candidate => candidate.FindApplyStatusId == null);
         }
     }
 }

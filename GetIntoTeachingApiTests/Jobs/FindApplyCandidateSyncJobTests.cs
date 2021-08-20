@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models.FindApply;
@@ -17,7 +18,9 @@ namespace GetIntoTeachingApiTests.Jobs
         private readonly Mock<ILogger<FindApplyCandidateSyncJob>> _mockLogger;
         private readonly Mock<ICrmService> _mockCrm;
         private readonly FindApplyCandidateSyncJob _job;
-        private readonly GetIntoTeachingApi.Models.FindApply.Candidate _candidate;
+        private readonly Candidate _candidate;
+        private readonly CandidateAttributes _attributes;
+        private readonly IList<ApplicationForm> _forms;
 
         public FindApplyCandidateSyncJobTests()
         {
@@ -29,7 +32,25 @@ namespace GetIntoTeachingApiTests.Jobs
                 _mockLogger.Object,
                 _mockCrm.Object,
                 _mockAppSettings.Object);
-            _candidate = new GetIntoTeachingApi.Models.FindApply.Candidate() { Id = "12345", Attributes = new CandidateAttributes() { Email = "email@address.com" } };
+            _forms = new List<ApplicationForm>()
+            {
+                new ApplicationForm() { Id = 1, CreatedAt = new DateTime(2021, 1, 3), UpdatedAt = new DateTime(2021, 1, 5) },
+                new ApplicationForm() { Id = 2, CreatedAt = new DateTime(2021, 1, 4) },
+            };
+            _attributes = new CandidateAttributes()
+            {
+                Email = "email@address.com",
+                CreatedAt = new DateTime(2021, 1, 1, 10, 0, 0),
+                UpdatedAt = new DateTime(2021, 1, 2, 11, 12, 13),
+                ApplicationForms = _forms,
+                ApplicationStatus = "never_signed_in",
+                ApplicationPhase = "apply_2",
+            };
+            _candidate = new Candidate()
+            { 
+                Id = "12345",
+                Attributes = _attributes
+            };
         }
 
         [Fact]
@@ -38,7 +59,43 @@ namespace GetIntoTeachingApiTests.Jobs
             var match = new GetIntoTeachingApi.Models.Crm.Candidate() { Id = Guid.NewGuid(), Email = _candidate.Attributes.Email };
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
             _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email)).Returns(match);
-            _mockCrm.Setup(m => m.Save(It.Is<GetIntoTeachingApi.Models.Crm.Candidate>(c => c.Id == match.Id && c.FindApplyId == _candidate.Id)));
+            _mockCrm.Setup(m => m.Save(It.Is<GetIntoTeachingApi.Models.Crm.Candidate>(
+                c => c.Id == match.Id
+                && c.FindApplyId == _candidate.Id
+                && c.Email == _attributes.Email
+                && c.FindApplyStatusId == (int)GetIntoTeachingApi.Models.Crm.Candidate.FindApplyApplicationStatus.NeverSignedIn
+                && c.FindApplyPhaseId == (int)GetIntoTeachingApi.Models.Crm.Candidate.FindApplyApplicationPhase.Apply2
+                && c.FindApplyCreatedAt == _attributes.CreatedAt
+                && c.FindApplyUpdatedAt == _attributes.UpdatedAt)));
+            _mockCrm.Setup(m => m.Save(It.IsAny<GetIntoTeachingApi.Models.Crm.ApplicationForm>()));
+
+            _job.Run(_candidate);
+
+            _mockLogger.VerifyInformationWasCalled($"FindApplyCandidateSyncJob - Started - {_candidate.Id}");
+            _mockLogger.VerifyInformationWasCalled($"FindApplyCandidateSyncJob - Hit - {_candidate.Id}");
+            _mockLogger.VerifyInformationWasCalled($"FindApplyCandidateSyncJob - Succeeded - {_candidate.Id}");
+        }
+
+        [Fact]
+        public void Run_OnSuccess_SavesApplicationForms()
+        {
+            var match = new GetIntoTeachingApi.Models.Crm.Candidate() { Id = Guid.NewGuid(), Email = _candidate.Attributes.Email };
+            var existingApplicationForm = new GetIntoTeachingApi.Models.Crm.ApplicationForm() { Id = Guid.NewGuid() };
+            _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
+            _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email)).Returns(match);
+            _mockCrm.Setup(m => m.GetApplicationForm("1")).Returns<GetIntoTeachingApi.Models.Crm.ApplicationForm>(null);
+            _mockCrm.Setup(m => m.GetApplicationForm("2")).Returns(existingApplicationForm);
+            _mockCrm.Setup(m => m.Save(It.IsAny<GetIntoTeachingApi.Models.Crm.Candidate>()));
+            _mockCrm.Setup(m => m.Save(It.Is<GetIntoTeachingApi.Models.Crm.ApplicationForm>(
+                f => f.Id == null
+                && f.FindApplyId == _forms[0].Id.ToString()
+                && f.CreatedAt == _forms[0].CreatedAt
+                && f.UpdatedAt == _forms[0].UpdatedAt)));
+            _mockCrm.Setup(m => m.Save(It.Is<GetIntoTeachingApi.Models.Crm.ApplicationForm>(
+                f => f.Id == existingApplicationForm.Id
+                && f.FindApplyId == _forms[1].Id.ToString()
+                && f.CreatedAt == _forms[1].CreatedAt
+                && f.UpdatedAt == _forms[1].UpdatedAt)));
 
             _job.Run(_candidate);
 
@@ -51,7 +108,7 @@ namespace GetIntoTeachingApiTests.Jobs
         public void Run_WhenCandidateNotFound_LogsMiss()
         {
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
-            _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email)).Returns<GetIntoTeachingApi.Models.FindApply.Candidate>(null);
+            _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email)).Returns<Candidate>(null);
 
             _job.Run(_candidate);
 
