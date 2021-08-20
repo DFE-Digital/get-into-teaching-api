@@ -73,6 +73,23 @@ namespace GetIntoTeachingApi.Services
                 .FirstOrDefault();
         }
 
+        public ApplicationForm GetApplicationForm(string findApplyId)
+        {
+            var query = new QueryExpression("dfe_applyapplicationform");
+            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(ApplicationForm)));
+            query.Criteria.AddCondition(new ConditionExpression("dfe_applicationformid", ConditionOperator.Equal, findApplyId));
+
+            var entities = _service.RetrieveMultiple(query);
+            var entity = entities.FirstOrDefault();
+
+            if (entity == null)
+            {
+                return null;
+            }
+
+            return new ApplicationForm(entity, this, _validatorFactory);
+        }
+
         public IEnumerable<PrivacyPolicy> GetPrivacyPolicies()
         {
             return _service.CreateQuery("dfe_privacypolicy", Context())
