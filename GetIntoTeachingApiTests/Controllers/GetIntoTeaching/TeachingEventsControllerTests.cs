@@ -79,7 +79,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
-            errors.Should().ContainKey("FirstName").WhichValue.Should().BeOfType<string[]>().Which.Should().Contain("First name must be specified.");
+            errors.Should().ContainKey("FirstName").WhoseValue.Should().BeOfType<string[]>().Which.Should().Contain("First name must be specified.");
         }
 
         [Fact]
@@ -107,7 +107,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
-            errors.Should().ContainKey("Postcode").WhichValue.Should().BeOfType<string[]>().Which.Should().Contain("Postcode must be specified.");
+            errors.Should().ContainKey("Postcode").WhoseValue.Should().BeOfType<string[]>().Which.Should().Contain("Postcode must be specified.");
         }
 
         [Fact]
@@ -207,7 +207,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
-            errors.Should().ContainKey(expectedErrorKey).WhichValue.Should().BeOfType<string[]>().Which.Should().Contain(expectedErrorMessage);
+            errors.Should().ContainKey(expectedErrorKey).WhoseValue.Should().BeOfType<string[]>().Which.Should().Contain(expectedErrorMessage);
         }
 
         [Fact]
@@ -225,7 +225,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
-            errors.Should().ContainKey("ReadableId").WhichValue.Should().BeOfType<string[]>().Which.Should().Contain("Must be unique");
+            errors.Should().ContainKey("ReadableId").WhoseValue.Should().BeOfType<string[]>().Which.Should().Contain("Must be unique");
         }
 
         [Fact]
