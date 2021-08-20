@@ -44,10 +44,27 @@ namespace GetIntoTeachingApiTests.Models.Crm
         }
 
         [Fact]
-        public void EntityFieldAttribute_OnPropertyWithIgnoreInEnvironmentAttribute_ReturnsNull()
+        public void EntityFieldAttribute_OnPropertyWithFeatureFlag_ReturnsNullIfFeatureFlagIsOff()
         {
+            var previous = Environment.GetEnvironmentVariable("TEST");
+            Environment.SetEnvironmentVariable("TEST_FEATURE", "off");
+
             var property = typeof(MockModel).GetProperty("Field4");
             BaseModel.EntityFieldAttribute(property).Should().BeNull();
+
+            Environment.SetEnvironmentVariable("TEST_FEATURE", previous);
+        }
+
+        [Fact]
+        public void EntityFieldAttribute_OnPropertyWithFeatureFlag_ReturnsAttributeIfFeatureFlagIsOn()
+        {
+            var previous = Environment.GetEnvironmentVariable("TEST");
+            Environment.SetEnvironmentVariable("TEST_FEATURE", "on");
+
+            var property = typeof(MockModel).GetProperty("Field4");
+            BaseModel.EntityFieldAttribute(property).Should().BeOfType<EntityFieldAttribute>();
+
+            Environment.SetEnvironmentVariable("TEST_FEATURE", previous);
         }
 
         [Fact]

@@ -180,19 +180,19 @@ namespace GetIntoTeachingApi.Models.Crm
         public int? AdviserStatusId { get; set; }
         [EntityField("dfe_candidatereregisterstatus", typeof(OptionSetValue))]
         public int? RegistrationStatusId { get; set; }
-        [EntityField("dfe_candidateapplystatus", typeof(OptionSetValue), null, new string[] { "Staging", "Production" })]
+        [EntityField("dfe_candidateapplystatus", typeof(OptionSetValue), null, new[] { "APPLY_API" })]
         public int? FindApplyStatusId { get; set; }
-        [EntityField("dfe_candidateapplyphase", typeof(OptionSetValue), null, new string[] { "Staging", "Production" })]
+        [EntityField("dfe_candidateapplyphase", typeof(OptionSetValue), null, new[] { "APPLY_API" })]
         public int? FindApplyPhaseId { get; set; }
         [EntityField("dfe_waitingtobeassigneddate")]
         public DateTime? StatusIsWaitingToBeAssignedAt { get; set; }
         [EntityField("merged")]
         public bool Merged { get; set; }
-        [EntityField("dfe_applyid", null, null, new[] { "Production" })]
+        [EntityField("dfe_applyid", null, null, new[] { "APPLY_API" })]
         public string FindApplyId { get; set; }
-        [EntityField("dfe_applylastmodifiedon", null, null, new[] { "Staging", "Production" })]
+        [EntityField("dfe_applylastmodifiedon", null, null, new[] { "APPLY_API" })]
         public DateTime? FindApplyUpdatedAt { get; set; }
-        [EntityField("dfe_applycreatedon", null, null, new[] { "Staging", "Production" })]
+        [EntityField("dfe_applycreatedon", null, null, new[] { "APPLY_API" })]
         public DateTime? FindApplyCreatedAt { get; set; }
         [EntityField("emailaddress1")]
         public string Email { get; set; }

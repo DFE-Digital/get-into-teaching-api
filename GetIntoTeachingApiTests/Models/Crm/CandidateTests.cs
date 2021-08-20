@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Attributes;
@@ -74,13 +75,13 @@ namespace GetIntoTeachingApiTests.Models.Crm
             type.GetProperty("RegistrationStatusId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_candidatereregisterstatus" && a.Type == typeof(OptionSetValue));
             type.GetProperty("FindApplyStatusId").Should().BeDecoratedWith<EntityFieldAttribute>(
-                a => a.Name == "dfe_candidateapplystatus" && a.Type == typeof(OptionSetValue));
+                a => a.Name == "dfe_candidateapplystatus" && a.Type == typeof(OptionSetValue) && a.Features.Contains("APPLY_API"));
             type.GetProperty("FindApplyPhaseId").Should().BeDecoratedWith<EntityFieldAttribute>(
-                a => a.Name == "dfe_candidateapplyphase" && a.Type == typeof(OptionSetValue));
+                a => a.Name == "dfe_candidateapplyphase" && a.Type == typeof(OptionSetValue) && a.Features.Contains("APPLY_API"));
 
-            type.GetProperty("FindApplyId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applyid");
-            type.GetProperty("FindApplyUpdatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applylastmodifiedon");
-            type.GetProperty("FindApplyCreatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applycreatedon");
+            type.GetProperty("FindApplyId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applyid" && a.Features.Contains("APPLY_API"));
+            type.GetProperty("FindApplyUpdatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applylastmodifiedon" && a.Features.Contains("APPLY_API"));
+            type.GetProperty("FindApplyCreatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applycreatedon" && a.Features.Contains("APPLY_API"));
             type.GetProperty("Merged").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "merged");
             type.GetProperty("Email").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "emailaddress1");
             type.GetProperty("SecondaryEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "emailaddress2");

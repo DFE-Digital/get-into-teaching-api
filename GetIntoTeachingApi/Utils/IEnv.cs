@@ -27,6 +27,8 @@
         string GoogleApiKey { get; }
         bool IsMasterInstance { get; }
 
+        bool IsFeatureOn(string feature);
+        bool IsFeatureOff(string feature);
         string Get(string variable);
     }
 }
