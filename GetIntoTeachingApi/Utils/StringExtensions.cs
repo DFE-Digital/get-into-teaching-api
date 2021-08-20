@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using GetIntoTeachingApi.Models;
 
@@ -6,6 +7,8 @@ namespace GetIntoTeachingApi.Utils
 {
     public static class StringExtensions
     {
+        private static readonly string[] TrueValues = new string[] { "true", "t", "1", "on" };
+
         public static string AsFormattedPostcode(this string str)
         {
             str = str?.Replace(" ", string.Empty);
@@ -55,6 +58,16 @@ namespace GetIntoTeachingApi.Utils
             str = str.ToLower().Replace("_", " ");
             var info = CultureInfo.CurrentCulture.TextInfo;
             return info.ToTitleCase(str).Replace(" ", string.Empty);
+        }
+
+        public static bool ToBool(this string str)
+        {
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                return false;
+            }
+
+            return TrueValues.Contains(str.Trim().ToLower());
         }
     }
 }
