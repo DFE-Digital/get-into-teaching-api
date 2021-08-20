@@ -72,93 +72,42 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience.Validators
         }
 
         [Fact]
-        public void Validate_FirstNameIsNull_HasError()
+        public void Validate_RequiredFieldsWhenNull_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.FirstName, null as string);
-        }
+            var signUp = new SchoolsExperienceSignUp()
+            {
+                FirstName = null,
+                LastName = null,
+                Email = null,
+                DateOfBirth = null,
+                AddressLine1 = null,
+                AddressCity = null,
+                AddressStateOrProvince = null,
+                AddressPostcode = null,
+                AddressTelephone = null,
+                Telephone = null,
+                SecondaryTelephone = null,
+                HasDbsCertificate = null,
+                AcceptedPolicyId = null,
+                PreferredTeachingSubjectId = null,
 
-        [Fact]
-        public void Validate_LastNameIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.LastName, null as string);
-        }
+            };
+            var result = _validator.TestValidate(signUp);
 
-        [Fact]
-        public void Validate_EmailIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.Email, null as string);
-        }
-
-        [Fact]
-        public void Validate_DateOfBirthIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.DateOfBirth, null as DateTime?);
-        }
-
-        [Fact]
-        public void Validate_AddressLine1IsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.AddressLine1, null as string);
-        }
-
-        [Fact]
-        public void Validate_AddressCityIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.AddressCity, null as string);
-        }
-
-        [Fact]
-        public void Validate_AddressStateOrProvinceIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.AddressStateOrProvince, null as string);
-        }
-
-        [Fact]
-        public void Validate_AddressPostcodeIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.AddressPostcode, null as string);
-        }
-
-        [Fact]
-        public void Validate_AddressTelephoneIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.AddressTelephone, null as string);
-        }
-
-        [Fact]
-        public void Validate_TelephoneIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.Telephone, null as string);
-        }
-
-        [Fact]
-        public void Validate_SecondaryTelephoneIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.SecondaryTelephone, null as string);
-        }
-
-        [Fact]
-        public void Validate_HasDbsCertificateIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.HasDbsCertificate, null as bool?);
-        }
-
-        [Fact]
-        public void Validate_AcceptedPolicyIdIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.AcceptedPolicyId, null as Guid?);
-        }
-
-        [Fact]
-        public void Validate_PreferredTeachingSubjectIdIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.PreferredTeachingSubjectId, null as Guid?);
-        }
-
-        [Fact]
-        public void Validate_SecondaryPreferredTeachingSubjectIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(request => request.SecondaryPreferredTeachingSubjectId, null as Guid?);
+            result.ShouldHaveValidationErrorFor(s => s.FirstName);
+            result.ShouldHaveValidationErrorFor(s => s.LastName);
+            result.ShouldHaveValidationErrorFor(s => s.Email);
+            result.ShouldHaveValidationErrorFor(s => s.DateOfBirth);
+            result.ShouldHaveValidationErrorFor(s => s.AddressLine1);
+            result.ShouldHaveValidationErrorFor(s => s.AddressCity);
+            result.ShouldHaveValidationErrorFor(s => s.AddressStateOrProvince);
+            result.ShouldHaveValidationErrorFor(s => s.AddressPostcode);
+            result.ShouldHaveValidationErrorFor(s => s.AddressTelephone);
+            result.ShouldHaveValidationErrorFor(s => s.Telephone);
+            result.ShouldHaveValidationErrorFor(s => s.SecondaryTelephone);
+            result.ShouldHaveValidationErrorFor(s => s.HasDbsCertificate);
+            result.ShouldHaveValidationErrorFor(s => s.AcceptedPolicyId);
+            result.ShouldHaveValidationErrorFor(s => s.PreferredTeachingSubjectId);
         }
     }
 }

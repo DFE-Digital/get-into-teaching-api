@@ -190,120 +190,121 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         }
 
         [Fact]
-        public void Validate_EmailAddressIsEmpty_HasError()
+        public void Validate_RequiredFieldsWhenNullOrEmpty_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.Email, "");
+            var candidate = new Candidate()
+            {
+                Email = "",
+                SecondaryEmail = "",
+                FirstName = "",
+                LastName = "",
+                AddressTelephone = "",
+                MobileTelephone = "",
+                Telephone = "",
+                SecondaryTelephone = "",
+
+            };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor(c => c.Email);
+            result.ShouldHaveValidationErrorFor(c => c.SecondaryEmail);
+            result.ShouldHaveValidationErrorFor(c => c.FirstName);
+            result.ShouldHaveValidationErrorFor(c => c.LastName);
+            result.ShouldHaveValidationErrorFor(c => c.AddressTelephone);
+            result.ShouldHaveValidationErrorFor(c => c.MobileTelephone);
+            result.ShouldHaveValidationErrorFor(c => c.Telephone);
+            result.ShouldHaveValidationErrorFor(c => c.SecondaryTelephone);
         }
 
         [Fact]
-        public void Validate_EmailAddressIsInvalid_HasError()
+        public void Validate_EmailAddressInvalid_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.Email, "invalid-email@");
+            var invalidEmail = "invalid-email@";
+            var candidate = new Candidate() { Email = invalidEmail, SecondaryEmail = invalidEmail };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor(c => c.Email);
+            result.ShouldHaveValidationErrorFor(c => c.SecondaryEmail);
         }
 
         [Fact]
         public void Validate_EmailAddressTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.Email, $"{new string('a', 50)}@{new string('a', 50)}.com");
+            var tooLongEmail = $"{new string('a', 50)}@{new string('a', 50)}.com";
+            var candidate = new Candidate() { Email = tooLongEmail, SecondaryEmail = tooLongEmail };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor(c => c.Email);
+            result.ShouldHaveValidationErrorFor(c => c.SecondaryEmail);
         }
 
         [Fact]
-        public void Validate_EmailAddressPresent_HasNoError()
+        public void Validate_EmailAddressIsValid_HasNoError()
         {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.Email, "valid@email.com");
-        }
+            var validEmail = "valid@email.com";
+            var candidate = new Candidate() { Email = validEmail, SecondaryEmail = validEmail };
+            var result = _validator.TestValidate(candidate);
 
-        [Fact]
-        public void Validate_SecondaryEmailAddressIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.SecondaryEmail, null as string);
-        }
-
-        [Fact]
-        public void Validate_SecondaryEmailAddressIsEmpty_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.SecondaryEmail, "");
-        }
-
-        [Fact]
-        public void Validate_SecondaryEmailAddressIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.SecondaryEmail, "invalid-email@");
-        }
-
-        [Fact]
-        public void Validate_SecondaryEmailAddressTooLong_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.SecondaryEmail, $"{new string('a', 50)}@{new string('a', 50)}.com");
-        }
-
-        [Fact]
-        public void Validate_SecondaryEmailAddressPresent_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.SecondaryEmail, "valid@email.com");
-        }
-
-        [Fact]
-        public void Validate_DateOfBirthIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.DateOfBirth, null as DateTime?);
+            result.ShouldNotHaveValidationErrorFor(c => c.Email);
+            result.ShouldNotHaveValidationErrorFor(c => c.SecondaryEmail);
         }
 
         [Fact]
         public void Validate_DateOfBirthInFuture_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.DateOfBirth, DateTime.UtcNow.AddDays(1));
+            var candidate = new Candidate() { DateOfBirth = DateTime.UtcNow.AddDays(1) };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor(c => c.DateOfBirth);
         }
 
         [Fact]
-        public void Validate_FirstNameIsEmpty_HasError()
+        public void Validate_NameIsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.FirstName, "");
-        }
+            var longName = new string('a', 257);
+            var candidate = new Candidate() { FirstName = longName, LastName = longName };
+            var result = _validator.TestValidate(candidate);
 
-        [Fact]
-        public void Validate_FirstNameTooLong_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.FirstName, new string('a', 257));
-        }
-
-        [Fact]
-        public void Validate_LastNameIsEmpty_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.LastName, "");
-        }
-
-        [Fact]
-        public void Validate_LastNameTooLong_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.LastName, new string('a', 257));
-        }
-
-        [Fact]
-        public void Validate_TelephoneIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressTelephone, null as string);
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.MobileTelephone, null as string);
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.Telephone, null as string);
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.SecondaryTelephone, null as string);
+            result.ShouldHaveValidationErrorFor(c => c.FirstName);
+            result.ShouldHaveValidationErrorFor(c => c.LastName);
         }
 
         [Fact]
         public void Validate_TelephoneTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressTelephone, new string('1', 26));
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.MobileTelephone, new string('1', 26));
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.Telephone, new string('1', 26));
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.SecondaryTelephone, new string('1', 26));
+            var longTelephone = new string('1', 26);
+            var candidate = new Candidate()
+            {
+                AddressTelephone = longTelephone,
+                MobileTelephone = longTelephone,
+                Telephone = longTelephone,
+                SecondaryTelephone = longTelephone
+            };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor(c => c.AddressTelephone);
+            result.ShouldHaveValidationErrorFor(c => c.MobileTelephone);
+            result.ShouldHaveValidationErrorFor(c => c.Telephone);
+            result.ShouldHaveValidationErrorFor(c => c.SecondaryTelephone);
         }
 
         [Fact]
         public void Validate_TelephoneTooShort_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressTelephone, new string('1', 4));
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.MobileTelephone, new string('1', 4));
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.Telephone, new string('1', 4));
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.SecondaryTelephone, new string('1', 4));
+            var shortTelephone = "1111";
+            var candidate = new Candidate()
+            {
+                AddressTelephone = shortTelephone,
+                MobileTelephone = shortTelephone,
+                Telephone = shortTelephone,
+                SecondaryTelephone = shortTelephone
+            };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor(c => c.AddressTelephone);
+            result.ShouldHaveValidationErrorFor(c => c.MobileTelephone);
+            result.ShouldHaveValidationErrorFor(c => c.Telephone);
+            result.ShouldHaveValidationErrorFor(c => c.SecondaryTelephone);
         }
 
         [Theory]
@@ -319,80 +320,64 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         [InlineData("5325.56fs326.32", true)]
         public void Validate_TelephoneFormat_ValidatesCorrectly(string telephone, bool hasError)
         {
+            var candidate = new Candidate()
+            {
+                AddressTelephone = telephone,
+                MobileTelephone = telephone,
+                Telephone = telephone,
+                SecondaryTelephone = telephone
+            };
+            var result = _validator.TestValidate(candidate);
+
             if (hasError)
             {
-                _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressTelephone, telephone);
-                _validator.ShouldHaveValidationErrorFor(candidate => candidate.MobileTelephone, telephone);
-                _validator.ShouldHaveValidationErrorFor(candidate => candidate.Telephone, telephone);
-                _validator.ShouldHaveValidationErrorFor(candidate => candidate.SecondaryTelephone, telephone);
+                result.ShouldHaveValidationErrorFor(c => c.AddressTelephone);
+                result.ShouldHaveValidationErrorFor(c => c.MobileTelephone);
+                result.ShouldHaveValidationErrorFor(c => c.Telephone);
+                result.ShouldHaveValidationErrorFor(c => c.SecondaryTelephone);
             }
             else
             {
-                _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressTelephone, telephone);
-                _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.MobileTelephone, telephone);
-                _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.Telephone, telephone);
-                _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.SecondaryTelephone, telephone);
+                result.ShouldNotHaveValidationErrorFor(c => c.AddressTelephone);
+                result.ShouldNotHaveValidationErrorFor(c => c.MobileTelephone);
+                result.ShouldNotHaveValidationErrorFor(c => c.Telephone);
+                result.ShouldNotHaveValidationErrorFor(c => c.SecondaryTelephone);
             }
         }
 
         [Fact]
-        public void Validate_AddressLine1IsEmpty_HasNoError()
+        public void Validate_AddressLineTooLong_HasError()
         {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressLine1, null as string);
-        }
+            var longAddressLine = new string('a', 1025);
+            var candidate = new Candidate()
+            {
+                AddressLine1 = longAddressLine,
+                AddressLine2 = longAddressLine,
+                AddressLine3 = longAddressLine,
+            };
+            var result = _validator.TestValidate(candidate);
 
-        [Fact]
-        public void Validate_AddressLine1IsTooLong_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressLine1, new string('a', 1025));
-        }
-
-        [Fact]
-        public void Validate_AddressLine2IsTooLong_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressLine2, new string('a', 1025));
-        }
-
-        [Fact]
-        public void Validate_AddressLine3IsTooLong_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressLine3, new string('a', 1025));
-        }
-
-        [Fact]
-        public void Validate_AddressCityIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressCity, null as string);
+            result.ShouldHaveValidationErrorFor(c => c.AddressLine1);
+            result.ShouldHaveValidationErrorFor(c => c.AddressLine2);
+            result.ShouldHaveValidationErrorFor(c => c.AddressLine3);
         }
 
         [Fact]
         public void Validate_AddressCityIsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressCity, new string('a', 129));
-        }
+            var candidate = new Candidate() { AddressCity = new string('a', 129) };
+            var result = _validator.TestValidate(candidate);
 
-        [Fact]
-        public void Validate_AddressStateOrProvinceIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressStateOrProvince, null as string);
+            result.ShouldHaveValidationErrorFor(c => c.AddressCity);
         }
 
         [Fact]
         public void Validate_AddressStateOrProvinceIsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressStateOrProvince, new string('a', 101));
-        }
+            var candidate = new Candidate() { AddressStateOrProvince = new string('a', 101) };
+            var result = _validator.TestValidate(candidate);
 
-        [Fact]
-        public void Validate_AddressPostcodeIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressPostcode, null as string);
-        }
-
-        [Fact]
-        public void Validate_AddressPostcodeIsTooLong_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressPostcode, new string('a', 41));
+            result.ShouldHaveValidationErrorFor(c => c.AddressStateOrProvince);
         }
 
         [Theory]
@@ -405,128 +390,84 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         [InlineData("AZ1VS1", true)]
         public void Validate_AddressPostcodeFormat_ValidatesCorrectly(string postcode, bool hasError)
         {
+            var candidate = new Candidate() { AddressPostcode = postcode };
+            var result = _validator.TestValidate(candidate);
+
             if (hasError)
             {
-                _validator.ShouldHaveValidationErrorFor(candidate => candidate.AddressPostcode, postcode);
+                result.ShouldHaveValidationErrorFor(c => c.AddressPostcode);
             }
             else
             {
-                _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AddressPostcode, postcode);
+                result.ShouldNotHaveValidationErrorFor(c => c.AddressPostcode);
             }
-        }
-
-        [Fact]
-        public void Validate_EligibilityRulesPassedIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.EligibilityRulesPassed, null as string);
         }
 
         [Fact]
         public void Validate_EligibilityRulesPassedIsNotTrueOrFalse_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.EligibilityRulesPassed, "falsy");
+            var candidate = new Candidate() { EligibilityRulesPassed = "falsy" };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor(c => c.EligibilityRulesPassed);
         }
 
         [Fact]
-        public void Validate_PreferredTeachingSubjectIdIsInvalid_HasError()
+        public void Validate_IdFieldWithInvalidLookupItemId_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.PreferredTeachingSubjectId, Guid.NewGuid());
+            var candidate = new Candidate()
+            {
+                PreferredTeachingSubjectId = Guid.NewGuid(),
+                SecondaryPreferredTeachingSubjectId = Guid.NewGuid(),
+                CountryId = Guid.NewGuid(),
+            };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor(c => c.PreferredTeachingSubjectId);
+            result.ShouldHaveValidationErrorFor(c => c.SecondaryPreferredTeachingSubjectId);
+            result.ShouldHaveValidationErrorFor(c => c.CountryId);
         }
 
         [Fact]
-        public void Validate_SecondaryPreferredTeachingSubjectIdIsInvalid_HasError()
+        public void Validate_IdFieldWithInvalidPicklistItemId_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.SecondaryPreferredTeachingSubjectId, Guid.NewGuid());
-        }
+            var candidate = new Candidate()
+            {
+                PreferredEducationPhaseId = 123,
+                InitialTeacherTrainingYearId = 123,
+                TypeId = 123,
+                AssignmentStatusId = 123,
+                MailingListSubscriptionChannelId = 123,
+                EventsSubscriptionChannelId = 123,
+                ChannelId = 123,
+                AdviserEligibilityId = 123,
+                AdviserRequirementId = 123,
+                HasGcseMathsId = 123,
+                HasGcseScienceId = 123,
+                HasGcseEnglishId = 123,
+                PlanningToRetakeGcseMathsId = 123,
+                PlanningToRetakeGcseScienceId = 123,
+                PlanningToRetakeGcseEnglishId = 123,
+                ConsiderationJourneyStageId = 123,
+            };
+            var result = _validator.TestValidate(candidate);
 
-        [Fact]
-        public void Validate_CountryIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.CountryId, null as Guid?);
-        }
-
-        [Fact]
-        public void Validate_CountryIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.CountryId, Guid.NewGuid());
-        }
-
-        [Fact]
-        public void Validate_PreferredTeachingSubjectIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.PreferredTeachingSubjectId, null as Guid?);
-        }
-
-        [Fact]
-        public void Validate_SecondaryPreferredTeachingSubjectIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.SecondaryPreferredTeachingSubjectId, null as Guid?);
-        }
-
-        [Fact]
-        public void Validate_PreferredEducationPhaseIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.PreferredEducationPhaseId, 123);
-        }
-
-        [Fact]
-        public void Validate_PreferredEducationPhaseIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.PreferredEducationPhaseId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_InitialTeacherTrainingYearIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.InitialTeacherTrainingYearId, 123);
-        }
-
-        [Fact]
-        public void Validate_InitialTeacherTrainingYearIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.InitialTeacherTrainingYearId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_TypeIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.TypeId, 123);
-        }
-
-        [Fact]
-        public void Validate_TypeIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.TypeId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_AssignmentStatusIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AssignmentStatusId, 123);
-        }
-
-        [Fact]
-        public void Validate_AssignmentStatusIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AssignmentStatusId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_MailingListSubscriptionChannelIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.MailingListSubscriptionChannelId, 123);
-        }
-
-        [Fact]
-        public void Validate_EventSubscriptionChannelIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.EventsSubscriptionChannelId, 123);
-        }
-
-        [Fact]
-        public void Validate_ChannelIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.ChannelId, 123);
+            result.ShouldHaveValidationErrorFor(c => c.PreferredEducationPhaseId);
+            result.ShouldHaveValidationErrorFor(c => c.InitialTeacherTrainingYearId);
+            result.ShouldHaveValidationErrorFor(c => c.TypeId);
+            result.ShouldHaveValidationErrorFor(c => c.AssignmentStatusId);
+            result.ShouldHaveValidationErrorFor(c => c.MailingListSubscriptionChannelId);
+            result.ShouldHaveValidationErrorFor(c => c.EventsSubscriptionChannelId);
+            result.ShouldHaveValidationErrorFor(c => c.ChannelId);
+            result.ShouldHaveValidationErrorFor(c => c.AdviserEligibilityId);
+            result.ShouldHaveValidationErrorFor(c => c.AdviserRequirementId);
+            result.ShouldHaveValidationErrorFor(c => c.HasGcseMathsId);
+            result.ShouldHaveValidationErrorFor(c => c.HasGcseScienceId);
+            result.ShouldHaveValidationErrorFor(c => c.HasGcseEnglishId);
+            result.ShouldHaveValidationErrorFor(c => c.PlanningToRetakeGcseMathsId);
+            result.ShouldHaveValidationErrorFor(c => c.PlanningToRetakeGcseScienceId);
+            result.ShouldHaveValidationErrorFor(c => c.PlanningToRetakeGcseEnglishId);
+            result.ShouldHaveValidationErrorFor(c => c.ConsiderationJourneyStageId);
         }
 
         [Fact]
@@ -548,117 +489,12 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         }
 
         [Fact]
-        public void Validate_AdviserEligibilityIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AdviserEligibilityId, 123);
-        }
-
-        [Fact]
-        public void Validate_AdviserEligibilityIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AdviserEligibilityId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_AdviserRequirementIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.AdviserRequirementId, 123);
-        }
-
-        [Fact]
-        public void Validate_AdviserRequirementIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.AdviserRequirementId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_HasGcseMathsIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.HasGcseMathsId, 123);
-        }
-
-        [Fact]
-        public void Validate_HasGcseMathsIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.HasGcseMathsId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_HasGcseScienceIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.HasGcseScienceId, 123);
-        }
-
-        [Fact]
-        public void Validate_HasGcseScienceIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.HasGcseScienceId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_HasGcseEnglishIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.HasGcseEnglishId, 123);
-        }
-
-        [Fact]
-        public void Validate_HasGcseEnglishIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.HasGcseEnglishId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_PlanningToRetakeGcseMathsIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.PlanningToRetakeGcseMathsId, 123);
-        }
-
-        [Fact]
-        public void Validate_PlanningToRetakeGcseMathsIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.PlanningToRetakeGcseMathsId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_PlanningToRetakeGcseScienceIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.PlanningToRetakeGcseScienceId, 123);
-        }
-
-        [Fact]
-        public void Validate_PlanningToRetakeGcseScienceIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.PlanningToRetakeGcseScienceId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_PlanningToRetakeGcseEnglishIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.PlanningToRetakeGcseEnglishId, 123);
-        }
-
-        [Fact]
-        public void Validate_PlanningToRetakeGcseEnglishIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.PlanningToRetakeGcseEnglishId, null as int?);
-        }
-
-        [Fact]
-        public void Validate_ConsiderationJourneyStageIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.ConsiderationJourneyStageId, 123);
-        }
-
-        [Fact]
-        public void Validate_ConsiderationJourneyStageIdIsNull_HasNoError()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(candidate => candidate.ConsiderationJourneyStageId, null as int?);
-        }
-
-        [Fact]
         public void Validate_ClassroomExperienceNotesRawIsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.ClassroomExperienceNotesRaw, new string('a', 10001));
+            var candidate = new Candidate() { ClassroomExperienceNotesRaw = new string('a', 10001) };
+            var result = _validator.TestValidate(candidate);
+
+            result.ShouldHaveValidationErrorFor(c => c.ClassroomExperienceNotesRaw);
         }
     }
 }

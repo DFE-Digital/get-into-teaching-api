@@ -34,15 +34,22 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience.Validators
         }
 
         [Fact]
-        public void Validate_ActionIsEmpty_HasError()
+        public void Validate_RequiredFieldsWhenNullOrEmpty_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.Action, "");
-        }
+            var note = new ClassroomExperienceNote()
+            {
+                Action = "",
+                RecordedAt = null,
+                SchoolName = "",
+                SchoolUrn = null,
 
-        [Fact]
-        public void Validate_RecordedAtIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.RecordedAt, null as DateTime?);
+            };
+            var result = _validator.TestValidate(note);
+
+            result.ShouldHaveValidationErrorFor(s => s.Action);
+            result.ShouldHaveValidationErrorFor(s => s.RecordedAt);
+            result.ShouldHaveValidationErrorFor(s => s.SchoolName);
+            result.ShouldHaveValidationErrorFor(s => s.SchoolUrn);
         }
 
         [Theory]
@@ -58,38 +65,35 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience.Validators
         [InlineData("CANCELLED BY JOHN", true)]
         public void Validate_ActionFormat_ValidatesCorrectly(string action, bool hasError)
         {
+            var note = new ClassroomExperienceNote() { Action = action };
+            var result = _validator.TestValidate(note);
+
             if (hasError)
             {
-                _validator.ShouldHaveValidationErrorFor(request => request.Action, action);
+                result.ShouldHaveValidationErrorFor(s => s.Action);
             }
             else
             {
-                _validator.ShouldNotHaveValidationErrorFor(request => request.Action, action);
+                result.ShouldNotHaveValidationErrorFor(s => s.Action);
             }
-        }
-
-        [Fact]
-        public void Validate_SchoolNameIsEmpty_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.SchoolName, "");
         }
 
         [Fact]
         public void Validate_SchoolUrnIsTooLong_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.SchoolUrn, 1234567);
+            var note = new ClassroomExperienceNote() { SchoolUrn = 1234567 };
+            var result = _validator.TestValidate(note);
+
+            result.ShouldHaveValidationErrorFor(s => s.Action);
         }
 
         [Fact]
-        public void Validate_SchoolUrnIsWrongLength_HasError()
+        public void Validate_SchoolUrnIsTooShort_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(request => request.SchoolUrn, 11);
-        }
+            var note = new ClassroomExperienceNote() { SchoolUrn = 11 };
+            var result = _validator.TestValidate(note);
 
-        [Fact]
-        public void Validate_SchoolUrnIsNull_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(request => request.SchoolUrn, null as int?);
+            result.ShouldHaveValidationErrorFor(s => s.Action);
         }
     }
 }
