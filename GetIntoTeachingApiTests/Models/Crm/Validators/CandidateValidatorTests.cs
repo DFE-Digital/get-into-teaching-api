@@ -457,6 +457,8 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 PlanningToRetakeGcseScienceId = 123,
                 PlanningToRetakeGcseEnglishId = 123,
                 ConsiderationJourneyStageId = 123,
+                FindApplyPhaseId = 123,
+                FindApplyStatusId = 123,
             };
             var result = _validator.TestValidate(candidate);
 
@@ -476,6 +478,8 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
             result.ShouldHaveValidationErrorFor(c => c.PlanningToRetakeGcseScienceId);
             result.ShouldHaveValidationErrorFor(c => c.PlanningToRetakeGcseEnglishId);
             result.ShouldHaveValidationErrorFor(c => c.ConsiderationJourneyStageId);
+            result.ShouldHaveValidationErrorFor(c => c.FindApplyPhaseId);
+            result.ShouldHaveValidationErrorFor(c => c.FindApplyStatusId);
         }
 
         [Fact]
@@ -503,18 +507,6 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
             var result = _validator.TestValidate(candidate);
 
             result.ShouldHaveValidationErrorFor(c => c.ClassroomExperienceNotesRaw);
-        }
-
-        [Fact]
-        public void Validate_FindApplyPhaseIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.FindApplyPhaseId, 123);
-        }
-
-        [Fact]
-        public void Validate_FindApplyStatusIdIsInvalid_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(candidate => candidate.FindApplyStatusId, 123);
         }
     }
 }
