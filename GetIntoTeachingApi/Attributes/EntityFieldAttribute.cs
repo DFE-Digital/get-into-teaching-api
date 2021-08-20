@@ -11,22 +11,27 @@ namespace GetIntoTeachingApi.Attributes
         public string Name { get; }
         public Type Type { get; }
         public string Reference { get; }
-        public string[] IgnoreInEnvironments { get; }
+        public string[] Features { get; }
 
         public bool Ignored
         {
             get
             {
-                return IgnoreInEnvironments?.Contains(new Env().EnvironmentName) == true;
+                if (Features == null)
+                {
+                    return false;
+                }
+
+                return Features!.All(f => new Env().IsFeatureOff(f));
             }
         }
 
-        public EntityFieldAttribute(string name, Type type = null, string reference = null, string[] ignoreInEnvironments = null)
+        public EntityFieldAttribute(string name, Type type = null, string reference = null, string[] features = null)
         {
             Name = name;
             Type = type;
             Reference = reference;
-            IgnoreInEnvironments = ignoreInEnvironments;
+            Features = features;
         }
 
         public IDictionary<string, string> ToDictionary()
