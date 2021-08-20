@@ -9,6 +9,7 @@ using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.GetIntoTeaching;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -26,12 +27,14 @@ namespace GetIntoTeachingApiTests.Services
         private readonly IStore _store;
         private readonly Mock<IGeocodeClientAdapter> _mockGeocodeClient;
         private readonly Mock<ICrmService> _mockCrm;
+        private readonly Mock<IEnv> _mockEnv;
 
         public StoreTests(DatabaseFixture databaseFixture) : base(databaseFixture)
         {
             _mockGeocodeClient = new Mock<IGeocodeClientAdapter>();
             _mockCrm = new Mock<ICrmService>();
-            _store = new Store(DbContext, _mockGeocodeClient.Object, _mockCrm.Object, new DateTimeProvider());
+            _mockEnv = new Mock<IEnv>();
+            _store = new Store(DbContext, _mockGeocodeClient.Object, _mockCrm.Object, new DateTimeProvider(), _mockEnv.Object);
 
             Store.FailedPostcodeLookupCache.Clear();
         }
@@ -313,6 +316,20 @@ namespace GetIntoTeachingApiTests.Services
             var countries = DbContext.PickListItems.ToList();
             countries.Select(c => c.Value).ToList().ForEach(value => value.Should().Contain("Updated"));
             DbContext.PickListItems.Count().Should().Be(3);
+        }
+
+        [Fact]
+        public async void SyncAsync_WhenApplyApiFeatureIsOn_InsertsApplyPickListItems()
+        {
+            _mockEnv.Setup(m => m.IsFeatureOn("APPLY_API")).Returns(true);
+
+            _mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_candidateapplystatus")).Returns(Array.Empty<PickListItem>()).Verifiable();
+            _mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_candidateapplyphase")).Returns(Array.Empty<PickListItem>()).Verifiable();
+            _mockCrm.Setup(m => m.GetPickListItems("dfe_applyapplicationform", "dfe_candidateapplyphase")).Returns(Array.Empty<PickListItem>()).Verifiable();
+
+            await _store.SyncAsync();
+
+            _mockCrm.Verify();
         }
 
         [Fact]

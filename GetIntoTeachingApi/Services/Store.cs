@@ -7,6 +7,7 @@ using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.GetIntoTeaching;
+using GetIntoTeachingApi.Utils;
 using Microsoft.EntityFrameworkCore;
 using MoreLinq;
 using NetTopologySuite.Geometries;
@@ -22,17 +23,20 @@ namespace GetIntoTeachingApi.Services
         private readonly IGeocodeClientAdapter _geocodeClient;
         private readonly ICrmService _crm;
         private readonly IDateTimeProvider _dateTime;
+        private readonly IEnv _env;
 
         public Store(
             GetIntoTeachingDbContext dbContext,
             IGeocodeClientAdapter geocodeClient,
             ICrmService crm,
-            IDateTimeProvider dateTime)
+            IDateTimeProvider dateTime,
+            IEnv env)
         {
             _dbContext = dbContext;
             _geocodeClient = geocodeClient;
             _crm = crm;
             _dateTime = dateTime;
+            _env = env;
         }
 
         public async Task<string> CheckStatusAsync()
@@ -242,8 +246,6 @@ namespace GetIntoTeachingApi.Services
             await SyncPickListItem("contact", "dfe_isadvisorrequiredos");
             await SyncPickListItem("contact", "dfe_gitismlservicesubscriptionchannel");
             await SyncPickListItem("contact", "dfe_gitiseventsservicesubscriptionchannel");
-            await SyncPickListItem("contact", "dfe_candidateapplystatus");
-            await SyncPickListItem("contact", "dfe_candidateapplyphase");
             await SyncPickListItem("dfe_candidatequalification", "dfe_degreestatus");
             await SyncPickListItem("dfe_candidatequalification", "dfe_ukdegreegrade");
             await SyncPickListItem("dfe_candidatequalification", "dfe_type");
@@ -253,7 +255,13 @@ namespace GetIntoTeachingApi.Services
             await SyncPickListItem("msevtmgt_eventregistration", "dfe_channelcreation");
             await SyncPickListItem("phonecall", "dfe_channelcreation");
             await SyncPickListItem("dfe_servicesubscription", "dfe_servicesubscriptiontype");
-            await SyncPickListItem("dfe_applyapplicationform", "dfe_candidateapplyphase");
+
+            if (_env.IsFeatureOn("APPLY_API"))
+            {
+                await SyncPickListItem("contact", "dfe_candidateapplystatus");
+                await SyncPickListItem("contact", "dfe_candidateapplyphase");
+                await SyncPickListItem("dfe_applyapplicationform", "dfe_candidateapplyphase");
+            }
         }
 
         private async Task SyncModels<T>(IEnumerable<T> models, IQueryable<T> dbSet)
