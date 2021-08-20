@@ -100,7 +100,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
             candidate.OptOutOfGdpr.Should().BeFalse();
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
-            candidate.PrivacyPolicy.AcceptedAt.Should().BeCloseTo(DateTime.UtcNow);
+            candidate.PrivacyPolicy.AcceptedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(30));
 
             candidate.HasMailingListSubscription.Should().BeTrue();
             candidate.HasEventsSubscription.Should().BeTrue();

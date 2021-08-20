@@ -29,7 +29,7 @@ namespace GetIntoTeachingApiTests.Services
 
             candidate.MagicLinkToken.Should().NotBeNull();
             candidate.MagicLinkToken.Length.Should().Be(32);
-            candidate.MagicLinkTokenExpiresAt.Should().BeCloseTo(DateTime.UtcNow.AddHours(48));
+            candidate.MagicLinkTokenExpiresAt.Should().BeCloseTo(DateTime.UtcNow.AddHours(48), TimeSpan.FromSeconds(30));
             candidate.MagicLinkTokenStatusId.Should().Be((int)Candidate.MagicLinkTokenStatus.Generated);
         }
 

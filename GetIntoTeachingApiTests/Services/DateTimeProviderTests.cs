@@ -12,7 +12,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             var provider = new DateTimeProvider();
 
-            provider.UtcNow.Should().BeCloseTo(DateTime.UtcNow);
+            provider.UtcNow.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(30));
         }
     }
 }

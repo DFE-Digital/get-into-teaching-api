@@ -60,7 +60,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
             candidate.PhoneCall.TalkingPoints.Should().Be(request.TalkingPoints);
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
-            candidate.PrivacyPolicy.AcceptedAt.Should().BeCloseTo(DateTime.UtcNow);
+            candidate.PrivacyPolicy.AcceptedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(30));
         }
 
         [Fact]

@@ -27,7 +27,7 @@ namespace GetIntoTeachingApiTests.ModelBinders
         [Fact]
         public void BindModelAsync_WithNullContext_ThrowsArgumentNullException()
         {
-            _binder.Awaiting(b => b.BindModelAsync(null)).Should().Throw<ArgumentNullException>();
+            _binder.Awaiting(b => b.BindModelAsync(null)).Should().ThrowAsync<ArgumentNullException>();
         }
 
         [Fact]

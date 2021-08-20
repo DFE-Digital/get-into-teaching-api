@@ -96,7 +96,7 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
-            errors.Should().ContainKey("Email").WhichValue.Should().BeOfType<string[]>().Which.Should().Contain("Email is invalid.");
+            errors.Should().ContainKey("Email").WhoseValue.Should().BeOfType<string[]>().Which.Should().Contain("Email is invalid.");
         }
 
         [Fact]
@@ -194,7 +194,7 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
-            errors.Should().ContainKey("SchoolName").WhichValue.Should().BeOfType<string[]>().Which.Should().Contain("SchoolName must be set.");
+            errors.Should().ContainKey("SchoolName").WhoseValue.Should().BeOfType<string[]>().Which.Should().Contain("SchoolName must be set.");
         }
 
         [Fact]
