@@ -25,6 +25,15 @@ namespace GetIntoTeachingApiTests.Models.Crm
             type.GetProperty("FindApplyId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applicationformid");
             type.GetProperty("CreatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_createdon");
             type.GetProperty("UpdatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_modifiedon");
+            type.GetProperty("Name").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_name");
+        }
+
+        [Fact]
+        public void Name_IsDerivedFromFindApplyId()
+        {
+            var form = new ApplicationForm() { FindApplyId = "123" };
+
+            form.Name.Should().Be("Application Form 123");
         }
     }
 }
