@@ -242,6 +242,23 @@ var myChangeTrackedObject = json.DeserializeChangeTracked<ChangeTrackedObject>()
 var json = myChangeTrackedObject.SerializeChangeTracked();
 ```
 
+### Feature Switches
+
+We have basic support for feature switching in the API. The `IEnv` interface provides methods to check if a feature is on or off:
+
+```
+bool IsFeatureOn(string feature);
+bool IsFeatureOff(string feature);
+```
+
+It expects features to be present in the environment variables in the format `<feature_name>_FEATURE`. For example, with the environment variable:
+
+```
+APPLY_API_FEATURE=on
+```
+
+We can check for the feature with `env.IsFeatureOn("APPLY_API")`.
+
 ## CRM Changes
 
 The application is designed to make supporting new attribtues and entities in the CRM as easy as possible. All of the 'heavy lifting' is done in the `BaseModel` class using reflection to inspect model attributes and relevant `Entity*` annotations.
