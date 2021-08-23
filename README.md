@@ -242,7 +242,7 @@ var myChangeTrackedObject = json.DeserializeChangeTracked<ChangeTrackedObject>()
 var json = myChangeTrackedObject.SerializeChangeTracked();
 ```
 
-### Feature Switches
+### Feature Switches
 
 We have basic support for feature switching in the API. The `IEnv` interface provides methods to check if a feature is on or off:
 
