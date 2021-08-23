@@ -20,7 +20,7 @@ namespace GetIntoTeachingApi.Jobs
     public class LocationSyncJob : BaseJob
     {
         public const string UkPostcodeCsvFilename = "ukpostcodes.csv";
-        public static readonly string FreeMapToolsUrl = "https://www.freemaptools.com/download/full-postcodes/ukpostcodes.zip";
+        public static readonly string FreeMapToolsUrl = "https://www.freemaptools.com/download/full-uk-postcodes/ukpostcodes.zip";
         private const int BatchInterval = 300;
         private readonly ILogger<LocationSyncJob> _logger;
         private readonly IMetricService _metrics;
