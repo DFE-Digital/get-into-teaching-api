@@ -20,6 +20,19 @@ namespace GetIntoTeachingApi.Models.Crm
         public DateTime CreatedAt { get; set; }
         [EntityField("dfe_modifiedon")]
         public DateTime UpdatedAt { get; set; }
+        [EntityField("dfe_name")]
+        public string Name
+        {
+            get
+            {
+                return $"Application Form {FindApplyId}";
+            }
+            set
+            {
+                // BaseModel requires a setter for all mapped
+                // attributes, although we treat this one as read-only.
+            }
+        }
 
         public ApplicationForm()
             : base()
