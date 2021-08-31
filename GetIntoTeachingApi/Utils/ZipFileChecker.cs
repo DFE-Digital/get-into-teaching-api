@@ -1,15 +1,26 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.IO.Compression;
 
 namespace GetIntoTeachingApi.Utils
 {
-    public static class ZipFileChecker
+    public class ZipFileChecker
     {
-        private const int MaxNumberOfEntries = 10000;
-        private const int MaxTotalArchiveSize = 1000000000; // 1GB
-        private const int MaxCompressionRatio = 10;
+        private readonly int _maxNumberOfEntries;
+        private readonly int _maxTotalArchiveSize;
+        private readonly int _maxCompressionRatio;
 
-        public static void AssureNoBombs(string zipPath)
+        public ZipFileChecker(
+            int maxNumberOfEntries = 10000,
+            int maxTotalArchiveSize = 1000000000, // 1GB
+            int maxCompressionRatio = 10)
+        {
+            _maxNumberOfEntries = maxNumberOfEntries;
+            _maxTotalArchiveSize = maxTotalArchiveSize;
+            _maxCompressionRatio = maxCompressionRatio;
+        }
+
+        public void AssureNoBombs(string zipPath)
         {
             using var zipFile = ZipFile.OpenRead(zipPath);
 
@@ -18,49 +29,47 @@ namespace GetIntoTeachingApi.Utils
             CheckSizeOfArchives(zipFile);
         }
 
-        private static void CheckSizeOfArchives(ZipArchive zipFile)
+        private void CheckSizeOfArchives(ZipArchive zipFile)
         {
             int totalArchiveSize = 0;
 
             foreach (ZipArchiveEntry entry in zipFile.Entries)
             {
-                using (Stream st = entry.Open())
-                {
-                    byte[] buffer = new byte[1024];
-                    int totalEntrySize = 0;
-                    int numberOfBytesRead = 0;
+                using Stream stream = entry.Open();
+                byte[] buffer = new byte[1024];
+                int totalEntrySize = 0;
+                int numberOfBytesRead = 0;
 
-                    do
+                do
+                {
+                    numberOfBytesRead = stream.Read(buffer, 0, 1024);
+                    totalEntrySize += numberOfBytesRead;
+                    totalArchiveSize += numberOfBytesRead;
+                    double compressionRatio = totalEntrySize / (double)entry.CompressedLength;
+
+                    if (compressionRatio > _maxCompressionRatio)
                     {
-                        numberOfBytesRead = st.Read(buffer, 0, 1024);
-                        totalEntrySize += numberOfBytesRead;
-                        totalArchiveSize += numberOfBytesRead;
-                        double compressionRatio = totalEntrySize / (double)entry.CompressedLength;
-
-                        if (compressionRatio > MaxCompressionRatio)
-                        {
-                            throw new BombFoundException(
-                                $"Compression ratio of ${compressionRatio} exceeds the maximum allowed ${MaxCompressionRatio}");
-                        }
+                        throw new BombFoundException(
+                            $"Compression ratio of {Math.Ceiling(compressionRatio)} exceeds the maximum allowed ({_maxCompressionRatio})");
                     }
-                    while (numberOfBytesRead > 0);
-                }
 
-                if (totalArchiveSize > MaxTotalArchiveSize)
-                {
-                    throw new BombFoundException(
-                        $"Total archive size ${totalArchiveSize} exceeds the maximum allowed ${MaxTotalArchiveSize}");
+                    if (totalArchiveSize > _maxTotalArchiveSize)
+                    {
+                        throw new BombFoundException(
+                            $"The total archive size has exceeded the maximum allowed ({_maxTotalArchiveSize} bytes)");
+                    }
                 }
+                while (numberOfBytesRead > 0);
             }
         }
 
-        private static void CheckNumberOfEntries(ZipArchive zipArchive)
+        private void CheckNumberOfEntries(ZipArchive zipArchive)
         {
             int numberOfEntries = zipArchive.Entries.Count;
-            if (numberOfEntries > MaxNumberOfEntries)
+            if (numberOfEntries > _maxNumberOfEntries)
             {
                 throw new BombFoundException(
-                    $"Found ${zipArchive.Entries.Count} entries which exceeds the maximum allowed ${MaxNumberOfEntries}");
+                    $"Found {zipArchive.Entries.Count} entries which exceeds the maximum allowed ({_maxNumberOfEntries})");
             }
         }
     }

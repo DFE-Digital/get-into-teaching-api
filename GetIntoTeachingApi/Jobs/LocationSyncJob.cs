@@ -145,17 +145,14 @@ namespace GetIntoTeachingApi.Jobs
             await net.DownloadFileTaskAsync(new Uri(ukPostcodeCsvUrl), zipPath);
             net.Dispose();
 
-            _logger.LogInformation($"LocationSyncJob - ZIP Downloaded");
+            _logger.LogInformation("LocationSyncJob - ZIP Downloaded");
 
             try
             {
-                ZipFileChecker.AssureNoBombs(zipPath);
+                var checker = new ZipFileChecker();
+                checker.AssureNoBombs(zipPath);
                 ZipFile.ExtractToDirectory(zipPath, csvPath);
                 _logger.LogInformation("LocationSyncJob - CSV Extracted");
-            }
-            catch (BombFoundException bombFoundException)
-            {
-                _logger.LogError($"LocationSyncJob - Zip bomb found: ${bombFoundException}");
             }
             finally
             {

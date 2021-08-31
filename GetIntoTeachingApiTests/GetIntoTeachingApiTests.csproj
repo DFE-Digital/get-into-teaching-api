@@ -175,6 +175,12 @@
     <None Update="Contracts\Input\TeacherTrainingAdviser\sign_up_with_an_existing_candidate_when_in_a_closed_state_not_returning_existing_data_change_country.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Fixtures\zip-bomb-fixtures\25kb-uncompressed_1kb-compressed.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\zip-bomb-fixtures\contains-two-files.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
