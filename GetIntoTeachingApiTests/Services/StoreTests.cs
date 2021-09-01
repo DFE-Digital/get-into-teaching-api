@@ -430,7 +430,7 @@ namespace GetIntoTeachingApiTests.Services
             {
                 Postcode = "KY6 2NJ",
                 Radius = 15,
-                TypeId = (int)TeachingEvent.EventType.ApplicationWorkshop,
+                TypeIds = new int[] { (int)TeachingEvent.EventType.ApplicationWorkshop },
                 StartAfter = DateTime.UtcNow,
                 StartBefore = DateTime.UtcNow.AddDays(3)
             };
@@ -451,7 +451,7 @@ namespace GetIntoTeachingApiTests.Services
             {
                 Postcode = "KY6 2NJ",
                 Radius = 13,
-                TypeId = (int)TeachingEvent.EventType.ApplicationWorkshop,
+                TypeIds = new int[] { (int)TeachingEvent.EventType.ApplicationWorkshop },
                 StartAfter = DateTime.UtcNow,
                 StartBefore = DateTime.UtcNow.AddDays(3)
             };
@@ -472,7 +472,7 @@ namespace GetIntoTeachingApiTests.Services
             {
                 Postcode = "KY6 2NJ",
                 Radius = 12,
-                TypeId = (int)TeachingEvent.EventType.ApplicationWorkshop,
+                TypeIds = new int[] { (int)TeachingEvent.EventType.ApplicationWorkshop },
                 StartAfter = DateTime.UtcNow,
                 StartBefore = DateTime.UtcNow.AddDays(3)
             };
@@ -521,11 +521,30 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public async void SearchTeachingEvents_FilteredByMultipleTypes_ReturnsMatching()
+        {
+            SeedMockLocations();
+            await SeedMockTeachingEventsAndBuildingsAsync();
+            var request = new TeachingEventSearchRequest()
+            {
+                TypeIds = new int[]
+                {
+                    (int)TeachingEvent.EventType.TrainToTeachEvent,
+                    (int)TeachingEvent.EventType.ApplicationWorkshop
+                }
+            };
+
+            var results = await _store.SearchTeachingEventsAsync(request);
+
+            results.Select(e => e.Name).Should().Contain(new string[] { "Event 1", "Event 2" });
+        }
+
+        [Fact]
         public async void SearchTeachingEvents_FilteredByType_ReturnsMatching()
         {
             SeedMockLocations();
             await SeedMockTeachingEventsAndBuildingsAsync();
-            var request = new TeachingEventSearchRequest() { TypeId = (int)TeachingEvent.EventType.ApplicationWorkshop };
+            var request = new TeachingEventSearchRequest() { TypeIds = new int[] { (int)TeachingEvent.EventType.ApplicationWorkshop } };
 
             var result = await _store.SearchTeachingEventsAsync(request);
 

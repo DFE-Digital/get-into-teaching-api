@@ -16,6 +16,9 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching.Validators
             RuleFor(request => request.TypeId)
                 .SetValidator(new PickListItemIdValidator<TeachingEventSearchRequest>("msevtmgt_event", "dfe_event_type", store))
                 .Unless(request => request.TypeId == null);
+            RuleForEach(request => request.TypeIds)
+                .SetValidator(new PickListItemIdValidator<TeachingEventSearchRequest>("msevtmgt_event", "dfe_event_type", store))
+                .Unless(request => request.TypeIds == null);
             RuleFor(request => request.Radius).GreaterThan(0);
             RuleFor(request => request)
                 .Must(StartAfterEarlierThanStartBefore)
