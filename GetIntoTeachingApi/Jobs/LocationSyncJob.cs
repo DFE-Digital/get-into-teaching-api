@@ -145,17 +145,19 @@ namespace GetIntoTeachingApi.Jobs
             await net.DownloadFileTaskAsync(new Uri(ukPostcodeCsvUrl), zipPath);
             net.Dispose();
 
-            _logger.LogInformation($"LocationSyncJob - ZIP Downloaded");
+            _logger.LogInformation("LocationSyncJob - ZIP Downloaded");
 
             try
             {
+                var checker = new ZipFileChecker();
+                checker.AssureNoBombs(zipPath);
                 ZipFile.ExtractToDirectory(zipPath, csvPath);
-                _logger.LogInformation($"LocationSyncJob - CSV Extracted");
+                _logger.LogInformation("LocationSyncJob - CSV Extracted");
             }
             finally
             {
                 File.Delete(zipPath);
-                _logger.LogInformation($"LocationSyncJob - ZIP Deleted");
+                _logger.LogInformation("LocationSyncJob - ZIP Deleted");
             }
 
             return Path.Combine(csvPath, UkPostcodeCsvFilename);
