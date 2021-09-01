@@ -5,21 +5,20 @@ using GetIntoTeachingApi.Services;
 
 namespace GetIntoTeachingApi.Validators
 {
-    public class PickListItemIdValidator<T> : PropertyValidator<T, int?>
+    public class PickListItemIdValidator<T> : PropertyValidator<T, int>
     {
         private readonly string _entityName;
         private readonly string _attributeName;
         private readonly IStore _store;
 
         public PickListItemIdValidator(string entityName, string attributeName, IStore store)
-            : base()
         {
             _entityName = entityName;
             _attributeName = attributeName;
             _store = store;
         }
 
-        public override bool IsValid(ValidationContext<T> context, int? value)
+        public override bool IsValid(ValidationContext<T> context, int value)
         {
             var exists = _store.GetPickListItems(_entityName, _attributeName).Any(i => i.Id == value);
 

@@ -6,12 +6,33 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
 {
     public class TeachingEventSearchRequest : ICloneable
     {
+        private int[] _typeIds;
+
         [SwaggerSchema("Postcode to center search around.")]
         public string Postcode { get; set; }
         [SwaggerSchema("Set to filter results to a radius (in miles) around the postcode.")]
         public int? Radius { get; set; }
         [SwaggerSchema("Set to filter results to a type of teaching event. Must match an `typeId` of the `TeachingEvent` schema.")]
         public int? TypeId { get; set; }
+        [SwaggerSchema("Set to filter results to a type of teaching event. Each ID must match a `typeId` of the `TeachingEvent` schema.")]
+        public int[] TypeIds
+        {
+            get
+            {
+                if (TypeId != null)
+                {
+                    return new int[] { TypeId.Value };
+                }
+
+                return _typeIds;
+            }
+
+            set
+            {
+                _typeIds = value;
+            }
+        }
+
         [SwaggerSchema("Set to filter results to those that start after a given date.")]
         public DateTime? StartAfter { get; set; }
         [SwaggerSchema("Set to filter results to those that start before a given date.")]
