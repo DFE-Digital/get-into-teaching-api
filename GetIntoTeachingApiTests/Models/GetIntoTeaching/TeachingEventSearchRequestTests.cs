@@ -21,11 +21,11 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         [Fact]
         public void Clone_WithBlock_ClonesAndCallsBlock()
         {
-            var request = new TeachingEventSearchRequest() { Radius = 10, TypeId = 123 };
+            var request = new TeachingEventSearchRequest() { Radius = 10, TypeIds = new int[] { 123 } };
             var clone = request.Clone((te) => te.Radius = 100);
 
             clone.Radius.Should().Be(100);
-            clone.TypeId.Should().Be(request.TypeId);
+            clone.TypeIds.Should().BeEquivalentTo(request.TypeIds);
         }
 
         [Fact]
@@ -35,6 +35,19 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
             var expectedDefaults = new int[] { (int)TeachingEvent.Status.Open, (int)TeachingEvent.Status.Closed };
 
             request.StatusIds.Should().Equal(expectedDefaults);
+        }
+
+        [Fact]
+        public void TypeIds_WhenTypeIdHasAValue_ReturnsTheValueOfTypeId()
+        {
+            var request = new TeachingEventSearchRequest
+            {
+                TypeId = 101,
+                TypeIds = new int[] { 202 }
+            };
+
+            request.TypeIds.Length.Should().Be(1);
+            request.TypeIds[0].Should().Be(101);
         }
     }
 }
