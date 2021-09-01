@@ -20,12 +20,12 @@ namespace GetIntoTeachingApi.Services
         private static readonly Histogram _teachingEventSearchResults = Metrics
             .CreateHistogram("api_teaching_event_search_results_count", "Histogram of teaching event search results.", new HistogramConfiguration
             {
-                LabelNames = new[] { "type_id", "radius" },
+                LabelNames = new[] { "type_ids", "radius" },
             });
         private static readonly Histogram _inPersonTeachingEventResults = Metrics
             .CreateHistogram("api_in_person_teaching_event_results_count", "Histogram of teaching event search results (in person).", new HistogramConfiguration
             {
-                LabelNames = new[] { "type_id", "radius" },
+                LabelNames = new[] { "type_ids", "radius" },
             });
         private static readonly Gauge _hangfireJobs = Metrics
             .CreateGauge("api_hangfire_jobs", "Gauge number of Hangifre jobs.", "state");

@@ -59,8 +59,9 @@ namespace GetIntoTeachingApi.Models.Crm.Validators
                 .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_ittyear", store))
                 .Unless(candidate => candidate.InitialTeacherTrainingYearId == null);
             RuleFor(candidate => candidate.ChannelId)
-                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_channelcreation", store))
-                .Unless(candidate => candidate.Id != null);
+                .NotNull()
+                .When(candidate => candidate.Id == null)
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_channelcreation", store));
             RuleFor(candidate => candidate.HasGcseEnglishId)
                 .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_websitehasgcseenglish", store))
                 .Unless(candidate => candidate.HasGcseEnglishId == null);

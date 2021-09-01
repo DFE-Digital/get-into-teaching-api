@@ -35,7 +35,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
             {
                 Postcode = "KY11 9HF",
                 Radius = 10,
-                TypeId = mockPickListItem.Id,
+                TypeIds = new int[] { mockPickListItem.Id },
                 StartAfter = DateTime.UtcNow.AddDays(-1),
                 StartBefore = DateTime.UtcNow.AddDays(1)
             };
@@ -104,9 +104,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         [Fact]
         public void Validate_TypeIdIsInvalid_HasError()
         {
-            var result = _validator.TestValidate(new TeachingEventSearchRequest() { TypeId = 123 });
+            var result = _validator.TestValidate(new TeachingEventSearchRequest() { TypeIds = new int[] { 123 } });
 
-            result.ShouldHaveValidationErrorFor(r => r.TypeId);
+            result.ShouldHaveValidationErrorFor(r => r.TypeIds);
         }
 
         [Fact]

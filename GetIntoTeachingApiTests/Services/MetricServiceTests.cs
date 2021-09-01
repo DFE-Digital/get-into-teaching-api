@@ -81,7 +81,7 @@ namespace GetIntoTeachingApiTests.Services
         public void TeachingEventSearchResults_ReturnsMetric()
         {
             _metrics.TeachingEventSearchResults.Name.Should().Be("api_teaching_event_search_results_count");
-            _metrics.TeachingEventSearchResults.LabelNames.Should().BeEquivalentTo(new[] { "type_id", "radius" });
+            _metrics.TeachingEventSearchResults.LabelNames.Should().BeEquivalentTo(new[] { "type_ids", "radius" });
         }
 
 
@@ -89,7 +89,7 @@ namespace GetIntoTeachingApiTests.Services
         public void InPersonTeachingEventResults_ReturnsMetric()
         {
             _metrics.InPersonTeachingEventResults.Name.Should().Be("api_in_person_teaching_event_results_count");
-            _metrics.InPersonTeachingEventResults.LabelNames.Should().BeEquivalentTo(new[] { "type_id", "radius" });
+            _metrics.InPersonTeachingEventResults.LabelNames.Should().BeEquivalentTo(new[] { "type_ids", "radius" });
         }
     }
 }
