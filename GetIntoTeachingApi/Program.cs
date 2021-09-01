@@ -2,6 +2,8 @@ using System.Threading.Tasks;
 using GetIntoTeachingApi.AppStart;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Serilog;
+using Serilog.Events;
 
 namespace GetIntoTeachingApi
 {
@@ -22,6 +24,11 @@ namespace GetIntoTeachingApi
                     webBuilder.UseSentry();
                     webBuilder.UseKestrel(opts => opts.AddServerHeader = false);
                     webBuilder.UseStartup<Startup>();
-                });
+                })
+            .UseSerilog(new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .WriteTo.Console()
+                .CreateLogger());
     }
 }
