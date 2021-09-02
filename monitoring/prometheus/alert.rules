@@ -145,12 +145,12 @@ groups:
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#HighGoogleApiCalls-high
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=57&orgId=1&var-App=get-into-teaching-api-prod
       - alert: GoogleApiErrors
-        expr: 'sum(rate(api_google_api_calls{result != "success"}[1m])) > 0'
+        expr: 'sum(rate(api_google_api_calls{result != "success"}[10m])) > 5'
         labels:
-          severity: medium
+          severity: high
         annotations:
-          summary: Alerts when the Google Geocoding API returns a non-success response.
-          description: Alerts when the Google Geocoding API returns a non-success response.
+          summary: Alerts when the Google Geocoding API returns a non-success response more than 5 times in the space of 10 minutes.
+          description: Alerts when the Google Geocoding API returns a non-success response more than 5 time sin the space of 10 minutes.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#GoogleApiErrors-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=57&orgId=1&var-App=get-into-teaching-api-prod
       - alert: ClientApproachingRateLimit
