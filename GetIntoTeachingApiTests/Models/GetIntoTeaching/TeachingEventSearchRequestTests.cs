@@ -36,18 +36,5 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
 
             request.StatusIds.Should().Equal(expectedDefaults);
         }
-
-        [Fact]
-        public void TypeIds_WhenTypeIdHasAValue_ReturnsTheValueOfTypeId()
-        {
-            var request = new TeachingEventSearchRequest
-            {
-                TypeId = 101,
-                TypeIds = new int[] { 202 }
-            };
-
-            request.TypeIds.Length.Should().Be(1);
-            request.TypeIds[0].Should().Be(101);
-        }
     }
 }

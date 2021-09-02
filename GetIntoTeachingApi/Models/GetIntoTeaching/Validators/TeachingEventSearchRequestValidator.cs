@@ -13,9 +13,6 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching.Validators
                 .MaximumLength(40)
                 .Matches(Location.OutwardOrFullPostcodeRegex)
                 .Unless(request => request.Postcode == null && request.Radius == null);
-            RuleFor(request => request.TypeId)
-                .SetValidator(new PickListItemIdValidator<TeachingEventSearchRequest>("msevtmgt_event", "dfe_event_type", store))
-                .Unless(request => request.TypeId == null);
             RuleForEach(request => request.TypeIds)
                 .SetValidator(new PickListItemIdValidator<TeachingEventSearchRequest>("msevtmgt_event", "dfe_event_type", store))
                 .Unless(request => request.TypeIds == null);
