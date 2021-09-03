@@ -28,7 +28,10 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
             var mockPickListItem = new PickListItem { Id = 123 };
 
             _mockStore
-                .Setup(mock => mock.GetPickListItems("dfe_applyapplicationform", "dfe_candidateapplyphase"))
+                .Setup(mock => mock.GetPickListItems("dfe_applyapplicationform", "dfe_applyphase"))
+                .Returns(new[] { mockPickListItem }.AsQueryable());
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("dfe_applyapplicationform", "dfe_applystatus"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
 
             var form = new ApplicationForm()
@@ -36,6 +39,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 CandidateId = Guid.NewGuid(),
                 FindApplyId = "67890",
                 PhaseId = mockPickListItem.Id,
+                StatusId = mockPickListItem.Id,
             };
 
             var result = _validator.TestValidate(form);
@@ -53,12 +57,23 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         }
 
         [Fact]
-        public void Validate_PhaseIdIsNotValid_HasError()
+        public void Validate_OptionSetIsNotValid_HasError()
         {
-            var form = new ApplicationForm() { PhaseId = 456 };
+            var form = new ApplicationForm() { PhaseId = 456, StatusId = 789 };
             var result = _validator.TestValidate(form);
 
             result.ShouldHaveValidationErrorFor("PhaseId");
+            result.ShouldHaveValidationErrorFor("StatusId");
+        }
+
+        [Fact]
+        public void Validate_RequiredAttributeIsNull_HasError()
+        {
+            var form = new ApplicationForm() { PhaseId = null, StatusId = null };
+            var result = _validator.TestValidate(form);
+
+            result.ShouldHaveValidationErrorFor("PhaseId");
+            result.ShouldHaveValidationErrorFor("StatusId");
         }
     }
 }
