@@ -19,9 +19,9 @@ namespace GetIntoTeachingApi.Attributes
             _factory = new CommaSeparatedQueryStringValueProviderFactory(separator);
         }
 
-        public CommaSeparatedQueryStringAttribute(string key, string separator)
+        public CommaSeparatedQueryStringAttribute(string[] keys, string separator)
         {
-            _factory = new CommaSeparatedQueryStringValueProviderFactory(key, separator);
+            _factory = new CommaSeparatedQueryStringValueProviderFactory(keys, separator);
         }
 
         public void OnResourceExecuted(ResourceExecutedContext context)
