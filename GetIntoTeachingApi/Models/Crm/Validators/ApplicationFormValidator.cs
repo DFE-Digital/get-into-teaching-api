@@ -10,8 +10,11 @@ namespace GetIntoTeachingApi.Models.Crm.Validators
         {
             RuleFor(form => form.FindApplyId).NotEmpty();
             RuleFor(form => form.PhaseId)
-                .SetValidator(new PickListItemIdValidator<ApplicationForm>("dfe_applyapplicationform", "dfe_candidateapplyphase", store))
-                .Unless(form => form.PhaseId == null);
+                .NotNull()
+                .SetValidator(new PickListItemIdValidator<ApplicationForm>("dfe_applyapplicationform", "dfe_applyphase", store));
+            RuleFor(form => form.StatusId)
+                .NotNull()
+                .SetValidator(new PickListItemIdValidator<ApplicationForm>("dfe_applyapplicationform", "dfe_applystatus", store));
         }
     }
 }
