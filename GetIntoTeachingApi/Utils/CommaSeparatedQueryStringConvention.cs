@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using GetIntoTeachingApi.Attributes;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
@@ -12,9 +13,23 @@ namespace GetIntoTeachingApi.Utils
             {
                 if (parameter.Attributes.OfType<CommaSeparatedAttribute>().Any() && !parameter.Action.Filters.OfType<CommaSeparatedQueryStringAttribute>().Any())
                 {
-                    parameter.Action.Filters.Add(new CommaSeparatedQueryStringAttribute(parameter.ParameterName, ","));
+                    var attributeNames = parameter.Attributes.OfType<CommaSeparatedAttribute>().First().AttributeNames;
+
+                    if (attributeNames != null)
+                    {
+                        AddToActionFilterAsCommaSeparated(parameter, attributeNames);
+                    }
+                    else
+                    {
+                        AddToActionFilterAsCommaSeparated(parameter, new string[] { parameter.ParameterName });
+                    }
                 }
             }
+        }
+
+        private static void AddToActionFilterAsCommaSeparated(ParameterModel parameter, string[] keys)
+        {
+            parameter.Action.Filters.Add(new CommaSeparatedQueryStringAttribute(keys, ","));
         }
     }
 }
