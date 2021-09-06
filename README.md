@@ -71,6 +71,9 @@ Endpoints that are potentially exploitable have global rate limits applied. If y
 
 More information on rate limiting can be found [below](#rate-limiting).
 
+### Client Configuration
+
+When the client is configured to point to the API, we need to ensure it uses the `https` version and does not rely on the insecure redirect of `http` traffic. We are looking into ways to disable `http` traffic entirely in the API, however it doesn't appear to be trivial to do and whilst we only have internal API clients that we have full control over we should instead be enforcing the policy of directly accessing the `https` version of the API.
 
 ## Getting Started
 
