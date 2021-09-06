@@ -325,7 +325,8 @@ namespace GetIntoTeachingApiTests.Services
 
             _mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_candidateapplystatus")).Returns(Array.Empty<PickListItem>()).Verifiable();
             _mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_candidateapplyphase")).Returns(Array.Empty<PickListItem>()).Verifiable();
-            _mockCrm.Setup(m => m.GetPickListItems("dfe_applyapplicationform", "dfe_candidateapplyphase")).Returns(Array.Empty<PickListItem>()).Verifiable();
+            _mockCrm.Setup(m => m.GetPickListItems("dfe_applyapplicationform", "dfe_applyphase")).Returns(Array.Empty<PickListItem>()).Verifiable();
+            _mockCrm.Setup(m => m.GetPickListItems("dfe_applyapplicationform", "dfe_applystatus")).Returns(Array.Empty<PickListItem>()).Verifiable();
 
             await _store.SyncAsync();
 

@@ -105,30 +105,6 @@ namespace GetIntoTeachingApi.Models.Crm
             ReRegistered = 222750000,
         }
 
-        // The keys for this enum need to mirror the
-        // Apply API naming so we can match them up.
-        public enum FindApplyApplicationStatus
-        {
-            NeverSignedIn = 222750000,
-            UnsubmittedNotStartedForm = 222750001,
-            UnsubmittedInProgress = 222750002,
-            AwaitingProviderDecisions = 222750003,
-            AwaitingCandidateResponse = 222750004,
-            Recruited = 222750005,
-            PendingConditions = 222750006,
-            OfferDeferred = 222750007,
-            EndedWithoutSuccess = 222750008,
-            UnknownState = 222750009,
-        }
-
-        // The keys for this enum need to mirror the
-        // Apply API naming so we can match them up.
-        public enum FindApplyApplicationPhase
-        {
-            Apply1 = 222750000,
-            Apply2 = 222750001,
-        }
-
         public string FullName => $"{FirstName} {LastName}".NullIfEmptyOrWhitespace();
         [EntityField("dfe_preferredteachingsubject01", typeof(EntityReference), "dfe_teachingsubjectlist")]
         public Guid? PreferredTeachingSubjectId { get; set; }
