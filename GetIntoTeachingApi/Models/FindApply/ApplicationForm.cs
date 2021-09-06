@@ -11,5 +11,9 @@ namespace GetIntoTeachingApi.Models.FindApply
         public DateTime CreatedAt { get; set; }
         [JsonProperty("updated_at")]
         public DateTime UpdatedAt { get; set; }
+        [JsonProperty("application_status")]
+        public string ApplicationStatus { get; set; }
+        [JsonProperty("application_phase")]
+        public string ApplicationPhase { get; set; }
     }
 }

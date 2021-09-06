@@ -20,7 +20,9 @@ namespace GetIntoTeachingApiTests.Models.Crm
                 && a.Type == typeof(EntityReference) && a.Reference == "contact");
 
             type.GetProperty("PhaseId").Should().BeDecoratedWith<EntityFieldAttribute>(
-                a => a.Name == "dfe_candidateapplyphase" && a.Type == typeof(OptionSetValue));
+                a => a.Name == "dfe_applyphase" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("StatusId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "dfe_applystatus" && a.Type == typeof(OptionSetValue));
 
             type.GetProperty("FindApplyId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applicationformid");
             type.GetProperty("CreatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_createdon");

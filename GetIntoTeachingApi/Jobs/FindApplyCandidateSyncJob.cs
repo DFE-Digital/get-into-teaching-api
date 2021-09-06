@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GetIntoTeachingApi.Models.FindApply;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
@@ -46,8 +47,9 @@ namespace GetIntoTeachingApi.Jobs
                 _logger.LogInformation($"FindApplyCandidateSyncJob - Hit - {findApplyCandidate.Id}");
 
                 var candidateId = (Guid)match.Id;
-                UpdateCandidate(candidateId, findApplyCandidate);
-                UpsertApplicationForms(candidateId, findApplyCandidate.Attributes.ApplicationForms);
+                var applicationForms = findApplyCandidate.Attributes.ApplicationForms;
+                UpdateCandidate(candidateId, findApplyCandidate, applicationForms);
+                UpsertApplicationForms(candidateId, applicationForms);
             }
             else
             {
@@ -55,7 +57,7 @@ namespace GetIntoTeachingApi.Jobs
             }
         }
 
-        private void UpdateCandidate(Guid candidateId, Candidate findApplyCandidate)
+        private void UpdateCandidate(Guid candidateId, Candidate findApplyCandidate, IEnumerable<ApplicationForm> findApplyApplicationForms)
         {
             // We persist a new Candidate to ensure we only write the find/apply
             // attributes back to the CRM and not existing attributes on the match.
@@ -65,9 +67,15 @@ namespace GetIntoTeachingApi.Jobs
                 FindApplyId = findApplyCandidate.Id,
                 FindApplyCreatedAt = findApplyCandidate.Attributes.CreatedAt,
                 FindApplyUpdatedAt = findApplyCandidate.Attributes.UpdatedAt,
-                FindApplyStatusId = (int)Enum.Parse(typeof(Models.Crm.Candidate.FindApplyApplicationStatus), findApplyCandidate.Attributes.ApplicationStatus.ToPascalCase()),
-                FindApplyPhaseId = (int)Enum.Parse(typeof(Models.Crm.Candidate.FindApplyApplicationPhase), findApplyCandidate.Attributes.ApplicationPhase.ToPascalCase()),
             };
+
+            var latestApplicationForm = findApplyApplicationForms?.FirstOrDefault();
+
+            if (latestApplicationForm != null)
+            {
+                candidate.FindApplyStatusId = (int)Enum.Parse(typeof(Models.Crm.ApplicationForm.Status), latestApplicationForm.ApplicationStatus.ToPascalCase());
+                candidate.FindApplyPhaseId = (int)Enum.Parse(typeof(Models.Crm.ApplicationForm.Phase), latestApplicationForm.ApplicationPhase.ToPascalCase());
+            }
 
             _crm.Save(candidate);
         }
@@ -90,6 +98,8 @@ namespace GetIntoTeachingApi.Jobs
                     FindApplyId = findApplyForm.Id.ToString(),
                     CreatedAt = findApplyForm.CreatedAt,
                     UpdatedAt = findApplyForm.UpdatedAt,
+                    StatusId = (int)Enum.Parse(typeof(Models.Crm.ApplicationForm.Status), findApplyForm.ApplicationStatus.ToPascalCase()),
+                    PhaseId = (int)Enum.Parse(typeof(Models.Crm.ApplicationForm.Phase), findApplyForm.ApplicationPhase.ToPascalCase()),
                 };
 
                 _crm.Save(form);
