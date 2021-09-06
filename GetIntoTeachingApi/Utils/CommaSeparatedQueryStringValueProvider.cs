@@ -9,7 +9,7 @@ namespace GetIntoTeachingApi.Utils
 {
     public class CommaSeparatedQueryStringValueProvider : QueryStringValueProvider
     {
-        private readonly string _key;
+        private readonly string[] _keys;
         private readonly string _separator;
 
         public CommaSeparatedQueryStringValueProvider(IQueryCollection values, string separator)
@@ -18,10 +18,10 @@ namespace GetIntoTeachingApi.Utils
             _separator = separator;
         }
 
-        public CommaSeparatedQueryStringValueProvider(string key, IQueryCollection values, string separator)
+        public CommaSeparatedQueryStringValueProvider(string[] keys, IQueryCollection values, string separator)
             : base(BindingSource.Query, values, CultureInfo.InvariantCulture)
         {
-            _key = key;
+            _keys = keys;
             _separator = separator;
         }
 
@@ -29,7 +29,7 @@ namespace GetIntoTeachingApi.Utils
         {
             var result = base.GetValue(key);
 
-            if (_key != key)
+            if (!_keys.Contains(key))
             {
                 return result;
             }

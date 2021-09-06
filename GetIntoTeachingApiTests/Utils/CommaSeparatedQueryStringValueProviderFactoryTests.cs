@@ -12,7 +12,7 @@ namespace GetIntoTeachingApiTests.Utils
         [Fact]
         public void CreateValueProviderAsync_InsertsCommaSepratedQueryStrinValueProvider()
         {
-            var factory = new CommaSeparatedQueryStringValueProviderFactory("key", ",");
+            var factory = new CommaSeparatedQueryStringValueProviderFactory(new string[] { "key" }, ",");
             var actionContext = new ActionContext();
             var httpContext = new DefaultHttpContext();
             httpContext.Request.QueryString = new QueryString("?key=value");
@@ -21,7 +21,7 @@ namespace GetIntoTeachingApiTests.Utils
 
             factory.CreateValueProviderAsync(context);
 
-            var expectedProvider = new CommaSeparatedQueryStringValueProvider("key",
+            var expectedProvider = new CommaSeparatedQueryStringValueProvider(new string[] { "key" },
                 context.ActionContext.HttpContext.Request.Query, ",");
             context.ValueProviders[0].Should().BeEquivalentTo(expectedProvider);
         }
