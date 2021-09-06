@@ -135,14 +135,6 @@ The GIT API aims to provide:
                     config.UsePostgreSqlStorage(DbConfiguration.HangfireConnectionString(env));
                 }
             });
-
-            services.AddHangfireServer(options =>
-            {
-                if (!env.IsDevelopment)
-                {
-                    options.WorkerCount = 20;
-                }
-            });
         }
 
         public static void ConfigureRedis(this IServiceCollection services, IEnv env)
