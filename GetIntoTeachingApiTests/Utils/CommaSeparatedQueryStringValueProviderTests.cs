@@ -9,13 +9,13 @@ namespace GetIntoTeachingApiTests.Utils
 {
     public class CommaSeparatedQueryStringValueProviderTests
     {
-        private readonly string _key;
+        private readonly string[] _keys;
         private readonly IQueryCollection _values;
         private readonly CommaSeparatedQueryStringValueProvider _provider;
 
         public CommaSeparatedQueryStringValueProviderTests()
         {
-            _key = "key1";
+            _keys = new string[] { "key1", "key2" };
             _values = new QueryCollection(new Dictionary<string, StringValues>()
             {
                 { "key1", "value1,value2,value3" },
@@ -23,15 +23,15 @@ namespace GetIntoTeachingApiTests.Utils
                 { "key3", "other_value1|other_value2" },
             });
 
-            _provider = new CommaSeparatedQueryStringValueProvider(_key, _values, ",");
+            _provider = new CommaSeparatedQueryStringValueProvider(_keys, _values, ",");
         }
 
         [Fact]
         public void GetValue_WithNonMatchingKey_ReturnsASingleValue()
         {
-            var result = _provider.GetValue("key2");
+            var result = _provider.GetValue("key3");
 
-            result.Values.Should().BeEquivalentTo(new string[] { "other_value1,other_value2" });
+            result.Values.Should().BeEquivalentTo(new string[] { "other_value1|other_value2" });
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace GetIntoTeachingApiTests.Utils
         [Fact]
         public void GetValue_WithMatchingKeyAndNoSeparator_ReturnsSingleValue()
         {
-            var provider = new CommaSeparatedQueryStringValueProvider("key3", _values, ",");
+            var provider = new CommaSeparatedQueryStringValueProvider(new string[] { "key3" }, _values, ",");
 
             var result = provider.GetValue("key3");
 

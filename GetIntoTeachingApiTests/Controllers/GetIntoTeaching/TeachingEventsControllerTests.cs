@@ -98,6 +98,20 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
         }
 
         [Fact]
+        public void SearchGroupedByType_SearchRequestIsDecoratedWithCommaSeparatedAttributeForArrayProperties()
+        {
+            var expectedAttribute = new CommaSeparatedAttribute(
+                nameof(TeachingEventSearchRequest.TypeIds), nameof(TeachingEventSearchRequest.StatusIds));
+
+            typeof(TeachingEventsController)
+                .GetMethod("SearchGroupedByType")
+                .GetParameters()
+                .FirstOrDefault(param => param.ParameterType == typeof(TeachingEventSearchRequest))
+                .GetCustomAttributes(false)
+                .Should().ContainEquivalentOf(expectedAttribute);
+        }
+
+        [Fact]
         public async void SearchGroupedByType_InvalidRequest_RespondsWithValidationErrors()
         {
             var request = new TeachingEventSearchRequest() { Postcode = null };
