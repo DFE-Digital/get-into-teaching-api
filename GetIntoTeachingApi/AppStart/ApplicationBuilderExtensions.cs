@@ -12,16 +12,8 @@ namespace GetIntoTeachingApi.AppStart
 {
     public static class ApplicationBuilderExtensions
     {
-        public static void ConfigureHangfire(this IApplicationBuilder app, int? workerCount, bool addBasicAuthFilter, IEnv env)
+        public static void ConfigureHangfire(this IApplicationBuilder app, bool addBasicAuthFilter, IEnv env)
         {
-            var hangfireOptions = new BackgroundJobServerOptions();
-            if (workerCount.HasValue)
-            {
-                hangfireOptions.WorkerCount = workerCount.Value;
-            }
-
-            app.UseHangfireServer(hangfireOptions);
-
             var filters = new List<IDashboardAuthorizationFilter> { new HangfireDashboardEnvironmentAuthorizationFilter(env) };
 
             if (addBasicAuthFilter)
