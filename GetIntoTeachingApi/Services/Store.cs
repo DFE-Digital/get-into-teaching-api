@@ -204,14 +204,6 @@ namespace GetIntoTeachingApi.Services
 
             foreach (var te in teachingEvents)
             {
-                // This horrible bit of misdirection is so that we can quickly lump the QT
-                // events in with TTT events on the GiT website for an immediate need. We
-                // should update the GiT website to handle QT events explicitly and remove this.
-                if (te.TypeId == (int)TeachingEvent.EventType.QuestionTime)
-                {
-                    te.TypeId = (int)TeachingEvent.EventType.TrainToTeachEvent;
-                }
-
                 if (te.BuildingId != null)
                 {
                     te.Building = teachingEventBuildings.FirstOrDefault(b => b.Id == te.BuildingId);
