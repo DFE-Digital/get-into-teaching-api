@@ -94,6 +94,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email)).Returns<Candidate>(null);
             _mockCrm.Setup(m => m.Save(It.Is<GetIntoTeachingApi.Models.Crm.Candidate>(
                 c => c.Id == null
+                && c.ChannelId == (int)GetIntoTeachingApi.Models.Crm.Candidate.Channel.ApplyForTeacherTraining
                 && c.FindApplyId == _candidate.Id
                 && c.Email == _attributes.Email
                 && c.FindApplyStatusId == (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.NeverSignedIn
