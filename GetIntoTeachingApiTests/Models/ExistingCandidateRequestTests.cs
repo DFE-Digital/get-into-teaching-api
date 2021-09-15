@@ -22,39 +22,54 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void Match_WithNullCandidate_ReturnsFalse()
+        public void IsEmailMatch_WithNullCandidate_ReturnsFalse()
         {
-            _request.Match(null).Should().BeFalse();
+            _request.IsEmailMatch(null).Should().BeFalse();
         }
 
         [Fact]
-        public void Match_WithEmailAndNoAdditionalAttributes_ReturnsFalse()
+        public void IsFullMatch_WithNullCandidate_ReturnsFalse()
+        {
+            _request.IsFullMatch(null).Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsEmailMatch_WithEmail_ReturnsTrue()
         {
             var entity = new Entity();
             entity["emailaddress1"] = "email@address.com";
 
-            _request.Match(entity).Should().BeFalse();
+            _request.IsEmailMatch(entity).Should().BeTrue();
         }
 
         [Fact]
-        public void Match_WithEmailAndOneAdditionalAttribute_ReturnsFalse()
+        public void IsFullMatch_WithEmailAndNoAdditionalAttributes_ReturnsFalse()
+        {
+            var entity = new Entity();
+            entity["emailaddress1"] = "email@address.com";
+
+            _request.IsFullMatch(entity).Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsFullMatch_WithEmailAndOneAdditionalAttribute_ReturnsFalse()
         {
             var entity = new Entity();
             entity["emailaddress1"] = _request.Email;
             entity["firstname"] = _request.FirstName;
 
-            _request.Match(entity).Should().BeFalse();
+            _request.IsFullMatch(entity).Should().BeFalse();
         }
 
         [Fact]
-        public void Match_WithEmailAndTwoAdditionalAttributes_ReturnsTrue()
+        public void IsFullMatch_WithEmailAndTwoAdditionalAttributes_ReturnsTrue()
         {
             var entity = new Entity();
             entity["emailaddress1"] = _request.Email;
             entity["firstname"] = _request.FirstName;
             entity["lastname"] = _request.LastName;
 
-            _request.Match(entity).Should().BeTrue();
+            _request.IsFullMatch(entity).Should().BeTrue();
         }
 
         [Fact]
@@ -65,22 +80,22 @@ namespace GetIntoTeachingApiTests.Models
             entity["firstname"] = $" {_request.FirstName} ";
             entity["lastname"] = $" {_request.LastName} ";
 
-            _request.Match(entity).Should().BeTrue();
+            _request.IsFullMatch(entity).Should().BeTrue();
         }
 
         [Fact]
-        public void Match_WithoutEmailAndWithTwoAdditionalAttributes_ReturnsFalse()
+        public void IsFullMatch_WithoutEmailAndWithTwoAdditionalAttributes_ReturnsFalse()
         {
             var entity = new Entity();
             entity["emailaddress1"] = "wrong@email.com";
             entity["firstname"] = _request.FirstName;
             entity["lastname"] = _request.LastName;
 
-            _request.Match(entity).Should().BeFalse();
+            _request.IsFullMatch(entity).Should().BeFalse();
         }
 
         [Fact]
-        public void Match_WithWrongEmailAndWithThreeAdditionalAttributes_ReturnsFalse()
+        public void IsFullMatch_WithWrongEmailAndWithThreeAdditionalAttributes_ReturnsFalse()
         {
             var entity = new Entity();
             entity["emailaddress1"] = "wrong@email.com";
@@ -88,11 +103,11 @@ namespace GetIntoTeachingApiTests.Models
             entity["lastname"] = _request.LastName;
             entity["birthdate"] = _request.DateOfBirth;
 
-            _request.Match(entity).Should().BeFalse();
+            _request.IsFullMatch(entity).Should().BeFalse();
         }
 
         [Fact]
-        public void Match_WithNullEmailAndWithThreeAdditionalAttributes_ReturnsFalse()
+        public void IsFullMatch_WithNullEmailAndWithThreeAdditionalAttributes_ReturnsFalse()
         {
             var entity = new Entity();
             entity["emailaddress1"] = _request.Email;
@@ -101,11 +116,11 @@ namespace GetIntoTeachingApiTests.Models
             entity["birthdate"] = _request.DateOfBirth;
             _request.Email = null;
 
-            _request.Match(entity).Should().BeFalse();
+            _request.IsFullMatch(entity).Should().BeFalse();
         }
 
         [Fact]
-        public void Match_WithEmailAndThreeAdditionalAttributes_ReturnsTrue()
+        public void IsFullMatch_WithEmailAndThreeAdditionalAttributes_ReturnsTrue()
         {
             var entity = new Entity();
             entity["emailaddress1"] = _request.Email;
@@ -113,29 +128,29 @@ namespace GetIntoTeachingApiTests.Models
             entity["lastname"] = _request.LastName;
             entity["birthdate"] = _request.DateOfBirth;
 
-            _request.Match(entity).Should().BeTrue();
+            _request.IsFullMatch(entity).Should().BeTrue();
         }
 
         [Fact]
-        public void Match_WithCaseInsensitiveMatch_ReturnsTrue()
+        public void IsFullMatch_WithCaseInsensitiveMatch_ReturnsTrue()
         {
             var entity = new Entity();
             entity["emailaddress1"] = _request.Email.ToUpper();
             entity["firstname"] = _request.FirstName.ToUpper();
             entity["lastname"] = _request.LastName.ToUpper();
 
-            _request.Match(entity).Should().BeTrue();
+            _request.IsFullMatch(entity).Should().BeTrue();
         }
 
         [Fact]
-        public void Match_WithMatchingDateButDifferentTimes_ReturnsTrue()
+        public void IsFullMatch_WithMatchingDateButDifferentTimes_ReturnsTrue()
         {
             var entity = new Entity();
             entity["emailaddress1"] = _request.Email;
             entity["firstname"] = _request.FirstName;
             entity["birthdate"] = _request.DateOfBirth?.AddMinutes(30);
 
-            _request.Match(entity).Should().BeTrue();
+            _request.IsFullMatch(entity).Should().BeTrue();
         }
 
         [Fact]
