@@ -65,7 +65,7 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public void Run_OnSuccess_SavesCandidate()
+        public void Run_OnSuccessWithExistingCandidate_SavesCandidate()
         {
             var match = new GetIntoTeachingApi.Models.Crm.Candidate() { Id = Guid.NewGuid(), Email = _candidate.Attributes.Email };
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
@@ -84,6 +84,28 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockLogger.VerifyInformationWasCalled($"FindApplyCandidateSyncJob - Started - {_candidate.Id}");
             _mockLogger.VerifyInformationWasCalled($"FindApplyCandidateSyncJob - Hit - {_candidate.Id}");
+            _mockLogger.VerifyInformationWasCalled($"FindApplyCandidateSyncJob - Succeeded - {_candidate.Id}");
+        }
+
+        [Fact]
+        public void Run_OnSuccessWhenWithNewCandidate_SavesCandidate()
+        {
+            _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
+            _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email)).Returns<Candidate>(null);
+            _mockCrm.Setup(m => m.Save(It.Is<GetIntoTeachingApi.Models.Crm.Candidate>(
+                c => c.Id == null
+                && c.FindApplyId == _candidate.Id
+                && c.Email == _attributes.Email
+                && c.FindApplyStatusId == (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.NeverSignedIn
+                && c.FindApplyPhaseId == (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply2
+                && c.FindApplyCreatedAt == _attributes.CreatedAt
+                && c.FindApplyUpdatedAt == _attributes.UpdatedAt))).Callback<GetIntoTeachingApi.Models.Crm.BaseModel>(c => c.Id = Guid.NewGuid());
+            _mockCrm.Setup(m => m.Save(It.IsAny<GetIntoTeachingApi.Models.Crm.ApplicationForm>()));
+
+            _job.Run(_candidate);
+
+            _mockLogger.VerifyInformationWasCalled($"FindApplyCandidateSyncJob - Started - {_candidate.Id}");
+            _mockLogger.VerifyInformationWasCalled($"FindApplyCandidateSyncJob - Miss - {_candidate.Id}");
             _mockLogger.VerifyInformationWasCalled($"FindApplyCandidateSyncJob - Succeeded - {_candidate.Id}");
         }
 
@@ -135,19 +157,6 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockLogger.VerifyInformationWasCalled($"FindApplyCandidateSyncJob - Started - {_candidate.Id}");
             _mockLogger.VerifyInformationWasCalled($"FindApplyCandidateSyncJob - Hit - {_candidate.Id}");
-            _mockLogger.VerifyInformationWasCalled($"FindApplyCandidateSyncJob - Succeeded - {_candidate.Id}");
-        }
-
-        [Fact]
-        public void Run_WhenCandidateNotFound_LogsMiss()
-        {
-            _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
-            _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email)).Returns<Candidate>(null);
-
-            _job.Run(_candidate);
-
-            _mockLogger.VerifyInformationWasCalled($"FindApplyCandidateSyncJob - Started - {_candidate.Id}");
-            _mockLogger.VerifyInformationWasCalled($"FindApplyCandidateSyncJob - Miss - {_candidate.Id}");
             _mockLogger.VerifyInformationWasCalled($"FindApplyCandidateSyncJob - Succeeded - {_candidate.Id}");
         }
 
