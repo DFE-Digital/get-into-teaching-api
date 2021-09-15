@@ -198,30 +198,16 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         }
 
         [Fact]
-        public void Validate_RequiredFieldsWhenNullOrEmpty_HasError()
+        public void Validate_RequiredFieldsWhenNull_HasError()
         {
             var candidate = new Candidate()
             {
-                Email = "",
-                SecondaryEmail = "",
-                FirstName = "",
-                LastName = "",
-                AddressTelephone = "",
-                MobileTelephone = "",
-                Telephone = "",
-                SecondaryTelephone = "",
+                Email = null,
 
             };
             var result = _validator.TestValidate(candidate);
 
             result.ShouldHaveValidationErrorFor(c => c.Email);
-            result.ShouldHaveValidationErrorFor(c => c.SecondaryEmail);
-            result.ShouldHaveValidationErrorFor(c => c.FirstName);
-            result.ShouldHaveValidationErrorFor(c => c.LastName);
-            result.ShouldHaveValidationErrorFor(c => c.AddressTelephone);
-            result.ShouldHaveValidationErrorFor(c => c.MobileTelephone);
-            result.ShouldHaveValidationErrorFor(c => c.Telephone);
-            result.ShouldHaveValidationErrorFor(c => c.SecondaryTelephone);
         }
 
         [Fact]
