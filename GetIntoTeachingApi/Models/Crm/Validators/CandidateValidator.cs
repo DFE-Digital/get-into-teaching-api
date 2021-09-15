@@ -14,8 +14,8 @@ namespace GetIntoTeachingApi.Models.Crm.Validators
 
         public CandidateValidator(IStore store, IDateTimeProvider dateTime)
         {
-            RuleFor(candidate => candidate.FirstName).NotEmpty().MaximumLength(256);
-            RuleFor(candidate => candidate.LastName).NotEmpty().MaximumLength(256);
+            RuleFor(candidate => candidate.FirstName).MaximumLength(256);
+            RuleFor(candidate => candidate.LastName).MaximumLength(256);
             RuleFor(candidate => candidate.Email).NotEmpty().EmailAddress(EmailValidationMode.AspNetCoreCompatible).MaximumLength(100);
             RuleFor(candidate => candidate.SecondaryEmail).EmailAddress(EmailValidationMode.AspNetCoreCompatible).MaximumLength(100);
             RuleFor(candidate => candidate.DateOfBirth).LessThan(candidate => dateTime.UtcNow);

@@ -58,12 +58,12 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         {
             var request = new TeachingEventAddAttendee
             {
-                FirstName = null,
+                Email = "invalid@"
             };
 
             var result = _validator.TestValidate(request);
 
-            result.ShouldHaveValidationErrorFor("Candidate.FirstName");
+            result.ShouldHaveValidationErrorFor("Candidate.Email");
         }
 
 
