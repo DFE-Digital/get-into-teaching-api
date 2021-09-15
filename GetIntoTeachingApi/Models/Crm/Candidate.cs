@@ -85,6 +85,7 @@ namespace GetIntoTeachingApi.Models.Crm
             TeacherTrainingAdviser = 222750027,
             SchoolsExperience = 222750021,
             GetIntoTeachingCallback = 222750043,
+            ApplyForTeacherTraining = 222750025,
         }
 
         public enum GcseStatus

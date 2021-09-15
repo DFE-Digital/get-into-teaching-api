@@ -63,6 +63,11 @@ namespace GetIntoTeachingApi.Jobs
                 FindApplyUpdatedAt = findApplyCandidate.Attributes.UpdatedAt,
             };
 
+            if (match == null)
+            {
+                candidate.ChannelId = (int)Models.Crm.Candidate.Channel.ApplyForTeacherTraining;
+            }
+
             var latestApplicationForm = findApplyApplicationForms?.FirstOrDefault();
 
             if (latestApplicationForm != null)
