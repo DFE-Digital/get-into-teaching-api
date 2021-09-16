@@ -13,6 +13,7 @@ using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApiTests.Helpers;
 using Hangfire;
+using MoreLinq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -61,11 +62,18 @@ namespace GetIntoTeachingApiTests.Contracts
 
             await WriteInitialOutputFile(outputFile, requestJson);
 
-            var request = JToken.Parse(requestJson);
-            var snapshot = JToken.Parse(File.ReadAllText(outputFile));
+            var request = SortEntities(JArray.Parse(requestJson));
+            var snapshot = SortEntities(JArray.Parse(File.ReadAllText(outputFile)));
 
             request.Should().HaveCount(snapshot.Count());
             request.Should().BeEquivalentTo(snapshot);
+        }
+
+        private static JArray SortEntities(JArray entities)
+        {
+            entities.ForEach(e => e["Attributes"] = new JArray(e["Attributes"].OrderBy(a => a["Key"])));
+
+            return new JArray(entities.OrderBy(e => e["LogicalName"]));
         }
 
         private static StringContent ConstructBody(string filename)
@@ -91,7 +99,7 @@ namespace GetIntoTeachingApiTests.Contracts
 
         private string RequestJson()
         {
-            var trackedEntities = _factory.ContractOrganizationServiceAdapter.TrackedEntities.OrderBy(e => e.LogicalName);
+            var trackedEntities = _factory.ContractOrganizationServiceAdapter.TrackedEntities;
             return JsonConvert.SerializeObject(trackedEntities, Formatting.Indented);
         }
 
