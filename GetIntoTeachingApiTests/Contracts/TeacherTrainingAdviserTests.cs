@@ -7,12 +7,14 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using FluentAssertions.Json;
 using GetIntoTeachingApi.AppStart;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApiTests.Helpers;
 using Hangfire;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Contracts
@@ -59,7 +61,11 @@ namespace GetIntoTeachingApiTests.Contracts
 
             await WriteInitialOutputFile(outputFile, requestJson);
 
-            requestJson.Should().BeEquivalentTo(File.ReadAllText(outputFile));
+            var request = JToken.Parse(requestJson);
+            var snapshot = JToken.Parse(File.ReadAllText(outputFile));
+
+            request.Should().HaveCount(snapshot.Count());
+            request.Should().BeEquivalentTo(snapshot);
         }
 
         private static StringContent ConstructBody(string filename)
