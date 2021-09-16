@@ -13,14 +13,19 @@ namespace GetIntoTeachingApi.Models
         public string Email { get; set; }
         public DateTime? DateOfBirth { get; set; }
 
-        public bool Match(Entity entity)
+        public bool IsFullMatch(Entity entity)
+        {
+            return IsEmailMatch(entity) && MinimumAdditionalAttributesMatch(entity);
+        }
+
+        public bool IsEmailMatch(Entity entity)
         {
             if (entity == null)
             {
                 return false;
             }
 
-            return EmailMatchesCandidate(entity) && MinimumAdditionalAttributesMatch(entity);
+            return EmailMatchesCandidate(entity);
         }
 
         public string Slugify()
