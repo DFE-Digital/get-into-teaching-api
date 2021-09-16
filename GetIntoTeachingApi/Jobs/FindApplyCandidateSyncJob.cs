@@ -40,34 +40,33 @@ namespace GetIntoTeachingApi.Jobs
 
         public void SyncCandidate(Candidate findApplyCandidate)
         {
-            var match = _crm.MatchCandidate(findApplyCandidate.Attributes.Email);
+            var applicationForms = findApplyCandidate.Attributes.ApplicationForms;
+            var candidate = UpdateCandidate(findApplyCandidate, applicationForms);
 
-            if (match != null)
-            {
-                _logger.LogInformation($"FindApplyCandidateSyncJob - Hit - {findApplyCandidate.Id}");
-
-                var candidateId = (Guid)match.Id;
-                var applicationForms = findApplyCandidate.Attributes.ApplicationForms;
-                UpdateCandidate(candidateId, findApplyCandidate, applicationForms);
-                UpsertApplicationForms(candidateId, applicationForms);
-            }
-            else
-            {
-                _logger.LogInformation($"FindApplyCandidateSyncJob - Miss - {findApplyCandidate.Id}");
-            }
+            UpsertApplicationForms((Guid)candidate.Id, applicationForms);
         }
 
-        private void UpdateCandidate(Guid candidateId, Candidate findApplyCandidate, IEnumerable<ApplicationForm> findApplyApplicationForms)
+        private Models.Crm.Candidate UpdateCandidate(Candidate findApplyCandidate, IEnumerable<ApplicationForm> findApplyApplicationForms)
         {
+            var match = _crm.MatchCandidate(findApplyCandidate.Attributes.Email);
+
+            _logger.LogInformation($"FindApplyCandidateSyncJob - {(match == null ? "Miss" : "Hit")} - {findApplyCandidate.Id}");
+
             // We persist a new Candidate to ensure we only write the find/apply
             // attributes back to the CRM and not existing attributes on the match.
             var candidate = new Models.Crm.Candidate()
             {
-                Id = candidateId,
+                Id = match?.Id,
+                Email = findApplyCandidate.Attributes.Email,
                 FindApplyId = findApplyCandidate.Id,
                 FindApplyCreatedAt = findApplyCandidate.Attributes.CreatedAt,
                 FindApplyUpdatedAt = findApplyCandidate.Attributes.UpdatedAt,
             };
+
+            if (match == null)
+            {
+                candidate.ChannelId = (int)Models.Crm.Candidate.Channel.ApplyForTeacherTraining;
+            }
 
             var latestApplicationForm = findApplyApplicationForms?.FirstOrDefault();
 
@@ -78,6 +77,8 @@ namespace GetIntoTeachingApi.Jobs
             }
 
             _crm.Save(candidate);
+
+            return candidate;
         }
 
         private void UpsertApplicationForms(Guid candidateId, IEnumerable<ApplicationForm> findApplyApplicationForms)

@@ -12,6 +12,7 @@ using GetIntoTeachingApi.Mocks;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Moq;
@@ -23,6 +24,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
     {
         private readonly Mock<IOrganizationServiceAdapter> _mockService;
         private readonly Mock<IValidatorFactory> _mockValidatorFactory;
+        private readonly Mock<ILogger<ICrmService>> _mockLogger;
         private readonly CrmService _crm;
         private readonly OrganizationServiceContext _context;
 
@@ -32,8 +34,9 @@ namespace GetIntoTeachingApiTests.Models.Crm
             _mockValidatorFactory = new Mock<IValidatorFactory>();
             _mockValidatorFactory.Setup(m => m.GetValidator(It.IsAny<Type>())).Returns<IValidator>(null);
             _mockService = new Mock<IOrganizationServiceAdapter>();
+            _mockLogger = new Mock<ILogger<ICrmService>>();
             _context = _mockService.Object.Context();
-            _crm = new CrmService(_mockService.Object, _mockValidatorFactory.Object, mockAppSettings.Object, new DateTimeProvider());
+            _crm = new CrmService(_mockService.Object, _mockValidatorFactory.Object, mockAppSettings.Object, new DateTimeProvider(), _mockLogger.Object);
         }
 
         [Fact]

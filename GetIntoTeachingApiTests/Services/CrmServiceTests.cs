@@ -14,6 +14,8 @@ using System.Linq.Dynamic.Core;
 using FluentValidation;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using GetIntoTeachingApi.Models.Crm;
+using Microsoft.Extensions.Logging;
+using GetIntoTeachingApiTests.Helpers;
 
 namespace GetIntoTeachingApiTests.Services
 {
@@ -24,6 +26,7 @@ namespace GetIntoTeachingApiTests.Services
         private static readonly string JaneDoeMagicLinkToken = "7898be2c4699719c8eca56ebd1fb8e6e";
         private readonly Mock<IOrganizationServiceAdapter> _mockService;
         private readonly Mock<IAppSettings> _mockAppSettings;
+        private readonly Mock<ILogger<ICrmService>> _mockLogger;
         private readonly OrganizationServiceContext _context;
         private readonly ICrmService _crm;
 
@@ -34,9 +37,10 @@ namespace GetIntoTeachingApiTests.Services
 
             _mockAppSettings = new Mock<IAppSettings>();
             _mockService = new Mock<IOrganizationServiceAdapter>();
+            _mockLogger = new Mock<ILogger<ICrmService>>();
             _context = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
             _mockService.Setup(mock => mock.Context()).Returns(_context);
-            _crm = new CrmService(_mockService.Object, mockValidatorFactory.Object, _mockAppSettings.Object, new DateTimeProvider());
+            _crm = new CrmService(_mockService.Object, mockValidatorFactory.Object, _mockAppSettings.Object, new DateTimeProvider(), _mockLogger.Object);
         }
 
         [Fact]
@@ -499,15 +503,15 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Theory]
-        [InlineData("john@doe.com", "New John", "Doe", "New John")]
-        [InlineData("jane@doe.com", "Jane", "Doe", "Jane")]
+        [InlineData("john@doe.com", "New John", "Doe", "john@doe.com")]
+        [InlineData("jane@doe.com", "Jane", "Doe", "jane@doe.com")]
         [InlineData("bob@doe.com", "Bob", "Doe", null)]
         [InlineData("inactive@doe.com", "Inactive", "Doe", null)]
-        public void MatchCandidate_WithExistingCandidateRequest_MatchesOnNewestCandidateWithEmail(
+        public void MatchCandidate_WithExistingCandidateRequestFullMatch_MatchesOnNewestCandidateWithEmail(
             string email,
             string firstName,
             string lastName,
-            string expectedFirstName
+            string expectedEmail
         )
         {
             var request = new ExistingCandidateRequest { Email = email, FirstName = firstName, LastName = lastName };
@@ -526,7 +530,36 @@ namespace GetIntoTeachingApiTests.Services
 
             var result = _crm.MatchCandidate(request);
 
-            result?.FirstName.Should().Be(expectedFirstName);
+            result?.Email.Should().Be(expectedEmail);
+
+            if (expectedEmail == null)
+            {
+                _mockLogger.VerifyInformationWasCalled("MatchCandidate - EmailMatch - Miss");
+            }
+        }
+
+        [Fact]
+        public void MatchCandidate_WithExistingCandidateRequestEmailOnlyMatch_MatchesOnNewestCandidateWithEmail()
+        {
+            var email = "no@name.com";
+            var request = new ExistingCandidateRequest { Email = email };
+            var candidates = MockCandidates().Where(c => c.GetAttributeValue<int>("statecode") == (int)Candidate.Status.Active
+                && c.GetAttributeValue<string>("emailaddress1").Contains(email));
+
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyMatchCandidatesWithExistingCandidateRequestExpression(q, email)))).Returns(candidates);
+
+            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
+                new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), _context));
+            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
+                new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), _context));
+            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
+                new Relationship("msevtmgt_contact_msevtmgt_eventregistration_Contact"), _context));
+
+            var result = _crm.MatchCandidate(request);
+
+            result?.Email.Should().Be(email);
+            _mockLogger.VerifyInformationWasCalled("MatchCandidate - EmailMatch - Hit");
         }
 
         [Fact]
@@ -853,6 +886,13 @@ namespace GetIntoTeachingApiTests.Services
             candidate7["birthdate"] = new DateTime(2000, 1, 1);
             candidate7["dfe_duplicatescorecalculated"] = 3.7;
 
+            var candidate8 = new Entity("contact")
+            {
+                Id = Guid.NewGuid()
+            };
+            candidate8["statecode"] = Candidate.Status.Active;
+            candidate8["emailaddress1"] = "no@name.com";
+
             return new[]
             {
                 candidate1,
@@ -861,7 +901,8 @@ namespace GetIntoTeachingApiTests.Services
                 candidate4,
                 candidate5,
                 candidate6,
-                candidate7
+                candidate7,
+                candidate8,
             }.AsQueryable();
         }
 

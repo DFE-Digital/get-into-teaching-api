@@ -5,6 +5,7 @@ using FluentValidation;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
@@ -20,17 +21,20 @@ namespace GetIntoTeachingApi.Services
         private readonly IValidatorFactory _validatorFactory;
         private readonly IDateTimeProvider _dateTime;
         private readonly IAppSettings _appSettings;
+        private readonly ILogger<ICrmService> _logger;
 
         public CrmService(
             IOrganizationServiceAdapter service,
             IValidatorFactory validatorFactory,
             IAppSettings appSettings,
-            IDateTimeProvider dateTime)
+            IDateTimeProvider dateTime,
+            ILogger<ICrmService> logger)
         {
             _appSettings = appSettings;
             _service = service;
             _validatorFactory = validatorFactory;
             _dateTime = dateTime;
+            _logger = logger;
         }
 
         public string CheckStatus()
@@ -107,7 +111,14 @@ namespace GetIntoTeachingApi.Services
             query.TopCount = MaximumNumberOfCandidatesToMatch;
 
             var entities = _service.RetrieveMultiple(query);
-            var entity = entities.FirstOrDefault(request.Match);
+            var entity = entities.FirstOrDefault(request.IsFullMatch);
+
+            if (entity == null)
+            {
+                entity = entities.FirstOrDefault(request.IsEmailMatch);
+
+                _logger.LogInformation($"MatchCandidate - EmailMatch - {(entity == null ? "Miss" : "Hit")}");
+            }
 
             if (entity == null)
             {
