@@ -75,6 +75,13 @@ groups:
           description: Alerts when any of the app instances exceed 70% memory utilisation.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighMemory-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=33&orgId=1
+      - alert: GoogleCspViolation
+        expr: 'sum by (blocked_uri)(increase(app_csp_violations_total{blocked_uri=~"google"}[1m])) > 0'
+        labels:
+          severity: low
+        annotations:
+          summary: Alerts when there is a Google CSP violation in production.
+          description: The CSP policy has blocked a request to {{ $labels.blocked_uri }}.
   - name: TTA
     rules:
       - alert: TooManyRequests
