@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1632403062667,
+  "iteration": 1632408570181,
   "links": [],
   "panels": [
     {
@@ -310,17 +310,116 @@
       "type": "table"
     },
     {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "displayMode": "basic",
+            "filterable": false
+          },
+          "decimals": 0,
+          "displayName": "Total",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgba(115, 191, 105, 0)",
+                "value": null
+              },
+              {
+                "color": "purple",
+                "value": 1
+              },
+              {
+                "color": "orange",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 100
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "blocked_uri"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Blocked URI"
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "auto"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 20,
+        "w": 9,
+        "x": 0,
+        "y": 21
+      },
+      "id": 28,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Total"
+          }
+        ]
+      },
+      "pluginVersion": "7.2.2",
+      "targets": [
+        {
+          "expr": "sum(increase(app_csp_violations_total{blocked_uri=~\".*google.*\"}[$__range])) by (blocked_uri) > 0",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Google CSP Violations by Blocked URI",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "blocked_uri",
+                "Value"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
       "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 41
       },
-      "id": 24,
+      "id": 22,
       "panels": [],
-      "repeatIteration": 1632403062667,
+      "repeatIteration": 1632408570181,
       "repeatPanelId": 2,
       "scopedVars": {
         "metric": {
@@ -353,9 +452,9 @@
         "h": 20,
         "w": 6,
         "x": 0,
-        "y": 22
+        "y": 42
       },
-      "id": 25,
+      "id": 23,
       "interval": null,
       "legend": {
         "show": true,
@@ -366,7 +465,7 @@
       "nullPointMode": "connected",
       "pieType": "pie",
       "pluginVersion": "7.2.2",
-      "repeatIteration": 1632403062667,
+      "repeatIteration": 1632408570181,
       "repeatPanelId": 4,
       "repeatedByRow": true,
       "scopedVars": {
@@ -450,9 +549,9 @@
         "h": 20,
         "w": 9,
         "x": 6,
-        "y": 22
+        "y": 42
       },
-      "id": 26,
+      "id": 24,
       "options": {
         "showHeader": true,
         "sortBy": [
@@ -463,7 +562,7 @@
         ]
       },
       "pluginVersion": "7.2.2",
-      "repeatIteration": 1632403062667,
+      "repeatIteration": 1632408570181,
       "repeatPanelId": 6,
       "repeatedByRow": true,
       "scopedVars": {
@@ -559,9 +658,9 @@
         "h": 20,
         "w": 9,
         "x": 15,
-        "y": 22
+        "y": 42
       },
-      "id": 27,
+      "id": 25,
       "options": {
         "showHeader": true,
         "sortBy": [
@@ -572,7 +671,7 @@
         ]
       },
       "pluginVersion": "7.2.2",
-      "repeatIteration": 1632403062667,
+      "repeatIteration": 1632408570181,
       "repeatPanelId": 9,
       "repeatedByRow": true,
       "scopedVars": {
@@ -617,7 +716,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 42
+        "y": 62
       },
       "id": 21,
       "panels": [],
@@ -661,7 +760,7 @@
         "h": 14,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 63
       },
       "id": 15,
       "options": {
@@ -734,11 +833,11 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 57
+        "y": 77
       },
-      "id": 30,
+      "id": 26,
       "panels": [],
-      "repeatIteration": 1632403062667,
+      "repeatIteration": 1632408570181,
       "repeatPanelId": 21,
       "scopedVars": {
         "cf_app": {
@@ -779,9 +878,9 @@
         "h": 14,
         "w": 24,
         "x": 0,
-        "y": 58
+        "y": 78
       },
-      "id": 31,
+      "id": 27,
       "options": {
         "showLabels": false,
         "showTime": true,
@@ -789,7 +888,7 @@
         "wrapLogMessage": true
       },
       "pluginVersion": "7.2.2",
-      "repeatIteration": 1632403062667,
+      "repeatIteration": 1632408570181,
       "repeatPanelId": 15,
       "repeatedByRow": true,
       "scopedVars": {
@@ -932,5 +1031,5 @@
   "timezone": "",
   "title": "CSP Violations",
   "uid": "qZjcqcpGz",
-  "version": 1
+  "version": 2
 }
