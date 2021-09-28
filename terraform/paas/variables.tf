@@ -123,6 +123,6 @@ variable "alertmanager" {
   type = map(any)
   default = {
     "name"   = "get-into-teaching"
-    "config" = "../../monitoring/alertmanager/alertmanager.yml.tmpl"
+    "config" = "../../monitoring/alertmanager/alertmanager.yml"
   }
 }
