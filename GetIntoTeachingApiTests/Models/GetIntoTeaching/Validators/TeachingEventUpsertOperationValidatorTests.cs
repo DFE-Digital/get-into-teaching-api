@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using FluentAssertions;
+using FluentValidation.TestHelper;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.GetIntoTeaching;
 using GetIntoTeachingApi.Models.GetIntoTeaching.Validators;
@@ -27,9 +28,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
 
             _mockCrm.Setup(m => m.GetTeachingEvent("new")).Returns<TeachingEvent>(null);
 
-            var result = _validator.Validate(operation);
+            var result = _validator.TestValidate(operation);
 
-            result.IsValid.Should().BeTrue();
+            result.ShouldNotHaveValidationErrorFor(te => te.ReadableId);
         }
 
         [Fact]
@@ -40,21 +41,24 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
 
             _mockCrm.Setup(m => m.GetTeachingEvent("existing")).Returns(existingTeachingEvent);
 
-            var result = _validator.Validate(operation);
+            var result = _validator.TestValidate(operation);
 
-            result.IsValid.Should().BeTrue();
+            result.ShouldNotHaveValidationErrorFor(te => te.ReadableId);
         }
 
         [Fact]
-        public void Validate_WhenExistingEventWithReadableIdHasDifferentTeachingEventId_HasErrors()
+        public void Validate_WhenExistingEventWithReadableIdHasDifferentTeachingEventId_HasError()
         {
             var operation = new TeachingEventUpsertOperation() { Id = Guid.NewGuid(), ReadableId = "existing" };
             var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
 
             _mockCrm.Setup(m => m.GetTeachingEvent("existing")).Returns(teachingEvent);
 
-            var result = _validator.Validate(operation);
+            var result = _validator.TestValidate(operation);
 
+            result.ShouldHaveValidationErrorFor(te => te.ReadableId)
+                .WithErrorMessage("Must be unique");
+        }
 
         [Theory]
         [InlineData("eventname", false)]
