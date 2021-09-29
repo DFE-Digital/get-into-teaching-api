@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using FluentAssertions;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.GetIntoTeaching;
@@ -55,7 +55,29 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
 
             var result = _validator.Validate(operation);
 
-            result.IsValid.Should().BeFalse();
+
+        [Theory]
+        [InlineData("eventname", false)]
+        [InlineData("eventname1", false)]
+        [InlineData("event-name", false)]
+        [InlineData("event_name", false)]
+        [InlineData("event name", true)]
+        [InlineData("event?name", true)]
+        [InlineData("event@name", true)]
+        [InlineData("event:name", true)]
+        public void Validate_ReadableId_AllowsOnlyAlphanumericHyphensUnderscores(string readableId, bool hasError)
+        {
+            var operation = new TeachingEventUpsertOperation() { ReadableId = readableId };
+            var result = _validator.TestValidate(operation);
+
+            if (hasError)
+            {
+                result.ShouldHaveValidationErrorFor(te => te.ReadableId);
+            }
+            else
+            {
+                result.ShouldNotHaveValidationErrorFor(te => te.ReadableId);
+            }
         }
     }
 }
