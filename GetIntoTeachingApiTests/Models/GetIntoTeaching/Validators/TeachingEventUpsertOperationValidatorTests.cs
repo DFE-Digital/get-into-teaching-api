@@ -69,7 +69,11 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         [InlineData("event?name", true)]
         [InlineData("event@name", true)]
         [InlineData("event:name", true)]
-        public void Validate_ReadableId_AllowsOnlyAlphanumericHyphensUnderscores(string readableId, bool hasError)
+        [InlineData("eventname-", true)]
+        [InlineData("-eventname", true)]
+        [InlineData("eventname_", true)]
+        [InlineData("_eventname", true)]
+        public void Validate_ReadableId_ValidatesCorrectly(string readableId, bool hasError)
         {
             var operation = new TeachingEventUpsertOperation() { ReadableId = readableId };
             var result = _validator.TestValidate(operation);

@@ -15,7 +15,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching.Validators
             RuleFor(operation => operation.ReadableId)
                 .Must((te, _) => BeUniqueReadableId(te))
                 .WithMessage("Must be unique")
-                .Matches(new Regex(@"\A[\w-]+\Z"));
+                .Matches(new Regex(@"\A[^_\W][\w-]+[^_\W]\Z"));
         }
 
         private bool BeUniqueReadableId(TeachingEventUpsertOperation operation)
