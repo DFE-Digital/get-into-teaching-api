@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Text.RegularExpressions;
+using FluentValidation;
 using GetIntoTeachingApi.Services;
 
 namespace GetIntoTeachingApi.Models.GetIntoTeaching.Validators
@@ -13,7 +14,8 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching.Validators
 
             RuleFor(operation => operation.ReadableId)
                 .Must((te, _) => BeUniqueReadableId(te))
-                .WithMessage("Must be unique");
+                .WithMessage("Must be unique")
+                .Matches(new Regex(@"\A[^_\W][\w-]+[^_\W]\Z"));
         }
 
         private bool BeUniqueReadableId(TeachingEventUpsertOperation operation)

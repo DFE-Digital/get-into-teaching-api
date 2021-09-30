@@ -1,5 +1,6 @@
 ﻿using System;
 using FluentAssertions;
+using FluentValidation.TestHelper;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.GetIntoTeaching;
 using GetIntoTeachingApi.Models.GetIntoTeaching.Validators;
@@ -27,9 +28,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
 
             _mockCrm.Setup(m => m.GetTeachingEvent("new")).Returns<TeachingEvent>(null);
 
-            var result = _validator.Validate(operation);
+            var result = _validator.TestValidate(operation);
 
-            result.IsValid.Should().BeTrue();
+            result.ShouldNotHaveValidationErrorFor(te => te.ReadableId);
         }
 
         [Fact]
@@ -40,22 +41,51 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
 
             _mockCrm.Setup(m => m.GetTeachingEvent("existing")).Returns(existingTeachingEvent);
 
-            var result = _validator.Validate(operation);
+            var result = _validator.TestValidate(operation);
 
-            result.IsValid.Should().BeTrue();
+            result.ShouldNotHaveValidationErrorFor(te => te.ReadableId);
         }
 
         [Fact]
-        public void Validate_WhenExistingEventWithReadableIdHasDifferentTeachingEventId_HasErrors()
+        public void Validate_WhenExistingEventWithReadableIdHasDifferentTeachingEventId_HasError()
         {
             var operation = new TeachingEventUpsertOperation() { Id = Guid.NewGuid(), ReadableId = "existing" };
             var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
 
             _mockCrm.Setup(m => m.GetTeachingEvent("existing")).Returns(teachingEvent);
 
-            var result = _validator.Validate(operation);
+            var result = _validator.TestValidate(operation);
 
-            result.IsValid.Should().BeFalse();
+            result.ShouldHaveValidationErrorFor(te => te.ReadableId)
+                .WithErrorMessage("Must be unique");
+        }
+
+        [Theory]
+        [InlineData("eventname", false)]
+        [InlineData("eventname1", false)]
+        [InlineData("event-name", false)]
+        [InlineData("event_name", false)]
+        [InlineData("event name", true)]
+        [InlineData("event?name", true)]
+        [InlineData("event@name", true)]
+        [InlineData("event:name", true)]
+        [InlineData("eventname-", true)]
+        [InlineData("-eventname", true)]
+        [InlineData("eventname_", true)]
+        [InlineData("_eventname", true)]
+        public void Validate_ReadableId_ValidatesCorrectly(string readableId, bool hasError)
+        {
+            var operation = new TeachingEventUpsertOperation() { ReadableId = readableId };
+            var result = _validator.TestValidate(operation);
+
+            if (hasError)
+            {
+                result.ShouldHaveValidationErrorFor(te => te.ReadableId);
+            }
+            else
+            {
+                result.ShouldNotHaveValidationErrorFor(te => te.ReadableId);
+            }
         }
     }
 }
