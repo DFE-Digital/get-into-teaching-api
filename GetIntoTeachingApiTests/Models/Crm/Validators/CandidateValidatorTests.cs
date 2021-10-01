@@ -52,6 +52,9 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_gitiseventsservicesubscriptionchannel"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_gitisttaservicesubscriptionchannel"))
+                .Returns(new[] { mockPickListItem }.AsQueryable());
+            _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_websitehasgcseenglish"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
@@ -117,6 +120,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 ChannelId = mockPickListItem.Id,
                 MailingListSubscriptionChannelId = mockPickListItem.Id,
                 EventsSubscriptionChannelId = mockPickListItem.Id,
+                TeacherTrainingAdviserSubscriptionChannelId = mockPickListItem.Id,
                 FindApplyPhaseId = mockPickListItem.Id,
                 FindApplyStatusId = mockPickListItem.Id,
                 PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id }
@@ -433,6 +437,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 AssignmentStatusId = 123,
                 MailingListSubscriptionChannelId = 123,
                 EventsSubscriptionChannelId = 123,
+                TeacherTrainingAdviserSubscriptionChannelId = 123,
                 ChannelId = 123,
                 AdviserEligibilityId = 123,
                 AdviserRequirementId = 123,
@@ -454,6 +459,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
             result.ShouldHaveValidationErrorFor(c => c.AssignmentStatusId);
             result.ShouldHaveValidationErrorFor(c => c.MailingListSubscriptionChannelId);
             result.ShouldHaveValidationErrorFor(c => c.EventsSubscriptionChannelId);
+            result.ShouldHaveValidationErrorFor(c => c.TeacherTrainingAdviserSubscriptionChannelId);
             result.ShouldHaveValidationErrorFor(c => c.ChannelId);
             result.ShouldHaveValidationErrorFor(c => c.AdviserEligibilityId);
             result.ShouldHaveValidationErrorFor(c => c.AdviserRequirementId);
