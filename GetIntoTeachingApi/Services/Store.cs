@@ -239,6 +239,7 @@ namespace GetIntoTeachingApi.Services
             await SyncPickListItem("contact", "dfe_isadvisorrequiredos");
             await SyncPickListItem("contact", "dfe_gitismlservicesubscriptionchannel");
             await SyncPickListItem("contact", "dfe_gitiseventsservicesubscriptionchannel");
+            await SyncPickListItem("contact", "dfe_gitisttaservicesubscriptionchannel");
             await SyncPickListItem("dfe_candidatequalification", "dfe_degreestatus");
             await SyncPickListItem("dfe_candidatequalification", "dfe_ukdegreegrade");
             await SyncPickListItem("dfe_candidatequalification", "dfe_type");

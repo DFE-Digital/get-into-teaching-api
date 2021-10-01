@@ -101,6 +101,9 @@ namespace GetIntoTeachingApi.Models.Crm.Validators
             RuleFor(candidate => candidate.MailingListSubscriptionChannelId)
                 .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_gitismlservicesubscriptionchannel", store))
                 .Unless(candidate => candidate.MailingListSubscriptionChannelId == null);
+            RuleFor(candidate => candidate.TeacherTrainingAdviserSubscriptionChannelId)
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_gitisttaservicesubscriptionchannel", store))
+                .Unless(candidate => candidate.TeacherTrainingAdviserSubscriptionChannelId == null);
             RuleFor(candidate => candidate.FindApplyPhaseId)
                 .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_candidateapplystatus", store))
                 .Unless(candidate => candidate.FindApplyPhaseId == null);

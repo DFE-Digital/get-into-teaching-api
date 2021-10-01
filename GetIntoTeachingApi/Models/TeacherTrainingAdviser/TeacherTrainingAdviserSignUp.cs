@@ -62,6 +62,8 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         public int? PlanningToRetakeGcseMathsAndEnglishId { get; set; }
         public int? PlanningToRetakeGcseScienceId { get; set; }
         public int? AdviserStatusId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? ChannelId { get; set; }
 
         public string Email { get; set; }
         public string FirstName { get; set; }
@@ -215,7 +217,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
             DefaultPreferredTeachingSubjectId(candidate);
             UpdateClosedAdviserStatus(candidate);
 
-            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate, DateTimeProvider.UtcNow);
+            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate, DateTimeProvider.UtcNow, ChannelId);
 
             return candidate;
         }
@@ -237,7 +239,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         {
             if (CandidateId == null)
             {
-                candidate.ChannelId = (int?)Candidate.Channel.TeacherTrainingAdviser;
+                candidate.ChannelId = ChannelId ?? (int?)Candidate.Channel.TeacherTrainingAdviser;
             }
         }
 
