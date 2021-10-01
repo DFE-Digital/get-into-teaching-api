@@ -292,6 +292,15 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
         }
 
         [Fact]
+        public void Candidate_WhenChannelIsProvided_SetsOnAllModels()
+        {
+            var request = new TeacherTrainingAdviserSignUp() { ChannelId = 123 };
+
+            request.Candidate.ChannelId.Should().Be(123);
+            request.Candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be(123);
+        }
+
+        [Fact]
         public void Candidate_PhoneCallScheduledAtIsNull_NoPhoneCallIsCreated()
         {
             var request = new TeacherTrainingAdviserSignUp() { PhoneCallScheduledAt = null };
