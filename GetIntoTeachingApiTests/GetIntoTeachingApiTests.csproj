@@ -183,6 +183,9 @@
     <None Update="Fixtures\zip-bomb-fixtures\contains-two-files.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Contracts\Data\pick_list_items\candidate\teacher_training_adviser_subscription_channels.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
