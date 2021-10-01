@@ -85,6 +85,18 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [Route("candidate/teacher_training_adviser_subscription_channels")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of candidate teacher training adviser subscription channels.",
+            OperationId = "GetCandidateTeacherTrainingAdviserSubscriptionChannels",
+            Tags = new[] { "Pick List Items" })]
+        [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCandidateTeacherTrainingAdviserSubscriptionChannels()
+        {
+            return Ok(await _store.GetPickListItems("contact", "dfe_gitisttaservicesubscriptionchannel").ToListAsync());
+        }
+
+        [HttpGet]
         [Route("candidate/gcse_status")]
         [SwaggerOperation(
             Summary = "Retrieves the list of candidate GCSE status.",

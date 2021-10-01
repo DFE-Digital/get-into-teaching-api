@@ -72,6 +72,18 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
+        public async void GetCandidateTeacherTrainingAdviserSubscriptionChannels_ReturnsAllChannels()
+        {
+            var mockItems = MockPickListItems();
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_gitisttaservicesubscriptionchannel")).Returns(mockItems.AsAsyncQueryable());
+
+            var response = await _controller.GetCandidateTeacherTrainingAdviserSubscriptionChannels();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockItems);
+        }
+
+        [Fact]
         public async void GetCandidateMailingListSubscriptionChannels_ReturnsAllChannels()
         {
             var mockItems = MockPickListItems();

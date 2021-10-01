@@ -1,0 +1,14 @@
+﻿[
+  {
+    "id": 222750000,
+    "entityName": "contact",
+    "attributeName": "dfe_gitisttaservicesubscriptionchannel",
+    "value": "GITIS TTA Service"
+  },
+  {
+    "id": 222750001,
+    "entityName": "contact",
+    "attributeName": "dfe_gitisttaservicesubscriptionchannel",
+    "value": "Within Dynamics"
+  }
+]
