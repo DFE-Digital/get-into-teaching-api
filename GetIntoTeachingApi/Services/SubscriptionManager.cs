@@ -52,10 +52,10 @@ namespace GetIntoTeachingApi.Services
             candidate.DoNotSendMm = ConsentValue(candidate.DoNotSendMm, true);
         }
 
-        public static void SubscribeToTeacherTrainingAdviser(Candidate candidate, DateTime utcNow)
+        public static void SubscribeToTeacherTrainingAdviser(Candidate candidate, DateTime utcNow, int? channelId = null)
         {
             candidate.HasTeacherTrainingAdviserSubscription = true;
-            candidate.TeacherTrainingAdviserSubscriptionChannelId = (int)Candidate.SubscriptionChannel.TeacherTrainingAdviser;
+            candidate.TeacherTrainingAdviserSubscriptionChannelId = channelId ?? (int)Candidate.SubscriptionChannel.TeacherTrainingAdviser;
             candidate.TeacherTrainingAdviserSubscriptionStartAt = utcNow;
             candidate.TeacherTrainingAdviserSubscriptionDoNotEmail = false;
             candidate.TeacherTrainingAdviserSubscriptionDoNotBulkEmail = candidate.IsReturningToTeaching();

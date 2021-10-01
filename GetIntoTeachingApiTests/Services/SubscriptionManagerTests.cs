@@ -116,6 +116,17 @@ namespace GetIntoTeachingApiTests.Services
             candidate.DoNotPostalMail.Should().BeFalse();
         }
 
+
+        [Fact]
+        public void SubscribeToTeacherTrainingAdviser_CustomChannel_UsesChannel()
+        {
+            var candidate = new Candidate();
+
+            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate, DateTime.UtcNow, 123);
+
+            candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be(123);
+        }
+
         [Fact]
         public void SubscribeToTeacherTrainingAdviser_NotReturningToTeaching_CorrectSubscription()
         {
