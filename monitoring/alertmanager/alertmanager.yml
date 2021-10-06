@@ -1,5 +1,0 @@
-route:
-  repeat_interval: 1h
-  routes:
-    - match:
-      alertname: GoogleCspViolation
