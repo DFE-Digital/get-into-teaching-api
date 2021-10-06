@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 3,
-  "iteration": 1603439685425,
+  "iteration": 1632408570181,
   "links": [],
   "panels": [
     {
@@ -49,7 +48,7 @@
         "label": "Others",
         "threshold": 0
       },
-      "datasource": null,
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -86,8 +85,9 @@
       "targets": [
         {
           "expr": "sum(increase($metric[$__range])) by (violated_directive)",
+          "instant": true,
           "interval": "",
-          "legendFormat": "{{violated_directive}}",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -98,7 +98,7 @@
       "valueName": "current"
     },
     {
-      "datasource": null,
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -204,7 +204,7 @@
       "type": "table"
     },
     {
-      "datasource": null,
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -310,17 +310,116 @@
       "type": "table"
     },
     {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "displayMode": "basic",
+            "filterable": false
+          },
+          "decimals": 0,
+          "displayName": "Total",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgba(115, 191, 105, 0)",
+                "value": null
+              },
+              {
+                "color": "purple",
+                "value": 1
+              },
+              {
+                "color": "orange",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 100
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "blocked_uri"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Blocked URI"
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "auto"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 20,
+        "w": 9,
+        "x": 0,
+        "y": 21
+      },
+      "id": 28,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Total"
+          }
+        ]
+      },
+      "pluginVersion": "7.2.2",
+      "targets": [
+        {
+          "expr": "sum(increase(app_csp_violations_total{blocked_uri=~\".*google.*\"}[$__range])) by (blocked_uri) > 0",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Google CSP Violations by Blocked URI",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "blocked_uri",
+                "Value"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
       "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 41
       },
-      "id": 24,
+      "id": 22,
       "panels": [],
-      "repeatIteration": 1603439685425,
+      "repeatIteration": 1632408570181,
       "repeatPanelId": 2,
       "scopedVars": {
         "metric": {
@@ -340,7 +439,7 @@
         "label": "Others",
         "threshold": 0
       },
-      "datasource": null,
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -353,9 +452,9 @@
         "h": 20,
         "w": 6,
         "x": 0,
-        "y": 22
+        "y": 42
       },
-      "id": 25,
+      "id": 23,
       "interval": null,
       "legend": {
         "show": true,
@@ -366,7 +465,7 @@
       "nullPointMode": "connected",
       "pieType": "pie",
       "pluginVersion": "7.2.2",
-      "repeatIteration": 1603439685425,
+      "repeatIteration": 1632408570181,
       "repeatPanelId": 4,
       "repeatedByRow": true,
       "scopedVars": {
@@ -380,8 +479,9 @@
       "targets": [
         {
           "expr": "sum(increase($metric[$__range])) by (violated_directive)",
+          "instant": true,
           "interval": "",
-          "legendFormat": "{{violated_directive}}",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -392,7 +492,7 @@
       "valueName": "current"
     },
     {
-      "datasource": null,
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -449,9 +549,9 @@
         "h": 20,
         "w": 9,
         "x": 6,
-        "y": 22
+        "y": 42
       },
-      "id": 26,
+      "id": 24,
       "options": {
         "showHeader": true,
         "sortBy": [
@@ -462,7 +562,7 @@
         ]
       },
       "pluginVersion": "7.2.2",
-      "repeatIteration": 1603439685425,
+      "repeatIteration": 1632408570181,
       "repeatPanelId": 6,
       "repeatedByRow": true,
       "scopedVars": {
@@ -501,7 +601,7 @@
       "type": "table"
     },
     {
-      "datasource": null,
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -558,9 +658,9 @@
         "h": 20,
         "w": 9,
         "x": 15,
-        "y": 22
+        "y": 42
       },
-      "id": 27,
+      "id": 25,
       "options": {
         "showHeader": true,
         "sortBy": [
@@ -571,7 +671,7 @@
         ]
       },
       "pluginVersion": "7.2.2",
-      "repeatIteration": 1603439685425,
+      "repeatIteration": 1632408570181,
       "repeatPanelId": 9,
       "repeatedByRow": true,
       "scopedVars": {
@@ -616,128 +716,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 42
-      },
-      "id": 22,
-      "panels": [],
-      "repeatIteration": 1603439685425,
-      "repeatPanelId": 21,
-      "scopedVars": {
-        "cf_app": {
-          "selected": false,
-          "text": "get-teacher-training-adviser-service-prod",
-          "value": "get-teacher-training-adviser-service-prod"
-        }
-      },
-      "title": "$cf_app",
-      "type": "row"
-    },
-    {
-      "datasource": "Elasticseach",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": null,
-            "filterable": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 14,
-        "w": 24,
-        "x": 0,
-        "y": 43
-      },
-      "id": 23,
-      "options": {
-        "showLabels": false,
-        "showTime": true,
-        "sortOrder": "Descending",
-        "wrapLogMessage": true
-      },
-      "pluginVersion": "7.2.2",
-      "repeatIteration": 1603439685425,
-      "repeatPanelId": 15,
-      "repeatedByRow": true,
-      "scopedVars": {
-        "cf_app": {
-          "selected": false,
-          "text": "get-teacher-training-adviser-service-prod",
-          "value": "get-teacher-training-adviser-service-prod"
-        }
-      },
-      "targets": [
-        {
-          "bucketAggs": [],
-          "metrics": [
-            {
-              "field": "select field",
-              "id": "1",
-              "meta": {},
-              "pipelineVariables": [
-                {
-                  "name": "var1",
-                  "pipelineAgg": "select metric"
-                }
-              ],
-              "settings": {
-                "size": 500
-              },
-              "type": "raw_data"
-            }
-          ],
-          "query": "\"csp-report\" AND cf.app:\"$cf_app\"",
-          "refId": "A",
-          "timeField": "@timestamp"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Latest CSP Violations",
-      "transformations": [
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "@timestamp",
-                "payload.csp-report.effective-directive",
-                "payload.csp-report.original-policy",
-                "payload.csp-report.referrer",
-                "payload.csp-report.script-sample",
-                "payload.csp-report.status-code",
-                "payload.csp-report.violated-directive",
-                "message"
-              ]
-            }
-          }
-        }
-      ],
-      "type": "logs"
-    },
-    {
-      "collapsed": false,
-      "datasource": null,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 57
+        "y": 62
       },
       "id": 21,
       "panels": [],
@@ -781,7 +760,7 @@
         "h": 14,
         "w": 24,
         "x": 0,
-        "y": 58
+        "y": 63
       },
       "id": 15,
       "options": {
@@ -846,6 +825,127 @@
         }
       ],
       "type": "logs"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 77
+      },
+      "id": 26,
+      "panels": [],
+      "repeatIteration": 1632408570181,
+      "repeatPanelId": 21,
+      "scopedVars": {
+        "cf_app": {
+          "selected": false,
+          "text": "get-teacher-training-adviser-service-prod",
+          "value": "get-teacher-training-adviser-service-prod"
+        }
+      },
+      "title": "$cf_app",
+      "type": "row"
+    },
+    {
+      "datasource": "Elasticseach",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 24,
+        "x": 0,
+        "y": 78
+      },
+      "id": 27,
+      "options": {
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "pluginVersion": "7.2.2",
+      "repeatIteration": 1632408570181,
+      "repeatPanelId": 15,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "cf_app": {
+          "selected": false,
+          "text": "get-teacher-training-adviser-service-prod",
+          "value": "get-teacher-training-adviser-service-prod"
+        }
+      },
+      "targets": [
+        {
+          "bucketAggs": [],
+          "metrics": [
+            {
+              "field": "select field",
+              "id": "1",
+              "meta": {},
+              "pipelineVariables": [
+                {
+                  "name": "var1",
+                  "pipelineAgg": "select metric"
+                }
+              ],
+              "settings": {
+                "size": 500
+              },
+              "type": "raw_data"
+            }
+          ],
+          "query": "\"csp-report\" AND cf.app:\"$cf_app\"",
+          "refId": "A",
+          "timeField": "@timestamp"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Latest CSP Violations",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "@timestamp",
+                "payload.csp-report.effective-directive",
+                "payload.csp-report.original-policy",
+                "payload.csp-report.referrer",
+                "payload.csp-report.script-sample",
+                "payload.csp-report.status-code",
+                "payload.csp-report.violated-directive",
+                "message"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "logs"
     }
   ],
   "schemaVersion": 26,
@@ -856,7 +956,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "All",
           "value": "$__all"
         },
@@ -890,7 +990,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "All",
           "value": "$__all"
         },
@@ -931,5 +1031,5 @@
   "timezone": "",
   "title": "CSP Violations",
   "uid": "qZjcqcpGz",
-  "version": 1
+  "version": 2
 }
