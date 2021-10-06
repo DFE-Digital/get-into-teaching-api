@@ -343,7 +343,14 @@ namespace GetIntoTeachingApi.Services
         {
             var location = new Location(postcode, coordinate, Location.SourceType.Google);
             await _dbContext.Locations.AddAsync(location);
-            await _dbContext.SaveChangesAsync();
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateException e) when (e.InnerException.Message.Contains("duplicate key"))
+            {
+                // Swallow concurrent requests to add the same postode.
+            }
         }
 
         private async Task<Point> GeocodePostcodeWithLocalLookup(string sanitizedPostcode)
