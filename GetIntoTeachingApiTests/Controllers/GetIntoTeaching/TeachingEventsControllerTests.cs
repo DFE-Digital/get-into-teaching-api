@@ -205,6 +205,29 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
         }
 
         [Fact]
+        public void ExchangeUnverifiedRequestForAttendee_ValidRequest_RespondsWithTeachingEventAddAttendee()
+        {
+            var candidate = new Candidate { Id = Guid.NewGuid() };
+            _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns(candidate);
+
+            var response = _controller.ExchangeUnverifiedRequestForAttendee(_request);
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            var responseModel = ok.Value as TeachingEventAddAttendee;
+            responseModel.CandidateId.Should().Be(candidate.Id);
+        }
+
+        [Fact]
+        public void ExchangeUnverifiedRequestForAttendee_MissingCandidate_RespondsWithNotFound()
+        {
+            _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns<Candidate>(null);
+
+            var response = _controller.ExchangeUnverifiedRequestForAttendee(_request);
+
+            response.Should().BeOfType<NotFoundResult>();
+        }
+
+        [Fact]
         public async Task Upsert_WhenRequestIsInvalid_RepondsWithValidationErrorAsync()
         {
             const string expectedErrorKey = "Name";
