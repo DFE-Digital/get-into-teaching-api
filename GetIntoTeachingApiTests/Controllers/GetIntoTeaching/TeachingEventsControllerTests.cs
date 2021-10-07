@@ -207,7 +207,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
         [Fact]
         public void ExchangeUnverifiedRequestForAttendee_ValidRequest_RespondsWithTeachingEventAddAttendee()
         {
-            var candidate = new Candidate { Id = Guid.NewGuid() };
+            var candidate = new Candidate { Id = Guid.NewGuid(), AddressPostcode = "TE51NG" };
             _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns(candidate);
 
             var response = _controller.ExchangeUnverifiedRequestForAttendee(_request);
@@ -215,6 +215,8 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             var responseModel = ok.Value as TeachingEventAddAttendee;
             responseModel.CandidateId.Should().Be(candidate.Id);
+            responseModel.IsVerified.Should().BeFalse();
+            responseModel.AddressPostcode.Should().BeNull();
         }
 
         [Fact]
