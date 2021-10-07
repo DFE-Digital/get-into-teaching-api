@@ -206,6 +206,14 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         }
 
         [Fact]
+        public void Candidate_WhenUnverifiedWalkIn_HasCorrectChannel()
+        {
+            var request = new TeachingEventAddAttendee() { IsWalkIn = true, IsVerified = false, EventId = Guid.NewGuid() };
+
+            request.Candidate.TeachingEventRegistrations.First().ChannelId.Should().Be((int)TeachingEventRegistration.Channel.EventWalkInUnverified);
+        }
+
+        [Fact]
         public void ClearAttributesForUnverifiedAccess_ClearsPersonalAttributesExcludingMatchbackFields()
         {
             var request = new TeachingEventAddAttendee() { AddressTelephone = "1234567", AddressPostcode = "TE51NG" };
