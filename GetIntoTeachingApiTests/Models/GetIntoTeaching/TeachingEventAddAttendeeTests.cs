@@ -59,6 +59,8 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
             response.AlreadySubscribedToEvents.Should().BeTrue();
             response.AlreadySubscribedToMailingList.Should().BeFalse();
             response.AlreadySubscribedToTeacherTrainingAdviser.Should().BeTrue();
+
+            response.IsVerified.Should().BeTrue();
         }
 
         [Fact]
@@ -122,19 +124,20 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         }
 
         [Fact]
-        public void Candidate_ConsiderationJourneyStageIdIsNull_DoesNotSet()
+        public void Candidate_OptionalAttributesWhenNull_DoesNotSet()
         {
-            var request = new TeachingEventAddAttendee() { ConsiderationJourneyStageId = null };
+            var request = new TeachingEventAddAttendee()
+            {
+                ConsiderationJourneyStageId = null,
+                PreferredTeachingSubjectId = null,
+                AddressTelephone = null,
+                AddressPostcode = null,
+            };
 
             request.Candidate.ChangedPropertyNames.Should().NotContain("ConsiderationJourneyStageId");
-        }
-
-        [Fact]
-        public void Candidate_PreferredTeachingSubjectIdIsNull_DoesNotSet()
-        {
-            var request = new TeachingEventAddAttendee() { ConsiderationJourneyStageId = null };
-
             request.Candidate.ChangedPropertyNames.Should().NotContain("PreferredTeachingSubjectId");
+            request.Candidate.ChangedPropertyNames.Should().NotContain("AddressTelephone");
+            request.Candidate.ChangedPropertyNames.Should().NotContain("AddressPostcode");
         }
 
         [Fact]
@@ -200,6 +203,17 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
             var request = new TeachingEventAddAttendee() { IsWalkIn = true, EventId = Guid.NewGuid() };
 
             request.Candidate.TeachingEventRegistrations.First().ChannelId.Should().Be((int)TeachingEventRegistration.Channel.EventWalkIn);
+        }
+
+        [Fact]
+        public void ClearAttributesForUnverifiedAccess_ClearsPersonalAttributesExcludingMatchbackFields()
+        {
+            var request = new TeachingEventAddAttendee() { AddressTelephone = "1234567", AddressPostcode = "TE51NG" };
+
+            request.ClearAttributesForUnverifiedAccess();
+
+            request.AddressTelephone.Should().BeNull();
+            request.AddressPostcode.Should().BeNull();
         }
     }
 }

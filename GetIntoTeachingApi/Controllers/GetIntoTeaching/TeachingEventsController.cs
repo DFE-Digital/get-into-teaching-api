@@ -143,6 +143,37 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
         }
 
         [HttpPost]
+        [Route("attendees/exchange_unverified_request")]
+        [SwaggerOperation(
+            Summary = "Retrieves a pre-populated TeachingEventAddAttendee for the candidate (allowing to proceed as unverified).",
+            Description = @"
+                        Retrieves a pre-populated TeachingEventAddAttendee for the candidate. This mechanism should be used with caution
+                        and the candidate should be treated as 'unverified' by the client.",
+            OperationId = "ExchangeUnverifiedRequestForTeachingEventAddAttendee",
+            Tags = new[] { "Teaching Events" })]
+        [ProducesResponseType(typeof(TeachingEventAddAttendee), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult ExchangeUnverifiedRequestForAttendee(
+            [FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] ExistingCandidateRequest request)
+        {
+            var candidate = _crm.MatchCandidate(request);
+
+            if (candidate == null)
+            {
+                return NotFound();
+            }
+
+            var attendee = new TeachingEventAddAttendee(candidate)
+            {
+                IsVerified = false,
+            };
+
+            attendee.ClearAttributesForUnverifiedAccess();
+
+            return Ok(attendee);
+        }
+
+        [HttpPost]
         [Route("attendees/exchange_access_token/{accessToken}")]
         [SwaggerOperation(
             Summary = "Retrieves a pre-populated TeachingEventAddAttendee for the candidate.",
