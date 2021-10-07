@@ -163,7 +163,14 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
                 return NotFound();
             }
 
-            return Ok(new TeachingEventAddAttendee(candidate));
+            var attendee = new TeachingEventAddAttendee(candidate)
+            {
+                IsVerified = false,
+            };
+
+            attendee.ClearAttributesForUnverifiedAccess();
+
+            return Ok(attendee);
         }
 
         [HttpPost]
