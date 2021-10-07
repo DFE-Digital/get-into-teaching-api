@@ -27,6 +27,8 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public string LastName { get; set; }
         public string AddressPostcode { get; set; }
         public string AddressTelephone { get; set; }
+        public bool IsVerified { get; set; } = true;
+        [SwaggerSchema(WriteOnly = true)]
         public bool IsWalkIn { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public bool SubscribeToMailingList { get; set; }
@@ -49,6 +51,16 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public TeachingEventAddAttendee(Candidate candidate)
         {
             PopulateWithCandidate(candidate);
+        }
+
+        // We do not want to pre-fill any sign up forms if a
+        // user is continuing as 'unverified'. Any fields that
+        // contain personal data should be cleared, excluding
+        // attributes used in match back (first/last/email).
+        public void ClearAttributesForUnverifiedAccess()
+        {
+            AddressPostcode = null;
+            AddressTelephone = null;
         }
 
         private void PopulateWithCandidate(Candidate candidate)
@@ -85,13 +97,21 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                 Email = Email,
                 FirstName = FirstName,
                 LastName = LastName,
-                AddressPostcode = AddressPostcode.AsFormattedPostcode(),
-                AddressTelephone = AddressTelephone,
                 PreferredPhoneNumberTypeId = (int)Candidate.PhoneNumberType.Home,
                 PreferredContactMethodId = (int)Candidate.ContactMethod.Any,
                 GdprConsentId = (int)Candidate.GdprConsent.Consent,
                 OptOutOfGdpr = false,
             };
+
+            if (AddressPostcode != null)
+            {
+                candidate.AddressPostcode = AddressPostcode.AsFormattedPostcode();
+            }
+
+            if (AddressTelephone != null)
+            {
+                candidate.AddressTelephone = AddressTelephone;
+            }
 
             if (ConsiderationJourneyStageId != null)
             {
