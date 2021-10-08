@@ -14,6 +14,7 @@ namespace GetIntoTeachingApi.Models.Crm
         {
             Event = 222750003,
             EventWalkIn = 222750004,
+            EventWalkInUnverified = 222750005,
         }
 
         [EntityField("msevtmgt_contactid", typeof(EntityReference), "contact")]

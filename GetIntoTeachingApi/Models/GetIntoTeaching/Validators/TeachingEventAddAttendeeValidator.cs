@@ -20,6 +20,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching.Validators
             RuleFor(request => request.ConsiderationJourneyStageId).NotNull().When(request => request.SubscribeToMailingList);
             RuleFor(request => request.DegreeStatusId).NotNull().When(request => request.SubscribeToMailingList);
             RuleFor(request => request.PreferredTeachingSubjectId).NotNull().When(request => request.SubscribeToMailingList);
+            RuleFor(request => request.IsVerified).Must(isVerified => isVerified).Unless(request => request.IsWalkIn);
 
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store, dateTime));
         }
