@@ -43,6 +43,8 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
                 LastName = "Doe",
                 AddressTelephone = "1234567",
                 AddressPostcode = "KY11 9YU",
+                IsWalkIn = true,
+                IsVerified = false,
             };
 
             var result = _validator.TestValidate(request);
@@ -51,6 +53,22 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
             // properties as we can't mock them).
             var propertiesWithErrors = result.Errors.Select(e => e.PropertyName);
             propertiesWithErrors.All(p => p.StartsWith("Candidate.")).Should().BeTrue();
+        }
+
+        [Fact]
+        public void Validate_IsNotVerifiedAndIsNotWalkIn_HasError()
+        {
+            var request = new TeachingEventAddAttendee() { IsWalkIn = false, IsVerified = false };
+
+            var result = _validator.TestValidate(request);
+
+            result.ShouldHaveValidationErrorFor("IsVerified");
+
+            request.IsVerified = true;
+
+            result = _validator.TestValidate(request);
+
+            result.ShouldNotHaveValidationErrorFor("IsVerified");
         }
 
         [Fact]

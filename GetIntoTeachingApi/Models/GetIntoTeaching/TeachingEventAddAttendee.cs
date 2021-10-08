@@ -169,10 +169,17 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         {
             if (EventId != null)
             {
+                var channelId = (int)TeachingEventRegistration.Channel.Event;
+
+                if (IsWalkIn)
+                {
+                    channelId = IsVerified ? (int)TeachingEventRegistration.Channel.EventWalkIn : (int)TeachingEventRegistration.Channel.EventWalkInUnverified;
+                }
+
                 candidate.TeachingEventRegistrations.Add(new TeachingEventRegistration()
                 {
                     EventId = (Guid)EventId,
-                    ChannelId = IsWalkIn ? (int)TeachingEventRegistration.Channel.EventWalkIn : (int)TeachingEventRegistration.Channel.Event,
+                    ChannelId = channelId,
                     IsCancelled = false,
                     RegistrationNotificationSeen = false,
                 });
