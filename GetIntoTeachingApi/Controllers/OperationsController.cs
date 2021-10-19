@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +29,7 @@ namespace GetIntoTeachingApi.Controllers
         private readonly IRedisService _redis;
         private readonly IEnv _env;
         private readonly IAppSettings _appSettings;
+        private readonly IBackgroundJobClient _jobClient;
 
         public OperationsController(
             ICrmService crm,
@@ -35,7 +38,8 @@ namespace GetIntoTeachingApi.Controllers
             IHangfireService hangfire,
             IRedisService redis,
             IEnv env,
-            IAppSettings appSettings)
+            IAppSettings appSettings,
+            IBackgroundJobClient jobClient)
         {
             _store = store;
             _crm = crm;
@@ -44,6 +48,7 @@ namespace GetIntoTeachingApi.Controllers
             _redis = redis;
             _env = env;
             _appSettings = appSettings;
+            _jobClient = jobClient;
         }
 
         [HttpGet]
@@ -116,6 +121,28 @@ namespace GetIntoTeachingApi.Controllers
         public IActionResult ResumeCrmIntegration()
         {
             _appSettings.CrmIntegrationPausedUntil = null;
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [Route("backfill_find_apply_candidates")]
+        [SwaggerOperation(
+            Summary = "Triggers a backfill job to sync the CRM with the Find/Apply candidates.",
+            Description = "The backfill will query all candidate information from the Find/Apply API and " +
+            "queue jobs to sync the data with the CRM.",
+            OperationId = "BackfillFindApplyCandidates",
+            Tags = new[] { "Operations" })]
+        [ProducesResponseType(typeof(HealthCheckResponse), StatusCodes.Status204NoContent)]
+        public IActionResult BackfillFindApplyCandidates()
+        {
+            if (_appSettings.IsFindApplyBackfillInProgress)
+            {
+                return BadRequest("Backfill already in progress");
+            }
+
+            _jobClient.Enqueue<FindApplyBackfillJob>((x) => x.RunAsync());
 
             return NoContent();
         }

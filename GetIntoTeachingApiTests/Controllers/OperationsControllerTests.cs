@@ -10,6 +10,10 @@ using Moq;
 using Xunit;
 using System;
 using Microsoft.AspNetCore.Authorization;
+using Hangfire;
+using Hangfire.Common;
+using GetIntoTeachingApi.Jobs;
+using Hangfire.States;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -22,6 +26,7 @@ namespace GetIntoTeachingApiTests.Controllers
         private readonly Mock<IRedisService> _mockRedis;
         private readonly Mock<IEnv> _mockEnv;
         private readonly Mock<IAppSettings> _mockAppSettings;
+        private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly OperationsController _controller;
 
         public OperationsControllerTests()
@@ -33,6 +38,7 @@ namespace GetIntoTeachingApiTests.Controllers
             _mockRedis = new Mock<IRedisService>();
             _mockEnv = new Mock<IEnv>();
             _mockAppSettings = new Mock<IAppSettings>();
+            _mockJobClient = new Mock<IBackgroundJobClient>();
 
             _controller = new OperationsController(
                 _mockCrm.Object,
@@ -41,7 +47,8 @@ namespace GetIntoTeachingApiTests.Controllers
                 _mockHangfire.Object,
                 _mockRedis.Object,
                 _mockEnv.Object,
-                _mockAppSettings.Object);
+                _mockAppSettings.Object,
+                _mockJobClient.Object);
         }
 
         [Fact]
@@ -92,6 +99,41 @@ namespace GetIntoTeachingApiTests.Controllers
             response.Should().BeOfType<NoContentResult>();
 
             _mockAppSettings.VerifySet(m => m.CrmIntegrationPausedUntil = null, Times.Once());
+        }
+
+        [Fact]
+        public void BackfillFindApplyCandidates_Authorize_IsPresent()
+        {
+            typeof(OperationsController).GetMethod("BackfillFindApplyCandidates")
+                .Should().BeDecoratedWith<AuthorizeAttribute>(a => a.Roles == "Admin");
+        }
+
+        [Fact]
+        public void BackfillFindApplyCandidates_WhenNotAlreadyRunning_EnqueuesJob()
+        {
+            _mockAppSettings.Setup(m => m.IsFindApplyBackfillInProgress).Returns(false);
+
+            var response = _controller.BackfillFindApplyCandidates();
+
+            response.Should().BeOfType<NoContentResult>();
+
+            _mockJobClient.Verify(x => x.Create(
+                It.Is<Job>(job => job.Type == typeof(FindApplyBackfillJob) && job.Method.Name == "RunAsync"),
+                It.IsAny<EnqueuedState>()), Times.Once);
+        }
+
+        [Fact]
+        public void BackfillFindApplyCandidates_WhenAlreadyRunning_ReturnsBadRequest()
+        {
+            _mockAppSettings.Setup(m => m.IsFindApplyBackfillInProgress).Returns(true);
+
+            var response = _controller.BackfillFindApplyCandidates();
+
+            response.Should().BeOfType<BadRequestObjectResult>();
+
+            _mockJobClient.Verify(x => x.Create(
+                It.Is<Job>(job => job.Type == typeof(FindApplyBackfillJob) && job.Method.Name == "RunAsync"),
+                It.IsAny<EnqueuedState>()),Times.Never);
         }
 
         [Theory]
