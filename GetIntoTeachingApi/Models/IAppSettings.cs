@@ -6,6 +6,7 @@ namespace GetIntoTeachingApi.Models
     {
         DateTime? FindApplyLastSyncAt { get; set; }
         DateTime? CrmIntegrationPausedUntil { get; set; }
+        bool IsFindApplyBackfillInProgress { get; set; }
         bool IsCrmIntegrationPaused { get; }
     }
 }
