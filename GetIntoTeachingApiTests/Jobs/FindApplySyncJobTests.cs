@@ -87,6 +87,32 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
+        public async void RunAsync_WhenMultiplePagesAvailable_QueuesCandidateJobsForEachPage()
+        {
+            var lastSyncAt = new DateTime(2020, 1, 1);
+            _mockAppSettings.Setup(m => m.FindApplyLastSyncAt).Returns(lastSyncAt);
+            var candidates1 = new Candidate[]
+            {
+                new Candidate() { Id = "11111", Attributes = new CandidateAttributes() { Email = "email1@address.com" } },
+            };
+            var candidates2 = new Candidate[]
+            {
+                new Candidate() { Id = "11111", Attributes = new CandidateAttributes() { Email = "email1@address.com" } },
+            };
+
+            using (var httpTest = new HttpTest())
+            {
+                MockResponse(httpTest, lastSyncAt, new Response<IEnumerable<Candidate>>() { Data = candidates1 }, 1, 2);
+                MockResponse(httpTest, lastSyncAt, new Response<IEnumerable<Candidate>>() { Data = candidates2 }, 2, 2);
+                await _job.RunAsync();
+            }
+
+            _mockJobClient.Verify(x => x.Create(
+               It.Is<Job>(job => job.Type == typeof(FindApplyCandidateSyncJob) && job.Method.Name == "Run"),
+               It.IsAny<EnqueuedState>()), Times.Exactly(candidates1.Length + candidates2.Length));
+        }
+
+        [Fact]
         public async void RunAsync_WithNoUpdatedCandidates_DoesNotQueueJobs()
         {
             var metricCount = _metrics.FindApplySyncDuration.Count;
@@ -147,16 +173,18 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockAppSettings.VerifySet(m => m.FindApplyLastSyncAt = now, Times.Once);
         }
 
-        private void MockResponse(HttpTest httpTest, DateTime updatedSince, Response<IEnumerable<Candidate>> response)
+        private void MockResponse(HttpTest httpTest, DateTime updatedSince, Response<IEnumerable<Candidate>> response, int page = 1, int totalPages = 1)
         {
             var json = JsonConvert.SerializeObject(response);
+            var headers = new Dictionary<string, int>() {  { "Total-Pages", totalPages }, { "Current-Page", page } };
 
             httpTest
                     .ForCallsTo($"{_mockEnv.Object.FindApplyApiUrl}/candidates")
                     .WithVerb("GET")
+                    .WithQueryParam("page", page)
                     .WithQueryParam("updated_since", updatedSince)
                     .WithHeader("Authorization", $"Bearer {_mockEnv.Object.FindApplyApiKey}")
-                    .RespondWith(json, 200);
+                    .RespondWith(json, 200, headers);
         }
     }
 }
