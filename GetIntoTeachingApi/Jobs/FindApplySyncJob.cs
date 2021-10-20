@@ -52,14 +52,19 @@ namespace GetIntoTeachingApi.Jobs
 
         private async Task QueueCandidateSyncJobs()
         {
-            var response = await Env.FindApplyApiUrl
+            var request = Env.FindApplyApiUrl
                 .AppendPathSegment("candidates")
                 .SetQueryParam("updated_since", UpdatedSince())
-                .WithOAuthBearerToken(Env.FindApplyApiKey)
-                .GetJsonAsync<Response<IEnumerable<Candidate>>>();
+                .WithOAuthBearerToken(Env.FindApplyApiKey);
 
-            _logger.LogInformation($"FindApplySyncJob - Syncing {response.Data.Count()} Candidates");
-            response.Data.ForEach(c => _jobClient.Enqueue<FindApplyCandidateSyncJob>(x => x.Run(c)));
+            var paginator = new PaginatorClient<Response<IEnumerable<Candidate>>>(request);
+
+            while (paginator.HasNext)
+            {
+                var response = await paginator.NextAsync();
+                _logger.LogInformation($"FindApplySyncJob - Syncing {response.Data.Count()} Candidates");
+                response.Data.ForEach(c => _jobClient.Enqueue<FindApplyCandidateSyncJob>(x => x.Run(c)));
+            }
         }
 
         private DateTime UpdatedSince()
