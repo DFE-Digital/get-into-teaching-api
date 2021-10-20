@@ -134,7 +134,8 @@ namespace GetIntoTeachingApi.Controllers
             "queue jobs to sync the data with the CRM.",
             OperationId = "BackfillFindApplyCandidates",
             Tags = new[] { "Operations" })]
-        [ProducesResponseType(typeof(HealthCheckResponse), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult BackfillFindApplyCandidates()
         {
             if (_appSettings.IsFindApplyBackfillInProgress)
