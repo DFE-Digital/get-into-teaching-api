@@ -322,14 +322,16 @@ This example creates a reference to the preferred teaching subject, which is ano
 
 > **If you add a new `EntityReference` type you should ensure that it is synced to the `Store` and exposed to clients via the `TypesController`.**
 
-#### Ignoring Fields by Environment
+#### Including Fields Behind a Feature Flag
 
-If a new field is not yet available in one of the CRM environments you can still develop and deploy code against the attribute as long as you mark it as ignored for any environments that it is not available in. For example, to map a field in dev but _not_ test (staging) or production:
+If a new field is not yet available in one of the CRM environments you can still develop and deploy code against the attribute as long as you put it behind a feature switch. For example, to map a field behind the `MY_FEATURE` feature you can use:
 
 ```
-[EntityField("dfe_brand_new_field", null, null, new string[] { "Staging", "Production" })]
+[EntityField("dfe_brand_new_field", null, null, new string[] { "MY_FEATURE" })]
 public string NewField { get; set; }
 ```
+
+You would then only turn on the feature for CRM environments that support it, preventing the mapper trying to map the field before it is available.
 
 #### Hidden Fields
 
