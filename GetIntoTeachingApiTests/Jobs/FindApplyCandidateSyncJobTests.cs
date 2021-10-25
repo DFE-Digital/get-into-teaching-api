@@ -144,7 +144,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
 
         [Fact]
-        public void Run_OnSuccessWhenThereAreNoApplicationForms_SavesCandidate()
+        public void Run_OnSuccessWhenThereAreNoApplicationForms_SavesCandidateWithNeverSignedInStatus()
         {
             _candidate.Attributes.ApplicationForms = Array.Empty<ApplicationForm>();
 
@@ -152,7 +152,8 @@ namespace GetIntoTeachingApiTests.Jobs
             var existingApplicationForm = new GetIntoTeachingApi.Models.Crm.ApplicationForm() { Id = Guid.NewGuid() };
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
             _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email)).Returns(match);
-            _mockCrm.Setup(m => m.Save(It.IsAny<GetIntoTeachingApi.Models.Crm.Candidate>()));
+            _mockCrm.Setup(m => m.Save(It.Is<GetIntoTeachingApi.Models.Crm.Candidate>(c =>
+                c.FindApplyStatusId == (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.NeverSignedIn)));
 
             _job.Run(_candidate);
 
