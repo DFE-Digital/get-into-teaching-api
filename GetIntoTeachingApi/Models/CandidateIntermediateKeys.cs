@@ -1,11 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace GetIntoTeachingApi.Models
 {
     public class CandidateIntermediateKeys
     {
         [Key]
-        public int IntermediateCandidateId { get; set; }
-        public int CrmCandidateId { get; set; }
+        public Guid IntermediateCandidateId { get; set; }
+        public Guid CrmCandidateId { get; set; }
     }
 }

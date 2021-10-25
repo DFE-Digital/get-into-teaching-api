@@ -27,5 +27,7 @@ namespace GetIntoTeachingApi.Services
         IQueryable<TeachingEventBuilding> GetTeachingEventBuildings();
         void Delete<T>(IEnumerable<T> models);
         Task<Candidate> FindCandidateByIntermediateId(Guid intermediatedId);
+        void AddCandidateIntermediateIdMapping(Guid crmId, Guid intermediateId);
+        Guid GetCandidateCrmIdByIntermediateId(Guid intermediateId);
     }
 }

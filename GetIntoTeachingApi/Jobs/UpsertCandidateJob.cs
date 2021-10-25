@@ -67,8 +67,16 @@ namespace GetIntoTeachingApi.Jobs
             }
             else
             {
-                _upserter.Upsert(candidate);
-                await RemoveCandidateCache(candidate);
+                if (candidate.IntermedidateCacheOnly)
+                {
+                    _upserter.Upsert(candidate);
+                    StoreIntermediateIdMapping(candidate.Id.Value, candidate.IntermediateId.Value);
+                    await RemoveCandidateCache(candidate);
+                }
+                else
+                {
+                    _upserter.Upsert(candidate);
+                }
 
                 _logger.LogInformation($"UpsertCandidateJob - Succeeded - {candidate.Id}");
             }
@@ -77,15 +85,17 @@ namespace GetIntoTeachingApi.Jobs
             _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Observe(duration);
         }
 
+        private void StoreIntermediateIdMapping(Guid crmId, Guid intermediateId)
+        {
+            _store.AddCandidateIntermediateIdMapping(crmId, intermediateId);
+        }
+
         private async Task RemoveCandidateCache(Candidate candidate)
         {
-            if (candidate.IntermediateId.HasValue)
+            var tempCandidate = await _store.FindCandidateByIntermediateId(candidate.IntermediateId.Value);
+            if (tempCandidate != null)
             {
-                var tempCandidate = await _store.FindCandidateByIntermediateId(candidate.IntermediateId.Value);
-                if (tempCandidate != null)
-                {
-                    _store.Delete(new List<Candidate> { tempCandidate });
-                }
+                _store.Delete(new List<Candidate> { tempCandidate });
             }
         }
     }

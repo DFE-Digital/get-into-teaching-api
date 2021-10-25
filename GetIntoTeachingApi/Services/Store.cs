@@ -172,6 +172,22 @@ namespace GetIntoTeachingApi.Services
             _dbContext.SaveChangesAsync();
         }
 
+        public void AddCandidateIntermediateIdMapping(Guid crmId, Guid intermediateId)
+        {
+            var mapping = new CandidateIntermediateKeys
+            {
+                CrmCandidateId = crmId,
+                IntermediateCandidateId = intermediateId,
+            };
+
+            _dbContext.CandidateIntermediateKeys.Add(mapping);
+        }
+
+        public Guid GetCandidateCrmIdByIntermediateId(Guid intermediateId)
+        {
+            return _dbContext.CandidateIntermediateKeys.Find(intermediateId).CrmCandidateId;
+        }
+
         private async Task<IEnumerable<TeachingEvent>> FilterTeachingEventsByRadius(
             IQueryable<TeachingEvent> teachingEvents, TeachingEventSearchRequest request)
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
@@ -102,6 +103,28 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
             if (candidate == null)
             {
                 return NotFound();
+            }
+
+            return Ok(new SchoolsExperienceSignUp(candidate));
+        }
+
+        [HttpGet]
+        [Route("cached/{id}")]
+        [SwaggerOperation(
+            Summary = "Retrieves a cached SchoolsExperienceSignUp for the candidate by intermediate ID.",
+            OperationId = "GetSchoolsExperienceSignUp",
+            Tags = new[] { "Schools Experience" })]
+        [ProducesResponseType(typeof(SchoolsExperienceSignUp), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetByIntermediateId([FromRoute, SwaggerParameter("The `intermediateId` of the `Candidate`.", Required = true)] Guid intermediateId)
+        {
+            var candidate = await _store.FindCandidateByIntermediateId(intermediateId);
+
+            if (candidate == null)
+            {
+                // Candidate cache has been cleared and candidate will exist in CRM
+                var crmId = _store.GetCandidateCrmIdByIntermediateId(intermediateId);
+                candidate = _crm.GetCandidate(crmId);
             }
 
             return Ok(new SchoolsExperienceSignUp(candidate));
