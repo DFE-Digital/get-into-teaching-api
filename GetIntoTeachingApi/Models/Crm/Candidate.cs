@@ -298,6 +298,18 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityRelationship("dfe_contact_dfe_candidateprivacypolicy_Candidate", typeof(CandidatePrivacyPolicy))]
         public CandidatePrivacyPolicy PrivacyPolicy { get; set; }
 
+        public Guid? IntermediateId { get; set; }
+
+        public bool PersistedInCrm
+        {
+            get => Id.HasValue;
+        }
+
+        public bool IntermedidateCacheOnly
+        {
+            get => !Id.HasValue && IntermediateId.HasValue;
+        }
+
         public Candidate()
             : base()
         {
