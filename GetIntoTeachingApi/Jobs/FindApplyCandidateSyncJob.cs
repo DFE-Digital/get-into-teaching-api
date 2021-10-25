@@ -70,7 +70,11 @@ namespace GetIntoTeachingApi.Jobs
 
             var latestApplicationForm = findApplyApplicationForms?.FirstOrDefault();
 
-            if (latestApplicationForm != null)
+            if (latestApplicationForm == null)
+            {
+                candidate.FindApplyStatusId = (int)Models.Crm.ApplicationForm.Status.NeverSignedIn;
+            }
+            else
             {
                 candidate.FindApplyStatusId = (int)Enum.Parse(typeof(Models.Crm.ApplicationForm.Status), latestApplicationForm.ApplicationStatus.ToPascalCase());
                 candidate.FindApplyPhaseId = (int)Enum.Parse(typeof(Models.Crm.ApplicationForm.Phase), latestApplicationForm.ApplicationPhase.ToPascalCase());
