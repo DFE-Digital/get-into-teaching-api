@@ -72,7 +72,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockJobClient.Verify(x => x.Create(
                It.Is<Job>(job => job.Type == typeof(FindApplyCandidateSyncJob) && job.Method.Name == "Run"),
-               It.IsAny<EnqueuedState>()), Times.Exactly(candidates1.Length + candidates2.Length));
+               It.IsAny<ScheduledState>()), Times.Exactly(candidates1.Length + candidates2.Length));
 
             _mockAppSettings.VerifySet(m => m.IsFindApplyBackfillInProgress = true, Times.Once);
             _mockLogger.VerifyInformationWasCalled("FindApplyBackfillJob - Started");
@@ -94,7 +94,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockJobClient.Verify(x => x.Create(
                It.Is<Job>(job => job.Type == typeof(FindApplyCandidateSyncJob)),
-               It.IsAny<EnqueuedState>()), Times.Never);
+               It.IsAny<ScheduledState>()), Times.Never);
 
             _mockAppSettings.VerifySet(m => m.IsFindApplyBackfillInProgress = true, Times.Once);
             _mockLogger.VerifyInformationWasCalled("FindApplyBackfillJob - Started");
