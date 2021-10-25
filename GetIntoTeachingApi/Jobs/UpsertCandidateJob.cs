@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
@@ -18,6 +19,7 @@ namespace GetIntoTeachingApi.Jobs
         private readonly IMetricService _metrics;
         private readonly IAppSettings _appSettings;
         private readonly ILogger<UpsertCandidateJob> _logger;
+        private readonly IStore _store;
 
         public UpsertCandidateJob(
             IEnv env,
@@ -26,7 +28,8 @@ namespace GetIntoTeachingApi.Jobs
             IPerformContextAdapter contextAdapter,
             IMetricService metrics,
             ILogger<UpsertCandidateJob> logger,
-            IAppSettings appSettings)
+            IAppSettings appSettings,
+            IStore store)
             : base(env)
         {
             _upserter = upserter;
@@ -35,9 +38,10 @@ namespace GetIntoTeachingApi.Jobs
             _metrics = metrics;
             _logger = logger;
             _appSettings = appSettings;
+            _store = store;
         }
 
-        public void Run(string json, PerformContext context)
+        public async Task Run(string json, PerformContext context)
         {
             if (_appSettings.IsCrmIntegrationPaused)
             {
@@ -54,21 +58,35 @@ namespace GetIntoTeachingApi.Jobs
                 var personalisation = new Dictionary<string, dynamic>();
 
                 // We fire and forget the email, ensuring the job succeeds.
-                _notifyService.SendEmailAsync(
+                await _notifyService.SendEmailAsync(
                     candidate.Email,
                     NotifyService.CandidateRegistrationFailedEmailTemplateId,
                     personalisation);
+                await RemoveCandidateCache(candidate);
                 _logger.LogInformation("UpsertCandidateJob - Deleted");
             }
             else
             {
                 _upserter.Upsert(candidate);
+                await RemoveCandidateCache(candidate);
 
                 _logger.LogInformation($"UpsertCandidateJob - Succeeded - {candidate.Id}");
             }
 
             var duration = (DateTime.UtcNow - _contextAdapter.GetJobCreatedAt(context)).TotalSeconds;
             _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Observe(duration);
+        }
+
+        private async Task RemoveCandidateCache(Candidate candidate)
+        {
+            if (candidate.IntermediateId.HasValue)
+            {
+                var tempCandidate = await _store.FindCandidateByIntermediateId(candidate.IntermediateId.Value);
+                if (tempCandidate != null)
+                {
+                    _store.Delete(new List<Candidate> { tempCandidate });
+                }
+            }
         }
     }
 }

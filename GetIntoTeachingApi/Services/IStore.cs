@@ -25,5 +25,7 @@ namespace GetIntoTeachingApi.Services
         Task<TeachingEvent> GetTeachingEventAsync(Guid id);
         Task<TeachingEvent> GetTeachingEventAsync(string readableId);
         IQueryable<TeachingEventBuilding> GetTeachingEventBuildings();
+        void Delete<T>(IEnumerable<T> models);
+        Task<Candidate> FindCandidateByIntermediateId(Guid intermediatedId);
     }
 }

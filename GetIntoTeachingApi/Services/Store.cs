@@ -145,6 +145,11 @@ namespace GetIntoTeachingApi.Services
             return _dbContext.TeachingEventBuildings.AsNoTracking();
         }
 
+        public async Task<Candidate> FindCandidateByIntermediateId(Guid intermediatedId)
+        {
+            return await _dbContext.Candidates.FindAsync(intermediatedId);
+        }
+
         public async Task SaveAsync<T>(IEnumerable<T> models)
             where T : BaseModel
         {
@@ -159,6 +164,12 @@ namespace GetIntoTeachingApi.Services
             where T : BaseModel
         {
             await SaveAsync(new T[] { model });
+        }
+
+        public void Delete<T>(IEnumerable<T> models)
+        {
+            _dbContext.RemoveRange(models);
+            _dbContext.SaveChangesAsync();
         }
 
         private async Task<IEnumerable<TeachingEvent>> FilterTeachingEventsByRadius(
