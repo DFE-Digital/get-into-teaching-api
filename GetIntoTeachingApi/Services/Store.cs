@@ -117,6 +117,11 @@ namespace GetIntoTeachingApi.Services
                     request.StatusIds.Contains(te.StatusId));
             }
 
+            if (request.Online != null)
+            {
+                teachingEvents = teachingEvents.Where(te => te.IsOnline == request.Online);
+            }
+
             if (request.Radius == null)
             {
                 return await teachingEvents.ToListAsync();
