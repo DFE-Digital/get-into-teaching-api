@@ -420,7 +420,8 @@ namespace GetIntoTeachingApiTests.Services
                 Radius = 15,
                 TypeIds = new int[] { (int)TeachingEvent.EventType.ApplicationWorkshop },
                 StartAfter = DateTime.UtcNow,
-                StartBefore = DateTime.UtcNow.AddDays(3)
+                StartBefore = DateTime.UtcNow.AddDays(3),
+                Online = true,
             };
 
             var result = await _store.SearchTeachingEventsAsync(request);
@@ -610,6 +611,28 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public async void SearchTeachingEvents_FilteredByOnline_ReturnsOnlyOnlineEvents()
+        {
+            await SeedMockTeachingEventsAndBuildingsAsync();
+            var request = new TeachingEventSearchRequest() { Online = true };
+
+            var result = await _store.SearchTeachingEventsAsync(request);
+
+            result.Select(e => e.Name).Should().Equal(new string[] { "Event 2", "Event 1", "Event 5" });
+        }
+
+        [Fact]
+        public async void SearchTeachingEvents_FilteredByOffline_ReturnsOnlyInPersonEvents()
+        {
+            await SeedMockTeachingEventsAndBuildingsAsync();
+            var request = new TeachingEventSearchRequest() { Online = false };
+
+            var result = await _store.SearchTeachingEventsAsync(request);
+
+            result.Select(e => e.Name).Should().Equal(new string[] { "Event 7", "Event 4", "Event 3", "Event 6" });
+        }
+
+        [Fact]
         public async void GetTeachingEventAsync_WithId_ReturnsMatchingEvent()
         {
             var events = await SeedMockTeachingEventsAndBuildingsAsync();
@@ -709,6 +732,7 @@ namespace GetIntoTeachingApiTests.Services
                 Id = FindEventGuid,
                 ReadableId = "2",
                 StatusId = (int)TeachingEvent.Status.Open,
+                IsOnline = true,
                 Name = "Event 2",
                 StartAt = DateTime.UtcNow.AddDays(1),
                 TypeId = (int)TeachingEvent.EventType.ApplicationWorkshop,
@@ -720,6 +744,7 @@ namespace GetIntoTeachingApiTests.Services
                 Id = Guid.NewGuid(),
                 ReadableId = "3",
                 StatusId = (int)TeachingEvent.Status.Open,
+                IsOnline = false,
                 Name = "Event 3",
                 StartAt = DateTime.UtcNow.AddDays(10),
                 TypeId = (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
@@ -731,6 +756,7 @@ namespace GetIntoTeachingApiTests.Services
                 Id = Guid.NewGuid(),
                 ReadableId = "4",
                 StatusId = (int)TeachingEvent.Status.Open,
+                IsOnline = false,
                 Name = "Event 4",
                 StartAt = DateTime.UtcNow.AddDays(3),
                 TypeId = (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
@@ -754,6 +780,7 @@ namespace GetIntoTeachingApiTests.Services
                 ReadableId = "6",
                 StatusId = (int)TeachingEvent.Status.Open,
                 Name = "Event 6",
+                IsOnline = false,
                 StartAt = DateTime.UtcNow.AddDays(60),
                 TypeId = (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
                 BuildingId = sharedBuildingId
@@ -765,6 +792,7 @@ namespace GetIntoTeachingApiTests.Services
                 ReadableId = "7",
                 StatusId = (int)TeachingEvent.Status.Closed,
                 Name = "Event 7",
+                IsOnline = false,
                 StartAt = DateTime.UtcNow.AddYears(-1),
                 TypeId = (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
                 BuildingId = buildings[4].Id
@@ -775,6 +803,7 @@ namespace GetIntoTeachingApiTests.Services
                 Id = Guid.NewGuid(),
                 ReadableId = "8",
                 Name = "Event 8",
+                IsOnline = false,
                 TypeId = (int)TeachingEvent.EventType.QuestionTime,
                 StatusId = (int)TeachingEvent.Status.Pending
             };
