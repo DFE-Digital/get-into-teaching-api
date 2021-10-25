@@ -26,19 +26,22 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
         private readonly ICandidateUpserter _upserter;
         private readonly IBackgroundJobClient _jobClient;
         private readonly IStore _store;
+        private readonly DateTimeProvider _dateTime;
 
         public CandidatesController(
             ICandidateAccessTokenService tokenService,
             ICrmService crm,
             ICandidateUpserter upserter,
             IBackgroundJobClient jobClient,
-            IStore store)
+            IStore store,
+            DateTimeProvider dateTime)
         {
             _crm = crm;
             _upserter = upserter;
             _tokenService = tokenService;
             _jobClient = jobClient;
             _store = store;
+            _dateTime = dateTime;
         }
 
         [HttpPost]
@@ -66,6 +69,12 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
             {
                 candidate.IntermediateId = Guid.NewGuid();
                 _store.SaveAsync(candidate);
+
+                // This is the only way we can mock/freeze the current date/time
+                // in contract tests (there's no other way to inject it into this class).
+                request.DateTimeProvider = _dateTime;
+                string json = request.Candidate.SerializeChangeTracked();
+                _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
             }
             else
             {
