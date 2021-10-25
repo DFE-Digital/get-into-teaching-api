@@ -25,17 +25,20 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
         private readonly ICrmService _crm;
         private readonly ICandidateUpserter _upserter;
         private readonly IBackgroundJobClient _jobClient;
+        private readonly IStore _store;
 
         public CandidatesController(
             ICandidateAccessTokenService tokenService,
             ICrmService crm,
             ICandidateUpserter upserter,
-            IBackgroundJobClient jobClient)
+            IBackgroundJobClient jobClient,
+            IStore store)
         {
             _crm = crm;
             _upserter = upserter;
             _tokenService = tokenService;
             _jobClient = jobClient;
+            _store = store;
         }
 
         [HttpPost]
@@ -57,13 +60,17 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
                 return BadRequest(ModelState);
             }
 
+            var candidate = request.Candidate;
+
             if (appSettings.IsCrmIntegrationPaused)
             {
-                throw new InvalidOperationException("CandidatesController#SignUp - Aborting (CRM integration paused).");
+                candidate.IntermediateId = Guid.NewGuid();
+                _store.SaveAsync(candidate);
             }
-
-            var candidate = request.Candidate;
-            _upserter.Upsert(candidate);
+            else
+            {
+                _upserter.Upsert(candidate);
+            }
 
             return CreatedAtAction(
                 actionName: nameof(Get),
