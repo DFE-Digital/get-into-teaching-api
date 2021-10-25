@@ -32,7 +32,7 @@ namespace GetIntoTeachingApi.Jobs
             _appSettings = appSettings;
         }
 
-        [DisableConcurrentExecution(timeoutInSeconds: 5)]
+        [DisableConcurrentExecution(timeoutInSeconds: 60 * 60)]
         public async Task RunAsync()
         {
             _appSettings.IsFindApplyBackfillInProgress = true;
@@ -55,7 +55,7 @@ namespace GetIntoTeachingApi.Jobs
             {
                 var response = await paginator.NextAsync();
                 _logger.LogInformation($"FindApplyBackfillJob - Syncing {response.Data.Count()} Candidates");
-                response.Data.ForEach(c => _jobClient.Enqueue<FindApplyCandidateSyncJob>(x => x.Run(c)));
+                response.Data.ForEach(c => _jobClient.Schedule<FindApplyCandidateSyncJob>(x => x.Run(c), TimeSpan.FromMinutes(30)));
             }
         }
     }
