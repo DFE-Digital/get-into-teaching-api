@@ -79,7 +79,6 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience.Validators
                 FirstName = null,
                 LastName = null,
                 Email = null,
-                DateOfBirth = null,
                 AddressLine1 = null,
                 AddressCity = null,
                 AddressStateOrProvince = null,
@@ -97,7 +96,6 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience.Validators
             result.ShouldHaveValidationErrorFor(s => s.FirstName);
             result.ShouldHaveValidationErrorFor(s => s.LastName);
             result.ShouldHaveValidationErrorFor(s => s.Email);
-            result.ShouldHaveValidationErrorFor(s => s.DateOfBirth);
             result.ShouldHaveValidationErrorFor(s => s.AddressLine1);
             result.ShouldHaveValidationErrorFor(s => s.AddressCity);
             result.ShouldHaveValidationErrorFor(s => s.AddressStateOrProvince);

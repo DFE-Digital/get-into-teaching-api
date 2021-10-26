@@ -18,7 +18,6 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience.Validators
             RuleFor(request => request.Email).NotEmpty();
             RuleFor(request => request.FirstName).NotEmpty();
             RuleFor(request => request.LastName).NotEmpty();
-            RuleFor(request => request.DateOfBirth).NotNull();
             RuleFor(request => request.AddressLine1).NotNull();
             RuleFor(request => request.AddressCity).NotNull();
             RuleFor(request => request.AddressStateOrProvince).NotNull();
