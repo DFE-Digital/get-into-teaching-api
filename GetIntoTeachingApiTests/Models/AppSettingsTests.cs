@@ -27,6 +27,7 @@ namespace GetIntoTeachingApiTests.Models
         {
             var date = DateTime.UtcNow;
             var dateStr = date.ToString("O");
+            _database.Setup(m => m.KeyExists("app_settings.crm_offline_until", CommandFlags.None)).Returns(true);
             _database.Setup(m => m.StringGet("app_settings.crm_offline_until", CommandFlags.None)).Returns(dateStr);
 
             _settings.CrmIntegrationPausedUntil = date;
@@ -38,6 +39,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void CrmIntegrationPausedUntil_SetAndGetWithNull_WorkCorrectly()
         {
+            _database.Setup(m => m.KeyExists("app_settings.crm_offline_until", CommandFlags.None)).Returns(true);
             _database.Setup(m => m.StringGet("app_settings.crm_offline_until", CommandFlags.None)).Returns(null as string);
 
             _settings.CrmIntegrationPausedUntil = null;
@@ -47,9 +49,9 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void IsCrmIntegrationPaused_WhenCrmOfflineUntilIsNull_ReturnsFalse()
+        public void IsCrmIntegrationPaused_WhenNotYetSet_ReturnsFalse()
         {
-            _database.Setup(m => m.StringGet("app_settings.crm_offline_until", CommandFlags.None)).Returns<string>(null);
+            _database.Setup(m => m.KeyExists("app_settings.crm_offline_until", CommandFlags.None)).Returns(false);
 
             _settings.IsCrmIntegrationPaused.Should().BeFalse();
         }
@@ -57,6 +59,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void IsCrmIntegrationPaused_WhenCrmOfflineUntilIsAFutureDate_ReturnsTrue()
         {
+            _database.Setup(m => m.KeyExists("app_settings.crm_offline_until", CommandFlags.None)).Returns(true);
             var dateStr = DateTime.UtcNow.AddDays(1).ToString("O");
             _database.Setup(m => m.StringGet("app_settings.crm_offline_until", CommandFlags.None)).Returns(dateStr);
 
@@ -66,6 +69,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void IsCrmIntegrationPaused_WhenCrmOfflineUntilIsAPastDate_ReturnsFalse()
         {
+            _database.Setup(m => m.KeyExists("app_settings.crm_offline_until", CommandFlags.None)).Returns(true);
             var dateStr = DateTime.UtcNow.AddDays(-1).ToString("O");
             _database.Setup(m => m.StringGet("app_settings.crm_offline_until", CommandFlags.None)).Returns(dateStr);
 
@@ -77,6 +81,7 @@ namespace GetIntoTeachingApiTests.Models
         {
             var date = DateTime.UtcNow;
             var dateStr = date.ToString("O");
+            _database.Setup(m => m.KeyExists("app_settings.find_apply_last_sync_at", CommandFlags.None)).Returns(true);
             _database.Setup(m => m.StringGet("app_settings.find_apply_last_sync_at", CommandFlags.None)).Returns(dateStr);
 
             _settings.FindApplyLastSyncAt = date;
@@ -88,6 +93,7 @@ namespace GetIntoTeachingApiTests.Models
         [Fact]
         public void FindApplyLastSyncAt_SetAndGetWithNull_WorkCorrectly()
         {
+            _database.Setup(m => m.KeyExists("app_settings.find_apply_last_sync_at", CommandFlags.None)).Returns(true);
             _database.Setup(m => m.StringGet("app_settings.find_apply_last_sync_at", CommandFlags.None)).Returns(null as string);
 
             _settings.FindApplyLastSyncAt = null;
@@ -97,8 +103,17 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
+        public void FindApplyLastSyncAt_WhenNotYetSet_ReturnsFalse()
+        {
+            _database.Setup(m => m.KeyExists("app_settings.find_apply_last_sync_at", CommandFlags.None)).Returns(false);
+
+            _settings.FindApplyLastSyncAt.Should().BeNull();
+        }
+
+        [Fact]
         public void FindApplyBackfillInProgress_SetAndGet_WorkCorrectly()
         {
+            _database.Setup(m => m.KeyExists("app_settings.find_apply_backfill_in_progress", CommandFlags.None)).Returns(true);
             _database.Setup(m => m.StringGet("app_settings.find_apply_backfill_in_progress", CommandFlags.None)).Returns(null as string);
             _settings.IsFindApplyBackfillInProgress.Should().BeFalse();
 
@@ -113,6 +128,10 @@ namespace GetIntoTeachingApiTests.Models
 
             _settings.IsFindApplyBackfillInProgress = true;
             _database.Verify(m => m.StringSet("app_settings.find_apply_backfill_in_progress", "True", null, When.Always, CommandFlags.None));
+
+            _database.Setup(m => m.KeyExists("app_settings.find_apply_backfill_in_progress", CommandFlags.None)).Returns(false);
+            _settings.IsFindApplyBackfillInProgress.Should().BeFalse();
         }
     }
 }
+

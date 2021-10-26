@@ -17,6 +17,11 @@ namespace GetIntoTeachingApi.Models
         {
             get
             {
+                if (!_redis.Database.KeyExists(CrmOfflineUntilKey))
+                {
+                    return null;
+                }
+
                 var dateStr = _redis.Database.StringGet(CrmOfflineUntilKey);
 
                 if (dateStr.IsNullOrEmpty)
@@ -43,6 +48,11 @@ namespace GetIntoTeachingApi.Models
         {
             get
             {
+                if (!_redis.Database.KeyExists(FindApplyLastSyncAtKey))
+                {
+                    return null;
+                }
+
                 var dateStr = _redis.Database.StringGet(FindApplyLastSyncAtKey);
 
                 if (dateStr.IsNullOrEmpty)
@@ -69,6 +79,11 @@ namespace GetIntoTeachingApi.Models
         {
             get
             {
+                if (!_redis.Database.KeyExists(FindApplyBackfillInProgressKey))
+                {
+                    return false;
+                }
+
                 var backfillString = _redis.Database.StringGet(FindApplyBackfillInProgressKey).ToString();
 
                 return backfillString.ToBool();
