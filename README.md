@@ -127,7 +127,7 @@ You can hit the API endpoints directly from the Swagger UI - hit the `Authorize`
 
 ### Validation
 
-[FluentValidation](https://fluentvalidation.net/) is used for validating the various models. The validators are registered at startup, so validating incoming payloads that have a corresponding validator is as simple as calling `ModelState.IsValid`.
+[FluentValidation](https://fluentvalidation.net) is used for validating the various models. The validators are registered at startup, so validating incoming payloads that have a corresponding validator is as simple as calling `ModelState.IsValid`.
 
 The majority of the validation should be performed against the core models linked to Dynamics entities (any model that inherits from `BaseModel`). The validation in these models should make sure that the data is correct, but remain loose around which fields are required; often a model will be reused in different contexts and the required fields will change. `Candidate` is a good example of this; the request models `MailingListAddMember`, `TeacherTrainingAdviserSignUp` and `TeachingEventAddAttendee` all map onto `Candidate`, however the required fields are different for each.
 
