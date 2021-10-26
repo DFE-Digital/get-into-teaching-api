@@ -39,7 +39,6 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience.Validators
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
-                DateOfBirth = new DateTime(2000, 1, 1),
                 AddressLine1 = "Address 1",
                 AddressCity = "City",
                 AddressStateOrProvince = "County",
