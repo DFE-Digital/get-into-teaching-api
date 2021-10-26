@@ -121,7 +121,6 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience
                 SecondaryEmail = "email2@address.com",
                 FirstName = "John",
                 LastName = "Doe",
-                DateOfBirth = DateTime.UtcNow,
                 AddressLine1 = "Address 1",
                 AddressLine2 = "Address 2",
                 AddressLine3 = "Address 3",
@@ -146,7 +145,6 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience
             candidate.SecondaryEmail.Should().Be(request.SecondaryEmail);
             candidate.FirstName.Should().Be(request.FirstName);
             candidate.LastName.Should().Be(request.LastName);
-            candidate.DateOfBirth.Should().Be(request.DateOfBirth);
             candidate.AddressLine1.Should().Be(request.AddressLine1);
             candidate.AddressLine2.Should().Be(request.AddressLine2);
             candidate.AddressLine3.Should().Be(request.AddressLine3);
