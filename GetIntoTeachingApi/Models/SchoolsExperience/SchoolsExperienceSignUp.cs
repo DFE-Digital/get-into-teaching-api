@@ -27,8 +27,6 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
         public string SecondaryEmail { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        [SwaggerSchema(Format = "date")]
-        public DateTime? DateOfBirth { get; set; }
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
         public string AddressLine3 { get; set; }
@@ -69,7 +67,6 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
             SecondaryEmail = candidate.SecondaryEmail ?? candidate.Email;
             FirstName = candidate.FirstName;
             LastName = candidate.LastName;
-            DateOfBirth = candidate.DateOfBirth;
             AddressLine1 = candidate.AddressLine1;
             AddressLine2 = candidate.AddressLine2;
             AddressLine3 = candidate.AddressLine3;
@@ -97,7 +94,6 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
                 SecondaryEmail = SecondaryEmail,
                 FirstName = FirstName,
                 LastName = LastName,
-                DateOfBirth = DateOfBirth,
                 AddressLine1 = AddressLine1,
                 AddressLine2 = AddressLine2,
                 AddressLine3 = AddressLine3,
