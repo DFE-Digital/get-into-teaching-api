@@ -34,7 +34,7 @@ MY_SERVICE_API_KEY=<a long secure value>
 
 It is important that you use a unique value for the service API key as the client/role is derived from this; if the API keys are not unique your service may not have access to the endpoints you expect.
 
-To make development easier you can define a short, memerable API key in `GetIntoTeachingApi/Properties/launchSettings.json` and commit it. **Do not commit keys for non-development environments!**.
+To make development easier you can define a short, memorable API key in `GetIntoTeachingApi/Properties/launchSettings.json` and commit it. **Do not commit keys for non-development environments!**.
 
 ### Authorizing Roles
 
@@ -162,7 +162,7 @@ The API consumes the output of API client service contract tests, which are snap
 
 If a change to the API codebase results in a different call/payload sent to the CRM, then the snapshots will not match and the test will fail. If the change is expected the snapshot should be replaced with the updated version and committed.
 
-A difficulty with these tests is ensuring that the services all have a consistent, global view of the service data state prior to executing the contract tests. We currently maintain the service data in `Contracts/Data` (to be centralised in a GitHub repospitory, but currently duplicated in each service).
+A difficulty with these tests is ensuring that the services all have a consistent, global view of the service data state prior to executing the contract tests. We currently maintain the service data in `Contracts/Data` (to be centralised in a GitHub repository, but currently duplicated in each service).
 
 Eventually, the `Contracts/Output` will be 'published' to a separate GitHub repository, which will enable other services to pull in their test fixtures from the upstream service. This will enable us to develop features in each service independently and publish only when the change is ready to be reflected in another service.
 
@@ -209,7 +209,7 @@ Deployment is via Terraform and the key will be stored in Azure.
 
 ### Logs
 
-Logs are available by loggging into [logit.io](https://logit.io).
+Logs are available by logging into [logit.io](https://logit.io).
 
 ### Metrics
 
