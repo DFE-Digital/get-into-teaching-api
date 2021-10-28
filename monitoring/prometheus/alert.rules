@@ -181,12 +181,12 @@ groups:
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#HighCpu-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=23&orgId=1&var-App=get-into-teaching-api-prod
       - alert: HighMemory
-        expr: 'dotnet_total_memory_bytes > 768000000'
+        expr: 'dotnet_total_memory_bytes > 1433000000'
         labels:
           severity: medium
         annotations:
-          summary: Alerts when any of the API instances exceed ~70% memory utilisation (768MB/1GB).
-          description: Alerts when any of the API instances exceed ~70% memory utilisation (768MB/1GB).
+          summary: Alerts when any of the API instances exceed ~70% memory utilisation (1.4GB/2GB).
+          description: Alerts when any of the API instances exceed ~70% memory utilisation (1.4GB/2GB).
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#HighMemory-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=12&orgId=1&var-App=get-into-teaching-api-prod
       - alert: HighDatabaseConnections
