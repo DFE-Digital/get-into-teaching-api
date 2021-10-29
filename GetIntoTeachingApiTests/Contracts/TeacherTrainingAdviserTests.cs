@@ -58,11 +58,11 @@ namespace GetIntoTeachingApiTests.Contracts
             await WaitForAllJobsToComplete();
 
             var requestJson = RequestJson();
+            var request = SortEntities(JArray.Parse(requestJson));
             var outputFile = OutputFilePath(filename);
 
-            await WriteInitialOutputFile(outputFile, requestJson);
+            await WriteInitialOutputFile(outputFile, request);
 
-            var request = SortEntities(JArray.Parse(requestJson));
             var snapshot = SortEntities(JArray.Parse(File.ReadAllText(outputFile)));
 
             request.Should().HaveCount(snapshot.Count());
@@ -83,11 +83,11 @@ namespace GetIntoTeachingApiTests.Contracts
             return new StringContent(json, Encoding.UTF8, "application/json");
         }
 
-        private static async Task WriteInitialOutputFile(string outputFile, string requestJson)
+        private static async Task WriteInitialOutputFile(string outputFile, JArray request)
         {
             if (!File.Exists(outputFile))
             {
-                await File.WriteAllTextAsync(outputFile, requestJson);
+                await File.WriteAllTextAsync(outputFile, JsonConvert.SerializeObject(request, Formatting.Indented));
             }
         }
 
