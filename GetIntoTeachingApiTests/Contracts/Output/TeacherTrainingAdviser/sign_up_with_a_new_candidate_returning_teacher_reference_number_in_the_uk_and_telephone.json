@@ -4,13 +4,39 @@
     "Id": "00000000-0000-0000-0000-000000000000",
     "Attributes": [
       {
-        "Key": "dfe_preferredteachingsubject01",
+        "Key": "address1_city",
+        "Value": "Edinburgh"
+      },
+      {
+        "Key": "address1_line1",
+        "Value": "5 Main Street"
+      },
+      {
+        "Key": "address1_line2",
+        "Value": "Dalkeith"
+      },
+      {
+        "Key": "address1_postalcode",
+        "Value": "TE7 5TR"
+      },
+      {
+        "Key": "address1_telephone1",
+        "Value": "123456789"
+      },
+      {
+        "Key": "birthdate",
+        "Value": "1974-03-16T00:00:00"
+      },
+      {
+        "Key": "dfe_candidatestatus",
         "Value": {
-          "Id": "ac2655a1-2afa-e811-a981-000d3a276620",
-          "LogicalName": "dfe_teachingsubjectlist",
-          "Name": null,
-          "KeyAttributes": [],
-          "RowVersion": null
+          "Value": 222750001
+        }
+      },
+      {
+        "Key": "dfe_channelcreation",
+        "Value": {
+          "Value": 222750027
         }
       },
       {
@@ -24,9 +50,57 @@
         }
       },
       {
-        "Key": "dfe_preferrededucationphase01",
+        "Key": "dfe_dfesnumber",
+        "Value": "12345"
+      },
+      {
+        "Key": "dfe_eligibilityrulespassed",
+        "Value": "false"
+      },
+      {
+        "Key": "dfe_gitisttaservicedonotbulkemail",
+        "Value": true
+      },
+      {
+        "Key": "dfe_gitisttaservicedonotbulkpostalmail",
+        "Value": true
+      },
+      {
+        "Key": "dfe_gitisttaservicedonotemail",
+        "Value": false
+      },
+      {
+        "Key": "dfe_gitisttaservicedonotpostalmail",
+        "Value": true
+      },
+      {
+        "Key": "dfe_gitisttaservicedonotsendmm",
+        "Value": true
+      },
+      {
+        "Key": "dfe_gitisttaserviceissubscriber",
+        "Value": true
+      },
+      {
+        "Key": "dfe_gitisttaservicestartdate",
+        "Value": "2021-03-24T10:00:00Z"
+      },
+      {
+        "Key": "dfe_gitisttaservicesubscriptionchannel",
+        "Value": {
+          "Value": 222750000
+        }
+      },
+      {
+        "Key": "dfe_isadvisorrequiredos",
         "Value": {
           "Value": 222750001
+        }
+      },
+      {
+        "Key": "dfe_iscandidateeligibleforadviser",
+        "Value": {
+          "Value": 222750000
         }
       },
       {
@@ -34,10 +108,44 @@
         "Value": null
       },
       {
-        "Key": "dfe_channelcreation",
+        "Key": "dfe_newregistrant",
+        "Value": true
+      },
+      {
+        "Key": "dfe_optoutsms",
+        "Value": false
+      },
+      {
+        "Key": "dfe_preferrededucationphase01",
         "Value": {
-          "Value": 222750027
+          "Value": 222750001
         }
+      },
+      {
+        "Key": "dfe_preferredphonenumbertype",
+        "Value": {
+          "Value": 222750001
+        }
+      },
+      {
+        "Key": "dfe_preferredteachingsubject01",
+        "Value": {
+          "Id": "ac2655a1-2afa-e811-a981-000d3a276620",
+          "LogicalName": "dfe_teachingsubjectlist",
+          "Name": null,
+          "KeyAttributes": [],
+          "RowVersion": null
+        }
+      },
+      {
+        "Key": "dfe_typeofcandidate",
+        "Value": {
+          "Value": 222750001
+        }
+      },
+      {
+        "Key": "dfe_waitingtobeassigneddate",
+        "Value": "2021-03-24T10:00:00Z"
       },
       {
         "Key": "dfe_websitehasgcseenglish",
@@ -76,100 +184,6 @@
         }
       },
       {
-        "Key": "dfe_typeofcandidate",
-        "Value": {
-          "Value": 222750001
-        }
-      },
-      {
-        "Key": "dfe_candidatestatus",
-        "Value": {
-          "Value": 222750001
-        }
-      },
-      {
-        "Key": "dfe_iscandidateeligibleforadviser",
-        "Value": {
-          "Value": 222750000
-        }
-      },
-      {
-        "Key": "dfe_isadvisorrequiredos",
-        "Value": {
-          "Value": 222750000
-        }
-      },
-      {
-        "Key": "dfe_preferredphonenumbertype",
-        "Value": {
-          "Value": 222750001
-        }
-      },
-      {
-        "Key": "preferredcontactmethodcode",
-        "Value": {
-          "Value": 1
-        }
-      },
-      {
-        "Key": "msgdpr_gdprconsent",
-        "Value": {
-          "Value": 587030001
-        }
-      },
-      {
-        "Key": "dfe_waitingtobeassigneddate",
-        "Value": "2021-03-24T10:00:00Z"
-      },
-      {
-        "Key": "merged",
-        "Value": false
-      },
-      {
-        "Key": "emailaddress1",
-        "Value": "john@doe.com"
-      },
-      {
-        "Key": "firstname",
-        "Value": "John"
-      },
-      {
-        "Key": "lastname",
-        "Value": "Doe"
-      },
-      {
-        "Key": "birthdate",
-        "Value": "1974-03-16T00:00:00"
-      },
-      {
-        "Key": "address1_telephone1",
-        "Value": "123456789"
-      },
-      {
-        "Key": "address1_line1",
-        "Value": "5 Main Street"
-      },
-      {
-        "Key": "address1_line2",
-        "Value": "Dalkeith"
-      },
-      {
-        "Key": "address1_city",
-        "Value": "Edinburgh"
-      },
-      {
-        "Key": "address1_postalcode",
-        "Value": "TE7 5TR"
-      },
-      {
-        "Key": "dfe_dfesnumber",
-        "Value": "12345"
-      },
-      {
-        "Key": "dfe_eligibilityrulespassed",
-        "Value": "false"
-      },
-      {
         "Key": "donotbulkemail",
         "Value": true
       },
@@ -190,7 +204,19 @@
         "Value": true
       },
       {
-        "Key": "dfe_optoutsms",
+        "Key": "emailaddress1",
+        "Value": "john@doe.com"
+      },
+      {
+        "Key": "firstname",
+        "Value": "John"
+      },
+      {
+        "Key": "lastname",
+        "Value": "Doe"
+      },
+      {
+        "Key": "merged",
         "Value": false
       },
       {
@@ -198,42 +224,16 @@
         "Value": false
       },
       {
-        "Key": "dfe_newregistrant",
-        "Value": true
-      },
-      {
-        "Key": "dfe_gitisttaserviceissubscriber",
-        "Value": true
-      },
-      {
-        "Key": "dfe_gitisttaservicesubscriptionchannel",
+        "Key": "msgdpr_gdprconsent",
         "Value": {
-          "Value": 222750000
+          "Value": 587030001
         }
       },
       {
-        "Key": "dfe_gitisttaservicestartdate",
-        "Value": "2021-03-24T10:00:00Z"
-      },
-      {
-        "Key": "dfe_gitisttaservicedonotbulkemail",
-        "Value": true
-      },
-      {
-        "Key": "dfe_gitisttaservicedonotbulkpostalmail",
-        "Value": true
-      },
-      {
-        "Key": "dfe_gitisttaservicedonotemail",
-        "Value": false
-      },
-      {
-        "Key": "dfe_gitisttaservicedonotpostalmail",
-        "Value": true
-      },
-      {
-        "Key": "dfe_gitisttaservicedonotsendmm",
-        "Value": true
+        "Key": "preferredcontactmethodcode",
+        "Value": {
+          "Value": 1
+        }
       }
     ],
     "EntityState": 1,
@@ -257,6 +257,12 @@
         }
       },
       {
+        "Key": "dfe_educationphase",
+        "Value": {
+          "Value": 222750001
+        }
+      },
+      {
         "Key": "dfe_subjecttaught",
         "Value": {
           "Id": "a42655a1-2afa-e811-a981-000d3a276620",
@@ -264,12 +270,6 @@
           "Name": null,
           "KeyAttributes": [],
           "RowVersion": null
-        }
-      },
-      {
-        "Key": "dfe_educationphase",
-        "Value": {
-          "Value": 222750001
         }
       }
     ],
@@ -294,16 +294,6 @@
         }
       },
       {
-        "Key": "dfe_privacypolicynumber",
-        "Value": {
-          "Id": "8da7ae80-82f2-ea11-a815-000d3a44afcc",
-          "LogicalName": "dfe_privacypolicy",
-          "Name": null,
-          "KeyAttributes": [],
-          "RowVersion": null
-        }
-      },
-      {
         "Key": "dfe_consentreceivedby",
         "Value": {
           "Value": 222750001
@@ -318,6 +308,16 @@
       {
         "Key": "dfe_name",
         "Value": "Online consent as part of web registration"
+      },
+      {
+        "Key": "dfe_privacypolicynumber",
+        "Value": {
+          "Id": "8da7ae80-82f2-ea11-a815-000d3a44afcc",
+          "LogicalName": "dfe_privacypolicy",
+          "Name": null,
+          "KeyAttributes": [],
+          "RowVersion": null
+        }
       },
       {
         "Key": "dfe_timeofconsent",

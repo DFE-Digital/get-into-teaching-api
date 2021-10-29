@@ -4,13 +4,37 @@
     "Id": "00000000-0000-0000-0000-000000000000",
     "Attributes": [
       {
-        "Key": "dfe_preferredteachingsubject01",
+        "Key": "address1_city",
+        "Value": null
+      },
+      {
+        "Key": "address1_line1",
+        "Value": null
+      },
+      {
+        "Key": "address1_line2",
+        "Value": null
+      },
+      {
+        "Key": "address1_postalcode",
+        "Value": null
+      },
+      {
+        "Key": "address1_telephone1",
+        "Value": "07584736574"
+      },
+      {
+        "Key": "birthdate",
+        "Value": "1974-03-16T00:00:00"
+      },
+      {
+        "Key": "dfe_candidatestatus",
+        "Value": null
+      },
+      {
+        "Key": "dfe_channelcreation",
         "Value": {
-          "Id": "a42655a1-2afa-e811-a981-000d3a276620",
-          "LogicalName": "dfe_teachingsubjectlist",
-          "Name": null,
-          "KeyAttributes": [],
-          "RowVersion": null
+          "Value": 222750027
         }
       },
       {
@@ -24,10 +48,54 @@
         }
       },
       {
-        "Key": "dfe_preferrededucationphase01",
+        "Key": "dfe_dfesnumber",
+        "Value": null
+      },
+      {
+        "Key": "dfe_eligibilityrulespassed",
+        "Value": "true"
+      },
+      {
+        "Key": "dfe_gitisttaservicedonotbulkemail",
+        "Value": false
+      },
+      {
+        "Key": "dfe_gitisttaservicedonotbulkpostalmail",
+        "Value": true
+      },
+      {
+        "Key": "dfe_gitisttaservicedonotemail",
+        "Value": false
+      },
+      {
+        "Key": "dfe_gitisttaservicedonotpostalmail",
+        "Value": true
+      },
+      {
+        "Key": "dfe_gitisttaservicedonotsendmm",
+        "Value": false
+      },
+      {
+        "Key": "dfe_gitisttaserviceissubscriber",
+        "Value": true
+      },
+      {
+        "Key": "dfe_gitisttaservicestartdate",
+        "Value": "2021-03-24T10:00:00Z"
+      },
+      {
+        "Key": "dfe_gitisttaservicesubscriptionchannel",
         "Value": {
-          "Value": 222750001
+          "Value": 222750000
         }
+      },
+      {
+        "Key": "dfe_isadvisorrequiredos",
+        "Value": null
+      },
+      {
+        "Key": "dfe_iscandidateeligibleforadviser",
+        "Value": null
       },
       {
         "Key": "dfe_ittyear",
@@ -36,9 +104,39 @@
         }
       },
       {
-        "Key": "dfe_channelcreation",
+        "Key": "dfe_newregistrant",
+        "Value": true
+      },
+      {
+        "Key": "dfe_optoutsms",
+        "Value": false
+      },
+      {
+        "Key": "dfe_preferrededucationphase01",
         "Value": {
-          "Value": 222750027
+          "Value": 222750001
+        }
+      },
+      {
+        "Key": "dfe_preferredphonenumbertype",
+        "Value": {
+          "Value": 222750001
+        }
+      },
+      {
+        "Key": "dfe_preferredteachingsubject01",
+        "Value": {
+          "Id": "a42655a1-2afa-e811-a981-000d3a276620",
+          "LogicalName": "dfe_teachingsubjectlist",
+          "Name": null,
+          "KeyAttributes": [],
+          "RowVersion": null
+        }
+      },
+      {
+        "Key": "dfe_typeofcandidate",
+        "Value": {
+          "Value": 222750000
         }
       },
       {
@@ -78,90 +176,6 @@
         }
       },
       {
-        "Key": "dfe_typeofcandidate",
-        "Value": {
-          "Value": 222750000
-        }
-      },
-      {
-        "Key": "dfe_candidatestatus",
-        "Value": null
-      },
-      {
-        "Key": "dfe_iscandidateeligibleforadviser",
-        "Value": null
-      },
-      {
-        "Key": "dfe_isadvisorrequiredos",
-        "Value": null
-      },
-      {
-        "Key": "dfe_preferredphonenumbertype",
-        "Value": {
-          "Value": 222750001
-        }
-      },
-      {
-        "Key": "preferredcontactmethodcode",
-        "Value": {
-          "Value": 1
-        }
-      },
-      {
-        "Key": "msgdpr_gdprconsent",
-        "Value": {
-          "Value": 587030001
-        }
-      },
-      {
-        "Key": "merged",
-        "Value": false
-      },
-      {
-        "Key": "emailaddress1",
-        "Value": "john@doe.com"
-      },
-      {
-        "Key": "firstname",
-        "Value": "John"
-      },
-      {
-        "Key": "lastname",
-        "Value": "Doe"
-      },
-      {
-        "Key": "birthdate",
-        "Value": "1974-03-16T00:00:00"
-      },
-      {
-        "Key": "address1_telephone1",
-        "Value": "07584736574"
-      },
-      {
-        "Key": "address1_line1",
-        "Value": null
-      },
-      {
-        "Key": "address1_line2",
-        "Value": null
-      },
-      {
-        "Key": "address1_city",
-        "Value": null
-      },
-      {
-        "Key": "address1_postalcode",
-        "Value": null
-      },
-      {
-        "Key": "dfe_dfesnumber",
-        "Value": null
-      },
-      {
-        "Key": "dfe_eligibilityrulespassed",
-        "Value": "true"
-      },
-      {
         "Key": "donotbulkemail",
         "Value": false
       },
@@ -182,7 +196,19 @@
         "Value": false
       },
       {
-        "Key": "dfe_optoutsms",
+        "Key": "emailaddress1",
+        "Value": "john@doe.com"
+      },
+      {
+        "Key": "firstname",
+        "Value": "John"
+      },
+      {
+        "Key": "lastname",
+        "Value": "Doe"
+      },
+      {
+        "Key": "merged",
         "Value": false
       },
       {
@@ -190,42 +216,16 @@
         "Value": false
       },
       {
-        "Key": "dfe_newregistrant",
-        "Value": true
-      },
-      {
-        "Key": "dfe_gitisttaserviceissubscriber",
-        "Value": true
-      },
-      {
-        "Key": "dfe_gitisttaservicesubscriptionchannel",
+        "Key": "msgdpr_gdprconsent",
         "Value": {
-          "Value": 222750000
+          "Value": 587030001
         }
       },
       {
-        "Key": "dfe_gitisttaservicestartdate",
-        "Value": "2021-03-24T10:00:00Z"
-      },
-      {
-        "Key": "dfe_gitisttaservicedonotbulkemail",
-        "Value": false
-      },
-      {
-        "Key": "dfe_gitisttaservicedonotbulkpostalmail",
-        "Value": true
-      },
-      {
-        "Key": "dfe_gitisttaservicedonotemail",
-        "Value": false
-      },
-      {
-        "Key": "dfe_gitisttaservicedonotpostalmail",
-        "Value": true
-      },
-      {
-        "Key": "dfe_gitisttaservicedonotsendmm",
-        "Value": false
+        "Key": "preferredcontactmethodcode",
+        "Value": {
+          "Value": 1
+        }
       }
     ],
     "EntityState": 1,
@@ -249,16 +249,6 @@
         }
       },
       {
-        "Key": "dfe_privacypolicynumber",
-        "Value": {
-          "Id": "8da7ae80-82f2-ea11-a815-000d3a44afcc",
-          "LogicalName": "dfe_privacypolicy",
-          "Name": null,
-          "KeyAttributes": [],
-          "RowVersion": null
-        }
-      },
-      {
         "Key": "dfe_consentreceivedby",
         "Value": {
           "Value": 222750001
@@ -273,6 +263,16 @@
       {
         "Key": "dfe_name",
         "Value": "Online consent as part of web registration"
+      },
+      {
+        "Key": "dfe_privacypolicynumber",
+        "Value": {
+          "Id": "8da7ae80-82f2-ea11-a815-000d3a44afcc",
+          "LogicalName": "dfe_privacypolicy",
+          "Name": null,
+          "KeyAttributes": [],
+          "RowVersion": null
+        }
       },
       {
         "Key": "dfe_timeofconsent",
@@ -300,16 +300,6 @@
         }
       },
       {
-        "Key": "dfe_type",
-        "Value": {
-          "Value": 222750005
-        }
-      },
-      {
-        "Key": "dfe_ukdegreegrade",
-        "Value": null
-      },
-      {
         "Key": "dfe_degreestatus",
         "Value": {
           "Value": 222750000
@@ -317,6 +307,16 @@
       },
       {
         "Key": "dfe_subject",
+        "Value": null
+      },
+      {
+        "Key": "dfe_type",
+        "Value": {
+          "Value": 222750005
+        }
+      },
+      {
+        "Key": "dfe_ukdegreegrade",
         "Value": null
       }
     ],
@@ -331,8 +331,12 @@
     "Id": "00000000-0000-0000-0000-000000000000",
     "Attributes": [
       {
-        "Key": "dfe_tocontactguid",
-        "Value": "00000000-0000-0000-0000-000000000000"
+        "Key": "dfe_appointmentflag",
+        "Value": false
+      },
+      {
+        "Key": "dfe_appointmentrequired",
+        "Value": false
       },
       {
         "Key": "dfe_channelcreation",
@@ -347,28 +351,24 @@
         }
       },
       {
-        "Key": "scheduledstart",
-        "Value": "2021-03-24T13:00:00Z"
+        "Key": "dfe_tocontactguid",
+        "Value": "00000000-0000-0000-0000-000000000000"
+      },
+      {
+        "Key": "directioncode",
+        "Value": true
       },
       {
         "Key": "phonenumber",
         "Value": "07584736574"
       },
       {
+        "Key": "scheduledstart",
+        "Value": "2021-03-24T13:00:00Z"
+      },
+      {
         "Key": "subject",
         "Value": "Scheduled phone call requested by John Doe"
-      },
-      {
-        "Key": "dfe_appointmentflag",
-        "Value": false
-      },
-      {
-        "Key": "dfe_appointmentrequired",
-        "Value": false
-      },
-      {
-        "Key": "directioncode",
-        "Value": true
       }
     ],
     "EntityState": 1,
