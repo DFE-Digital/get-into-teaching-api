@@ -90,7 +90,7 @@
       {
         "Key": "dfe_isadvisorrequiredos",
         "Value": {
-          "Value": 222750000
+          "Value": 222750001
         }
       },
       {
@@ -237,43 +237,6 @@
     "KeyAttributes": []
   },
   {
-    "LogicalName": "dfe_candidatepastteachingposition",
-    "Id": "00000000-0000-0000-0000-000000000000",
-    "Attributes": [
-      {
-        "Key": "dfe_contactid",
-        "Value": {
-          "Id": "271aa675-e6bf-41c5-ad5f-4e1e8de5d7ad",
-          "LogicalName": "contact",
-          "Name": null,
-          "KeyAttributes": [],
-          "RowVersion": null
-        }
-      },
-      {
-        "Key": "dfe_subjecttaught",
-        "Value": {
-          "Id": "a42655a1-2afa-e811-a981-000d3a276620",
-          "LogicalName": "dfe_teachingsubjectlist",
-          "Name": null,
-          "KeyAttributes": [],
-          "RowVersion": null
-        }
-      },
-      {
-        "Key": "dfe_educationphase",
-        "Value": {
-          "Value": 222750001
-        }
-      }
-    ],
-    "EntityState": 1,
-    "FormattedValues": [],
-    "RelatedEntities": [],
-    "RowVersion": null,
-    "KeyAttributes": []
-  },
-  {
     "LogicalName": "dfe_candidateprivacypolicy",
     "Id": "00000000-0000-0000-0000-000000000000",
     "Attributes": [
@@ -316,6 +279,43 @@
       {
         "Key": "dfe_timeofconsent",
         "Value": "2021-03-24T10:00:00Z"
+      }
+    ],
+    "EntityState": 1,
+    "FormattedValues": [],
+    "RelatedEntities": [],
+    "RowVersion": null,
+    "KeyAttributes": []
+  },
+  {
+    "LogicalName": "dfe_candidatepastteachingposition",
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Attributes": [
+      {
+        "Key": "dfe_contactid",
+        "Value": {
+          "Id": "271aa675-e6bf-41c5-ad5f-4e1e8de5d7ad",
+          "LogicalName": "contact",
+          "Name": null,
+          "KeyAttributes": [],
+          "RowVersion": null
+        }
+      },
+      {
+        "Key": "dfe_subjecttaught",
+        "Value": {
+          "Id": "a42655a1-2afa-e811-a981-000d3a276620",
+          "LogicalName": "dfe_teachingsubjectlist",
+          "Name": null,
+          "KeyAttributes": [],
+          "RowVersion": null
+        }
+      },
+      {
+        "Key": "dfe_educationphase",
+        "Value": {
+          "Value": 222750001
+        }
       }
     ],
     "EntityState": 1,
