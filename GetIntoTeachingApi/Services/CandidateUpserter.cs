@@ -25,11 +25,13 @@ namespace GetIntoTeachingApi.Services
             var privacyPolicy = ClearPrivacyPolicy(candidate);
             var qualifications = ClearQualifications(candidate);
             var pastTeachingPositions = ClearPastTeachingPositions(candidate);
+            var applicationForms = ClearApplicationForms(candidate);
 
             SaveCandidate(candidate);
 
             SaveQualifications(qualifications, candidate);
             SavePastTeachingPositions(pastTeachingPositions, candidate);
+            SaveApplicationForms(applicationForms, candidate);
             SaveTeachingEventRegistrations(registrations, candidate);
             SavePrivacyPolicy(privacyPolicy, candidate);
             SavePhoneCall(phoneCall, candidate);
@@ -37,12 +39,7 @@ namespace GetIntoTeachingApi.Services
             IncrementCallbackBookingQuotaNumberOfBookings(phoneCall);
         }
 
-        private void SaveCandidate(Candidate candidate)
-        {
-            _crm.Save(candidate);
-        }
-
-        private IEnumerable<TeachingEventRegistration> ClearTeachingEventRegistrations(Candidate candidate)
+        private static IEnumerable<TeachingEventRegistration> ClearTeachingEventRegistrations(Candidate candidate)
         {
             // Due to reasons unknown the event registrations relationship can't be deep-inserted
             // in the same way we do for other relationships - we need to explicitly save them against
@@ -52,21 +49,28 @@ namespace GetIntoTeachingApi.Services
             return teachingEventRegistrations;
         }
 
-        private IEnumerable<CandidatePastTeachingPosition> ClearPastTeachingPositions(Candidate candidate)
+        private static IEnumerable<CandidatePastTeachingPosition> ClearPastTeachingPositions(Candidate candidate)
         {
             var pastTeachingPositions = new List<CandidatePastTeachingPosition>(candidate.PastTeachingPositions);
             candidate.PastTeachingPositions.Clear();
             return pastTeachingPositions;
         }
 
-        private IEnumerable<CandidateQualification> ClearQualifications(Candidate candidate)
+        private static IEnumerable<ApplicationForm> ClearApplicationForms(Candidate candidate)
+        {
+            var applicationForms = new List<ApplicationForm>(candidate.ApplicationForms);
+            candidate.ApplicationForms.Clear();
+            return applicationForms;
+        }
+
+        private static IEnumerable<CandidateQualification> ClearQualifications(Candidate candidate)
         {
             var qualifications = new List<CandidateQualification>(candidate.Qualifications);
             candidate.Qualifications.Clear();
             return qualifications;
         }
 
-        private PhoneCall ClearPhoneCall(Candidate candidate)
+        private static PhoneCall ClearPhoneCall(Candidate candidate)
         {
             if (candidate.PhoneCall == null)
             {
@@ -81,7 +85,7 @@ namespace GetIntoTeachingApi.Services
             return phoneCall;
         }
 
-        private CandidatePrivacyPolicy ClearPrivacyPolicy(Candidate candidate)
+        private static CandidatePrivacyPolicy ClearPrivacyPolicy(Candidate candidate)
         {
             if (candidate.PrivacyPolicy == null)
             {
@@ -91,6 +95,11 @@ namespace GetIntoTeachingApi.Services
             var privacyPolicy = candidate.PrivacyPolicy;
             candidate.PrivacyPolicy = null;
             return privacyPolicy;
+        }
+
+        private void SaveCandidate(Candidate candidate)
+        {
+            _crm.Save(candidate);
         }
 
         private void SaveTeachingEventRegistrations(IEnumerable<TeachingEventRegistration> registrations, Candidate candidate)
@@ -110,6 +119,16 @@ namespace GetIntoTeachingApi.Services
                 qualification.CandidateId = (Guid)candidate.Id;
                 string json = qualification.SerializeChangeTracked();
                 _jobClient.Enqueue<UpsertModelJob<CandidateQualification>>((x) => x.Run(json, null));
+            }
+        }
+
+        private void SaveApplicationForms(IEnumerable<ApplicationForm> applicationForms, Candidate candidate)
+        {
+            foreach (var applicationForm in applicationForms)
+            {
+                applicationForm.CandidateId = (Guid)candidate.Id;
+                string json = applicationForm.SerializeChangeTracked();
+                _jobClient.Enqueue<UpsertModelJob<ApplicationForm>>((x) => x.Run(json, null));
             }
         }
 
