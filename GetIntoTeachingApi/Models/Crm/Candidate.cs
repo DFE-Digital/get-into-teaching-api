@@ -291,6 +291,8 @@ namespace GetIntoTeachingApi.Models.Crm
         public List<CandidateQualification> Qualifications { get; set; } = new List<CandidateQualification>();
         [EntityRelationship("dfe_contact_dfe_candidatepastteachingposition_ContactId", typeof(CandidatePastTeachingPosition))]
         public List<CandidatePastTeachingPosition> PastTeachingPositions { get; set; } = new List<CandidatePastTeachingPosition>();
+        [EntityRelationship("dfe_contact_dfe_applyapplicationform_contact", typeof(ApplicationForm))]
+        public List<ApplicationForm> ApplicationForms { get; set; } = new List<ApplicationForm>();
         [SwaggerSchema("Set to schedule a phone call.", WriteOnly = true)]
         [EntityRelationship("dfe_contact_phonecall_contactid", typeof(PhoneCall))]
         public PhoneCall PhoneCall { get; set; }
