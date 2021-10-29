@@ -235,6 +235,47 @@
     "KeyAttributes": []
   },
   {
+    "LogicalName": "dfe_candidatequalification",
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Attributes": [
+      {
+        "Key": "dfe_contactid",
+        "Value": {
+          "Id": "00000000-0000-0000-0000-000000000000",
+          "LogicalName": "contact",
+          "Name": null,
+          "KeyAttributes": [],
+          "RowVersion": null
+        }
+      },
+      {
+        "Key": "dfe_type",
+        "Value": {
+          "Value": 222750005
+        }
+      },
+      {
+        "Key": "dfe_ukdegreegrade",
+        "Value": null
+      },
+      {
+        "Key": "dfe_degreestatus",
+        "Value": {
+          "Value": 222750000
+        }
+      },
+      {
+        "Key": "dfe_subject",
+        "Value": null
+      }
+    ],
+    "EntityState": 1,
+    "FormattedValues": [],
+    "RelatedEntities": [],
+    "RowVersion": null,
+    "KeyAttributes": []
+  },
+  {
     "LogicalName": "dfe_candidateprivacypolicy",
     "Id": "00000000-0000-0000-0000-000000000000",
     "Attributes": [
@@ -277,47 +318,6 @@
       {
         "Key": "dfe_timeofconsent",
         "Value": "2021-03-24T10:00:00Z"
-      }
-    ],
-    "EntityState": 1,
-    "FormattedValues": [],
-    "RelatedEntities": [],
-    "RowVersion": null,
-    "KeyAttributes": []
-  },
-  {
-    "LogicalName": "dfe_candidatequalification",
-    "Id": "00000000-0000-0000-0000-000000000000",
-    "Attributes": [
-      {
-        "Key": "dfe_contactid",
-        "Value": {
-          "Id": "00000000-0000-0000-0000-000000000000",
-          "LogicalName": "contact",
-          "Name": null,
-          "KeyAttributes": [],
-          "RowVersion": null
-        }
-      },
-      {
-        "Key": "dfe_type",
-        "Value": {
-          "Value": 222750005
-        }
-      },
-      {
-        "Key": "dfe_ukdegreegrade",
-        "Value": null
-      },
-      {
-        "Key": "dfe_degreestatus",
-        "Value": {
-          "Value": 222750000
-        }
-      },
-      {
-        "Key": "dfe_subject",
-        "Value": null
       }
     ],
     "EntityState": 1,

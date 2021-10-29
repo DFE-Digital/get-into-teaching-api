@@ -30,7 +30,7 @@ namespace GetIntoTeachingApi.Models.Crm
 
         public enum AdviserRequirement
         {
-            Yes = 222750000,
+            Yes = 222750001,
         }
 
         public enum AssignmentStatus

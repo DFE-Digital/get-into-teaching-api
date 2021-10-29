@@ -235,6 +235,57 @@
     "KeyAttributes": []
   },
   {
+    "LogicalName": "phonecall",
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Attributes": [
+      {
+        "Key": "dfe_tocontactguid",
+        "Value": "00000000-0000-0000-0000-000000000000"
+      },
+      {
+        "Key": "dfe_channelcreation",
+        "Value": {
+          "Value": 222750003
+        }
+      },
+      {
+        "Key": "dfe_destination",
+        "Value": {
+          "Value": 222750000
+        }
+      },
+      {
+        "Key": "scheduledstart",
+        "Value": "2021-03-24T13:00:00Z"
+      },
+      {
+        "Key": "phonenumber",
+        "Value": "123456789"
+      },
+      {
+        "Key": "subject",
+        "Value": "Scheduled phone call requested by John Doe"
+      },
+      {
+        "Key": "dfe_appointmentflag",
+        "Value": false
+      },
+      {
+        "Key": "dfe_appointmentrequired",
+        "Value": false
+      },
+      {
+        "Key": "directioncode",
+        "Value": true
+      }
+    ],
+    "EntityState": 1,
+    "FormattedValues": [],
+    "RelatedEntities": [],
+    "RowVersion": null,
+    "KeyAttributes": []
+  },
+  {
     "LogicalName": "dfe_candidateprivacypolicy",
     "Id": "00000000-0000-0000-0000-000000000000",
     "Attributes": [
@@ -318,57 +369,6 @@
       {
         "Key": "dfe_subject",
         "Value": null
-      }
-    ],
-    "EntityState": 1,
-    "FormattedValues": [],
-    "RelatedEntities": [],
-    "RowVersion": null,
-    "KeyAttributes": []
-  },
-  {
-    "LogicalName": "phonecall",
-    "Id": "00000000-0000-0000-0000-000000000000",
-    "Attributes": [
-      {
-        "Key": "dfe_tocontactguid",
-        "Value": "00000000-0000-0000-0000-000000000000"
-      },
-      {
-        "Key": "dfe_channelcreation",
-        "Value": {
-          "Value": 222750003
-        }
-      },
-      {
-        "Key": "dfe_destination",
-        "Value": {
-          "Value": 222750000
-        }
-      },
-      {
-        "Key": "scheduledstart",
-        "Value": "2021-03-24T13:00:00Z"
-      },
-      {
-        "Key": "phonenumber",
-        "Value": "123456789"
-      },
-      {
-        "Key": "subject",
-        "Value": "Scheduled phone call requested by John Doe"
-      },
-      {
-        "Key": "dfe_appointmentflag",
-        "Value": false
-      },
-      {
-        "Key": "dfe_appointmentrequired",
-        "Value": false
-      },
-      {
-        "Key": "directioncode",
-        "Value": true
       }
     ],
     "EntityState": 1,
