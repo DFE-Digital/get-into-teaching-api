@@ -20,8 +20,7 @@ locals {
 
 module "prometheus" {
   count  = var.monitoring
-#  source                            = "git::https://github.com/DFE-Digital/cf-monitoring.git//prometheus_all"
-  source                            = "../../../cf-monitoring/prometheus_all"
+  source                            = "git::https://github.com/DFE-Digital/cf-monitoring.git//prometheus_all"
   monitoring_instance_name          = local.monitoring_org_name
   monitoring_org_name               = var.paas_org_name
   monitoring_space_name             = var.monitor_space
