@@ -20,11 +20,19 @@ jobs:
         with:
            creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - uses: Azure/get-keyvault-secrets@v1.2
-        id:   azSecret
+      - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
+        id: SONAR-TOKEN
         with:
-           keyvault: ${{ secrets.KEY_VAULT}}
-           secrets: 'SLACK-WEBHOOK, SONAR-TOKEN'
+          keyvault: ${{ secrets.KEY_VAULT}}
+          yaml_secret: INFRA-KEYS
+          secret: SONAR-TOKEN
+
+      - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
+        id: SLACK-WEBHOOK
+        with:
+          keyvault: ${{ secrets.KEY_VAULT}}
+          yaml_secret: INFRA-KEYS
+          secret: SLACK-WEBHOOK
 
       - name: Install dotnet-sonarscanner
         run:  dotnet tool install --global dotnet-sonarscanner --version 4.8.0
@@ -43,7 +51,7 @@ jobs:
             /k:"DFE-Digital_get-into-teaching-api" \
             /o:"dfe-digital" \
             /n:"get-into-teaching-api" \
-            /d:sonar.login="${{ steps.azSecret.outputs.SONAR-TOKEN }}" \
+            /d:sonar.login="${{ steps.SONAR-TOKEN.outputs.secret-value }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.cpd.exclusions="GetIntoTeachingApi/Migrations/*.cs" \
             /d:sonar.cs.opencover.reportsPaths="GetIntoTeachingApiTests/coverage.opencover.xml" \
@@ -61,7 +69,7 @@ jobs:
             /d:sonar.log.level="DEBUG"
              dotnet build
              dotnet test --no-build --logger:trx /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-             dotnet sonarscanner end /d:sonar.login="${{ steps.azSecret.outputs.SONAR-TOKEN }}"
+             dotnet sonarscanner end /d:sonar.login="${{ steps.SONAR-TOKEN.outputs.secret-value }}"
 
       - name: Slack Notification
         if: failure() && github.ref == 'refs/heads/master'
@@ -70,5 +78,5 @@ jobs:
            SLACK_COLOR:   ${{env.SLACK_FAILURE }}
            SLACK_MESSAGE: Pipeline Failure carrying out job ${{github.job}} 
            SLACK_TITLE:   'Failure: ${{ github.workflow }}'
-           SLACK_WEBHOOK: ${{ steps.azSecret.outputs.SLACK-WEBHOOK }}
+           SLACK_WEBHOOK: ${{ steps.SLACK-WEBHOOK.outputs.secret-value }}
 

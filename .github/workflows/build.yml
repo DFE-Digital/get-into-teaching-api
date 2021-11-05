@@ -22,11 +22,12 @@ jobs:
         with:
             creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - uses: Azure/get-keyvault-secrets@v1.2
-        id:   azSecret
+      - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
+        id: SLACK-WEBHOOK
         with:
-            keyvault: ${{ secrets.KEY_VAULT}}
-            secrets: 'ACTIONS-API-ACCESS-TOKEN, SLACK-WEBHOOK'
+          keyvault: ${{ secrets.KEY_VAULT}}
+          yaml_secret: INFRA-KEYS
+          secret: SLACK-WEBHOOK
 
       - name: Check workflow concurrency
         uses: softprops/turnstyle@v1
@@ -43,7 +44,7 @@ jobs:
            SLACK_COLOR:   ${{env.SLACK_FAILURE}}
            SLACK_MESSAGE: Content Delivery has failed. This is due to a workflow concurrency issue
            SLACK_TITLE:   Turnstyle failure ${{ github.workflow }}
-           SLACK_WEBHOOK: steps.azSecret.outputs.SLACK-WEBHOOK
+           SLACK_WEBHOOK: ${{ steps.SLACK-WEBHOOK.outputs.secret-value }}
 
   build:
     name: Build and push to DockerHub
@@ -62,11 +63,19 @@ jobs:
         with:
             creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - uses: Azure/get-keyvault-secrets@v1.2
-        id:   azSecret
+      - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
+        id: ACTIONS-API-ACCESS-TOKEN
         with:
-            keyvault: ${{ secrets.KEY_VAULT}}
-            secrets: 'ACTIONS-API-ACCESS-TOKEN, SLACK-WEBHOOK'
+          keyvault: ${{ secrets.KEY_VAULT}}
+          yaml_secret: INFRA-KEYS
+          secret: ACTIONS-API-ACCESS-TOKEN
+
+      - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
+        id: SLACK-WEBHOOK
+        with:
+          keyvault: ${{ secrets.KEY_VAULT}}
+          yaml_secret: INFRA-KEYS
+          secret: SLACK-WEBHOOK
 
       - name: Set up Docker Buildx
         id: buildx
@@ -90,7 +99,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN }}
+          password: ${{ steps.ACTIONS-API-ACCESS-TOKEN.outputs.secret-value }}
 
       - name: Build
         uses: docker/build-push-action@v2.7.0
@@ -110,7 +119,7 @@ jobs:
            SLACK_COLOR:   ${{env.SLACK_FAILURE}}
            SLACK_MESSAGE: 'The pipeline has failed to build the API image'
            SLACK_TITLE:   'Failure to Build API '
-           SLACK_WEBHOOK: steps.azSecret.outputs.SLACK-WEBHOOK
+           SLACK_WEBHOOK: ${{ steps.SLACK-WEBHOOK.outputs.secret-value }}
 
   development:
     name: Development Deployment
@@ -131,17 +140,18 @@ jobs:
          with:
             creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-       - uses: Azure/get-keyvault-secrets@v1.2
-         id:   azSecret
+       - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
+         id: ACTIONS-API-ACCESS-TOKEN
          with:
-            keyvault: ${{ secrets.KEY_VAULT}}
-            secrets: 'ACTIONS-API-ACCESS-TOKEN'
+          keyvault: ${{ secrets.KEY_VAULT}}
+          yaml_secret: INFRA-KEYS
+          secret: ACTIONS-API-ACCESS-TOKEN
 
        - name: Trigger Development Deployment
          uses: benc-uk/workflow-dispatch@v1.1
          with:
            workflow: Deploy to PaaS
-           token: ${{steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN}}
+           token: ${{ steps.ACTIONS-API-ACCESS-TOKEN.outputs.secret-value }}
            inputs: '{"environment": "Development", "sha": "${{ github.sha }}"}'
            ref: ${{github.ref}}
 
@@ -149,7 +159,7 @@ jobs:
          uses: fountainhead/action-wait-for-check@v1.0.0
          id: wait-for-deploy
          with:
-           token: ${{steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN}}
+           token: ${{ steps.ACTIONS-API-ACCESS-TOKEN.outputs.secret-value }}
            checkName: Deploy Development
            ref: ${{github.ref}}
 
@@ -161,7 +171,7 @@ jobs:
          uses: benc-uk/workflow-dispatch@v1.1
          with:
            workflow: Fix Network policies 
-           token: ${{steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN}}
+           token: ${{ steps.ACTIONS-API-ACCESS-TOKEN.outputs.secret-value }}
            inputs: '{"environment": "Development" }'
            ref: ${{github.ref}}
         
@@ -209,17 +219,25 @@ jobs:
          with:
             creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-       - uses: Azure/get-keyvault-secrets@v1.2
-         id:   azSecret
+       - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
+         id: ACTIONS-API-ACCESS-TOKEN
          with:
-            keyvault: ${{ secrets.KEY_VAULT}}
-            secrets: 'ACTIONS-API-ACCESS-TOKEN, SLACK-WEBHOOK'
+           keyvault: ${{ secrets.KEY_VAULT}}
+           yaml_secret: INFRA-KEYS
+           secret: ACTIONS-API-ACCESS-TOKEN
+
+       - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
+         id: SLACK-WEBHOOK
+         with:
+           keyvault: ${{ secrets.KEY_VAULT}}
+           yaml_secret: INFRA-KEYS
+           secret: SLACK-WEBHOOK
 
        - name: Trigger Deployment to QA
          uses: benc-uk/workflow-dispatch@v1.1
          with:
            workflow: Deploy to PaaS
-           token: ${{steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN}}
+           token: ${{ steps.ACTIONS-API-ACCESS-TOKEN.outputs.secret-value }}
            inputs: '{"environment": "Test", "sha": "${{ github.sha }}" }'
            ref: ${{github.ref}}
 
@@ -227,7 +245,7 @@ jobs:
          uses: fountainhead/action-wait-for-check@v1.0.0
          id: wait-for-deploy
          with:
-           token: ${{steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN}}
+           token: ${{ steps.ACTIONS-API-ACCESS-TOKEN.outputs.secret-value }}
            checkName: Deploy Test
            ref: ${{github.ref}}
 
@@ -242,7 +260,7 @@ jobs:
            SLACK_COLOR:   ${{env.SLACK_FAILURE}}
            SLACK_TITLE:   Failure in Post-Development Deploy
            SLACK_MESSAGE: Failure with initialising QA deployment for ${{env.APPLICATION}}
-           SLACK_WEBHOOK: steps.azSecret.outputs.SLACK-WEBHOOK
+           SLACK_WEBHOOK: ${{ steps.SLACK-WEBHOOK.outputs.secret-value }}
 
   cypress:
     name: Run Cypress Tests on QA
@@ -259,18 +277,26 @@ jobs:
          with:
             creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-       - uses: Azure/get-keyvault-secrets@v1.2
-         id:   azSecret
+       - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
+         id: ACTIONS-API-ACCESS-TOKEN
          with:
-            keyvault: ${{ secrets.KEY_VAULT}}
-            secrets: 'ACTIONS-API-ACCESS-TOKEN'
+           keyvault: ${{ secrets.KEY_VAULT}}
+           yaml_secret: INFRA-KEYS
+           secret: ACTIONS-API-ACCESS-TOKEN
+
+       - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
+         id: SLACK-WEBHOOK
+         with:
+           keyvault: ${{ secrets.KEY_VAULT}}
+           yaml_secret: INFRA-KEYS
+           secret: SLACK-WEBHOOK
 
        - name: Trigger Cypress Tests (DFE-Digital/get-into-teaching-frontend-tests )
          uses: benc-uk/workflow-dispatch@v1.1
          with:
            repo: DFE-Digital/get-into-teaching-frontend-tests
            workflow: Cypress
-           token: ${{steps.azSecret.outputs.ACTIONS-API-ACCESS-TOKEN}}
+           token: ${{ steps.ACTIONS-API-ACCESS-TOKEN.outputs.secret-value }}
            inputs: '{"application": "BOTH" , "reference": "${{ github.sha }}" }'
            ref:  refs/heads/master
 
