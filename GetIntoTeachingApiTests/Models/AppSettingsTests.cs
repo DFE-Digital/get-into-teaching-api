@@ -27,7 +27,6 @@ namespace GetIntoTeachingApiTests.Models
         {
             var date = DateTime.UtcNow;
             var dateStr = date.ToString("O");
-
             _database.Setup(m => m.KeyExists("app_settings.crm_offline_until", CommandFlags.None)).Returns(true);
             _database.Setup(m => m.StringGet("app_settings.crm_offline_until", CommandFlags.None)).Returns(dateStr);
 
