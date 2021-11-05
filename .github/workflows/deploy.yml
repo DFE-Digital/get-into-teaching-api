@@ -31,6 +31,7 @@ jobs:
            SECRETS: |
              MONITORING-KEYS
              API-KEYS
+             INFRA-KEYS
 
   turnstyle:
     name: Wait for any previous deployments
@@ -43,6 +44,8 @@ jobs:
          with:
             continue-after-seconds: 300
             same-branch-only: false
+         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   deploy:
     name: Deploy ${{ github.event.inputs.environment }}
@@ -65,11 +68,12 @@ jobs:
          with:
             creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-       - uses: Azure/get-keyvault-secrets@v1.2
-         id:   azSecret
+       - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
+         id: LOGIT-API
          with:
-            keyvault: ${{ secrets.KEY_VAULT}}
-            secrets: 'LOGIT-API'
+           keyvault: ${{ secrets.KEY_VAULT}}
+           yaml_secret: INFRA-KEYS
+           secret: LOGIT-API
 
        - name: Get Short SHA
          id: sha
@@ -146,7 +150,7 @@ jobs:
          if: always()
          uses: DFE-Digital/github-actions/SendToLogit@master
          with:
-            LOGIT-API-KEY: ${{ steps.azSecret.outputs.LOGIT-API }}
+            LOGIT-API-KEY: ${{ steps.LOGIT-API.outputs.secret-value }}
             logtype: "github"
             JSON: |
                 '{"Application" : "${{env.PAAS_APPLICATION_NAME}}",

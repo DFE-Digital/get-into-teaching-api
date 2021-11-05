@@ -24,23 +24,3 @@ locals {
   monitoring_secrets     = yamldecode(data.azurerm_key_vault_secret.monitoring.value)
   infrastructure_secrets = yamldecode(data.azurerm_key_vault_secret.infrastructure.value)
 }
-
-data "azurerm_key_vault_secret" "paas_username" {
-  key_vault_id = data.azurerm_key_vault.vault.id
-  name         = "PAAS-USERNAME"
-}
-
-data "azurerm_key_vault_secret" "paas_password" {
-  key_vault_id = data.azurerm_key_vault.vault.id
-  name         = "PAAS-PASSWORD"
-}
-
-data "azurerm_key_vault_secret" "statuscake_username" {
-  key_vault_id = data.azurerm_key_vault.vault.id
-  name         = "SC-USERNAME"
-}
-
-data "azurerm_key_vault_secret" "statuscake_password" {
-  key_vault_id = data.azurerm_key_vault.vault.id
-  name         = "SC-PASSWORD"
-}
