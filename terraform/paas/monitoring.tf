@@ -20,12 +20,13 @@ locals {
 
 module "prometheus" {
   count  = var.monitoring
-  source                            = "git::https://github.com/DFE-Digital/cf-monitoring.git//prometheus_all"
+#  source                            = "git::https://github.com/DFE-Digital/cf-monitoring.git//prometheus_all"
+  source                            = "../../../cf-monitoring/prometheus_all"
   monitoring_instance_name          = local.monitoring_org_name
   monitoring_org_name               = var.paas_org_name
   monitoring_space_name             = var.monitor_space
-  paas_exporter_username            = data.azurerm_key_vault_secret.paas_username.value
-  paas_exporter_password            = data.azurerm_key_vault_secret.paas_password.value
+  paas_exporter_username            = local.infrastructure_secrets.PAAS-USERNAME
+  paas_exporter_password            = local.infrastructure_secrets.PAAS-PASSWORD
   alertmanager_slack_url            = lookup( local.monitoring_secrets , "SLACK_ALERTMANAGER_HOOK" , "" )
   alertmanager_slack_channel        = lookup( local.monitoring_secrets , "SLACK_CHANNEL" , "" )
   alert_rules                       = local.alert_rules
