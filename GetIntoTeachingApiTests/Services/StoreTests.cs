@@ -701,6 +701,18 @@ namespace GetIntoTeachingApiTests.Services
             DbContext.TeachingEvents.FirstOrDefault(e => e.Id == teachingEvent2.Id).Should().NotBeNull();
         }
 
+        [Fact]
+        public async Task DeleteAsync_RemovesModel()
+        {
+            Guid teachingEventId = Guid.NewGuid();
+            var teachingEvent = new TeachingEvent { Id = teachingEventId };
+            await _store.SaveAsync(teachingEvent);
+
+            await _store.DeleteAsync(teachingEvent);
+
+            DbContext.TeachingEvents.FirstOrDefault(e => e.Id == teachingEventId).Should().BeNull();
+        }
+
         private static bool CheckGetTeachingEventsAfterDate(DateTime date)
         {
             var afterDate = DateTime.UtcNow.Subtract(Store.TeachingEventArchiveSize);

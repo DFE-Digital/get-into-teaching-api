@@ -16,6 +16,8 @@ namespace GetIntoTeachingApi.Services
             where T : BaseModel;
         Task SaveAsync<T>(T model)
             where T : BaseModel;
+        Task DeleteAsync<T>(T model)
+            where T : BaseModel;
         IQueryable<LookupItem> GetLookupItems(string entityName);
         IQueryable<PickListItem> GetPickListItems(string entityName, string attributeName);
         Task<PrivacyPolicy> GetLatestPrivacyPolicyAsync();

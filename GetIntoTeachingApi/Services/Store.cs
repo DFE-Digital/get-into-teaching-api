@@ -161,6 +161,13 @@ namespace GetIntoTeachingApi.Services
             await SaveAsync(new T[] { model });
         }
 
+        public async Task DeleteAsync<T>(T model)
+            where T : BaseModel
+        {
+            _dbContext.Remove(model);
+            await _dbContext.SaveChangesAsync();
+        }
+
         private async Task<IEnumerable<TeachingEvent>> FilterTeachingEventsByRadius(
             IQueryable<TeachingEvent> teachingEvents, TeachingEventSearchRequest request)
         {
