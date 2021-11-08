@@ -25,6 +25,8 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
         private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly Mock<ICandidateUpserter> _mockUpserter;
+        private readonly Mock<IStore> _mockStore;
+        private readonly Mock<IDateTimeProvider> _mockDateTime;
         private readonly CandidatesController _controller;
         private readonly ExistingCandidateRequest _request;
 
@@ -34,12 +36,16 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
             _mockCrm = new Mock<ICrmService>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
             _mockUpserter = new Mock<ICandidateUpserter>();
+            _mockStore = new Mock<IStore>();
+            _mockDateTime = new Mock<IDateTimeProvider>();
             _request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
             _controller = new CandidatesController(
                 _mockTokenService.Object,
                 _mockCrm.Object,
                 _mockUpserter.Object,
-                _mockJobClient.Object);
+                _mockJobClient.Object,
+                _mockStore.Object,
+                _mockDateTime.Object);
         }
 
         [Fact]
@@ -119,15 +125,22 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
         }
 
         [Fact]
-        public void SignUp_WhenCrmIntegrationIsPaused_RaisesError()
+        public void SignUp_WhenCrmIntegrationIsPaused_SavesCandidateInStoreAndQueuesUpsert()
         {
             var mockAppSettings = new Mock<IAppSettings>();
             mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(true);
             var request = new SchoolsExperienceSignUp { FirstName = "first" };
 
-            _controller.Invoking(c => c.SignUp(request, mockAppSettings.Object))
-                .Should().Throw<InvalidOperationException>()
-                .WithMessage("CandidatesController#SignUp - Aborting (CRM integration paused).");
+            var response = _controller.SignUp(request, mockAppSettings.Object);
+
+            var created = response.Should().BeOfType<CreatedAtActionResult>().Subject;
+            var signUp = created.Value.Should().BeAssignableTo<SchoolsExperienceSignUp>().Subject;
+            signUp.FirstName.Should().Be(request.FirstName);
+            _mockStore.Verify(mock => mock.SaveAsync(It.IsAny<Candidate>()), Times.Once);
+            _mockJobClient.Verify(x => x.Create(
+               It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
+               IsMatch(request.Candidate, (string)job.Args[0])),
+               It.IsAny<EnqueuedState>()));
         }
 
         [Fact]
