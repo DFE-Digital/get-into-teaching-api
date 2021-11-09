@@ -79,7 +79,7 @@ namespace GetIntoTeachingApi.Jobs
                 return;
             }
 
-            var candidate = await _store.GetCandidateAsync(candidateId.Value);
+            var candidate = _store.GetCandidate(candidateId.Value);
 
             if (candidate != null)
             {

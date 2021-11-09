@@ -27,6 +27,7 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
         private readonly IBackgroundJobClient _jobClient;
         private readonly IStore _store;
         private readonly IDateTimeProvider _dateTime;
+        private readonly IAppSettings _appSettings;
 
         public CandidatesController(
             ICandidateAccessTokenService tokenService,
@@ -34,7 +35,8 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
             ICandidateUpserter upserter,
             IBackgroundJobClient jobClient,
             IStore store,
-            IDateTimeProvider dateTime)
+            IDateTimeProvider dateTime,
+            IAppSettings appSettings)
         {
             _crm = crm;
             _upserter = upserter;
@@ -42,6 +44,7 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
             _jobClient = jobClient;
             _store = store;
             _dateTime = dateTime;
+            _appSettings = appSettings;
         }
 
         [HttpPost]
@@ -55,8 +58,7 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
         [ProducesResponseType(typeof(SchoolsExperienceSignUp), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
         public IActionResult SignUp(
-            [FromBody, SwaggerRequestBody("Candidate to sign up for the Schools Experience service.", Required = true)] SchoolsExperienceSignUp request,
-            [FromServices] IAppSettings appSettings)
+            [FromBody, SwaggerRequestBody("Candidate to sign up for the Schools Experience service.", Required = true)] SchoolsExperienceSignUp request)
         {
             if (!ModelState.IsValid)
             {
@@ -65,7 +67,7 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
 
             var candidate = request.Candidate;
 
-            if (appSettings.IsCrmIntegrationPaused)
+            if (_appSettings.IsCrmIntegrationPaused)
             {
                 // Usually, it is best practice to allow the CRM to generate sequential GUIDs which provide better
                 // SQL performance. However, in this scenario we have agreed it is beneficial to provide the GUID up-front
@@ -100,7 +102,9 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Get([FromRoute, SwaggerParameter("The `id` of the `Candidate`.", Required = true)] Guid id)
         {
-            var candidate = _crm.GetCandidate(id);
+            var candidate = _appSettings.IsCrmIntegrationPaused
+                ? _store.GetCandidate(id)
+                : _crm.GetCandidate(id);
 
             if (candidate == null)
             {
@@ -120,7 +124,10 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetMultiple([FromQuery, CommaSeparated, SwaggerParameter("A collection of `Candidate` `id`s.", Required = true)] IEnumerable<Guid> ids)
         {
-            var candidates = _crm.GetCandidates(ids);
+            var candidates = _appSettings.IsCrmIntegrationPaused
+                ? _store.GetCandidates(ids)
+                : _crm.GetCandidates(ids);
+
             var signUps = candidates.Select(c => new SchoolsExperienceSignUp(c));
 
             return Ok(signUps);
@@ -169,7 +176,9 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
                 return BadRequest(ModelState);
             }
 
-            var existingCandidate = _crm.GetCandidate(id);
+            var existingCandidate = _appSettings.IsCrmIntegrationPaused
+                 ? _store.GetCandidate(id)
+                 : _crm.GetCandidate(id);
 
             if (existingCandidate == null)
             {
