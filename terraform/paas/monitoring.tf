@@ -24,9 +24,9 @@ module "prometheus" {
   monitoring_instance_name          = local.monitoring_org_name
   monitoring_org_name               = var.paas_org_name
   monitoring_space_name             = var.monitor_space
-  paas_exporter_username            = local.infrastructure_secrets.PAAS-USERNAME
-  paas_exporter_password            = local.infrastructure_secrets.PAAS-PASSWORD
-  alertmanager_slack_url            = lookup( local.monitoring_secrets , "SLACK_ALERTMANAGER_HOOK" , "" )
+  paas_exporter_username            = lookup( local.monitoring_secrets , "PAAS_MONITORING_USER"     , local.infrastructure_secrets.PAAS-USERNAME )
+  paas_exporter_password            = lookup( local.monitoring_secrets , "PAAS_MONITORING_PASSWORD" , local.infrastructure_secrets.PAAS-PASSWORD )
+  alertmanager_slack_url            = lookup( local.monitoring_secrets , "SLACK_ALERTMANAGER_HOOK"  , "" )
   alertmanager_slack_channel        = lookup( local.monitoring_secrets , "SLACK_CHANNEL" , "" )
   alert_rules                       = local.alert_rules
   grafana_elasticsearch_credentials = local.elasticsearch_credentials
