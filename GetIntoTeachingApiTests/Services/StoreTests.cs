@@ -713,6 +713,20 @@ namespace GetIntoTeachingApiTests.Services
             DbContext.TeachingEvents.FirstOrDefault(e => e.Id == teachingEventId).Should().BeNull();
         }
 
+        [Fact]
+        public async Task GetCandidateAsync_WithId_ReturnsMatchingCandidateAndRelatedModels()
+        {
+            var candidates = await SeedMockCandidates();
+            var result = await _store.GetCandidateAsync((Guid)candidates.First().Id);
+
+            result.Id.Should().Be(candidates.First().Id);
+            result.PrivacyPolicy.Should().NotBeNull();
+            result.PastTeachingPositions.Should().NotBeNull();
+            result.Qualifications.Should().NotBeNull();
+            result.TeachingEventRegistrations.Should().NotBeNull();
+            result.PhoneCall.Should().NotBeNull();
+        }
+
         private static bool CheckGetTeachingEventsAfterDate(DateTime date)
         {
             var afterDate = DateTime.UtcNow.Subtract(Store.TeachingEventArchiveSize);
@@ -954,6 +968,30 @@ namespace GetIntoTeachingApiTests.Services
 
             DbContext.Locations.AddRange(locations);
             DbContext.SaveChanges();
+        }
+
+        private async Task<List<Candidate>> SeedMockCandidates()
+        {
+            var privacyPolicy = new CandidatePrivacyPolicy { Id = Guid.NewGuid() };
+            var pastTeachingPosition = new CandidatePastTeachingPosition { Id = Guid.NewGuid() };
+            var qualification = new CandidateQualification { Id = Guid.NewGuid() };
+            var teachingeventRegistration = new TeachingEventRegistration { Id = Guid.NewGuid() };
+            var phoneCall = new PhoneCall { Id = Guid.NewGuid() };
+            var candidates = new List<Candidate> {
+                new Candidate {
+                    Id = Guid.NewGuid() ,
+                    PrivacyPolicy = privacyPolicy,
+                    PastTeachingPositions = new List<CandidatePastTeachingPosition> { pastTeachingPosition },
+                    Qualifications = new List<CandidateQualification> { qualification },
+                    TeachingEventRegistrations = new List<TeachingEventRegistration> { teachingeventRegistration },
+                    PhoneCall = phoneCall,
+                }
+            };
+
+            await DbContext.Candidates.AddRangeAsync(candidates);
+            await DbContext.SaveChangesAsync();
+
+            return candidates;
         }
     }
 }
