@@ -714,10 +714,24 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async Task GetCandidateAsync_WithId_ReturnsMatchingCandidateAndRelatedModels()
+        public async Task GetCandidate_WithId_ReturnsMatchingCandidateAndRelatedModels()
         {
             var candidates = await SeedMockCandidates();
-            var result = await _store.GetCandidateAsync((Guid)candidates.First().Id);
+            var result = _store.GetCandidate((Guid)candidates.First().Id);
+
+            result.Id.Should().Be(candidates.First().Id);
+            result.PrivacyPolicy.Should().NotBeNull();
+            result.PastTeachingPositions.Should().NotBeNull();
+            result.Qualifications.Should().NotBeNull();
+            result.TeachingEventRegistrations.Should().NotBeNull();
+            result.PhoneCall.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task GetCandidates_WithIds_ReturnsMatchingCandidatesAndRelatedModels()
+        {
+            var candidates = await SeedMockCandidates();
+            var result = _store.GetCandidates(new List<Guid> { (Guid)candidates.First().Id }).First();
 
             result.Id.Should().Be(candidates.First().Id);
             result.PrivacyPolicy.Should().NotBeNull();

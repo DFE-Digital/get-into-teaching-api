@@ -86,7 +86,7 @@ namespace GetIntoTeachingApiTests.Jobs
         {
             public StoreContainsCandidate()
             {
-                _mockStore.Setup(mock => mock.GetCandidateAsync(It.IsAny<Guid>())).ReturnsAsync(new Candidate());
+                _mockStore.Setup(mock => mock.GetCandidate(It.IsAny<Guid>())).Returns(new Candidate());
             }
 
             public override async Task Run_OnSuccess_UpsertsCandidate()

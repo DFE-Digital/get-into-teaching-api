@@ -145,15 +145,21 @@ namespace GetIntoTeachingApi.Services
             return _dbContext.TeachingEventBuildings.AsNoTracking();
         }
 
-        public async Task<Candidate> GetCandidateAsync(Guid candidateId)
+        public IEnumerable<Candidate> GetCandidates(IEnumerable<Guid> ids)
         {
-            return await _dbContext.Candidates.AsNoTracking()
+            return _dbContext.Candidates.AsNoTracking()
                 .Include(c => c.PrivacyPolicy)
                 .Include(c => c.PastTeachingPositions)
                 .Include(c => c.Qualifications)
                 .Include(c => c.TeachingEventRegistrations)
                 .Include(c => c.PhoneCall)
-                .FirstOrDefaultAsync(c => c.Id == candidateId);
+                .Where(c => ids.Contains((Guid)c.Id))
+                .ToList();
+        }
+
+        public Candidate GetCandidate(Guid candidateId)
+        {
+            return GetCandidates(new List<Guid> { candidateId }).FirstOrDefault();
         }
 
         public async Task SaveAsync<T>(IEnumerable<T> models)
