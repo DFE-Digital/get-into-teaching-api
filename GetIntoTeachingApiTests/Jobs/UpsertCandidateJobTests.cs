@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Jobs;
@@ -24,6 +25,7 @@ namespace GetIntoTeachingApiTests.Jobs
         private readonly IMetricService _metrics;
         private readonly UpsertCandidateJob _job;
         private readonly Mock<ILogger<UpsertCandidateJob>> _mockLogger;
+        private readonly Mock<IStore> _mockStore;
 
         public UpsertCandidateJobTests()
         {
@@ -32,10 +34,11 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockNotifyService = new Mock<INotifyService>();
             _mockLogger = new Mock<ILogger<UpsertCandidateJob>>();
             _mockAppSettings = new Mock<IAppSettings>();
+            _mockStore = new Mock<IStore>();
             _metrics = new MetricService();
             _candidate = new Candidate() { Id = Guid.NewGuid(), Email = "test@test.com" };
             _job = new UpsertCandidateJob(new Env(), _mockUpserter.Object, _mockNotifyService.Object,
-                _mockContext.Object, _metrics, _mockLogger.Object, _mockAppSettings.Object);
+                _mockContext.Object, _metrics, _mockLogger.Object, _mockAppSettings.Object, _mockStore.Object);
 
             _metrics.HangfireJobQueueDuration.RemoveLabelled(new[] { "UpsertCandidateJob" });
             _mockContext.Setup(m => m.GetJobCreatedAt(null)).Returns(DateTime.UtcNow.AddDays(-1));
@@ -44,12 +47,12 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public void Run_OnSuccess_UpsertsCandidate()
+        public virtual async Task Run_OnSuccess_UpsertsCandidate()
         {
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
 
             var json = _candidate.SerializeChangeTracked();
-            _job.Run(json, null);
+            await _job.Run(json, null);
 
             _mockUpserter.Verify(mock => mock.Upsert(It.Is<Candidate>(c => IsMatch(_candidate, c))), Times.Once);
             _mockLogger.VerifyInformationWasCalled("UpsertCandidateJob - Started (1/24)");
@@ -59,11 +62,11 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public void Run_OnFailure_EmailsCandidate()
+        public virtual async Task Run_OnFailure_EmailsCandidate()
         {
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(23);
 
-            _job.Run(_candidate.SerializeChangeTracked(), null);
+            await _job.Run(_candidate.SerializeChangeTracked(), null);
 
             _mockUpserter.Verify(mock => mock.Upsert(It.IsAny<Candidate>()), Times.Never);
             _mockNotifyService.Verify(mock => mock.SendEmailAsync(_candidate.Email,
@@ -73,22 +76,30 @@ namespace GetIntoTeachingApiTests.Jobs
             _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Count.Should().Be(1);
         }
 
-        [Fact]
-        public void Run_WhenCrmIntegrationPaused_Aborts()
-        {
-            _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(true);
-
-            var json = _candidate.SerializeChangeTracked();
-            Action action = () => _job.Run(json, null);
-
-            action.Should().Throw<InvalidOperationException>()
-                .WithMessage("UpsertCandidateJob - Aborting (CRM integration paused).");
-        }
-
         private bool IsMatch(object objectA, object objectB)
         {
             objectA.Should().BeEquivalentTo(objectB);
             return true;
+        }
+
+        public class StoreContainsCandidate : UpsertCandidateJobTests
+        {
+            public StoreContainsCandidate()
+            {
+                _mockStore.Setup(mock => mock.GetCandidateAsync(It.IsAny<Guid>())).ReturnsAsync(new Candidate());
+            }
+
+            public override async Task Run_OnSuccess_UpsertsCandidate()
+            {
+                await base.Run_OnSuccess_UpsertsCandidate();
+                _mockStore.Verify(mock => mock.DeleteAsync(It.IsAny<Candidate>()), Times.Once);
+            }
+
+            public override async Task Run_OnFailure_EmailsCandidate()
+            {
+                await base.Run_OnFailure_EmailsCandidate();
+                _mockStore.Verify(mock => mock.DeleteAsync(It.IsAny<Candidate>()), Times.Once);
+            }
         }
     }
 }
