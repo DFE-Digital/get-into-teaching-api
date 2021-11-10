@@ -72,6 +72,24 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void Upsert_WithApplicationForms_SavesApplicationForms()
+        {
+            var candidateId = Guid.NewGuid();
+            var applicationForm = new ApplicationForm();
+            _candidate.ApplicationForms.Add(applicationForm);
+            _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
+
+            _upserter.Upsert(_candidate);
+
+            applicationForm.CandidateId = candidateId;
+
+            _mockJobClient.Verify(x => x.Create(
+               It.Is<Job>(job => job.Type == typeof(UpsertModelJob<ApplicationForm>) && job.Method.Name == "Run" &&
+               IsMatch(applicationForm, (string)job.Args[0])),
+               It.IsAny<EnqueuedState>()));
+        }
+
+        [Fact]
         public void Upsert_WithTeachingEventRegistrations_SavesTeachingEventRegistrations()
         {
             var candidateId = Guid.NewGuid();

@@ -162,6 +162,9 @@ namespace GetIntoTeachingApiTests.Models.Crm
             type.GetProperty("PastTeachingPositions").Should().BeDecoratedWith<EntityRelationshipAttribute>(
                 a => a.Name == "dfe_contact_dfe_candidatepastteachingposition_ContactId" &&
                      a.Type == typeof(CandidatePastTeachingPosition));
+            type.GetProperty("ApplicationForms").Should().BeDecoratedWith<EntityRelationshipAttribute>(
+                a => a.Name == "dfe_contact_dfe_applyapplicationform_contact" &&
+                     a.Type == typeof(ApplicationForm));
             type.GetProperty("PhoneCall").Should().BeDecoratedWith<EntityRelationshipAttribute>(
                 a => a.Name == "dfe_contact_phonecall_contactid" && a.Type == typeof(PhoneCall));
             type.GetProperty("PrivacyPolicy").Should().BeDecoratedWith<EntityRelationshipAttribute>(
