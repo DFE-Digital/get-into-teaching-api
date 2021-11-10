@@ -4,6 +4,7 @@ using System.Linq;
 using GetIntoTeachingApi.Models.FindApply;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
+using Hangfire;
 using Microsoft.Extensions.Logging;
 
 namespace GetIntoTeachingApi.Jobs
@@ -11,6 +12,7 @@ namespace GetIntoTeachingApi.Jobs
     public class FindApplyCandidateSyncJob : BaseJob
     {
         private readonly ILogger<FindApplyCandidateSyncJob> _logger;
+        private readonly IBackgroundJobClient _jobClient;
         private readonly ICrmService _crm;
         private readonly Models.IAppSettings _appSettings;
 
@@ -18,11 +20,13 @@ namespace GetIntoTeachingApi.Jobs
             IEnv env,
             ILogger<FindApplyCandidateSyncJob> logger,
             ICrmService crm,
+            IBackgroundJobClient jobClient,
             Models.IAppSettings appSettings)
             : base(env)
         {
             _logger = logger;
             _crm = crm;
+            _jobClient = jobClient;
             _appSettings = appSettings;
         }
 
@@ -41,12 +45,15 @@ namespace GetIntoTeachingApi.Jobs
         public void SyncCandidate(Candidate findApplyCandidate)
         {
             var applicationForms = findApplyCandidate.Attributes.ApplicationForms;
-            var candidate = UpdateCandidate(findApplyCandidate, applicationForms);
+            var candidate = Candidate(findApplyCandidate, applicationForms);
 
-            UpsertApplicationForms((Guid)candidate.Id, applicationForms);
+            candidate.ApplicationForms = ApplicationForms(applicationForms).ToList();
+
+            string json = candidate.SerializeChangeTracked();
+            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
         }
 
-        private Models.Crm.Candidate UpdateCandidate(Candidate findApplyCandidate, IEnumerable<ApplicationForm> findApplyApplicationForms)
+        private Models.Crm.Candidate Candidate(Candidate findApplyCandidate, IEnumerable<ApplicationForm> findApplyApplicationForms)
         {
             var match = _crm.MatchCandidate(findApplyCandidate.Attributes.Email);
 
@@ -80,35 +87,30 @@ namespace GetIntoTeachingApi.Jobs
                 candidate.FindApplyPhaseId = (int)Enum.Parse(typeof(Models.Crm.ApplicationForm.Phase), latestApplicationForm.ApplicationPhase.ToPascalCase());
             }
 
-            _crm.Save(candidate);
-
             return candidate;
         }
 
-        private void UpsertApplicationForms(Guid candidateId, IEnumerable<ApplicationForm> findApplyApplicationForms)
+        private IEnumerable<Models.Crm.ApplicationForm> ApplicationForms(IEnumerable<ApplicationForm> findApplyApplicationForms)
         {
             if (findApplyApplicationForms == null)
             {
-                return;
+                return Array.Empty<Models.Crm.ApplicationForm>();
             }
 
-            foreach (var findApplyForm in findApplyApplicationForms)
+            return findApplyApplicationForms.Select(findApplyForm =>
             {
                 var existingForm = _crm.GetApplicationForm(findApplyForm.Id.ToString());
 
-                var form = new Models.Crm.ApplicationForm()
+                return new Models.Crm.ApplicationForm()
                 {
                     Id = existingForm?.Id,
-                    CandidateId = candidateId,
                     FindApplyId = findApplyForm.Id.ToString(),
                     CreatedAt = findApplyForm.CreatedAt,
                     UpdatedAt = findApplyForm.UpdatedAt,
                     StatusId = (int)Enum.Parse(typeof(Models.Crm.ApplicationForm.Status), findApplyForm.ApplicationStatus.ToPascalCase()),
                     PhaseId = (int)Enum.Parse(typeof(Models.Crm.ApplicationForm.Phase), findApplyForm.ApplicationPhase.ToPascalCase()),
                 };
-
-                _crm.Save(form);
-            }
+            });
         }
     }
 }
