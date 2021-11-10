@@ -25,17 +25,23 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
         private readonly ICrmService _crm;
         private readonly ICandidateUpserter _upserter;
         private readonly IBackgroundJobClient _jobClient;
+        private readonly IDateTimeProvider _dateTime;
+        private readonly IEnv _env;
 
         public CandidatesController(
             ICandidateAccessTokenService tokenService,
             ICrmService crm,
             ICandidateUpserter upserter,
-            IBackgroundJobClient jobClient)
+            IBackgroundJobClient jobClient,
+            IDateTimeProvider dateTime,
+            IEnv env)
         {
             _crm = crm;
             _upserter = upserter;
             _tokenService = tokenService;
             _jobClient = jobClient;
+            _dateTime = dateTime;
+            _env = env;
         }
 
         [HttpPost]
@@ -57,13 +63,31 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
                 return BadRequest(ModelState);
             }
 
+            var candidate = request.Candidate;
+
             if (appSettings.IsCrmIntegrationPaused)
             {
-                throw new InvalidOperationException("CandidatesController#SignUp - Aborting (CRM integration paused).");
-            }
+                // Temporary. To be removed once feature is verified in other environments.
+                if (_env.IsProduction)
+                {
+                    throw new InvalidOperationException("CandidatesController#SignUp - Aborting (CRM integration paused).");
+                }
 
-            var candidate = request.Candidate;
-            _upserter.Upsert(candidate);
+                // Usually, it is best practice to allow the CRM to generate sequential GUIDs which provide better
+                // SQL performance. However, in this scenario we have agreed it is beneficial to provide the GUID up-front
+                // because the School Experience app needs the Candidate ID immediately.
+                candidate.Id = Guid.NewGuid();
+
+                // This is the only way we can mock/freeze the current date/time
+                // in contract tests (there's no other way to inject it into this class).
+                request.DateTimeProvider = _dateTime;
+                string json = request.Candidate.SerializeChangeTracked();
+                _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
+            }
+            else
+            {
+                _upserter.Upsert(candidate);
+            }
 
             return CreatedAtAction(
                 actionName: nameof(Get),
