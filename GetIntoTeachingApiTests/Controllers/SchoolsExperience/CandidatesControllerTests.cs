@@ -26,6 +26,7 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly Mock<ICandidateUpserter> _mockUpserter;
         private readonly Mock<IDateTimeProvider> _mockDateTime;
+        private readonly Mock<IEnv> _mockEnv;
         private readonly CandidatesController _controller;
         private readonly ExistingCandidateRequest _request;
 
@@ -36,13 +37,15 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
             _mockJobClient = new Mock<IBackgroundJobClient>();
             _mockUpserter = new Mock<ICandidateUpserter>();
             _mockDateTime = new Mock<IDateTimeProvider>();
+            _mockEnv = new Mock<IEnv>();
             _request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
             _controller = new CandidatesController(
                 _mockTokenService.Object,
                 _mockCrm.Object,
                 _mockUpserter.Object,
                 _mockJobClient.Object,
-                _mockDateTime.Object);
+                _mockDateTime.Object,
+                _mockEnv.Object);
         }
 
         [Fact]
@@ -138,6 +141,19 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
                IsMatch(request.Candidate, (string)job.Args[0])),
                It.IsAny<EnqueuedState>()));
+        }
+
+        [Fact]
+        public void SignUp_WhenProductionAndCrmIntegrationPaused_ThrowsException()
+        {
+            var request = new SchoolsExperienceSignUp { FirstName = "first" };
+            var mockAppSettings = new Mock<IAppSettings>();
+            mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(true);
+            _mockEnv.Setup(m => m.IsProduction).Returns(true);
+
+            _controller.Invoking(c => c.SignUp(request, mockAppSettings.Object))
+               .Should().Throw<InvalidOperationException>()
+               .WithMessage("CandidatesController#SignUp - Aborting (CRM integration paused).");
         }
 
         [Fact]
