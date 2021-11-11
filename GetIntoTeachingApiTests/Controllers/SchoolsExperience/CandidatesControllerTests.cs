@@ -222,33 +222,21 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
             errors.Should().ContainKey("SchoolName").WhoseValue.Should().BeOfType<string[]>().Which.Should().Contain("SchoolName must be set.");
         }
-
+        
         [Fact]
-        public void AddClassroomExperienceNote_CandidateNotFound_RespondsWithNotFound()
-        {
-            var candidateId = Guid.NewGuid();
-            var note = new ClassroomExperienceNote() { Action = "REQUESTED", SchoolName = "School Name", SchoolUrn = 123456 };
-            _mockCrm.Setup(m => m.GetCandidate(candidateId)).Returns(null as Candidate);
-
-            var response = _controller.AddClassroomExperienceNote(candidateId, note);
-
-            response.Should().BeOfType<NotFoundResult>();
-        }
-
-        [Fact]
-        public void AddClassroomExperienceNote_ValidRequest_EnqueuesJobAndRespondsWithSuccess()
+        public void AddClassroomExperienceNote_ValidRequest_EnqueuesJobAndRespondsWithNoContent()
         {
             var candidate = new Candidate() { Id = Guid.NewGuid() };
-            var note = new ClassroomExperienceNote() { Action = "REQUESTED", SchoolName = "School Name", SchoolUrn = 123456 };
-            _mockCrm.Setup(m => m.GetCandidate((Guid)candidate.Id)).Returns(candidate);
+            var note = new ClassroomExperienceNote();
+            var expectedArguments = new object[] { candidate.Id, note };
 
             var response = _controller.AddClassroomExperienceNote((Guid)candidate.Id, note);
 
-            candidate.AddClassroomExperienceNote(note);
             response.Should().BeOfType<NoContentResult>();
             _mockJobClient.Verify(x => x.Create(
-                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-                IsMatch(candidate, (string)job.Args[0])),
+                It.Is<Job>(job => job.Type == typeof(AddClassroomExperienceNoteJob) && 
+                                  job.Method.Name == "Run" &&
+                                  expectedArguments.All(arg => job.Args.Contains(arg))),
                 It.IsAny<EnqueuedState>()));
         }
 
