@@ -15,6 +15,9 @@ namespace GetIntoTeachingApi.Models.Crm.Validators
             RuleFor(form => form.StatusId)
                 .NotNull()
                 .SetValidator(new PickListItemIdValidator<ApplicationForm>("dfe_applyapplicationform", "dfe_applystatus", store));
+            RuleFor(form => form.RecruitmentCycleYearId)
+                .NotNull()
+                .SetValidator(new PickListItemIdValidator<ApplicationForm>("dfe_applyapplicationform", "dfe_recruitmentyear", store));
         }
     }
 }

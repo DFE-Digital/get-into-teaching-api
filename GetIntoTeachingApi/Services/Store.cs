@@ -261,6 +261,7 @@ namespace GetIntoTeachingApi.Services
                 await SyncPickListItem("contact", "dfe_candidateapplyphase");
                 await SyncPickListItem("dfe_applyapplicationform", "dfe_applyphase");
                 await SyncPickListItem("dfe_applyapplicationform", "dfe_applystatus");
+                await SyncPickListItem("dfe_applyapplicationform", "dfe_recruitmentyear");
             }
         }
 

@@ -23,10 +23,13 @@ namespace GetIntoTeachingApiTests.Models.Crm
                 a => a.Name == "dfe_applyphase" && a.Type == typeof(OptionSetValue));
             type.GetProperty("StatusId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_applystatus" && a.Type == typeof(OptionSetValue));
+            type.GetProperty("RecruitmentCycleYearId").Should().BeDecoratedWith<EntityFieldAttribute>(
+                a => a.Name == "dfe_recruitmentyear" && a.Type == typeof(OptionSetValue));
 
             type.GetProperty("FindApplyId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applicationformid");
             type.GetProperty("CreatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_createdon");
             type.GetProperty("UpdatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_modifiedon");
+            type.GetProperty("SubmittedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_submittedatdate");
             type.GetProperty("Name").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_name");
         }
 
