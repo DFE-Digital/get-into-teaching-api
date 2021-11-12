@@ -23,7 +23,6 @@ namespace GetIntoTeachingApiTests.Jobs
         private readonly Mock<IEnv> _mockEnv;
         private readonly Mock<IPerformContextAdapter> _mockContext;
         private readonly Mock<IAppSettings> _mockAppSettings;
-        private readonly Mock<ILogger<AddClassroomExperienceNoteJob>> _mockLogger;
         private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly AddClassroomExperienceNoteJob _job;
@@ -33,7 +32,6 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockEnv = new Mock<IEnv>();
             _mockContext = new Mock<IPerformContextAdapter>();
             _mockAppSettings = new Mock<IAppSettings>();
-            _mockLogger = new Mock<ILogger<AddClassroomExperienceNoteJob>>();
             _mockCrm = new Mock<ICrmService>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
 
@@ -41,7 +39,6 @@ namespace GetIntoTeachingApiTests.Jobs
                 _mockEnv.Object,
                 _mockContext.Object,
                 _mockAppSettings.Object,
-                _mockLogger.Object,
                 _mockCrm.Object,
                 _mockJobClient.Object);
         }
@@ -59,20 +56,16 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public void Run_WhenCandidateReturnsNullAndLessThanThreeTries_LogsMessageAndRetries()
+        public void Run_WhenCandidateReturnsNullAndLessThanThreeTries_ThrowsInformationalException()
         {
             _mockCrm.Setup(mock => mock.GetCandidate(It.IsAny<Guid>())).Returns((Candidate)null);
             _mockContext.Setup(mock => mock.GetRetryCount(null)).Returns(2);
-            var mockPerformContext = new PerformContextMock();
-            mockPerformContext.BackgroundJob.Id = "perform-context-id";
 
-            _job.Run(mockPerformContext.Object, new ClassroomExperienceNote(), Guid.NewGuid());
+            Action job = () => _job.Run(null, new ClassroomExperienceNote(), Guid.NewGuid());
 
-            _mockLogger.VerifyInformationWasCalled("AddClassroomExperienceNoteJob - Candidate not found (may be in concurrent job queue)");
-            _mockJobClient.Verify(x => x.ChangeState(
-               "perform-context-id",
-               It.IsAny<EnqueuedState>(),
-               null), Times.Once);
+            job.Should()
+                .Throw<InvalidOperationException>()
+                .WithMessage("AddClassroomExperienceNoteJob - Candidate not found (may be in concurrent job queue)");
             _mockJobClient.Verify(x => x.Create(
                 It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run"),
                 It.IsAny<EnqueuedState>()), Times.Never);
