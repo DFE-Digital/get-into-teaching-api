@@ -34,18 +34,30 @@ namespace GetIntoTeachingApi.Models.Crm
             Apply2 = 222750001,
         }
 
+        // The keys for this enum need to mirror the
+        // Apply API naming so we can match them up.
+        public enum RecruitmentCycleYear
+        {
+            Year2021 = 222750001,
+            Year2022 = 222750002,
+        }
+
         [EntityField("dfe_contact", typeof(EntityReference), "contact")]
         public Guid CandidateId { get; set; }
         [EntityField("dfe_applyphase", typeof(OptionSetValue))]
         public int? PhaseId { get; set; }
         [EntityField("dfe_applystatus", typeof(OptionSetValue))]
         public int? StatusId { get; set; }
+        [EntityField("dfe_recruitmentyear", typeof(OptionSetValue))]
+        public int? RecruitmentCycleYearId { get; set; }
         [EntityField("dfe_applicationformid")]
         public string FindApplyId { get; set; }
         [EntityField("dfe_createdon")]
         public DateTime CreatedAt { get; set; }
         [EntityField("dfe_modifiedon")]
         public DateTime UpdatedAt { get; set; }
+        [EntityField("dfe_submittedatdate")]
+        public DateTime? SubmittedAt { get; set; }
         [EntityField("dfe_name")]
         public string Name
         {

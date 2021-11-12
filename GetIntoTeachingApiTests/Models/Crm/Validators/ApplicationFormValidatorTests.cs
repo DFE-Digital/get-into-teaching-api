@@ -33,6 +33,9 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
             _mockStore
                 .Setup(mock => mock.GetPickListItems("dfe_applyapplicationform", "dfe_applystatus"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("dfe_applyapplicationform", "dfe_recruitmentyear"))
+                .Returns(new[] { mockPickListItem }.AsQueryable());
 
             var form = new ApplicationForm()
             {
@@ -40,6 +43,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 FindApplyId = "67890",
                 PhaseId = mockPickListItem.Id,
                 StatusId = mockPickListItem.Id,
+                RecruitmentCycleYearId = mockPickListItem.Id,
             };
 
             var result = _validator.TestValidate(form);
@@ -59,21 +63,23 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         [Fact]
         public void Validate_OptionSetIsNotValid_HasError()
         {
-            var form = new ApplicationForm() { PhaseId = 456, StatusId = 789 };
+            var form = new ApplicationForm() { PhaseId = 456, StatusId = 789, RecruitmentCycleYearId = 876 };
             var result = _validator.TestValidate(form);
 
             result.ShouldHaveValidationErrorFor("PhaseId");
             result.ShouldHaveValidationErrorFor("StatusId");
+            result.ShouldHaveValidationErrorFor("RecruitmentCycleYearId");
         }
 
         [Fact]
         public void Validate_RequiredAttributeIsNull_HasError()
         {
-            var form = new ApplicationForm() { PhaseId = null, StatusId = null };
+            var form = new ApplicationForm() { PhaseId = null, StatusId = null, RecruitmentCycleYearId = null };
             var result = _validator.TestValidate(form);
 
             result.ShouldHaveValidationErrorFor("PhaseId");
             result.ShouldHaveValidationErrorFor("StatusId");
+            result.ShouldHaveValidationErrorFor("RecruitmentCycleYearId");
         }
     }
 }
