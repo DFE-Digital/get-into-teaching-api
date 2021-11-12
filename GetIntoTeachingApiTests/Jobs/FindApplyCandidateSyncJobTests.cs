@@ -45,8 +45,10 @@ namespace GetIntoTeachingApiTests.Jobs
                     Id = 1,
                     CreatedAt = new DateTime(2021, 1, 4),
                     UpdatedAt = new DateTime(2021, 1, 5),
+                    SubmittedAt = new DateTime(2021, 1, 6),
                     ApplicationStatus = "never_signed_in",
                     ApplicationPhase = "apply_2",
+                    RecruitmentCycleYear = 2022,
                 },
                 new ApplicationForm()
                 {
@@ -54,6 +56,7 @@ namespace GetIntoTeachingApiTests.Jobs
                     CreatedAt = new DateTime(2021, 1, 3),
                     ApplicationStatus = "awaiting_candidate_response",
                     ApplicationPhase = "apply_1",
+                    RecruitmentCycleYear = 2021,
                 },
             };
             _attributes = new CandidateAttributes()
@@ -89,7 +92,9 @@ namespace GetIntoTeachingApiTests.Jobs
                 CreatedAt = _forms[0].CreatedAt,
                 PhaseId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply2,
                 StatusId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.NeverSignedIn,
+                RecruitmentCycleYearId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.RecruitmentCycleYear.Year2022,
                 UpdatedAt = _forms[0].UpdatedAt,
+                SubmittedAt = _forms[0].SubmittedAt,
             };
 
             var form2 = new GetIntoTeachingApi.Models.Crm.ApplicationForm()
@@ -98,8 +103,10 @@ namespace GetIntoTeachingApiTests.Jobs
                 FindApplyId = _forms[1].Id.ToString(),
                 PhaseId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply1,
                 StatusId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.AwaitingCandidateResponse,
+                RecruitmentCycleYearId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.RecruitmentCycleYear.Year2021,
                 CreatedAt = _forms[1].CreatedAt,
                 UpdatedAt = _forms[1].UpdatedAt,
+                SubmittedAt = null,
             };
 
             var candidate = new GetIntoTeachingApi.Models.Crm.Candidate()
