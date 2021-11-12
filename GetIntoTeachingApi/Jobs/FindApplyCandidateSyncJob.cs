@@ -107,8 +107,10 @@ namespace GetIntoTeachingApi.Jobs
                     FindApplyId = findApplyForm.Id.ToString(),
                     CreatedAt = findApplyForm.CreatedAt,
                     UpdatedAt = findApplyForm.UpdatedAt,
+                    SubmittedAt = findApplyForm.SubmittedAt,
                     StatusId = (int)Enum.Parse(typeof(Models.Crm.ApplicationForm.Status), findApplyForm.ApplicationStatus.ToPascalCase()),
                     PhaseId = (int)Enum.Parse(typeof(Models.Crm.ApplicationForm.Phase), findApplyForm.ApplicationPhase.ToPascalCase()),
+                    RecruitmentCycleYearId = (int)Enum.Parse(typeof(Models.Crm.ApplicationForm.RecruitmentCycleYear), $"Year{findApplyForm.RecruitmentCycleYear.ToString()}"),
                 };
             });
         }
