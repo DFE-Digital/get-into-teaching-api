@@ -7,16 +7,15 @@ using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Hangfire.Server;
-using Microsoft.Extensions.Logging;
 
 namespace GetIntoTeachingApi.Jobs
 {
     public class AddClassroomExperienceNoteJob : BaseJob
     {
-        private const int NumberOfQuietRetries = 3;
+        private const int NumberOfRetriesAllowingForJobQueue = 3;
+
         private readonly IPerformContextAdapter _contextAdapter;
         private readonly IAppSettings _appSettings;
-        private readonly ILogger<AddClassroomExperienceNoteJob> _logger;
         private readonly ICrmService _crm;
         private readonly IBackgroundJobClient _jobClient;
 
@@ -24,14 +23,12 @@ namespace GetIntoTeachingApi.Jobs
             IEnv env,
             IPerformContextAdapter contextAdapter,
             IAppSettings appSettings,
-            ILogger<AddClassroomExperienceNoteJob> logger,
             ICrmService crm,
             IBackgroundJobClient jobClient)
             : base(env)
         {
             _contextAdapter = contextAdapter;
             _appSettings = appSettings;
-            _logger = logger;
             _crm = crm;
             _jobClient = jobClient;
         }
@@ -50,15 +47,7 @@ namespace GetIntoTeachingApi.Jobs
 
             if (existingCandidate == null)
             {
-                if (CurrentAttempt(context, _contextAdapter) <= NumberOfQuietRetries)
-                {
-                    _logger.LogInformation($"{GetType().Name} - Candidate not found (may be in concurrent job queue)");
-                    _jobClient.Requeue(context.BackgroundJob.Id);
-                }
-                else
-                {
-                    throw new InvalidOperationException($"{GetType().Name} - Candidate not found");
-                }
+                throw new InvalidOperationException(BuildExceptionMessage(CurrentAttempt(context, _contextAdapter)));
             }
             else
             {
@@ -75,6 +64,15 @@ namespace GetIntoTeachingApi.Jobs
                 string json = candidate.SerializeChangeTracked();
                 _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
             }
+        }
+
+        private string BuildExceptionMessage(int numberOfRetries)
+        {
+            var baseMessage = $"{GetType().Name} - Candidate not found";
+
+            return numberOfRetries <= NumberOfRetriesAllowingForJobQueue
+                ? baseMessage += " (may be in concurrent job queue)"
+                : baseMessage;
         }
     }
 }
