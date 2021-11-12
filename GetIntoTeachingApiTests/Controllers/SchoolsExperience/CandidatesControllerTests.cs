@@ -139,7 +139,7 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
             signUp.CandidateId.Should().NotBeNull();
             _mockJobClient.Verify(x => x.Create(
                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-               IsMatch(request.Candidate, (string)job.Args[0])),
+               IsRequestPlusId(request.Candidate, (string)job.Args[0], signUp.CandidateId.Value)),
                It.IsAny<EnqueuedState>()));
         }
 
@@ -222,7 +222,7 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
             errors.Should().ContainKey("SchoolName").WhoseValue.Should().BeOfType<string[]>().Which.Should().Contain("SchoolName must be set.");
         }
-        
+
         [Fact]
         public void AddClassroomExperienceNote_ValidRequest_EnqueuesJobAndRespondsWithNoContent()
         {
@@ -234,16 +234,18 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
 
             response.Should().BeOfType<NoContentResult>();
             _mockJobClient.Verify(x => x.Create(
-                It.Is<Job>(job => job.Type == typeof(AddClassroomExperienceNoteJob) && 
+                It.Is<Job>(job => job.Type == typeof(AddClassroomExperienceNoteJob) &&
                                   job.Method.Name == "Run" &&
                                   expectedArguments.All(arg => job.Args.Contains(arg))),
                 It.IsAny<EnqueuedState>()));
         }
 
-        private static bool IsMatch(Candidate candidateA, string candidateBJson)
+        private static bool IsRequestPlusId(Candidate requestCandidate, string candidateSentToJobJson, Guid expectedId)
         {
-            var candidateB = candidateBJson.DeserializeChangeTracked<Candidate>();
-            candidateA.Should().BeEquivalentTo(candidateB);
+            var candidateSentToJob = candidateSentToJobJson.DeserializeChangeTracked<Candidate>();
+            requestCandidate.Should().BeEquivalentTo(candidateSentToJob, option => option
+                .Excluding(candidate => candidate.Id));
+            candidateSentToJob.Id.Should().Be(expectedId);
             return true;
         }
     }
