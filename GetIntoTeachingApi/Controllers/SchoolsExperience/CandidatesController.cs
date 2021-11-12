@@ -174,25 +174,7 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
                 return BadRequest(ModelState);
             }
 
-            var existingCandidate = _crm.GetCandidate(id);
-
-            if (existingCandidate == null)
-            {
-                return NotFound();
-            }
-
-            // Create a new candidate to encapsulate the actual changes - avoids writing
-            // all the existingCandidate fields back to the CRM.
-            var candidate = new Candidate()
-            {
-                Id = id,
-                ClassroomExperienceNotesRaw = existingCandidate.ClassroomExperienceNotesRaw,
-            };
-
-            candidate.AddClassroomExperienceNote(note);
-
-            string json = candidate.SerializeChangeTracked();
-            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
+            _jobClient.Enqueue<AddClassroomExperienceNoteJob>((x) => x.Run(null, note, id));
 
             return NoContent();
         }
