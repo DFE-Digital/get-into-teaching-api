@@ -71,7 +71,7 @@ namespace GetIntoTeachingApi.Jobs
             var baseMessage = $"{GetType().Name} - Candidate not found";
 
             return numberOfRetries <= NumberOfRetriesAllowingForJobQueue
-                ? baseMessage += " (may be in concurrent job queue)"
+                ? baseMessage + " (may be in concurrent job queue)"
                 : baseMessage;
         }
     }
