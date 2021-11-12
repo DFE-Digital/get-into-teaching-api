@@ -81,7 +81,7 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
                 // This is the only way we can mock/freeze the current date/time
                 // in contract tests (there's no other way to inject it into this class).
                 request.DateTimeProvider = _dateTime;
-                string json = request.Candidate.SerializeChangeTracked();
+                string json = candidate.SerializeChangeTracked();
                 _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
             }
             else
