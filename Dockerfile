@@ -1,5 +1,5 @@
 # https://hub.docker.com/_/microsoft-dotnet-core
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0.100 AS build
 WORKDIR /source
 ARG GIT_COMMIT_SHA
 ENV ASPNETCORE_URLS=http://+:8080
