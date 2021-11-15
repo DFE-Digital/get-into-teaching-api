@@ -123,6 +123,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
             type.GetProperty("OptOutOfGdpr").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "msdyn_gdproptout");
             type.GetProperty("MagicLinkToken").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_websitemltoken");
             type.GetProperty("MagicLinkTokenExpiresAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_websitemltokenexpirydate");
+            type.GetProperty("WelcomeGuideVariant").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_welcomeguidestring" && a.Features.Contains("WELCOME_GUIDE_VARIANT"));
 
             type.GetProperty("TeacherTrainingAdviserSubscriptionChannelId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_gitisttaservicesubscriptionchannel" && a.Type == typeof(OptionSetValue));

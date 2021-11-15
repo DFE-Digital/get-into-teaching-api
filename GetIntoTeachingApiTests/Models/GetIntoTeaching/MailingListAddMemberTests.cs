@@ -36,6 +36,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
                 FirstName = "John",
                 LastName = "Doe",
                 AddressPostcode = "KY11 9YU",
+                WelcomeGuideVariant = "variant1",
                 Qualifications = qualifications,
                 HasEventsSubscription = true,
                 HasTeacherTrainingAdviserSubscription = true,
@@ -50,6 +51,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
             response.FirstName.Should().Be(candidate.FirstName);
             response.LastName.Should().Be(candidate.LastName);
             response.AddressPostcode.Should().Be(candidate.AddressPostcode);
+            response.WelcomeGuideVariant.Should().Be(candidate.WelcomeGuideVariant);
 
             response.QualificationId.Should().Be(latestQualification.Id);
             response.DegreeStatusId.Should().Be(latestQualification.DegreeStatusId);
@@ -74,6 +76,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
                 FirstName = "John",
                 LastName = "Doe",
                 AddressPostcode = "KY11 9YU",
+                WelcomeGuideVariant = "variant1"
             };
 
             var candidate = request.Candidate;
@@ -98,6 +101,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
             candidate.PreferredContactMethodId.Should().Be((int)Candidate.ContactMethod.Any);
             candidate.GdprConsentId.Should().Be((int)Candidate.GdprConsent.Consent);
             candidate.OptOutOfGdpr.Should().BeFalse();
+            candidate.WelcomeGuideVariant.Should().Be(request.WelcomeGuideVariant);
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
             candidate.PrivacyPolicy.AcceptedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(30));

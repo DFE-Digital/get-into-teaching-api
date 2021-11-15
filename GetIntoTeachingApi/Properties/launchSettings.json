@@ -33,7 +33,8 @@
         "TTA_API_KEY": "secret-tta",
         "SE_API_KEY": "secret-se",
         "TOTP_SECRET_KEY": "def456",
-        "APPLY_API_FEATURE": "on"
+        "APPLY_API_FEATURE": "on",
+        "WELCOME_GUIDE_VARIANT_FEATURE": "on"
       }
     }
   }
