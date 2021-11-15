@@ -101,6 +101,8 @@ namespace GetIntoTeachingApi.Jobs
             {
                 var existingForm = _crm.GetApplicationForm(findApplyForm.Id.ToString());
 
+                var yearId = ((int)Models.Crm.ApplicationForm.RecruitmentCycleYear.Year2020) + (findApplyForm.RecruitmentCycleYear - 2020);
+
                 return new Models.Crm.ApplicationForm()
                 {
                     Id = existingForm?.Id,
@@ -110,7 +112,7 @@ namespace GetIntoTeachingApi.Jobs
                     SubmittedAt = findApplyForm.SubmittedAt,
                     StatusId = (int)Enum.Parse(typeof(Models.Crm.ApplicationForm.Status), findApplyForm.ApplicationStatus.ToPascalCase()),
                     PhaseId = (int)Enum.Parse(typeof(Models.Crm.ApplicationForm.Phase), findApplyForm.ApplicationPhase.ToPascalCase()),
-                    RecruitmentCycleYearId = (int)Enum.Parse(typeof(Models.Crm.ApplicationForm.RecruitmentCycleYear), $"Year{findApplyForm.RecruitmentCycleYear.ToString()}"),
+                    RecruitmentCycleYearId = yearId,
                 };
             });
         }
