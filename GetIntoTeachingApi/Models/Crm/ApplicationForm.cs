@@ -34,10 +34,9 @@ namespace GetIntoTeachingApi.Models.Crm
             Apply2 = 222750001,
         }
 
-        // The keys for this enum need to mirror the
-        // Apply API naming so we can match them up.
         public enum RecruitmentCycleYear
         {
+            Year2020 = 222750000,
             Year2021 = 222750001,
             Year2022 = 222750002,
         }
