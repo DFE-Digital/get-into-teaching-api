@@ -25,6 +25,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string AddressPostcode { get; set; }
+        public string WelcomeGuideVariant { get; set; }
         [SwaggerSchema(ReadOnly = true)]
         public bool AlreadySubscribedToEvents { get; set; }
         [SwaggerSchema(ReadOnly = true)]
@@ -65,6 +66,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
             FirstName = candidate.FirstName;
             LastName = candidate.LastName;
             AddressPostcode = candidate.AddressPostcode;
+            WelcomeGuideVariant = candidate.WelcomeGuideVariant;
 
             AlreadySubscribedToMailingList = candidate.HasMailingListSubscription == true;
             AlreadySubscribedToEvents = candidate.HasEventsSubscription == true;
@@ -82,6 +84,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                 FirstName = FirstName,
                 LastName = LastName,
                 AddressPostcode = AddressPostcode.AsFormattedPostcode(),
+                WelcomeGuideVariant = WelcomeGuideVariant,
                 EligibilityRulesPassed = "false",
                 PreferredPhoneNumberTypeId = (int)Candidate.PhoneNumberType.Home,
                 PreferredContactMethodId = (int)Candidate.ContactMethod.Any,
