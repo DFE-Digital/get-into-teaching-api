@@ -32,7 +32,7 @@ namespace GetIntoTeachingApi.Services
         void DeleteLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);
         IEnumerable<Entity> RelatedEntities(Entity entity, string relationshipName, string logicalName);
         Entity BlankExistingEntity(string entityName, Guid id, OrganizationServiceContext context);
-        Entity NewEntity(string entityName, OrganizationServiceContext context);
+        Entity NewEntity(string entityName, Guid? id, OrganizationServiceContext context);
         IEnumerable<TeachingEventBuilding> GetTeachingEventBuildings();
     }
 }
