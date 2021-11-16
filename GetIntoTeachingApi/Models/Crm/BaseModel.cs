@@ -7,32 +7,35 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
+using Newtonsoft.Json;
 
 namespace GetIntoTeachingApi.Models.Crm
 {
-    public class BaseModel : INotifyPropertyChanged
+    public abstract class BaseModel : INotifyPropertyChanged
     {
-        private readonly string[] _propertyNamesExcludedFromChangeTracking = new string[] { "ChangedPropertyNames" };
+        private readonly string[] _propertyNamesExcludedFromChangeTracking = new string[] { nameof(ChangedPropertyNames), nameof(HasUpfrontId) };
         private bool _changeTrackingEnabled = true;
 
         [NotMapped]
-        [JsonIgnore]
+        [JsonProperty]
+        public bool HasUpfrontId { get; private set; }
+        [NotMapped]
+        [System.Text.Json.Serialization.JsonIgnore]
         public HashSet<string> ChangedPropertyNames { get; set; } = new HashSet<string>();
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid? Id { get; set; }
 
-        public BaseModel()
+        protected BaseModel()
         {
             InitChangedPropertyNames();
         }
 
-        public BaseModel(Entity entity, ICrmService crm, IValidatorFactory vaidatorFactory)
+        protected BaseModel(Entity entity, ICrmService crm, IValidatorFactory vaidatorFactory)
             : this()
         {
             Id = entity.Id;
@@ -80,7 +83,7 @@ namespace GetIntoTeachingApi.Models.Crm
                 return null;
             }
 
-            var entity = crm.MappableEntity(LogicalName(GetType()), Id, context);
+            var entity = MappableEntity(LogicalName(GetType()), crm, context);
             MapFieldAttributesToEntity(entity);
             FinaliseEntity(entity, crm, context);
             return entity;
@@ -94,6 +97,17 @@ namespace GetIntoTeachingApi.Models.Crm
         public void EnableChangeTracking()
         {
             _changeTrackingEnabled = true;
+        }
+
+        public void GenerateUpfrontId()
+        {
+            if (Id.HasValue)
+            {
+                throw new InvalidOperationException("Can only generate IDs on models that do not have a preexisting ID.");
+            }
+
+            Id = Guid.NewGuid();
+            HasUpfrontId = true;
         }
 
         protected virtual bool ShouldMapRelationship(string propertyName, dynamic value, ICrmService crm)
@@ -146,6 +160,13 @@ namespace GetIntoTeachingApi.Models.Crm
         {
             input = input?.Trim();
             return string.IsNullOrWhiteSpace(input) ? null : input;
+        }
+
+        private Entity MappableEntity(string entityName, ICrmService crm, OrganizationServiceContext context)
+        {
+            return Id.HasValue && !HasUpfrontId
+                ? crm.BlankExistingEntity(entityName, Id.Value, context)
+                : crm.NewEntity(entityName, context);
         }
 
         [OnDeserializing]

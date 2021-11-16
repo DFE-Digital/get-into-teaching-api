@@ -4,7 +4,6 @@ using System.Linq;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
-using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.SchoolsExperience;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
@@ -76,7 +75,7 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
                 // Usually, it is best practice to allow the CRM to generate sequential GUIDs which provide better
                 // SQL performance. However, in this scenario we have agreed it is beneficial to provide the GUID up-front
                 // because the School Experience app needs the Candidate ID immediately.
-                candidate.Id = Guid.NewGuid();
+                candidate.GenerateUpfrontId();
 
                 // This is the only way we can mock/freeze the current date/time
                 // in contract tests (there's no other way to inject it into this class).
