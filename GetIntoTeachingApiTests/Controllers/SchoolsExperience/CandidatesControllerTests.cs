@@ -139,7 +139,7 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
             signUp.CandidateId.Should().NotBeNull();
             _mockJobClient.Verify(x => x.Create(
                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-               IsRequestPlusId(request.Candidate, (string)job.Args[0], signUp.CandidateId.Value)),
+               MatchesCandidateWithUpfrontId(request.Candidate, (string)job.Args[0], signUp.CandidateId.Value)),
                It.IsAny<EnqueuedState>()));
         }
 
@@ -240,12 +240,14 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
                 It.IsAny<EnqueuedState>()));
         }
 
-        private static bool IsRequestPlusId(Candidate requestCandidate, string candidateSentToJobJson, Guid expectedId)
+        private static bool MatchesCandidateWithUpfrontId(Candidate requestCandidate, string candidateSentToJobJson, Guid expectedId)
         {
             var candidateSentToJob = candidateSentToJobJson.DeserializeChangeTracked<Candidate>();
             requestCandidate.Should().BeEquivalentTo(candidateSentToJob, option => option
-                .Excluding(candidate => candidate.Id));
+                .Excluding(candidate => candidate.Id)
+                .Excluding(candidate => candidate.HasUpfrontId));
             candidateSentToJob.Id.Should().Be(expectedId);
+            candidateSentToJob.HasUpfrontId.Should().Be(true);
             return true;
         }
     }
