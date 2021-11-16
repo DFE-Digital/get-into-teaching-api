@@ -707,12 +707,21 @@ namespace GetIntoTeachingApiTests.Services
         public void NewEntity_CallsNewEntityOnService()
         {
             const string entityName = "entity";
-            var newEntity = new Entity("mock");
-            _mockService.Setup(mock => mock.NewEntity(entityName, _context)).Returns(newEntity);
 
-            var result = _crm.NewEntity(entityName, _context);
+            var result = _crm.NewEntity(entityName, null, _context);
 
-            result.Should().Be(newEntity);
+            _mockService.Verify(mock => mock.NewEntity(entityName, null, _context), Times.Once);
+        }
+
+        [Fact]
+        public void NewEntity_WithId_CallsNewEntityOnService()
+        {
+            const string entityName = "entity";
+            var id = Guid.NewGuid();
+
+            var result = _crm.NewEntity(entityName, id, _context);
+
+            _mockService.Verify(mock => mock.NewEntity(entityName, id, _context), Times.Once);
         }
 
         [Fact]

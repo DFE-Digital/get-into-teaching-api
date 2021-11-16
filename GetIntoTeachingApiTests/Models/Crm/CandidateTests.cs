@@ -220,7 +220,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
 
             candidate.ToEntity(mockCrm.Object, context);
 
-            mockService.Verify(m => m.NewEntity("dfe_candidateprivacypolicy", context), Times.Never);
+            mockService.Verify(m => m.NewEntity("dfe_candidateprivacypolicy", null, context), Times.Never);
         }
 
         [Fact]
@@ -237,7 +237,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
 
             mockCrm.Verify(m => m.CandidateYetToAcceptPrivacyPolicy(
                 It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
-            mockService.Verify(m => m.NewEntity("dfe_candidateprivacypolicy", context), Times.Never);
+            mockService.Verify(m => m.NewEntity("dfe_candidateprivacypolicy", null, context), Times.Never);
         }
 
         [Fact]
@@ -267,7 +267,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
             var mockCrm = new Mock<ICrmService>();
             var candidate = new Candidate() { Id = null };
             var candidateEntity = new Entity("contact");
-            mockCrm.Setup(m => m.NewEntity("contact", context)).Returns(candidateEntity);
+            mockCrm.Setup(m => m.NewEntity("contact", null, context)).Returns(candidateEntity);
 
             candidate.ToEntity(mockCrm.Object, context);
 

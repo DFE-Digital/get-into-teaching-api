@@ -266,9 +266,9 @@ namespace GetIntoTeachingApi.Services
             return _service.BlankExistingEntity(entityName, id, context);
         }
 
-        public Entity NewEntity(string entityName, OrganizationServiceContext context)
+        public Entity NewEntity(string entityName, Guid? id, OrganizationServiceContext context)
         {
-            return _service.NewEntity(entityName, context);
+            return _service.NewEntity(entityName, id, context);
         }
 
         public void Save(BaseModel model)

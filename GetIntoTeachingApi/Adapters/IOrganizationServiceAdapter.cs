@@ -18,7 +18,7 @@ namespace GetIntoTeachingApi.Adapters
         IEnumerable<Entity> RelatedEntities(Entity entity, string attributeName);
         OrganizationServiceContext Context();
         Entity BlankExistingEntity(string entityName, Guid id, OrganizationServiceContext context);
-        Entity NewEntity(string entityName, OrganizationServiceContext context);
+        Entity NewEntity(string entityName, Guid? id, OrganizationServiceContext context);
         void SaveChanges(OrganizationServiceContext context);
         void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);
         void DeleteLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);

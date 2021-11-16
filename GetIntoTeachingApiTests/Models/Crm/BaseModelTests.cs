@@ -323,7 +323,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
 
             var mockEntity = new Entity("mock");
 
-            _mockService.Setup(m => m.NewEntity("mock", _context)).Returns(mockEntity);
+            _mockService.Setup(m => m.NewEntity("mock", null, _context)).Returns(mockEntity);
 
             mock.ToEntity(_crm, _context);
 
@@ -334,14 +334,14 @@ namespace GetIntoTeachingApiTests.Models.Crm
         }
 
         [Fact]
-        public void ToEntity_WhenIdIsGeneratedUpfront_CallsNewEntity()
+        public void ToEntity_WhenIdIsGeneratedUpfront_CallsNewEntityWithId()
         {
             var mock = new MockModel();
 
             mock.GenerateUpfrontId();
             mock.ToEntity(_crm, _context);
 
-            _mockService.Verify(m => m.NewEntity("mock", _context));
+            _mockService.Verify(m => m.NewEntity("mock", mock.Id, _context));
         }
 
         [Fact]
@@ -392,7 +392,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
             var mockEntity = new Entity("mock", (Guid)mock.Id);
 
             _mockService.Setup(m => m.BlankExistingEntity("mock", mockEntity.Id, _context)).Returns(mockEntity);
-            _mockService.Setup(m => m.NewEntity("relatedMock", _context)).Returns<Entity>(null);
+            _mockService.Setup(m => m.NewEntity("relatedMock", null, _context)).Returns<Entity>(null);
 
             mock.ToEntity(_crm, _context);
 
@@ -411,8 +411,8 @@ namespace GetIntoTeachingApiTests.Models.Crm
             var mockEntity = new Entity("mock");
             var relatedMockEntity = new Entity("mock");
 
-            _mockService.Setup(m => m.NewEntity("mock", _context)).Returns(mockEntity);
-            _mockService.Setup(m => m.NewEntity("relatedMock", _context)).Returns(relatedMockEntity);
+            _mockService.Setup(m => m.NewEntity("mock", null, _context)).Returns(mockEntity);
+            _mockService.Setup(m => m.NewEntity("relatedMock", null, _context)).Returns(relatedMockEntity);
             relatedMock.Setup(m => m.ToEntity(_crm, _context)).Returns<Entity>(null);
 
             mock.ToEntity(_crm, _context);
