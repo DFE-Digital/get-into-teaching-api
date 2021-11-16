@@ -231,7 +231,7 @@ namespace GetIntoTeachingApi.Models.Crm
         public string MagicLinkToken { get; set; }
         [EntityField("dfe_websitemltokenexpirydate")]
         public DateTime? MagicLinkTokenExpiresAt { get; set; }
-        [EntityField("dfe_welcomeguidestring", null, null, new[] { "WELCOME_GUIDE_VARIANT" })]
+        [EntityField("dfe_welcomeguidestring")]
         public string WelcomeGuideVariant { get; set; }
 
         [EntityField("dfe_gitisttaserviceissubscriber")]
