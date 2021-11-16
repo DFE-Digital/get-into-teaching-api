@@ -690,19 +690,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void MappableEntity_CallsNewEntityOnServiceWhenIdNull()
-        {
-            const string entityName = "entity";
-            var newEntity = new Entity("mock");
-            _mockService.Setup(mock => mock.NewEntity(entityName, _context)).Returns(newEntity);
-
-            var result = _crm.MappableEntity(entityName, null, _context);
-
-            result.Should().Be(newEntity);
-        }
-
-        [Fact]
-        public void MappableEntity_CallsBlankExistingEntityOnServiceWhenIdNotNull()
+        public void BlankExistingEntity_CallsBlankExistingEntityOnService()
         {
             const string entityName = "entity";
             var id = Guid.NewGuid();
@@ -710,9 +698,21 @@ namespace GetIntoTeachingApiTests.Services
             _mockService.Setup(mock => mock.BlankExistingEntity(entityName, id, _context))
                 .Returns(existingEntity);
 
-            var result = _crm.MappableEntity(entityName, id, _context);
+            var result = _crm.BlankExistingEntity(entityName, id, _context);
 
             result.Should().Be(existingEntity);
+        }
+
+        [Fact]
+        public void NewEntity_CallsNewEntityOnService()
+        {
+            const string entityName = "entity";
+            var newEntity = new Entity("mock");
+            _mockService.Setup(mock => mock.NewEntity(entityName, _context)).Returns(newEntity);
+
+            var result = _crm.NewEntity(entityName, _context);
+
+            result.Should().Be(newEntity);
         }
 
         [Fact]

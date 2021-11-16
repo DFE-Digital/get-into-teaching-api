@@ -31,7 +31,8 @@ namespace GetIntoTeachingApi.Services
         void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);
         void DeleteLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);
         IEnumerable<Entity> RelatedEntities(Entity entity, string relationshipName, string logicalName);
-        Entity MappableEntity(string entityName, Guid? id, OrganizationServiceContext context);
+        Entity BlankExistingEntity(string entityName, Guid id, OrganizationServiceContext context);
+        Entity NewEntity(string entityName, OrganizationServiceContext context);
         IEnumerable<TeachingEventBuilding> GetTeachingEventBuildings();
     }
 }

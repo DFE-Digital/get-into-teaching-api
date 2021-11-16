@@ -261,9 +261,14 @@ namespace GetIntoTeachingApi.Services
             return new List<Entity>() { relatedEntity };
         }
 
-        public Entity MappableEntity(string entityName, Guid? id, OrganizationServiceContext context)
+        public Entity BlankExistingEntity(string entityName, Guid id, OrganizationServiceContext context)
         {
-            return id != null ? _service.BlankExistingEntity(entityName, (Guid)id, context) : _service.NewEntity(entityName, context);
+            return _service.BlankExistingEntity(entityName, id, context);
+        }
+
+        public Entity NewEntity(string entityName, OrganizationServiceContext context)
+        {
+            return _service.NewEntity(entityName, context);
         }
 
         public void Save(BaseModel model)

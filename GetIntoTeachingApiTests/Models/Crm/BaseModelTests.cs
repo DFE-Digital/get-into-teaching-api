@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Moq;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Models.Crm
@@ -333,6 +334,17 @@ namespace GetIntoTeachingApiTests.Models.Crm
         }
 
         [Fact]
+        public void ToEntity_WhenIdIsGeneratedUpfront_CallsNewEntity()
+        {
+            var mock = new MockModel();
+
+            mock.GenerateUpfrontId();
+            mock.ToEntity(_crm, _context);
+
+            _mockService.Verify(m => m.NewEntity("mock", _context));
+        }
+
+        [Fact]
         public void ToEntity_WritesNullProperties()
         {
             var mock = new MockModel()
@@ -414,6 +426,38 @@ namespace GetIntoTeachingApiTests.Models.Crm
         {
             var names = BaseModel.EntityFieldAttributeNames(typeof(MockModel));
             names.Should().BeEquivalentTo(new[] { "dfe_field1", "dfe_field2", "dfe_field3", "mockid" });
+        }
+
+        [Fact]
+        public void HasUpfrontId_IsDecoratedWithJsonPropertyAttribute()
+        {
+            // Decorating properties that have private setters with the JsonProperty
+            // attribute allows them to be deserialized by Newtonsoft.Json 
+            typeof(BaseModel).GetProperty("HasUpfrontId").Should().BeDecoratedWith<JsonPropertyAttribute>();
+        }
+
+        [Fact]
+        public void GenerateUpfrontId_WhenAlreadyHasAnId_ThrowsException()
+        {
+            var mock = new MockModel { Id = Guid.NewGuid() };
+
+            Action action = () => mock.GenerateUpfrontId();
+
+            action.Should().Throw<InvalidOperationException>()
+                .WithMessage("Can only generate IDs on models that do not have a preexisting ID.");
+        }
+
+        [Fact]
+        public void GenerateUpfrontId_WhenNoPreexistingId_GeneratesIdAndSetsHasUpfrontIdFlagToTrue()
+        {
+            var mock = new MockModel();
+            mock.Id.Should().BeNull();
+            mock.HasUpfrontId.Should().Be(false);
+
+            mock.GenerateUpfrontId();
+
+            mock.Id.Should().NotBeNull();
+            mock.HasUpfrontId.Should().Be(true);
         }
     }
 }
