@@ -213,7 +213,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
                 PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = Guid.NewGuid() }
             };
 
-            mockCrm.Setup(m => m.MappableEntity("contact", (Guid)candidate.Id, context)).Returns(new Entity("contact"));
+            mockCrm.Setup(m => m.BlankExistingEntity("contact", candidate.Id.Value, context)).Returns(new Entity("contact"));
             mockCrm.Setup(m => m.CandidateYetToAcceptPrivacyPolicy((Guid)candidate.Id,
                 candidate.PrivacyPolicy.AcceptedPolicyId)).Returns(false);
 
@@ -230,7 +230,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
             var mockCrm = new Mock<ICrmService>();
             var candidate = new Candidate() { Id = Guid.NewGuid(), PrivacyPolicy = null };
 
-            mockCrm.Setup(m => m.MappableEntity("contact", (Guid)candidate.Id, context)).Returns(new Entity("contact"));
+            mockCrm.Setup(m => m.BlankExistingEntity("contact", candidate.Id.Value, context)).Returns(new Entity("contact"));
 
             candidate.ToEntity(mockCrm.Object, context);
 
@@ -247,7 +247,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
             var mockCrm = new Mock<ICrmService>();
             var candidate = new Candidate() { Id = Guid.NewGuid(), EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.SingleEvent };
             var candidateEntity = new Entity("contact");
-            mockCrm.Setup(m => m.MappableEntity("contact", candidate.Id, context)).Returns(candidateEntity);
+            mockCrm.Setup(m => m.BlankExistingEntity("contact", candidate.Id.Value, context)).Returns(candidateEntity);
             mockCrm.Setup(m => m.CandidateAlreadyHasLocalEventSubscriptionType((Guid)candidate.Id)).Returns(true);
 
             candidate.ToEntity(mockCrm.Object, context);
@@ -266,7 +266,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
             var mockCrm = new Mock<ICrmService>();
             var candidate = new Candidate() { Id = null };
             var candidateEntity = new Entity("contact");
-            mockCrm.Setup(m => m.MappableEntity("contact", null, context)).Returns(candidateEntity);
+            mockCrm.Setup(m => m.NewEntity("contact", context)).Returns(candidateEntity);
 
             candidate.ToEntity(mockCrm.Object, context);
 
@@ -281,7 +281,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
             var mockCrm = new Mock<ICrmService>();
             var candidate = new Candidate() { Id = Guid.NewGuid() };
             var candidateEntity = new Entity("contact");
-            mockCrm.Setup(m => m.MappableEntity("contact", candidate.Id, context)).Returns(candidateEntity);
+            mockCrm.Setup(m => m.BlankExistingEntity("contact", candidate.Id.Value, context)).Returns(candidateEntity);
 
             candidate.ToEntity(mockCrm.Object, context);
 
