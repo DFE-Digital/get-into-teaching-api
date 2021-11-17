@@ -47,7 +47,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
             var entity = registration.ToEntity(mockCrm.Object, context);
 
             entity.Should().BeNull();
-            mockService.Verify(m => m.NewEntity("msevtmgt_eventregistration", context), Times.Never);
+            mockService.Verify(m => m.NewEntity("msevtmgt_eventregistration", null, context), Times.Never);
         }
 
         [Fact]
@@ -58,12 +58,12 @@ namespace GetIntoTeachingApiTests.Models.Crm
             var mockCrm = new Mock<ICrmService>();
             var registration = new TeachingEventRegistration() { CandidateId = Guid.NewGuid(), EventId = Guid.NewGuid() };
 
-            mockCrm.Setup(m => m.NewEntity("msevtmgt_eventregistration", context)).Returns(new Entity("msevtmgt_eventregistration"));
+            mockCrm.Setup(m => m.NewEntity("msevtmgt_eventregistration", null, context)).Returns(new Entity("msevtmgt_eventregistration"));
             mockCrm.Setup(m => m.CandidateYetToRegisterForTeachingEvent(registration.CandidateId, registration.EventId)).Returns(true);
 
             registration.ToEntity(mockCrm.Object, context);
 
-            mockCrm.Verify(m => m.NewEntity("msevtmgt_eventregistration", context), Times.Once);
+            mockCrm.Verify(m => m.NewEntity("msevtmgt_eventregistration", null, context), Times.Once);
         }
     }
 }

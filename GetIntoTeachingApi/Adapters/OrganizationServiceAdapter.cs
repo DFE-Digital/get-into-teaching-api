@@ -86,9 +86,9 @@ namespace GetIntoTeachingApi.Adapters
             return existingEntity;
         }
 
-        public Entity NewEntity(string entityName, OrganizationServiceContext context)
+        public Entity NewEntity(string entityName, Guid? id, OrganizationServiceContext context)
         {
-            var newEntity = new Entity(entityName);
+            var newEntity = id.HasValue ? new Entity(entityName, id.Value) : new Entity(entityName);
             context.AddObject(newEntity);
             return newEntity;
         }

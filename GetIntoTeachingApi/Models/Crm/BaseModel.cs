@@ -166,7 +166,7 @@ namespace GetIntoTeachingApi.Models.Crm
         {
             return Id.HasValue && !HasUpfrontId
                 ? crm.BlankExistingEntity(entityName, Id.Value, context)
-                : crm.NewEntity(entityName, context);
+                : crm.NewEntity(entityName, Id, context);
         }
 
         [OnDeserializing]
