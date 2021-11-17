@@ -66,12 +66,6 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
 
             if (appSettings.IsCrmIntegrationPaused)
             {
-                // Temporary. To be removed once feature is verified in other environments.
-                if (_env.IsProduction)
-                {
-                    throw new InvalidOperationException("CandidatesController#SignUp - Aborting (CRM integration paused).");
-                }
-
                 // Usually, it is best practice to allow the CRM to generate sequential GUIDs which provide better
                 // SQL performance. However, in this scenario we have agreed it is beneficial to provide the GUID up-front
                 // because the School Experience app needs the Candidate ID immediately.
