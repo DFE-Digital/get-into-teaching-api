@@ -34,8 +34,13 @@ jobs:
           yaml_secret: INFRA-KEYS
           secret: SLACK-WEBHOOK
 
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0'
+
       - name: Install dotnet-sonarscanner
-        run:  dotnet tool install --global dotnet-sonarscanner --version 4.8.0
+        run:  dotnet tool install --global dotnet-sonarscanner --version 5.4
 
       - name: Install dependencies
         run:  dotnet restore
