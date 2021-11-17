@@ -8,14 +8,12 @@ namespace GetIntoTeachingApi.Services
 {
     public class CandidateMagicLinkTokenService : ICandidateMagicLinkTokenService
     {
-        public static readonly TimeSpan TokenTimeSpan = new TimeSpan(48, 0, 0);
+        public static readonly TimeSpan TokenTimeSpan = new (48, 0, 0);
         private readonly ICrmService _crm;
         private readonly IDateTimeProvider _dateTime;
-        private readonly RNGCryptoServiceProvider _cryptoService;
 
         public CandidateMagicLinkTokenService(ICrmService crm, IDateTimeProvider dateTime)
         {
-            _cryptoService = new RNGCryptoServiceProvider();
             _crm = crm;
             _dateTime = dateTime;
         }
@@ -46,10 +44,9 @@ namespace GetIntoTeachingApi.Services
             return result;
         }
 
-        private string CreateToken()
+        private static string CreateToken()
         {
-            byte[] bytes = new byte[16];
-            _cryptoService.GetBytes(bytes);
+            var bytes = RandomNumberGenerator.GetBytes(16);
 
             return BitConverter.ToString(bytes).Replace("-", string.Empty);
         }
