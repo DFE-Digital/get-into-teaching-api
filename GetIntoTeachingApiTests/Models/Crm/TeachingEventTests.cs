@@ -116,7 +116,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
         public void ToEntity_WhenBuildingIsRemoved_DeletesLink()
         {
             _mockBuilding.Setup(mock => mock.ToEntity(It.IsAny<ICrmService>(), _context)).Returns(new Entity());
-            _mockCrm.Setup(m => m.NewEntity("msevtmgt_event", _context)).Returns(new Entity());
+            _mockCrm.Setup(m => m.NewEntity("msevtmgt_event", null, _context)).Returns(new Entity());
             _mockCrm.Setup(mock => mock.GetTeachingEvent("readableId"))
                 .Returns(new TeachingEvent
                 {
@@ -140,7 +140,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
         public void ToEntity_WhenEventIsNew_ReturnsEntity()
         {
             _mockBuilding.Setup(mock => mock.ToEntity(It.IsAny<ICrmService>(), _context)).Returns(new Entity());
-            _mockCrm.Setup(m => m.NewEntity("msevtmgt_event", _context)).Returns(new Entity());
+            _mockCrm.Setup(m => m.NewEntity("msevtmgt_event", null, _context)).Returns(new Entity());
             _mockCrm.Setup(mock => mock.GetTeachingEvent("readableId"))
                 .Returns<TeachingEvent>(null);
 
@@ -160,7 +160,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
         public void ToEntity_WhenBuildingIsNotRemoved_DoesNotDeleteLink()
         {
             _mockBuilding.Setup(mock => mock.ToEntity(It.IsAny<ICrmService>(), _context)).Returns(new Entity());
-            _mockCrm.Setup(m => m.NewEntity("msevtmgt_event",  _context)).Returns(new Entity());
+            _mockCrm.Setup(m => m.NewEntity("msevtmgt_event", null,  _context)).Returns(new Entity());
             _mockCrm.Setup(mock => mock.GetTeachingEvent("readableId"))
                 .Returns(new TeachingEvent
                 {
@@ -184,7 +184,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
         public void ToEntity_WhenThereIsNoPreexistingRelationship_DoesNotDeleteLink()
         {
             _mockBuilding.Setup(mock => mock.ToEntity(It.IsAny<ICrmService>(), _context)).Returns(new Entity());
-            _mockCrm.Setup(m => m.NewEntity("msevtmgt_event", _context)).Returns(new Entity());
+            _mockCrm.Setup(m => m.NewEntity("msevtmgt_event", null, _context)).Returns(new Entity());
             _mockCrm.Setup(mock => mock.GetTeachingEvent("readableId"))
                 .Returns(new TeachingEvent
                 {
