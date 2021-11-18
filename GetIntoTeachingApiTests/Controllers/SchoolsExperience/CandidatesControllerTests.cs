@@ -144,19 +144,6 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
         }
 
         [Fact]
-        public void SignUp_WhenProductionAndCrmIntegrationPaused_ThrowsException()
-        {
-            var request = new SchoolsExperienceSignUp { FirstName = "first" };
-            var mockAppSettings = new Mock<IAppSettings>();
-            mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(true);
-            _mockEnv.Setup(m => m.IsProduction).Returns(true);
-
-            _controller.Invoking(c => c.SignUp(request, mockAppSettings.Object))
-               .Should().Throw<InvalidOperationException>()
-               .WithMessage("CandidatesController#SignUp - Aborting (CRM integration paused).");
-        }
-
-        [Fact]
         public void Get_WhenFound_ReturnsSchoolsExperienceSignUp()
         {
             var candidate = new Candidate() { Id = Guid.NewGuid() };
