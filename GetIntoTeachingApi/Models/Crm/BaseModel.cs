@@ -23,6 +23,7 @@ namespace GetIntoTeachingApi.Models.Crm
 
         [NotMapped]
         [JsonProperty]
+        [System.Text.Json.Serialization.JsonIgnore]
         public bool HasUpfrontId { get; private set; }
         [NotMapped]
         [System.Text.Json.Serialization.JsonIgnore]
