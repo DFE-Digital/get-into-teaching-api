@@ -27,8 +27,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 6,
-  "iteration": 1628066205294,
+  "id": 2,
+  "iteration": 1638193478454,
   "links": [],
   "panels": [
     {
@@ -656,7 +656,8 @@
     },
     {
       "aliasColors": {
-        "Unverified": "#F2495C"
+        "Unverified": "#F2495C",
+        "Verified": "#73BF69"
       },
       "breakPoint": "50%",
       "cacheTimeout": null,
@@ -694,59 +695,21 @@
       "strokeWidth": 1,
       "targets": [
         {
-          "expr": "sum(max_over_time(api_generated_totps[$__range]) or vector(0)) - sum(max_over_time(api_generated_totps[$__range] offset $__range) or vector(0))",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "interval": "",
-          "legendFormat": "Generated",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        },
-        {
-          "expr": "sum(max_over_time(api_verified_totps[$__range]) or vector(0)) - sum(max_over_time(api_verified_totps[$__range] offset $__range) or vector(0))",
-          "interval": "",
-          "legendFormat": "Verified",
-          "refId": "B"
-        },
-        {
-          "expr": "(sum(max_over_time(api_generated_totps[$__range]) or vector(0)) - sum(max_over_time(api_generated_totps[$__range] offset $__range) or vector(0))) - (sum(max_over_time(api_verified_totps[$__range]) or vector(0)) - sum(max_over_time(api_verified_totps[$__range] offset $__range) or vector(0)))",
+          "expr": "sum(increase(api_generated_totps[$__range])) - sum(increase(api_verified_totps[$__range]))",
           "interval": "",
           "legendFormat": "Unverified",
-          "refId": "C"
+          "refId": "D"
+        },
+        {
+          "expr": "sum(increase(api_verified_totps[$__range]))",
+          "interval": "",
+          "legendFormat": "Verified",
+          "refId": "E"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "TOTPs Generated vs Verified",
+      "title": "TOTPs Verified vs Unverified",
       "type": "grafana-piechart-panel",
       "valueName": "current"
     },
@@ -800,42 +763,10 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "expr": "sum(max_over_time(api_verified_totps{valid=\"False\"}[$__range]) or vector(0)) - sum(max_over_time(api_verified_totps{valid=\"False\"}[$__range] offset $__range) or vector(0))",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
+          "expr": "sum(increase(api_verified_totps{valid=\"False\"}[$__range]))",
           "interval": "",
-          "legendFormat": "Failed Attempts",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
+          "legendFormat": "",
+          "refId": "B"
         }
       ],
       "timeFrom": null,
@@ -1132,7 +1063,7 @@
               "type": "count"
             }
           ],
-          "query": "\"Response Operations:HealthCheck\" AND \"healthy\" AND cf.app:\"$App\"",
+          "query": "\"api/operations/health_check\" AND \"healthy\" AND cf.app:\"$App\"",
           "refId": "A",
           "timeField": "@timestamp"
         },
@@ -1159,7 +1090,7 @@
               "type": "count"
             }
           ],
-          "query": "\"Response Operations:HealthCheck\" AND \"degraded\" AND cf.app:\"$App\"",
+          "query": "\"api/operations/health_check\" AND \"degraded\" AND cf.app:\"$App\"",
           "refId": "B",
           "timeField": "@timestamp"
         },
@@ -1185,7 +1116,7 @@
               "type": "count"
             }
           ],
-          "query": "\"Response Operations:HealthCheck\" AND \"unhealthy\" AND cf.app:\"$App\"",
+          "query": "\"api/operations/health_check\" AND \"unhealthy\" AND cf.app:\"$App\"",
           "refId": "C",
           "timeField": "@timestamp"
         },
@@ -1211,7 +1142,7 @@
               "type": "count"
             }
           ],
-          "query": "\"api/operations/health_check\" AND access.response_code >=400 AND cf.app:\"$App\"",
+          "query": "\"api/operations/health_check\"  AND access.response_code >=400 AND cf.app:\"$App\"",
           "refId": "D",
           "timeField": "@timestamp"
         }
