@@ -65,14 +65,15 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         [InlineData("eventname1", false)]
         [InlineData("event-name", false)]
         [InlineData("event_name", false)]
+        [InlineData("event:name", false)]
+        [InlineData("eventname-", false)]
+        [InlineData("-eventname", false)]
+        [InlineData("eventname_", false)]
+        [InlineData("_eventname", false)]
+        [InlineData("test(ing)–valid&yuk", false)]
         [InlineData("event name", true)]
         [InlineData("event?name", true)]
         [InlineData("event@name", true)]
-        [InlineData("event:name", true)]
-        [InlineData("eventname-", true)]
-        [InlineData("-eventname", true)]
-        [InlineData("eventname_", true)]
-        [InlineData("_eventname", true)]
         public void Validate_ReadableId_ValidatesCorrectly(string readableId, bool hasError)
         {
             var operation = new TeachingEventUpsertOperation() { ReadableId = readableId };
