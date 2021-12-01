@@ -16,6 +16,7 @@ using System.Linq;
 using System.Collections.Generic;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.SchoolsExperience;
+using GetIntoTeachingApiTests.Helpers;
 
 namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
 {
@@ -46,6 +47,7 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
                 _mockJobClient.Object,
                 _mockDateTime.Object,
                 _mockEnv.Object);
+            _controller.MockUser("SE");
         }
 
         [Fact]
@@ -57,12 +59,14 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
         [Fact]
         public void ExchangeAccessToken_InvalidAccessToken_RespondsWithUnauthorized()
         {
+            _request.Reference = "Ref";
             var candidate = new Candidate { Id = Guid.NewGuid() };
             _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns(candidate);
             _mockTokenService.Setup(mock => mock.IsValid("000000", _request, (Guid)candidate.Id)).Returns(false);
 
             var response = _controller.ExchangeAccessToken("000000", _request);
 
+            _request.Reference.Should().Be("Ref");
             response.Should().BeOfType<UnauthorizedResult>();
         }
 
@@ -75,6 +79,7 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
 
             var response = _controller.ExchangeAccessToken("000000", _request);
 
+            _request.Reference.Should().Be("SE");
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             var responseModel = ok.Value as SchoolsExperienceSignUp;
             responseModel.CandidateId.Should().Be(candidate.Id);
