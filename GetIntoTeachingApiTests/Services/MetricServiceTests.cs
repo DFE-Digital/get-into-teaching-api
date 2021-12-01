@@ -68,13 +68,14 @@ namespace GetIntoTeachingApiTests.Services
         public void GeneratedTotps_ReturnsMetric()
         {
             _metrics.GeneratedTotps.Name.Should().Be("api_generated_totps");
+            _metrics.GeneratedTotps.LabelNames.Should().BeEquivalentTo(new[] { "reference" });
         }
 
         [Fact]
         public void VerifiedTotps_ReturnsMetric()
         {
             _metrics.VerifiedTotps.Name.Should().Be("api_verified_totps");
-            _metrics.VerifiedTotps.LabelNames.Should().BeEquivalentTo(new[] { "valid" });
+            _metrics.VerifiedTotps.LabelNames.Should().BeEquivalentTo(new[] { "valid", "reference" });
         }
 
         [Fact]
