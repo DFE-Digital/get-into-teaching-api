@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
@@ -57,10 +58,15 @@ namespace GetIntoTeachingApi.Auth
 
             if (client == null)
             {
-                return new Claim[0];
+                return Array.Empty<Claim>();
             }
 
-            return new[] { new Claim("token", token), new Claim(ClaimTypes.Role, client.Role) };
+            return new[]
+            {
+                new Claim("token", token),
+                new Claim(ClaimTypes.Role, client.Role),
+                new Claim(ClaimTypes.Name, client.Name),
+            };
         }
     }
 }
