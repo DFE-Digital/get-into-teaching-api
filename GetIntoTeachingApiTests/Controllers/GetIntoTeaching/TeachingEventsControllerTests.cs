@@ -49,6 +49,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
             _metrics = new MetricService();
             _controller = new TeachingEventsController(_mockStore.Object, _mockJobClient.Object,
                 _mockTokenService.Object, _mockCrm.Object, _mockLogger.Object, _metrics, _mockDateTime.Object);
+            _controller.MockUser("GIT");
 
             // Freeze time.
             _mockDateTime.Setup(m => m.UtcNow).Returns(DateTime.UtcNow);
@@ -171,12 +172,14 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
         [Fact]
         public void ExchangeAccessTokenForAttendee_InvalidAccessToken_RespondsWithUnauthorized()
         {
+            _request.Reference = "Ref";
             var candidate = new Candidate { Id = Guid.NewGuid() };
             _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns(candidate);
             _mockTokenService.Setup(mock => mock.IsValid("000000", _request, (Guid)candidate.Id)).Returns(false);
 
             var response = _controller.ExchangeAccessTokenForAttendee("000000", _request);
 
+            _request.Reference.Should().Be("Ref");
             response.Should().BeOfType<UnauthorizedResult>();
         }
 
@@ -189,6 +192,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
 
             var response = _controller.ExchangeAccessTokenForAttendee("000000", _request);
 
+            _request.Reference.Should().Be("GIT");
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             var responseModel = ok.Value as TeachingEventAddAttendee;
             responseModel.CandidateId.Should().Be(candidate.Id);
@@ -212,6 +216,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
 
             var response = _controller.ExchangeUnverifiedRequestForAttendee(_request);
 
+            _request.Reference.Should().Be("GIT");
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             var responseModel = ok.Value as TeachingEventAddAttendee;
             responseModel.CandidateId.Should().Be(candidate.Id);
@@ -222,10 +227,12 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
         [Fact]
         public void ExchangeUnverifiedRequestForAttendee_MissingCandidate_RespondsWithNotFound()
         {
+            _request.Reference = "Ref";
             _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns<Candidate>(null);
 
             var response = _controller.ExchangeUnverifiedRequestForAttendee(_request);
 
+            _request.Reference.Should().Be("Ref");
             response.Should().BeOfType<NotFoundResult>();
         }
 

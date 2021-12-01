@@ -14,6 +14,7 @@ using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApi.Controllers.GetIntoTeaching;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.GetIntoTeaching;
+using GetIntoTeachingApiTests.Helpers;
 
 namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
 {
@@ -41,6 +42,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
                 _mockCrm.Object,
                 _mockJobClient.Object,
                 _mockDateTime.Object);
+            _controller.MockUser("GIT");
 
             // Freeze time.
             _mockDateTime.Setup(m => m.UtcNow).Returns(DateTime.UtcNow);
@@ -65,12 +67,14 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
         [Fact]
         public void ExchangeAccessTokenForMember_InvalidAccessToken_RespondsWithUnauthorized()
         {
+            _request.Reference = "Ref";
             var candidate = new Candidate { Id = Guid.NewGuid() };
             _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns(candidate);
             _mockAccessTokenService.Setup(mock => mock.IsValid("000000", _request, (Guid)candidate.Id)).Returns(false);
 
             var response = _controller.ExchangeAccessTokenForMember("000000", _request);
 
+            _request.Reference.Should().Be("Ref");
             response.Should().BeOfType<UnauthorizedResult>();
         }
 
@@ -83,6 +87,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
 
             var response = _controller.ExchangeAccessTokenForMember("000000", _request);
 
+            _request.Reference.Should().Be("GIT");
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             var responseModel = ok.Value as MailingListAddMember;
             responseModel.CandidateId.Should().Be(candidate.Id);

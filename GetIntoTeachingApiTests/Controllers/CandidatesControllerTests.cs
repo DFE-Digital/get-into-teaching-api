@@ -36,6 +36,7 @@ namespace GetIntoTeachingApiTests.Controllers
                 _mockCrm.Object,
                 _mockAppSettings.Object,
                 _mockLogger.Object);
+            _controller.MockUser();
         }
 
         [Fact]
@@ -47,11 +48,12 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void CreateAccessToken_InvalidRequest_RespondsWithValidationErrors()
         {
-            var request = new ExistingCandidateRequest { Email = "invalid-email@" };
+            var request = new ExistingCandidateRequest { Email = "invalid-email@", Reference = "Ref" };
             _controller.ModelState.AddModelError("Email", "Email is invalid.");
 
             var response = _controller.CreateAccessToken(request);
 
+            request.Reference.Should().Be("Ref");
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
             errors.Should().ContainKey("Email").WhoseValue.Should().BeOfType<string[]>().Which.Should().Contain("Email is invalid.");
@@ -68,6 +70,7 @@ namespace GetIntoTeachingApiTests.Controllers
 
             var response = _controller.CreateAccessToken(request);
 
+            request.Reference.Should().Be("Client");
             response.Should().BeOfType<NoContentResult>();
             _mockNotifyService.Verify(
                 mock => mock.SendEmailAsync(
