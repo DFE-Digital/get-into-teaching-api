@@ -61,6 +61,7 @@ namespace GetIntoTeachingApiTests.Auth
             {
                 result.Principal.HasClaim("token", "api_key").Should().BeTrue();
                 result.Principal.HasClaim(ClaimTypes.Role, "Service").Should().BeTrue();
+                result.Principal.HasClaim(ClaimTypes.Name, "Admin").Should().BeTrue();
             }
         }
 

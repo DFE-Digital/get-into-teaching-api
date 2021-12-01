@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.TeacherTrainingAdviser;
+using GetIntoTeachingApiTests.Helpers;
 
 namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
 {
@@ -34,6 +35,7 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
             _mockDateTime = new Mock<IDateTimeProvider>();
             _request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
             _controller = new CandidatesController(_mockTokenService.Object, _mockCrm.Object, _mockJobClient.Object, _mockDateTime.Object);
+            _controller.MockUser("TTA");
 
             // Freeze time.
             _mockDateTime.Setup(m => m.UtcNow).Returns(DateTime.UtcNow);
@@ -48,12 +50,14 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         [Fact]
         public void ExchangeAccessToken_InvalidAccessToken_RespondsWithUnauthorized()
         {
+            _request.Reference = "Ref";
             var candidate = new Candidate { Id = Guid.NewGuid() };
             _mockCrm.Setup(mock => mock.MatchCandidate(_request)).Returns(candidate);
             _mockTokenService.Setup(mock => mock.IsValid("000000", _request, (Guid)candidate.Id)).Returns(false);
 
             var response = _controller.ExchangeAccessToken("000000", _request);
 
+            _request.Reference.Should().Be("Ref");
             response.Should().BeOfType<UnauthorizedResult>();
         }
 
@@ -66,6 +70,7 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
 
             var response = _controller.ExchangeAccessToken("000000", _request);
 
+            _request.Reference.Should().Be("TTA");
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             var responseModel = ok.Value as TeacherTrainingAdviserSignUp;
             responseModel.CandidateId.Should().Be(candidate.Id);

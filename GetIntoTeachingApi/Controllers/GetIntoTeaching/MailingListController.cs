@@ -82,6 +82,8 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
             [FromRoute, SwaggerParameter("Access token (PIN code).", Required = true)] string accessToken,
             [FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] ExistingCandidateRequest request)
         {
+            request.Reference ??= User.Identity.Name;
+
             var candidate = _crm.MatchCandidate(request);
 
             if (candidate == null || !_accessTokenService.IsValid(accessToken, request, (Guid)candidate.Id))

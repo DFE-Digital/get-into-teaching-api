@@ -40,11 +40,14 @@ namespace GetIntoTeachingApi.Services
                 LabelNames = new[] { "outcome" },
             });
         private static readonly Counter _generatedTotps = Metrics
-            .CreateCounter("api_generated_totps", "Number of generated timed one time passwords.");
+            .CreateCounter("api_generated_totps", "Number of generated timed one time passwords.", new CounterConfiguration
+            {
+                LabelNames = new[] { "reference" },
+            });
         private static readonly Counter _verifiedTotps = Metrics
             .CreateCounter("api_verified_totps", "Number of verified timed one time passwords.", new CounterConfiguration
             {
-                LabelNames = new[] { "valid" },
+                LabelNames = new[] { "valid", "reference" },
             });
 
         public Histogram FindApplySyncDuration => _findApplySyncDuration;
