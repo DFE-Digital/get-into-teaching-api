@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Sentry;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Controllers
@@ -52,9 +51,11 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
         public IActionResult CreateAccessToken([FromBody, SwaggerRequestBody("Candidate access token request (must match an existing candidate).", Required = true)] ExistingCandidateRequest request)
         {
+            request.Reference ??= User.Identity.Name;
+
             if (!ModelState.IsValid)
             {
-                return BadRequest(this.ModelState);
+                return BadRequest(ModelState);
             }
 
             if (_appSettings.IsCrmIntegrationPaused)

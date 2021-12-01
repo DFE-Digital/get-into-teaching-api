@@ -12,6 +12,7 @@ namespace GetIntoTeachingApi.Models
         public string LastName { get; set; }
         public string Email { get; set; }
         public DateTime? DateOfBirth { get; set; }
+        public string Reference { get; set; }
 
         public bool IsFullMatch(Entity entity)
         {

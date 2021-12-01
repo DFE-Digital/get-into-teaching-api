@@ -13,6 +13,7 @@ namespace GetIntoTeachingApi.Services
         public static readonly int VerificationWindow = 30;
         public static readonly int StepInSeconds = 30;
         private const int Length = 6;
+        private static readonly string NoReference = "None";
         private readonly IEnv _env;
         private readonly IMetricService _metrics;
         private readonly IDateTimeProvider _dateTime;
@@ -28,7 +29,7 @@ namespace GetIntoTeachingApi.Services
         {
             var totp = CreateTotp(request).ComputeTotp();
 
-            _metrics.GeneratedTotps.Inc();
+            _metrics.GeneratedTotps.WithLabels(request.Reference ?? NoReference).Inc();
 
             return totp;
         }
@@ -53,7 +54,7 @@ namespace GetIntoTeachingApi.Services
                 out _,
                 new VerificationWindow(previous: VerificationWindow, future: 0));
 
-            _metrics.VerifiedTotps.WithLabels(valid.ToString()).Inc();
+            _metrics.VerifiedTotps.WithLabels(valid.ToString(), request.Reference ?? NoReference).Inc();
 
             return valid;
         }
