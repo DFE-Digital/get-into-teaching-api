@@ -27,8 +27,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 2,
-  "iteration": 1638193478454,
+  "id": 1,
+  "iteration": 1638433091210,
   "links": [],
   "panels": [
     {
@@ -685,6 +685,8 @@
       "interval": null,
       "legend": {
         "show": true,
+        "sort": "current",
+        "sortDesc": true,
         "values": true
       },
       "legendType": "Under graph",
@@ -695,21 +697,16 @@
       "strokeWidth": 1,
       "targets": [
         {
-          "expr": "sum(increase(api_generated_totps[$__range])) - sum(increase(api_verified_totps[$__range]))",
+          "expr": "sum(increase(api_generated_totps[$__range])) by (reference)",
+          "instant": true,
           "interval": "",
-          "legendFormat": "Unverified",
-          "refId": "D"
-        },
-        {
-          "expr": "sum(increase(api_verified_totps[$__range]))",
-          "interval": "",
-          "legendFormat": "Verified",
-          "refId": "E"
+          "legendFormat": "{{reference}}",
+          "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "TOTPs Verified vs Unverified",
+      "title": "TOTPs Generated",
       "type": "grafana-piechart-panel",
       "valueName": "current"
     },
@@ -869,6 +866,94 @@
       "title": "Magic Link Requests",
       "type": "grafana-piechart-panel",
       "valueName": "total"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 50
+              },
+              {
+                "color": "#EAB839",
+                "value": 65
+              },
+              {
+                "color": "green",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 18,
+        "x": 6,
+        "y": 20
+      },
+      "id": 69,
+      "interval": null,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.2",
+      "targets": [
+        {
+          "expr": "(sum(increase(api_verified_totps{reference=\"Get an Adviser\"}[$__range])) by (reference) / sum(increase(api_generated_totps{reference=\"Get an Adviser\"}[$__range])) by (reference)) * 100",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "TTA",
+          "refId": "A"
+        },
+        {
+          "expr": "(sum(increase(api_verified_totps{reference=\"Get into Teaching\"}[$__range])) by (reference) / sum(increase(api_generated_totps{reference=\"Get into Teaching\"}[$__range])) by (reference)) * 100",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Get into Teaching",
+          "refId": "B"
+        },
+        {
+          "expr": "(sum(increase(api_verified_totps{reference=\"Schools Experience\"}[$__range])) by (reference) / sum(increase(api_generated_totps{reference=\"Schools Experience\"}[$__range])) by (reference)) * 100",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Schools Experience",
+          "refId": "C"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "TOTP Success Rates",
+      "type": "stat"
     },
     {
       "collapsed": false,
