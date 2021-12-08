@@ -75,7 +75,7 @@ namespace GetIntoTeachingApi.Jobs
                 candidate.ChannelId = (int)Models.Crm.Candidate.Channel.ApplyForTeacherTraining;
             }
 
-            var latestApplicationForm = findApplyApplicationForms?.FirstOrDefault();
+            var latestApplicationForm = findApplyApplicationForms?.OrderByDescending(f => f.UpdatedAt).FirstOrDefault();
 
             if (latestApplicationForm == null)
             {

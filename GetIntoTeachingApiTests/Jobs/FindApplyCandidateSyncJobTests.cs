@@ -42,6 +42,15 @@ namespace GetIntoTeachingApiTests.Jobs
             {
                 new ApplicationForm()
                 {
+                    Id = 2,
+                    CreatedAt = new DateTime(2021, 1, 3),
+                    UpdatedAt = new DateTime(2021, 1, 3),
+                    ApplicationStatus = "awaiting_candidate_response",
+                    ApplicationPhase = "apply_1",
+                    RecruitmentCycleYear = 2021,
+                },
+                new ApplicationForm()
+                {
                     Id = 1,
                     CreatedAt = new DateTime(2021, 1, 4),
                     UpdatedAt = new DateTime(2021, 1, 5),
@@ -49,14 +58,6 @@ namespace GetIntoTeachingApiTests.Jobs
                     ApplicationStatus = "never_signed_in",
                     ApplicationPhase = "apply_2",
                     RecruitmentCycleYear = 2022,
-                },
-                new ApplicationForm()
-                {
-                    Id = 2,
-                    CreatedAt = new DateTime(2021, 1, 3),
-                    ApplicationStatus = "awaiting_candidate_response",
-                    ApplicationPhase = "apply_1",
-                    RecruitmentCycleYear = 2021,
                 },
             };
             _attributes = new CandidateAttributes()
@@ -88,24 +89,24 @@ namespace GetIntoTeachingApiTests.Jobs
             var form1 = new GetIntoTeachingApi.Models.Crm.ApplicationForm()
             {
                 Id = null,
-                FindApplyId = _forms[0].Id.ToString(),
-                CreatedAt = _forms[0].CreatedAt,
+                FindApplyId = _forms[1].Id.ToString(),
+                CreatedAt = _forms[1].CreatedAt,
                 PhaseId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply2,
                 StatusId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.NeverSignedIn,
                 RecruitmentCycleYearId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.RecruitmentCycleYear.Year2022,
-                UpdatedAt = _forms[0].UpdatedAt,
-                SubmittedAt = _forms[0].SubmittedAt,
+                UpdatedAt = _forms[1].UpdatedAt,
+                SubmittedAt = _forms[1].SubmittedAt,
             };
 
             var form2 = new GetIntoTeachingApi.Models.Crm.ApplicationForm()
             {
                 Id = existingApplicationForm.Id,
-                FindApplyId = _forms[1].Id.ToString(),
+                FindApplyId = _forms[0].Id.ToString(),
                 PhaseId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply1,
                 StatusId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.AwaitingCandidateResponse,
                 RecruitmentCycleYearId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.RecruitmentCycleYear.Year2021,
-                CreatedAt = _forms[1].CreatedAt,
-                UpdatedAt = _forms[1].UpdatedAt,
+                CreatedAt = _forms[0].CreatedAt,
+                UpdatedAt = _forms[0].UpdatedAt,
                 SubmittedAt = null,
             };
 
@@ -118,7 +119,7 @@ namespace GetIntoTeachingApiTests.Jobs
                 FindApplyPhaseId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply2,
                 FindApplyCreatedAt = _attributes.CreatedAt,
                 FindApplyUpdatedAt = _attributes.UpdatedAt,
-                ApplicationForms = new List<GetIntoTeachingApi.Models.Crm.ApplicationForm>() { form1, form2 },
+                ApplicationForms = new List<GetIntoTeachingApi.Models.Crm.ApplicationForm>() { form2, form1 },
             };
 
             _mockJobClient.Verify(x => x.Create(
