@@ -171,6 +171,9 @@ namespace GetIntoTeachingApiTests.Models.Crm
             type.GetProperty("PrivacyPolicy").Should().BeDecoratedWith<EntityRelationshipAttribute>(
                 a => a.Name == "dfe_contact_dfe_candidateprivacypolicy_Candidate" &&
                      a.Type == typeof(CandidatePrivacyPolicy));
+            type.GetProperty("SchoolExperiences").Should().BeDecoratedWith<EntityRelationshipAttribute>(
+                a => a.Name == "dfe_contact_dfe_candidateschoolexperience_ContactId" &&
+                     a.Type == typeof(CandidateSchoolExperience));
         }
 
         [Theory]
