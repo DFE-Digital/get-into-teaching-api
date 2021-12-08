@@ -58,7 +58,7 @@ namespace GetIntoTeachingApiTests.Controllers
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             var mappings = ok.Value.Should().BeOfType<List<MappingInfo>>().Subject;
-            mappings.Count().Should().Be(13);
+            mappings.Count().Should().Be(14);
             mappings.Any(m => m.LogicalName == "contact" &&
                               m.Class == "GetIntoTeachingApi.Models.Crm.Candidate"
             ).Should().BeTrue();
