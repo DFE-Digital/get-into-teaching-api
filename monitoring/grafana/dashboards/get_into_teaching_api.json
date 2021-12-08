@@ -27,8 +27,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 1,
-  "iteration": 1638433091210,
+  "id": 16,
+  "iteration": 1638966235972,
   "links": [],
   "panels": [
     {
@@ -929,18 +929,11 @@
       "pluginVersion": "7.2.2",
       "targets": [
         {
-          "expr": "(sum(increase(api_verified_totps{reference=\"Get an Adviser\"}[$__range])) by (reference) / sum(increase(api_generated_totps{reference=\"Get an Adviser\"}[$__range])) by (reference)) * 100",
+          "expr": "(sum(increase(api_verified_totps{reference=\"teacher_training_adviser_wizard\"}[$__range])) by (reference) / sum(increase(api_generated_totps{reference=\"teacher_training_adviser_wizard\"}[$__range])) by (reference)) * 100",
           "instant": false,
           "interval": "",
           "legendFormat": "TTA",
           "refId": "A"
-        },
-        {
-          "expr": "(sum(increase(api_verified_totps{reference=\"Get into Teaching\"}[$__range])) by (reference) / sum(increase(api_generated_totps{reference=\"Get into Teaching\"}[$__range])) by (reference)) * 100",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "Get into Teaching",
-          "refId": "B"
         },
         {
           "expr": "(sum(increase(api_verified_totps{reference=\"Schools Experience\"}[$__range])) by (reference) / sum(increase(api_generated_totps{reference=\"Schools Experience\"}[$__range])) by (reference)) * 100",
@@ -952,7 +945,103 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "TOTP Success Rates",
+      "title": "TOTP Success Rates by Service",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "Prometheus",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 50
+              },
+              {
+                "color": "#EAB839",
+                "value": 65
+              },
+              {
+                "color": "green",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 30
+      },
+      "id": 70,
+      "interval": null,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.2",
+      "targets": [
+        {
+          "expr": "(sum(increase(api_verified_totps{reference=\"events_wizard-unverified\"}[$__range])) by (reference) / sum(increase(api_generated_totps{reference=\"events_wizard-unverified\"}[$__range])) by (reference)) * 100",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Events (unverified)",
+          "refId": "A"
+        },
+        {
+          "expr": "(sum(increase(api_verified_totps{reference=\"events_wizard\"}[$__range])) by (reference) / sum(increase(api_generated_totps{reference=\"events_wizard\"}[$__range])) by (reference)) * 100",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Events",
+          "refId": "B"
+        },
+        {
+          "expr": "(sum(increase(api_verified_totps{reference=\"mailing_list_wizard\"}[$__range])) by (reference) / sum(increase(api_generated_totps{reference=\"mailing_list_wizard\"}[$__range])) by (reference)) * 100",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Mailing List",
+          "refId": "C"
+        },
+        {
+          "expr": "(sum(increase(api_verified_totps{reference=\"callbacks_wizard\"}[$__range])) by (reference) / sum(increase(api_generated_totps{reference=\"callbacks_wizard\"}[$__range])) by (reference)) * 100",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Callbacks",
+          "refId": "D"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "GiT TOTP Success Rates",
       "type": "stat"
     },
     {
@@ -962,7 +1051,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 40
       },
       "id": 46,
       "panels": [],
@@ -989,7 +1078,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 31
+        "y": 41
       },
       "hiddenSeries": false,
       "id": 52,
@@ -1093,7 +1182,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 31
+        "y": 41
       },
       "hiddenSeries": false,
       "id": 44,
@@ -1281,7 +1370,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 41
+        "y": 51
       },
       "id": 38,
       "panels": [],
@@ -1307,7 +1396,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 42
+        "y": 52
       },
       "hiddenSeries": false,
       "id": 23,
@@ -1403,7 +1492,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 42
+        "y": 52
       },
       "hiddenSeries": false,
       "id": 12,
@@ -1499,7 +1588,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 54
+        "y": 64
       },
       "hiddenSeries": false,
       "id": 4,
@@ -1600,7 +1689,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 66
+        "y": 76
       },
       "id": 40,
       "panels": [],
@@ -1641,7 +1730,7 @@
         "h": 10,
         "w": 4,
         "x": 0,
-        "y": 67
+        "y": 77
       },
       "id": 50,
       "interval": null,
@@ -1708,7 +1797,7 @@
         "h": 10,
         "w": 5,
         "x": 4,
-        "y": 67
+        "y": 77
       },
       "id": 48,
       "interval": null,
@@ -1782,7 +1871,7 @@
         "h": 10,
         "w": 5,
         "x": 9,
-        "y": 67
+        "y": 77
       },
       "id": 6,
       "interval": null,
@@ -1858,7 +1947,7 @@
         "h": 10,
         "w": 5,
         "x": 14,
-        "y": 67
+        "y": 77
       },
       "id": 66,
       "interval": null,
@@ -1934,7 +2023,7 @@
         "h": 10,
         "w": 5,
         "x": 19,
-        "y": 67
+        "y": 77
       },
       "id": 21,
       "interval": null,
@@ -1988,7 +2077,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 77
+        "y": 87
       },
       "hiddenSeries": false,
       "id": 10,
@@ -2098,7 +2187,7 @@
         "h": 12,
         "w": 6,
         "x": 12,
-        "y": 77
+        "y": 87
       },
       "id": 25,
       "interval": null,
@@ -2158,7 +2247,7 @@
         "h": 12,
         "w": 6,
         "x": 18,
-        "y": 77
+        "y": 87
       },
       "id": 14,
       "interval": null,
@@ -2242,7 +2331,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 89
+        "y": 99
       },
       "id": 16,
       "pageSize": null,
@@ -2304,7 +2393,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 100
+        "y": 110
       },
       "hiddenSeries": false,
       "id": 18,
@@ -2405,7 +2494,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 100
+        "y": 110
       },
       "heatmap": {},
       "hideZeroBuckets": false,
@@ -2470,7 +2559,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 112
+        "y": 122
       },
       "hiddenSeries": false,
       "id": 54,
@@ -2588,7 +2677,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 112
+        "y": 122
       },
       "hiddenSeries": false,
       "id": 60,
@@ -2801,7 +2890,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 122
+        "y": 132
       },
       "id": 34,
       "panels": [],
@@ -2827,7 +2916,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 123
+        "y": 133
       },
       "hiddenSeries": false,
       "id": 61,
@@ -2961,7 +3050,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 123
+        "y": 133
       },
       "hiddenSeries": false,
       "id": 2,
@@ -3048,7 +3137,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 135
+        "y": 145
       },
       "id": 42,
       "panels": [],
@@ -3097,7 +3186,7 @@
         "h": 10,
         "w": 4,
         "x": 0,
-        "y": 136
+        "y": 146
       },
       "id": 27,
       "interval": null,
@@ -3172,7 +3261,7 @@
         "h": 10,
         "w": 4,
         "x": 4,
-        "y": 136
+        "y": 146
       },
       "id": 55,
       "interval": null,
@@ -3244,7 +3333,7 @@
         "h": 10,
         "w": 16,
         "x": 8,
-        "y": 136
+        "y": 146
       },
       "hiddenSeries": false,
       "id": 58,
