@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using CsvHelper;
 using GetIntoTeachingApi.Database;
@@ -140,10 +141,13 @@ namespace GetIntoTeachingApi.Jobs
         {
             var zipPath = GetTempPath();
             var csvPath = GetTempPath();
-            var net = new System.Net.WebClient();
+            using var client = new HttpClient();
+            var response = await client.GetAsync(new Uri(ukPostcodeCsvUrl));
 
-            await net.DownloadFileTaskAsync(new Uri(ukPostcodeCsvUrl), zipPath);
-            net.Dispose();
+            using (var stream = new FileStream(zipPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                await response.Content.CopyToAsync(stream);
+            }
 
             _logger.LogInformation("LocationSyncJob - ZIP Downloaded");
 
