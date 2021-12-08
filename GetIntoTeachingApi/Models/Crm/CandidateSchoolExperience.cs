@@ -38,6 +38,7 @@ namespace GetIntoTeachingApi.Models.Crm
         public string SchoolName { get; set; }
 
         public CandidateSchoolExperience()
+            : base()
         {
         }
 
