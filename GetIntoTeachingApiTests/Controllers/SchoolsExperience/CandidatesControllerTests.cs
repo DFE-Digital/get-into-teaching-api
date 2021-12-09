@@ -273,18 +273,6 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
                 It.IsAny<EnqueuedState>()));
         }
 
-        [Fact]
-        public void AddSchoolExperience_InProduction_ThrowsFeatureUnderDevelopmentException()
-        {
-            _mockEnv.Setup(mock => mock.IsProduction).Returns(true);
-
-            Action request = () => _controller.AddSchoolExperience(new CandidateSchoolExperience());
-
-            request.Should()
-                .Throw<InvalidOperationException>()
-                .WithMessage("New feature under development");
-        }
-
         private static bool IsMatch(Candidate candidateA, string candidateBJson)
         {
             var candidateB = candidateBJson.DeserializeChangeTracked<Candidate>();
