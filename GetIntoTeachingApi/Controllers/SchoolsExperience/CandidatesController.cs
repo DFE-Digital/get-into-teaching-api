@@ -183,6 +183,7 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
             OperationId = "AddSchoolExperience",
             Tags = new[] { "Schools Experience" })]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
         public IActionResult AddSchoolExperience(
             [FromBody, SwaggerRequestBody("School experience.", Required = true)] CandidateSchoolExperience candidateSchoolExperience)
         {
