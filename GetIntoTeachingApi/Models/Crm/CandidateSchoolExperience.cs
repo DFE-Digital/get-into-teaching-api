@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
@@ -20,6 +21,7 @@ namespace GetIntoTeachingApi.Models.Crm
             Completed = 222750005,
         }
 
+        [JsonIgnore]
         [EntityField("dfe_contactid", typeof(EntityReference), "contact")]
         public Guid CandidateId { get; set; }
         [EntityField("dfe_urn")]
