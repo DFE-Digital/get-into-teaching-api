@@ -22,6 +22,7 @@ namespace GetIntoTeachingApiTests.Utils
         public void Dispose()
         {
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", _previousEnvironment);
+            GC.SuppressFinalize(this);
         }
 
         [Theory]
