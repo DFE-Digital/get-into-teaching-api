@@ -24,12 +24,9 @@ namespace GetIntoTeachingApi.AppStart
 
             var schemas = swaggerDoc.Components.Schemas;
 
-            foreach (var definition in schemas)
+            foreach (var schema in schemas.Where(s => swaggerIngoredTypeNames.Contains(s.Key)))
             {
-                if (swaggerIngoredTypeNames.Contains(definition.Key))
-                {
-                    schemas.Remove(definition);
-                }
+                schemas.Remove(schema);
             }
         }
     }

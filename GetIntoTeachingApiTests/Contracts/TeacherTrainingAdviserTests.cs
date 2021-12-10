@@ -65,7 +65,7 @@ namespace GetIntoTeachingApiTests.Contracts
 
             var snapshot = SortEntities(JArray.Parse(File.ReadAllText(outputFile)));
 
-            request.Should().HaveCount(snapshot.Count());
+            request.Should().HaveCount(snapshot.Count);
             request.Should().BeEquivalentTo(snapshot);
         }
 
@@ -97,6 +97,12 @@ namespace GetIntoTeachingApiTests.Contracts
             return Path.Combine(Directory.GetCurrentDirectory(), relativePath);
         }
 
+        private static ContractTestState GetContractTestState()
+        {
+            var json = File.ReadAllText("./Contracts/Data/state.json");
+            return JsonConvert.DeserializeObject<ContractTestState>(json);
+        }
+
         private string RequestJson()
         {
             var trackedEntities = _factory.ContractOrganizationServiceAdapter.TrackedEntities;
@@ -108,12 +114,6 @@ namespace GetIntoTeachingApiTests.Contracts
             await SeedPickListItems();
             await SeedLookupItems();
             await SeedPrivacyPolicy();
-        }
-
-        private ContractTestState GetContractTestState()
-        {
-            var json = File.ReadAllText("./Contracts/Data/state.json");
-            return JsonConvert.DeserializeObject<ContractTestState>(json);
         }
 
         private async Task SeedPickListItems()

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -22,7 +23,7 @@ namespace GetIntoTeachingApiTests.Middleware
         {
             _mockLogger = new Mock<ILogger<RequestResponseLoggingMiddleware>>();
             _mockConfig = new Mock<IRequestResponseLoggingConfiguration>();
-            _mockConfig.Setup(m => m.CompactLoggingPatterns).Returns(new Regex[0]);
+            _mockConfig.Setup(m => m.CompactLoggingPatterns).Returns(Array.Empty<Regex>());
             _context = new DefaultHttpContext();
 
             _context.Request.Scheme = "https";

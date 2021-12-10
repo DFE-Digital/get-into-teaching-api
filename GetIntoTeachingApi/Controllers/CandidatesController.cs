@@ -72,7 +72,7 @@ namespace GetIntoTeachingApi.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogInformation($"CandidatesController - potential duplicate (CRM exception) - {e.Message}");
+                _logger.LogInformation("CandidatesController - potential duplicate (CRM exception) - {message}", e.Message);
                 throw;
             }
 

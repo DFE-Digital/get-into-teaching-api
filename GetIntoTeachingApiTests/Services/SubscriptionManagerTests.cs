@@ -16,7 +16,7 @@ namespace GetIntoTeachingApiTests.Services
             SubscriptionManager.SubscribeToMailingList(candidate, DateTime.UtcNow);
 
             candidate.HasMailingListSubscription.Should().BeTrue();
-            candidate.MailingListSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.MailingList);
+            candidate.MailingListSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Subscribed);
             candidate.MailingListSubscriptionStartAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
             candidate.MailingListSubscriptionDoNotBulkEmail.Should().BeFalse();
             candidate.MailingListSubscriptionDoNotBulkPostalMail.Should().BeTrue();
@@ -69,7 +69,7 @@ namespace GetIntoTeachingApiTests.Services
             SubscriptionManager.SubscribeToEvents(candidate, DateTime.UtcNow);
 
             candidate.HasEventsSubscription.Should().BeTrue();
-            candidate.EventsSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Events);
+            candidate.EventsSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Subscribed);
             candidate.EventsSubscriptionStartAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
             candidate.EventsSubscriptionDoNotBulkEmail.Should().BeFalse();
             candidate.EventsSubscriptionDoNotBulkPostalMail.Should().BeTrue();
@@ -138,7 +138,7 @@ namespace GetIntoTeachingApiTests.Services
             SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate, DateTime.UtcNow);
 
             candidate.HasTeacherTrainingAdviserSubscription.Should().BeTrue();
-            candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.TeacherTrainingAdviser);
+            candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Subscribed);
             candidate.TeacherTrainingAdviserSubscriptionStartAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
             candidate.TeacherTrainingAdviserSubscriptionDoNotBulkEmail.Should().BeFalse();
             candidate.TeacherTrainingAdviserSubscriptionDoNotBulkPostalMail.Should().BeTrue();
@@ -158,7 +158,7 @@ namespace GetIntoTeachingApiTests.Services
             SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate, DateTime.UtcNow);
 
             candidate.HasTeacherTrainingAdviserSubscription.Should().BeTrue();
-            candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.TeacherTrainingAdviser);
+            candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Subscribed);
             candidate.TeacherTrainingAdviserSubscriptionStartAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
             candidate.TeacherTrainingAdviserSubscriptionDoNotBulkEmail.Should().BeTrue();
             candidate.TeacherTrainingAdviserSubscriptionDoNotBulkPostalMail.Should().BeTrue();

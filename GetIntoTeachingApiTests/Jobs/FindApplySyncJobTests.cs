@@ -78,7 +78,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockJobClient.Verify(x => x.Create(
                It.Is<Job>(job => job.Type == typeof(FindApplyCandidateSyncJob) && job.Method.Name == "Run"),
-               It.IsAny<EnqueuedState>()), Times.Exactly(candidates.Count()));
+               It.IsAny<EnqueuedState>()), Times.Exactly(candidates.Length));
 
             _mockLogger.VerifyInformationWasCalled("FindApplySyncJob - Started");
             _mockLogger.VerifyInformationWasCalled("FindApplySyncJob - Syncing 2 Candidates");
@@ -121,7 +121,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             using (var httpTest = new HttpTest())
             {
-                var response = new Response<IEnumerable<Candidate>>() { Data = new Candidate[0] };
+                var response = new Response<IEnumerable<Candidate>>() { Data = Array.Empty<Candidate>() };
                 MockResponse(httpTest, lastSyncAt, response);
                 await _job.RunAsync();
             }
@@ -145,7 +145,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             using (var httpTest = new HttpTest())
             {
-                var response = new Response<IEnumerable<Candidate>>() { Data = new Candidate[0] };
+                var response = new Response<IEnumerable<Candidate>>() { Data = Array.Empty<Candidate>() };
                 MockResponse(httpTest, now, response);
                 await _job.RunAsync();
             }
@@ -165,7 +165,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             using (var httpTest = new HttpTest())
             {
-                var response = new Response<IEnumerable<Candidate>>() { Data = new Candidate[0] };
+                var response = new Response<IEnumerable<Candidate>>() { Data = Array.Empty<Candidate>() };
                 MockResponse(httpTest, lastSyncAt, response);
                 await _job.RunAsync();
             }
