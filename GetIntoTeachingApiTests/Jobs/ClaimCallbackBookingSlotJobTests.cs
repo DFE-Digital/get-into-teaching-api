@@ -95,7 +95,7 @@ namespace GetIntoTeachingApiTests.Jobs
                 .WithMessage("ClaimCallbackBookingSlotJob - Aborting (CRM integration paused).");
         }
 
-        private bool IsMatch(object objectA, object objectB)
+        private static bool IsMatch(object objectA, object objectB)
         {
             objectA.Should().BeEquivalentTo(objectB);
             return true;

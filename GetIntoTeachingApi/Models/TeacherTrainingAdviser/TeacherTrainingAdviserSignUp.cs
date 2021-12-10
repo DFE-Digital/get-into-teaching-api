@@ -114,6 +114,22 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
             return Enum.IsDefined(typeof(ResubscribableAdviserStatus), candidate.AdviserStatusId);
         }
 
+        private static void DefaultPreferredEducationPhase(Candidate candidate)
+        {
+            if (candidate.IsReturningToTeaching())
+            {
+                candidate.PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary;
+            }
+        }
+
+        private static void DefaultPreferredTeachingSubjectId(Candidate candidate)
+        {
+            if (candidate.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Primary)
+            {
+                candidate.PreferredTeachingSubjectId = LookupItem.PrimaryTeachingSubjectId;
+            }
+        }
+
         private void PopulateWithCandidate(Candidate candidate)
         {
             CandidateId = candidate.Id;
@@ -240,22 +256,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
             if (CandidateId == null)
             {
                 candidate.ChannelId = ChannelId ?? (int?)Candidate.Channel.TeacherTrainingAdviser;
-            }
-        }
-
-        private void DefaultPreferredEducationPhase(Candidate candidate)
-        {
-            if (candidate.IsReturningToTeaching())
-            {
-                candidate.PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary;
-            }
-        }
-
-        private void DefaultPreferredTeachingSubjectId(Candidate candidate)
-        {
-            if (candidate.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Primary)
-            {
-                candidate.PreferredTeachingSubjectId = LookupItem.PrimaryTeachingSubjectId;
             }
         }
 

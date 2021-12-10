@@ -61,9 +61,7 @@ namespace GetIntoTeachingApi.Models.Crm
 
         public enum SubscriptionChannel
         {
-            TeacherTrainingAdviser = 222750000,
-            MailingList = 222750000,
-            Events = 222750000,
+            Subscribed = 222750000,
         }
 
         public enum SubscriptionType
