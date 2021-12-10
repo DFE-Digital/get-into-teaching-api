@@ -29,6 +29,8 @@ namespace GetIntoTeachingApiTests.Helpers
                 // StoreTests.CheckStatusAsync_WhenUnhealthy_ReturnsError
                 // disposes of the connection prematurely as part of the test.
             }
+
+            GC.SuppressFinalize(this);
         }
 
         private void SetupDbContext(string databaseName)

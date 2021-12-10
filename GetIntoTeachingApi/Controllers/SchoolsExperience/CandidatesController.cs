@@ -25,22 +25,19 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
         private readonly ICandidateUpserter _upserter;
         private readonly IBackgroundJobClient _jobClient;
         private readonly IDateTimeProvider _dateTime;
-        private readonly IEnv _env;
 
         public CandidatesController(
             ICandidateAccessTokenService tokenService,
             ICrmService crm,
             ICandidateUpserter upserter,
             IBackgroundJobClient jobClient,
-            IDateTimeProvider dateTime,
-            IEnv env)
+            IDateTimeProvider dateTime)
         {
             _crm = crm;
             _upserter = upserter;
             _tokenService = tokenService;
             _jobClient = jobClient;
             _dateTime = dateTime;
-            _env = env;
         }
 
         [HttpPost]

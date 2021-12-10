@@ -365,7 +365,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
             mockEntity.GetAttributeValue<OptionSetValue>("dfe_field2").Should().BeNull();
             mockEntity.GetAttributeValue<string>("dfe_field3").Should().BeNull();
 
-            var numberOfChangedAttributes = mockEntity.Attributes.Count();
+            var numberOfChangedAttributes = mockEntity.Attributes.Count;
             numberOfChangedAttributes.Should().Be(3);
         }
 
@@ -380,7 +380,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
 
             mock.ToEntity(_crm, _context);
 
-            var numberOfChangedAttributes = mockEntity.Attributes.Count();
+            var numberOfChangedAttributes = mockEntity.Attributes.Count;
             numberOfChangedAttributes.Should().Be(2);
         }
 

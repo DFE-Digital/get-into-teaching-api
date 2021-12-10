@@ -81,6 +81,21 @@ namespace GetIntoTeachingApi.Jobs
             return Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
         }
 
+        private static NpgsqlParameter[] DbParameters(Location location, int index)
+        {
+            return new[]
+            {
+                new NpgsqlParameter($"postcode{index}", location.Postcode),
+                new NpgsqlParameter($"coordinate{index}", location.Coordinate),
+                new NpgsqlParameter($"source{index}", (int)Location.SourceType.CSV),
+            };
+        }
+
+        private static void DeleteCsv(string csvPath)
+        {
+            File.Delete(csvPath);
+        }
+
         private async Task SyncLocations(string csvPath)
         {
             var batch = new List<Location>();
@@ -108,7 +123,7 @@ namespace GetIntoTeachingApi.Jobs
             await ProcessBatch(batch, true);
 
             var batchCount = (int)Math.Ceiling((decimal)locationCount / BatchInterval);
-            _logger.LogInformation($"LocationSyncJob - Processed {locationCount} Locations ({batchCount} Batches)");
+            _logger.LogInformation("LocationSyncJob - Processed {locationCount} Locations ({batchCount} Batches)", locationCount, batchCount);
         }
 
         private async Task ProcessBatch(ICollection<Location> batch, bool force = false)
@@ -125,16 +140,6 @@ namespace GetIntoTeachingApi.Jobs
                 $"INSERT INTO public.\"Locations\" (\"Postcode\", \"Coordinate\", \"Source\") VALUES {values} ON CONFLICT DO NOTHING", parameters);
 
             batch.Clear();
-        }
-
-        private NpgsqlParameter[] DbParameters(Location location, int index)
-        {
-            return new[]
-            {
-                new NpgsqlParameter($"postcode{index}", location.Postcode),
-                new NpgsqlParameter($"coordinate{index}", location.Coordinate),
-                new NpgsqlParameter($"source{index}", (int)Location.SourceType.CSV),
-            };
         }
 
         private async Task<string> RetrieveCsv(string ukPostcodeCsvUrl)
@@ -165,11 +170,6 @@ namespace GetIntoTeachingApi.Jobs
             }
 
             return Path.Combine(csvPath, UkPostcodeCsvFilename);
-        }
-
-        private void DeleteCsv(string csvPath)
-        {
-            File.Delete(csvPath);
         }
     }
 }

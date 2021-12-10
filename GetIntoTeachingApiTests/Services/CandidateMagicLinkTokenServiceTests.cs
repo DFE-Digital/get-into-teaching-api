@@ -110,7 +110,7 @@ namespace GetIntoTeachingApiTests.Services
         public void Exchange_WhenTokenDoesNotMatch_ReturnsFailure()
         {
             var token = Guid.NewGuid().ToString();
-            _mockCrm.Setup(m => m.MatchCandidates(token)).Returns(new Candidate[0]);
+            _mockCrm.Setup(m => m.MatchCandidates(token)).Returns(Array.Empty<Candidate>());
 
             var result = _service.Exchange(token);
 

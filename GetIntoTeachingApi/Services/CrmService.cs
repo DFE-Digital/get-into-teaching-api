@@ -117,7 +117,8 @@ namespace GetIntoTeachingApi.Services
             {
                 entity = entities.FirstOrDefault(request.IsEmailMatch);
 
-                _logger.LogInformation($"MatchCandidate - EmailMatch - {(entity == null ? "Miss" : "Hit")}");
+                var status = entity == null ? "Miss" : "Hit";
+                _logger.LogInformation("MatchCandidate - EmailMatch - {status}", status);
             }
 
             if (entity == null)
@@ -154,7 +155,7 @@ namespace GetIntoTeachingApi.Services
             // Avoids a potentially very expensive query.
             if (string.IsNullOrEmpty(magicLinkToken))
             {
-                return new Candidate[0];
+                return Array.Empty<Candidate>();
             }
 
             var query = new QueryExpression("contact");

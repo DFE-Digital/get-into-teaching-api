@@ -36,7 +36,7 @@ namespace GetIntoTeachingApiTests.Services
             _mockEnv = new Mock<IEnv>();
             _store = new Store(DbContext, _mockGeocodeClient.Object, _mockCrm.Object, new DateTimeProvider(), _mockEnv.Object);
 
-            Store.FailedPostcodeLookupCache.Clear();
+            Store.ClearFailedPostcodeLookupCache();
         }
 
         [Fact]
@@ -165,7 +165,7 @@ namespace GetIntoTeachingApiTests.Services
             await SeedMockTeachingEventBuildingsAsync();
             SeedMockLocations();
 
-            Store.FailedPostcodeLookupCache.Clear();
+            Store.ClearFailedPostcodeLookupCache();
 
             _mockCrm.Setup(m => m.GetTeachingEvents(It.Is<DateTime>(d => CheckGetTeachingEventsAfterDate(d)))).Returns(MockTeachingEvents);
 
@@ -181,7 +181,7 @@ namespace GetIntoTeachingApiTests.Services
             await SeedMockTeachingEventBuildingsAsync();
             SeedMockLocations();
 
-            Store.FailedPostcodeLookupCache.Clear();
+            Store.ClearFailedPostcodeLookupCache();
 
             _mockCrm.Setup(m => m.GetTeachingEvents(It.Is<DateTime>(d => CheckGetTeachingEventsAfterDate(d)))).Returns(MockTeachingEvents);
             var postcode = "TE7 9IN";

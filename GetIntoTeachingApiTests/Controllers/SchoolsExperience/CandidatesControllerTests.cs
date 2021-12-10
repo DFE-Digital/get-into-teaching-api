@@ -27,7 +27,6 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly Mock<ICandidateUpserter> _mockUpserter;
         private readonly Mock<IDateTimeProvider> _mockDateTime;
-        private readonly Mock<IEnv> _mockEnv;
         private readonly CandidatesController _controller;
         private readonly ExistingCandidateRequest _request;
 
@@ -38,15 +37,13 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
             _mockJobClient = new Mock<IBackgroundJobClient>();
             _mockUpserter = new Mock<ICandidateUpserter>();
             _mockDateTime = new Mock<IDateTimeProvider>();
-            _mockEnv = new Mock<IEnv>();
             _request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
             _controller = new CandidatesController(
                 _mockTokenService.Object,
                 _mockCrm.Object,
                 _mockUpserter.Object,
                 _mockJobClient.Object,
-                _mockDateTime.Object,
-                _mockEnv.Object);
+                _mockDateTime.Object);
             _controller.MockUser("SE");
         }
 
@@ -192,7 +189,7 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
         [Fact]
         public void Get_WhenNotFound_ReturnsEmpty()
         {
-            _mockCrm.Setup(mock => mock.GetCandidates(It.IsAny<IEnumerable<Guid>>())).Returns(new Candidate[0]);
+            _mockCrm.Setup(mock => mock.GetCandidates(It.IsAny<IEnumerable<Guid>>())).Returns(Array.Empty<Candidate>());
 
             var response = _controller.GetMultiple(new Guid[] { Guid.NewGuid() });
 

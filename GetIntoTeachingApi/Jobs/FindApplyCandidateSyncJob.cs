@@ -37,9 +37,9 @@ namespace GetIntoTeachingApi.Jobs
                 throw new InvalidOperationException("FindApplyCandidateSyncJob - Aborting (CRM integration paused).");
             }
 
-            _logger.LogInformation($"FindApplyCandidateSyncJob - Started - {findApplyCandidate.Id}");
+            _logger.LogInformation("FindApplyCandidateSyncJob - Started - {id}", findApplyCandidate.Id);
             SyncCandidate(findApplyCandidate);
-            _logger.LogInformation($"FindApplyCandidateSyncJob - Succeeded - {findApplyCandidate.Id}");
+            _logger.LogInformation("FindApplyCandidateSyncJob - Succeeded - {id}", findApplyCandidate.Id);
         }
 
         public void SyncCandidate(Candidate findApplyCandidate)
@@ -56,8 +56,9 @@ namespace GetIntoTeachingApi.Jobs
         private Models.Crm.Candidate Candidate(Candidate findApplyCandidate, IEnumerable<ApplicationForm> findApplyApplicationForms)
         {
             var match = _crm.MatchCandidate(findApplyCandidate.Attributes.Email);
+            var status = match == null ? "Miss" : "Hit";
 
-            _logger.LogInformation($"FindApplyCandidateSyncJob - {(match == null ? "Miss" : "Hit")} - {findApplyCandidate.Id}");
+            _logger.LogInformation("FindApplyCandidateSyncJob - {status} - {id}", status, findApplyCandidate.Id);
 
             // We persist a new Candidate to ensure we only write the find/apply
             // attributes back to the CRM and not existing attributes on the match.

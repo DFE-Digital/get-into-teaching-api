@@ -8,7 +8,7 @@ namespace GetIntoTeachingApi.Services
         public static void SubscribeToMailingList(Candidate candidate, DateTime utcNow, int? channelId = null)
         {
             candidate.HasMailingListSubscription = true;
-            candidate.MailingListSubscriptionChannelId = channelId ?? (int)Candidate.SubscriptionChannel.MailingList;
+            candidate.MailingListSubscriptionChannelId = channelId ?? (int)Candidate.SubscriptionChannel.Subscribed;
             candidate.MailingListSubscriptionStartAt = utcNow;
             candidate.MailingListSubscriptionDoNotEmail = false;
             candidate.MailingListSubscriptionDoNotBulkEmail = false;
@@ -27,7 +27,7 @@ namespace GetIntoTeachingApi.Services
         public static void SubscribeToEvents(Candidate candidate, DateTime utcNow, int? channelId = null)
         {
             candidate.HasEventsSubscription = true;
-            candidate.EventsSubscriptionChannelId = channelId ?? (int)Candidate.SubscriptionChannel.Events;
+            candidate.EventsSubscriptionChannelId = channelId ?? (int)Candidate.SubscriptionChannel.Subscribed;
             candidate.EventsSubscriptionStartAt = utcNow;
             candidate.EventsSubscriptionDoNotEmail = false;
             candidate.EventsSubscriptionDoNotBulkEmail = false;
@@ -55,7 +55,7 @@ namespace GetIntoTeachingApi.Services
         public static void SubscribeToTeacherTrainingAdviser(Candidate candidate, DateTime utcNow, int? channelId = null)
         {
             candidate.HasTeacherTrainingAdviserSubscription = true;
-            candidate.TeacherTrainingAdviserSubscriptionChannelId = channelId ?? (int)Candidate.SubscriptionChannel.TeacherTrainingAdviser;
+            candidate.TeacherTrainingAdviserSubscriptionChannelId = channelId ?? (int)Candidate.SubscriptionChannel.Subscribed;
             candidate.TeacherTrainingAdviserSubscriptionStartAt = utcNow;
             candidate.TeacherTrainingAdviserSubscriptionDoNotEmail = false;
             candidate.TeacherTrainingAdviserSubscriptionDoNotBulkEmail = candidate.IsReturningToTeaching();

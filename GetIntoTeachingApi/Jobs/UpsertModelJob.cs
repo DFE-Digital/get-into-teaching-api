@@ -47,8 +47,8 @@ namespace GetIntoTeachingApi.Jobs
                 throw new InvalidOperationException($"UpsertModelJob<{typeName}> - Aborting (CRM integration paused).");
             }
 
-            _logger.LogInformation($"UpsertModelJob<{typeName}> - Started ({AttemptInfo(context, _contextAdapter)})");
-            _logger.LogInformation($"UpsertModelJob<{typeName}> - Payload {Redactor.RedactJson(json)}");
+            _logger.LogInformation("UpsertModelJob<{typeName}> - Started ({attempt})", typeName, AttemptInfo(context, _contextAdapter));
+            _logger.LogInformation("UpsertModelJob<{typeName}> - Payload {payload}", typeName, Redactor.RedactJson(json));
 
             var model = json.DeserializeChangeTracked<T>();
 
@@ -67,13 +67,13 @@ namespace GetIntoTeachingApi.Jobs
                         personalisation);
                 }
 
-                _logger.LogInformation($"UpsertModelJob<{typeName}> - Deleted");
+                _logger.LogInformation("UpsertModelJob<{typeName}> - Deleted", typeName);
             }
             else
             {
                 _crm.Save(model);
 
-                _logger.LogInformation($"UpsertModelJob<{typeName}> - Succeeded - {model.Id}");
+                _logger.LogInformation("UpsertModelJob<{typeName}> - Succeeded - {id}", typeName, model.Id);
             }
 
             var duration = (DateTime.UtcNow - _contextAdapter.GetJobCreatedAt(context)).TotalSeconds;
