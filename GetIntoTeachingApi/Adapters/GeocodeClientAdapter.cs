@@ -27,7 +27,7 @@ namespace GetIntoTeachingApi.Adapters
         {
             var response = await _client.GeocodeAddress($"postcode {postcode}");
 
-            _logger.LogInformation("Google API Status [{postcode}]: {statusText}", postcode, response.StatusText);
+            _logger.LogInformation("Google API Status [{Postcode}]: {StatusText}", postcode, response.StatusText);
 
             if (response.Status != GeocodeStatus.Ok)
             {

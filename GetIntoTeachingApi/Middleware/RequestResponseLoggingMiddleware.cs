@@ -64,7 +64,7 @@ namespace GetIntoTeachingApi.Middleware
                 Payload = ConstructPayload(request, payload),
             };
 
-            _logger.LogInformation("{identifier}: {info}", identifier, info);
+            _logger.LogInformation("{Identifier}: {Info}", identifier, info);
         }
 
         private string ConstructPayload(HttpRequest request, string payload)

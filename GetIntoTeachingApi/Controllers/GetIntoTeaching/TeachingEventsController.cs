@@ -73,7 +73,7 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
 
             if (request.Postcode != null)
             {
-                _logger.LogInformation("SearchGroupedByType: {postcode}", request.Postcode);
+                _logger.LogInformation("SearchGroupedByType: {Postcode}", request.Postcode);
             }
 
             var teachingEvents = await _store.SearchTeachingEventsAsync(request);

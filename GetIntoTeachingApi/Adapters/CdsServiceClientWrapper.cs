@@ -4,9 +4,10 @@ using Microsoft.PowerPlatform.Dataverse.Client;
 
 namespace GetIntoTeachingApi.Adapters
 {
-    public class CdsServiceClientWrapper
+    public class CdsServiceClientWrapper : IDisposable
     {
-        public readonly ServiceClient CdsServiceClient;
+        internal readonly ServiceClient CdsServiceClient;
+        private bool disposed;
 
         public CdsServiceClientWrapper(IEnv env)
         {
@@ -25,6 +26,25 @@ namespace GetIntoTeachingApi.Adapters
             var clientId = env.CrmClientId;
             var clientSecret = env.CrmClientSecret;
             return $"AuthType=ClientSecret; url={instanceUrl}; ClientId={clientId}; ClientSecret={clientSecret}";
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);   
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    CdsServiceClient.Dispose();
+                }
+
+                disposed = true;
+            }
         }
     }
 }

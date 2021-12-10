@@ -31,7 +31,7 @@ namespace GetIntoTeachingApi.Services
 
         public Task SendEmailAsync(string email, string templateId, Dictionary<string, dynamic> personalisation)
         {
-            _logger.LogInformation("NotifyService - Sending Email ({template})", TemplateDescription(templateId));
+            _logger.LogInformation("NotifyService - Sending Email ({Template})", TemplateDescription(templateId));
 
             return _client.SendEmailAsync(
                 ApiKey(),
@@ -39,7 +39,7 @@ namespace GetIntoTeachingApi.Services
                 templateId,
                 personalisation)
             .ContinueWith(
-                task => _logger.LogWarning("NotifyService - Failed to send email: {message}", task.Exception?.Message),
+                task => _logger.LogWarning("NotifyService - Failed to send email: {Message}", task.Exception?.Message),
                 TaskContinuationOptions.OnlyOnFaulted);
         }
 

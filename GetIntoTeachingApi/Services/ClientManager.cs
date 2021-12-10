@@ -41,7 +41,7 @@ namespace GetIntoTeachingApi.Services
 
         private void PopulateApiKey(Client client)
         {
-            client.ApiKey = _env.Get($"{client.ApiKeyPrefix}_API_KEY");
+            client.ApiKey = _env.GetVariable($"{client.ApiKeyPrefix}_API_KEY");
         }
     }
 }
