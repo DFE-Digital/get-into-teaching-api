@@ -57,7 +57,7 @@ namespace GetIntoTeachingApi.Jobs
         private void GenerateTokens()
         {
             var candidates = _crm.GetCandidatesPendingMagicLinkTokenGeneration(BatchSize);
-            _logger.LogInformation("MagicLinkTokenGenerationJob - Processing ({count})", candidates.Count());
+            _logger.LogInformation("MagicLinkTokenGenerationJob - Processing ({Count})", candidates.Count());
 
             foreach (var match in candidates)
             {

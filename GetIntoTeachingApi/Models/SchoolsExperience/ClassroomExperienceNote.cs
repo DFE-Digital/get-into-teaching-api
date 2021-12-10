@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models.SchoolsExperience
@@ -24,10 +25,11 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
         public override string ToString()
         {
             return string.Format(
+                CultureInfo.CurrentCulture,
                 EntryFormat,
-                RecordedAt?.ToString(DateFormat),
+                RecordedAt?.ToString(DateFormat, CultureInfo.CurrentCulture),
                 Action,
-                Date?.ToString(DateFormat),
+                Date?.ToString(DateFormat, CultureInfo.CurrentCulture),
                 SchoolUrn,
                 SchoolName);
         }
