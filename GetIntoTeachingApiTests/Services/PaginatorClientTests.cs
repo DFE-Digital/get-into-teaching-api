@@ -88,7 +88,7 @@ namespace GetIntoTeachingApiTests.Services
                 .WithMessage("Expected Total-Pages and Current-Page header keys");
         }
 
-        private void MockResponse(HttpTest httpTest, string response, int? page = 1, int? totalPages = 1)
+        private static void MockResponse(HttpTest httpTest, string response, int? page = 1, int? totalPages = 1)
         {
             var json = JsonConvert.SerializeObject(response);
             var headers = new Dictionary<string, int?>() { { "Total-Pages", totalPages }, { "Current-Page", page } };
