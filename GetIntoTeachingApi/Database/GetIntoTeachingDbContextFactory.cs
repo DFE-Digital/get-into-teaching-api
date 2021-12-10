@@ -30,7 +30,7 @@ namespace GetIntoTeachingApi.Database
             return new GetIntoTeachingDbContext(optionsBuilder.Options);
         }
 
-        private void MockRequiredEnvironment()
+        private static void MockRequiredEnvironment()
         {
             // We need to be able to generate a valid connection string
             // when creating migrations (even though the DB is never called).

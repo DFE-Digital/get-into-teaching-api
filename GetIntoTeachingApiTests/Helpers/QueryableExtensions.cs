@@ -53,6 +53,8 @@ namespace GetIntoTeachingApiTests.Helpers
 
             public ValueTask DisposeAsync()
             {
+                GC.SuppressFinalize(this);
+
                 return new ValueTask();
             }
 

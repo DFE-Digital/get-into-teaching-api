@@ -62,7 +62,7 @@ namespace GetIntoTeachingApi.Jobs
             while (paginator.HasNext)
             {
                 var response = await paginator.NextAsync();
-                _logger.LogInformation($"FindApplySyncJob - Syncing {response.Data.Count()} Candidates");
+                _logger.LogInformation("FindApplySyncJob - Syncing {count} Candidates", response.Data.Count());
                 response.Data.ForEach(c => _jobClient.Enqueue<FindApplyCandidateSyncJob>(x => x.Run(c)));
             }
         }

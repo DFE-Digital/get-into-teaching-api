@@ -35,12 +35,7 @@ namespace GetIntoTeachingApi.Models
             return string.Join("-", attributes).ToLower();
         }
 
-        private bool EmailMatchesCandidate(Entity entity)
-        {
-            return entity.GetAttributeValue<string>("emailaddress1").Trim().Equals(Email, StringComparison.OrdinalIgnoreCase);
-        }
-
-        private string[] AdditionalAttributeValues(string firstName, string lastName, DateTime? dateOfBirth)
+        private static string[] AdditionalAttributeValues(string firstName, string lastName, DateTime? dateOfBirth)
         {
             return new[]
                 {
@@ -50,6 +45,11 @@ namespace GetIntoTeachingApi.Models
                 }
                 .Where(s => s != null)
                 .ToArray();
+        }
+
+        private bool EmailMatchesCandidate(Entity entity)
+        {
+            return entity.GetAttributeValue<string>("emailaddress1").Trim().Equals(Email, StringComparison.OrdinalIgnoreCase);
         }
 
         private bool MinimumAdditionalAttributesMatch(Entity entity)

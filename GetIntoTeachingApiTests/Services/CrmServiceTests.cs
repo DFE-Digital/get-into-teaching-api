@@ -370,7 +370,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             var ids = new Guid[] { Guid.NewGuid() };
             _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
-                q => VerifyGetCandidatesQueryExpression(q, ids)))).Returns(new Entity[0]);
+                q => VerifyGetCandidatesQueryExpression(q, ids)))).Returns(Array.Empty<Entity>());
 
             var result = _crm.GetCandidate(ids.First());
 
@@ -414,9 +414,9 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void GetCandidates_WithEmptyArray_ReturnsEmpty()
         {
-            var ids = new Guid[0];
+            var ids = Array.Empty<Guid>();
             _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
-                q => VerifyGetCandidatesQueryExpression(q, ids)))).Returns(new Entity[0]);
+                q => VerifyGetCandidatesQueryExpression(q, ids)))).Returns(Array.Empty<Entity>());
 
             var result = _crm.GetCandidates(ids);
 

@@ -39,8 +39,8 @@ namespace GetIntoTeachingApi.Jobs
                 throw new InvalidOperationException("ClaimCallbackBookingSlotJob - Aborting (CRM integration paused).");
             }
 
-            _logger.LogInformation($"ClaimCallbackBookingSlotJob - Started ({AttemptInfo(context, _contextAdapter)})");
-            _logger.LogInformation($"ClaimCallbackBookingSlotJob - Payload {scheduledAt}");
+            _logger.LogInformation("ClaimCallbackBookingSlotJob - Started ({attempt})", AttemptInfo(context, _contextAdapter));
+            _logger.LogInformation("ClaimCallbackBookingSlotJob - Payload {scheduledAt}", scheduledAt);
 
             if (IsLastAttempt(context, _contextAdapter))
             {
@@ -58,7 +58,7 @@ namespace GetIntoTeachingApi.Jobs
                     _crm.Save(quota);
                 }
 
-                _logger.LogInformation($"ClaimCallbackBookingSlotJob - Succeeded - {scheduledAt}");
+                _logger.LogInformation("ClaimCallbackBookingSlotJob - Succeeded - {scheduledAt}", scheduledAt);
             }
 
             var duration = (DateTime.UtcNow - _contextAdapter.GetJobCreatedAt(context)).TotalSeconds;

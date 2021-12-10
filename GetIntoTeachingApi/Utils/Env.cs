@@ -67,7 +67,7 @@ namespace GetIntoTeachingApi.Utils
             return Environment.GetEnvironmentVariable(variable);
         }
 
-        private ApplicationServices AppServices
+        private static ApplicationServices AppServices
         {
             get
             {
@@ -76,7 +76,7 @@ namespace GetIntoTeachingApi.Utils
             }
         }
 
-        private class ApplicationServices
+        private sealed class ApplicationServices
         {
             [JsonPropertyName("application_name")]
             public string ApplicationName { get; set; }
