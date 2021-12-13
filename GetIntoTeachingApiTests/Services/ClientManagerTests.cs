@@ -23,7 +23,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void Clients_AreAllValid()
         {
-            _mockEnv.Setup(m => m.Get(It.IsAny<string>())).Returns(null as string);
+            _mockEnv.Setup(m => m.GetVariable(It.IsAny<string>())).Returns(null as string);
             var manager = new ClientManager(_mockEnv.Object);
 
             var clients = manager.Clients;
@@ -35,7 +35,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void Clients_ContainNoDuplicateApiKeyPrefixes()
         {
-            _mockEnv.Setup(m => m.Get(It.IsAny<string>())).Returns(null as string);
+            _mockEnv.Setup(m => m.GetVariable(It.IsAny<string>())).Returns(null as string);
             var manager = new ClientManager(_mockEnv.Object);
             var keys = manager.Clients.Select(c => c.ApiKeyPrefix);
 
@@ -45,7 +45,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void GetClient_WithSecret_ReturnsCorrespondingClient()
         {
-            _mockEnv.Setup(m => m.Get("ADMIN_API_KEY")).Returns("admin_secret");
+            _mockEnv.Setup(m => m.GetVariable("ADMIN_API_KEY")).Returns("admin_secret");
             var manager = new ClientManager(_mockEnv.Object);
 
             var client = manager.GetClient("admin_secret");
@@ -59,7 +59,7 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public void GetClient_WithIncorrectSecret_ReturnsNull()
         {
-            _mockEnv.Setup(m => m.Get("an_invalid_secret")).Returns(null as string);
+            _mockEnv.Setup(m => m.GetVariable("an_invalid_secret")).Returns(null as string);
             var manager = new ClientManager(_mockEnv.Object);
 
             var client = manager.GetClient("an_invalid_secret");

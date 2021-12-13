@@ -29,6 +29,6 @@
 
         bool IsFeatureOn(string feature);
         bool IsFeatureOff(string feature);
-        string Get(string variable);
+        string GetVariable(string variable);
     }
 }

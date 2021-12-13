@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using GetIntoTeachingApi.Models.FindApply;
 using GetIntoTeachingApi.Services;
@@ -37,9 +38,9 @@ namespace GetIntoTeachingApi.Jobs
                 throw new InvalidOperationException("FindApplyCandidateSyncJob - Aborting (CRM integration paused).");
             }
 
-            _logger.LogInformation("FindApplyCandidateSyncJob - Started - {id}", findApplyCandidate.Id);
+            _logger.LogInformation("FindApplyCandidateSyncJob - Started - {Id}", findApplyCandidate.Id);
             SyncCandidate(findApplyCandidate);
-            _logger.LogInformation("FindApplyCandidateSyncJob - Succeeded - {id}", findApplyCandidate.Id);
+            _logger.LogInformation("FindApplyCandidateSyncJob - Succeeded - {Id}", findApplyCandidate.Id);
         }
 
         public void SyncCandidate(Candidate findApplyCandidate)
@@ -58,7 +59,7 @@ namespace GetIntoTeachingApi.Jobs
             var match = _crm.MatchCandidate(findApplyCandidate.Attributes.Email);
             var status = match == null ? "Miss" : "Hit";
 
-            _logger.LogInformation("FindApplyCandidateSyncJob - {status} - {id}", status, findApplyCandidate.Id);
+            _logger.LogInformation("FindApplyCandidateSyncJob - {Status} - {Id}", status, findApplyCandidate.Id);
 
             // We persist a new Candidate to ensure we only write the find/apply
             // attributes back to the CRM and not existing attributes on the match.
@@ -100,14 +101,14 @@ namespace GetIntoTeachingApi.Jobs
 
             return findApplyApplicationForms.Select(findApplyForm =>
             {
-                var existingForm = _crm.GetApplicationForm(findApplyForm.Id.ToString());
+                var existingForm = _crm.GetApplicationForm(findApplyForm.Id.ToString(CultureInfo.CurrentCulture));
 
                 var yearId = ((int)Models.Crm.ApplicationForm.RecruitmentCycleYear.Year2020) + (findApplyForm.RecruitmentCycleYear - 2020);
 
                 return new Models.Crm.ApplicationForm()
                 {
                     Id = existingForm?.Id,
-                    FindApplyId = findApplyForm.Id.ToString(),
+                    FindApplyId = findApplyForm.Id.ToString(CultureInfo.CurrentCulture),
                     CreatedAt = findApplyForm.CreatedAt,
                     UpdatedAt = findApplyForm.UpdatedAt,
                     SubmittedAt = findApplyForm.SubmittedAt,

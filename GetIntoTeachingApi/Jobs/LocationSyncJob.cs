@@ -123,7 +123,7 @@ namespace GetIntoTeachingApi.Jobs
             await ProcessBatch(batch, true);
 
             var batchCount = (int)Math.Ceiling((decimal)locationCount / BatchInterval);
-            _logger.LogInformation("LocationSyncJob - Processed {locationCount} Locations ({batchCount} Batches)", locationCount, batchCount);
+            _logger.LogInformation("LocationSyncJob - Processed {LocationCount} Locations ({BatchCount} Batches)", locationCount, batchCount);
         }
 
         private async Task ProcessBatch(ICollection<Location> batch, bool force = false)

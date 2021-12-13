@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using FluentValidation;
 using GetIntoTeachingApi.Adapters;
@@ -118,7 +119,7 @@ namespace GetIntoTeachingApi.Services
                 entity = entities.FirstOrDefault(request.IsEmailMatch);
 
                 var status = entity == null ? "Miss" : "Hit";
-                _logger.LogInformation("MatchCandidate - EmailMatch - {status}", status);
+                _logger.LogInformation("MatchCandidate - EmailMatch - {Status}", status);
             }
 
             if (entity == null)
@@ -239,7 +240,7 @@ namespace GetIntoTeachingApi.Services
 
         public IEnumerable<Entity> RelatedEntities(Entity entity, string relationshipName, string logicalName)
         {
-            var relatedEntityKeys = entity.Attributes.Keys.Where(k => k.StartsWith($"{relationshipName}.")).ToList();
+            var relatedEntityKeys = entity.Attributes.Keys.Where(k => k.StartsWith($"{relationshipName}.", true, CultureInfo.CurrentCulture)).ToList();
 
             if (!relatedEntityKeys.Any())
             {

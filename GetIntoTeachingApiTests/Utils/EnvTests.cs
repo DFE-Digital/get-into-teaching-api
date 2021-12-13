@@ -289,7 +289,7 @@ namespace GetIntoTeachingApiTests.Utils
             var previous = Environment.GetEnvironmentVariable("AN_ENV_VAR");
             Environment.SetEnvironmentVariable("AN_ENV_VAR", "test");
 
-            _env.Get("AN_ENV_VAR").Should().Be("test");
+            _env.GetVariable("AN_ENV_VAR").Should().Be("test");
 
             Environment.SetEnvironmentVariable("AN_ENV_VAR", previous);
         }
@@ -297,7 +297,7 @@ namespace GetIntoTeachingApiTests.Utils
         [Fact]
         public void Get_WhenVariableDoesNotExist_ReturnsNull()
         {
-            _env.Get("NON_EXISTANT").Should().BeNull();
+            _env.GetVariable("NON_EXISTANT").Should().BeNull();
         }
 
         [Theory]

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using Microsoft.Xrm.Sdk;
 
@@ -32,7 +33,7 @@ namespace GetIntoTeachingApi.Models
         public string Slugify()
         {
             var attributes = new[] { Email }.Concat(AdditionalAttributeValues(FirstName, LastName, DateOfBirth));
-            return string.Join("-", attributes).ToLower();
+            return string.Join("-", attributes).ToLower(CultureInfo.CurrentCulture);
         }
 
         private static string[] AdditionalAttributeValues(string firstName, string lastName, DateTime? dateOfBirth)
@@ -41,7 +42,7 @@ namespace GetIntoTeachingApi.Models
                 {
                     firstName,
                     lastName,
-                    dateOfBirth?.Date.ToString("MM-dd-yyyy"),
+                    dateOfBirth?.Date.ToString("MM-dd-yyyy", CultureInfo.CurrentCulture),
                 }
                 .Where(s => s != null)
                 .ToArray();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using GetIntoTeachingApi.Attributes;
 using Microsoft.OpenApi.Models;
@@ -14,7 +15,7 @@ namespace GetIntoTeachingApi.AppStart
             var apiTypes = AppDomain
                 .CurrentDomain
                 .GetAssemblies()
-                .Where(assembly => assembly.FullName.StartsWith("GetIntoTeachingApi"))
+                .Where(assembly => assembly.FullName.StartsWith("GetIntoTeachingApi", true, CultureInfo.CurrentCulture))
                 .SelectMany(assembly => assembly.GetTypes())
                 .ToList();
 

@@ -54,7 +54,7 @@ namespace GetIntoTeachingApi.Jobs
             while (paginator.HasNext)
             {
                 var response = await paginator.NextAsync();
-                _logger.LogInformation("FindApplyBackfillJob - Syncing {count} Candidates", response.Data.Count());
+                _logger.LogInformation("FindApplyBackfillJob - Syncing {Count} Candidates", response.Data.Count());
                 response.Data.ForEach(c => _jobClient.Schedule<FindApplyCandidateSyncJob>(x => x.Run(c), TimeSpan.FromMinutes(30)));
             }
         }
