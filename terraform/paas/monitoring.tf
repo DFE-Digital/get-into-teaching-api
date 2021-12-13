@@ -36,7 +36,7 @@ module "prometheus" {
   grafana_json_dashboards           = [for f in local.dashboard_list : file(f)]
   grafana_extra_datasources         = [for f in local.datasource_list : templatefile(f, local.template_variable_map)]
   grafana_google_jwt                = lookup( local.monitoring_secrets , "GOOGLE_JWT" , "" )
-  grafana_runtime_version           = "7.2.2"
+  grafana_runtime_version           = "8.3.2"
   prometheus_memory                 = 5120
   prometheus_disk_quota             = 5120
   internal_apps                     = var.monitor_scrape_applications
