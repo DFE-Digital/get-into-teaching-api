@@ -6,7 +6,7 @@ namespace GetIntoTeachingApi.Jobs
 {
     public abstract class BaseJob
     {
-        protected readonly IEnv Env;
+        protected IEnv Env { get; init; }
 
         protected BaseJob(IEnv env)
         {

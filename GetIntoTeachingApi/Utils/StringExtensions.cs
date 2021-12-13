@@ -18,7 +18,7 @@ namespace GetIntoTeachingApi.Utils
                 return null;
             }
 
-            return str.ToUpper().Insert(str.Length - Location.InwardPostcodeLength, " ");
+            return str.ToUpper(CultureInfo.CurrentCulture).Insert(str.Length - Location.InwardPostcodeLength, " ");
         }
 
         public static string StripExitCode(this string str)
@@ -55,7 +55,7 @@ namespace GetIntoTeachingApi.Utils
 
         public static string ToPascalCase(this string str)
         {
-            str = str.ToLower().Replace("_", " ");
+            str = str.ToLower(CultureInfo.CurrentCulture).Replace("_", " ");
             var info = CultureInfo.CurrentCulture.TextInfo;
             return info.ToTitleCase(str).Replace(" ", string.Empty);
         }
@@ -67,7 +67,7 @@ namespace GetIntoTeachingApi.Utils
                 return false;
             }
 
-            return TrueValues.Contains(str.Trim().ToLower());
+            return TrueValues.Contains(str.Trim().ToLower(CultureInfo.CurrentCulture));
         }
     }
 }

@@ -62,7 +62,7 @@ namespace GetIntoTeachingApi.Utils
             return !IsFeatureOn(feature);
         }
 
-        public string Get(string variable)
+        public string GetVariable(string variable)
         {
             return Environment.GetEnvironmentVariable(variable);
         }

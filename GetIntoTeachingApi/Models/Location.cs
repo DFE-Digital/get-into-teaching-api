@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using GetIntoTeachingApi.Database;
@@ -45,7 +46,7 @@ namespace GetIntoTeachingApi.Models
                     continue;
                 }
 
-                builder.Append(char.ToLower(c));
+                builder.Append(char.ToLower(c, CultureInfo.CurrentCulture));
             }
 
             return builder.ToString();
