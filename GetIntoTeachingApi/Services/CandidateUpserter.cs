@@ -26,6 +26,7 @@ namespace GetIntoTeachingApi.Services
             var qualifications = ClearQualifications(candidate);
             var pastTeachingPositions = ClearPastTeachingPositions(candidate);
             var applicationForms = ClearApplicationForms(candidate);
+            var schoolExperiences = ClearSchoolExperiences(candidate);
 
             SaveCandidate(candidate);
 
@@ -35,6 +36,7 @@ namespace GetIntoTeachingApi.Services
             SaveTeachingEventRegistrations(registrations, candidate);
             SavePrivacyPolicy(privacyPolicy, candidate);
             SavePhoneCall(phoneCall, candidate);
+            SaveSchoolExperiences(schoolExperiences, candidate);
 
             IncrementCallbackBookingQuotaNumberOfBookings(phoneCall);
         }
@@ -68,6 +70,13 @@ namespace GetIntoTeachingApi.Services
             var qualifications = new List<CandidateQualification>(candidate.Qualifications);
             candidate.Qualifications.Clear();
             return qualifications;
+        }
+
+        private static IEnumerable<CandidateSchoolExperience> ClearSchoolExperiences(Candidate candidate)
+        {
+            var schoolExperiences = new List<CandidateSchoolExperience>(candidate.SchoolExperiences);
+            candidate.SchoolExperiences.Clear();
+            return schoolExperiences;
         }
 
         private static PhoneCall ClearPhoneCall(Candidate candidate)
@@ -139,6 +148,16 @@ namespace GetIntoTeachingApi.Services
                 pastTeachingPosition.CandidateId = (Guid)candidate.Id;
                 string json = pastTeachingPosition.SerializeChangeTracked();
                 _jobClient.Enqueue<UpsertModelJob<CandidatePastTeachingPosition>>((x) => x.Run(json, null));
+            }
+        }
+
+        private void SaveSchoolExperiences(IEnumerable<CandidateSchoolExperience> schoolExperiences, Candidate candidate)
+        {
+            foreach (var schoolExperience in schoolExperiences)
+            {
+                schoolExperience.CandidateId = (Guid)candidate.Id;
+                string json = schoolExperience.SerializeChangeTracked();
+                _jobClient.Enqueue<UpsertModelJob<CandidateSchoolExperience>>((x) => x.Run(json, null));
             }
         }
 
