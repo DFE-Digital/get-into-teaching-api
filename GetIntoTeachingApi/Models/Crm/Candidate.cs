@@ -299,6 +299,8 @@ namespace GetIntoTeachingApi.Models.Crm
         [SwaggerSchema("Set to update the accepted privacy policy.", WriteOnly = true)]
         [EntityRelationship("dfe_contact_dfe_candidateprivacypolicy_Candidate", typeof(CandidatePrivacyPolicy))]
         public CandidatePrivacyPolicy PrivacyPolicy { get; set; }
+        [EntityRelationship("dfe_contact_dfe_candidateschoolexperience_ContactId", typeof(CandidateSchoolExperience))]
+        public List<CandidateSchoolExperience> SchoolExperiences { get; set; } = new List<CandidateSchoolExperience>();
 
         public Candidate()
             : base()

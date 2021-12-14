@@ -27,6 +27,7 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly Mock<ICandidateUpserter> _mockUpserter;
         private readonly Mock<IDateTimeProvider> _mockDateTime;
+        private readonly Mock<IEnv> _mockEnv;
         private readonly CandidatesController _controller;
         private readonly ExistingCandidateRequest _request;
 
@@ -37,13 +38,16 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
             _mockJobClient = new Mock<IBackgroundJobClient>();
             _mockUpserter = new Mock<ICandidateUpserter>();
             _mockDateTime = new Mock<IDateTimeProvider>();
+            _mockEnv = new Mock<IEnv>();
             _request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
+
             _controller = new CandidatesController(
                 _mockTokenService.Object,
                 _mockCrm.Object,
                 _mockUpserter.Object,
                 _mockJobClient.Object,
-                _mockDateTime.Object);
+                _mockDateTime.Object,
+                _mockEnv.Object);
             _controller.MockUser("SE");
         }
 
@@ -227,6 +231,66 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
                                   job.Method.Name == "Run" &&
                                   expectedArguments.All(arg => job.Args.Contains(arg))),
                 It.IsAny<EnqueuedState>()));
+        }
+
+        [Fact]
+        public void AddSchoolExperience_InvalidRequest_RespondsWithValidationErrors()
+        {
+            var schoolExperience = new CandidateSchoolExperience { SchoolName = null };
+            _controller.ModelState.AddModelError("SchoolName", "SchoolName must be set.");
+
+            var response = _controller.AddSchoolExperience(schoolExperience);
+
+            var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
+            var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
+            errors.Should().ContainKey("SchoolName").WhoseValue.Should().BeOfType<string[]>().Which.Should().Contain("SchoolName must be set.");
+        }
+
+        [Fact]
+        public void AddSchoolExperience_ValidRequest_EnqueuesUpsertCandidateJobAndRespondsWithNoContent()
+        {
+            var schoolExperience = new CandidateSchoolExperience()
+            {
+                CandidateId = Guid.NewGuid(),
+                SchoolUrn = "123456",
+                DurationOfPlacementInDays = 1,
+                TeachingSubjectId = Guid.NewGuid(),
+                Notes = "Notes about the candidate.",
+                SchoolName = "James Brindley High School"
+            };
+            var candidate = new Candidate
+            {
+                Id = schoolExperience.CandidateId,
+                SchoolExperiences = new List<CandidateSchoolExperience> { schoolExperience }
+            };
+
+            var response = _controller.AddSchoolExperience(schoolExperience);
+
+            response.Should().BeOfType<NoContentResult>();
+            _mockJobClient.Verify(x => x.Create(
+                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) &&
+                                  job.Method.Name == "Run" &&
+                                  IsMatch(candidate, (string)job.Args[0])),
+                It.IsAny<EnqueuedState>()));
+        }
+
+        [Fact]
+        public void AddSchoolExperience_InProduction_ThrowsFeatureUnderDevelopmentException()
+        {
+            _mockEnv.Setup(mock => mock.IsProduction).Returns(true);
+
+            Action request = () => _controller.AddSchoolExperience(new CandidateSchoolExperience());
+
+            request.Should()
+                .Throw<InvalidOperationException>()
+                .WithMessage("New feature under development");
+        }
+
+        private static bool IsMatch(Candidate candidateA, string candidateBJson)
+        {
+            var candidateB = candidateBJson.DeserializeChangeTracked<Candidate>();
+            candidateA.Should().BeEquivalentTo(candidateB);
+            return true;
         }
 
         private static bool MatchesCandidateWithUpfrontId(Candidate requestCandidate, string candidateSentToJobJson, Guid expectedId)
