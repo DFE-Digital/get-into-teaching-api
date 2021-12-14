@@ -90,6 +90,24 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public void Upsert_WithSchoolExperiences_SavesSchoolExperiences()
+        {
+            var candidateId = Guid.NewGuid();
+            var schoolExperience = new CandidateSchoolExperience();
+            _candidate.SchoolExperiences.Add(schoolExperience);
+            _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
+
+            _upserter.Upsert(_candidate);
+
+            schoolExperience.CandidateId = candidateId;
+
+            _mockJobClient.Verify(x => x.Create(
+               It.Is<Job>(job => job.Type == typeof(UpsertModelJob<CandidateSchoolExperience>) && job.Method.Name == "Run" &&
+               IsMatch(schoolExperience, (string)job.Args[0])),
+               It.IsAny<EnqueuedState>()));
+        }
+
+        [Fact]
         public void Upsert_WithTeachingEventRegistrations_SavesTeachingEventRegistrations()
         {
             var candidateId = Guid.NewGuid();

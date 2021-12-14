@@ -303,6 +303,7 @@ namespace GetIntoTeachingApi.Models.Crm
         public List<CandidateSchoolExperience> SchoolExperiences { get; set; } = new List<CandidateSchoolExperience>();
 
         public Candidate()
+            : base()
         {
         }
 

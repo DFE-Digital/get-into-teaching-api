@@ -4,6 +4,7 @@ using System.Linq;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.SchoolsExperience;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
@@ -25,19 +26,22 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
         private readonly ICandidateUpserter _upserter;
         private readonly IBackgroundJobClient _jobClient;
         private readonly IDateTimeProvider _dateTime;
+        private readonly IEnv _env;
 
         public CandidatesController(
             ICandidateAccessTokenService tokenService,
             ICrmService crm,
             ICandidateUpserter upserter,
             IBackgroundJobClient jobClient,
-            IDateTimeProvider dateTime)
+            IDateTimeProvider dateTime,
+            IEnv env)
         {
             _crm = crm;
             _upserter = upserter;
             _tokenService = tokenService;
             _jobClient = jobClient;
             _dateTime = dateTime;
+            _env = env;
         }
 
         [HttpPost]
@@ -152,7 +156,7 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
         [Route("{id}/classroom_experience_notes")]
         [SwaggerOperation(
            Summary = "Add a classroom experience note to the candidate.",
-           Description = @"Adds a new classroom experience note to the candidate record",
+           Description = "Adds a new classroom experience note to the candidate record",
            OperationId = "AddClassroomExperienceNote",
            Tags = new[] { "Schools Experience" })]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -167,6 +171,37 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
             }
 
             _jobClient.Enqueue<AddClassroomExperienceNoteJob>((x) => x.Run(null, note, id));
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        [Route("{id}/school_experience")]
+        [SwaggerOperation(
+            Summary = "Add a school experience to the candidate.",
+            Description = "Adds a new school experience to the candidate record",
+            OperationId = "AddSchoolExperience",
+            Tags = new[] { "Schools Experience" })]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
+        public IActionResult AddSchoolExperience(
+            [FromBody, SwaggerRequestBody("School experience.", Required = true)] CandidateSchoolExperience candidateSchoolExperience)
+        {
+            if (_env.IsProduction)
+            {
+                throw new InvalidOperationException("New feature under development");
+            }
+
+            var candidate = new Candidate { Id = candidateSchoolExperience.CandidateId };
+            candidate.SchoolExperiences.Add(candidateSchoolExperience);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            string json = candidate.SerializeChangeTracked();
+            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
 
             return NoContent();
         }
