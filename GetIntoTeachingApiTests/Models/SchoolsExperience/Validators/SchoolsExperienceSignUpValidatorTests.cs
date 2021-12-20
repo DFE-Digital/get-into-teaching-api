@@ -43,9 +43,7 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience.Validators
                 AddressCity = "City",
                 AddressStateOrProvince = "County",
                 AddressPostcode = "KY11 9YU",
-                AddressTelephone = "123456789",
                 Telephone = "123456789",
-                SecondaryTelephone = "123456789",
                 HasDbsCertificate = false,
             };
 
@@ -82,9 +80,7 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience.Validators
                 AddressCity = null,
                 AddressStateOrProvince = null,
                 AddressPostcode = null,
-                AddressTelephone = null,
                 Telephone = null,
-                SecondaryTelephone = null,
                 HasDbsCertificate = null,
                 AcceptedPolicyId = null,
                 PreferredTeachingSubjectId = null,
@@ -99,9 +95,7 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience.Validators
             result.ShouldHaveValidationErrorFor(s => s.AddressCity);
             result.ShouldHaveValidationErrorFor(s => s.AddressStateOrProvince);
             result.ShouldHaveValidationErrorFor(s => s.AddressPostcode);
-            result.ShouldHaveValidationErrorFor(s => s.AddressTelephone);
             result.ShouldHaveValidationErrorFor(s => s.Telephone);
-            result.ShouldHaveValidationErrorFor(s => s.SecondaryTelephone);
             result.ShouldHaveValidationErrorFor(s => s.HasDbsCertificate);
             result.ShouldHaveValidationErrorFor(s => s.AcceptedPolicyId);
             result.ShouldHaveValidationErrorFor(s => s.PreferredTeachingSubjectId);

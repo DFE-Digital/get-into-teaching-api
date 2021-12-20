@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
@@ -24,7 +22,6 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
         [SwaggerSchema(ReadOnly = true)]
         public string FullName { get; set; }
         public string Email { get; set; }
-        public string SecondaryEmail { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string AddressLine1 { get; set; }
@@ -33,10 +30,7 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
         public string AddressCity { get; set; }
         public string AddressStateOrProvince { get; set; }
         public string AddressPostcode { get; set; }
-        public string AddressTelephone { get; set; }
         public string Telephone { get; set; }
-        public string SecondaryTelephone { get; set; }
-        public string MobileTelephone { get; set; }
         public bool? HasDbsCertificate { get; set; }
         public DateTime? DbsCertificateIssuedAt { get; set; }
 
@@ -64,7 +58,6 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
             Merged = candidate.Merged;
             FullName = candidate.FullName;
             Email = candidate.Email;
-            SecondaryEmail = candidate.SecondaryEmail ?? candidate.Email;
             FirstName = candidate.FirstName;
             LastName = candidate.LastName;
             AddressLine1 = candidate.AddressLine1;
@@ -73,12 +66,7 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
             AddressCity = candidate.AddressCity;
             AddressStateOrProvince = candidate.AddressStateOrProvince;
             AddressPostcode = candidate.AddressPostcode;
-            AddressTelephone = candidate.AddressTelephone.StripExitCode();
             Telephone = candidate.Telephone.StripExitCode();
-            MobileTelephone = candidate.MobileTelephone.StripExitCode();
-
-            var secondaryTelephoneDefaults = new List<string> { MobileTelephone, AddressTelephone, Telephone };
-            SecondaryTelephone = candidate.SecondaryTelephone.StripExitCode() ?? secondaryTelephoneDefaults.FirstOrDefault(t => !string.IsNullOrWhiteSpace(t));
 
             HasDbsCertificate = candidate.HasDbsCertificate;
             DbsCertificateIssuedAt = candidate.DbsCertificateIssuedAt;
@@ -91,7 +79,6 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
                 Id = CandidateId,
                 CountryId = LookupItem.UnitedKingdomCountryId,
                 Email = Email,
-                SecondaryEmail = SecondaryEmail,
                 FirstName = FirstName,
                 LastName = LastName,
                 AddressLine1 = AddressLine1,
@@ -100,10 +87,7 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
                 AddressCity = AddressCity,
                 AddressStateOrProvince = AddressStateOrProvince,
                 AddressPostcode = AddressPostcode.AsFormattedPostcode(),
-                AddressTelephone = AddressTelephone,
                 Telephone = Telephone,
-                SecondaryTelephone = SecondaryTelephone,
-                MobileTelephone = MobileTelephone,
                 HasDbsCertificate = HasDbsCertificate,
                 DbsCertificateIssuedAt = DbsCertificateIssuedAt,
             };
