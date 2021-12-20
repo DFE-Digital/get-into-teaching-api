@@ -197,33 +197,6 @@ namespace GetIntoTeachingApi.Services
             return entities.Select((entity) => new Candidate(entity, this, _validatorFactory));
         }
 
-        // Temporary method. Currently, we use secondary phone number in School Experience if primary number already has a value.
-        // Going forward we want to use primary phone number only. This method is used to retrieve all School Experience candidates
-        // with primary and secondary phone numbers that are different, because these will be negatively impacted by the change (we
-        // will be assuming that their primary phone number is the most up to date, but it will actually be their secondary phone
-        // number)
-        public IEnumerable<Candidate> GetSchoolExperienceCandidatesWithDifferentPrimaryAndSecondaryPhoneNumbers(int pageNumber, int count)
-        {
-            var query = new QueryExpression("contact")
-            {
-                PageInfo = new PagingInfo
-                {
-                    PageNumber = pageNumber,
-                    Count = count
-                }
-            };
-            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
-
-            query.Criteria.AddCondition(new ConditionExpression("dfe_notesforclassroomexperience", ConditionOperator.NotNull));
-            query.Criteria.AddCondition(new ConditionExpression("telephone1", ConditionOperator.NotNull));
-            query.Criteria.AddCondition(new ConditionExpression("telephone2", ConditionOperator.NotNull));
-            query.Criteria.AddCondition(new ConditionExpression("telephone1", ConditionOperator.NotEqual, true, "telephone2"));
-
-            var entities = _service.RetrieveMultiple(query);
-
-            return entities.Select((entity) => new Candidate(entity, this, _validatorFactory));
-        }
-
         public IEnumerable<Candidate> GetCandidatesPendingMagicLinkTokenGeneration(int limit = 10)
         {
             var query = new QueryExpression("contact");

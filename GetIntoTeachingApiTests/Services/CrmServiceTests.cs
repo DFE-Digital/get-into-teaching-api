@@ -764,37 +764,6 @@ namespace GetIntoTeachingApiTests.Services
                 new Relationship("msevtmgt_event_building"), _context), Times.Never);
         }
 
-        [Fact]
-        public void GetSchoolExperienceCandidatesWithDifferentPrimaryAndSecondaryPhoneNumbers_ReturnsCandidates()
-        {
-            const int pageNumber = 1;
-            const int count = 500;
-            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
-                q => VerifyGetCandidatesWithDifferentPrimaryAndSecondaryPhoneNumbersQueryExpression(q, pageNumber, count)))).Returns(MockCandidates());
-
-            var result = _crm.GetSchoolExperienceCandidatesWithDifferentPrimaryAndSecondaryPhoneNumbers(pageNumber, count);
-
-            result.Should().NotBeNull();
-        }
-
-        private static bool VerifyGetCandidatesWithDifferentPrimaryAndSecondaryPhoneNumbersQueryExpression(QueryExpression query, int pageNumber, int count)
-        {
-            var hasEntityName = query.EntityName == "contact";
-            var hasPagination = query.PageInfo.PageNumber == pageNumber && query.PageInfo.Count == count;
-            var conditions = query.Criteria.Conditions;
-
-            var hasPhoneNotNullCondition = conditions.Any(c => c.AttributeName == "telephone1" &&
-                c.Operator == ConditionOperator.NotNull);
-            var hasSecondPhoneNotNullCondition = conditions.Any(c => c.AttributeName == "telephone2" &&
-               c.Operator == ConditionOperator.NotNull);
-            var hasSchoolExperienceNotesNotNullCondition = conditions.Any(c => c.AttributeName == "dfe_notesforclassroomexperience" &&
-               c.Operator == ConditionOperator.NotNull);
-            var hasPhoneDoesNotEqualSecondPhoneCondition = conditions.Any(c => c.AttributeName == "telephone1" &&
-               c.Operator == ConditionOperator.NotEqual && c.CompareColumns && c.Values.Contains("telephone2"));
-
-            return hasEntityName && hasSecondPhoneNotNullCondition && hasSchoolExperienceNotesNotNullCondition && hasPhoneDoesNotEqualSecondPhoneCondition && hasPagination;
-        }
-
         private static bool VerifyMatchEventWithReadableIdQueryExpression(QueryExpression query, string readableId)
         {
             var hasEntityName = query.EntityName == "msevtmgt_event";
