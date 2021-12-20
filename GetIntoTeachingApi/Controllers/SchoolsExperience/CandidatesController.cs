@@ -125,25 +125,6 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
             return Ok(signUps);
         }
 
-        // Temporary method. Currently, we use secondary phone number in School Experience if primary number already has a value.
-        // Going forward we want to use primary phone number only. This method is used to retrieve all School Experience candidates
-        // with primary and secondary phone numbers that are different, because these will be negatively impacted by the change (we
-        // will be assuming that their primary phone number is the most up to date, but it will actually be their secondary phone
-        // number)
-        [HttpGet]
-        [Route("different-phone-numbers")]
-        [SwaggerOperation(
-          Summary = "Find all candidates with different primary and seconary phone numbers.",
-          OperationId = "GetSchoolsExperienceDifferentPhoneNumbers",
-          Tags = new[] { "Schools Experience" })]
-        [ProducesResponseType(typeof(IEnumerable<SchoolsExperienceSignUp>), StatusCodes.Status200OK)]
-        public IActionResult GetCandidatesWithDifferentPrimaryAndSecondaryPhoneNumbers(int pageNumber, int count)
-        {
-            var candidates = _crm.GetSchoolExperienceCandidatesWithDifferentPrimaryAndSecondaryPhoneNumbers(pageNumber, count);
-
-            return Ok(candidates);
-        }
-
         [HttpPost]
         [Route("exchange_access_token/{accessToken}")]
         [SwaggerOperation(
