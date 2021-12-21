@@ -95,8 +95,7 @@ namespace GetIntoTeachingApi.AppStart
 
             app.ConfigureHangfire(addBasicAuthFilter: _env.IsStaging, _env);
 
-            // The UI generated for V2 is buggy, so use V3 in development.
-            app.UseSwagger(c => c.SerializeAsV2 = !_env.IsDevelopment);
+            app.UseSwagger();
 
             if (!_env.IsProduction)
             {
