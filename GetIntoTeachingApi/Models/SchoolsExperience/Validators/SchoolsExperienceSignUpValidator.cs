@@ -22,10 +22,8 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience.Validators
             RuleFor(request => request.AddressCity).NotNull();
             RuleFor(request => request.AddressStateOrProvince).NotNull();
             RuleFor(request => request.AddressPostcode).NotNull();
-            RuleFor(request => request.AddressTelephone).NotNull();
             RuleFor(request => request.HasDbsCertificate).NotNull();
             RuleFor(request => request.Telephone).NotNull();
-            RuleFor(request => request.SecondaryTelephone).NotNull();
 
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store, dateTime));
         }
