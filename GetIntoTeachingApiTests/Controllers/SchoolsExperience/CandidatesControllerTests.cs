@@ -288,6 +288,23 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
                 .WithMessage("New feature under development");
         }
 
+        [Fact]
+        public void GetCandidatesWithDifferentPrimaryAndSecondaryPhoneNumbers_ReturnsCandidates()
+        {
+            var candidates = new Candidate[]
+            {
+                new Candidate() { Telephone = "07777777777", SecondaryTelephone = "07999999999" },
+                new Candidate() { Telephone = "07777777777", SecondaryTelephone = "07888888888" },
+            };
+            _mockCrm.Setup(mock => mock.GetSchoolExperienceCandidatesWithDifferentPrimaryAndSecondaryPhoneNumbers(1, 2)).Returns(candidates);
+
+            var response = _controller.GetCandidatesWithDifferentPrimaryAndSecondaryPhoneNumbers(1, 2);
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            var candidatesResponse = ok.Value.Should().BeAssignableTo<IEnumerable<Candidate>>().Subject;
+            candidatesResponse.Should().BeEquivalentTo(candidates);
+        }
+
         private static bool IsMatch(Candidate candidateA, string candidateBJson)
         {
             var candidateB = candidateBJson.DeserializeChangeTracked<Candidate>();
