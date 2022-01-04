@@ -20,7 +20,6 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience
                 MasterId = Guid.NewGuid(),
                 Merged = true,
                 Email = "email@address.com",
-                SecondaryEmail = "email2@address.com",
                 FirstName = "John",
                 LastName = "Doe",
                 DateOfBirth = DateTime.UtcNow,
@@ -30,10 +29,7 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience
                 AddressCity = "City",
                 AddressStateOrProvince = "County",
                 AddressPostcode = "KY11 9YU",
-                AddressTelephone = "00123456789",
                 Telephone = "00234567890",
-                SecondaryTelephone = "00345678901",
-                MobileTelephone = "00456789012",
                 HasDbsCertificate = true,
                 DbsCertificateIssuedAt = DateTime.UtcNow,
             };
@@ -45,7 +41,6 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience
             response.SecondaryPreferredTeachingSubjectId.Should().Be(candidate.SecondaryPreferredTeachingSubjectId);
             response.MasterId.Should().Be(candidate.MasterId);
             response.Email.Should().Be(candidate.Email);
-            response.SecondaryEmail.Should().Be(candidate.SecondaryEmail);
             response.Merged.Should().Be(candidate.Merged);
             response.FullName.Should().Be(candidate.FullName);
             response.FirstName.Should().Be(candidate.FirstName);
@@ -56,56 +51,9 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience
             response.AddressCity.Should().Be(candidate.AddressCity);
             response.AddressStateOrProvince.Should().Be(candidate.AddressStateOrProvince);
             response.AddressPostcode.Should().Be(candidate.AddressPostcode);
-            response.AddressTelephone.Should().Be(candidate.AddressTelephone[2..]);
             response.Telephone.Should().Be(candidate.Telephone[2..]);
-            response.SecondaryTelephone.Should().Be(candidate.SecondaryTelephone[2..]);
-            response.MobileTelephone.Should().Be(candidate.MobileTelephone[2..]);
             response.HasDbsCertificate.Should().Be(candidate.HasDbsCertificate);
             response.DbsCertificateIssuedAt.Should().Be(candidate.DbsCertificateIssuedAt);
-        }
-
-        [Fact]
-        public void Constructor_CandidateSecondaryEmail_SetsCorrectly()
-        {
-            var candidate = new Candidate() { Email = "email@address.com" };
-
-            var response = new SchoolsExperienceSignUp(candidate);
-
-            response.SecondaryEmail.Should().Be(candidate.Email);
-
-            candidate.SecondaryEmail = "email2@address.com";
-
-            response = new SchoolsExperienceSignUp(candidate);
-
-            response.SecondaryTelephone.Should().Be(candidate.SecondaryTelephone);
-        }
-
-        [Fact]
-        public void Constructor_SecondaryTelephone_SetsCorrectly()
-        {
-            var candidate = new Candidate() { Telephone = "111111" };
-
-            var response = new SchoolsExperienceSignUp(candidate);
-
-            response.SecondaryTelephone.Should().Be(candidate.Telephone);
-
-            candidate.AddressTelephone = "222222";
-
-            response = new SchoolsExperienceSignUp(candidate);
-
-            response.SecondaryTelephone.Should().Be(candidate.AddressTelephone);
-
-            candidate.MobileTelephone = "333333";
-
-            response = new SchoolsExperienceSignUp(candidate);
-
-            response.SecondaryTelephone.Should().Be(candidate.MobileTelephone);
-
-            candidate.SecondaryTelephone = "444444";
-
-            response = new SchoolsExperienceSignUp(candidate);
-
-            response.SecondaryTelephone.Should().Be(candidate.SecondaryTelephone);
         }
 
         [Fact]
@@ -118,7 +66,6 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience
                 SecondaryPreferredTeachingSubjectId = Guid.NewGuid(),
                 AcceptedPolicyId = Guid.NewGuid(),
                 Email = "email@address.com",
-                SecondaryEmail = "email2@address.com",
                 FirstName = "John",
                 LastName = "Doe",
                 AddressLine1 = "Address 1",
@@ -127,10 +74,7 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience
                 AddressCity = "City",
                 AddressStateOrProvince = "County",
                 AddressPostcode = "KY11 9YU",
-                AddressTelephone = "123456789",
                 Telephone = "234567890",
-                SecondaryTelephone = "345678901",
-                MobileTelephone = "456789012",
                 HasDbsCertificate = true,
                 DbsCertificateIssuedAt = DateTime.UtcNow,
             };
@@ -142,7 +86,6 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience
             candidate.SecondaryPreferredTeachingSubjectId.Should().Equals(request.SecondaryPreferredTeachingSubjectId);
             candidate.CountryId.Should().Equals(LookupItem.UnitedKingdomCountryId);
             candidate.Email.Should().Be(request.Email);
-            candidate.SecondaryEmail.Should().Be(request.SecondaryEmail);
             candidate.FirstName.Should().Be(request.FirstName);
             candidate.LastName.Should().Be(request.LastName);
             candidate.AddressLine1.Should().Be(request.AddressLine1);
@@ -151,10 +94,7 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience
             candidate.AddressCity.Should().Be(request.AddressCity);
             candidate.AddressStateOrProvince.Should().Be(request.AddressStateOrProvince);
             candidate.AddressPostcode.Should().Be(request.AddressPostcode);
-            candidate.AddressTelephone.Should().Be(request.AddressTelephone);
             candidate.Telephone.Should().Be(request.Telephone);
-            candidate.SecondaryTelephone.Should().Be(request.SecondaryTelephone);
-            candidate.MobileTelephone.Should().Be(request.MobileTelephone);
             candidate.HasDbsCertificate.Should().Be(request.HasDbsCertificate);
             candidate.DbsCertificateIssuedAt.Should().Be(request.DbsCertificateIssuedAt);
 
