@@ -185,6 +185,7 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
         public IActionResult AddSchoolExperience(
+            [FromRoute, SwaggerParameter("The `id` of the `Candidate`.", Required = true)] Guid id,
             [FromBody, SwaggerRequestBody("School experience.", Required = true)] CandidateSchoolExperience candidateSchoolExperience)
         {
             if (_env.IsProduction)
@@ -192,7 +193,7 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
                 throw new InvalidOperationException("New feature under development");
             }
 
-            var candidate = new Candidate { Id = candidateSchoolExperience.CandidateId };
+            var candidate = new Candidate { Id = id };
             candidate.SchoolExperiences.Add(candidateSchoolExperience);
 
             if (!ModelState.IsValid)

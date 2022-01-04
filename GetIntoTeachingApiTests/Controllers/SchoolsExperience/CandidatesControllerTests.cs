@@ -236,10 +236,11 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
         [Fact]
         public void AddSchoolExperience_InvalidRequest_RespondsWithValidationErrors()
         {
+            var candidateId = Guid.NewGuid();
             var schoolExperience = new CandidateSchoolExperience { SchoolName = null };
             _controller.ModelState.AddModelError("SchoolName", "SchoolName must be set.");
 
-            var response = _controller.AddSchoolExperience(schoolExperience);
+            var response = _controller.AddSchoolExperience(candidateId, schoolExperience);
 
             var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
             var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
@@ -249,9 +250,9 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
         [Fact]
         public void AddSchoolExperience_ValidRequest_EnqueuesUpsertCandidateJobAndRespondsWithNoContent()
         {
+            var candidateId = Guid.NewGuid();
             var schoolExperience = new CandidateSchoolExperience()
             {
-                CandidateId = Guid.NewGuid(),
                 SchoolUrn = "123456",
                 DurationOfPlacementInDays = 1,
                 TeachingSubjectId = Guid.NewGuid(),
@@ -260,11 +261,11 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
             };
             var candidate = new Candidate
             {
-                Id = schoolExperience.CandidateId,
+                Id = candidateId,
                 SchoolExperiences = new List<CandidateSchoolExperience> { schoolExperience }
             };
 
-            var response = _controller.AddSchoolExperience(schoolExperience);
+            var response = _controller.AddSchoolExperience(candidateId, schoolExperience);
 
             response.Should().BeOfType<NoContentResult>();
             _mockJobClient.Verify(x => x.Create(
@@ -277,9 +278,10 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
         [Fact]
         public void AddSchoolExperience_InProduction_ThrowsFeatureUnderDevelopmentException()
         {
+            var candidateId = Guid.NewGuid();
             _mockEnv.Setup(mock => mock.IsProduction).Returns(true);
 
-            Action request = () => _controller.AddSchoolExperience(new CandidateSchoolExperience());
+            Action request = () => _controller.AddSchoolExperience(candidateId, new CandidateSchoolExperience());
 
             request.Should()
                 .Throw<InvalidOperationException>()
