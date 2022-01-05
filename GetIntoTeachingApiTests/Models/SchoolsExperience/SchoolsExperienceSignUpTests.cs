@@ -3,6 +3,7 @@ using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.SchoolsExperience;
 using System;
+using System.Reflection;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Models.SchoolsExperience
@@ -100,6 +101,21 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
             candidate.PrivacyPolicy.AcceptedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(30));
+        }
+
+        [Theory]
+        [InlineData(nameof(Candidate.MobileTelephone))]
+        [InlineData(nameof(Candidate.AddressTelephone))]
+        [InlineData(nameof(Candidate.SecondaryTelephone))]
+        public void Constructor_WhenCandidateHasNoPrimaryTelephone_UsesReserveNumbers(string reserveNumber)
+        {
+            var candidate = new Candidate();
+            var reserveNumberProperty = typeof(Candidate).GetProperty(reserveNumber);
+            reserveNumberProperty.SetValue(candidate, "07123456789");
+
+            var response = new SchoolsExperienceSignUp(candidate);
+
+            response.Telephone.Should().Be((string)reserveNumberProperty.GetValue(candidate));
         }
 
         [Fact]

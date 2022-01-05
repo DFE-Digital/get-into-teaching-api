@@ -34,6 +34,5 @@ namespace GetIntoTeachingApi.Services
         Entity BlankExistingEntity(string entityName, Guid id, OrganizationServiceContext context);
         Entity NewEntity(string entityName, Guid? id, OrganizationServiceContext context);
         IEnumerable<TeachingEventBuilding> GetTeachingEventBuildings();
-        IEnumerable<Candidate> GetSchoolExperienceCandidatesWithDifferentPrimaryAndSecondaryPhoneNumbers(int pageNumber, int count);
     }
 }
