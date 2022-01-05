@@ -70,8 +70,8 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
             // We only want to expose primary phone number to School Experience. However, there
             // are a number of records in the CRM that have School Experience but no primary number.
             // Fetch the other phone numbers for now until the issue has been resolved in the CRM.
-            var telephoneReserves = new string[] { candidate.MobileTelephone, candidate.AddressTelephone, candidate.SecondaryTelephone };
-            Telephone = candidate.Telephone.StripExitCode() ?? Array.Find(telephoneReserves, number => !string.IsNullOrWhiteSpace(number)).StripExitCode();
+            var telephoneReserves = new string[] { candidate.Telephone, candidate.MobileTelephone, candidate.SecondaryTelephone };
+            Telephone = candidate.AddressTelephone.StripExitCode() ?? Array.Find(telephoneReserves, number => !string.IsNullOrWhiteSpace(number)).StripExitCode();
 
             HasDbsCertificate = candidate.HasDbsCertificate;
             DbsCertificateIssuedAt = candidate.DbsCertificateIssuedAt;
@@ -92,7 +92,7 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
                 AddressCity = AddressCity,
                 AddressStateOrProvince = AddressStateOrProvince,
                 AddressPostcode = AddressPostcode.AsFormattedPostcode(),
-                Telephone = Telephone,
+                AddressTelephone = Telephone,
                 HasDbsCertificate = HasDbsCertificate,
                 DbsCertificateIssuedAt = DbsCertificateIssuedAt,
             };
