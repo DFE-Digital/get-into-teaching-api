@@ -95,7 +95,7 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience
             candidate.AddressCity.Should().Be(request.AddressCity);
             candidate.AddressStateOrProvince.Should().Be(request.AddressStateOrProvince);
             candidate.AddressPostcode.Should().Be(request.AddressPostcode);
-            candidate.Telephone.Should().Be(request.Telephone);
+            candidate.AddressTelephone.Should().Be(request.Telephone);
             candidate.HasDbsCertificate.Should().Be(request.HasDbsCertificate);
             candidate.DbsCertificateIssuedAt.Should().Be(request.DbsCertificateIssuedAt);
 
@@ -104,8 +104,8 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience
         }
 
         [Theory]
+        [InlineData(nameof(Candidate.Telephone))]
         [InlineData(nameof(Candidate.MobileTelephone))]
-        [InlineData(nameof(Candidate.AddressTelephone))]
         [InlineData(nameof(Candidate.SecondaryTelephone))]
         public void Constructor_WhenCandidateHasNoPrimaryTelephone_UsesReserveNumbers(string reserveNumber)
         {
