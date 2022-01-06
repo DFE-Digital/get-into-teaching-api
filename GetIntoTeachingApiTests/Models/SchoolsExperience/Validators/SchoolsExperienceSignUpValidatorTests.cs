@@ -65,7 +65,7 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience.Validators
 
             var result = _validator.TestValidate(request);
 
-            result.ShouldHaveValidationErrorFor("Candidate.Telephone");
+            result.ShouldHaveValidationErrorFor("Candidate.AddressTelephone");
         }
 
         [Fact]
