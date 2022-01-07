@@ -8,6 +8,7 @@ jobs:
   cf:
     name: Cloud Foundry Network
     runs-on: ubuntu-latest
+    concurrency: prometheus
     steps:
       - name: Install Cloud Foundry
         run: |

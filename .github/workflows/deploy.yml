@@ -3,8 +3,9 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: The environment to deploy to Development/Test/Production/
+        description: The environment to deploy to
         required: true
+
       sha:
         description: Commit sha to be deployed
         required: true
@@ -33,26 +34,13 @@ jobs:
              API-KEYS
              INFRA-KEYS
 
-  turnstyle:
-    name: Wait for any previous deployments
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    needs: validate
-    steps:
-       - name: Turnstyle
-         uses: softprops/turnstyle@v1
-         with:
-            continue-after-seconds: 300
-            same-branch-only: false
-         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   deploy:
     name: Deploy ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
     environment: 
        name: ${{ github.event.inputs.environment }}
-    needs: turnstyle
+    needs: validate
+    concurrency: ${{github.event.inputs.environment}}
 
     defaults:
       run:
