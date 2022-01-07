@@ -8,48 +8,9 @@ on:
       - master
 
 jobs:
-  turnstyle:
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2.4.0
-
-      - name: set-up-environment
-        uses: DFE-Digital/github-actions/set-up-environment@master
-
-      - uses: Azure/login@v1
-        with:
-            creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
-        id: SLACK-WEBHOOK
-        with:
-          keyvault: ${{ secrets.KEY_VAULT}}
-          yaml_secret: INFRA-KEYS
-          secret: SLACK-WEBHOOK
-
-      - name: Check workflow concurrency
-        uses: softprops/turnstyle@v1
-        with:
-          poll-interval-seconds: 20
-          same-branch-only: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Slack Notification
-        if: failure() && github.ref == 'refs/heads/master'
-        uses: rtCamp/action-slack-notify@master
-        env:
-           SLACK_COLOR:   ${{env.SLACK_FAILURE}}
-           SLACK_MESSAGE: Content Delivery has failed. This is due to a workflow concurrency issue
-           SLACK_TITLE:   Turnstyle failure ${{ github.workflow }}
-           SLACK_WEBHOOK: ${{ steps.SLACK-WEBHOOK.outputs.secret-value }}
-
   build:
     name: Build and push to DockerHub
     runs-on: ubuntu-latest
-    needs: turnstyle 
     outputs:
        image: ${{steps.docker_image.outputs.IMAGE}}
     steps:

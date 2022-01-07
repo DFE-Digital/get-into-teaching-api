@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
        name: ${{ github.event.inputs.environment }}
+    concurrency: ${{github.event.inputs.environment}}
     steps:
       - name: Install Cloud Foundry
         run: |
