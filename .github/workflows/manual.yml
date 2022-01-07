@@ -4,8 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: Development/Test/Production
+        description: Environment to release to 
         required: true
+        type: environment
       tag:
         description: Release Tag
         required: true
@@ -16,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
         name: ${{github.event.inputs.environment}}
+    concurrency: ${{github.event.inputs.environment}}
     defaults:
       run:
         shell: bash
