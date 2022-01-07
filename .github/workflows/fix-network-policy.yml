@@ -3,9 +3,10 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: Environment to fix to Development/Test/Production
+        description: Environment to fix
         required: true
         default: Development
+        type: environment
 
 jobs:
   cf:
