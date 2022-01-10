@@ -49,7 +49,7 @@ groups:
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#TooManyRequests-HIGH
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=27&orgId=1
       - alert: HighNotFound
-        expr: 'sum(increase(app_requests_total{path!~"(apple|logo.svg|login|sites|user|wp|node)",status=~"404"}[10m])) > 120'
+        expr: 'sum(increase(app_requests_total{path!~"(apple|logo.svg|login|sites|user|wp|node|.jpg|.jpeg|.png|.svg|.pdf|.txt)",status=~"404"}[10m])) > 120'
         labels:
           severity: medium
         annotations:
