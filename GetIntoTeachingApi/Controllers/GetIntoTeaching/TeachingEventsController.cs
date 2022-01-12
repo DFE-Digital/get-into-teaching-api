@@ -56,15 +56,15 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
         [PrivateShortTermResponseCache]
         [Route("search_grouped_by_type")]
         [SwaggerOperation(
-    Summary = "Searches for teaching events, returning grouped by type.",
-    Description = "Searches for teaching events. Optionally limit the results by distance (in miles) from a postcode, event type and start date.",
-    OperationId = "SearchTeachingEventsGroupedByType",
-    Tags = new[] { "Teaching Events" })]
+            Summary = "Searches for teaching events, returning grouped by type.",
+            Description = "Searches for teaching events. Optionally limit the results by distance (in miles) from a postcode, event type and start date.",
+            OperationId = "SearchTeachingEventsGroupedByType",
+            Tags = new[] { "Teaching Events" })]
         [ProducesResponseType(typeof(IEnumerable<TeachingEventsByType>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> SearchGroupedByType(
-    [FromQuery, CommaSeparated("TypeIds", "StatusIds"), SwaggerParameter("Event search criteria.", Required = true)] TeachingEventSearchRequest request,
-    [FromQuery, SwaggerParameter("Quantity to return (per type).")] int quantityPerType = 3)
+            [FromQuery, CommaSeparated("TypeIds", "StatusIds"), SwaggerParameter("Event search criteria.", Required = true)] TeachingEventSearchRequest request,
+            [FromQuery, SwaggerParameter("Quantity to return (per type).")] int quantityPerType = 3)
         {
             if (!ModelState.IsValid)
             {
@@ -90,6 +90,46 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
                 .Observe(inPesonTeachingEvents.Count());
 
             return Ok(GroupTeachingEventsByType(teachingEvents, quantityPerType));
+        }
+
+        [HttpGet]
+        [PrivateShortTermResponseCache]
+        [Route("search")]
+        [SwaggerOperation(
+            Summary = "Searches for teaching events.",
+            Description = "Searches for teaching events. Optionally limit the results by distance (in miles) from a postcode, event type and start date.",
+            OperationId = "SearchTeachingEvents",
+            Tags = new[] { "Teaching Events" })]
+                [ProducesResponseType(typeof(IEnumerable<TeachingEvent>), StatusCodes.Status200OK)]
+                [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Search(
+            [FromQuery, CommaSeparated("TypeIds", "StatusIds"), SwaggerParameter("Event search criteria.", Required = true)] TeachingEventSearchRequest request,
+            [FromQuery, SwaggerParameter("Quantity to return.")] int quantity = 10)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (request.Postcode != null)
+            {
+                _logger.LogInformation("Search: {Postcode}", request.Postcode);
+            }
+
+            var teachingEvents = (await _store.SearchTeachingEventsAsync(request)).Take(quantity);
+
+            var typeIds = request.TypeIds == null ? string.Empty : string.Join(",", request.TypeIds);
+
+            _metrics.TeachingEventSearchResults
+                .WithLabels(typeIds, request.Radius.ToString())
+                .Observe(teachingEvents.Count());
+
+            var inPesonTeachingEvents = teachingEvents.Where(e => e.IsInPerson);
+            _metrics.InPersonTeachingEventResults
+                .WithLabels(typeIds, request.Radius.ToString())
+                .Observe(inPesonTeachingEvents.Count());
+
+            return Ok(teachingEvents);
         }
 
         [HttpGet]
