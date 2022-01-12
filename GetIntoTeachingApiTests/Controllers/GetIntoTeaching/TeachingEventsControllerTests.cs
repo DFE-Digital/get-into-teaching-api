@@ -129,6 +129,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
         public async void SearchGroupedByType_ValidRequest_ReturnsTeachingEventsByType()
         {
             var request = new TeachingEventSearchRequest() { Postcode = "KY12 8FG" };
+            var metricCountBefore = _metrics.TeachingEventSearchResults.WithLabels(new[] { string.Empty, request.Radius.ToString() }).Count;
             var mockEvents = MockEvents();
             _mockStore.Setup(mock => mock.SearchTeachingEventsAsync(request)).ReturnsAsync(mockEvents);
 
@@ -144,7 +145,54 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
 
             _mockLogger.VerifyInformationWasCalled("SearchGroupedByType: KY12 8FG");
 
-            _metrics.TeachingEventSearchResults.WithLabels(new[] { string.Empty, request.Radius.ToString() }).Count.Should().Be(1);
+            _metrics.TeachingEventSearchResults.WithLabels(new[] { string.Empty, request.Radius.ToString() }).Count.Should().Be(metricCountBefore + 1);
+        }
+
+        [Fact]
+        public void Search_SearchRequestIsDecoratedWithCommaSeparatedAttributeForArrayProperties()
+        {
+            var expectedAttribute = new CommaSeparatedAttribute(
+                nameof(TeachingEventSearchRequest.TypeIds), nameof(TeachingEventSearchRequest.StatusIds));
+
+            typeof(TeachingEventsController)
+                .GetMethod("Search")
+                .GetParameters()
+                .FirstOrDefault(param => param.ParameterType == typeof(TeachingEventSearchRequest))
+                .GetCustomAttributes(false)
+                .Should().ContainEquivalentOf(expectedAttribute);
+        }
+
+        [Fact]
+        public async void Search_InvalidRequest_RespondsWithValidationErrors()
+        {
+            var request = new TeachingEventSearchRequest() { Postcode = null };
+            _controller.ModelState.AddModelError("Postcode", "Postcode must be specified.");
+
+            var response = await _controller.Search(request);
+
+            var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
+            var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
+            errors.Should().ContainKey("Postcode").WhoseValue.Should().BeOfType<string[]>().Which.Should().Contain("Postcode must be specified.");
+        }
+
+        [Fact]
+        public async void Search_ValidRequest_ReturnsTeachingEvents()
+        {
+            var request = new TeachingEventSearchRequest() { Postcode = "KY12 8FG" };
+            var metricCountBefore = _metrics.TeachingEventSearchResults.WithLabels(new[] { string.Empty, request.Radius.ToString() }).Count;
+            var mockEvents = MockEvents();
+            _mockStore.Setup(mock => mock.SearchTeachingEventsAsync(request)).ReturnsAsync(mockEvents);
+
+            var response = await _controller.Search(request, 2);
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            var result = (IEnumerable<TeachingEvent>)ok.Value;
+
+            result.Count().Should().Be(2);
+
+            _mockLogger.VerifyInformationWasCalled("Search: KY12 8FG");
+
+            _metrics.TeachingEventSearchResults.WithLabels(new[] { string.Empty, request.Radius.ToString() }).Count.Should().Be(metricCountBefore + 1);
         }
 
         [Fact]
