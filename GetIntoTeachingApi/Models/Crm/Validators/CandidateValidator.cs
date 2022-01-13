@@ -25,7 +25,6 @@ namespace GetIntoTeachingApi.Models.Crm.Validators
             RuleFor(candidate => candidate.AddressLine3).MaximumLength(1024);
             RuleFor(candidate => candidate.AddressCity).MaximumLength(128);
             RuleFor(candidate => candidate.AddressStateOrProvince).MaximumLength(100);
-            RuleFor(candidate => candidate.ClassroomExperienceNotesRaw).MaximumLength(10000);
             RuleFor(candidate => candidate.MobileTelephone).MinimumLength(5).MaximumLength(25).Matches(TelephoneRegex);
             RuleFor(candidate => candidate.Telephone).MinimumLength(5).MaximumLength(25).Matches(TelephoneRegex);
             RuleFor(candidate => candidate.SecondaryTelephone).MinimumLength(5).MaximumLength(25).Matches(TelephoneRegex);

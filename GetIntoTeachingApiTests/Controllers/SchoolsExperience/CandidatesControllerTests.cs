@@ -203,37 +203,6 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
         }
 
         [Fact]
-        public void AddClassroomExperienceNote_InvalidRequest_RespondsWithValidationErrors()
-        {
-            var candidateId = Guid.NewGuid();
-            var note = new ClassroomExperienceNote { SchoolName = null };
-            _controller.ModelState.AddModelError("SchoolName", "SchoolName must be set.");
-
-            var response = _controller.AddClassroomExperienceNote(candidateId, note);
-
-            var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
-            var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
-            errors.Should().ContainKey("SchoolName").WhoseValue.Should().BeOfType<string[]>().Which.Should().Contain("SchoolName must be set.");
-        }
-
-        [Fact]
-        public void AddClassroomExperienceNote_ValidRequest_EnqueuesJobAndRespondsWithNoContent()
-        {
-            var candidate = new Candidate() { Id = Guid.NewGuid() };
-            var note = new ClassroomExperienceNote();
-            var expectedArguments = new object[] { candidate.Id, note };
-
-            var response = _controller.AddClassroomExperienceNote((Guid)candidate.Id, note);
-
-            response.Should().BeOfType<NoContentResult>();
-            _mockJobClient.Verify(x => x.Create(
-                It.Is<Job>(job => job.Type == typeof(AddClassroomExperienceNoteJob) &&
-                                  job.Method.Name == "Run" &&
-                                  expectedArguments.All(arg => job.Args.Contains(arg))),
-                It.IsAny<EnqueuedState>()));
-        }
-
-        [Fact]
         public void AddSchoolExperience_InvalidRequest_RespondsWithValidationErrors()
         {
             var candidateId = Guid.NewGuid();
