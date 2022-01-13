@@ -188,11 +188,6 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
             [FromRoute, SwaggerParameter("The `id` of the `Candidate`.", Required = true)] Guid id,
             [FromBody, SwaggerRequestBody("School experience.", Required = true)] CandidateSchoolExperience candidateSchoolExperience)
         {
-            if (_env.IsProduction)
-            {
-                throw new InvalidOperationException("New feature under development");
-            }
-
             var candidate = new Candidate { Id = id };
             candidate.SchoolExperiences.Add(candidateSchoolExperience);
 
