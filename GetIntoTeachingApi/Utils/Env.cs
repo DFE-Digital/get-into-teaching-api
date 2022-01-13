@@ -11,7 +11,8 @@ namespace GetIntoTeachingApi.Utils
         public bool IsStaging => EnvironmentName == "Staging";
         public bool IsTest => EnvironmentName == "Test";
         public string GitCommitSha => Environment.GetEnvironmentVariable("GIT_COMMIT_SHA");
-        public bool ExportHangireToPrometheus => Environment.GetEnvironmentVariable("CF_INSTANCE_INDEX") == "0";
+        public bool ExportHangireToPrometheus => InstanceIndex == "0";
+        public string InstanceIndex => Environment.GetEnvironmentVariable("CF_INSTANCE_INDEX");
         public string DatabaseInstanceName => Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME");
         public string HangfireInstanceName => Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME");
         public string HangfireUsername => Environment.GetEnvironmentVariable("HANGFIRE_USERNAME");
