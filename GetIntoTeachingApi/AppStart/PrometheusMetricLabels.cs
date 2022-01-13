@@ -16,6 +16,7 @@ namespace GetIntoTeachingApi.AppStart
                     { "app", env.AppName },
                     { "organization", env.Organization },
                     { "space", env.Space },
+                    { "app_instance", env.InstanceIndex },
                 });
             }
         }

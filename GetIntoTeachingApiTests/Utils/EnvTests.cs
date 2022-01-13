@@ -107,6 +107,14 @@ namespace GetIntoTeachingApiTests.Utils
         }
 
         [Fact]
+        public void InstanceIndex_ReturnsCorrectly()
+        { 
+            Environment.SetEnvironmentVariable("CF_INSTANCE_INDEX", "123");
+
+            _env.InstanceIndex.Should().Be("123");
+        }
+
+        [Fact]
         public void HangfireUsername_ReturnsCorrectly()
         {
             var previous = Environment.GetEnvironmentVariable("HANGFIRE_USERNAME");
