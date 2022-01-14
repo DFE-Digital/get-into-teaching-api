@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
+using Serilog.Formatting.Compact;
 
 namespace GetIntoTeachingApi
 {
@@ -25,10 +26,6 @@ namespace GetIntoTeachingApi
                     webBuilder.UseKestrel(opts => opts.AddServerHeader = false);
                     webBuilder.UseStartup<Startup>();
                 })
-            .UseSerilog(new LoggerConfiguration()
-                .MinimumLevel.Information()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                .WriteTo.Console()
-                .CreateLogger());
+            .UseSerilog((ctx, config) => config.ReadFrom.Configuration(ctx.Configuration));
     }
 }
