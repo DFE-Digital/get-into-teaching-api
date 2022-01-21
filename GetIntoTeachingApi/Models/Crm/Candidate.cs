@@ -203,8 +203,6 @@ namespace GetIntoTeachingApi.Models.Crm
         public bool? HasDbsCertificate { get; set; }
         [EntityField("dfe_dateofissueofdbscertificate")]
         public DateTime? DbsCertificateIssuedAt { get; set; }
-        [EntityField("dfe_notesforclassroomexperience")]
-        public string ClassroomExperienceNotesRaw { get; set; }
         [EntityField("dfe_dfesnumber")]
         public string TeacherId { get; set; }
         [EntityField("dfe_eligibilityrulespassed")]
@@ -310,16 +308,6 @@ namespace GetIntoTeachingApi.Models.Crm
         public Candidate(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
             : base(entity, crm, validatorFactory)
         {
-        }
-
-        public void AddClassroomExperienceNote(ClassroomExperienceNote note)
-        {
-            if (string.IsNullOrWhiteSpace(ClassroomExperienceNotesRaw))
-            {
-                ClassroomExperienceNotesRaw = ClassroomExperienceNote.Header;
-            }
-
-            ClassroomExperienceNotesRaw += note.ToString();
         }
 
         public bool HasTeacherTrainingAdviser()

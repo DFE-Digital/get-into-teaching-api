@@ -153,29 +153,6 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
         }
 
         [HttpPost]
-        [Route("{id}/classroom_experience_notes")]
-        [SwaggerOperation(
-           Summary = "Add a classroom experience note to the candidate.",
-           Description = "Adds a new classroom experience note to the candidate record",
-           OperationId = "AddClassroomExperienceNote",
-           Tags = new[] { "Schools Experience" })]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult AddClassroomExperienceNote(
-           [FromRoute, SwaggerParameter("The `id` of the `Candidate`.", Required = true)] Guid id,
-           [FromBody, SwaggerRequestBody("Classroom experience note.", Required = true)] ClassroomExperienceNote note)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            _jobClient.Enqueue<AddClassroomExperienceNoteJob>((x) => x.Run(null, note, id));
-
-            return NoContent();
-        }
-
-        [HttpPost]
         [Route("{id}/school_experience")]
         [SwaggerOperation(
             Summary = "Add a school experience to the candidate.",

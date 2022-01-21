@@ -101,7 +101,6 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 Telephone = "07584 734 576",
                 SecondaryTelephone = "07584 734 576",
                 MobileTelephone = "07584 734 576",
-                ClassroomExperienceNotesRaw = "notes",
                 HasDbsCertificate = true,
                 HasGcseMathsId = mockPickListItem.Id,
                 HasGcseEnglishId = mockPickListItem.Id,
@@ -490,15 +489,6 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
             var result = _validator.TestValidate(candidate);
 
             result.ShouldHaveValidationErrorFor("ChannelId");
-        }
-
-        [Fact]
-        public void Validate_ClassroomExperienceNotesRawIsTooLong_HasError()
-        {
-            var candidate = new Candidate() { ClassroomExperienceNotesRaw = new string('a', 10001) };
-            var result = _validator.TestValidate(candidate);
-
-            result.ShouldHaveValidationErrorFor(c => c.ClassroomExperienceNotesRaw);
         }
     }
 }
