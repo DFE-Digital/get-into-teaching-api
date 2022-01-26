@@ -63,7 +63,7 @@ jobs:
           password: ${{ steps.ACTIONS-API-ACCESS-TOKEN.outputs.secret-value }}
 
       - name: Build
-        uses: docker/build-push-action@v2.7.0
+        uses: docker/build-push-action@v2.8.0
         with:
           push: ${{ github.ref == 'refs/heads/master' }}
           builder: ${{ steps.buildx.outputs.name }}
