@@ -16,6 +16,11 @@ locals {
     api           = local.api_endpoint
     API_ENDPOINT  = var.api_url
   }
+
+  docker_credentials_map = {
+      username = local.infrastructure_secrets.DOCKER-USERNAME
+      password = local.infrastructure_secrets.DOCKER-PASSWORD
+  }
 }
 
 module "prometheus" {
@@ -43,5 +48,6 @@ module "prometheus" {
   influxdb_service_plan             = var.influxdb_1_plan
   redis_services                    = ["${var.paas_space}/${var.paas_redis_1_name}"]
   postgres_services                 = ["${var.paas_space}/${var.paas_database_common_name}"]
+  docker_credentials                = local.docker_credentials_map
 }
 
