@@ -24,19 +24,12 @@ jobs:
         with:
             creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
-        id: ACTIONS-API-ACCESS-TOKEN
+      - uses: DfE-Digital/keyvault-yaml-secret@v1
+        id:  keyvault-yaml-secret
         with:
           keyvault: ${{ secrets.KEY_VAULT}}
-          yaml_secret: INFRA-KEYS
-          secret: ACTIONS-API-ACCESS-TOKEN
-
-      - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
-        id: SLACK-WEBHOOK
-        with:
-          keyvault: ${{ secrets.KEY_VAULT}}
-          yaml_secret: INFRA-KEYS
-          secret: SLACK-WEBHOOK
+          secret: INFRA-KEYS
+          key: ACTIONS-API-ACCESS-TOKEN, SLACK-WEBHOOK
 
       - name: Set up Docker Buildx
         id: buildx
@@ -60,7 +53,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ steps.ACTIONS-API-ACCESS-TOKEN.outputs.secret-value }}
+          password: ${{ steps.keyvault-yaml-secret.outputs.ACTIONS-API-ACCESS-TOKEN }}
 
       - name: Build
         uses: docker/build-push-action@v2.9.0
@@ -80,7 +73,7 @@ jobs:
            SLACK_COLOR:   ${{env.SLACK_FAILURE}}
            SLACK_MESSAGE: 'The pipeline has failed to build the API image'
            SLACK_TITLE:   'Failure to Build API '
-           SLACK_WEBHOOK: ${{ steps.SLACK-WEBHOOK.outputs.secret-value }}
+           SLACK_WEBHOOK: ${{ steps.keyvault-yaml-secret.outputs.SLACK-WEBHOOK }}
 
   development:
     name: Development Deployment
@@ -101,38 +94,29 @@ jobs:
          with:
             creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-       - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
-         id: ACTIONS-API-ACCESS-TOKEN
+       - uses: DfE-Digital/keyvault-yaml-secret@v1
+         id:  keyvault-yaml-secret
          with:
-          keyvault: ${{ secrets.KEY_VAULT}}
-          yaml_secret: INFRA-KEYS
-          secret: ACTIONS-API-ACCESS-TOKEN
+           keyvault: ${{ secrets.KEY_VAULT}}
+           secret: INFRA-KEYS
+           key: ACTIONS-API-ACCESS-TOKEN, SLACK-WEBHOOK
 
        - name: Trigger Development Deployment
-         uses: benc-uk/workflow-dispatch@v1.1
+         uses: ./.github/workflows/actions/deploy
+         id: deploy
          with:
-           workflow: Deploy to PaaS
-           token: ${{ steps.ACTIONS-API-ACCESS-TOKEN.outputs.secret-value }}
-           inputs: '{"environment": "Development", "sha": "${{ github.sha }}"}'
-           ref: ${{github.ref}}
-
-       - name: Wait for Deployment to Development
-         uses: fountainhead/action-wait-for-check@v1.0.0
-         id: wait-for-deploy
-         with:
-           token: ${{ steps.ACTIONS-API-ACCESS-TOKEN.outputs.secret-value }}
-           checkName: Deploy Development
-           ref: ${{github.ref}}
-
-       - name: Check if Development Deployment has returned with a failure
-         if: steps.wait-for-deploy.outputs.conclusion == 'failure'
-         run: exit 1
+           environment: Development
+           sha:  ${{ github.sha }}
+           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+           KEY_VAULT:         ${{ secrets.KEY_VAULT }}
+           ARM_ACCESS_KEY:    ${{ secrets.ARM_ACCESS_KEY }}
+           GITHUB_TOKEN:      ${{ secrets.GITHUB_TOKEN }}
 
        - name: Trigger Development Fix Network Policies
          uses: benc-uk/workflow-dispatch@v1.1
          with:
            workflow: Fix Network policies 
-           token: ${{ steps.ACTIONS-API-ACCESS-TOKEN.outputs.secret-value }}
+           token: ${{ steps.keyvault-yaml-secret.outputs.ACTIONS-API-ACCESS-TOKEN }}
            inputs: '{"environment": "Development" }'
            ref: ${{github.ref}}
         
@@ -180,39 +164,23 @@ jobs:
          with:
             creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-       - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
-         id: ACTIONS-API-ACCESS-TOKEN
+       - uses: DfE-Digital/keyvault-yaml-secret@v1
+         id:  keyvault-yaml-secret
          with:
            keyvault: ${{ secrets.KEY_VAULT}}
-           yaml_secret: INFRA-KEYS
-           secret: ACTIONS-API-ACCESS-TOKEN
-
-       - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
-         id: SLACK-WEBHOOK
-         with:
-           keyvault: ${{ secrets.KEY_VAULT}}
-           yaml_secret: INFRA-KEYS
-           secret: SLACK-WEBHOOK
+           secret: INFRA-KEYS
+           key: ACTIONS-API-ACCESS-TOKEN, SLACK-WEBHOOK
 
        - name: Trigger Deployment to QA
-         uses: benc-uk/workflow-dispatch@v1.1
+         uses: ./.github/workflows/actions/deploy
+         id: deploy
          with:
-           workflow: Deploy to PaaS
-           token: ${{ steps.ACTIONS-API-ACCESS-TOKEN.outputs.secret-value }}
-           inputs: '{"environment": "Test", "sha": "${{ github.sha }}" }'
-           ref: ${{github.ref}}
-
-       - name: Wait for Deployment to QA
-         uses: fountainhead/action-wait-for-check@v1.0.0
-         id: wait-for-deploy
-         with:
-           token: ${{ steps.ACTIONS-API-ACCESS-TOKEN.outputs.secret-value }}
-           checkName: Deploy Test
-           ref: ${{github.ref}}
-
-       - name: Check if QA Deployment has returned with a failure
-         if: steps.wait-for-deploy.outputs.conclusion == 'failure'
-         run: exit 1
+           environment: Test
+           sha:  ${{ github.sha }}
+           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+           KEY_VAULT:         ${{ secrets.KEY_VAULT }}
+           ARM_ACCESS_KEY:    ${{ secrets.ARM_ACCESS_KEY }}
+           GITHUB_TOKEN:      ${{ secrets.GITHUB_TOKEN }}
 
        - name: Slack Notification
          if: failure()
@@ -221,7 +189,7 @@ jobs:
            SLACK_COLOR:   ${{env.SLACK_FAILURE}}
            SLACK_TITLE:   Failure in Post-Development Deploy
            SLACK_MESSAGE: Failure with initialising QA deployment for ${{env.APPLICATION}}
-           SLACK_WEBHOOK: ${{ steps.SLACK-WEBHOOK.outputs.secret-value }}
+           SLACK_WEBHOOK: ${{ steps.keyvault-yaml-secret.outputs.SLACK-WEBHOOK }}
 
   cypress:
     name: Run Cypress Tests on QA
@@ -238,26 +206,21 @@ jobs:
          with:
             creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-       - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
-         id: ACTIONS-API-ACCESS-TOKEN
+       - uses: DfE-Digital/keyvault-yaml-secret@v1
+         id:  keyvault-yaml-secret
          with:
            keyvault: ${{ secrets.KEY_VAULT}}
-           yaml_secret: INFRA-KEYS
-           secret: ACTIONS-API-ACCESS-TOKEN
-
-       - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
-         id: SLACK-WEBHOOK
-         with:
-           keyvault: ${{ secrets.KEY_VAULT}}
-           yaml_secret: INFRA-KEYS
-           secret: SLACK-WEBHOOK
+           secret: INFRA-KEYS
+           key: ACTIONS-API-ACCESS-TOKEN, SLACK-WEBHOOK
+         env:
+           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
        - name: Trigger Cypress Tests (DFE-Digital/get-into-teaching-frontend-tests )
          uses: benc-uk/workflow-dispatch@v1.1
          with:
            repo: DFE-Digital/get-into-teaching-frontend-tests
            workflow: Cypress
-           token: ${{ steps.ACTIONS-API-ACCESS-TOKEN.outputs.secret-value }}
+           token: ${{ steps.keyvault-yaml-secret.outputs.ACTIONS-API-ACCESS-TOKEN }}
            inputs: '{"application": "BOTH" , "reference": "${{ github.sha }}" }'
            ref:  refs/heads/master
 

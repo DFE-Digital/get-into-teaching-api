@@ -15,12 +15,14 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - uses: DFE-Digital/github-actions/keyvault-yaml-secret@master
-      id: SLACK-WEBHOOK
+    - uses: DfE-Digital/keyvault-yaml-secret@v1
+      id:  keyvault-yaml-secret
       with:
-         keyvault: ${{ secrets.KEY_VAULT}}
-         yaml_secret: INFRA-KEYS
-         secret: SLACK-WEBHOOK
+        keyvault: ${{ secrets.KEY_VAULT}}
+        secret: INFRA-KEYS
+        key: SLACK-WEBHOOK
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
     - name: set-up-environment
       uses: DFE-Digital/github-actions/set-up-environment@master
@@ -54,4 +56,4 @@ jobs:
            SLACK_COLOR:   ${{env.SLACK_FAILURE }}
            SLACK_MESSAGE: Pipeline Failure carrying out job ${{github.job}}
            SLACK_TITLE:   'Failure: ${{ github.workflow }}'
-           SLACK_WEBHOOK: ${{ steps.SLACK-WEBHOOK.outputs.secret-value }}
+           SLACK_WEBHOOK: ${{ steps.keyvault-yaml-secret.outputs.SLACK-WEBHOOK }}
