@@ -52,10 +52,12 @@ runs:
 
        - name: Get Short SHA
          id: sha
+         shell: bash
          run: echo ::set-output name=short::$(echo "${{ inputs.sha }}" | cut -c -7)
 
        - name: Setup Environment Variables
          id:  variables
+         shell: bash
          run: |
              if [ "${{inputs.environment }}" == "Development" ]
              then
@@ -88,16 +90,8 @@ runs:
          with:
               terraform_version: 0.14.9
 
-       - name: Start ${{ inputs.environment }} Deployment
-         uses: bobheadxi/deployments@v0.6.2
-         id: deployment
-         with:
-           step: start
-           token: ${{ inputs.GITHUB_TOKEN }}
-           env: ${{ inputs.environment }}
-           ref: ${{ inputs.sha }}
-
        - name: Terraform ( ${{inputs.environment}} ) 
+         shell: bash
          run: |
              cd terraform/paas && pwd
              terraform init -backend-config=${{steps.variables.outputs.control}}.bk.vars -backend-config="key=${{steps.variables.outputs.key}}.tfstate"
@@ -108,17 +102,9 @@ runs:
              TF_VAR_paas_api_docker_image: ${{ steps.variables.outputs.docker_image}}
 
        - name: Smoke tests
+         shell: bash
          run: |
              tests/confidence/healthcheck.sh  "${{steps.variables.outputs.healthcheck}}"  "${{ steps.sha.outputs.short }}"
-
-       - name: Update ${{ inputs.environment }} status
-         if: success() 
-         uses: bobheadxi/deployments@v0.6.2
-         with:
-           step: finish
-           token: ${{ inputs.GITHUB_TOKEN }}
-           status: ${{ job.status }}
-           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
 
        - name: Log Deployment
          if: always()
