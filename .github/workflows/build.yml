@@ -153,6 +153,8 @@ jobs:
     needs: build
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
+    environment:
+       name: Test 
     steps:
        - name: Check out the repo
          uses: actions/checkout@v2.4.0
