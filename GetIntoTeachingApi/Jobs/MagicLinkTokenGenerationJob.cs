@@ -21,13 +21,14 @@ namespace GetIntoTeachingApi.Jobs
 
         public MagicLinkTokenGenerationJob(
             IEnv env,
+            IRedisService redis,
             IBackgroundJobClient jobClient,
             ICandidateMagicLinkTokenService magicLinkTokenService,
             ICrmService crm,
             ILogger<MagicLinkTokenGenerationJob> logger,
             IMetricService metrics,
             IAppSettings appSettings)
-            : base(env)
+            : base(env, redis)
         {
             _jobClient = jobClient;
             _magicLinkTokenService = magicLinkTokenService;

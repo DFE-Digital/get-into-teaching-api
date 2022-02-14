@@ -19,11 +19,12 @@ namespace GetIntoTeachingApi.Jobs
 
         public FindApplyCandidateSyncJob(
             IEnv env,
+            IRedisService redis,
             ILogger<FindApplyCandidateSyncJob> logger,
             ICrmService crm,
             IBackgroundJobClient jobClient,
             Models.IAppSettings appSettings)
-            : base(env)
+            : base(env, redis)
         {
             _logger = logger;
             _crm = crm;

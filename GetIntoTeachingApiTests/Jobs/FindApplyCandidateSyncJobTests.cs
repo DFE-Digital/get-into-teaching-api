@@ -34,6 +34,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockJobClient = new Mock<IBackgroundJobClient>();
             _job = new FindApplyCandidateSyncJob(
                 new Env(),
+                new Mock<IRedisService>().Object,
                 _mockLogger.Object,
                 _mockCrm.Object,
                 _mockJobClient.Object,

@@ -35,6 +35,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _metrics = new MetricService();
             _job = new MagicLinkTokenGenerationJob(
                 new Env(),
+                new Mock<IRedisService>().Object,
                 _mockJobClient.Object,
                 _mockMagicLinkTokenService.Object,
                 _mockCrm.Object,
