@@ -29,10 +29,11 @@ namespace GetIntoTeachingApi.Jobs
 
         public LocationSyncJob(
             IEnv env,
+            IRedisService redis,
             GetIntoTeachingDbContext dbContext,
             ILogger<LocationSyncJob> logger,
             IMetricService metrics)
-            : base(env)
+            : base(env, redis)
         {
             _logger = logger;
             _dbContext = dbContext;

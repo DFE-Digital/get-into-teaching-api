@@ -42,6 +42,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _job = new FindApplySyncJob(
                 _mockEnv.Object,
+                new Mock<IRedisService>().Object,
                 _mockLogger.Object,
                 _mockJobClient.Object,
                 _mockAppSettings.Object,

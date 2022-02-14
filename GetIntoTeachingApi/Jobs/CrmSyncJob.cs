@@ -17,11 +17,12 @@ namespace GetIntoTeachingApi.Jobs
 
         public CrmSyncJob(
             IEnv env,
+            IRedisService redis,
             IStore store,
             ILogger<CrmSyncJob> logger,
             IMetricService metrics,
             IAppSettings appSettings)
-            : base(env)
+            : base(env, redis)
         {
             _store = store;
             _logger = logger;
