@@ -31,7 +31,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockLogger = new Mock<ILogger<LocationSyncJob>>();
             _metrics = new MetricService();
             _job = new LocationSyncJob(_mockEnv.Object,
-                DbContext, _mockLogger.Object, _metrics);
+                new Mock<IRedisService>().Object, DbContext, _mockLogger.Object, _metrics);
         }
 
         [Fact]

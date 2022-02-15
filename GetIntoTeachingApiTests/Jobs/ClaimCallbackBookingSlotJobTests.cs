@@ -32,7 +32,8 @@ namespace GetIntoTeachingApiTests.Jobs
             _metrics = new MetricService();
             _scheduledAt = DateTime.UtcNow;
             _job = new ClaimCallbackBookingSlotJob(
-                new Env(), _mockContext.Object, _mockCrm.Object, _metrics, _mockLogger.Object, _mockAppSettings.Object);
+                new Env(), new Mock<IRedisService>().Object, _mockContext.Object, _mockCrm.Object,
+                _metrics, _mockLogger.Object, _mockAppSettings.Object);
 
             _metrics.HangfireJobQueueDuration.RemoveLabelled(new[] { "ClaimCallbackBookingSlotJob" });
             _mockContext.Setup(m => m.GetJobCreatedAt(null)).Returns(DateTime.UtcNow.AddDays(-1));
