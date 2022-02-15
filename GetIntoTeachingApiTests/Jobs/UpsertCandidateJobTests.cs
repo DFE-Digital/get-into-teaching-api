@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Jobs;
@@ -10,6 +12,7 @@ using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
 using Microsoft.Extensions.Logging;
 using Moq;
+using StackExchange.Redis;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Jobs
@@ -20,6 +23,7 @@ namespace GetIntoTeachingApiTests.Jobs
         private readonly Mock<ICandidateUpserter> _mockUpserter;
         private readonly Mock<INotifyService> _mockNotifyService;
         private readonly Mock<IAppSettings> _mockAppSettings;
+        private readonly Mock<IDatabase> _mockDatabase;
         private readonly Candidate _candidate;
         private readonly IMetricService _metrics;
         private readonly UpsertCandidateJob _job;
@@ -34,7 +38,12 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockAppSettings = new Mock<IAppSettings>();
             _metrics = new MetricService();
             _candidate = new Candidate() { Id = Guid.NewGuid(), Email = "test@test.com" };
-            _job = new UpsertCandidateJob(new Env(), _mockUpserter.Object, _mockNotifyService.Object,
+
+            _mockDatabase = new Mock<IDatabase>();
+            var mockRedis = new Mock<IRedisService>();
+            mockRedis.Setup(m => m.Database).Returns(_mockDatabase.Object);
+
+            _job = new UpsertCandidateJob(new Env(), mockRedis.Object, _mockUpserter.Object, _mockNotifyService.Object,
                 _mockContext.Object, _metrics, _mockLogger.Object, _mockAppSettings.Object);
 
             _metrics.HangfireJobQueueDuration.RemoveLabelled(new[] { "UpsertCandidateJob" });
@@ -47,6 +56,8 @@ namespace GetIntoTeachingApiTests.Jobs
         public void Run_OnSuccess_UpsertsCandidate()
         {
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
+            var key = $"base_job.UpsertCandidateJob.{Signature(_candidate)}";
+            _mockDatabase.Setup(d => d.KeyExists(key, CommandFlags.None)).Returns(false);
 
             var json = _candidate.SerializeChangeTracked();
             _job.Run(json, null);
@@ -56,6 +67,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockLogger.VerifyInformationWasCalled($"UpsertCandidateJob - Payload {Redactor.RedactJson(json)}");
             _mockLogger.VerifyInformationWasCalled($"UpsertCandidateJob - Succeeded - {_candidate.Id}");
             _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Count.Should().Be(1);
+            _mockDatabase.Verify(m => m.StringSet(key, true, TimeSpan.FromSeconds(5), When.Always, CommandFlags.None));
         }
 
         [Fact]
@@ -77,6 +89,8 @@ namespace GetIntoTeachingApiTests.Jobs
         public void Run_WhenCrmIntegrationPaused_Aborts()
         {
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(true);
+            var key = $"base_job.UpsertCandidateJob.{Signature(_candidate)}";
+            _mockDatabase.Setup(d => d.KeyExists(key, CommandFlags.None)).Returns(false);
 
             var json = _candidate.SerializeChangeTracked();
             Action action = () => _job.Run(json, null);
@@ -85,10 +99,44 @@ namespace GetIntoTeachingApiTests.Jobs
                 .WithMessage("UpsertCandidateJob - Aborting (CRM integration paused).");
         }
 
+        [Fact]
+        public void Run_WhenTheJobHasBeenDuplicated_Deduplicates()
+        {
+            _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
+            var key = $"base_job.UpsertCandidateJob.{Signature(_candidate)}";
+            _mockDatabase.Setup(d => d.KeyExists(key, CommandFlags.None)).Returns(true);
+
+            var json = _candidate.SerializeChangeTracked();
+            _job.Run(json, null);
+
+            _mockUpserter.Verify(mock => mock.Upsert(It.Is<Candidate>(c => IsMatch(_candidate, c))), Times.Never);
+            _mockDatabase.Verify(m => m.StringSet(key, true, TimeSpan.FromSeconds(5), When.Always, CommandFlags.None), Times.Never);
+        }
+
+        [Fact]
+        public void Run_WhenTheJobIsRetrying_DoesNotDeduplicate()
+        {
+            _mockContext.Setup(m => m.GetRetryCount(null)).Returns(1);
+
+            var json = _candidate.SerializeChangeTracked();
+            _job.Run(json, null);
+
+            _mockUpserter.Verify(mock => mock.Upsert(It.Is<Candidate>(c => IsMatch(_candidate, c))), Times.Once);
+            var key = $"base_job.UpsertCandidateJob.{Signature(_candidate)}";
+            _mockDatabase.Verify(m => m.KeyExists(key, CommandFlags.None), Times.Never);
+
+        }
+
         private static bool IsMatch(object objectA, object objectB)
         {
             objectA.Should().BeEquivalentTo(objectB);
             return true;
+        }
+
+        private static string Signature(Candidate candidate)
+        {
+            var changedProperties = "MergedIsNewRegistrantTeachingEventRegistrationsQualificationsPastTeachingPositionsApplicationFormsSchoolExperiencesIdEmail";
+            return $"{candidate.Id}-{candidate.Email}-{changedProperties}";
         }
     }
 }

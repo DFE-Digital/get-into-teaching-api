@@ -25,7 +25,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockStore = new Mock<IStore>();
             _mockAppSettings = new Mock<IAppSettings>();
             _metrics = new MetricService();
-            _job = new CrmSyncJob(new Env(), _mockStore.Object, _mockLogger.Object, _metrics, _mockAppSettings.Object);
+            _job = new CrmSyncJob(new Env(), new Mock<IRedisService>().Object, _mockStore.Object, _mockLogger.Object, _metrics, _mockAppSettings.Object);
         }
 
         [Fact]

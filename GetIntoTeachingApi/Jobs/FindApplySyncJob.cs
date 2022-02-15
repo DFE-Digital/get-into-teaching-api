@@ -24,12 +24,13 @@ namespace GetIntoTeachingApi.Jobs
 
         public FindApplySyncJob(
             IEnv env,
+            IRedisService redis,
             ILogger<FindApplySyncJob> logger,
             IBackgroundJobClient jobClient,
             Models.IAppSettings appSettings,
             IMetricService metrics,
             IDateTimeProvider dateTime)
-            : base(env)
+            : base(env, redis)
         {
             _logger = logger;
             _metrics = metrics;

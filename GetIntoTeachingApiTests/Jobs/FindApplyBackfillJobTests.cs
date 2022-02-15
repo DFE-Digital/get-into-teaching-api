@@ -6,6 +6,7 @@ using Flurl.Http.Testing;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.FindApply;
+using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
 using Hangfire;
@@ -38,6 +39,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _job = new FindApplyBackfillJob(
                 _mockEnv.Object,
+                new Mock<IRedisService>().Object,
                 _mockJobClient.Object,
                 _mockLogger.Object,
                 _mockAppSettings.Object);

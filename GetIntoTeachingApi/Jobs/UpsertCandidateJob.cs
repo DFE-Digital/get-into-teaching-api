@@ -21,13 +21,14 @@ namespace GetIntoTeachingApi.Jobs
 
         public UpsertCandidateJob(
             IEnv env,
+            IRedisService redis,
             ICandidateUpserter upserter,
             INotifyService notifyService,
             IPerformContextAdapter contextAdapter,
             IMetricService metrics,
             ILogger<UpsertCandidateJob> logger,
             IAppSettings appSettings)
-            : base(env)
+            : base(env, redis)
         {
             _upserter = upserter;
             _notifyService = notifyService;
@@ -39,6 +40,14 @@ namespace GetIntoTeachingApi.Jobs
 
         public void Run(string json, PerformContext context)
         {
+            var candidate = json.DeserializeChangeTracked<Candidate>();
+
+            if (Deduplicate(Signature(candidate), context, _contextAdapter))
+            {
+                _logger.LogInformation("UpsertCandidateJob - Deduplicating");
+                return;
+            }
+
             if (_appSettings.IsCrmIntegrationPaused)
             {
                 throw new InvalidOperationException("UpsertCandidateJob - Aborting (CRM integration paused).");
@@ -46,8 +55,6 @@ namespace GetIntoTeachingApi.Jobs
 
             _logger.LogInformation("UpsertCandidateJob - Started ({Attempt})", AttemptInfo(context, _contextAdapter));
             _logger.LogInformation("UpsertCandidateJob - Payload {Payload}", Redactor.RedactJson(json));
-
-            var candidate = json.DeserializeChangeTracked<Candidate>();
 
             if (IsLastAttempt(context, _contextAdapter))
             {
@@ -69,6 +76,11 @@ namespace GetIntoTeachingApi.Jobs
 
             var duration = (DateTime.UtcNow - _contextAdapter.GetJobCreatedAt(context)).TotalSeconds;
             _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Observe(duration);
+        }
+
+        private static string Signature(Candidate candidate)
+        {
+            return $"{candidate.Id}-{candidate.Email}-{string.Join("", candidate.ChangedPropertyNames)}";
         }
     }
 }

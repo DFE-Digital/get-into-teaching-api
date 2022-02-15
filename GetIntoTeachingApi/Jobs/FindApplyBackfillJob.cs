@@ -22,10 +22,11 @@ namespace GetIntoTeachingApi.Jobs
 
         public FindApplyBackfillJob(
             IEnv env,
+            IRedisService redis,
             IBackgroundJobClient jobClient,
             ILogger<FindApplyBackfillJob> logger,
             IAppSettings appSettings)
-            : base(env)
+            : base(env, redis)
         {
             _jobClient = jobClient;
             _logger = logger;

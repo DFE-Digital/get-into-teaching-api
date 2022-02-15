@@ -18,12 +18,13 @@ namespace GetIntoTeachingApi.Jobs
 
         public ClaimCallbackBookingSlotJob(
             IEnv env,
+            IRedisService redis,
             IPerformContextAdapter contextAdapter,
             ICrmService crm,
             IMetricService metrics,
             ILogger<ClaimCallbackBookingSlotJob> logger,
             IAppSettings appSettings)
-            : base(env)
+            : base(env, redis)
         {
             _contextAdapter = contextAdapter;
             _metrics = metrics;

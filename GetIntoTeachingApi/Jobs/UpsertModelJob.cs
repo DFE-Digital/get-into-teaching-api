@@ -22,13 +22,14 @@ namespace GetIntoTeachingApi.Jobs
 
         public UpsertModelJob(
             IEnv env,
+            IRedisService redis,
             IPerformContextAdapter contextAdapter,
             ICrmService crm,
             IMetricService metrics,
             ILogger<UpsertModelJob<T>> logger,
             IAppSettings appSettings,
             INotifyService notifyService)
-            : base(env)
+            : base(env, redis)
         {
             _contextAdapter = contextAdapter;
             _metrics = metrics;
