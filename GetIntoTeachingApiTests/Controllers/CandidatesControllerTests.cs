@@ -76,7 +76,9 @@ namespace GetIntoTeachingApiTests.Controllers
                 mock => mock.SendEmailAsync(
                     "email@address.com",
                     NotifyService.NewPinCodeEmailTemplateId,
-                    It.Is<Dictionary<string, dynamic>>(personalisation => personalisation["pin_code"] as string == "123456")
+                    It.Is<Dictionary<string, dynamic>>(personalisation =>
+                        personalisation["pin_code"] as string == "123456" &&
+                        personalisation["first_name"] as string == "John")
                 )
             );
         }
