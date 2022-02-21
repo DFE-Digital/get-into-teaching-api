@@ -11,12 +11,12 @@
   api_key_prefix: ADMIN
   role: Admin
 -
-  name: Get into Teaching
+  name: Get Into Teaching
   description: "A service to support potential teachers on their journey into teaching"
   api_key_prefix: GIT
   role: GetIntoTeaching
 -
-  name: Get an Adviser
+  name: Get an adviser
   description: "A service to enable candidates to sign up for a Teacher Training Adviser (TTA)"
   api_key_prefix: TTA
   role: GetAnAdviser
@@ -26,7 +26,7 @@
   api_key_prefix: CRM
   role: Crm
 -
-  name: Schools Experience
+  name: Get school experience
   description: "A service that allows candidates to book school experience"
   api_key_prefix: SE
   role: SchoolsExperience

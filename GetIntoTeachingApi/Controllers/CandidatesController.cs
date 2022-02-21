@@ -82,7 +82,10 @@ namespace GetIntoTeachingApi.Controllers
             }
 
             var token = _accessTokenService.GenerateToken(request, (Guid)candidate.Id);
-            var personalisation = new Dictionary<string, dynamic> { { "pin_code", token } };
+            var personalisation = new Dictionary<string, dynamic> {
+                { "pin_code", token },
+                { "first_name", request.FirstName }
+            };
 
             // We respond immediately/assume this will be successful.
             _notifyService.SendEmailAsync(request.Email, NotifyService.NewPinCodeEmailTemplateId, personalisation);
