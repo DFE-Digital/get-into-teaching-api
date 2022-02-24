@@ -17,5 +17,9 @@ monitor_scrape_applications = [ "get-into-teaching-api-prod-internal.apps.intern
                                 "get-into-teaching-api-test-internal.apps.internal:8080" ,
                                 "get-into-teaching-app-test-internal.apps.internal:3000" ,
                                 "get-teacher-training-adviser-service-test-internal.apps.internal:3000" ,
-                                "get-into-teaching-app-pagespeed-internal.apps.internal:3000" ]
+                                "get-into-teaching-app-pagespeed-internal.apps.internal:3000" ,
+                                "school-experience-app-production-internal.apps.internal:3000" ,
+                                "school-experience-app-production-delayed.apps.internal:3000"  ,
+                                "school-experience-app-test-internal.apps.internal:3000" ,
+                                "school-experience-app-test-delayed.apps.internal:3000"  ]
 alerts = {}
