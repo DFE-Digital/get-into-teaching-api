@@ -1,5 +1,6 @@
 paas_space                = "get-into-teaching-test"
 monitor_space             = "get-into-teaching-monitoring"
+paas_monitoring_app       = "prometheus-prod-get-into-teaching"
 paas_database_common_name = "get-into-teaching-api-test-pg-common-svc"
 paas_redis_1_name         = "get-into-teaching-test-redis-svc"
 paas_api_application_name = "get-into-teaching-api-test"
