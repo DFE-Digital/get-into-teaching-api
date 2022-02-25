@@ -7,40 +7,40 @@ locals {
   configuration_file = "${path.module}/${var.grafana["configuration_file"]}"
 
   elasticsearch_credentials = {
-    url      = lookup( local.monitoring_secrets,"LOGIT_URL" , "" )
-    username = lookup( local.monitoring_secrets,"LOGIT_USERID" , "" )
-    password = lookup( local.monitoring_secrets,"LOGIT_PASSWORD" , "" )
+    url      = lookup(local.monitoring_secrets, "LOGIT_URL", "")
+    username = lookup(local.monitoring_secrets, "LOGIT_USERID", "")
+    password = lookup(local.monitoring_secrets, "LOGIT_PASSWORD", "")
   }
 
   template_variable_map = {
-    api           = local.api_endpoint
-    API_ENDPOINT  = var.api_url
+    api          = local.api_endpoint
+    API_ENDPOINT = var.api_url
   }
 
   docker_credentials_map = {
-      username = local.infrastructure_secrets.DOCKER-USERNAME
-      password = local.infrastructure_secrets.DOCKER-PASSWORD
+    username = local.infrastructure_secrets.DOCKER-USERNAME
+    password = local.infrastructure_secrets.DOCKER-PASSWORD
   }
 }
 
 module "prometheus" {
-  count  = var.monitoring
+  count                             = var.monitoring
   source                            = "git::https://github.com/DFE-Digital/cf-monitoring.git//prometheus_all"
   monitoring_instance_name          = local.monitoring_org_name
   monitoring_org_name               = var.paas_org_name
   monitoring_space_name             = var.monitor_space
-  paas_exporter_username            = lookup( local.monitoring_secrets , "PAAS_MONITORING_USER"     , local.infrastructure_secrets.PAAS-USERNAME )
-  paas_exporter_password            = lookup( local.monitoring_secrets , "PAAS_MONITORING_PASSWORD" , local.infrastructure_secrets.PAAS-PASSWORD )
-  alertmanager_slack_url            = lookup( local.monitoring_secrets , "SLACK_ALERTMANAGER_HOOK"  , "" )
-  alertmanager_slack_channel        = lookup( local.monitoring_secrets , "SLACK_CHANNEL" , "" )
+  paas_exporter_username            = lookup(local.monitoring_secrets, "PAAS_MONITORING_USER", local.infrastructure_secrets.PAAS-USERNAME)
+  paas_exporter_password            = lookup(local.monitoring_secrets, "PAAS_MONITORING_PASSWORD", local.infrastructure_secrets.PAAS-PASSWORD)
+  alertmanager_slack_url            = lookup(local.monitoring_secrets, "SLACK_ALERTMANAGER_HOOK", "")
+  alertmanager_slack_channel        = lookup(local.monitoring_secrets, "SLACK_CHANNEL", "")
   alert_rules                       = local.alert_rules
   grafana_elasticsearch_credentials = local.elasticsearch_credentials
-  grafana_google_client_id          = lookup( local.monitoring_secrets , "GOOGLE_CLIENT_ID" , "" )
-  grafana_google_client_secret      = lookup( local.monitoring_secrets , "GOOGLE_CLIENT_SECRET" , "" )
-  grafana_admin_password            = lookup( local.monitoring_secrets , "GRAFANA_ADMIN_PASSWORD" , "" )
+  grafana_google_client_id          = lookup(local.monitoring_secrets, "GOOGLE_CLIENT_ID", "")
+  grafana_google_client_secret      = lookup(local.monitoring_secrets, "GOOGLE_CLIENT_SECRET", "")
+  grafana_admin_password            = lookup(local.monitoring_secrets, "GRAFANA_ADMIN_PASSWORD", "")
   grafana_json_dashboards           = [for f in local.dashboard_list : file(f)]
   grafana_extra_datasources         = [for f in local.datasource_list : templatefile(f, local.template_variable_map)]
-  grafana_google_jwt                = lookup( local.monitoring_secrets , "GOOGLE_JWT" , "" )
+  grafana_google_jwt                = lookup(local.monitoring_secrets, "GOOGLE_JWT", "")
   grafana_runtime_version           = "8.3.2"
   prometheus_memory                 = 5120
   prometheus_disk_quota             = 5120
