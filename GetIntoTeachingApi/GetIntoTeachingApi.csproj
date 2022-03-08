@@ -17,7 +17,6 @@
 		<PackageReference Include="Hangfire.AspNetCore" Version="1.7.28" />
 		<PackageReference Include="Hangfire.Core" Version="1.7.28" />
 		<PackageReference Include="Hangfire.MemoryStorage" Version="1.7.0" />
-		<PackageReference Include="Hangfire.PostgreSql.ahydrax" Version="1.7.4" />
 		<PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="5.4.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.2" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.2">
@@ -30,8 +29,9 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.2" />
 		<PackageReference Include="morelinq" Version="3.3.2" />
-		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.7" />
-		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="5.0.7" />
+		<PackageReference Include="Npgsql" Version="6.0.3" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.3" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="6.0.3" />
 		<PackageReference Include="Otp.NET" Version="1.2.2" />
 		<PackageReference Include="ProjNET4GeoAPI" Version="1.4.1" />
 		<PackageReference Include="prometheus-net.AspNetCore" Version="6.0.0" />
@@ -67,6 +67,7 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		  <PrivateAssets>all</PrivateAssets>
 		</PackageReference>
+		<PackageReference Include="Hangfire.PostgreSql" Version="1.9.6" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -96,6 +97,7 @@
 	  <None Remove="Microsoft.Bcl.AsyncInterfaces" />
 	  <None Remove="Microsoft.EntityFrameworkCore.Relational" />
 	  <None Remove="Microsoft.CodeAnalysis.NetAnalyzers" />
+	  <None Remove="Hangfire.PostgreSql" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="Fixtures\clients.yml">
