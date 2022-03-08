@@ -86,7 +86,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
 
             var candidate = request.Candidate;
 
-            candidate.Id.Should().Equals(request.CandidateId);
+            candidate.Id.Should().Be(request.CandidateId);
             candidate.ConsiderationJourneyStageId.Should().Be(request.ConsiderationJourneyStageId);
             candidate.PreferredTeachingSubjectId.Should().Be(request.PreferredTeachingSubjectId);
 
@@ -113,7 +113,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
             candidate.HasEventsSubscription.Should().BeTrue();
             candidate.HasMailingListSubscription.Should().BeTrue();
 
-            candidate.TeachingEventRegistrations.First().EventId.Should().Equals(request.EventId);
+            candidate.TeachingEventRegistrations.First().EventId.Should().Be((Guid)request.EventId);
             candidate.TeachingEventRegistrations.First().ChannelId.Should().Be((int)TeachingEventRegistration.Channel.Event);
             candidate.TeachingEventRegistrations.First().IsCancelled.Should().BeFalse();
             candidate.TeachingEventRegistrations.First().RegistrationNotificationSeen.Should().BeFalse();
