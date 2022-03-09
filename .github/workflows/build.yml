@@ -185,37 +185,5 @@ jobs:
            SLACK_MESSAGE: Failure with initialising QA deployment for ${{env.APPLICATION}}
            SLACK_WEBHOOK: ${{ steps.keyvault-yaml-secret.outputs.SLACK-WEBHOOK }}
 
-  cypress:
-    name: Run Cypress Tests on QA
-    runs-on: ubuntu-latest
-    needs: qa
-    steps:
-       - name: Check out the repo
-         uses: actions/checkout@v2.4.0
-
-       - name: set-up-environment
-         uses: DFE-Digital/github-actions/set-up-environment@master
-
-       - uses: Azure/login@v1
-         with:
-            creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-       - uses: DfE-Digital/keyvault-yaml-secret@v1
-         id:  keyvault-yaml-secret
-         with:
-           keyvault: ${{ secrets.KEY_VAULT}}
-           secret: INFRA-KEYS
-           key: ACTIONS-API-ACCESS-TOKEN, SLACK-WEBHOOK
-         env:
-           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-       - name: Trigger Cypress Tests (DFE-Digital/get-into-teaching-frontend-tests )
-         uses: benc-uk/workflow-dispatch@v1.1
-         with:
-           repo: DFE-Digital/get-into-teaching-frontend-tests
-           workflow: Cypress
-           token: ${{ steps.keyvault-yaml-secret.outputs.ACTIONS-API-ACCESS-TOKEN }}
-           inputs: '{"application": "BOTH" , "reference": "${{ github.sha }}" }'
-           ref:  refs/heads/master
 
 
