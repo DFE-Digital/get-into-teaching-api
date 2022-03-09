@@ -1,5 +1,4 @@
-﻿using System;
-using GetIntoTeachingApi.Models;
+﻿using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,13 +16,6 @@ namespace GetIntoTeachingApi.Database
         public GetIntoTeachingDbContext(DbContextOptions<GetIntoTeachingDbContext> options)
             : base(options)
         {
-            ConfigureNpgsql();
-        }
-
-        public static void ConfigureNpgsql()
-        {
-            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-            AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
