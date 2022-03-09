@@ -81,7 +81,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
 
             var candidate = request.Candidate;
 
-            candidate.Id.Should().Be(request.CandidateId);
+            candidate.Id.Should().Equals(request.CandidateId);
             candidate.ConsiderationJourneyStageId.Should().Be(request.ConsiderationJourneyStageId);
             candidate.PreferredTeachingSubjectId.Should().Be(request.PreferredTeachingSubjectId);
 

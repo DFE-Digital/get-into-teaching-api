@@ -125,9 +125,9 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
                 TypeId = (int)Candidate.Type.ReturningToTeacherTraining,
                 UkDegreeGradeId = 0,
                 DegreeStatusId = 1,
-                DegreeTypeId = (int)CandidateQualification.DegreeType.Degree,
+                DegreeTypeId = 2,
                 InitialTeacherTrainingYearId = 3,
-                PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary,
+                PreferredEducationPhaseId = 4,
                 HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 HasGcseScienceId = 7,
                 PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
@@ -149,17 +149,17 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
 
             var candidate = request.Candidate;
 
-            candidate.Id.Should().Be(request.CandidateId);
-            candidate.PreferredTeachingSubjectId.Should().Be(request.PreferredTeachingSubjectId);
-            candidate.CountryId.Should().Be(request.CountryId);
-            candidate.InitialTeacherTrainingYearId.Should().Be(request.InitialTeacherTrainingYearId);
-            candidate.PreferredEducationPhaseId.Should().Be(request.PreferredEducationPhaseId);
-            candidate.HasGcseEnglishId.Should().Be(request.HasGcseMathsAndEnglishId);
-            candidate.HasGcseMathsId.Should().Be(request.HasGcseMathsAndEnglishId);
-            candidate.HasGcseScienceId.Should().Be(request.HasGcseScienceId);
-            candidate.PlanningToRetakeGcseEnglishId.Should().Be(request.PlanningToRetakeGcseMathsAndEnglishId);
-            candidate.PlanningToRetakeGcseMathsId.Should().Be(request.PlanningToRetakeGcseMathsAndEnglishId);
-            candidate.PlanningToRetakeGcseScienceId.Should().Be(request.PlanningToRetakeGcseScienceId);
+            candidate.Id.Should().Equals(request.CandidateId);
+            candidate.PreferredTeachingSubjectId.Should().Equals(request.PreferredTeachingSubjectId);
+            candidate.CountryId.Should().Equals(request.CountryId);
+            candidate.InitialTeacherTrainingYearId.Should().Equals(request.InitialTeacherTrainingYearId);
+            candidate.PreferredEducationPhaseId.Should().Equals(request.PreferredEducationPhaseId);
+            candidate.HasGcseEnglishId.Should().Equals(request.HasGcseMathsAndEnglishId);
+            candidate.HasGcseMathsId.Should().Equals(request.HasGcseMathsAndEnglishId);
+            candidate.HasGcseScienceId.Should().Equals(request.HasGcseScienceId);
+            candidate.PlanningToRetakeGcseEnglishId.Should().Equals(request.PlanningToRetakeGcseMathsAndEnglishId);
+            candidate.PlanningToRetakeGcseMathsId.Should().Equals(request.PlanningToRetakeGcseMathsAndEnglishId);
+            candidate.PlanningToRetakeGcseScienceId.Should().Equals(request.PlanningToRetakeGcseScienceId);
             candidate.AdviserStatusId.Should().BeNull();
             candidate.AdviserRequirementId.Should().Be((int)Candidate.AdviserRequirement.Yes);
             candidate.AdviserEligibilityId.Should().Be((int)Candidate.AdviserEligibility.Yes);
