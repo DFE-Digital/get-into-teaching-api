@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2.4.0
 
     - name: Check Prometheus alert rules
       uses: peimanja/promtool-github-actions@master
