@@ -46,7 +46,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
 
             var candidate = request.Candidate;
 
-            candidate.Id.Should().Equals(request.CandidateId);
+            candidate.Id.Should().Be(request.CandidateId);
             candidate.Email.Should().Be(request.Email);
             candidate.FirstName.Should().Be(request.FirstName);
             candidate.LastName.Should().Be(request.LastName);
