@@ -53,7 +53,7 @@
 		<PackageReference Include="GovukNotify" Version="4.0.1" />
 		<PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="0.5.17" />
 		<PackageReference Include="Flurl.Http" Version="3.2.2" />
-		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="6.0.2" />
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="6.0.3" />
 		<PackageReference Include="AspNetCoreRateLimit.Redis" Version="1.0.0" />
 		<PackageReference Include="Hangfire.Dashboard.Basic.Authentication" Version="5.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
