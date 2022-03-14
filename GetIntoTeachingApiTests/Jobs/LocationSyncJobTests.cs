@@ -41,7 +41,7 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public async void RunAsync_EnqueuesLocationBatchJob()
+        public async void RunAsync_UpsertsLocations()
         {
             _mockEnv.Setup(m => m.IsDevelopment).Returns(false);
             var server = WireMockServer.Start();
@@ -56,18 +56,11 @@ namespace GetIntoTeachingApiTests.Jobs
             // Run again to verify upsert/no duplicates
             await _job.RunAsync(ukPostcodeCsvUrl);
 
-            var batch = new List<dynamic>
-            {
-                new { Postcode = "ky119yu", Latitude = 56.02748, Longitude = -3.35870 },
-                new { Postcode = "ca48le", Latitude = 54.89014, Longitude = -2.84000 },
-                new { Postcode = "ky62nj", Latitude = 56.182790, Longitude = -3.178240 },
-                new { Postcode = "kw14yl", Latitude = 58.64102, Longitude = -3.10075 },
-                new { Postcode = "tr182ab", Latitude = 50.12279, Longitude = -5.53987 },
-            };
+            var csvLocations = CsvLocations();
 
-            DbContext.Locations.Count().Should().Be(batch.Count);
-            DbContext.Locations.ToList().All(l =>
-                batch.Any(b => BatchLocationMatchesExistingLocation(b, l))).Should().BeTrue();
+            DbContext.Locations.Count().Should().Be(csvLocations.Count());
+            DbContext.Locations.ToList().All(existingLocation => csvLocations.Any(csvLocation =>
+                MatchCsvLocationWithExisting(csvLocation, existingLocation))).Should().BeTrue();
             DbContext.Locations.All(l => l.Source == GetIntoTeachingApi.Models.Location.SourceType.CSV);
 
             _mockLogger.VerifyInformationWasCalled("LocationSyncJob - Started");
@@ -81,11 +74,48 @@ namespace GetIntoTeachingApiTests.Jobs
             _metrics.LocationSyncDuration.Count.Should().BeGreaterOrEqualTo(1);
         }
 
-        private static bool BatchLocationMatchesExistingLocation(dynamic batchLocation, GetIntoTeachingApi.Models.Location existingLocation)
+        [Fact]
+        public async void RunAsync_WhenCsvOmitsHeaderRow_UpsertsLocations()
         {
-            var postcodeMatch = batchLocation.Postcode == existingLocation.Postcode;
-            var batchCoordinate = Coordinate(batchLocation.Latitude, batchLocation.Longitude);
-            var coordinateMatch = batchCoordinate == existingLocation.Coordinate;
+            _mockEnv.Setup(m => m.IsDevelopment).Returns(false);
+            var server = WireMockServer.Start();
+            var ukPostcodeCsvUrl = $"http://localhost:{server.Ports[0]}/test";
+            server
+                .Given(Request.Create().WithUrl(ukPostcodeCsvUrl))
+                .RespondWith(Response.Create()
+                    .WithBodyFromFile("./Fixtures/ukpostcodes_no_header_row.csv.zip")
+                );
+
+            await _job.RunAsync(ukPostcodeCsvUrl);
+            // Run again to verify upsert/no duplicates
+            await _job.RunAsync(ukPostcodeCsvUrl);
+
+            var csvLocations = CsvLocations();
+
+            DbContext.Locations.Count().Should().Be(csvLocations.Count());
+            DbContext.Locations.ToList().All(existingLocation => csvLocations.Any(csvLocation =>
+                MatchCsvLocationWithExisting(csvLocation, existingLocation))).Should().BeTrue();
+            DbContext.Locations.All(l => l.Source == GetIntoTeachingApi.Models.Location.SourceType.CSV);
+
+        }
+
+        private static IEnumerable<dynamic> CsvLocations()
+        {
+            return new List<dynamic>
+            {
+                new { Postcode = "ky119yu", Latitude = 56.02748, Longitude = -3.35870 },
+                new { Postcode = "ca48le", Latitude = 54.89014, Longitude = -2.84000 },
+                new { Postcode = "ky62nj", Latitude = 56.182790, Longitude = -3.178240 },
+                new { Postcode = "kw14yl", Latitude = 58.64102, Longitude = -3.10075 },
+                new { Postcode = "tr182ab", Latitude = 50.12279, Longitude = -5.53987 },
+            };
+        }
+
+        private static bool MatchCsvLocationWithExisting(dynamic csvLocation, GetIntoTeachingApi.Models.Location existingLocation)
+        {
+            var postcodeMatch = csvLocation.Postcode == existingLocation.Postcode;
+            var csvLocationCoordinate = Coordinate(csvLocation.Latitude, csvLocation.Longitude);
+            var coordinateMatch = csvLocationCoordinate == existingLocation.Coordinate;
 
             return postcodeMatch && coordinateMatch;
         }
