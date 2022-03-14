@@ -42,7 +42,7 @@
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.0" />
 		<PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
 		<PackageReference Include="dotenv.net" Version="3.1.1" />
-		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.3" />
 		<PackageReference Include="YamlDotNet" Version="11.2.1" />
 		<PackageReference Include="Fody" Version="6.6.0">
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
