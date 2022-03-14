@@ -189,6 +189,9 @@
     <None Update="Fixtures\ukpostcodes_no_header_row.csv.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Fixtures\ukpostcodes_malformed_rows.csv.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
