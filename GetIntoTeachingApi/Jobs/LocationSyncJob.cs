@@ -64,17 +64,25 @@ namespace GetIntoTeachingApi.Jobs
 
         private static Location CreateLocation(IReaderRow csv)
         {
-            var latitude = csv.GetField<double?>("latitude");
-            var longitude = csv.GetField<double?>("longitude");
+            var latitude = csv.GetField<double?>(2);
+            var longitude = csv.GetField<double?>(3);
 
             if (latitude == null || longitude == null)
             {
                 return null;
             }
 
-            var postcode = csv.GetField<string>("postcode");
+            var postcode = csv.GetField<string>(1);
 
             return new Location(postcode, (double)latitude, (double)longitude, Location.SourceType.CSV);
+        }
+
+        private static bool IsHeaderRow(IReaderRow csv)
+        {
+            return csv.GetField<string>(0) == "id" &&
+                csv.GetField<string>(1) == "postcode" &&
+                csv.GetField<string>(2) == "latitude" &&
+                csv.GetField<string>(3) == "longitude";
         }
 
         private static string GetTempPath()
@@ -104,11 +112,13 @@ namespace GetIntoTeachingApi.Jobs
             using var reader = new StreamReader(csvPath);
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
-            await csv.ReadAsync();
-            csv.ReadHeader();
-
             while (await csv.ReadAsync())
             {
+                if (IsHeaderRow(csv))
+                {
+                    continue;
+                }
+
                 var location = CreateLocation(csv);
                 if (location == null)
                 {

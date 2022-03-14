@@ -186,6 +186,9 @@
     <None Update="Contracts\Data\pick_list_items\candidate\teacher_training_adviser_subscription_channels.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Fixtures\ukpostcodes_no_header_row.csv.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
