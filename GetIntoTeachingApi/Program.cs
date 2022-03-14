@@ -15,7 +15,6 @@ namespace GetIntoTeachingApi
         public static async Task Main(string[] args)
         {
             GetIntoTeachingDbContext.ConfigureNpgsql();
-            DbConfiguration.DropHangfireDatabase();
 
             var webHost = CreateHostBuilder(args).Build();
 

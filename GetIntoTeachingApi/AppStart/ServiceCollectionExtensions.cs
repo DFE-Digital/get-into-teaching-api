@@ -132,7 +132,10 @@ The GIT API aims to provide:
                 }
                 else
                 {
-                    config.UsePostgreSqlStorage(DbConfiguration.HangfireConnectionString(env));
+                    config.UsePostgreSqlStorage(DbConfiguration.HangfireConnectionString(env), new PostgreSqlStorageOptions
+                    {
+                        SchemaName = "hangfire_postgres"
+                    });
                 }
             });
 
