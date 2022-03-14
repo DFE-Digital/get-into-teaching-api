@@ -96,7 +96,30 @@ namespace GetIntoTeachingApiTests.Jobs
             DbContext.Locations.ToList().All(existingLocation => csvLocations.Any(csvLocation =>
                 MatchCsvLocationWithExisting(csvLocation, existingLocation))).Should().BeTrue();
             DbContext.Locations.All(l => l.Source == GetIntoTeachingApi.Models.Location.SourceType.CSV);
+        }
 
+        [Fact]
+        public async void RunAsync_WhenCsvContainsMalformedRows_SkipsMalformedRows()
+        {
+            _mockEnv.Setup(m => m.IsDevelopment).Returns(false);
+            var server = WireMockServer.Start();
+            var ukPostcodeCsvUrl = $"http://localhost:{server.Ports[0]}/test";
+            server
+                .Given(Request.Create().WithUrl(ukPostcodeCsvUrl))
+                .RespondWith(Response.Create()
+                    .WithBodyFromFile("./Fixtures/ukpostcodes_malformed_rows.csv.zip")
+                );
+
+            await _job.RunAsync(ukPostcodeCsvUrl);
+            // Run again to verify upsert/no duplicates
+            await _job.RunAsync(ukPostcodeCsvUrl);
+
+            var csvLocations = CsvLocations();
+
+            DbContext.Locations.Count().Should().Be(3);
+            DbContext.Locations.ToList().All(existingLocation => csvLocations.Any(csvLocation =>
+                MatchCsvLocationWithExisting(csvLocation, existingLocation))).Should().BeTrue();
+            DbContext.Locations.All(l => l.Source == GetIntoTeachingApi.Models.Location.SourceType.CSV);
         }
 
         private static IEnumerable<dynamic> CsvLocations()
