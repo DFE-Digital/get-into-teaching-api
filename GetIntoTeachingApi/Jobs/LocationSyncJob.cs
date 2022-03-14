@@ -64,15 +64,15 @@ namespace GetIntoTeachingApi.Jobs
 
         private static Location CreateLocation(IReaderRow csv)
         {
-            var latitude = csv.GetField<double?>("latitude");
-            var longitude = csv.GetField<double?>("longitude");
+            csv.TryGetField<double?>(2, out double? latitude);
+            csv.TryGetField<double?>(3, out double? longitude);
 
             if (latitude == null || longitude == null)
             {
                 return null;
             }
 
-            var postcode = csv.GetField<string>("postcode");
+            csv.TryGetField<string>(1, out string postcode);
 
             return new Location(postcode, (double)latitude, (double)longitude, Location.SourceType.CSV);
         }
@@ -103,9 +103,6 @@ namespace GetIntoTeachingApi.Jobs
             var locationCount = 0;
             using var reader = new StreamReader(csvPath);
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-
-            await csv.ReadAsync();
-            csv.ReadHeader();
 
             while (await csv.ReadAsync())
             {
