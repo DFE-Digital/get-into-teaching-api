@@ -14,11 +14,12 @@ namespace GetIntoTeachingApi.Models.Crm
         {
             Requested = 1, // default
             Confirmed = 222750000,
-            Withdrawn = 222750001,
+            DidNotAttend = 222750001,
             Rejected = 222750002,
             CancelledBySchool = 222750003,
             CancelledByCandidate = 222750004,
             Completed = 222750005,
+            Withdrawn = 222750006,
         }
 
         [JsonIgnore]
