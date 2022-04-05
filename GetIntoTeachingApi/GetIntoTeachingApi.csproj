@@ -50,7 +50,7 @@
 		</PackageReference>
 		<PackageReference Include="PropertyChanged.Fody" Version="3.4.0" PrivateAssets="All" />
 		<PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="2.2.0" />
-		<PackageReference Include="GovukNotify" Version="4.0.1" />
+		<PackageReference Include="GovukNotify" Version="6.0.0" />
 		<PackageReference Include="Flurl.Http" Version="3.2.2" />
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="6.0.3" />
 		<PackageReference Include="AspNetCoreRateLimit.Redis" Version="1.0.1" />
