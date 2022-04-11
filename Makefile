@@ -34,6 +34,11 @@ development:
 	$(eval export KEY_VAULT=s146d01-kv)
 	$(eval export AZ_SUBSCRIPTION=s146-getintoteachingwebsite-development)
 
+.PHONY: local
+local:
+	$(eval export KEY_VAULT=s146d01-local2-kv)
+	$(eval export AZ_SUBSCRIPTION=s146-getintoteachingwebsite-development)
+
 .PHONY: review
 review:
 	$(eval export KEY_VAULT=s146d01-kv)
@@ -82,3 +87,6 @@ edit-infrastructure-secrets: install-fetch-config set-azure-account
 
 print-infrastructure-secrets: install-fetch-config set-azure-account 
 	./fetch_config.rb -s azure-key-vault-secret:${KEY_VAULT}/${INFRASTRUCTURE_SECRETS}  -f yaml
+
+setup-local-env: install-fetch-config set-azure-account
+	./fetch_config.rb -s azure-key-vault-secret:s146d01-local2-kv/${APPLICATION_SECRETS} -f shell-env-var > GetIntoTeachingApi/.env.development
