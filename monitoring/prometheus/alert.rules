@@ -39,7 +39,7 @@ groups:
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/eF19g4RZx/cf-apps?orgId=1
   - name: App
     rules:
-      - alert: TooManyRequests
+      - alert: TooManyRequests (App)
         expr: 'sum(increase(app_requests_total{path!~"csp_reports",status=~"429"}[1m])) > 0'
         labels:
           severity: high
@@ -48,7 +48,7 @@ groups:
           description: Alerts when any user hits a rate limit, excluding the /csp_reports endpoint.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#TooManyRequests-HIGH
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=27&orgId=1
-      - alert: HighNotFound
+      - alert: HighNotFound (App)
         expr: 'sum(increase(app_requests_total{path!~"(apple|logo.svg|login|sites|user|wp|node|.jpg|.jpeg|.png|.svg|.pdf|.txt)",status=~"404"}[10m])) > 120'
         labels:
           severity: medium
@@ -57,7 +57,7 @@ groups:
           description: Alerts when the app is serving a high number of 404 responses (more than 120 in any 10 minute period).
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighNotFound-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=27&orgId=1
-      - alert: HighCpu
+      - alert: HighCpu (App)
         expr: 'max(cpu{app="get-into-teaching-app-prod"}) > 70'
         labels:
           severity: medium
@@ -66,7 +66,7 @@ groups:
           description: Alerts when any of the app instances exceed 70% CPU utilisation.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighCpu-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=31&orgId=1
-      - alert: HighMemory
+      - alert: HighMemory (App)
         expr: 'max(memory_utilization{app="get-into-teaching-app-prod"}) > 70'
         labels:
           severity: medium
@@ -75,9 +75,18 @@ groups:
           description: Alerts when any of the app instances exceed 70% memory utilisation.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighMemory-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=33&orgId=1
+      - alert: HighCspViolations (App)
+        expr: 'sum(increase(app_csp_violations_total{app="get-into-teaching-app-prod"}[5m])) by (blocked_uri) > 20'
+        labels:
+          severity: medium
+        annotations:
+          summary: Alerts when more than 20 CSP violations for the same URI are reported in a 5 minute period.
+          description: Alerts when more than 20 CSP violations for the same URI are reported in a 5 minute period.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighCspViolations-MEDIUM
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/qZjcqcpGz/csp-violations?orgId=1
   - name: TTA
     rules:
-      - alert: TooManyRequests
+      - alert: TooManyRequests (TTA)
         expr: 'sum(increase(tta_requests_total{path!~"csp_reports",status=~"429"}[1m])) > 0'
         labels:
           severity: high
@@ -86,7 +95,7 @@ groups:
           description: Alerts when any user hits a rate limit, excluding the /csp_reports endpoint.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#TooManyRequests-HIGH
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=27&orgId=1
-      - alert: HighNotFound
+      - alert: HighNotFound (TTA)
         expr: 'sum(increase(tta_requests_total{path=~".+",status=~"404"}[10m])) > 120'
         labels:
           severity: medium
@@ -95,7 +104,7 @@ groups:
           description: Alerts when the app is serving a high number of 404 responses (more than 60 in any 120 minute period).
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighNotFound-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=27&orgId=1 
-      - alert: HighCpu
+      - alert: HighCpu (TTA)
         expr: 'max(cpu{app="get-teacher-training-adviser-service-prod"}) > 70'
         labels:
           severity: medium
@@ -104,7 +113,7 @@ groups:
           description: Alerts when any of the app instances exceed 70% CPU utilisation.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighCpu-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=31&orgId=1
-      - alert: HighMemory
+      - alert: HighMemory (TTA)
         expr: 'max(memory_utilization{app="get-teacher-training-adviser-service-prod"}) > 70'
         labels:
           severity: medium
@@ -113,9 +122,18 @@ groups:
           description: Alerts when any of the app instances exceed 70% memory utilisation.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighMemory-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=33&orgId=1
+      - alert: HighCspViolations (TTA)
+        expr: 'sum(increase(app_csp_violations_total{app="get-teacher-training-adviser-service-prod"}[5m])) by (blocked_uri) > 20'
+        labels:
+          severity: medium
+        annotations:
+          summary: Alerts when more than 20 CSP violations for the same URI are reported in a 5 minute period.
+          description: Alerts when more than 20 CSP violations for the same URI are reported in a 5 minute period.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighCspViolations-MEDIUM
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/qZjcqcpGz/csp-violations?orgId=1
   - name: API
     rules:
-      - alert: TooManyRequests
+      - alert: TooManyRequests (API)
         expr: >-
           sum(increase(http_requests_received_total{controller=~".+",action=~".+",code=~"429"}[1m]))
           > 0
@@ -126,7 +144,7 @@ groups:
           description: Alerts when the API has received too many requests from a client and has responded with a 429 status code.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#TooManyRequests-Medium
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=60&orgId=1&var-App=get-into-teaching-api-prod
-      - alert: FailedJobs
+      - alert: FailedJobs (API)
         expr: 'sum(increase(api_hangfire_jobs{state="failed"}[1m])) > 0'
         labels:
           severity: high
@@ -135,7 +153,7 @@ groups:
           description: Alerts when a background job fails. Jobs are retried once per hour for a maximum of 24 attempts/hours before they are deemed as failures. Failed jobs are then deleted permanently.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#FailedJobs-high
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=2&orgId=1&var-App=get-into-teaching-api-prod
-      - alert: HighGoogleApiCalls
+      - alert: HighGoogleApiCalls (API)
         expr: 'sum(increase(api_google_api_calls[10m])) > 5'
         labels:
           severity: high
@@ -144,7 +162,7 @@ groups:
           description: Alerts when the API makes more than 5 requests to the Google Geocoding API in the space of 10 minutes.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#HighGoogleApiCalls-high
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=57&orgId=1&var-App=get-into-teaching-api-prod
-      - alert: GoogleApiErrors
+      - alert: GoogleApiErrors (API)
         expr: 'sum(rate(api_google_api_calls{result != "success"}[10m])) > 5'
         labels:
           severity: high
@@ -153,7 +171,7 @@ groups:
           description: Alerts when the Google Geocoding API returns a non-success response more than 5 time sin the space of 10 minutes.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#GoogleApiErrors-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=57&orgId=1&var-App=get-into-teaching-api-prod
-      - alert: ClientApproachingRateLimit
+      - alert: ClientApproachingRateLimit (API)
         expr: 'max(increase(http_request_duration_seconds_sum{controller=~"Candidates|MailingList|TeachingEvents",action=~"AddMember|AddAttendee|SignUp",code=~".+"}[1m])) by (controller, action) > 175'
         labels:
           severity: medium
@@ -162,7 +180,7 @@ groups:
           description: Alerts when the API is reviving a lot of requests to rate limited endpoints from a client (and is in danger of returning a 429 response soon). 
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#ClientApproachingRateLimit-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=60&orgId=1&var-App=get-into-teaching-api-prod
-      - alert: ClientApproachingRateLimit (CreateAccessToken)
+      - alert: ClientApproachingRateLimit (CreateAccessToken) (API)
         expr: 'max(increase(http_request_duration_seconds_sum{controller=~"Candidates",action=~"CreateAccessToken",code=~".+"}[1m])) by (controller, action) > 350'
         labels:
           severity: medium
@@ -171,7 +189,7 @@ groups:
           description: Alerts when the API is reviving a lot of requests to the match back endpoint from a client (and is in danger of returning a 429 response soon). 
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#ClientApproachingRateLimit-(CreateAccessToken)-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=60&orgId=1&var-App=get-into-teaching-api-prod
-      - alert: HighCpu
+      - alert: HighCpu (API)
         expr: 'max(cpu_percent) > 70'
         labels:
           severity: medium
@@ -180,7 +198,7 @@ groups:
           description: Alerts when any of the API instances exceed 70% CPU utilisation.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#HighCpu-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=23&orgId=1&var-App=get-into-teaching-api-prod
-      - alert: HighMemory
+      - alert: HighMemory (API)
         expr: 'dotnet_total_memory_bytes > 1433000000'
         labels:
           severity: medium
@@ -189,7 +207,7 @@ groups:
           description: Alerts when any of the API instances exceed ~70% memory utilisation (1.4GB/2GB).
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#HighMemory-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=12&orgId=1&var-App=get-into-teaching-api-prod
-      - alert: HighDatabaseConnections
+      - alert: HighDatabaseConnections (API)
         expr: 'max(connections) > 75'
         labels:
           severity: medium
