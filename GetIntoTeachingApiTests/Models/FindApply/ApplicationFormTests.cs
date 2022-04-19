@@ -26,6 +26,18 @@ namespace GetIntoTeachingApiTests.Models.FindApply
                 .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "application_phase");
             type.GetProperty("RecruitmentCycleYear").Should()
                 .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "recruitment_cycle_year");
+            type.GetProperty("ApplicationChoicesCompleted").Should()
+                .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "application_choices.completed");
+            type.GetProperty("ApplicationChoices").Should()
+                .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "application_choices.data");
+            type.GetProperty("ReferencesCompleted").Should()
+                .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "references.completed");
+            type.GetProperty("References").Should()
+                .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "references.data");
+            type.GetProperty("QualificationsCompleted").Should()
+                .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "qualifications.completed");
+            type.GetProperty("PersonalStatementCompleted").Should()
+                .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "personal_statement.completed");
         }
     }
 }
