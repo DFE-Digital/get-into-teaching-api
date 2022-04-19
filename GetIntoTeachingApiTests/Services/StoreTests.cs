@@ -321,6 +321,34 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public async void SyncAsync_WhenApplyApiV1_2FeatureIsOn_InsertsApplyPickListItems()
+        {
+            _mockEnv.Setup(m => m.IsFeatureOn("APPLY_API_V1_2")).Returns(true);
+
+            _mockCrm.Setup(m => m.GetPickListItems("dfe_applyapplicationchoice", "dfe_applicationchoicestatus")).Returns(Array.Empty<PickListItem>()).Verifiable();
+            _mockCrm.Setup(m => m.GetPickListItems("dfe_applyreference", "dfe_referencefeedbackstatus")).Returns(Array.Empty<PickListItem>()).Verifiable();
+
+            await _store.SyncAsync();
+
+            _mockCrm.Verify();
+        }
+
+        [Fact]
+        public async void SyncAsync_WhenApplyApiV1_2_FeatureIsOn_InsertsApplyPickListItems()
+        {
+            _mockEnv.Setup(m => m.IsFeatureOn("APPLY_API")).Returns(true);
+
+            _mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_candidateapplystatus")).Returns(Array.Empty<PickListItem>()).Verifiable();
+            _mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_candidateapplyphase")).Returns(Array.Empty<PickListItem>()).Verifiable();
+            _mockCrm.Setup(m => m.GetPickListItems("dfe_applyapplicationform", "dfe_applyphase")).Returns(Array.Empty<PickListItem>()).Verifiable();
+            _mockCrm.Setup(m => m.GetPickListItems("dfe_applyapplicationform", "dfe_applystatus")).Returns(Array.Empty<PickListItem>()).Verifiable();
+
+            await _store.SyncAsync();
+
+            _mockCrm.Verify();
+        }
+
+        [Fact]
         public async void SyncAsync_DeletesOrphanedPickListItems()
         {
             var years = (await SeedMockInitialTeacherTrainingYearsAsync()).ToList();
