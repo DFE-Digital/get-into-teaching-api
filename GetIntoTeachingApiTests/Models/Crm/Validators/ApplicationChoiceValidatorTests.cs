@@ -36,7 +36,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 ApplicationFormId = Guid.NewGuid(),
                 FindApplyId = "67890",
                 CourseName = "Course Name",
-                CourseProvider = "Course Provider",
+                Provider = "Course Provider",
                 CourseId = Guid.NewGuid().ToString(),
                 StatusId = mockPickListItem.Id,
             };
@@ -49,13 +49,13 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         [Fact]
         public void Validate_RequiredAttributeIsEmpty_HasError()
         {
-            var choice = new ApplicationChoice() { FindApplyId = "", CourseId = "", CourseName = "", CourseProvider = "" };
+            var choice = new ApplicationChoice() { FindApplyId = "", CourseId = "", CourseName = "", Provider = "" };
             var result = _validator.TestValidate(choice);
 
             result.ShouldHaveValidationErrorFor("FindApplyId");
             result.ShouldHaveValidationErrorFor("CourseId");
             result.ShouldHaveValidationErrorFor("CourseName");
-            result.ShouldHaveValidationErrorFor("CourseProvider");
+            result.ShouldHaveValidationErrorFor("Provider");
         }
 
         [Fact]

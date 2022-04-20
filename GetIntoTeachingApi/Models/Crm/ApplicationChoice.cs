@@ -11,6 +11,26 @@ namespace GetIntoTeachingApi.Models.Crm
     [Entity("dfe_applyapplicationchoice")]
     public class ApplicationChoice : BaseModel
     {
+        // The keys for this enum need to mirror the
+        // Apply API naming so we can match them up.
+        public enum Status
+        {
+            Unsubmitted = 222750000,
+            Cancelled = 222750001,
+            AwaitingProviderDecision = 222750002,
+            Interviewing = 222750003,
+            Offer = 222750004,
+            PendingConditions = 222750005,
+            Recruited = 222750006,
+            Rejected = 222750007,
+            ApplicationNotSent = 222750008,
+            OfferWithdrawn = 222750009,
+            Declined = 222750010,
+            Withdrawn = 222750011,
+            ConditionsNotMet = 222750012,
+            OfferDeferred = 222750013,
+        }
+
         [EntityField("dfe_applyapplicationform", typeof(EntityReference), "dfe_applyapplicationform")]
         public Guid ApplicationFormId { get; set; }
         [EntityField("dfe_applicationchoicestatus", typeof(OptionSetValue))]
@@ -26,7 +46,7 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityField("dfe_applicationchoicecourseuuid")]
         public string CourseId { get; set; }
         [EntityField("dfe_applicationchoiceprovider")]
-        public string CourseProvider { get; set; }
+        public string Provider { get; set; }
         [EntityField("dfe_name")]
         public string Name
         {

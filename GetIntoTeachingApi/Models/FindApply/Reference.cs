@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using GetIntoTeachingApi.Utils;
 using Newtonsoft.Json;
 
 namespace GetIntoTeachingApi.Models.FindApply
@@ -13,5 +15,16 @@ namespace GetIntoTeachingApi.Models.FindApply
 		public string FeedbackStatus { get; set; }
 		[JsonProperty("referee_type")]
 		public string RefereeType { get; set; }
+
+		public Crm.ApplicationReference ToCrmModel()
+		{
+			return new Crm.ApplicationReference()
+			{
+				FindApplyId = Id.ToString(CultureInfo.CurrentCulture),
+				RequestedAt = RequestedAt,
+				FeedbackStatusId = (int)Enum.Parse(typeof(Crm.ApplicationReference.FeedbackStatus), FeedbackStatus.ToPascalCase()),
+				Type = RefereeType,
+			};
+		}
 	}
 }
