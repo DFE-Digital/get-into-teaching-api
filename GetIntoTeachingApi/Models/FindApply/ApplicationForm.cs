@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using GetIntoTeachingApi.Utils;
 using Newtonsoft.Json;
 
 namespace GetIntoTeachingApi.Models.FindApply
@@ -32,5 +35,23 @@ namespace GetIntoTeachingApi.Models.FindApply
         public bool QualificationsCompleted { get; set; }
         [JsonProperty("personal_statement.completed")]
         public bool PersonalStatementCompleted { get; set; }
+
+        public Crm.ApplicationForm ToCrmModel()
+        {
+            var yearId = ((int)Crm.ApplicationForm.RecruitmentCycleYear.Year2020) + (RecruitmentCycleYear - 2020);
+
+            return new Crm.ApplicationForm()
+            {
+                FindApplyId = Id.ToString(CultureInfo.CurrentCulture),
+                CreatedAt = CreatedAt,
+                UpdatedAt = UpdatedAt,
+                SubmittedAt = SubmittedAt,
+                StatusId = (int)Enum.Parse(typeof(Crm.ApplicationForm.Status), ApplicationStatus.ToPascalCase()),
+                PhaseId = (int)Enum.Parse(typeof(Crm.ApplicationForm.Phase), ApplicationPhase.ToPascalCase()),
+                RecruitmentCycleYearId = yearId,
+                Choices = ApplicationChoices?.Select(c => c.ToCrmModel()).ToList(),
+                References = References?.Select(c => c.ToCrmModel()).ToList(),
+            };
+        }
     }
 }

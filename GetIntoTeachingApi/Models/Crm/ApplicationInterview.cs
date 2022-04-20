@@ -21,7 +21,7 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityField("dfe_interviewscheduledat")]
         public DateTime ScheduledAt { get; set; }
         [EntityField("dfe_interviewcancelledat")]
-        public DateTime CancelledAt { get; set; }
+        public DateTime? CancelledAt { get; set; }
         [EntityField("dfe_name")]
         public string Name
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Newtonsoft.Json;
 
 namespace GetIntoTeachingApi.Models.FindApply
@@ -15,5 +16,17 @@ namespace GetIntoTeachingApi.Models.FindApply
 		public DateTime UpdatedAt { get; set; }
 		[JsonProperty("cancelled_at")]
 		public DateTime? CancelledAt { get; set; }
+
+		public Crm.ApplicationInterview ToCrmModel()
+		{
+			return new Crm.ApplicationInterview()
+			{
+				FindApplyId = Id.ToString(CultureInfo.CurrentCulture),
+				CreatedAt = CreatedAt,
+				UpdatedAt = UpdatedAt,
+				ScheduledAt = DateAndTime,
+				CancelledAt = CancelledAt,
+			};
+		}
 	}
 }

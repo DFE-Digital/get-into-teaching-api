@@ -27,7 +27,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
             type.GetProperty("UpdatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_modifiedon");
             type.GetProperty("CourseName").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applicationchoicecoursename");
             type.GetProperty("CourseId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applicationchoicecourseuuid");
-            type.GetProperty("CourseProvider").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applicationchoiceprovider");
+            type.GetProperty("Provider").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applicationchoiceprovider");
 
             type.GetProperty("Interviews").Should().BeDecoratedWith<EntityRelationshipAttribute>(
                 a => a.Name == "dfe_applyapplicationform_dfe_applyapplicationinterview_applyapplicationform" &&
