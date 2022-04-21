@@ -8,7 +8,7 @@ namespace GetIntoTeachingApi.Models.Crm
 {
     [SwaggerIgnore]
     [Entity("dfe_applyreference")]
-    public class ApplicationReference : BaseModel
+    public class ApplicationReference : BaseModel, IHasFindApplyId
     {
         // The keys for this enum need to mirror the
         // Apply API naming so we can match them up.

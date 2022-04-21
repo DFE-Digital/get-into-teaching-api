@@ -82,8 +82,8 @@ namespace GetIntoTeachingApiTests.Jobs
             var existingApplicationForm = new GetIntoTeachingApi.Models.Crm.ApplicationForm() { Id = Guid.NewGuid() };
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
             _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email)).Returns(match);
-            _mockCrm.Setup(m => m.GetApplicationForm("1")).Returns<GetIntoTeachingApi.Models.Crm.ApplicationForm>(null);
-            _mockCrm.Setup(m => m.GetApplicationForm("2")).Returns(existingApplicationForm);
+            _mockCrm.Setup(m => m.GetFindApplyModels<GetIntoTeachingApi.Models.Crm.ApplicationForm>(new string[] { "1" })).Returns(Array.Empty<GetIntoTeachingApi.Models.Crm.ApplicationForm>());
+            _mockCrm.Setup(m => m.GetFindApplyModels<GetIntoTeachingApi.Models.Crm.ApplicationForm>(new string[] { "2" })).Returns(new[] { existingApplicationForm });
 
             _job.Run(_candidate);
 

@@ -9,7 +9,7 @@ namespace GetIntoTeachingApi.Models.Crm
 {
     [SwaggerIgnore]
     [Entity("dfe_applyapplicationchoice")]
-    public class ApplicationChoice : BaseModel
+    public class ApplicationChoice : BaseModel, IHasFindApplyId
     {
         // The keys for this enum need to mirror the
         // Apply API naming so we can match them up.
