@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Services;
@@ -218,27 +218,35 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void GetApplicationForm_WithExistingFindApplyId_ReturnsMatchingForm()
+        public void GetFindApplyModels_WithExistingFindApplyIds_ReturnsMatchingModels()
         {
             var findApplyId = "12345";
             _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
                 q => VerifyGetApplicationFormQueryExpression(q, findApplyId)))).Returns(MockApplicationForms());
 
-            var result = _crm.GetApplicationForm(findApplyId);
+            var results = _crm.GetFindApplyModels<ApplicationForm>(new string[] { findApplyId });
 
-            result.Should().NotBeNull();
+            results.Should().NotBeEmpty();
         }
 
         [Fact]
-        public void GetApplicationForm_WithUnknownFindApplyId_ReturnsNull()
+        public void GetFindApplyModels_WithUnknownFindApplyIds_ReturnsEmpty()
         {
             var findApplyId = "12345";
             _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
                 q => VerifyGetApplicationFormQueryExpression(q, findApplyId)))).Returns(Array.Empty<Entity>());
 
-            var result = _crm.GetApplicationForm(findApplyId);
+            var results = _crm.GetFindApplyModels<ApplicationForm>(new string[] { findApplyId });
 
-            result.Should().BeNull();
+            results.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void GetFindApplyModels_WithEmptyFindApplyIds_ReturnsEmpty()
+        {
+            var results = _crm.GetFindApplyModels<ApplicationForm>(Array.Empty<string>());
+
+            results.Should().BeEmpty();
         }
 
         [Fact]
@@ -465,9 +473,8 @@ namespace GetIntoTeachingApiTests.Services
         {
             var hasEntityName = query.EntityName == "dfe_applyapplicationform";
             var conditions = query.Criteria.Conditions;
-
             var hasFindApplyIdCondition = conditions.Where(c => c.AttributeName == "dfe_applicationformid" &&
-                c.Operator == ConditionOperator.Equal && c.Values.FirstOrDefault().ToString() == findApplyId).Any();
+                c.Operator == ConditionOperator.In && (c.Values.First() as string) == findApplyId).Any();
 
             return hasEntityName && hasFindApplyIdCondition;
         }

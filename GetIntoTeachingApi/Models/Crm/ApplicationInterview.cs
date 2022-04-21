@@ -8,7 +8,7 @@ namespace GetIntoTeachingApi.Models.Crm
 {
     [SwaggerIgnore]
     [Entity("dfe_applyinterview")]
-    public class ApplicationInterview : BaseModel
+    public class ApplicationInterview : BaseModel, IHasFindApplyId
     {
         [EntityField("dfe_applyapplicationchoice", typeof(EntityReference), "dfe_applyapplicationchoice")]
         public Guid ApplicationChoiceId { get; set; }
