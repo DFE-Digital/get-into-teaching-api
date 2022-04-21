@@ -200,9 +200,10 @@ namespace GetIntoTeachingApiTests.Jobs
         {
             var json = JsonConvert.SerializeObject(response);
             var headers = new Dictionary<string, int>() {  { "Total-Pages", totalPages }, { "Current-Page", page } };
+            var url = _mockEnv.Object.FindApplyApiUrl;
 
             httpTest
-                    .ForCallsTo($"{_mockEnv.Object.FindApplyApiUrl}/candidates")
+                    .ForCallsTo($"{url}/candidates")
                     .WithVerb("GET")
                     .WithQueryParam("page", page)
                     .WithQueryParam("updated_since", updatedSince)
