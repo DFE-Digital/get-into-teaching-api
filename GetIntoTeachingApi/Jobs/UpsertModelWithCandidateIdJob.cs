@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace GetIntoTeachingApi.Jobs
 {
-    public class UpsertModelJob<T> : BaseJob
+    public class UpsertModelWithCandidateIdJob<T> : BaseJob
         where T : BaseModel, IHasCandidateId
     {
         private readonly IPerformContextAdapter _contextAdapter;
@@ -18,15 +18,15 @@ namespace GetIntoTeachingApi.Jobs
         private readonly IAppSettings _appSettings;
         private readonly INotifyService _notifyService;
         private readonly ICrmService _crm;
-        private readonly ILogger<UpsertModelJob<T>> _logger;
+        private readonly ILogger<UpsertModelWithCandidateIdJob<T>> _logger;
 
-        public UpsertModelJob(
+        public UpsertModelWithCandidateIdJob(
             IEnv env,
             IRedisService redis,
             IPerformContextAdapter contextAdapter,
             ICrmService crm,
             IMetricService metrics,
-            ILogger<UpsertModelJob<T>> logger,
+            ILogger<UpsertModelWithCandidateIdJob<T>> logger,
             IAppSettings appSettings,
             INotifyService notifyService)
             : base(env, redis)
@@ -45,11 +45,11 @@ namespace GetIntoTeachingApi.Jobs
 
             if (_appSettings.IsCrmIntegrationPaused)
             {
-                throw new InvalidOperationException($"UpsertModelJob<{typeName}> - Aborting (CRM integration paused).");
+                throw new InvalidOperationException($"UpsertModelWithCandidateIdJob<{typeName}> - Aborting (CRM integration paused).");
             }
 
-            _logger.LogInformation("UpsertModelJob<{TypeName}> - Started ({Attempt})", typeName, AttemptInfo(context, _contextAdapter));
-            _logger.LogInformation("UpsertModelJob<{TypeName}> - Payload {Payload}", typeName, Redactor.RedactJson(json));
+            _logger.LogInformation("UpsertModelWithCandidateIdJob<{TypeName}> - Started ({Attempt})", typeName, AttemptInfo(context, _contextAdapter));
+            _logger.LogInformation("UpsertModelWithCandidateIdJob<{TypeName}> - Payload {Payload}", typeName, Redactor.RedactJson(json));
 
             var model = json.DeserializeChangeTracked<T>();
 
@@ -68,17 +68,17 @@ namespace GetIntoTeachingApi.Jobs
                         personalisation);
                 }
 
-                _logger.LogInformation("UpsertModelJob<{TypeName}> - Deleted", typeName);
+                _logger.LogInformation("UpsertModelWithCandidateIdJob<{TypeName}> - Deleted", typeName);
             }
             else
             {
                 _crm.Save(model);
 
-                _logger.LogInformation("UpsertModelJob<{TypeName}> - Succeeded - {Id}", typeName, model.Id);
+                _logger.LogInformation("UpsertModelWithCandidateIdJob<{TypeName}> - Succeeded - {Id}", typeName, model.Id);
             }
 
             var duration = (DateTime.UtcNow - _contextAdapter.GetJobCreatedAt(context)).TotalSeconds;
-            _metrics.HangfireJobQueueDuration.WithLabels(new[] { $"UpsertModelJob<{typeName}>" }).Observe(duration);
+            _metrics.HangfireJobQueueDuration.WithLabels(new[] { $"UpsertModelWithCandidateIdJob<{typeName}>" }).Observe(duration);
         }
     }
 }
