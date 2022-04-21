@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using FluentAssertions;
 using Flurl.Http.Testing;
 using GetIntoTeachingApi.Jobs;
@@ -172,6 +171,29 @@ namespace GetIntoTeachingApiTests.Jobs
             }
 
             _mockAppSettings.VerifySet(m => m.FindApplyLastSyncAt = now, Times.Once);
+        }
+
+        [Fact]
+        public async void RunAsync_WhenApplyApiV1_2FeatureIsOn_QueuesCandidateJobsV1_2()
+        {
+            var lastSyncAt = new DateTime(2020, 1, 1);
+            _mockAppSettings.Setup(m => m.FindApplyLastSyncAt).Returns(lastSyncAt);
+            _mockEnv.Setup(m => m.IsFeatureOn("APPLY_API_V1_2")).Returns(true);
+            var candidates = new Candidate[]
+            {
+                new Candidate() { Id = "11111", Attributes = new CandidateAttributes() { Email = "email1@address.com" } },
+            };
+
+            using (var httpTest = new HttpTest())
+            {
+                var response = new Response<IEnumerable<Candidate>>() { Data = candidates };
+                MockResponse(httpTest, lastSyncAt, response);
+                await _job.RunAsync();
+            }
+
+            _mockJobClient.Verify(x => x.Create(
+               It.Is<Job>(job => job.Type == typeof(FindApplyCandidateSyncV12Job) && job.Method.Name == "Run"),
+               It.IsAny<EnqueuedState>()), Times.Exactly(candidates.Length));
         }
 
         private void MockResponse(HttpTest httpTest, DateTime updatedSince, Response<IEnumerable<Candidate>> response, int page = 1, int totalPages = 1)
