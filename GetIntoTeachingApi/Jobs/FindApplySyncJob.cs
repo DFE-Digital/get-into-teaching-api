@@ -64,7 +64,15 @@ namespace GetIntoTeachingApi.Jobs
             {
                 var response = await paginator.NextAsync();
                 _logger.LogInformation("FindApplySyncJob - Syncing {Count} Candidates", response.Data.Count());
-                response.Data.ForEach(c => _jobClient.Enqueue<FindApplyCandidateSyncJob>(x => x.Run(c)));
+
+                if (Env.IsFeatureOn("APPLY_API_V1_2"))
+                {
+                    response.Data.ForEach(c => _jobClient.Enqueue<FindApplyCandidateSyncV12Job>(x => x.Run(c)));
+                }
+                else
+                {
+                    response.Data.ForEach(c => _jobClient.Enqueue<FindApplyCandidateSyncJob>(x => x.Run(c)));
+                }
             }
         }
 
