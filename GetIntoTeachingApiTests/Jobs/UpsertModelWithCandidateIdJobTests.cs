@@ -14,7 +14,7 @@ using Xunit;
 
 namespace GetIntoTeachingApiTests.Jobs
 {
-    public class UpsertModelJobTests
+    public class UpsertModelWithCandidateIdJobTests
     {
         private readonly Mock<IPerformContextAdapter> _mockContext;
         private readonly Mock<IAppSettings> _mockAppSettings;
@@ -22,23 +22,23 @@ namespace GetIntoTeachingApiTests.Jobs
         private readonly Mock<INotifyService> _mockNotifyService;
         private readonly CandidatePrivacyPolicy _policy;
         private readonly IMetricService _metrics;
-        private readonly UpsertModelJob<CandidatePrivacyPolicy> _job;
-        private readonly Mock<ILogger<UpsertModelJob<CandidatePrivacyPolicy>>> _mockLogger;
+        private readonly UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy> _job;
+        private readonly Mock<ILogger<UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>>> _mockLogger;
 
-        public UpsertModelJobTests()
+        public UpsertModelWithCandidateIdJobTests()
         {
             _mockContext = new Mock<IPerformContextAdapter>();
-            _mockLogger = new Mock<ILogger<UpsertModelJob<CandidatePrivacyPolicy>>>();
+            _mockLogger = new Mock<ILogger<UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>>>();
             _mockAppSettings = new Mock<IAppSettings>();
             _mockCrm = new Mock<ICrmService>();
             _mockNotifyService = new Mock<INotifyService>();
             _metrics = new MetricService();
             _policy = new CandidatePrivacyPolicy() { Id = Guid.NewGuid(), AcceptedAt = DateTime.UtcNow, CandidateId = Guid.NewGuid() };
-            _job = new UpsertModelJob<CandidatePrivacyPolicy>(
+            _job = new UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>(
                 new Env(), new Mock<IRedisService>().Object, _mockContext.Object, _mockCrm.Object,
                 _metrics, _mockLogger.Object, _mockAppSettings.Object, _mockNotifyService.Object);
 
-            _metrics.HangfireJobQueueDuration.RemoveLabelled(new[] { "UpsertModelJob<CandidatePrivacyPolicy>" });
+            _metrics.HangfireJobQueueDuration.RemoveLabelled(new[] { "UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>" });
             _mockContext.Setup(m => m.GetJobCreatedAt(null)).Returns(DateTime.UtcNow.AddDays(-1));
 
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
@@ -53,10 +53,10 @@ namespace GetIntoTeachingApiTests.Jobs
             _job.Run(json, null);
 
             _mockCrm.Verify(mock => mock.Save(It.Is<CandidatePrivacyPolicy>(p => IsMatch(_policy, p))), Times.Once);
-            _mockLogger.VerifyInformationWasCalled("UpsertModelJob<CandidatePrivacyPolicy> - Started (1/24)");
-            _mockLogger.VerifyInformationWasCalled($"UpsertModelJob<CandidatePrivacyPolicy> - Payload {Redactor.RedactJson(json)}");
-            _mockLogger.VerifyInformationWasCalled($"UpsertModelJob<CandidatePrivacyPolicy> - Succeeded - {_policy.Id}");
-            _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertModelJob<CandidatePrivacyPolicy>" }).Count.Should().Be(1);
+            _mockLogger.VerifyInformationWasCalled("UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy> - Started (1/24)");
+            _mockLogger.VerifyInformationWasCalled($"UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy> - Payload {Redactor.RedactJson(json)}");
+            _mockLogger.VerifyInformationWasCalled($"UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy> - Succeeded - {_policy.Id}");
+            _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>" }).Count.Should().Be(1);
         }
 
         [Fact]
@@ -72,9 +72,9 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockNotifyService.Verify(mock => mock.SendEmailAsync(candidate.Email,
                 NotifyService.SignUpPartiallyFailedTemplateId, It.IsAny<Dictionary<string, dynamic>>()));
-            _mockLogger.VerifyInformationWasCalled("UpsertModelJob<CandidatePrivacyPolicy> - Started (24/24)");
-            _mockLogger.VerifyInformationWasCalled("UpsertModelJob<CandidatePrivacyPolicy> - Deleted");
-            _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertModelJob<CandidatePrivacyPolicy>" }).Count.Should().Be(1);
+            _mockLogger.VerifyInformationWasCalled("UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy> - Started (24/24)");
+            _mockLogger.VerifyInformationWasCalled("UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy> - Deleted");
+            _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>" }).Count.Should().Be(1);
         }
 
         [Fact]
@@ -86,7 +86,7 @@ namespace GetIntoTeachingApiTests.Jobs
             Action action = () => _job.Run(json, null);
 
             action.Should().Throw<InvalidOperationException>()
-                .WithMessage("UpsertModelJob<CandidatePrivacyPolicy> - Aborting (CRM integration paused).");
+                .WithMessage("UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy> - Aborting (CRM integration paused).");
         }
 
         private static bool IsMatch(object objectA, object objectB)
