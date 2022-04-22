@@ -24,11 +24,25 @@ namespace GetIntoTeachingApi.Utils
         public string CrmClientSecret => Environment.GetEnvironmentVariable("CRM_CLIENT_SECRET");
         public string NotifyApiKey => Environment.GetEnvironmentVariable("NOTIFY_API_KEY");
         public string GoogleApiKey => Environment.GetEnvironmentVariable("GOOGLE_API_KEY");
-        public string FindApplyApiUrl => Environment.GetEnvironmentVariable("FIND_APPLY_API_URL");
         public string FindApplyApiKey => Environment.GetEnvironmentVariable("FIND_APPLY_API_KEY");
         public string AppName => AppServices.ApplicationName;
         public string Organization => AppServices.OrganizationName;
         public string Space => AppServices.SpaceName;
+
+        public string FindApplyApiUrl
+        {
+            get
+            {
+                var url = Environment.GetEnvironmentVariable("FIND_APPLY_API_URL"); ;
+
+                if (IsFeatureOn("APPLY_API_V1_2"))
+                {
+                    url += "/v1.2";
+                }
+
+                return url;
+            }
+        }
 
         // The master instance boots first on deploy.
         public bool IsMasterInstance
