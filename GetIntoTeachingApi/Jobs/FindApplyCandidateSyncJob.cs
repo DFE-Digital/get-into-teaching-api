@@ -102,7 +102,7 @@ namespace GetIntoTeachingApi.Jobs
 
             return findApplyApplicationForms.Select(findApplyForm =>
             {
-                var existingForm = _crm.GetApplicationForm(findApplyForm.Id.ToString(CultureInfo.CurrentCulture));
+                var existingForm = _crm.GetFindApplyModels<Models.Crm.ApplicationForm>(new string[] { findApplyForm.Id.ToString(CultureInfo.CurrentCulture) }).FirstOrDefault();
 
                 var yearId = ((int)Models.Crm.ApplicationForm.RecruitmentCycleYear.Year2020) + (findApplyForm.RecruitmentCycleYear - 2020);
 
