@@ -84,7 +84,7 @@ namespace GetIntoTeachingApiTests.Services
             applicationForm.CandidateId = candidateId;
 
             _mockJobClient.Verify(x => x.Create(
-               It.Is<Job>(job => job.Type == typeof(UpsertModelJob<ApplicationForm>) && job.Method.Name == "Run" &&
+               It.Is<Job>(job => job.Type == typeof(UpsertApplicationFormJob) && job.Method.Name == "Run" &&
                IsMatch(applicationForm, (string)job.Args[0])),
                It.IsAny<EnqueuedState>()));
         }
