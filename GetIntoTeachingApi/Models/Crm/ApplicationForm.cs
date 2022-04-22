@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
@@ -8,7 +9,7 @@ namespace GetIntoTeachingApi.Models.Crm
 {
     [SwaggerIgnore]
     [Entity("dfe_applyapplicationform")]
-    public class ApplicationForm : BaseModel, IHasCandidateId
+    public class ApplicationForm : BaseModel, IHasCandidateId, IHasFindApplyId
     {
         // The keys for this enum need to mirror the
         // Apply API naming so we can match them up.
@@ -57,6 +58,14 @@ namespace GetIntoTeachingApi.Models.Crm
         public DateTime UpdatedAt { get; set; }
         [EntityField("dfe_submittedatdate")]
         public DateTime? SubmittedAt { get; set; }
+        [EntityField("dfe_qualificationscompleted", null, null, new[] { "APPLY_API_V1_2" })]
+        public bool? QualificationsCompleted { get; set; }
+        [EntityField("dfe_referencescompleted", null, null, new[] { "APPLY_API_V1_2" })]
+        public bool? ReferencesCompleted { get; set; }
+        [EntityField("dfe_applicationchoicescompleted", null, null, new[] { "APPLY_API_V1_2" })]
+        public bool? ApplicationChoicesCompleted { get; set; }
+        [EntityField("dfe_personalstatementcompleted", null, null, new[] { "APPLY_API_V1_2" })]
+        public bool? PersonalStatementCompleted { get; set; }
         [EntityField("dfe_name")]
         public string Name
         {
@@ -70,6 +79,11 @@ namespace GetIntoTeachingApi.Models.Crm
                 // attributes, although we treat this one as read-only.
             }
         }
+
+        [EntityRelationship("dfe_applyapplicationform_dfe_applyapplicationchoice_applyapplicationform", typeof(ApplicationChoice))]
+        public List<ApplicationChoice> Choices { get; set; } = new List<ApplicationChoice>();
+        [EntityRelationship("dfe_applyapplicationform_dfe_applyreference_applyapplicationform", typeof(ApplicationReference))]
+        public List<ApplicationReference> References { get; set; } = new List<ApplicationReference>();
 
         public ApplicationForm()
             : base()
