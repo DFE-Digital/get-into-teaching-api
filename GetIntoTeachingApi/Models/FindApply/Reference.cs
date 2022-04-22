@@ -10,7 +10,7 @@ namespace GetIntoTeachingApi.Models.FindApply
 		[JsonProperty("id")]
 		public int Id { get; set; }
 		[JsonProperty("requested_at")]
-		public DateTime RequestedAt { get; set; }
+		public DateTime? RequestedAt { get; set; }
 		[JsonProperty("feedback_status")]
 		public string FeedbackStatus { get; set; }
 		[JsonProperty("referee_type")]

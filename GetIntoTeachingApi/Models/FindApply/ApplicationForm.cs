@@ -23,18 +23,14 @@ namespace GetIntoTeachingApi.Models.FindApply
         public string ApplicationPhase { get; set; }
         [JsonProperty("recruitment_cycle_year")]
         public int RecruitmentCycleYear { get; set; }
-        [JsonProperty("application_choices.completed")]
-        public bool ApplicationChoicesCompleted { get; set; }
-        [JsonProperty("application_choices.data")]
-        public IEnumerable<ApplicationChoice> ApplicationChoices { get; set; }
-        [JsonProperty("references.completed")]
-        public bool ReferencesCompleted { get; set; }
-        [JsonProperty("references.data")]
-        public IEnumerable<Reference> References { get; set; }
-        [JsonProperty("qualifications.completed")]
-        public bool QualificationsCompleted { get; set; }
-        [JsonProperty("personal_statement.completed")]
-        public bool PersonalStatementCompleted { get; set; }
+        [JsonProperty("application_choices")]
+        public ApplicationResponse<IEnumerable<ApplicationChoice>> ApplicationChoices { get; set; }
+        [JsonProperty("references")]
+        public ApplicationResponse<IEnumerable<Reference>> References { get; set; }
+        [JsonProperty("qualifications")]
+        public ApplicationResponse<IEnumerable<object>> Qualifications { get; set; }
+        [JsonProperty("personal_statement")]
+        public ApplicationResponse<IEnumerable<object>> PersonalStatement { get; set; }
 
         public Crm.ApplicationForm ToCrmModel()
         {
@@ -49,8 +45,12 @@ namespace GetIntoTeachingApi.Models.FindApply
                 StatusId = (int)Enum.Parse(typeof(Crm.ApplicationForm.Status), ApplicationStatus.ToPascalCase()),
                 PhaseId = (int)Enum.Parse(typeof(Crm.ApplicationForm.Phase), ApplicationPhase.ToPascalCase()),
                 RecruitmentCycleYearId = yearId,
-                Choices = ApplicationChoices?.Select(c => c.ToCrmModel()).ToList(),
-                References = References?.Select(c => c.ToCrmModel()).ToList(),
+                Choices = ApplicationChoices?.Data?.Select(c => c.ToCrmModel()).ToList(),
+                References = References?.Data?.Select(c => c.ToCrmModel()).ToList(),
+                ApplicationChoicesCompleted = ApplicationChoices?.Completed,
+                ReferencesCompleted = References?.Completed,
+                PersonalStatementCompleted = PersonalStatement?.Completed,
+                QualificationsCompleted = Qualifications?.Completed,
             };
         }
     }

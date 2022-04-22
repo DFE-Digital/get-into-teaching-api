@@ -30,7 +30,7 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityField("dfe_referenceid")]
         public string FindApplyId { get; set; }
         [EntityField("dfe_requestedat")]
-        public DateTime RequestedAt { get; set; }
+        public DateTime? RequestedAt { get; set; }
         [EntityField("dfe_referencetype")]
         public string Type { get; set; }
         [EntityField("dfe_name")]
