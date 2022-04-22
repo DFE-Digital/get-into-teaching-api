@@ -48,7 +48,7 @@ namespace GetIntoTeachingApiTests.Services
             qualification.CandidateId = candidateId;
 
             _mockJobClient.Verify(x => x.Create(
-                           It.Is<Job>(job => job.Type == typeof(UpsertModelJob<CandidateQualification>) && job.Method.Name == "Run" &&
+                           It.Is<Job>(job => job.Type == typeof(UpsertModelWithCandidateIdJob<CandidateQualification>) && job.Method.Name == "Run" &&
                            IsMatch(qualification, (string)job.Args[0])),
                            It.IsAny<EnqueuedState>()));
         }
@@ -66,7 +66,7 @@ namespace GetIntoTeachingApiTests.Services
             pastTeachingPosition.CandidateId = candidateId;
 
             _mockJobClient.Verify(x => x.Create(
-               It.Is<Job>(job => job.Type == typeof(UpsertModelJob<CandidatePastTeachingPosition>) && job.Method.Name == "Run" &&
+               It.Is<Job>(job => job.Type == typeof(UpsertModelWithCandidateIdJob<CandidatePastTeachingPosition>) && job.Method.Name == "Run" &&
                IsMatch(pastTeachingPosition, (string)job.Args[0])),
                It.IsAny<EnqueuedState>()));
         }
@@ -102,7 +102,7 @@ namespace GetIntoTeachingApiTests.Services
             schoolExperience.CandidateId = candidateId;
 
             _mockJobClient.Verify(x => x.Create(
-               It.Is<Job>(job => job.Type == typeof(UpsertModelJob<CandidateSchoolExperience>) && job.Method.Name == "Run" &&
+               It.Is<Job>(job => job.Type == typeof(UpsertModelWithCandidateIdJob<CandidateSchoolExperience>) && job.Method.Name == "Run" &&
                IsMatch(schoolExperience, (string)job.Args[0])),
                It.IsAny<EnqueuedState>()));
         }
@@ -120,7 +120,7 @@ namespace GetIntoTeachingApiTests.Services
             registration.CandidateId = candidateId;
 
             _mockJobClient.Verify(x => x.Create(
-               It.Is<Job>(job => job.Type == typeof(UpsertModelJob<TeachingEventRegistration>) && job.Method.Name == "Run" &&
+               It.Is<Job>(job => job.Type == typeof(UpsertModelWithCandidateIdJob<TeachingEventRegistration>) && job.Method.Name == "Run" &&
                IsMatch(registration, (string)job.Args[0])),
                It.IsAny<EnqueuedState>()));
         }
@@ -139,7 +139,7 @@ namespace GetIntoTeachingApiTests.Services
             phoneCall.CandidateId = candidateId.ToString();
 
             _mockJobClient.Verify(x => x.Create(
-               It.Is<Job>(job => job.Type == typeof(UpsertModelJob<PhoneCall>) && job.Method.Name == "Run" &&
+               It.Is<Job>(job => job.Type == typeof(UpsertModelWithCandidateIdJob<PhoneCall>) && job.Method.Name == "Run" &&
                IsMatch(phoneCall, (string)job.Args[0])),
                It.IsAny<EnqueuedState>()));
 
@@ -162,7 +162,7 @@ namespace GetIntoTeachingApiTests.Services
             policy.CandidateId = candidateId;
 
             _mockJobClient.Verify(x => x.Create(
-               It.Is<Job>(job => job.Type == typeof(UpsertModelJob<CandidatePrivacyPolicy>) && job.Method.Name == "Run" &&
+               It.Is<Job>(job => job.Type == typeof(UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>) && job.Method.Name == "Run" &&
                IsMatch(policy, (string)job.Args[0])),
                It.IsAny<EnqueuedState>()));
         }
