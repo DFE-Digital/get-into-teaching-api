@@ -137,7 +137,7 @@ namespace GetIntoTeachingApi.Services
             {
                 applicationForm.CandidateId = (Guid)candidate.Id;
                 string json = applicationForm.SerializeChangeTracked();
-                _jobClient.Enqueue<UpsertModelJob<ApplicationForm>>((x) => x.Run(json, null));
+                _jobClient.Enqueue<UpsertApplicationFormJob>((x) => x.Run(json, null));
             }
         }
 
