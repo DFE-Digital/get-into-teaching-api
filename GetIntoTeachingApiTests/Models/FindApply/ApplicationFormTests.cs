@@ -29,18 +29,14 @@ namespace GetIntoTeachingApiTests.Models.FindApply
                 .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "application_phase");
             type.GetProperty("RecruitmentCycleYear").Should()
                 .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "recruitment_cycle_year");
-            type.GetProperty("ApplicationChoicesCompleted").Should()
-                .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "application_choices.completed");
             type.GetProperty("ApplicationChoices").Should()
-                .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "application_choices.data");
-            type.GetProperty("ReferencesCompleted").Should()
-                .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "references.completed");
+                .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "application_choices");
             type.GetProperty("References").Should()
-                .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "references.data");
-            type.GetProperty("QualificationsCompleted").Should()
-                .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "qualifications.completed");
-            type.GetProperty("PersonalStatementCompleted").Should()
-                .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "personal_statement.completed");
+                .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "references");
+            type.GetProperty("Qualifications").Should()
+                .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "qualifications");
+            type.GetProperty("PersonalStatement").Should()
+                .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "personal_statement");
         }
 
         [Fact]
@@ -73,8 +69,10 @@ namespace GetIntoTeachingApiTests.Models.FindApply
                 ApplicationStatus = "never_signed_in",
                 ApplicationPhase = "apply_1",
                 RecruitmentCycleYear = 2022,
-                ApplicationChoices = new List<ApplicationChoice> { choice },
-                References = new List<Reference> { reference },
+                ApplicationChoices = new ApplicationResponse<IEnumerable<ApplicationChoice>>() { Completed = true, Data = new List<ApplicationChoice> { choice } },
+                References = new ApplicationResponse<IEnumerable<Reference>>() { Completed = false, Data = new List<Reference> { reference } },
+                Qualifications = new ApplicationResponse<IEnumerable<object>>() { Completed = true },
+                PersonalStatement = new ApplicationResponse<IEnumerable<object>>() { Completed = null },
             };
 
             var crmForm = form.ToCrmModel();
@@ -87,6 +85,10 @@ namespace GetIntoTeachingApiTests.Models.FindApply
             crmForm.RecruitmentCycleYearId.Should().Be((int)GetIntoTeachingApi.Models.Crm.ApplicationForm.RecruitmentCycleYear.Year2022);
             crmForm.Choices.First().FindApplyId.Should().Be(choice.Id.ToString());
             crmForm.References.First().FindApplyId.Should().Be(reference.Id.ToString());
+            crmForm.ApplicationChoicesCompleted.Should().Be(form.ApplicationChoices.Completed);
+            crmForm.ReferencesCompleted.Should().Be(form.References.Completed);
+            crmForm.QualificationsCompleted.Should().Be(form.Qualifications.Completed);
+            crmForm.PersonalStatementCompleted.Should().Be(form.PersonalStatement.Completed);
         }
 
         [Fact]

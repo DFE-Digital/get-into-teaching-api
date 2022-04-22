@@ -6,7 +6,7 @@ namespace GetIntoTeachingApi.Models.FindApply
 	public class Course
 	{
 		[JsonProperty("uuid")]
-		public Guid Id { get; set; }
+		public Guid? Id { get; set; }
 		[JsonProperty("name")]
 		public string Name { get; set; }
 	}

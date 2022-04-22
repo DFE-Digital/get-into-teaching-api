@@ -32,7 +32,7 @@ namespace GetIntoTeachingApi.Models.FindApply
                 CreatedAt = CreatedAt,
                 UpdatedAt = UpdatedAt,
                 StatusId = (int)Enum.Parse(typeof(Crm.ApplicationChoice.Status), Status.ToPascalCase()),
-                CourseId = Course.Id.ToString(),
+                CourseId = Course.Id?.ToString(),
                 CourseName = Course.Name,
                 Provider = Provider.Name,
                 Interviews = Interviews?.Select(c => c.ToCrmModel()).ToList(),
