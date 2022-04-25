@@ -18,6 +18,7 @@ namespace GetIntoTeachingApiTests.Contracts
         public ApplyCandidateApiTests(DatabaseFixture databaseFixture) : base(databaseFixture)
         {
             Environment.SetEnvironmentVariable($"APPLY_API_FEATURE", "on");
+            Environment.SetEnvironmentVariable($"APPLY_API_V1_2_FEATURE", "on");
         }
 
         [Theory]

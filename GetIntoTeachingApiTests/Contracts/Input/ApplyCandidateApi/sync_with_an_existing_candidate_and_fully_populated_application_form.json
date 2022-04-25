@@ -1,0 +1,63 @@
+﻿{
+  "id": "C00002",
+  "attributes": {
+    "email_address": "existing@user.com",
+    "created_at": "2022-04-24T23:03:10+00:00",
+    "updated_at": "2022-04-24T23:04:01.853+00:00",
+    "application_forms": [
+      {
+        "id": 2,
+        "created_at": "2022-04-24T23:03:51+00:00",
+        "updated_at": "2022-04-24T23:04:08+00:00",
+        "application_status": "unsubmitted_in_progress",
+        "application_phase": "apply_1",
+        "recruitment_cycle_year": 2022,
+        "submitted_at": "2022-04-28T00:00:00+00:00",
+        "application_choices": {
+          "completed": true,
+          "data": [
+            {
+              "id": 2,
+              "created_at": "2021-12-16T00:00:00+00:00",
+              "updated_at": "2022-03-14T14:23:39+00:00",
+              "status": "interviewing",
+              "provider": {
+                "name": "OAKS Norths Staffordshire and Shropshire Hub"
+              },
+              "course": {
+                "uuid": "353496bf-ad7d-4de7-bbe5-76751cb35973",
+                "name": "History"
+              },
+              "interviews": [
+                {
+                  "id": 2,
+                  "date_and_time": "2022-01-26T00:00:00+00:00",
+                  "created_at": "2022-01-04T13:14:17+00:00",
+                  "updated_at": "2022-01-04T13:14:17+00:00",
+                  "cancelled_at": "2022-01-24T00:00:00+00:00"
+                }
+              ]
+            }
+          ]
+        },
+        "references": {
+          "completed": true,
+          "data": [
+            {
+              "id": 2,
+              "requested_at": "2022-01-26T00:00:00+00:00",
+              "feedback_status": "not_requested_yet",
+              "referee_type": "academic"
+            }
+          ]
+        },
+        "qualifications": {
+          "completed": true
+        },
+        "personal_statement": {
+          "completed": false
+        }
+      }
+    ]
+  }
+}
