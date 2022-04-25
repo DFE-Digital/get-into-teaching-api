@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Linq;
+using FluentAssertions;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models.Crm;
 using Microsoft.Xrm.Sdk;
@@ -31,6 +32,17 @@ namespace GetIntoTeachingApiTests.Models.Crm
             type.GetProperty("UpdatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_modifiedon");
             type.GetProperty("SubmittedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_submittedatdate");
             type.GetProperty("Name").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_name");
+            type.GetProperty("QualificationsCompleted").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_qualificationscompleted" && a.Features.Contains("APPLY_API_V1_2"));
+            type.GetProperty("ReferencesCompleted").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_referencescompleted" && a.Features.Contains("APPLY_API_V1_2"));
+            type.GetProperty("ApplicationChoicesCompleted").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applicationchoicescompleted" && a.Features.Contains("APPLY_API_V1_2"));
+            type.GetProperty("PersonalStatementCompleted").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_personalstatementcompleted" && a.Features.Contains("APPLY_API_V1_2"));
+
+            type.GetProperty("Choices").Should().BeDecoratedWith<EntityRelationshipAttribute>(
+                a => a.Name == "dfe_applyapplicationform_dfe_applyapplicationchoice_applyapplicationform" &&
+                     a.Type == typeof(ApplicationChoice));
+            type.GetProperty("References").Should().BeDecoratedWith<EntityRelationshipAttribute>(
+                a => a.Name == "dfe_applyapplicationform_dfe_applyreference_applyapplicationform" &&
+                        a.Type == typeof(ApplicationReference));
         }
 
         [Fact]
