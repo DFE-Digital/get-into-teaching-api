@@ -1,0 +1,114 @@
+[
+  {
+    "LogicalName": "contact",
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Attributes": [
+      {
+        "Key": "dfe_applycreatedon",
+        "Value": "2022-04-25T00:03:10+01:00"
+      },
+      {
+        "Key": "dfe_applyid",
+        "Value": "C00001"
+      },
+      {
+        "Key": "dfe_applylastmodifiedon",
+        "Value": "2022-04-25T00:04:01.853+01:00"
+      },
+      {
+        "Key": "dfe_candidateapplyphase",
+        "Value": {
+          "Value": 222750000
+        }
+      },
+      {
+        "Key": "dfe_candidateapplystatus",
+        "Value": {
+          "Value": 222750002
+        }
+      },
+      {
+        "Key": "dfe_channelcreation",
+        "Value": {
+          "Value": 222750025
+        }
+      },
+      {
+        "Key": "dfe_newregistrant",
+        "Value": true
+      },
+      {
+        "Key": "emailaddress1",
+        "Value": "john@doe.com"
+      },
+      {
+        "Key": "merged",
+        "Value": false
+      }
+    ],
+    "EntityState": 1,
+    "FormattedValues": [],
+    "RelatedEntities": [],
+    "RowVersion": null,
+    "KeyAttributes": []
+  },
+  {
+    "LogicalName": "dfe_applyapplicationform",
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Attributes": [
+      {
+        "Key": "dfe_applicationformid",
+        "Value": "1"
+      },
+      {
+        "Key": "dfe_applyphase",
+        "Value": {
+          "Value": 222750000
+        }
+      },
+      {
+        "Key": "dfe_applystatus",
+        "Value": {
+          "Value": 222750002
+        }
+      },
+      {
+        "Key": "dfe_contact",
+        "Value": {
+          "Id": "00000000-0000-0000-0000-000000000000",
+          "LogicalName": "contact",
+          "Name": null,
+          "KeyAttributes": [],
+          "RowVersion": null
+        }
+      },
+      {
+        "Key": "dfe_createdon",
+        "Value": "2022-04-25T00:03:51+01:00"
+      },
+      {
+        "Key": "dfe_modifiedon",
+        "Value": "2022-04-25T00:04:08+01:00"
+      },
+      {
+        "Key": "dfe_name",
+        "Value": "Application Form 1"
+      },
+      {
+        "Key": "dfe_recruitmentyear",
+        "Value": {
+          "Value": 222750002
+        }
+      },
+      {
+        "Key": "dfe_submittedatdate",
+        "Value": null
+      }
+    ],
+    "EntityState": 1,
+    "FormattedValues": [],
+    "RelatedEntities": [],
+    "RowVersion": null,
+    "KeyAttributes": []
+  }
+]

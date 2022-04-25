@@ -1,0 +1,38 @@
+﻿[
+  {
+    "Id": "271aa675-e6bf-41c5-ad5f-4e1e8de5d7ad",
+    "Email": "existing@user.com",
+    "FirstName": "Jane",
+    "LastName": "Doe",
+    "TeacherId": "abc123",
+    "SubjectTaughtId": "a42655a1-2afa-e811-a981-000d3a276620",
+    "PreferredTeachingSubjectId": "ac2655a1-2afa-e811-a981-000d3a276620",
+    "DateOfBirth": "1987-03-22T00:00:00",
+    "CountryId": "72f5c2e6-74f9-e811-a97a-000d3a2760f2",
+    "AddressLine1": "11",
+    "AddressLine2": "Main Street",
+    "AddressCity": "St Andrews",
+    "AddressPostcode": "KY9 6NJ",
+    "AddressTelephone": "987654321",
+    "AlreadySubscribedToTeacherTrainingAdviser": false
+  },
+  {
+    "Id": "371aa675-e6bf-41c5-ad5f-4e1e8de5d7ad",
+    "Email": "existing.closed@user.com",
+    "FirstName": "Jim",
+    "LastName": "Doe",
+    "DegreeTypeId": 222750000,
+    "DegreeStatusId": 222750000,
+    "DegreeSubject": "Maths",
+    "UkDegreeGradeId": 222750001,
+    "PreferredEducationPhaseId": 222750001,
+    "AdviserStatusId": 222750000,
+    "HasGcseMathsAndEnglishId": 222750000,
+    "PreferredTeachingSubjectId": "ac2655a1-2afa-e811-a981-000d3a276620",
+    "InitialTeacherTrainingYearId": 12917,
+    "DateOfBirth": "1987-03-22T00:00:00",
+    "CountryId": "13f4c2e6-74f9-e811-a97a-000d3a2760f2",
+    "AddressTelephone": "24265849586",
+    "CanSubscribeToTeacherTrainingAdviser": true
+  }
+]
