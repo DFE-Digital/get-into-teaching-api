@@ -39,6 +39,11 @@ namespace GetIntoTeachingApiTests.Helpers
                 services.Remove(services.First(d => d.ServiceType == typeof(ICallbackBookingService)));
                 services.Add(ServiceDescriptor.Describe(typeof(ICallbackBookingService), provider => ContractCallbackBookingService, ServiceLifetime.Singleton));
 
+                // Return mock existing entities instead of calling API.
+                var crmService = services.BuildServiceProvider().GetService<ICrmService>(); 
+                services.Remove(services.First(d => d.ServiceType == typeof(ICrmService)));
+                services.Add(ServiceDescriptor.Describe(typeof(ICrmService), provider => new ContractCrmService(crmService), ServiceLifetime.Singleton));
+
                 // Freeze date/time.
                 services.Remove(services.First(d => d.ServiceType == typeof(IDateTimeProvider)));
                 services.Add(ServiceDescriptor.Describe(typeof(IDateTimeProvider), provider => new FrozenDateTimeProvider(_state.UtcNow), ServiceLifetime.Singleton));

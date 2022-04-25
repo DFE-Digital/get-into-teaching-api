@@ -9,12 +9,13 @@
   <ItemGroup>
     <None Remove="Controllers\GetIntoTeaching\" />
     <None Remove="Models\FindApply\" />
-    <None Remove="Contracts\Data\teacher_training_adviser\" />
     <None Remove="FluentAssertions.Json" />
     <None Remove="Microsoft.CodeAnalysis.Common" />
     <None Remove="Microsoft.CodeAnalysis.CSharp" />
     <None Remove="Microsoft.CodeAnalysis.Workspaces.Common" />
     <None Remove="Microsoft.CodeAnalysis.CSharp.Workspaces" />
+    <None Remove="Contracts\Input\ApplyCandidateApi\" />
+    <None Remove="Contracts\Output\ApplyCandidateApi\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
@@ -195,6 +196,21 @@
     <None Update="Fixtures\ukpostcodes_malformed_rows.csv.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Contracts\Input\ApplyCandidateApi\sync_with_a_new_candidaite_and_no_application_form.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Input\ApplyCandidateApi\sync_with_a_new_candidaite_and_application_form.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Input\ApplyCandidateApi\sync_with_an_existing_candidate_and_application_form.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\candidates.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contracts\Data\application_forms.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -219,7 +235,8 @@
     <Folder Include="Contracts\Data\pick_list_items\subscription\" />
     <Folder Include="Contracts\Input\TeacherTrainingAdviser\" />
     <Folder Include="Contracts\Output\TeacherTrainingAdviser\" />
-    <Folder Include="Contracts\Data\teacher_training_adviser\" />
+    <Folder Include="Contracts\Input\ApplyCandidateApi\" />
+    <Folder Include="Contracts\Output\ApplyCandidateApi\" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
