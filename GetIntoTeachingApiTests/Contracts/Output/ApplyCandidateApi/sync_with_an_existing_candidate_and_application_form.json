@@ -48,8 +48,12 @@
   },
   {
     "LogicalName": "dfe_applyapplicationform",
-    "Id": "00000000-0000-0000-0000-000000000000",
+    "Id": "351aa675-e6bf-41c5-ad5f-4e1e8de5d5fe",
     "Attributes": [
+      {
+        "Key": "dfe_applicationchoicescompleted",
+        "Value": null
+      },
       {
         "Key": "dfe_applicationformid",
         "Value": "2"
@@ -89,17 +93,29 @@
         "Value": "Application Form 2"
       },
       {
+        "Key": "dfe_personalstatementcompleted",
+        "Value": null
+      },
+      {
+        "Key": "dfe_qualificationscompleted",
+        "Value": null
+      },
+      {
         "Key": "dfe_recruitmentyear",
         "Value": {
           "Value": 222750002
         }
       },
       {
+        "Key": "dfe_referencescompleted",
+        "Value": null
+      },
+      {
         "Key": "dfe_submittedatdate",
         "Value": null
       }
     ],
-    "EntityState": 1,
+    "EntityState": null,
     "FormattedValues": [],
     "RelatedEntities": [],
     "RowVersion": null,
