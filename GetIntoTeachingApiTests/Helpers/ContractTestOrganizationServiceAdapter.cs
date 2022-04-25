@@ -26,7 +26,7 @@ namespace GetIntoTeachingApiTests.Helpers
 
         public IEnumerable<Entity> RetrieveMultiple(QueryBase query)
         {
-            throw new NotImplementedException();
+            return new List<Entity>();
         }
 
         public void LoadProperty(Entity entity, Relationship relationship, OrganizationServiceContext context)
