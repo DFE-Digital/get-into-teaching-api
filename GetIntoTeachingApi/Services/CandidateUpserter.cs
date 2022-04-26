@@ -117,7 +117,7 @@ namespace GetIntoTeachingApi.Services
             {
                 registration.CandidateId = (Guid)candidate.Id;
                 string json = registration.SerializeChangeTracked();
-                _jobClient.Enqueue<UpsertModelJob<TeachingEventRegistration>>((x) => x.Run(json, null));
+                _jobClient.Enqueue<UpsertModelWithCandidateIdJob<TeachingEventRegistration>>((x) => x.Run(json, null));
             }
         }
 
@@ -127,7 +127,7 @@ namespace GetIntoTeachingApi.Services
             {
                 qualification.CandidateId = (Guid)candidate.Id;
                 string json = qualification.SerializeChangeTracked();
-                _jobClient.Enqueue<UpsertModelJob<CandidateQualification>>((x) => x.Run(json, null));
+                _jobClient.Enqueue<UpsertModelWithCandidateIdJob<CandidateQualification>>((x) => x.Run(json, null));
             }
         }
 
@@ -137,7 +137,7 @@ namespace GetIntoTeachingApi.Services
             {
                 applicationForm.CandidateId = (Guid)candidate.Id;
                 string json = applicationForm.SerializeChangeTracked();
-                _jobClient.Enqueue<UpsertModelJob<ApplicationForm>>((x) => x.Run(json, null));
+                _jobClient.Enqueue<UpsertApplicationFormJob>((x) => x.Run(json, null));
             }
         }
 
@@ -147,7 +147,7 @@ namespace GetIntoTeachingApi.Services
             {
                 pastTeachingPosition.CandidateId = (Guid)candidate.Id;
                 string json = pastTeachingPosition.SerializeChangeTracked();
-                _jobClient.Enqueue<UpsertModelJob<CandidatePastTeachingPosition>>((x) => x.Run(json, null));
+                _jobClient.Enqueue<UpsertModelWithCandidateIdJob<CandidatePastTeachingPosition>>((x) => x.Run(json, null));
             }
         }
 
@@ -157,7 +157,7 @@ namespace GetIntoTeachingApi.Services
             {
                 schoolExperience.CandidateId = (Guid)candidate.Id;
                 string json = schoolExperience.SerializeChangeTracked();
-                _jobClient.Enqueue<UpsertModelJob<CandidateSchoolExperience>>((x) => x.Run(json, null));
+                _jobClient.Enqueue<UpsertModelWithCandidateIdJob<CandidateSchoolExperience>>((x) => x.Run(json, null));
             }
         }
 
@@ -178,7 +178,7 @@ namespace GetIntoTeachingApi.Services
 
             phoneCall.CandidateId = candidate.Id.ToString();
             string json = phoneCall.SerializeChangeTracked();
-            _jobClient.Enqueue<UpsertModelJob<PhoneCall>>((x) => x.Run(json, null));
+            _jobClient.Enqueue<UpsertModelWithCandidateIdJob<PhoneCall>>((x) => x.Run(json, null));
         }
 
         private void SavePrivacyPolicy(CandidatePrivacyPolicy privacyPolicy, Candidate candidate)
@@ -190,7 +190,7 @@ namespace GetIntoTeachingApi.Services
 
             privacyPolicy.CandidateId = (Guid)candidate.Id;
             string json = privacyPolicy.SerializeChangeTracked();
-            _jobClient.Enqueue<UpsertModelJob<CandidatePrivacyPolicy>>((x) => x.Run(json, null));
+            _jobClient.Enqueue<UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>>((x) => x.Run(json, null));
         }
     }
 }
