@@ -1,11 +1,10 @@
-﻿using System.IO;
+﻿using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using FluentAssertions;
 using FluentAssertions.Json;
 using GetIntoTeachingApiTests.Helpers;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Contracts
@@ -22,33 +21,19 @@ namespace GetIntoTeachingApiTests.Contracts
         [ContractTestInputs("./Contracts/Input/TeacherTrainingAdviser")]
         public async void Contract(string scenario)
         {
-            await FlushState();
+            await Setup();
 
-            var filename = $"{scenario.Replace(" ", "_")}.json";
-
-            await SeedDatabase();
-
-            var response = await _httpClient.PostAsync(
-                "/api/teacher_training_adviser/candidates", ConstructBody(filename));
+            var response = await HttpClient.PostAsync(
+                "/api/teacher_training_adviser/candidates", ConstructBody(scenario));
 
             response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-            await WaitForAllJobsToComplete();
-
-            var request = SortEntities(JArray.Parse(RequestJson()));
-            var outputFile = OutputFilePath(filename);
-
-            await WriteInitialOutputFile(outputFile, request);
-
-            var snapshot = SortEntities(JArray.Parse(File.ReadAllText(outputFile)));
-
-            request.Should().HaveCount(snapshot.Count);
-            request.Should().BeEquivalentTo(snapshot);
+            await AssertRequestMatchesSnapshot(scenario);
         }
 
-        private StringContent ConstructBody(string filename)
+        private StringContent ConstructBody(string scenario)
         {
-            return new StringContent(ReadInput(filename), Encoding.UTF8, "application/json");
+            return new StringContent(ReadInput(scenario), Encoding.UTF8, "application/json");
         }
     }
 }
