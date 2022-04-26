@@ -22,12 +22,36 @@ namespace GetIntoTeachingApiTests.Helpers
                 return JsonConvert.DeserializeObject<IEnumerable<Candidate>>(json);
             }
         }
-        private IEnumerable<ApplicationForm> ApplicationForms
+        private static IEnumerable<ApplicationForm> ApplicationForms
         {
             get
             {
                 var json = File.ReadAllText("./Contracts/Data/application_forms.json");
                 return JsonConvert.DeserializeObject<IEnumerable<ApplicationForm>>(json);
+            }
+        }
+        private static IEnumerable<ApplicationChoice> ApplicationChoices
+        {
+            get
+            {
+                var json = File.ReadAllText("./Contracts/Data/application_choices.json");
+                return JsonConvert.DeserializeObject<IEnumerable<ApplicationChoice>>(json);
+            }
+        }
+        private static IEnumerable<ApplicationInterview> ApplicationInterviews
+        {
+            get
+            {
+                var json = File.ReadAllText("./Contracts/Data/application_interviews.json");
+                return JsonConvert.DeserializeObject<IEnumerable<ApplicationInterview>>(json);
+            }
+        }
+        private static IEnumerable<ApplicationReference> ApplicationReferences
+        {
+            get
+            {
+                var json = File.ReadAllText("./Contracts/Data/application_references.json");
+                return JsonConvert.DeserializeObject<IEnumerable<ApplicationReference>>(json);
             }
         }
 
@@ -77,6 +101,12 @@ namespace GetIntoTeachingApiTests.Helpers
             {
                 case "GetIntoTeachingApi.Models.Crm.ApplicationForm":
                     return ApplicationForms.Where(f => findApplyIds.Contains(f.FindApplyId)) as IEnumerable<T>;
+                case "GetIntoTeachingApi.Models.Crm.ApplicationChoice":
+                    return ApplicationChoices.Where(c => findApplyIds.Contains(c.FindApplyId)) as IEnumerable<T>;
+                case "GetIntoTeachingApi.Models.Crm.ApplicationInterview":
+                    return ApplicationInterviews.Where(i => findApplyIds.Contains(i.FindApplyId)) as IEnumerable<T>;
+                case "GetIntoTeachingApi.Models.Crm.ApplicationReference":
+                    return ApplicationReferences.Where(r => findApplyIds.Contains(r.FindApplyId)) as IEnumerable<T>;
                 default:
                     throw new NotImplementedException();
             }
