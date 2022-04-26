@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -78,21 +78,24 @@ namespace GetIntoTeachingApi.Services
                 .FirstOrDefault();
         }
 
-        public ApplicationForm GetApplicationForm(string findApplyId)
+        public IEnumerable<T> GetFindApplyModels<T>(IEnumerable<string> findApplyIds) where T : BaseModel, IHasFindApplyId
         {
-            var query = new QueryExpression("dfe_applyapplicationform");
-            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(ApplicationForm)));
-            query.Criteria.AddCondition(new ConditionExpression("dfe_applicationformid", ConditionOperator.Equal, findApplyId));
-
-            var entities = _service.RetrieveMultiple(query);
-            var entity = entities.FirstOrDefault();
-
-            if (entity == null)
+            if (!findApplyIds.Any())
             {
-                return null;
+                return Array.Empty<T>();
             }
 
-            return new ApplicationForm(entity, this, _validatorFactory);
+            var query = new QueryExpression(BaseModel.LogicalName(typeof(T)));
+            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(T)));
+
+            var property = typeof(T).GetProperty("FindApplyId");
+            var attribute = BaseModel.EntityFieldAttribute(property);
+            query.Criteria.AddCondition(new ConditionExpression(attribute.Name, ConditionOperator.In, findApplyIds.ToArray()));
+
+            var entities = _service.RetrieveMultiple(query);
+
+
+            return entities.Select(e => (T)Activator.CreateInstance(typeof(T), e, this, _validatorFactory));
         }
 
         public IEnumerable<PrivacyPolicy> GetPrivacyPolicies()

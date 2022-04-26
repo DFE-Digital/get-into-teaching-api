@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace GetIntoTeachingApi.Jobs
 {
-    public class UpsertModelJob<T> : BaseJob
+    public class UpsertModelWithCandidateIdJob<T> : BaseJob
         where T : BaseModel, IHasCandidateId
     {
         private readonly IPerformContextAdapter _contextAdapter;
@@ -18,15 +18,15 @@ namespace GetIntoTeachingApi.Jobs
         private readonly IAppSettings _appSettings;
         private readonly INotifyService _notifyService;
         private readonly ICrmService _crm;
-        private readonly ILogger<UpsertModelJob<T>> _logger;
+        private readonly ILogger<UpsertModelWithCandidateIdJob<T>> _logger;
 
-        public UpsertModelJob(
+        public UpsertModelWithCandidateIdJob(
             IEnv env,
             IRedisService redis,
             IPerformContextAdapter contextAdapter,
             ICrmService crm,
             IMetricService metrics,
-            ILogger<UpsertModelJob<T>> logger,
+            ILogger<UpsertModelWithCandidateIdJob<T>> logger,
             IAppSettings appSettings,
             INotifyService notifyService)
             : base(env, redis)

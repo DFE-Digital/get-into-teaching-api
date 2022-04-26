@@ -71,9 +71,15 @@ namespace GetIntoTeachingApiTests.Helpers
             _crmService.DeleteLink(source, relationship, target, context);
         }
 
-        public ApplicationForm GetApplicationForm(string findApplyId)
+        public IEnumerable<T> GetFindApplyModels<T>(IEnumerable<string> findApplyIds) where T : BaseModel, IHasFindApplyId
         {
-            return ApplicationForms.FirstOrDefault(f => f.FindApplyId == findApplyId);
+            switch (typeof(T).ToString())
+            {
+                case "GetIntoTeachingApi.Models.Crm.ApplicationForm":
+                    return ApplicationForms.Where(f => findApplyIds.Contains(f.FindApplyId)) as IEnumerable<T>;
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         public CallbackBookingQuota GetCallbackBookingQuota(DateTime scheduledAt)

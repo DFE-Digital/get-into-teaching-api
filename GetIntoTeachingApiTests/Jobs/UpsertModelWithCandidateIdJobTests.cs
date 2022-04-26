@@ -14,7 +14,7 @@ using Xunit;
 
 namespace GetIntoTeachingApiTests.Jobs
 {
-    public class UpsertModelJobTests
+    public class UpsertModelWithCandidateIdJobTests
     {
         private readonly Mock<IPerformContextAdapter> _mockContext;
         private readonly Mock<IAppSettings> _mockAppSettings;
@@ -22,19 +22,19 @@ namespace GetIntoTeachingApiTests.Jobs
         private readonly Mock<INotifyService> _mockNotifyService;
         private readonly CandidatePrivacyPolicy _policy;
         private readonly IMetricService _metrics;
-        private readonly UpsertModelJob<CandidatePrivacyPolicy> _job;
-        private readonly Mock<ILogger<UpsertModelJob<CandidatePrivacyPolicy>>> _mockLogger;
+        private readonly UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy> _job;
+        private readonly Mock<ILogger<UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>>> _mockLogger;
 
-        public UpsertModelJobTests()
+        public UpsertModelWithCandidateIdJobTests()
         {
             _mockContext = new Mock<IPerformContextAdapter>();
-            _mockLogger = new Mock<ILogger<UpsertModelJob<CandidatePrivacyPolicy>>>();
+            _mockLogger = new Mock<ILogger<UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>>>();
             _mockAppSettings = new Mock<IAppSettings>();
             _mockCrm = new Mock<ICrmService>();
             _mockNotifyService = new Mock<INotifyService>();
             _metrics = new MetricService();
             _policy = new CandidatePrivacyPolicy() { Id = Guid.NewGuid(), AcceptedAt = DateTime.UtcNow, CandidateId = Guid.NewGuid() };
-            _job = new UpsertModelJob<CandidatePrivacyPolicy>(
+            _job = new UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>(
                 new Env(), new Mock<IRedisService>().Object, _mockContext.Object, _mockCrm.Object,
                 _metrics, _mockLogger.Object, _mockAppSettings.Object, _mockNotifyService.Object);
 
