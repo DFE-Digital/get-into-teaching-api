@@ -21,13 +21,13 @@ namespace GetIntoTeachingApiTests.Contracts
         private static readonly int maxWaitDurationInSeconds = 60;
         private static readonly int waitInterval = 200;
         private static readonly int verifyChallenges = 3;
-        private readonly ContractTestGitWebApplicationFactory<Startup> _factory;
-        protected readonly HttpClient _httpClient;
+        protected readonly HttpClient HttpClient;
+        protected readonly ContractTestGitWebApplicationFactory<Startup> _factory;
         public IBackgroundJobClient JobClient
         {
             get
             {
-                return (IBackgroundJobClient) _factory.Services.GetService(typeof(IBackgroundJobClient));
+                return (IBackgroundJobClient)_factory.Services.GetService(typeof(IBackgroundJobClient));
             }
         }
         public string ContractName
@@ -41,34 +41,61 @@ namespace GetIntoTeachingApiTests.Contracts
         public BaseTests(DatabaseFixture databaseFixture)
             : base(databaseFixture)
         {
+            _factory = new ContractTestGitWebApplicationFactory<Startup>(GetContractTestState());
+
             var apiKey = "admin-secret";
             Environment.SetEnvironmentVariable($"ADMIN_API_KEY", apiKey);
 
-            _factory = new ContractTestGitWebApplicationFactory<Startup>(GetContractTestState());
-            _httpClient = _factory.CreateClient();
-            _httpClient.DefaultRequestHeaders.Add("Authorization", apiKey);
+            HttpClient = _factory.CreateClient();
+            HttpClient.DefaultRequestHeaders.Add("Authorization", apiKey);
         }
 
-        protected string ReadInput(string filename)
+        protected async Task Setup()
         {
-            var file = $"./Contracts/Input/{ContractName}/{filename}";
+            await FlushState();
+            await SeedDatabase();
+        }
+
+        protected async Task AssertRequestMatchesSnapshot(string scenario)
+        {
+            await WaitForAllJobsToComplete();
+
+            var request = SortEntities(JArray.Parse(RequestJson()));
+            var outputFile = OutputFile(scenario);
+
+            await WriteInitialOutputFile(outputFile, request);
+
+            var snapshot = SortEntities(JArray.Parse(File.ReadAllText(outputFile)));
+
+            request.Should().HaveCount(snapshot.Count);
+            request.Should().BeEquivalentTo(snapshot);
+        }
+
+        protected string ReadInput(string scenario)
+        {
+            var file = $"./Contracts/Input/{ContractName}/{InputFilename(scenario)}";
             return File.ReadAllText(file);
         }
 
-        protected string OutputFilePath(string filename)
+        private static string InputFilename(string scenario)
         {
-            var relativePath = $"../../../Contracts/Output/{ContractName}/{filename}";
+            return $"{scenario.Replace(" ", "_")}.json";
+        }
+
+        private string OutputFile(string scenario)
+        {
+            var relativePath = $"../../../Contracts/Output/{ContractName}/{InputFilename(scenario)}";
             return Path.Combine(Directory.GetCurrentDirectory(), relativePath);
         }
 
-        protected static JArray SortEntities(JArray entities)
+        private static JArray SortEntities(JArray entities)
         {
             entities.ForEach(e => e["Attributes"] = new JArray(e["Attributes"].OrderBy(a => a["Key"])));
 
             return new JArray(entities.OrderBy(e => e["LogicalName"]));
         }
 
-        protected static async Task WriteInitialOutputFile(string outputFile, JArray request)
+        private static async Task WriteInitialOutputFile(string outputFile, JArray request)
         {
             if (!File.Exists(outputFile))
             {
@@ -76,19 +103,19 @@ namespace GetIntoTeachingApiTests.Contracts
             }
         }
 
-        protected static ContractTestState GetContractTestState()
+        private static ContractTestState GetContractTestState()
         {
             var json = File.ReadAllText("./Contracts/Data/state.json");
             return JsonConvert.DeserializeObject<ContractTestState>(json);
         }
 
-        protected string RequestJson()
+        private string RequestJson()
         {
             var trackedEntities = _factory.ContractOrganizationServiceAdapter.TrackedEntities;
             return JsonConvert.SerializeObject(trackedEntities, Formatting.Indented);
         }
 
-        protected async Task SeedDatabase()
+        private async Task SeedDatabase()
         {
             await SeedPickListItems();
             await SeedLookupItems();
@@ -125,7 +152,7 @@ namespace GetIntoTeachingApiTests.Contracts
             await DbContext.SaveChangesAsync();
         }
 
-        protected async Task FlushState()
+        private async Task FlushState()
         {
             ClearJobQueue();
             await WaitForAllJobsToComplete();
@@ -143,7 +170,7 @@ namespace GetIntoTeachingApiTests.Contracts
             }
         }
 
-        protected static async Task WaitForAllJobsToComplete()
+        private static async Task WaitForAllJobsToComplete()
         {
             var startWaitTime = DateTime.UtcNow;
 
