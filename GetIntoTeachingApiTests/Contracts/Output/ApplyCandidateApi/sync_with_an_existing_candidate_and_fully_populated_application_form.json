@@ -1,0 +1,267 @@
+[
+  {
+    "LogicalName": "contact",
+    "Id": "271aa675-e6bf-41c5-ad5f-4e1e8de5d7ad",
+    "Attributes": [
+      {
+        "Key": "dfe_applycreatedon",
+        "Value": "2022-04-25T00:03:10+01:00"
+      },
+      {
+        "Key": "dfe_applyid",
+        "Value": "C00002"
+      },
+      {
+        "Key": "dfe_applylastmodifiedon",
+        "Value": "2022-04-25T00:04:01.853+01:00"
+      },
+      {
+        "Key": "dfe_candidateapplyphase",
+        "Value": {
+          "Value": 222750000
+        }
+      },
+      {
+        "Key": "dfe_candidateapplystatus",
+        "Value": {
+          "Value": 222750002
+        }
+      },
+      {
+        "Key": "dfe_newregistrant",
+        "Value": false
+      },
+      {
+        "Key": "emailaddress1",
+        "Value": "existing@user.com"
+      },
+      {
+        "Key": "merged",
+        "Value": false
+      }
+    ],
+    "EntityState": null,
+    "FormattedValues": [],
+    "RelatedEntities": [],
+    "RowVersion": null,
+    "KeyAttributes": []
+  },
+  {
+    "LogicalName": "dfe_applyapplicationchoice",
+    "Id": "765aa675-e6bf-41c5-ad5f-4e1e8de5d4ab",
+    "Attributes": [
+      {
+        "Key": "dfe_applicationchoicecoursename",
+        "Value": "History"
+      },
+      {
+        "Key": "dfe_applicationchoicecourseuuid",
+        "Value": "353496bf-ad7d-4de7-bbe5-76751cb35973"
+      },
+      {
+        "Key": "dfe_applicationchoiceid",
+        "Value": "2"
+      },
+      {
+        "Key": "dfe_applicationchoiceprovider",
+        "Value": "OAKS Norths Staffordshire and Shropshire Hub"
+      },
+      {
+        "Key": "dfe_applicationchoicestatus",
+        "Value": {
+          "Value": 222750003
+        }
+      },
+      {
+        "Key": "dfe_applyapplicationform",
+        "Value": {
+          "Id": "351aa675-e6bf-41c5-ad5f-4e1e8de5d5fe",
+          "LogicalName": "dfe_applyapplicationform",
+          "Name": null,
+          "KeyAttributes": [],
+          "RowVersion": null
+        }
+      },
+      {
+        "Key": "dfe_createdon",
+        "Value": "2021-12-16T00:00:00+00:00"
+      },
+      {
+        "Key": "dfe_modifiedon",
+        "Value": "2022-03-14T14:23:39+00:00"
+      },
+      {
+        "Key": "dfe_name",
+        "Value": "Application Choice 2"
+      }
+    ],
+    "EntityState": null,
+    "FormattedValues": [],
+    "RelatedEntities": [],
+    "RowVersion": null,
+    "KeyAttributes": []
+  },
+  {
+    "LogicalName": "dfe_applyapplicationform",
+    "Id": "351aa675-e6bf-41c5-ad5f-4e1e8de5d5fe",
+    "Attributes": [
+      {
+        "Key": "dfe_applicationchoicescompleted",
+        "Value": true
+      },
+      {
+        "Key": "dfe_applicationformid",
+        "Value": "2"
+      },
+      {
+        "Key": "dfe_applyphase",
+        "Value": {
+          "Value": 222750000
+        }
+      },
+      {
+        "Key": "dfe_applystatus",
+        "Value": {
+          "Value": 222750002
+        }
+      },
+      {
+        "Key": "dfe_contact",
+        "Value": {
+          "Id": "271aa675-e6bf-41c5-ad5f-4e1e8de5d7ad",
+          "LogicalName": "contact",
+          "Name": null,
+          "KeyAttributes": [],
+          "RowVersion": null
+        }
+      },
+      {
+        "Key": "dfe_createdon",
+        "Value": "2022-04-25T00:03:51+01:00"
+      },
+      {
+        "Key": "dfe_modifiedon",
+        "Value": "2022-04-25T00:04:08+01:00"
+      },
+      {
+        "Key": "dfe_name",
+        "Value": "Application Form 2"
+      },
+      {
+        "Key": "dfe_personalstatementcompleted",
+        "Value": false
+      },
+      {
+        "Key": "dfe_qualificationscompleted",
+        "Value": true
+      },
+      {
+        "Key": "dfe_recruitmentyear",
+        "Value": {
+          "Value": 222750002
+        }
+      },
+      {
+        "Key": "dfe_referencescompleted",
+        "Value": true
+      },
+      {
+        "Key": "dfe_submittedatdate",
+        "Value": "2022-04-28T01:00:00+01:00"
+      }
+    ],
+    "EntityState": null,
+    "FormattedValues": [],
+    "RelatedEntities": [],
+    "RowVersion": null,
+    "KeyAttributes": []
+  },
+  {
+    "LogicalName": "dfe_applyinterview",
+    "Id": "823aa675-e6bf-41c5-ad5f-4e1e8de5d4ca",
+    "Attributes": [
+      {
+        "Key": "dfe_applyapplicationchoice",
+        "Value": {
+          "Id": "765aa675-e6bf-41c5-ad5f-4e1e8de5d4ab",
+          "LogicalName": "dfe_applyapplicationchoice",
+          "Name": null,
+          "KeyAttributes": [],
+          "RowVersion": null
+        }
+      },
+      {
+        "Key": "dfe_createdon",
+        "Value": "2022-01-04T13:14:17+00:00"
+      },
+      {
+        "Key": "dfe_interviewcancelledat",
+        "Value": "2022-01-24T00:00:00+00:00"
+      },
+      {
+        "Key": "dfe_interviewid",
+        "Value": "2"
+      },
+      {
+        "Key": "dfe_interviewscheduledat",
+        "Value": "2022-01-26T00:00:00+00:00"
+      },
+      {
+        "Key": "dfe_modifiedon",
+        "Value": "2022-01-04T13:14:17+00:00"
+      },
+      {
+        "Key": "dfe_name",
+        "Value": "Application Interview 2"
+      }
+    ],
+    "EntityState": null,
+    "FormattedValues": [],
+    "RelatedEntities": [],
+    "RowVersion": null,
+    "KeyAttributes": []
+  },
+  {
+    "LogicalName": "dfe_applyreference",
+    "Id": "933aa675-e6bf-41c5-ad5f-4e1e8de5d4cc",
+    "Attributes": [
+      {
+        "Key": "dfe_applyapplicationform",
+        "Value": {
+          "Id": "351aa675-e6bf-41c5-ad5f-4e1e8de5d5fe",
+          "LogicalName": "dfe_applyapplicationform",
+          "Name": null,
+          "KeyAttributes": [],
+          "RowVersion": null
+        }
+      },
+      {
+        "Key": "dfe_name",
+        "Value": "Application Reference 2"
+      },
+      {
+        "Key": "dfe_referencefeedbackstatus",
+        "Value": {
+          "Value": 222750002
+        }
+      },
+      {
+        "Key": "dfe_referenceid",
+        "Value": "2"
+      },
+      {
+        "Key": "dfe_referencetype",
+        "Value": "academic"
+      },
+      {
+        "Key": "dfe_requestedat",
+        "Value": "2022-01-26T00:00:00+00:00"
+      }
+    ],
+    "EntityState": null,
+    "FormattedValues": [],
+    "RelatedEntities": [],
+    "RowVersion": null,
+    "KeyAttributes": []
+  }
+]
