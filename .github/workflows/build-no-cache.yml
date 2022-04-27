@@ -52,13 +52,13 @@ jobs:
           push: false
           build-args: GIT_COMMIT_SHA=${{ steps.vars.outputs.sha_short }}
 
-      - name: Run Snyk to check Docker image for vulnerabilities
-        uses: snyk/actions/docker@master
-        env:
-          SNYK_TOKEN: ${{ steps.keyvault-yaml-secret.outputs.SNYK-TOKEN }}
-        with:
-          image: ${{ env.DOCKER_REPOSITORY }}:master
-          args: --severity-threshold=high --file=Dockerfile
+      # - name: Run Snyk to check Docker image for vulnerabilities
+      #   uses: snyk/actions/docker@master
+      #   env:
+      #     SNYK_TOKEN: ${{ steps.keyvault-yaml-secret.outputs.SNYK-TOKEN }}
+      #   with:
+      #     image: ${{ env.DOCKER_REPOSITORY }}:master
+      #     args: --severity-threshold=high --file=Dockerfile
 
       - name: Push image to registry
         if: success()
