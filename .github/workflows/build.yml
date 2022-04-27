@@ -1,4 +1,4 @@
-name: Build 
+name: Build
 on:
   repository_dispatch:
   pull_request:
@@ -29,7 +29,7 @@ jobs:
         with:
           keyvault: ${{ secrets.KEY_VAULT}}
           secret: INFRA-KEYS
-          key: ACTIONS-API-ACCESS-TOKEN, SLACK-WEBHOOK
+          key: SLACK-WEBHOOK
 
       - name: Set up Docker Buildx
         id: buildx
@@ -53,7 +53,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ steps.keyvault-yaml-secret.outputs.ACTIONS-API-ACCESS-TOKEN }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build
         uses: docker/build-push-action@v2.10.0
@@ -99,7 +99,7 @@ jobs:
          with:
            keyvault: ${{ secrets.KEY_VAULT}}
            secret: INFRA-KEYS
-           key: ACTIONS-API-ACCESS-TOKEN, SLACK-WEBHOOK
+           key: SLACK-WEBHOOK
 
        - name: Trigger Development Deployment
          uses: ./.github/workflows/actions/deploy
@@ -117,7 +117,7 @@ jobs:
          uses: DFE-Digital/github-actions/GenerateReleaseFromSHA@master
          with:
            sha: ${{github.sha}}
-          
+
        - name: Create a GitHub Release
          id: release
          if:   steps.tag_version.outputs.pr_found == 1
@@ -132,21 +132,21 @@ jobs:
             draft:      false
 
        - name: Copy PR Info to Release
-         if: steps.release.outputs.id      
+         if: steps.release.outputs.id
          uses: DFE-Digital/github-actions/CopyPRtoRelease@master
          with:
            PR_NUMBER:  ${{ steps.tag_version.outputs.pr_number }}
            RELEASE_ID: ${{ steps.release.outputs.id }}
-           TOKEN: ${{secrets.GITHUB_TOKEN}} 
-           
-           
+           TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
   qa:
     name: Quality Assurance Deployment
     needs: build
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     environment:
-       name: Test 
+       name: Test
     steps:
        - name: Check out the repo
          uses: actions/checkout@v3
@@ -163,7 +163,7 @@ jobs:
          with:
            keyvault: ${{ secrets.KEY_VAULT}}
            secret: INFRA-KEYS
-           key: ACTIONS-API-ACCESS-TOKEN, SLACK-WEBHOOK
+           key: SLACK-WEBHOOK
 
        - name: Trigger Deployment to QA
          uses: ./.github/workflows/actions/deploy
@@ -184,4 +184,3 @@ jobs:
            SLACK_TITLE:   Failure in Post-Development Deploy
            SLACK_MESSAGE: Failure with initialising QA deployment for ${{env.APPLICATION}}
            SLACK_WEBHOOK: ${{ steps.keyvault-yaml-secret.outputs.SLACK-WEBHOOK }}
-
