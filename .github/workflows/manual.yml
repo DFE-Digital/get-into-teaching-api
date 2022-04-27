@@ -1,10 +1,10 @@
----  
+---
 name: Manual Release
-on: 
+on:
   workflow_dispatch:
     inputs:
       environment:
-        description: Environment to release to 
+        description: Environment to release to
         required: true
         type: environment
       tag:
@@ -24,7 +24,7 @@ jobs:
     steps:
        - name: Checkout
          uses: actions/checkout@v3
-   
+
        - name: set-up-environment
          uses: DFE-Digital/github-actions/set-up-environment@master
 
@@ -37,7 +37,7 @@ jobs:
          with:
            keyvault: ${{ secrets.KEY_VAULT}}
            secret: INFRA-KEYS
-           key: ACTIONS-API-ACCESS-TOKEN, SLACK-WEBHOOK,SLACK-RELEASE-NOTE-WEBHOOK
+           key: SLACK-WEBHOOK,SLACK-RELEASE-NOTE-WEBHOOK
          env:
            GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
@@ -46,7 +46,7 @@ jobs:
          uses: DFE-Digital/github-actions/DraftReleaseByTag@master
          with:
            TAG: ${{ github.event.inputs.tag }}
-           TOKEN: ${{ steps.keyvault-yaml-secret.outputs.ACTIONS-API-ACCESS-TOKEN  }}
+           TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
        - name: Check if found
          if:  steps.tag_id.outputs.release_id == ''
@@ -83,4 +83,3 @@ jobs:
            SLACK_TITLE:    "Manual Release Failed: ${{steps.tag_id.outputs.release_name}}"
            SLACK_MESSAGE:  Failure deploying ${{github.event.inputs.environment}} release
            SLACK_WEBHOOK:  ${{steps.keyvault-yaml-secret.outputs.SLACK-WEBHOOK}}
-
