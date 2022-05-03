@@ -70,7 +70,7 @@ namespace GetIntoTeachingApi.Utils
         {
             get
             {
-                return AppServices.SpaceName.Split("-").Last();
+                return AppServices.ApplicationName.Split("-").Last();
             }
         }
 

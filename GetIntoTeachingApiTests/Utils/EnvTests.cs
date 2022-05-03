@@ -187,11 +187,11 @@ namespace GetIntoTeachingApiTests.Utils
         [InlineData(null, "")]
         [InlineData("get-into-teaching-test", "test")]
         [InlineData("get-into-teaching-dev", "dev")]
-        [InlineData("get-into-teaching-production", "production")]
+        [InlineData("get-into-teaching-prod", "prod")]
         public void CloudFoundryEnvironmentName_ReturnsCorrectly(string spaceName, string expected)
         {
             var previous = Environment.GetEnvironmentVariable("VCAP_APPLICATION");
-            Environment.SetEnvironmentVariable("VCAP_APPLICATION", $"{{\"space_name\":\"{spaceName}\"}}");
+            Environment.SetEnvironmentVariable("VCAP_APPLICATION", $"{{\"application_name\":\"{spaceName}\"}}");
 
             _env.CloudFoundryEnvironmentName.Should().Be(expected);
 
