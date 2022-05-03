@@ -44,7 +44,7 @@ msbuild.wrn
 TestResults
 
 # Dotenv
-.env*
+.env.local
 
 # DevOps file
 fetch_config.rb

@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using AspNetCoreRateLimit;
 using dotenv.net;
 using FluentValidation.AspNetCore;
@@ -27,9 +27,10 @@ namespace GetIntoTeachingApi.AppStart
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            if (_env.IsDevelopment)
+            if (!_env.IsTest)
             {
-                DotEnv.Load(options: new DotEnvOptions(ignoreExceptions: false, envFilePaths: new[] { ".env.development" }));
+                var envFile = $".env.{_env.CloudFoundryEnvironmentName.ToLowerInvariant()}";
+                DotEnv.Load(options: new DotEnvOptions(ignoreExceptions: false, envFilePaths: new[] { envFile }));
             }
 
             services.RegisterServices(_configuration, _env);
