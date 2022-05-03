@@ -16,8 +16,6 @@ inputs:
         required: true
       ARM_ACCESS_KEY:
         required: true
-      GITHUB_TOKEN:
-        required: true
 
 runs:
   using: composite
@@ -46,9 +44,7 @@ runs:
          with:
            keyvault: ${{ inputs.KEY_VAULT}}
            secret: INFRA-KEYS
-           key: HTTP-USERNAME, HTTP-PASSWORD, LOGIT-API
-         env:
-           GITHUB_TOKEN: ${{inputs.GITHUB_TOKEN}}
+           key: LOGIT-API
 
        - name: Get Short SHA
          id: sha
@@ -90,7 +86,7 @@ runs:
          with:
               terraform_version: 0.14.9
 
-       - name: Terraform ( ${{inputs.environment}} ) 
+       - name: Terraform ( ${{inputs.environment}} )
          shell: bash
          run: |
              cd terraform/paas && pwd
