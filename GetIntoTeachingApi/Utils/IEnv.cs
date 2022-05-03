@@ -14,6 +14,7 @@
         string HangfireUsername { get; }
         string HangfirePassword { get; }
         string EnvironmentName { get; }
+        string CloudFoundryEnvironmentName { get; }
         string TotpSecretKey { get; }
         string VcapServices { get; }
         string AppName { get; }

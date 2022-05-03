@@ -183,6 +183,21 @@ namespace GetIntoTeachingApiTests.Utils
             Environment.SetEnvironmentVariable("VCAP_APPLICATION", previous);
         }
 
+        [Theory]
+        [InlineData(null, "")]
+        [InlineData("get-into-teaching-test", "test")]
+        [InlineData("get-into-teaching-dev", "dev")]
+        [InlineData("get-into-teaching-production", "production")]
+        public void CloudFoundryEnvironmentName_ReturnsCorrectly(string spaceName, string expected)
+        {
+            var previous = Environment.GetEnvironmentVariable("VCAP_APPLICATION");
+            Environment.SetEnvironmentVariable("VCAP_APPLICATION", $"{{\"space_name\":\"{spaceName}\"}}");
+
+            _env.CloudFoundryEnvironmentName.Should().Be(expected);
+
+            Environment.SetEnvironmentVariable("VCAP_APPLICATION", previous);
+        }
+
         [Fact]
         public void FindApplyApiUrl_ReturnsCorrectly()
         {

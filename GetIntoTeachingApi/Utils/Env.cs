@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -62,6 +63,14 @@ namespace GetIntoTeachingApi.Utils
             {
                 var name = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
                 return name ?? "Test";
+            }
+        }
+
+        public string CloudFoundryEnvironmentName
+        {
+            get
+            {
+                return AppServices.SpaceName.Split("-").Last();
             }
         }
 
