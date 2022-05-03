@@ -27,7 +27,7 @@
         "DATABASE_INSTANCE_NAME": "gis",
         "HANGFIRE_INSTANCE_NAME": "gis",
         "VCAP_SERVICES": "{\"postgres\": [{\"instance_name\": \"gis\",\"credentials\": {\"host\": \"localhost\",\"name\": \"gis\",\"username\": \"docker\",\"password\": \"docker\",\"port\": 4432}}],\"redis\": [{\"credentials\": {\"host\": \"0.0.0.0\",\"port\": 5379,\"password\": \"docker\",\"tls_enabled\": false}}]}",
-        "VCAP_APPLICATION": "{\"application_name\": \"app-name\",\"organization_name\": \"org-name\",\"space_name\": \"local\"}",
+        "VCAP_APPLICATION": "{\"application_name\": \"app-local\",\"organization_name\": \"org-name\",\"space_name\": \"local\"}",
         "CF_INSTANCE_INDEX": "0",
         "FIND_APPLY_API_URL": "https://sandbox.apply-for-teacher-training.service.gov.uk/candidate-api",
         "ADMIN_API_KEY": "secret-admin",
