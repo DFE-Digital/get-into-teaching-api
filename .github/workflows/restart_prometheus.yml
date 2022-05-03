@@ -1,4 +1,4 @@
-name: Restart Prometheus 
+name: Restart Prometheus
 on:
   workflow_dispatch:
   schedule:
@@ -15,8 +15,8 @@ jobs:
           wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
           echo "deb https://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
           sudo apt-get update
-          sudo apt-get install cf7-cli  
-          
+          sudo apt-get install cf7-cli
+
       - uses: Azure/login@v1
         with:
             creds: ${{ secrets.AZURE_CREDENTIALS }}
@@ -27,13 +27,11 @@ jobs:
           keyvault: ${{ secrets.KEY_VAULT}}
           secret: INFRA-KEYS
           key: PAAS-USERNAME , PAAS-PASSWORD
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       - name: Login to Cloud Foundry
         run: cf login -a api.london.cloud.service.gov.uk -u ${{ steps.keyvault-yaml-secret.outputs.PAAS-USERNAME }} -p ${{steps.keyvault-yaml-secret.outputs.PAAS-PASSWORD}} -s get-into-teaching
-             
+
       - name: Restart Application
         run:  |
             cf target -s get-into-teaching-monitoring
-            cf restart prometheus-prod-get-into-teaching 
+            cf restart prometheus-prod-get-into-teaching
