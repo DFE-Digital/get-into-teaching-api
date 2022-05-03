@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.IO;
+using System.Text.Json.Serialization;
 using AspNetCoreRateLimit;
 using dotenv.net;
 using FluentValidation.AspNetCore;
@@ -29,7 +30,8 @@ namespace GetIntoTeachingApi.AppStart
         {
             if (!_env.IsTest)
             {
-                var envFile = $".env.{_env.CloudFoundryEnvironmentName.ToLowerInvariant()}";
+                var root = Directory.GetCurrentDirectory();
+                var envFile = Path.Combine(root, $".env.{_env.CloudFoundryEnvironmentName.ToLowerInvariant()}");
                 DotEnv.Load(options: new DotEnvOptions(ignoreExceptions: false, envFilePaths: new[] { envFile }));
             }
 
