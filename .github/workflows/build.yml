@@ -110,7 +110,6 @@ jobs:
            AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
            KEY_VAULT:         ${{ secrets.KEY_VAULT }}
            ARM_ACCESS_KEY:    ${{ secrets.ARM_ACCESS_KEY }}
-           GITHUB_TOKEN:      ${{ secrets.GITHUB_TOKEN }}
 
        - name: Generate Tag from PR Number
          id:   tag_version
@@ -174,7 +173,6 @@ jobs:
            AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
            KEY_VAULT:         ${{ secrets.KEY_VAULT }}
            ARM_ACCESS_KEY:    ${{ secrets.ARM_ACCESS_KEY }}
-           GITHUB_TOKEN:      ${{ secrets.GITHUB_TOKEN }}
 
        - name: Slack Notification
          if: failure()

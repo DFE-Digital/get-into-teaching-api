@@ -1,4 +1,4 @@
-name: Run .NET tests and Lint Dockerfile 
+name: Run .NET tests and Lint Dockerfile
 on:
   pull_request:
     types: [assigned, opened, synchronize, reopened]
@@ -21,8 +21,6 @@ jobs:
         keyvault: ${{ secrets.KEY_VAULT}}
         secret: INFRA-KEYS
         key: SLACK-WEBHOOK
-      env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
     - name: set-up-environment
       uses: DFE-Digital/github-actions/set-up-environment@master
