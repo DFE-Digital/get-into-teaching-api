@@ -31,7 +31,7 @@ namespace GetIntoTeachingApi.AppStart
             if (!_env.IsTest)
             {
                 var root = Directory.GetCurrentDirectory();
-                var envFile = Path.Combine(root, $".env.{_env.CloudFoundryEnvironmentName.ToLowerInvariant()}");
+                var envFile = Path.Combine(root, $"env.{_env.CloudFoundryEnvironmentName.ToLowerInvariant()}");
                 DotEnv.Load(options: new DotEnvOptions(ignoreExceptions: false, envFilePaths: new[] { envFile }));
             }
 
