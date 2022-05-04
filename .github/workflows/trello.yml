@@ -6,7 +6,7 @@ on:
 jobs:
   attach-to-trello:
     name: Link Trello card to this PR
-    if: "!contains( 'dependabot[bot] snyk-bot' , github.actor )"  
+    if: "!contains( 'dependabot[bot] snyk-bot' , github.actor )"
     runs-on: ubuntu-latest
     environment: Development
     steps:
@@ -20,13 +20,11 @@ jobs:
           keyvault: ${{ secrets.KEY_VAULT}}
           secret: INFRA-KEYS
           key: TRELLO-KEY , TRELLO-TOKEN
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       - name: Add Trello Comment
         uses: DFE-Digital/github-actions/AddTrelloComment@master
         with:
-          MESSAGE:      ${{ github.event.pull_request.html_url }} 
-          CARD:         ${{ github.event.pull_request.body }}           
+          MESSAGE:      ${{ github.event.pull_request.html_url }}
+          CARD:         ${{ github.event.pull_request.body }}
           TRELLO-KEY:   ${{ steps.keyvault-yaml-secret.outputs.TRELLO-KEY }}
           TRELLO-TOKEN: ${{ steps.keyvault-yaml-secret.outputs.TRELLO-TOKEN }}
