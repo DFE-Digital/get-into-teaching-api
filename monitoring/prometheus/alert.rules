@@ -216,5 +216,23 @@ groups:
           description: Alerts when any of the API database exceeds 75 out of a possible 100 connections.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156134401/API+Runbook#HighDatabaseConnections-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=4&orgId=1&var-App=get-into-teaching-api-prod
-          
-          
+  - name: GSE
+    rules:
+      - alert: HighJobsWaiting (GSE)
+        expr: 'max(delayed_job_jobs_waiting_count{app="school-experience-app-production-delayed_job"}) > 5'
+        labels:
+          severity: high
+        annotations:
+          summary: Alerts when jobs are backing up in the GSE delayed job queue (more than 5 pending).
+          description: Alerts if there are more than 5 jobs pending in the GSE delayed job queue.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/3586785294/GSE+Runbook#HighJobsWaiting-HIGH
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/xOMcgnLnk/yabeda-delayed-job?orgId=1&refresh=10s
+      - alert: HighJobFailures (GSE)
+        expr: 'max(delayed_job_jobs_errored_total{app="school-experience-app-production-delayed_job"}) > 2'
+        labels:
+          severity: high
+        annotations:
+          summary: Alerts when there are more than 2 failed jobs in the retry queue.
+          description: Alerts when there are more than 2 failed jobs in the retry queue.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/3586785294/GSE+Runbook#HighJobFailures-HIGH
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/xOMcgnLnk/yabeda-delayed-job?orgId=1&refresh=10s
