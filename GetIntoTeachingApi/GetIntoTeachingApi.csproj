@@ -58,7 +58,7 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-		<PackageReference Include="Serilog" Version="2.10.0" />
+		<PackageReference Include="Serilog" Version="2.11.0" />
 		<PackageReference Include="Castle.Core" Version="4.4.1" />
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.3" />
