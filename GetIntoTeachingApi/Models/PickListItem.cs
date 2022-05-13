@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using Microsoft.PowerPlatform.Dataverse.Client;
 
 namespace GetIntoTeachingApi.Models
 {
@@ -18,7 +17,7 @@ namespace GetIntoTeachingApi.Models
         {
         }
 
-        public PickListItem(ServiceClient.PickListItem pickListItem, string entityName, string attributeName)
+        public PickListItem(Microsoft.PowerPlatform.Dataverse.Client.Extensions.PickListItem pickListItem, string entityName, string attributeName)
         {
             Id = pickListItem.PickListItemId;
             Value = pickListItem.DisplayLabel;

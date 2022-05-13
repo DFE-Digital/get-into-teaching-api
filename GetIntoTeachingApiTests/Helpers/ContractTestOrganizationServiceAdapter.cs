@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using GetIntoTeachingApi.Adapters;
+using Microsoft.PowerPlatform.Dataverse.Client.Extensions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
 using Moq;
-using static Microsoft.PowerPlatform.Dataverse.Client.ServiceClient;
 
 namespace GetIntoTeachingApiTests.Helpers
 {
