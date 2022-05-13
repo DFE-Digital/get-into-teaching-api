@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GetIntoTeachingApi.Models;
 using Microsoft.PowerPlatform.Dataverse.Client;
+using Microsoft.PowerPlatform.Dataverse.Client.Extensions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
@@ -65,7 +66,7 @@ namespace GetIntoTeachingApi.Adapters
             return result;
         }
 
-        public IEnumerable<ServiceClient.PickListItem> GetPickListItemsForAttribute(
+        public IEnumerable<Microsoft.PowerPlatform.Dataverse.Client.Extensions.PickListItem> GetPickListItemsForAttribute(
             string entityName,
             string attributeName)
         {
