@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.PowerPlatform.Dataverse.Client;
+using Microsoft.PowerPlatform.Dataverse.Client.Extensions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
@@ -14,7 +14,7 @@ namespace GetIntoTeachingApi.Adapters
         IQueryable<Entity> CreateQuery(string entityName, OrganizationServiceContext context);
         IEnumerable<Entity> RetrieveMultiple(QueryBase query);
         void LoadProperty(Entity entity, Relationship relationship, OrganizationServiceContext context);
-        IEnumerable<ServiceClient.PickListItem> GetPickListItemsForAttribute(string entityName, string attributeName);
+        IEnumerable<PickListItem> GetPickListItemsForAttribute(string entityName, string attributeName);
         IEnumerable<Entity> RelatedEntities(Entity entity, string attributeName);
         OrganizationServiceContext Context();
         Entity BlankExistingEntity(string entityName, Guid id, OrganizationServiceContext context);
