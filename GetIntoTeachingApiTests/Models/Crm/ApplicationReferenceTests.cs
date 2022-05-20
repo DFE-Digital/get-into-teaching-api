@@ -24,6 +24,8 @@ namespace GetIntoTeachingApiTests.Models.Crm
 
             type.GetProperty("FindApplyId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_referenceid");
             type.GetProperty("RequestedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_requestedat");
+            type.GetProperty("CreatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_createdon");
+            type.GetProperty("UpdatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_modifiedon");
             type.GetProperty("Type").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_referencetype");
         }
 
