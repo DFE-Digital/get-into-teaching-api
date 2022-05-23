@@ -11,6 +11,10 @@ namespace GetIntoTeachingApi.Models.FindApply
 		public int Id { get; set; }
 		[JsonProperty("requested_at")]
 		public DateTime? RequestedAt { get; set; }
+		[JsonProperty("created_at")]
+		public DateTime CreatedAt { get; set; }
+		[JsonProperty("updated_at")]
+		public DateTime UpdatedAt { get; set; }
 		[JsonProperty("feedback_status")]
 		public string FeedbackStatus { get; set; }
 		[JsonProperty("referee_type")]
@@ -22,6 +26,8 @@ namespace GetIntoTeachingApi.Models.FindApply
 			{
 				FindApplyId = Id.ToString(CultureInfo.CurrentCulture),
 				RequestedAt = RequestedAt,
+				CreatedAt = CreatedAt,
+				UpdatedAt = UpdatedAt,
 				FeedbackStatusId = (int)Enum.Parse(typeof(Crm.ApplicationReference.FeedbackStatus), FeedbackStatus.ToPascalCase()),
 				Type = RefereeType,
 			};

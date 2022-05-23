@@ -242,6 +242,14 @@
         }
       },
       {
+        "Key": "dfe_createdon",
+        "Value": "2022-01-25T00:00:00+00:00"
+      },
+      {
+        "Key": "dfe_modifiedon",
+        "Value": "2022-01-27T00:00:00+00:00"
+      },
+      {
         "Key": "dfe_name",
         "Value": "Application Reference 1"
       },
