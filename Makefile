@@ -88,4 +88,4 @@ print-infrastructure-secrets: install-fetch-config set-azure-account
 	./fetch_config.rb -s azure-key-vault-secret:${KEY_VAULT}/${INFRASTRUCTURE_SECRETS}  -f yaml
 
 setup-local-env: install-fetch-config set-azure-account
-	./fetch_config.rb -s azure-key-vault-secret:s146d01-local2-kv/${APPLICATION_SECRETS} -f shell-env-var > GetIntoTeachingApi/.env.local
+	./fetch_config.rb -s azure-key-vault-secret:s146d01-local2-kv/${APPLICATION_SECRETS} -f shell-env-var > GetIntoTeachingApi/env.local
