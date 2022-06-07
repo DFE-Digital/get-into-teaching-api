@@ -95,7 +95,7 @@ az login
 make local setup-local-env
 ```
 
-Then **set properties of the created .env.local to "Always copy"**.
+Then **set properties of the created env.local to "Always copy"**.
 
 A number of non-secret, default development environment variables are pre-set in `GetIntoTeachingApi/Properties/launchSettings.json` (such as a development `ADMIN_API_KEY` of `admin-secret` and the `VCAP_SERVICES` setup for the Postgres instance running in Docker).
 
