@@ -6,6 +6,7 @@ using FluentValidation;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
@@ -18,24 +19,24 @@ namespace GetIntoTeachingApi.Services
         private const int MaximumNumberOfCandidatesToMatch = 20;
         private const int MaximumNumberOfPrivacyPolicies = 3;
         private const int MaximumCallbackBookingQuotaDaysInAdvance = 14;
+        private readonly IServiceProvider _serviceProvider;
         private readonly IOrganizationServiceAdapter _service;
-        private readonly IValidatorFactory _validatorFactory;
         private readonly IDateTimeProvider _dateTime;
         private readonly IAppSettings _appSettings;
         private readonly ILogger<ICrmService> _logger;
 
         public CrmService(
             IOrganizationServiceAdapter service,
-            IValidatorFactory validatorFactory,
             IAppSettings appSettings,
             IDateTimeProvider dateTime,
-            ILogger<ICrmService> logger)
+            ILogger<ICrmService> logger,
+            IServiceProvider serviceProvider)
         {
             _appSettings = appSettings;
             _service = service;
-            _validatorFactory = validatorFactory;
             _dateTime = dateTime;
             _logger = logger;
+            _serviceProvider = serviceProvider;
         }
 
         public string CheckStatus()
@@ -61,20 +62,24 @@ namespace GetIntoTeachingApi.Services
 
         public IEnumerable<CallbackBookingQuota> GetCallbackBookingQuotas()
         {
+            var validator = _serviceProvider.GetService<IValidator<CallbackBookingQuota>>();
+
             return _service.CreateQuery("dfe_callbackbookingquota", Context())
                 .Where((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime") > _dateTime.UtcNow &&
                                    entity.GetAttributeValue<DateTime>("dfe_starttime") < _dateTime.UtcNow.AddDays(MaximumCallbackBookingQuotaDaysInAdvance))
                 .OrderBy((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime"))
-                .Select((entity) => new CallbackBookingQuota(entity, this, _validatorFactory))
+                .Select((entity) => new CallbackBookingQuota(entity, this, validator))
                 .ToList()
                 .Where((quota) => quota.IsAvailable); // Doing this in the Dynamics query throws an exception, though I'm not sure why.
         }
 
         public CallbackBookingQuota GetCallbackBookingQuota(DateTime scheduledAt)
         {
+            var validator = _serviceProvider.GetService<IValidator<CallbackBookingQuota>>();
+
             return _service.CreateQuery("dfe_callbackbookingquota", Context())
                 .Where((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime") == scheduledAt)
-                .Select((entity) => new CallbackBookingQuota(entity, this, _validatorFactory))
+                .Select((entity) => new CallbackBookingQuota(entity, this, validator))
                 .FirstOrDefault();
         }
 
@@ -95,17 +100,19 @@ namespace GetIntoTeachingApi.Services
             var entities = _service.RetrieveMultiple(query);
 
 
-            return entities.Select(e => (T)Activator.CreateInstance(typeof(T), e, this, _validatorFactory));
+            return entities.Select(e => (T)Activator.CreateInstance(typeof(T), e, this));
         }
 
         public IEnumerable<PrivacyPolicy> GetPrivacyPolicies()
         {
+            var validator = _serviceProvider.GetService<IValidator<PrivacyPolicy>>();
+
             return _service.CreateQuery("dfe_privacypolicy", Context())
                 .Where((entity) =>
                     entity.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int)PrivacyPolicy.Type.Web &&
                     entity.GetAttributeValue<bool>("dfe_active"))
                 .OrderByDescending((policy) => policy.GetAttributeValue<DateTime>("createdon"))
-                .Select((entity) => new PrivacyPolicy(entity, this, _validatorFactory))
+                .Select((entity) => new PrivacyPolicy(entity, this, validator))
                 .Take(MaximumNumberOfPrivacyPolicies);
         }
 
@@ -135,7 +142,9 @@ namespace GetIntoTeachingApi.Services
 
             LoadCandidateRelationships(entity, context);
 
-            return new Candidate(entity, this, _validatorFactory);
+            var validator = _serviceProvider.GetService<IValidator<Candidate>>();
+
+            return new Candidate(entity, this, validator);
         }
 
         public Candidate MatchCandidate(string email)
@@ -151,7 +160,9 @@ namespace GetIntoTeachingApi.Services
                 return null;
             }
 
-            return new Candidate(entity, this, _validatorFactory);
+            var validator = _serviceProvider.GetService<IValidator<Candidate>>();
+
+            return new Candidate(entity, this, validator);
         }
 
         public IEnumerable<Candidate> MatchCandidates(string magicLinkToken)
@@ -175,7 +186,9 @@ namespace GetIntoTeachingApi.Services
                 LoadCandidateRelationships(entity, context);
             }
 
-            return entities.Select(e => new Candidate(e, this, _validatorFactory));
+            var validator = _serviceProvider.GetService<IValidator<Candidate>>();
+
+            return entities.Select(e => new Candidate(e, this, validator));
         }
 
         public Candidate GetCandidate(Guid id)
@@ -196,8 +209,9 @@ namespace GetIntoTeachingApi.Services
             query.Criteria.AddCondition(new ConditionExpression("contactid", ConditionOperator.In, ids.ToArray()));
 
             var entities = _service.RetrieveMultiple(query);
+            var validator = _serviceProvider.GetService<IValidator<Candidate>>();
 
-            return entities.Select((entity) => new Candidate(entity, this, _validatorFactory));
+            return entities.Select((entity) => new Candidate(entity, this, validator));
         }
 
         public IEnumerable<Candidate> GetCandidatesPendingMagicLinkTokenGeneration(int limit = 10)
@@ -208,8 +222,9 @@ namespace GetIntoTeachingApi.Services
             query.TopCount = limit;
 
             var entities = _service.RetrieveMultiple(query);
+            var validator = _serviceProvider.GetService<IValidator<Candidate>>();
 
-            return entities.Select(e => new Candidate(e, this, _validatorFactory));
+            return entities.Select(e => new Candidate(e, this, validator));
         }
 
         public bool CandidateAlreadyHasLocalEventSubscriptionType(Guid candidateId)
@@ -311,8 +326,9 @@ namespace GetIntoTeachingApi.Services
             query.Criteria.AddFilter(filter);
 
             var entities = _service.RetrieveMultiple(query);
+            var validator = _serviceProvider.GetService<IValidator<TeachingEvent>>();
 
-            return entities.Select((entity) => new TeachingEvent(entity, this, _validatorFactory)).ToList();
+            return entities.Select((entity) => new TeachingEvent(entity, this, validator)).ToList();
         }
 
         public TeachingEvent GetTeachingEvent(string readableId)
@@ -333,13 +349,17 @@ namespace GetIntoTeachingApi.Services
             context.Attach(entity);
             _service.LoadProperty(entity, new Relationship("msevtmgt_event_building"), context);
 
-            return new TeachingEvent(entity, this, _validatorFactory);
+            var validator = _serviceProvider.GetService<IValidator<TeachingEvent>>();
+
+            return new TeachingEvent(entity, this, validator);
         }
 
         public IEnumerable<TeachingEventBuilding> GetTeachingEventBuildings()
         {
+            var validator = _serviceProvider.GetService<IValidator<TeachingEventBuilding>>();
+
             return _service.CreateQuery("msevtmgt_building", Context())
-                .Select((entity) => new TeachingEventBuilding(entity, this, _validatorFactory)).ToList();
+                .Select((entity) => new TeachingEventBuilding(entity, this, validator)).ToList();
         }
 
         private static QueryExpression MatchBackQuery(string email)

@@ -24,8 +24,8 @@ namespace GetIntoTeachingApi.Models.Crm
         {
         }
 
-        public PrivacyPolicy(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
-            : base(entity, crm, validatorFactory)
+        public PrivacyPolicy(Entity entity, ICrmService crm, IValidator<PrivacyPolicy> validator)
+            : base(entity, crm, validator)
         {
         }
     }

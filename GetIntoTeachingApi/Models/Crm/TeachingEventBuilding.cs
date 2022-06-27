@@ -37,8 +37,8 @@ namespace GetIntoTeachingApi.Models.Crm
         {
         }
 
-        public TeachingEventBuilding(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
-            : base(entity, crm, validatorFactory)
+        public TeachingEventBuilding(Entity entity, ICrmService crm, IValidator<TeachingEventBuilding> validator)
+            : base(entity, crm, validator)
         {
         }
     }

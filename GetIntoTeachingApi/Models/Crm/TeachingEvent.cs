@@ -108,8 +108,8 @@ namespace GetIntoTeachingApi.Models.Crm
         {
         }
 
-        public TeachingEvent(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
-            : base(entity, crm, validatorFactory)
+        public TeachingEvent(Entity entity, ICrmService crm, IValidator<TeachingEvent> validator)
+            : base(entity, crm, validator)
         {
         }
 

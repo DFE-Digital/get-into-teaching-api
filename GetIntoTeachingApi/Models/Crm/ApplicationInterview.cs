@@ -41,8 +41,8 @@ namespace GetIntoTeachingApi.Models.Crm
         {
         }
 
-        public ApplicationInterview(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
-            : base(entity, crm, validatorFactory)
+        public ApplicationInterview(Entity entity, ICrmService crm, IValidator<ApplicationInterview> validator)
+            : base(entity, crm, validator)
         {
         }
     }

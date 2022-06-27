@@ -49,8 +49,8 @@ namespace GetIntoTeachingApi.Models.Crm
         {
         }
 
-        public PhoneCall(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
-            : base(entity, crm, validatorFactory)
+        public PhoneCall(Entity entity, ICrmService crm, IValidator<PhoneCall> validator)
+            : base(entity, crm, validator)
         {
         }
     }
