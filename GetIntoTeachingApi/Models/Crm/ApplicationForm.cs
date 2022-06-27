@@ -90,8 +90,8 @@ namespace GetIntoTeachingApi.Models.Crm
         {
         }
 
-        public ApplicationForm(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
-            : base(entity, crm, validatorFactory)
+        public ApplicationForm(Entity entity, ICrmService crm, IValidator<ApplicationForm> validator)
+            : base(entity, crm, validator)
         {
         }
     }

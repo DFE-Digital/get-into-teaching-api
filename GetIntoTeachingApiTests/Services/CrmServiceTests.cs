@@ -31,15 +31,15 @@ namespace GetIntoTeachingApiTests.Services
 
         public CrmServiceTests()
         {
-            var mockValidatorFactory = new Mock<IValidatorFactory>();
-            mockValidatorFactory.Setup(m => m.GetValidator(It.IsAny<Type>())).Returns<IValidator>(null);
+            var mockServiceProvider = new Mock<IServiceProvider>();
+            mockServiceProvider.Setup(m => m.GetService(It.IsAny<Type>())).Returns<IValidator>(null);
 
             _mockAppSettings = new Mock<IAppSettings>();
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _mockLogger = new Mock<ILogger<ICrmService>>();
             _context = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
             _mockService.Setup(mock => mock.Context()).Returns(_context);
-            _crm = new CrmService(_mockService.Object, mockValidatorFactory.Object, _mockAppSettings.Object, new DateTimeProvider(), _mockLogger.Object);
+            _crm = new CrmService(_mockService.Object, _mockAppSettings.Object, new DateTimeProvider(), _mockLogger.Object, mockServiceProvider.Object);
         }
 
         [Fact]

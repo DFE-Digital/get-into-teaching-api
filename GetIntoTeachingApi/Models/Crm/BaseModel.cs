@@ -36,14 +36,14 @@ namespace GetIntoTeachingApi.Models.Crm
             InitChangedPropertyNames();
         }
 
-        protected BaseModel(Entity entity, ICrmService crm, IValidatorFactory vaidatorFactory)
+        protected BaseModel(Entity entity, ICrmService crm, IValidator validator)
             : this()
         {
             Id = entity.Id;
 
             MapFieldAttributesFromEntity(entity);
-            MapRelationshipAttributesFromEntity(entity, crm, vaidatorFactory);
-            NullifyInvalidFieldAttributes(vaidatorFactory);
+            MapRelationshipAttributesFromEntity(entity, crm, validator);
+            NullifyInvalidFieldAttributes(validator);
         }
 
 #pragma warning disable 67
@@ -195,10 +195,8 @@ namespace GetIntoTeachingApi.Models.Crm
             }
         }
 
-        private void NullifyInvalidFieldAttributes(IValidatorFactory validatorFactory)
+        private void NullifyInvalidFieldAttributes(IValidator validator)
         {
-            var validator = validatorFactory.GetValidator(GetType());
-
             if (validator == null)
             {
                 return;
@@ -284,7 +282,7 @@ namespace GetIntoTeachingApi.Models.Crm
             }
         }
 
-        private void MapRelationshipAttributesFromEntity(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
+        private void MapRelationshipAttributesFromEntity(Entity entity, ICrmService crm, IValidator validator)
         {
             foreach (var property in GetProperties(this))
             {
@@ -303,7 +301,7 @@ namespace GetIntoTeachingApi.Models.Crm
                     continue;
                 }
 
-                var relatedModels = relatedEntities.Select(e => Activator.CreateInstance(attribute.Type, e, crm, validatorFactory));
+                var relatedModels = relatedEntities.Select(e => Activator.CreateInstance(attribute.Type, e, crm, validator));
 
                 if (typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
                 {

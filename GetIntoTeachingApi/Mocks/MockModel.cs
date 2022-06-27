@@ -34,8 +34,8 @@ namespace GetIntoTeachingApi.Mocks
         {
         }
 
-        public MockModel(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
-            : base(entity, crm, validatorFactory)
+        public MockModel(Entity entity, ICrmService crm, IValidator<MockModel> validator)
+            : base(entity, crm, validator)
         {
         }
     }

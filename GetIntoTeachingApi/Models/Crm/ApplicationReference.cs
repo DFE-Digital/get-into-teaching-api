@@ -56,8 +56,8 @@ namespace GetIntoTeachingApi.Models.Crm
         {
         }
 
-        public ApplicationReference(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
-            : base(entity, crm, validatorFactory)
+        public ApplicationReference(Entity entity, ICrmService crm, IValidator<ApplicationReference> validator)
+            : base(entity, crm, validator)
         {
         }
     }

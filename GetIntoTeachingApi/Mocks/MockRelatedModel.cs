@@ -17,8 +17,8 @@ namespace GetIntoTeachingApi.Mocks
         {
         }
 
-        public MockRelatedModel(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
-            : base(entity, crm, validatorFactory)
+        public MockRelatedModel(Entity entity, ICrmService crm, IValidator<MockRelatedModel> validator)
+            : base(entity, crm, validator)
         {
         }
     }

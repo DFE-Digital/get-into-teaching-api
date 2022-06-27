@@ -305,8 +305,8 @@ namespace GetIntoTeachingApi.Models.Crm
         {
         }
 
-        public Candidate(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
-            : base(entity, crm, validatorFactory)
+        public Candidate(Entity entity, ICrmService crm, IValidator<Candidate> validator)
+            : base(entity, crm, validator)
         {
         }
 
