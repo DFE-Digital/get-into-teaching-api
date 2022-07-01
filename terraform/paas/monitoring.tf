@@ -42,6 +42,7 @@ module "prometheus" {
   grafana_extra_datasources         = [for f in local.datasource_list : templatefile(f, local.template_variable_map)]
   grafana_google_jwt                = lookup(local.monitoring_secrets, "GOOGLE_JWT", "")
   grafana_runtime_version           = "8.3.2"
+  grafana_anonymous_auth            = true
   prometheus_memory                 = 5120
   prometheus_disk_quota             = 5120
   internal_apps                     = var.monitor_scrape_applications
@@ -50,4 +51,3 @@ module "prometheus" {
   postgres_services                 = ["${var.paas_space}/${var.paas_database_common_name}"]
   docker_credentials                = local.docker_credentials_map
 }
-
