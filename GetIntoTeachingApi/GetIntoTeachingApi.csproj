@@ -11,7 +11,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="AspNetCoreRateLimit" Version="4.0.2" />
-		<PackageReference Include="CsvHelper" Version="27.2.1" />
+		<PackageReference Include="CsvHelper" Version="28.0.0" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.0.2" />
 		<PackageReference Include="GeocodeSharp" Version="1.5.0" />
 		<PackageReference Include="Hangfire.AspNetCore" Version="1.7.30" />
