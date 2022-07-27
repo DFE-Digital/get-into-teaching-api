@@ -30,7 +30,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockAppSettings = new Mock<IAppSettings>();
             _mockCrm = new Mock<ICrmService>();
             _metrics = new MetricService();
-            _scheduledAt = DateTime.UtcNow;
+            _scheduledAt = new DateTime(2001, 1, 1, 10, 20, 30);
             _job = new ClaimCallbackBookingSlotJob(
                 new Env(), new Mock<IRedisService>().Object, _mockContext.Object, _mockCrm.Object,
                 _metrics, _mockLogger.Object, _mockAppSettings.Object);
