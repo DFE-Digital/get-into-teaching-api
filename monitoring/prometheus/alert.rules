@@ -219,20 +219,30 @@ groups:
   - name: GSE
     rules:
       - alert: HighJobsWaiting (GSE)
-        expr: 'max(delayed_job_jobs_waiting_count{app="school-experience-app-production-delayed_job"}) > 80'
+        expr: 'sum(min_over_time(delayed_job_jobs_waiting_count{app="school-experience-app-production-delayed_job"}[10m])) > 3'
         labels:
           severity: high
         annotations:
-          summary: Alerts when jobs are backing up in the GSE delayed job queue (more than 80 pending).
-          description: Alerts if there are more than 5 jobs pending in the GSE delayed job queue.
+          summary: Alerts when jobs are backing up in the GSE delayed job queue.
+          description: Alerts if there have been more than 3 jobs waiting for a 10 minute period (indicating they aren't being picked up).
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/3586785294/GSE+Runbook#HighJobsWaiting-HIGH
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/xOMcgnLnk/yabeda-delayed-job?orgId=1&refresh=10s
       - alert: HighJobFailures (GSE)
-        expr: 'max(delayed_job_jobs_errored_total{app="school-experience-app-production-delayed_job"}) > 2'
+        expr: 'sum(increase(delayed_job_jobs_errored_total{app="school-experience-app-production-delayed_job"}[15m])) > 1'
         labels:
           severity: high
         annotations:
-          summary: Alerts when there are more than 2 failed jobs in the retry queue.
-          description: Alerts when there are more than 2 failed jobs in the retry queue.
+          summary: Alerts when there is more than 1 failed job in the space of 15 minutes.
+          description: Alerts when there is more than 1 failed job in the space of 15 minutes.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/3586785294/GSE+Runbook#HighJobFailures-HIGH
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/xOMcgnLnk/yabeda-delayed-job?orgId=1&refresh=10s
+      - alert: WorkerFailure (GSE)
+        expr: 'sum(increase(gse_delayed_job_heart_beat{app="school-experience-app-production-delayed_job"}[3m])) > 0'
+        labels:
+          severity: high
+        annotations:
+          summary: Alerts when the heat beat job stops running
+          description: Alerts when there have been 0 heart beats over a 3 minute period, indicating that the workers have hung/crashed.
+          runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/3586785294/GSE+Runbook#HighJobFailures-HIGH
+          dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/xOMcgnLnk/yabeda-delayed-job?orgId=1&refresh=10s
+          
