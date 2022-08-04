@@ -237,7 +237,7 @@ groups:
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/3586785294/GSE+Runbook#HighJobFailures-HIGH
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/xOMcgnLnk/yabeda-delayed-job?orgId=1&refresh=10s
       - alert: WorkerFailure (GSE)
-        expr: 'sum(increase(gse_delayed_job_heart_beat{app="school-experience-app-production-delayed_job"}[3m])) > 0'
+        expr: 'sum(increase(gse_delayed_job_heart_beat{app="school-experience-app-production-delayed_job"}[3m])) < 1'
         labels:
           severity: high
         annotations:
