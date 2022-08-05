@@ -12,7 +12,6 @@ namespace GetIntoTeachingApi.Utils
         {
             "password",
             "email",
-            "secondaryEmail",
             "fullName",
             "firstName",
             "lastName",

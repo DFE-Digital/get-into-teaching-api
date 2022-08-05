@@ -171,8 +171,6 @@ namespace GetIntoTeachingApi.Models.Crm
         public DateTime? FindApplyCreatedAt { get; set; }
         [EntityField("emailaddress1")]
         public string Email { get; set; }
-        [EntityField("emailaddress2")]
-        public string SecondaryEmail { get; set; }
         [EntityField("firstname")]
         public string FirstName { get; set; }
         [EntityField("lastname")]
