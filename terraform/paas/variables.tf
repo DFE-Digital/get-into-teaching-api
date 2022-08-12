@@ -1,6 +1,3 @@
-# These settings are for the sandbox and should mainly be overriden by TF_VARS 
-# or set with environment variables TF_VAR_xxxx
-
 variable "api_url" {
   default = "https://api.london.cloud.service.gov.uk"
 }
@@ -34,7 +31,7 @@ variable "application_disk" {
 }
 
 variable "paas_space" {
-  default = "sandbox"
+  default = "get-into-teaching"
 }
 
 variable "paas_monitoring_app" { }
