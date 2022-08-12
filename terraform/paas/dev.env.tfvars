@@ -8,7 +8,7 @@ monitor_scrape_applications = ["get-into-teaching-api-dev-internal.apps.internal
   "get-into-teaching-app-dev-internal.apps.internal:3000",
   "get-teacher-training-adviser-service-dev-internal.apps.internal:3000",
   "school-experience-app-dev-internal.apps.internal:3000",
-"school-experience-app-dev-delayed-internal.apps.internal:3000"]
+  "school-experience-app-dev-delayed.apps.internal:3000"]
 application_instances = 1
 logging               = 0
 monitoring            = 1
