@@ -10,7 +10,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         [Theory]
         [InlineData(1, 1.6093)]
         [InlineData(-1, -1.6093)]
-        [InlineData(0, 0)]
+        [InlineData(0, 0.0)]
         [InlineData(87, 140.0125)]
         [InlineData(null, null)]
         public void RadiusInKm_ConvertsCorrectly(int? miles, double? km)

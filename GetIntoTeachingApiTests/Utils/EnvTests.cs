@@ -199,14 +199,18 @@ namespace GetIntoTeachingApiTests.Utils
         }
 
         [Fact]
-        public void FindApplyApiUrl_ReturnsCorrectly()
+        public void FindApplyApiUrl_WhenV1_2FeatureIsOff_ReturnsCorrectly()
         {
-            var previous = Environment.GetEnvironmentVariable("FIND_APPLY_API_URL");
+            var previousUrl = Environment.GetEnvironmentVariable("FIND_APPLY_API_URL");
+            var previousFeature = Environment.GetEnvironmentVariable("APPLY_API_V1_2_FEATURE");
+
             Environment.SetEnvironmentVariable("FIND_APPLY_API_URL", "find-apply-api-url");
+            Environment.SetEnvironmentVariable("APPLY_API_V1_2_FEATURE", "false");
 
             _env.FindApplyApiUrl.Should().Be("find-apply-api-url");
 
-            Environment.SetEnvironmentVariable("FIND_APPLY_API_URL", previous);
+            Environment.SetEnvironmentVariable("FIND_APPLY_API_URL", previousUrl);
+            Environment.SetEnvironmentVariable("APPLY_API_V1_2_FEATURE", previousFeature);
         }
 
         [Fact]
