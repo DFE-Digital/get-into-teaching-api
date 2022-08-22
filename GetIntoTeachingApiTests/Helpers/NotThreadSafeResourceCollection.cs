@@ -3,5 +3,5 @@
 namespace GetIntoTeachingApiTests.Helpers
 {
     [CollectionDefinition(nameof(NotThreadSafeResourceCollection), DisableParallelization = true)]
-    class NotThreadSafeResourceCollection { }
+    public class NotThreadSafeResourceCollection { }
 }

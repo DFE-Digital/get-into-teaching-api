@@ -26,13 +26,13 @@ namespace GetIntoTeachingApi.AppStart
             // Initial CRM sync.
             if (!dbContext.PickListItems.Any())
             {
-                RecurringJob.Trigger(JobConfiguration.CrmSyncJobId);
+                RecurringJob.TriggerJob(JobConfiguration.CrmSyncJobId);
             }
 
             // Initial location sync.
             if (!dbContext.Locations.Any())
             {
-                RecurringJob.Trigger(JobConfiguration.LocationSyncJobId);
+                RecurringJob.TriggerJob(JobConfiguration.LocationSyncJobId);
             }
         }
     }
