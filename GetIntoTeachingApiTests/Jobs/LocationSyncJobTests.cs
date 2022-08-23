@@ -37,7 +37,7 @@ namespace GetIntoTeachingApiTests.Jobs
         [Fact]
         public void FreeMapToolsUrl_IsCorrect()
         {
-            LocationSyncJob.FreeMapToolsUrl.Should().Be("https://www.freemaptools.com/download/full-uk-postcodes/ukpostcodes.zip");
+            LocationSyncJob.FreeMapToolsUrl.Should().Be("https://data.freemaptools.com/download/full-uk-postcodes/ukpostcodes.zip");
         }
 
         [Fact]
