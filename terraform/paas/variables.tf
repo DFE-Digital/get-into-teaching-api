@@ -34,7 +34,7 @@ variable "paas_space" {
   default = "get-into-teaching"
 }
 
-variable "paas_monitoring_app" { }
+variable "paas_monitoring_app" {}
 
 variable "environment" {
   default = "sb"
@@ -90,6 +90,11 @@ variable "monitor_space" {
 
 variable "alerts" {
   type = map(any)
+}
+
+variable "statuscake_enable_basic_auth" {
+  type    = bool
+  default = false
 }
 
 ### Monitoring
