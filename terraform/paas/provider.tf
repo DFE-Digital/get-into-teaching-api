@@ -5,8 +5,7 @@ provider "cloudfoundry" {
 }
 
 provider "statuscake" {
-  username = local.infrastructure_secrets.SC-USERNAME
-  apikey   = local.infrastructure_secrets.SC-PASSWORD
+  api_token = local.infrastructure_secrets.SC-PASSWORD
 }
 
 locals {
@@ -32,7 +31,7 @@ terraform {
     }
     statuscake = {
       source  = "StatusCakeDev/statuscake"
-      version = "1.0.1"
+      version = "2.0.3"
     }
   }
 
