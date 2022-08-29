@@ -48,7 +48,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="PropertyChanged.Fody" Version="3.4.1" PrivateAssets="All" />
-		<PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="2.2.0" />
+		<PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="2.2.1" />
 		<PackageReference Include="GovukNotify" Version="6.0.0" />
 		<PackageReference Include="Flurl.Http" Version="3.2.4" />
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="6.0.8" />
