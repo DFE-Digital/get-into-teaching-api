@@ -2,7 +2,9 @@ variable "api_url" {
   default = "https://api.london.cloud.service.gov.uk"
 }
 
-variable "AZURE_CREDENTIALS" {}
+variable "AZURE_CREDENTIALS" {
+  default = "{}"
+}
 variable "azure_key_vault" {}
 variable "azure_resource_group" {}
 
