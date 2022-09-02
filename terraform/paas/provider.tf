@@ -15,14 +15,14 @@ locals {
 provider "azurerm" {
   skip_provider_registration = true
   features {}
-  subscription_id = local.azure_credentials.subscriptionId
-  client_id       = local.azure_credentials.clientId
-  client_secret   = local.azure_credentials.clientSecret
-  tenant_id       = local.azure_credentials.tenantId
+  subscription_id = var.AZURE_CREDENTIALS == "{}" ? "" : local.azure_credentials.subscriptionId
+  client_id       = var.AZURE_CREDENTIALS == "{}" ? "" : local.azure_credentials.clientId
+  client_secret   = var.AZURE_CREDENTIALS == "{}" ? "" : local.azure_credentials.clientSecret
+  tenant_id       = var.AZURE_CREDENTIALS == "{}" ? "" : local.azure_credentials.tenantId
 }
 
 terraform {
-  required_version = "~> 0.14"
+  required_version = "1.2.8"
 
   required_providers {
     cloudfoundry = {
