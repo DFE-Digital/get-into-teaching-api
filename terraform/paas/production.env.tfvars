@@ -21,6 +21,7 @@ monitor_scrape_applications = ["get-into-teaching-api-prod-internal.apps.interna
   "get-into-teaching-app-pagespeed-internal.apps.internal:3000",
   "school-experience-app-production-internal.apps.internal:3000",
   "school-experience-app-production-delayed.apps.internal:3000",
-  "school-experience-app-test-internal.apps.internal:3000",
-"school-experience-app-test-delayed.apps.internal:3000"]
+  "school-experience-app-staging-internal.apps.internal:3000",
+  "school-experience-app-staging-delayed.apps.internal:3000"
+]
 alerts = {}
