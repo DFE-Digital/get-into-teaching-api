@@ -22,6 +22,7 @@ monitor_scrape_applications = ["get-into-teaching-api-prod-internal.apps.interna
   "school-experience-app-production-internal.apps.internal:3000",
   "school-experience-app-production-delayed.apps.internal:3000",
   "school-experience-app-staging-internal.apps.internal:3000",
-  "school-experience-app-staging-delayed.apps.internal:3000"
+  "school-experience-app-staging-delayed.apps.internal:3000",
+  "school-experience-app-staging-sidekiq.apps.internal:3000"
 ]
 alerts = {}
