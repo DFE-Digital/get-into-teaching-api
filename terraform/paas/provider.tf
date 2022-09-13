@@ -25,6 +25,11 @@ terraform {
   required_version = "1.2.8"
 
   required_providers {
+
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "3.22.0"
+    }
     cloudfoundry = {
       source  = "cloudfoundry-community/cloudfoundry"
       version = "0.15.5"
