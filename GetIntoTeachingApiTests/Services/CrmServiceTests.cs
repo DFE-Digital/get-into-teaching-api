@@ -179,6 +179,7 @@ namespace GetIntoTeachingApiTests.Services
                 (int)TeachingEvent.EventType.ApplicationWorkshop,
                 (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
                 (int)TeachingEvent.EventType.QuestionTime,
+                (int)TeachingEvent.EventType.GetIntoTeaching,
             };
             var hasTypeCondition = conditions.Where(c => c.AttributeName == "dfe_event_type" &&
                 c.Operator == ConditionOperator.In && c.Values.ToHashSet().IsSubsetOf(types)).Any();
