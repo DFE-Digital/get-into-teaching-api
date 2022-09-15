@@ -241,6 +241,18 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [Route("teaching_event/regions")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of teaching event regions.",
+            OperationId = "GetTeachingEventRegions",
+            Tags = new[] { "Pick List Items" })]
+        [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetTeachingEventRegions()
+        {
+            return Ok(await _store.GetPickListItems("msevtmgt_event", "dfe_eventregion").ToListAsync());
+        }
+
+        [HttpGet]
         [Route("teaching_event/status")]
         [SwaggerOperation(
             Summary = "Retrieves the list of teaching event status.",

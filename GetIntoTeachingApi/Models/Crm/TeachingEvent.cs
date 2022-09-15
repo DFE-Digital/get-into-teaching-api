@@ -39,6 +39,8 @@ namespace GetIntoTeachingApi.Models.Crm
         public int TypeId { get; set; }
         [EntityField("dfe_eventstatus", typeof(OptionSetValue))]
         public int StatusId { get; set; }
+        [EntityField("dfe_eventregion", typeof(OptionSetValue), null, new[] { "GET_INTO_TEACHING_EVENTS" })]
+        public int? RegionId { get; set; }
         [EntityField("dfe_websiteeventpartialurl")]
         public string ReadableId { get; set; }
         [EntityField("dfe_eventwebfeedid")]

@@ -274,6 +274,11 @@ namespace GetIntoTeachingApi.Services
                 await SyncPickListItem("dfe_applyapplicationchoice", "dfe_applicationchoicestatus");
                 await SyncPickListItem("dfe_applyreference", "dfe_referencefeedbackstatus");
             }
+
+            if (_env.IsFeatureOn("GET_INTO_TEACHING_EVENTS"))
+            {
+                await SyncPickListItem("msevtmgt_event", "dfe_eventregion");
+            }
         }
 
         private async Task SyncModels<T>(IEnumerable<T> models, IQueryable<T> dbSet)

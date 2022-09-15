@@ -3,6 +3,7 @@ using System;
 using GetIntoTeachingApi.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GetIntoTeachingApi.Migrations
 {
     [DbContext(typeof(GetIntoTeachingDbContext))]
-    partial class GetIntoTeachingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220915115624_AddRegionIdToTeachingEvent")]
+    partial class AddRegionIdToTeachingEvent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
