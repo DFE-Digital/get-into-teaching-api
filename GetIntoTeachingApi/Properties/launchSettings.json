@@ -36,7 +36,8 @@
         "SE_API_KEY": "secret-se",
         "TOTP_SECRET_KEY": "def456",
         "APPLY_API_FEATURE": "on",
-        "APPLY_API_V1_2_FEATURE": "on"
+        "APPLY_API_V1_2_FEATURE": "on",
+        "GET_INTO_TEACHING_EVENTS_FEATURE": "on"
       }
     }
   }
