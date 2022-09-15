@@ -334,6 +334,18 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public async void SyncAsync_WhenGetIntoTeachingEventsFeatureIsOn_InsertsRegionIdPickListItem()
+        {
+            _mockEnv.Setup(m => m.IsFeatureOn("GET_INTO_TEACHING_EVENTS")).Returns(true);
+
+            _mockCrm.Setup(m => m.GetPickListItems("msevtmgt_event", "dfe_eventregion")).Returns(Array.Empty<PickListItem>()).Verifiable();
+
+            await _store.SyncAsync();
+
+            _mockCrm.Verify();
+        }
+      
+        [Fact]
         public async void SyncAsync_DeletesOrphanedPickListItems()
         {
             var years = (await SeedMockInitialTeacherTrainingYearsAsync()).ToList();

@@ -253,6 +253,18 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
+        public async void GetTeachingEventRegions_ReturnsAllRegions()
+        {
+            var mockItems = MockPickListItems();
+            _mockStore.Setup(mock => mock.GetPickListItems("msevtmgt_event", "dfe_eventregion")).Returns(mockItems.AsAsyncQueryable());
+
+            var response = await _controller.GetTeachingEventRegions();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockItems);
+        }
+
+        [Fact]
         public async void GetTeachingEventStatus_ReturnsAllStatus()
         {
             var mockItems = MockPickListItems();
