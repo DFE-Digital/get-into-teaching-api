@@ -65,7 +65,7 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		  <PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="Hangfire.PostgreSql" Version="1.9.8" />
+		<PackageReference Include="Hangfire.PostgreSql" Version="1.9.9" />
 		<PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.0.9" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.0.2" />
 	</ItemGroup>
