@@ -12,14 +12,10 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching.Validators
         {
             _crm = crm;
 
-            // TODO: the regex we use here has been relaxed be due to a number of
-            // pre-existing events that would otherwise fail the validation.
-            // We should look to revert it back to the stricter regex in the
-            // future (when these events have since passed - 24/6/22).
             RuleFor(operation => operation.ReadableId)
                 .Must((te, _) => BeUniqueReadableId(te))
                 .WithMessage("Must be unique")
-                .Matches(new Regex(@"\A[\w\-:\(\)&'–]+\Z"));
+                .Matches(new Regex(@"\A[^_\W][\w-]+[^_\W]\Z"));
         }
 
         private bool BeUniqueReadableId(TeachingEventUpsertOperation operation)
