@@ -23,7 +23,7 @@ namespace GetIntoTeachingApi.Adapters
         {
             try
             {
-                _client.GetMyUserId();
+                _client.GetEntityDisplayName("contact");
             }
             catch (Exception e)
             {

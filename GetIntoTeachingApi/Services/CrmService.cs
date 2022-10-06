@@ -23,6 +23,9 @@ namespace GetIntoTeachingApi.Services
         private readonly IDateTimeProvider _dateTime;
         private readonly IAppSettings _appSettings;
         private readonly ILogger<ICrmService> _logger;
+        private readonly TimeSpan _statusCheckInterval = TimeSpan.FromMinutes(1);
+        private DateTime _previousStatusCheckAt = DateTime.UtcNow;
+        private string _previousStatus;
 
         public CrmService(
             IOrganizationServiceAdapter service,
@@ -45,7 +48,15 @@ namespace GetIntoTeachingApi.Services
                 return HealthCheckResponse.StatusIntegrationPaused;
             }
 
-            return _service.CheckStatus();
+            if (_previousStatus != null && _dateTime.UtcNow.Subtract(_previousStatusCheckAt) < _statusCheckInterval)
+            {
+                return _previousStatus;
+            }
+
+            _previousStatusCheckAt = _dateTime.UtcNow;
+
+            return _previousStatus = _service.CheckStatus();
+
         }
 
         public IEnumerable<LookupItem> GetLookupItems(string entityName)
