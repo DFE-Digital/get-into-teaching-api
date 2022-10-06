@@ -26,6 +26,7 @@ namespace GetIntoTeachingApiTests.Services
         private readonly Mock<IOrganizationServiceAdapter> _mockService;
         private readonly Mock<IAppSettings> _mockAppSettings;
         private readonly Mock<ILogger<ICrmService>> _mockLogger;
+        private readonly Mock<IDateTimeProvider> _mockDateTime;
         private readonly OrganizationServiceContext _context;
         private readonly ICrmService _crm;
 
@@ -37,9 +38,13 @@ namespace GetIntoTeachingApiTests.Services
             _mockAppSettings = new Mock<IAppSettings>();
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _mockLogger = new Mock<ILogger<ICrmService>>();
+            _mockDateTime = new Mock<IDateTimeProvider>();
             _context = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
             _mockService.Setup(mock => mock.Context()).Returns(_context);
-            _crm = new CrmService(_mockService.Object, mockValidatorFactory.Object, _mockAppSettings.Object, new DateTimeProvider(), _mockLogger.Object);
+            _crm = new CrmService(_mockService.Object, mockValidatorFactory.Object, _mockAppSettings.Object, _mockDateTime.Object, _mockLogger.Object);
+
+            // Freeze time.
+            _mockDateTime.Setup(m => m.UtcNow).Returns(DateTime.UtcNow);
         }
 
         [Fact]
@@ -52,7 +57,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void IsHealthy_WhenUnhealthy_ReturnsError()
+        public void CheckStatus_WhenUnhealthy_ReturnsError()
         {
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
             _mockService.Setup(m => m.CheckStatus()).Returns("this is an error");
@@ -61,11 +66,34 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void IsHealthy_WhenCrmIntegrationPaused_ReturnsIntegrationPaused()
+        public void CheckStatus_WhenCrmIntegrationPaused_ReturnsIntegrationPaused()
         {
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(true);
 
             _crm.CheckStatus().Should().Be(HealthCheckResponse.StatusIntegrationPaused);
+        }
+
+        [Fact]
+        public void CheckStatus_InQuickSuccession_LimitsCallsToCrm()
+        {
+            _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
+            _mockService.Setup(m => m.CheckStatus()).Returns(HealthCheckResponse.StatusOk);
+
+            var firstStatus = _crm.CheckStatus();
+            var secondStatus = _crm.CheckStatus();
+
+            firstStatus.Should().Be(HealthCheckResponse.StatusOk);
+            firstStatus.Should().Be(secondStatus);
+            _mockService.Verify(m => m.CheckStatus(), Times.Once);
+
+            // Advance time past the status check interval and try again.
+            var time = _mockDateTime.Object.UtcNow + TimeSpan.FromSeconds(61);
+            _mockDateTime.Setup(m => m.UtcNow).Returns(time);
+            _mockService.Setup(m => m.CheckStatus()).Returns("broken");
+
+            _crm.CheckStatus().Should().Be("broken");
+
+            _mockService.Verify(m => m.CheckStatus(), Times.Exactly(2));
         }
 
         [Fact]
