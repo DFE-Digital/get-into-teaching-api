@@ -82,7 +82,7 @@ runs:
 
              fi
 
-       - uses: hashicorp/setup-terraform@v2.0.0
+       - uses: hashicorp/setup-terraform@v2
          with:
               terraform_version: 1.2.8
 
