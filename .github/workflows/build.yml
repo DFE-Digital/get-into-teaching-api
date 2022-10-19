@@ -38,7 +38,7 @@ jobs:
       - name: Get Short SHA
         id: vars
         run: |
-             echo ::set-output name=sha_short::$(echo $GITHUB_SHA | cut -c -7)
+             echo "sha_short=$(echo $GITHUB_SHA | cut -c -7)" >> $GITHUB_OUTPUT
 
       - name: Cache Docker layers
         uses: actions/cache@v3
