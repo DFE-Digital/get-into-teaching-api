@@ -510,6 +510,20 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
+        public async void SearchTeachingEvents_FilteredByRadiusWithoutPostcode_ReturnsAll()
+        {
+            SeedMockLocations();
+            await SeedMockTeachingEventsAndBuildingsAsync();
+            var request = new TeachingEventSearchRequest() { Radius = 15 };
+
+            var result = await _store.SearchTeachingEventsAsync(request);
+
+            result.Select(e => e.Name).Should().BeEquivalentTo(
+                new string[] { "Event 7", "Event 2", "Event 4", "Event 1", "Event 3", "Event 5", "Event 6" },
+                options => options.WithStrictOrdering());
+        }
+
+        [Fact]
         public async void SearchTeachingEvents_FilteredByRadiusWithOutwardOnlyPostcode_ReturnsMatchingAndOnlineEvents()
         {
             SeedMockLocations();
