@@ -88,20 +88,6 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         }
 
         [Fact]
-        public void Validate_RadiusIsNotNullAndPostcodeIsNull_HasError()
-        {
-            var request = new TeachingEventSearchRequest()
-            {
-                Radius = 10,
-                Postcode = null,
-            };
-
-            var result = _validator.TestValidate(request);
-
-            result.ShouldHaveValidationErrorFor(request => request.Postcode);
-        }
-
-        [Fact]
         public void Validate_TypeIdIsInvalid_HasError()
         {
             var result = _validator.TestValidate(new TeachingEventSearchRequest() { TypeIds = new int[] { 123 } });
