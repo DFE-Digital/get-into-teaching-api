@@ -127,7 +127,7 @@ namespace GetIntoTeachingApi.Services
                 teachingEvents = teachingEvents.Where(te => te.IsOnline == request.Online);
             }
 
-            if (request.Radius == null)
+            if (request.Radius == null || request.Postcode == null)
             {
                 return await teachingEvents.ToListAsync();
             }
