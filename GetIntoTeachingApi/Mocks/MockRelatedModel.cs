@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System;
+using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
@@ -17,8 +18,8 @@ namespace GetIntoTeachingApi.Mocks
         {
         }
 
-        public MockRelatedModel(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
-            : base(entity, crm, validatorFactory)
+        public MockRelatedModel(Entity entity, ICrmService crm, IServiceProvider serviceProvider)
+            : base(entity, crm, serviceProvider)
         {
         }
     }
