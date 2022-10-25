@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 using AspNetCoreRateLimit;
 using dotenv.net;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using GetIntoTeachingApi.JsonConverters;
 using GetIntoTeachingApi.ModelBinders;
@@ -46,8 +47,9 @@ namespace GetIntoTeachingApi.AppStart
             services.AddMvc(o => o.Conventions.Add(new CommaSeparatedQueryStringConvention()));
 
             services
+                .AddValidatorsFromAssemblyContaining<Startup>()
+                .AddFluentValidationAutoValidation()
                 .AddControllers(o => o.ModelBinderProviders.Insert(0, new TrimStringModelBinderProvider()))
-                .AddFluentValidation(c => c.RegisterValidatorsFromAssemblyContaining<Startup>())
                 .AddJsonOptions(o =>
                 {
                     o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());

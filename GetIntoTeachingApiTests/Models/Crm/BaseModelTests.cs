@@ -24,7 +24,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
     public class BaseModelTests
     {
         private readonly Mock<IOrganizationServiceAdapter> _mockService;
-        private readonly Mock<IValidatorFactory> _mockValidatorFactory;
+        private readonly Mock<IServiceProvider> _mockServiceProvider;
         private readonly Mock<ILogger<ICrmService>> _mockLogger;
         private readonly CrmService _crm;
         private readonly OrganizationServiceContext _context;
@@ -32,12 +32,13 @@ namespace GetIntoTeachingApiTests.Models.Crm
         public BaseModelTests()
         {
             var mockAppSettings = new Mock<IAppSettings>();
-            _mockValidatorFactory = new Mock<IValidatorFactory>();
-            _mockValidatorFactory.Setup(m => m.GetValidator(It.IsAny<Type>())).Returns<IValidator>(null);
+            _mockServiceProvider = new Mock<IServiceProvider>();
+            _mockServiceProvider.Setup(m => m.GetService(It.IsAny<Type>())).Returns<IValidator>(null);
+
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _mockLogger = new Mock<ILogger<ICrmService>>();
             _context = _mockService.Object.Context();
-            _crm = new CrmService(_mockService.Object, _mockValidatorFactory.Object, mockAppSettings.Object, new DateTimeProvider(), _mockLogger.Object);
+            _crm = new CrmService(_mockService.Object, _mockServiceProvider.Object, mockAppSettings.Object, new DateTimeProvider(), _mockLogger.Object);
         }
 
         [Fact]
@@ -117,11 +118,11 @@ namespace GetIntoTeachingApiTests.Models.Crm
             {
                 // Constructor is required for creating related models in BaseModel.MapRelationshipAttributesFromEntity
                 var requiredConstructor = subType.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null,
-                    new Type[] { typeof(Entity), typeof(ICrmService), typeof(IValidatorFactory) }, null);
+                    new Type[] { typeof(Entity), typeof(ICrmService), typeof(IServiceProvider) }, null);
                 requiredConstructor.Should().NotBeNull();
                 // Instantiate to include in coverage reports
                 var entity = new Entity();
-                Activator.CreateInstance(subType, entity, new Mock<ICrmService>().Object, _mockValidatorFactory.Object);
+                Activator.CreateInstance(subType, entity, new Mock<ICrmService>().Object, _mockServiceProvider.Object);
             }
         }
 
@@ -190,7 +191,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
             _mockService.Setup(m => m.RelatedEntities(entity, "dfe_mock_dfe_relatedmock_mocks"))
                 .Returns(new List<Entity> { relatedEntity2 });
 
-            var mock = new MockModel(entity, _crm, _mockValidatorFactory.Object);
+            var mock = new MockModel(entity, _crm, _mockServiceProvider.Object);
 
             mock.Id.Should().Be(entity.Id);
             mock.Field1.Should().Be(entity.GetAttributeValue<EntityReference>("dfe_field1").Id);
@@ -208,7 +209,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
             entity["dfe_field3"] = "   a field3\n\rgoes here\n\r  ";
             entity["dfe_field4"] = "  ";
 
-            var mock = new MockModel(entity, _crm, _mockValidatorFactory.Object);
+            var mock = new MockModel(entity, _crm, _mockServiceProvider.Object);
 
             mock.Field3.Should().Be("a field3\n\rgoes here");
             mock.Field4.Should().BeNull();
@@ -220,7 +221,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
             var entity = new Entity("mock") { Id = Guid.NewGuid() };
             entity["dfe_field3"] = null;
 
-            var mock = new MockModel(entity, _crm, _mockValidatorFactory.Object);
+            var mock = new MockModel(entity, _crm, _mockServiceProvider.Object);
 
             mock.Field3.Should().BeNull();
         }
@@ -234,11 +235,11 @@ namespace GetIntoTeachingApiTests.Models.Crm
 
             var mockValidator = new Mock<IValidator>();
             var validationResult = new ValidationResult();
-            _mockValidatorFactory.Setup(m => m.GetValidator(It.IsAny<Type>())).Returns(mockValidator.Object);
+            _mockServiceProvider.Setup(m => m.GetService(It.IsAny<Type>())).Returns(mockValidator.Object);
             mockValidator.Setup(m => m.Validate(It.IsAny<ValidationContext<BaseModel>>())).Returns(validationResult);
             validationResult.Errors.Add(new ValidationFailure("Field3", "this value is not valid!"));
 
-            var mock = new MockModel(entity, _crm, _mockValidatorFactory.Object);
+            var mock = new MockModel(entity, _crm, _mockServiceProvider.Object);
 
             mock.Field2.Should().Be(123);
             mock.Field3.Should().BeNull();
@@ -255,11 +256,11 @@ namespace GetIntoTeachingApiTests.Models.Crm
 
             var mockValidator = new Mock<IValidator>();
             var validationResult = new ValidationResult();
-            _mockValidatorFactory.Setup(m => m.GetValidator(It.IsAny<Type>())).Returns(mockValidator.Object);
+            _mockServiceProvider.Setup(m => m.GetService(It.IsAny<Type>())).Returns(mockValidator.Object);
             mockValidator.Setup(m => m.Validate(It.IsAny<ValidationContext<BaseModel>>())).Returns(validationResult);
             validationResult.Errors.Add(new ValidationFailure("RelatedMock", "this value is not valid!"));
 
-            var mock = new MockModel(entity, _crm, _mockValidatorFactory.Object);
+            var mock = new MockModel(entity, _crm, _mockServiceProvider.Object);
 
             mock.Id.Should().Be(entity.Id);
             mock.RelatedMock.Id.Should().Be(relatedEntity.Id);
@@ -276,7 +277,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
             _mockService.Setup(m => m.RelatedEntities(entity, "dfe_mock_dfe_relatedmock_mock")).Returns(new List<Entity>());
             _mockService.Setup(m => m.RelatedEntities(entity, "dfe_mock_dfe_relatedmock_mocks")).Returns(new List<Entity>());
 
-            var mock = new MockModel(entity, _crm, _mockValidatorFactory.Object);
+            var mock = new MockModel(entity, _crm, _mockServiceProvider.Object);
 
             mock.Id.Should().Be(entity.Id);
             mock.Field1.Should().Be(entity.GetAttributeValue<EntityReference>("dfe_field1").Id);
