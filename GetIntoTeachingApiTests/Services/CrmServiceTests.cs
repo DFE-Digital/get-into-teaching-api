@@ -32,8 +32,8 @@ namespace GetIntoTeachingApiTests.Services
 
         public CrmServiceTests()
         {
-            var mockValidatorFactory = new Mock<IValidatorFactory>();
-            mockValidatorFactory.Setup(m => m.GetValidator(It.IsAny<Type>())).Returns<IValidator>(null);
+            var mockServiceProvider = new Mock<IServiceProvider>();
+            mockServiceProvider.Setup(m => m.GetService(It.IsAny<Type>())).Returns<IValidator>(null);
 
             _mockAppSettings = new Mock<IAppSettings>();
             _mockService = new Mock<IOrganizationServiceAdapter>();
@@ -41,7 +41,7 @@ namespace GetIntoTeachingApiTests.Services
             _mockDateTime = new Mock<IDateTimeProvider>();
             _context = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
             _mockService.Setup(mock => mock.Context()).Returns(_context);
-            _crm = new CrmService(_mockService.Object, mockValidatorFactory.Object, _mockAppSettings.Object, _mockDateTime.Object, _mockLogger.Object);
+            _crm = new CrmService(_mockService.Object, mockServiceProvider.Object, _mockAppSettings.Object, _mockDateTime.Object, _mockLogger.Object);
 
             // Freeze time.
             _mockDateTime.Setup(m => m.UtcNow).Returns(DateTime.UtcNow);

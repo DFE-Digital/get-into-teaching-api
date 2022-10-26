@@ -29,8 +29,8 @@ namespace GetIntoTeachingApi.Models.Crm
         {
         }
 
-        public CallbackBookingQuota(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
-            : base(entity, crm, validatorFactory)
+        public CallbackBookingQuota(Entity entity, ICrmService crm, IServiceProvider serviceProvider)
+            : base(entity, crm, serviceProvider)
         {
         }
     }
