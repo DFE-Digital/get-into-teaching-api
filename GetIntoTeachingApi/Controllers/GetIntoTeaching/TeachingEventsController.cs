@@ -54,46 +54,6 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
 
         [HttpGet]
         [PrivateShortTermResponseCache]
-        [Route("search_grouped_by_type")]
-        [SwaggerOperation(
-            Summary = "Searches for teaching events, returning grouped by type.",
-            Description = "Searches for teaching events. Optionally limit the results by distance (in miles) from a postcode, event type and start date.",
-            OperationId = "SearchTeachingEventsGroupedByType",
-            Tags = new[] { "Teaching Events" })]
-        [ProducesResponseType(typeof(IEnumerable<TeachingEventsByType>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> SearchGroupedByType(
-            [FromQuery, CommaSeparated("TypeIds", "StatusIds"), SwaggerParameter("Event search criteria.", Required = true)] TeachingEventSearchRequest request,
-            [FromQuery, SwaggerParameter("Quantity to return (per type).")] int quantityPerType = 3)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (request.Postcode != null)
-            {
-                _logger.LogInformation("SearchGroupedByType: {Postcode}", request.Postcode);
-            }
-
-            var teachingEvents = await _store.SearchTeachingEventsAsync(request);
-
-            var typeIds = request.TypeIds == null ? string.Empty : string.Join(",", request.TypeIds);
-
-            _metrics.TeachingEventSearchResults
-                .WithLabels(typeIds, request.Radius.ToString())
-                .Observe(teachingEvents.Count());
-
-            var inPesonTeachingEvents = teachingEvents.Where(e => e.IsInPerson);
-            _metrics.InPersonTeachingEventResults
-                .WithLabels(typeIds, request.Radius.ToString())
-                .Observe(inPesonTeachingEvents.Count());
-
-            return Ok(GroupTeachingEventsByType(teachingEvents, quantityPerType));
-        }
-
-        [HttpGet]
-        [PrivateShortTermResponseCache]
         [Route("search")]
         [SwaggerOperation(
             Summary = "Searches for teaching events.",
@@ -273,18 +233,6 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
                 actionName: nameof(Get),
                 routeValues: new { readableId = teachingEvent.ReadableId },
                 value: teachingEvent);
-        }
-
-        private static IEnumerable<TeachingEventsByType> GroupTeachingEventsByType(
-            IEnumerable<TeachingEvent> teachingEvents,
-            int quantityPerType)
-        {
-            return teachingEvents
-                .GroupBy(e => e.TypeId, e => e, (typeId, events) => new TeachingEventsByType()
-                {
-                    TypeId = typeId,
-                    TeachingEvents = events.Take(quantityPerType),
-                });
         }
 
         private async Task PersistBuildingAsync(TeachingEvent teachingEvent)
