@@ -6,6 +6,7 @@ using FluentValidation;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
@@ -19,7 +20,7 @@ namespace GetIntoTeachingApi.Services
         private const int MaximumNumberOfPrivacyPolicies = 3;
         private const int MaximumCallbackBookingQuotaDaysInAdvance = 14;
         private readonly IOrganizationServiceAdapter _service;
-        private readonly IValidatorFactory _validatorFactory;
+        private readonly IServiceProvider _serviceProvider;
         private readonly IDateTimeProvider _dateTime;
         private readonly IAppSettings _appSettings;
         private readonly ILogger<ICrmService> _logger;
@@ -29,14 +30,14 @@ namespace GetIntoTeachingApi.Services
 
         public CrmService(
             IOrganizationServiceAdapter service,
-            IValidatorFactory validatorFactory,
+            IServiceProvider serviceProvider,
             IAppSettings appSettings,
             IDateTimeProvider dateTime,
             ILogger<ICrmService> logger)
         {
             _appSettings = appSettings;
             _service = service;
-            _validatorFactory = validatorFactory;
+            _serviceProvider = serviceProvider;
             _dateTime = dateTime;
             _logger = logger;
         }
@@ -76,7 +77,7 @@ namespace GetIntoTeachingApi.Services
                 .Where((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime") > _dateTime.UtcNow &&
                                    entity.GetAttributeValue<DateTime>("dfe_starttime") < _dateTime.UtcNow.AddDays(MaximumCallbackBookingQuotaDaysInAdvance))
                 .OrderBy((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime"))
-                .Select((entity) => new CallbackBookingQuota(entity, this, _validatorFactory))
+                .Select((entity) => new CallbackBookingQuota(entity, this, _serviceProvider))
                 .ToList()
                 .Where((quota) => quota.IsAvailable); // Doing this in the Dynamics query throws an exception, though I'm not sure why.
         }
@@ -85,7 +86,7 @@ namespace GetIntoTeachingApi.Services
         {
             return _service.CreateQuery("dfe_callbackbookingquota", Context())
                 .Where((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime") == scheduledAt)
-                .Select((entity) => new CallbackBookingQuota(entity, this, _validatorFactory))
+                .Select((entity) => new CallbackBookingQuota(entity, this, _serviceProvider))
                 .FirstOrDefault();
         }
 
@@ -106,7 +107,7 @@ namespace GetIntoTeachingApi.Services
             var entities = _service.RetrieveMultiple(query);
 
 
-            return entities.Select(e => (T)Activator.CreateInstance(typeof(T), e, this, _validatorFactory));
+            return entities.Select(e => (T)Activator.CreateInstance(typeof(T), e, this, _serviceProvider));
         }
 
         public IEnumerable<PrivacyPolicy> GetPrivacyPolicies()
@@ -116,7 +117,7 @@ namespace GetIntoTeachingApi.Services
                     entity.GetAttributeValue<OptionSetValue>("dfe_policytype").Value == (int)PrivacyPolicy.Type.Web &&
                     entity.GetAttributeValue<bool>("dfe_active"))
                 .OrderByDescending((policy) => policy.GetAttributeValue<DateTime>("createdon"))
-                .Select((entity) => new PrivacyPolicy(entity, this, _validatorFactory))
+                .Select((entity) => new PrivacyPolicy(entity, this, _serviceProvider))
                 .Take(MaximumNumberOfPrivacyPolicies);
         }
 
@@ -146,7 +147,7 @@ namespace GetIntoTeachingApi.Services
 
             LoadCandidateRelationships(entity, context);
 
-            return new Candidate(entity, this, _validatorFactory);
+            return new Candidate(entity, this, _serviceProvider);
         }
 
         public Candidate MatchCandidate(string email)
@@ -162,7 +163,7 @@ namespace GetIntoTeachingApi.Services
                 return null;
             }
 
-            return new Candidate(entity, this, _validatorFactory);
+            return new Candidate(entity, this, _serviceProvider);
         }
 
         public IEnumerable<Candidate> MatchCandidates(string magicLinkToken)
@@ -186,7 +187,7 @@ namespace GetIntoTeachingApi.Services
                 LoadCandidateRelationships(entity, context);
             }
 
-            return entities.Select(e => new Candidate(e, this, _validatorFactory));
+            return entities.Select(e => new Candidate(e, this, _serviceProvider));
         }
 
         public Candidate GetCandidate(Guid id)
@@ -208,7 +209,7 @@ namespace GetIntoTeachingApi.Services
 
             var entities = _service.RetrieveMultiple(query);
 
-            return entities.Select((entity) => new Candidate(entity, this, _validatorFactory));
+            return entities.Select((entity) => new Candidate(entity, this, _serviceProvider));
         }
 
         public IEnumerable<Candidate> GetCandidatesPendingMagicLinkTokenGeneration(int limit = 10)
@@ -220,7 +221,7 @@ namespace GetIntoTeachingApi.Services
 
             var entities = _service.RetrieveMultiple(query);
 
-            return entities.Select(e => new Candidate(e, this, _validatorFactory));
+            return entities.Select(e => new Candidate(e, this, _serviceProvider));
         }
 
         public bool CandidateAlreadyHasLocalEventSubscriptionType(Guid candidateId)
@@ -323,7 +324,7 @@ namespace GetIntoTeachingApi.Services
 
             var entities = _service.RetrieveMultiple(query);
 
-            return entities.Select((entity) => new TeachingEvent(entity, this, _validatorFactory)).ToList();
+            return entities.Select((entity) => new TeachingEvent(entity, this, _serviceProvider)).ToList();
         }
 
         public TeachingEvent GetTeachingEvent(string readableId)
@@ -344,13 +345,13 @@ namespace GetIntoTeachingApi.Services
             context.Attach(entity);
             _service.LoadProperty(entity, new Relationship("msevtmgt_event_building"), context);
 
-            return new TeachingEvent(entity, this, _validatorFactory);
+            return new TeachingEvent(entity, this, _serviceProvider);
         }
 
         public IEnumerable<TeachingEventBuilding> GetTeachingEventBuildings()
         {
             return _service.CreateQuery("msevtmgt_building", Context())
-                .Select((entity) => new TeachingEventBuilding(entity, this, _validatorFactory)).ToList();
+                .Select((entity) => new TeachingEventBuilding(entity, this, _serviceProvider)).ToList();
         }
 
         private static QueryExpression MatchBackQuery(string email)

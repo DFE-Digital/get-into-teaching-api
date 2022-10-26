@@ -10,9 +10,11 @@ using System.Runtime.Serialization;
 using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Newtonsoft.Json;
+using YamlDotNet.Core;
 
 namespace GetIntoTeachingApi.Models.Crm
 {
@@ -36,14 +38,14 @@ namespace GetIntoTeachingApi.Models.Crm
             InitChangedPropertyNames();
         }
 
-        protected BaseModel(Entity entity, ICrmService crm, IValidatorFactory vaidatorFactory)
+        protected BaseModel(Entity entity, ICrmService crm, IServiceProvider serviceProvider)
             : this()
         {
             Id = entity.Id;
 
             MapFieldAttributesFromEntity(entity);
-            MapRelationshipAttributesFromEntity(entity, crm, vaidatorFactory);
-            NullifyInvalidFieldAttributes(vaidatorFactory);
+            MapRelationshipAttributesFromEntity(entity, crm, serviceProvider);
+            NullifyInvalidFieldAttributes(serviceProvider);
         }
 
 #pragma warning disable 67
@@ -195,9 +197,10 @@ namespace GetIntoTeachingApi.Models.Crm
             }
         }
 
-        private void NullifyInvalidFieldAttributes(IValidatorFactory validatorFactory)
+        private void NullifyInvalidFieldAttributes(IServiceProvider serviceProvider)
         {
-            var validator = validatorFactory.GetValidator(GetType());
+            Type genericType = typeof(IValidator<>).MakeGenericType(GetType());
+            IValidator validator = (IValidator)serviceProvider.GetService(genericType);
 
             if (validator == null)
             {
@@ -284,7 +287,7 @@ namespace GetIntoTeachingApi.Models.Crm
             }
         }
 
-        private void MapRelationshipAttributesFromEntity(Entity entity, ICrmService crm, IValidatorFactory validatorFactory)
+        private void MapRelationshipAttributesFromEntity(Entity entity, ICrmService crm, IServiceProvider serviceProvider)
         {
             foreach (var property in GetProperties(this))
             {
@@ -303,7 +306,7 @@ namespace GetIntoTeachingApi.Models.Crm
                     continue;
                 }
 
-                var relatedModels = relatedEntities.Select(e => Activator.CreateInstance(attribute.Type, e, crm, validatorFactory));
+                var relatedModels = relatedEntities.Select(e => Activator.CreateInstance(attribute.Type, e, crm, serviceProvider));
 
                 if (typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
                 {
