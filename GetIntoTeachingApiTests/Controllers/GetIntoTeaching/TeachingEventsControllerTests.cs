@@ -65,7 +65,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
         public void PrivateShortTermResponseCache_IsPresent()
         {
             JobStorage.Current = new Mock<JobStorage>().Object;
-            var methods = new[] { "Get", "SearchGroupedByType" };
+            var methods = new[] { "Get", "Search" };
 
             methods.ForEach(m => typeof(TeachingEventsController).GetMethod(m).Should().BeDecoratedWith<PrivateShortTermResponseCacheAttribute>());
         }
@@ -96,56 +96,6 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
                 It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
                 IsMatch(request.Candidate, (string)job.Args[0])),
                 It.IsAny<EnqueuedState>()));
-        }
-
-        [Fact]
-        public void SearchGroupedByType_SearchRequestIsDecoratedWithCommaSeparatedAttributeForArrayProperties()
-        {
-            var expectedAttribute = new CommaSeparatedAttribute(
-                nameof(TeachingEventSearchRequest.TypeIds), nameof(TeachingEventSearchRequest.StatusIds));
-
-            typeof(TeachingEventsController)
-                .GetMethod("SearchGroupedByType")
-                .GetParameters()
-                .FirstOrDefault(param => param.ParameterType == typeof(TeachingEventSearchRequest))
-                .GetCustomAttributes(false)
-                .Should().ContainEquivalentOf(expectedAttribute);
-        }
-
-        [Fact]
-        public async void SearchGroupedByType_InvalidRequest_RespondsWithValidationErrors()
-        {
-            var request = new TeachingEventSearchRequest() { Postcode = null };
-            _controller.ModelState.AddModelError("Postcode", "Postcode must be specified.");
-
-            var response = await _controller.SearchGroupedByType(request);
-
-            var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
-            var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
-            errors.Should().ContainKey("Postcode").WhoseValue.Should().BeOfType<string[]>().Which.Should().Contain("Postcode must be specified.");
-        }
-
-        [Fact]
-        public async void SearchGroupedByType_ValidRequest_ReturnsTeachingEventsByType()
-        {
-            var request = new TeachingEventSearchRequest() { Postcode = "KY12 8FG" };
-            var metricCountBefore = _metrics.TeachingEventSearchResults.WithLabels(new[] { string.Empty, request.Radius.ToString() }).Count;
-            var mockEvents = MockEvents();
-            _mockStore.Setup(mock => mock.SearchTeachingEventsAsync(request)).ReturnsAsync(mockEvents);
-
-            var response = await _controller.SearchGroupedByType(request);
-
-            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
-            var result = (IEnumerable<TeachingEventsByType>)ok.Value;
-
-            result.First().TypeId.Should().Be(123);
-            result.First().TeachingEvents.Count().Should().Be(3);
-            result.Last().TypeId.Should().Be(456);
-            result.Last().TeachingEvents.Count().Should().Be(1);
-
-            _mockLogger.VerifyInformationWasCalled("SearchGroupedByType: KY12 8FG");
-
-            _metrics.TeachingEventSearchResults.WithLabels(new[] { string.Empty, request.Radius.ToString() }).Count.Should().Be(metricCountBefore + 1);
         }
 
         [Fact]
