@@ -76,7 +76,7 @@ groups:
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighMemory-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=33&orgId=1
       - alert: HighCspViolations (App)
-        expr: 'sum(increase(app_csp_violations_total{app="get-into-teaching-app-prod"}[5m])) by (blocked_uri) > 20'
+        expr: 'sum(increase(app_csp_violations_total{app="get-into-teaching-app-prod"}[5m])) by (blocked_uri) > 35'
         labels:
           severity: medium
         annotations:
