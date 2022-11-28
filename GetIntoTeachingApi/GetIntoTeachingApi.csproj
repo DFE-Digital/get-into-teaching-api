@@ -12,7 +12,7 @@
 	<ItemGroup>
 		<PackageReference Include="AspNetCoreRateLimit" Version="4.0.2" />
 		<PackageReference Include="CsvHelper" Version="30.0.1" />
-		<PackageReference Include="GeocodeSharp" Version="1.5.0" />
+		<PackageReference Include="GeocodeSharp" Version="2.0.0" />
 		<PackageReference Include="Hangfire.AspNetCore" Version="1.7.32" />
 		<PackageReference Include="Hangfire.Core" Version="1.7.32" />
 		<PackageReference Include="Hangfire.MemoryStorage" Version="1.7.0" />
