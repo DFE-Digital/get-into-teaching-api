@@ -14,9 +14,11 @@ namespace GetIntoTeachingApi.Adapters
             // We don't want to try and connect to Dynamics when integration testing.
             if (!env.IsTest)
             {
-                ServiceClient.MaxConnectionTimeout = TimeSpan.FromSeconds(15);
-                CdsServiceClient = new ServiceClient(ConnectionString(env));
-                CdsServiceClient.MaxRetryCount = 3;
+                ServiceClient.MaxConnectionTimeout = TimeSpan.FromSeconds(30);
+                CdsServiceClient = new ServiceClient(ConnectionString(env))
+                {
+                    MaxRetryCount = 3
+                };
             }
         }
 
