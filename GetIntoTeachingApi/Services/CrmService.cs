@@ -6,7 +6,6 @@ using FluentValidation;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
@@ -150,9 +149,9 @@ namespace GetIntoTeachingApi.Services
             return new Candidate(entity, this, _serviceProvider);
         }
 
-        public Candidate MatchCandidate(string email)
+        public Candidate MatchCandidate(string email, string findApplyId)
         {
-            var query = MatchBackQuery(email);
+            var query = MatchBackQuery(email, findApplyId);
             query.TopCount = 1;
 
             var entities = _service.RetrieveMultiple(query);
@@ -354,12 +353,31 @@ namespace GetIntoTeachingApi.Services
                 .Select((entity) => new TeachingEventBuilding(entity, this, _serviceProvider)).ToList();
         }
 
-        private static QueryExpression MatchBackQuery(string email)
+        private static QueryExpression MatchBackQuery(string email, string findApplyId = null)
         {
             var query = new QueryExpression("contact");
             query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
-            query.Criteria.AddCondition(new ConditionExpression("statecode", ConditionOperator.Equal, (int)Candidate.Status.Active));
-            query.Criteria.AddCondition(new ConditionExpression("emailaddress1", ConditionOperator.Equal, email));
+
+            var mainFilter = new FilterExpression(LogicalOperator.And);
+
+            var filter = new FilterExpression(LogicalOperator.Or);
+            filter.AddCondition(new ConditionExpression("emailaddress1", ConditionOperator.Equal, email));
+
+            if (findApplyId != null)
+            {
+                // We match records on email or apply id.
+                filter.AddCondition(new ConditionExpression("dfe_applyid", ConditionOperator.Equal, findApplyId));
+
+                // Ensure apply id takes presedence over email and duplicate score/modified on.
+                query.Orders.Add(new OrderExpression("dfe_applyid", OrderType.Descending));
+            }
+
+            mainFilter.AddFilter(filter);
+
+            mainFilter.AddCondition(new ConditionExpression("statecode", ConditionOperator.Equal, (int)Candidate.Status.Active));
+
+            query.Criteria = mainFilter;
+
             query.Orders.Add(new OrderExpression("dfe_duplicatescorecalculated", OrderType.Descending));
             query.Orders.Add(new OrderExpression("modifiedon", OrderType.Descending));
 
