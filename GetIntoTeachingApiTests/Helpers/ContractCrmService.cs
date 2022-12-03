@@ -172,9 +172,9 @@ namespace GetIntoTeachingApiTests.Helpers
             return _crmService.MatchCandidate(request);
         }
 
-        public Candidate MatchCandidate(string email)
+        public Candidate MatchCandidate(string email, string findApplyId)
         {
-            return Candidates.FirstOrDefault(c => c.Email == email);
+            return Candidates.FirstOrDefault(c => c.Email == email || c.FindApplyId == findApplyId);
         }
 
         public IEnumerable<Candidate> MatchCandidates(string magicLinkToken)

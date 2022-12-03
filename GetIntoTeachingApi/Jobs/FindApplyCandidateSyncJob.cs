@@ -44,7 +44,7 @@ namespace GetIntoTeachingApi.Jobs
         public void SyncCandidate(Candidate findApplyCandidate)
         {
             var candidate = findApplyCandidate.ToCrmModel();
-            var match = _crm.MatchCandidate(candidate.Email);
+            var match = _crm.MatchCandidate(candidate.Email, findApplyCandidate.Id);
 
             _logger.LogInformation("FindApplyCandidateSyncJob - {Status} - {Id}", match == null ? "Miss" : "Hit", findApplyCandidate.Id);
 

@@ -88,7 +88,7 @@ namespace GetIntoTeachingApiTests.Jobs
         {
             var match = new GetIntoTeachingApi.Models.Crm.Candidate() { Id = Guid.NewGuid(), Email = _candidate.Attributes.Email };
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
-            _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email)).Returns(match);
+            _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email, _candidate.Id)).Returns(match);
 
             _job.Run(_candidate);
 
@@ -148,7 +148,7 @@ namespace GetIntoTeachingApiTests.Jobs
         public void Run_OnSuccessWithNewCandidate_SetsChannelAndQueuesUpsertJobForCandidateWithApplicationForms()
         {
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
-            _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email)).Returns<Candidate>(null);
+            _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email, _candidate.Id)).Returns<Candidate>(null);
 
             _job.Run(_candidate);
 
