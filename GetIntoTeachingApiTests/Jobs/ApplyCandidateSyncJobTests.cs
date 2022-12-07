@@ -88,7 +88,7 @@ namespace GetIntoTeachingApiTests.Jobs
         [Fact]
         public void Run_OnSuccessWithExistingCandidate_SetsIdAndQueuesUpsertJobForCandidateWithApplicationForms()
         {
-            var match = new GetIntoTeachingApi.Models.Crm.Candidate() { Id = Guid.NewGuid(), Email = _candidate.Attributes.Email };
+            var match = new GetIntoTeachingApi.Models.Crm.Candidate() { Id = Guid.NewGuid(), Email = "different@email.com" };
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
             _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email, null)).Returns(match);
 
@@ -128,7 +128,7 @@ namespace GetIntoTeachingApiTests.Jobs
             {
                 Id = match.Id,
                 ApplyId = _candidate.Id,
-                Email = _attributes.Email,
+                Email = match.Email,
                 ApplyStatusId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.NeverSignedIn,
                 ApplyPhaseId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply2,
                 ApplyCreatedAt = _attributes.CreatedAt,
