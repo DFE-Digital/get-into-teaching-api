@@ -60,6 +60,9 @@ namespace GetIntoTeachingApi.Jobs
             if (match != null)
             {
                 candidate.Id = match.Id;
+                // The existing email address in the CRM should always
+                // take presedence over the email from the Apply candidate.
+                candidate.Email = match.Email;
             }
             else
             {
