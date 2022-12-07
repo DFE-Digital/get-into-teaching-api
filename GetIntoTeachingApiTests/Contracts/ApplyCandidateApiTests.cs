@@ -15,6 +15,7 @@ namespace GetIntoTeachingApiTests.Contracts
         {
             Environment.SetEnvironmentVariable($"APPLY_API_FEATURE", "on");
             Environment.SetEnvironmentVariable($"APPLY_API_V1_2_FEATURE", "on");
+            Environment.SetEnvironmentVariable($"APPLY_ID_MATCHBACK_FEATURE", "on");
         }
 
         [Theory]
