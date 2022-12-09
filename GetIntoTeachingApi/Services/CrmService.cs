@@ -149,7 +149,7 @@ namespace GetIntoTeachingApi.Services
             return new Candidate(entity, this, _serviceProvider);
         }
 
-        public Candidate MatchCandidate(string email, string findApplyId)
+        public Candidate MatchCandidate(string email, string findApplyId = null)
         {
             var query = MatchBackQuery(email, findApplyId);
             query.TopCount = 1;
