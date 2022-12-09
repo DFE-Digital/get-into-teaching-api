@@ -184,14 +184,14 @@ namespace GetIntoTeachingApiTests.Utils
         }
 
         [Theory]
-        [InlineData(null, "")]
-        [InlineData("get-into-teaching-test", "test")]
-        [InlineData("get-into-teaching-dev", "dev")]
-        [InlineData("get-into-teaching-prod", "prod")]
-        public void CloudFoundryEnvironmentName_ReturnsCorrectly(string spaceName, string expected)
+        [InlineData(null, "local")]
+        [InlineData($"{{\"application_name\":\"get-into-teaching-test\"}}", "test")]
+        [InlineData($"{{\"application_name\":\"get-into-teaching-dev\"}}", "dev")]
+        [InlineData($"{{\"application_name\":\"get-into-teaching-prod\"}}", "prod")]
+        public void CloudFoundryEnvironmentName_ReturnsCorrectly(string vcapApplication, string expected)
         {
             var previous = Environment.GetEnvironmentVariable("VCAP_APPLICATION");
-            Environment.SetEnvironmentVariable("VCAP_APPLICATION", $"{{\"application_name\":\"{spaceName}\"}}");
+            Environment.SetEnvironmentVariable("VCAP_APPLICATION", vcapApplication);
 
             _env.CloudFoundryEnvironmentName.Should().Be(expected);
 
