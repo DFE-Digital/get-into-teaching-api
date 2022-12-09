@@ -50,8 +50,7 @@ namespace GetIntoTeachingApi.Utils
         {
             get
             {
-                var index = Environment.GetEnvironmentVariable("CF_INSTANCE_INDEX");
-                var success = int.TryParse(index, out int value);
+                var success = int.TryParse(InstanceIndex, out int value);
 
                 return !success || value == 0;
             }
@@ -70,7 +69,7 @@ namespace GetIntoTeachingApi.Utils
         {
             get
             {
-                return AppServices.ApplicationName.Split("-").Last();
+                return AppServices == null ? "local" : AppServices.ApplicationName.Split("-").Last();
             }
         }
 
@@ -95,8 +94,8 @@ namespace GetIntoTeachingApi.Utils
         {
             get
             {
-                return JsonSerializer.Deserialize<ApplicationServices>(
-                    Environment.GetEnvironmentVariable("VCAP_APPLICATION"));
+                var vcapApplication = Environment.GetEnvironmentVariable("VCAP_APPLICATION");
+                return vcapApplication == null ? null : JsonSerializer.Deserialize<ApplicationServices>(vcapApplication);
             }
         }
 
