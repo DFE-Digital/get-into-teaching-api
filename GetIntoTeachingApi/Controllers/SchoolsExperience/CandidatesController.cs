@@ -63,24 +63,26 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
                 return BadRequest(ModelState);
             }
 
+            // This is the only way we can mock/freeze the current date/time
+            // in contract tests (there's no other way to inject it into this class).
+            request.DateTimeProvider = _dateTime;
+
             var candidate = request.Candidate;
 
             if (appSettings.IsCrmIntegrationPaused)
             {
-                // Usually, it is best practice to allow the CRM to generate sequential GUIDs which provide better
-                // SQL performance. However, in this scenario we have agreed it is beneficial to provide the GUID up-front
-                // because the School Experience app needs the Candidate ID immediately.
-                candidate.GenerateUpfrontId();
-
-                // This is the only way we can mock/freeze the current date/time
-                // in contract tests (there's no other way to inject it into this class).
-                request.DateTimeProvider = _dateTime;
-                string json = candidate.SerializeChangeTracked();
-                _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
+                QueueUpsert(candidate);
             }
             else
             {
-                _upserter.Upsert(candidate);
+                try
+                {
+                    _upserter.Upsert(candidate);
+                }
+                catch
+                {
+                    QueueUpsert(candidate);
+                }
             }
 
             return CreatedAtAction(
@@ -177,6 +179,17 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
 
             return NoContent();
+        }
+
+        private void QueueUpsert(Candidate candidate)
+        {
+            // Usually, it is best practice to allow the CRM to generate sequential GUIDs which provide better
+            // SQL performance. However, when the CRM is unavailable we have agreed it is beneficial to
+            // provide the GUID up-front because the School Experience app needs the Candidate ID immediately.
+            candidate.GenerateUpfrontId();
+
+            string json = candidate.SerializeChangeTracked();
+            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
         }
     }
 }
