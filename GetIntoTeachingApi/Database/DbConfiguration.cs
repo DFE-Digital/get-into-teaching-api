@@ -56,19 +56,19 @@ namespace GetIntoTeachingApi.Database
             return builder.ConnectionString;
         }
 
-        internal class VcapServices
+        internal sealed class VcapServices
         {
             public IEnumerable<VcapPostgres> Postgres { get; set; }
         }
 
-        internal class VcapPostgres
+        internal sealed class VcapPostgres
         {
             [JsonPropertyName("instance_name")]
             public string InstanceName { get; set; }
             public VcapCredentials Credentials { get; set; }
         }
 
-        internal class VcapCredentials
+        internal sealed class VcapCredentials
         {
             public string Host { get; set; }
             public string Name { get; set; }
