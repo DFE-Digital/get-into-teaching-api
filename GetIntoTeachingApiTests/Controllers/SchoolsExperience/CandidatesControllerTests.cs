@@ -150,6 +150,26 @@ namespace GetIntoTeachingApiTests.Controllers.SchoolsExperience
         }
 
         [Fact]
+        public void SignUp_WhenCrmIsUnavailable_QueuesCandidateUpsert()
+        {
+            var request = new SchoolsExperienceSignUp { FirstName = "first" };
+            var mockAppSettings = new Mock<IAppSettings>();
+            mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
+            _mockUpserter.Setup(m => m.Upsert(It.IsAny<Candidate>())).Throws<Exception>();
+
+            var response = _controller.SignUp(request, mockAppSettings.Object);
+
+            var created = response.Should().BeOfType<CreatedAtActionResult>().Subject;
+            var signUp = created.Value.Should().BeAssignableTo<SchoolsExperienceSignUp>().Subject;
+            signUp.FirstName.Should().Be(request.FirstName);
+            signUp.CandidateId.Should().NotBeNull();
+            _mockJobClient.Verify(x => x.Create(
+               It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
+               MatchesCandidateWithUpfrontId(request.Candidate, (string)job.Args[0], signUp.CandidateId.Value)),
+               It.IsAny<EnqueuedState>()));
+        }
+
+        [Fact]
         public void Get_WhenFound_ReturnsSchoolsExperienceSignUp()
         {
             var candidate = new Candidate() { Id = Guid.NewGuid() };
