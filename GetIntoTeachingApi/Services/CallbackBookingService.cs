@@ -25,7 +25,7 @@ namespace GetIntoTeachingApi.Services
 
         public IEnumerable<CallbackBookingQuota> GetCallbackBookingQuotas()
         {
-            IEnumerable<CallbackBookingQuota> quotas = null;
+            IEnumerable<CallbackBookingQuota> quotas;
 
             try
             {
@@ -34,16 +34,12 @@ namespace GetIntoTeachingApi.Services
             catch
             {
                 _logger.LogError("GetCallbackBookingQuotas: failed to reach CRM");
-            }
-
-            if (quotas == null || !quotas.Any())
-            {
                 _logger.LogWarning("GetCallbackBookingQuotas: returning fallback quotas");
 
                 quotas = FallbackBookingQuotas();
             }
 
-            return quotas;
+            return quotas ?? Array.Empty<CallbackBookingQuota>();
         }
 
         private static bool IsWeekend(DateTime date)

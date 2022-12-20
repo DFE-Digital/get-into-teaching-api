@@ -49,27 +49,23 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void GetCallbackBookingQuotas_WhenCrmReturnsEmpty_ReturnsFallbackQuotas()
+        public void GetCallbackBookingQuotas_WhenCrmReturnsEmpty_ReturnsEmpty()
         {
             _mockCrm.Setup(m => m.GetCallbackBookingQuotas()).Returns(new List<CallbackBookingQuota>());
 
             var quotas = _service.GetCallbackBookingQuotas();
 
-            VerifyFallbackQuotas(quotas);
-
-            _mockLogger.VerifyWarningWasCalled("GetCallbackBookingQuotas: returning fallback quotas");
+            quotas.Should().BeEmpty();
         }
 
         [Fact]
-        public void GetCallbackBookingQuotas_WhenCrmReturnsNull_ReturnsFallbackQuotas()
+        public void GetCallbackBookingQuotas_WhenCrmReturnsNull_ReturnsEmpty()
         {
             _mockCrm.Setup(m => m.GetCallbackBookingQuotas()).Returns<IEnumerable<CallbackBookingQuota>>(null);
 
             var quotas = _service.GetCallbackBookingQuotas();
 
-            VerifyFallbackQuotas(quotas);
-
-            _mockLogger.VerifyWarningWasCalled("GetCallbackBookingQuotas: returning fallback quotas");
+            quotas.Should().BeEmpty();
         }
 
         private static IEnumerable<CallbackBookingQuota> MockQuotas()
