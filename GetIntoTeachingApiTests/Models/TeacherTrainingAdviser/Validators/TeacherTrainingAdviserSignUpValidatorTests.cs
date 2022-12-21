@@ -424,41 +424,13 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
             }
 
             [Fact]
-            public void Validate_WhenTelephoneIsNull_AndDegreeTypeIsDegreeEquivalent_HasError()
-            {
-                _request.AddressTelephone = null;
-                _request.DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent;
-
-                var result = _validator.TestValidate(_request);
-
-                result.ShouldHaveValidationErrorFor(request => request.AddressTelephone)
-                    .WithErrorMessage("Must be set for candidates with an equivalent degree.");
-
-                _request.AddressTelephone = "123456789";
-
-                result = _validator.TestValidate(_request);
-
-                result.ShouldNotHaveValidationErrorFor(request => request.AddressTelephone);
-
-                _request.AddressTelephone = null;
-                _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
-
-                result = _validator.TestValidate(_request);
-
-                result.ShouldNotHaveValidationErrorFor(request => request.AddressTelephone);
-            }
-
-            [Fact]
-            public void Validate_WhenPhoneCallScheduledAtIsNullOrInPast_AndDegreeTypeIsDegreeEquivalent_AndCountryIdIsUk_HasError()
+            public void Validate_WhenPhoneCallScheduledAtIsInPast_AndDegreeTypeIsDegreeEquivalent_AndCountryIdIsUk_HasError()
             {
                 _request.PhoneCallScheduledAt = null;
                 _request.CountryId = LookupItem.UnitedKingdomCountryId;
                 _request.DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent;
 
                 var result = _validator.TestValidate(_request);
-
-                result.ShouldHaveValidationErrorFor(request => request.PhoneCallScheduledAt)
-                    .WithErrorMessage("Must be set for candidate with UK equivalent degree.");
 
                 _request.PhoneCallScheduledAt = DateTime.UtcNow.AddDays(-1);
 
