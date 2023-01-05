@@ -101,15 +101,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
                     RuleFor(request => request.UkDegreeGradeId).NotNull()
                         .WithMessage("Must be set when candidate has a degree or is studying for a degree (predicted grade).");
                 });
-
-                When(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent, () =>
-                {
-                    RuleFor(request => request.AddressTelephone).NotNull()
-                        .WithMessage("Must be set for candidates with an equivalent degree.");
-                    RuleFor(request => request.PhoneCallScheduledAt).NotNull()
-                        .When(request => request.CountryId == LookupItem.UnitedKingdomCountryId)
-                        .WithMessage("Must be set for candidate with UK equivalent degree.");
-                });
             });
 
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store, dateTime));
