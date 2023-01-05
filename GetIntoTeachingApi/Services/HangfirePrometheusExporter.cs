@@ -54,7 +54,7 @@ namespace GetIntoTeachingApi.Services
             };
         }
 
-        internal class HangfireJobStatistics
+        internal sealed class HangfireJobStatistics
         {
             public long Deleted { get; set; }
             public long Enqueued { get; set; }

@@ -25,17 +25,17 @@ namespace GetIntoTeachingApi.Redis
             };
         }
 
-        internal class VcapServices
+        internal sealed class VcapServices
         {
             public IEnumerable<VcapRedis> Redis { get; set; }
         }
 
-        internal class VcapRedis
+        internal sealed class VcapRedis
         {
             public VcapCredentials Credentials { get; set; }
         }
 
-        internal class VcapCredentials
+        internal sealed class VcapCredentials
         {
             public string Host { get; set; }
             public string Password { get; set; }
