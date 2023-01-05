@@ -8,12 +8,11 @@ ENV ASPNETCORE_URLS=http://+:8080
 COPY *.sln .
 COPY GetIntoTeachingApi/*.csproj ./GetIntoTeachingApi/
 COPY GetIntoTeachingApiTests/*.csproj ./GetIntoTeachingApiTests/
-RUN dotnet restore -r linux-x64
 
 # copy everything else and build app
 COPY GetIntoTeachingApi/. ./GetIntoTeachingApi/
 WORKDIR /source/GetIntoTeachingApi
-RUN dotnet publish -c release -o /app --no-restore
+RUN dotnet publish -c release -o /app
 
 # final stage/image
 FROM mcr.microsoft.com/dotnet/aspnet:7.0-alpine
