@@ -60,7 +60,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockDatabase.Setup(d => d.KeyExists(key, CommandFlags.None)).Returns(false);
 
             var json = _candidate.SerializeChangeTracked();
-            _job.Run(json, null);
+            _job.Run(json, null); 
 
             _mockUpserter.Verify(mock => mock.Upsert(It.Is<Candidate>(c => IsMatch(_candidate, c))), Times.Once);
             _mockLogger.VerifyInformationWasCalled("UpsertCandidateJob - Started (1/24)");
