@@ -33,7 +33,7 @@ namespace GetIntoTeachingApiTests.Models
             _settings.CrmIntegrationPausedUntil = date;
             _settings.CrmIntegrationPausedUntil.Should().Be(date);
 
-            _database.Verify(m => m.StringSet("app_settings.crm_offline_until", dateStr, null, When.Always, CommandFlags.None));
+            _database.Verify(m => m.StringSet("app_settings.crm_offline_until", dateStr, null, false, When.Always, CommandFlags.None));
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace GetIntoTeachingApiTests.Models
             _settings.CrmIntegrationPausedUntil = null;
             _settings.CrmIntegrationPausedUntil.Should().BeNull();
 
-            _database.Verify(m => m.StringSet("app_settings.crm_offline_until", null as string, null, When.Always, CommandFlags.None));
+            _database.Verify(m => m.StringSet("app_settings.crm_offline_until", null as string, null, false, When.Always, CommandFlags.None));
         }
 
         [Fact]
@@ -87,7 +87,7 @@ namespace GetIntoTeachingApiTests.Models
             _settings.FindApplyLastSyncAt = date;
             _settings.FindApplyLastSyncAt.Should().Be(date);
 
-            _database.Verify(m => m.StringSet("app_settings.find_apply_last_sync_at", dateStr, null, When.Always, CommandFlags.None));
+            _database.Verify(m => m.StringSet("app_settings.find_apply_last_sync_at", dateStr, null, false, When.Always, CommandFlags.None));
         }
 
         [Fact]
@@ -99,7 +99,7 @@ namespace GetIntoTeachingApiTests.Models
             _settings.FindApplyLastSyncAt = null;
             _settings.FindApplyLastSyncAt.Should().BeNull();
 
-            _database.Verify(m => m.StringSet("app_settings.find_apply_last_sync_at", null as string, null, When.Always, CommandFlags.None));
+            _database.Verify(m => m.StringSet("app_settings.find_apply_last_sync_at", null as string, null, false, When.Always, CommandFlags.None));
         }
 
         [Fact]
@@ -124,10 +124,10 @@ namespace GetIntoTeachingApiTests.Models
             _settings.IsFindApplyBackfillInProgress.Should().BeFalse();
 
             _settings.IsFindApplyBackfillInProgress = false;
-            _database.Verify(m => m.StringSet("app_settings.find_apply_backfill_in_progress", "False", null, When.Always, CommandFlags.None));
+            _database.Verify(m => m.StringSet("app_settings.find_apply_backfill_in_progress", "False", null, false, When.Always, CommandFlags.None));
 
             _settings.IsFindApplyBackfillInProgress = true;
-            _database.Verify(m => m.StringSet("app_settings.find_apply_backfill_in_progress", "True", null, When.Always, CommandFlags.None));
+            _database.Verify(m => m.StringSet("app_settings.find_apply_backfill_in_progress", "True", null, false, When.Always, CommandFlags.None));
 
             _database.Setup(m => m.KeyExists("app_settings.find_apply_backfill_in_progress", CommandFlags.None)).Returns(false);
             _settings.IsFindApplyBackfillInProgress.Should().BeFalse();
