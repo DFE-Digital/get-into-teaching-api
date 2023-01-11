@@ -67,7 +67,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockLogger.VerifyInformationWasCalled($"UpsertCandidateJob - Payload {Redactor.RedactJson(json)}");
             _mockLogger.VerifyInformationWasCalled($"UpsertCandidateJob - Succeeded - {_candidate.Id}");
             _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Count.Should().Be(1);
-            _mockDatabase.Verify(m => m.StringSet(key, true, TimeSpan.FromSeconds(5), When.Always, CommandFlags.None));
+            _mockDatabase.Verify(m => m.StringSet(key, true, TimeSpan.FromSeconds(5), false, When.Always, CommandFlags.None));
         }
 
         [Fact]
