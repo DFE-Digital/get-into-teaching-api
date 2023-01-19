@@ -99,7 +99,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
                         .WithMessage("Must be set when candidate has a degree or is studying for a degree.");
 
                     RuleFor(request => request.UkDegreeGradeId).NotNull()
-                        .WithMessage("Must be set when candidate has a degree or is studying for a degree (predicted grade).");
+                        .WithMessage("Must be set when candidate has a degree.");
                 });
             });
 

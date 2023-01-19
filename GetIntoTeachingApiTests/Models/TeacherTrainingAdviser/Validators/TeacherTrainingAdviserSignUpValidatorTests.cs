@@ -399,7 +399,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
             }
 
             [Fact]
-            public void Validate_WhenUkDegreeGradeIsNull_AndDegreeTypeIsNotDegreeEquivalent_HasError()
+            public void Validate_WhenUkDegreeGradeIsNull_AndDegreeTypeIsNotHasADegeree_HasError()
             {
                 _request.UkDegreeGradeId = null;
                 _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
@@ -407,7 +407,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
                 var result = _validator.TestValidate(_request);
 
                 result.ShouldHaveValidationErrorFor(request => request.UkDegreeGradeId)
-                    .WithErrorMessage("Must be set when candidate has a degree or is studying for a degree (predicted grade).");
+                    .WithErrorMessage("Must be set when candidate has a degree.");
 
                 _request.UkDegreeGradeId = 0;
 
