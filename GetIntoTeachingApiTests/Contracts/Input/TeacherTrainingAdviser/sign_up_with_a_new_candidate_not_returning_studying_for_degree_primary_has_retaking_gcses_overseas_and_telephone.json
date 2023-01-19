@@ -10,7 +10,7 @@
   "degreeStatusId": 222750003,
   "degreeTypeId": 222750000,
   "initialTeacherTrainingYearId": 22303,
-  "preferredEducationPhaseId": 222750000,
+  "preferredEducationPhaseId": null,
   "hasGcseMathsAndEnglishId": 222750001,
   "hasGcseScienceId": 222750000,
   "planningToRetakeGcseMathsAndEnglishId": 222750000,

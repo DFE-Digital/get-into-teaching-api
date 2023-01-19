@@ -213,18 +213,11 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
             [Fact]
             public void Validate_WhenRequiredAttributesAreNull_HasErrors()
             {
-                _request.PreferredEducationPhaseId = null;
                 _request.InitialTeacherTrainingYearId = null;
                 _request.DegreeStatusId = null;
                 _request.DegreeTypeId = null;
 
                 var result = _validator.TestValidate(_request);
-
-                result.ShouldHaveValidationErrorFor(request => request.PreferredEducationPhaseId)
-                    .WithErrorMessage("Must be set for candidates interested in teacher training.");
-
-                result.ShouldHaveValidationErrorFor(request => request.PreferredEducationPhaseId)
-                    .WithErrorMessage("Must be set for candidates interested in teacher training.");
 
                 result.ShouldHaveValidationErrorFor(request => request.DegreeStatusId)
                     .WithErrorMessage("Must be set for candidates interested in teacher training.");
@@ -242,6 +235,26 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
 
                 result.ShouldHaveValidationErrorFor(request => request.DegreeStatusId)
                     .WithErrorMessage("Can not be no degree (ineligible for service).");
+            }
+
+            [Fact]
+            public void Validate_WhenPreferredEducationPhaseIdIsNull_AndHasADegree_HasError()
+            {
+                _request.PreferredEducationPhaseId = null;
+                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.FirstYear;
+
+                var result = _validator.TestValidate(_request);
+
+                result = _validator.TestValidate(_request);
+
+                result.ShouldNotHaveValidationErrorFor(request => request.PreferredEducationPhaseId);
+
+                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree;
+
+                result = _validator.TestValidate(_request);
+
+                result.ShouldHaveValidationErrorFor(request => request.PreferredEducationPhaseId)
+                    .WithErrorMessage("Must be set for candidates interested in teacher training that have a degree.");
             }
 
             [Fact]
@@ -403,12 +416,20 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
             {
                 _request.UkDegreeGradeId = null;
                 _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
+                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree;
 
                 var result = _validator.TestValidate(_request);
 
                 result.ShouldHaveValidationErrorFor(request => request.UkDegreeGradeId)
                     .WithErrorMessage("Must be set when candidate has a degree.");
 
+                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.FirstYear;
+
+                result = _validator.TestValidate(_request);
+
+                result.ShouldNotHaveValidationErrorFor(request => request.UkDegreeGradeId);
+
+                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree;
                 _request.UkDegreeGradeId = 0;
 
                 result = _validator.TestValidate(_request);

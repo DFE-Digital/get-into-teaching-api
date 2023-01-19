@@ -26,6 +26,9 @@ namespace GetIntoTeachingApiTests.Contracts
             var response = await HttpClient.PostAsync(
                 "/api/teacher_training_adviser/candidates", ConstructBody(scenario));
 
+            var text = await response.Content.ReadAsStringAsync(); //right!
+
+
             response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
             await AssertRequestMatchesSnapshot(scenario);
