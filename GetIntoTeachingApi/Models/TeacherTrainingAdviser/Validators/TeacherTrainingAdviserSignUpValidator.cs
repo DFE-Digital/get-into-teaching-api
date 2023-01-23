@@ -86,6 +86,13 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
 
                 Unless(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent, () =>
                 {
+                    RuleFor(request => request.DegreeSubject).NotNull()
+                        .WithMessage("Must be set when candidate has a degree or is studying for a degree.");
+                });
+
+                When(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.Degree &&
+                    request.DegreeStatusId == (int)CandidateQualification.DegreeStatus.HasDegree, () =>
+                {
                     RuleFor(request => request)
                         .Must(request => HasOrIsPlanningOnRetakingEnglishAndMaths(request))
                         .When(request => request.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Secondary)
@@ -96,13 +103,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
                         .When(request => request.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Primary)
                         .WithMessage("Must have or be retaking all GCSEs when preferred education phase is primary.");
 
-                    RuleFor(request => request.DegreeSubject).NotNull()
-                        .WithMessage("Must be set when candidate has a degree or is studying for a degree.");
-                });
-
-                When(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.Degree &&
-                    request.DegreeStatusId == (int)CandidateQualification.DegreeStatus.HasDegree, () =>
-                {
                     RuleFor(request => request.UkDegreeGradeId).NotNull()
                         .WithMessage("Must be set when candidate has a degree.");
                 });
