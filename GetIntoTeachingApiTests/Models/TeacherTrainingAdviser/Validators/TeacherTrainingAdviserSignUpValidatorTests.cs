@@ -312,11 +312,12 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
             }
 
             [Fact]
-            public void Validate_WhenNotHaveOrPlanningToRetakeGcseMathsAndEnglish_AndDegreeTypeIsNotDegreeEquivalent_AndPreferredEducationPhaseIdIsSecondary_HasError()
+            public void Validate_WhenNotHaveOrPlanningToRetakeGcseMathsAndEnglish_AndDegreeTypeIsHasDegreeNotStudying_AndPreferredEducationPhaseIdIsSecondary_HasError()
             {
                 _request.HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
                 _request.PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
                 _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
+                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree;
                 _request.PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary;
 
                 var result = _validator.TestValidate(_request);
@@ -344,16 +345,25 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
                 result = _validator.TestValidate(_request);
 
                 result.ShouldNotHaveValidationErrorFor(request => request);
+
+                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.FinalYear;
+                _request.HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
+                _request.PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
+
+                result = _validator.TestValidate(_request);
+
+                result.ShouldNotHaveValidationErrorFor(request => request);
             }
 
             [Fact]
-            public void Validate_WhenNotHaveOrPlanningToRetakeGcseMathsAndEnglishAndScience_AndDegreeTypeIsNotDegreeEquivalent_AndPreferredEducationPhaseIdIsPrimary_HasError()
+            public void Validate_WhenNotHaveOrPlanningToRetakeGcseMathsAndEnglishAndScience_AndDegreeTypeIsHasDegreeNotStudying_AndPreferredEducationPhaseIdIsPrimary_HasError()
             {
                 _request.HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
                 _request.PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
                 _request.HasGcseScienceId = (int)Candidate.GcseStatus.NotAnswered;
                 _request.PlanningToRetakeGcseScienceId = (int)Candidate.GcseStatus.NotAnswered;
                 _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
+                _request.DegreeStatusId = (int)CandidateQualification.DegreeType.Degree;
                 _request.PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Primary;
 
                 var result = _validator.TestValidate(_request);
@@ -380,6 +390,14 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
                 _request.HasGcseScienceId = (int)Candidate.GcseStatus.NotAnswered;
                 _request.PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking;
                 _request.PlanningToRetakeGcseScienceId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking;
+
+                result = _validator.TestValidate(_request);
+
+                result.ShouldNotHaveValidationErrorFor(request => request);
+
+                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.FinalYear;
+                _request.HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
+                _request.PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
 
                 result = _validator.TestValidate(_request);
 
