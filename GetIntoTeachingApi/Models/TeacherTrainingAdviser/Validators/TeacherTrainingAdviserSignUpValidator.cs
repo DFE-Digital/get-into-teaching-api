@@ -54,8 +54,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
                 RuleFor(request => request.PreferredEducationPhaseId).NotNull()
                     .When(request => request.DegreeStatusId == (int)CandidateQualification.DegreeStatus.HasDegree)
                     .WithMessage("Must be set for candidates interested in teacher training that have a degree.");
-                RuleFor(request => request.InitialTeacherTrainingYearId).NotNull()
-                    .WithMessage("Must be set for candidates interested in teacher training.");
                 RuleFor(request => request.DegreeStatusId).NotNull()
                     .WithMessage("Must be set for candidates interested in teacher training.");
                 RuleFor(request => request.DegreeTypeId).NotNull()
@@ -68,6 +66,10 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
                 RuleFor(request => request.PreferredTeachingSubjectId).NotNull()
                     .When(request => request.Candidate.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Secondary)
                     .WithMessage("Must be set when preferred education phase is secondary.");
+
+                RuleFor(request => request.InitialTeacherTrainingYearId).NotNull()
+                    .When(request => request.DegreeStatusId == (int)CandidateQualification.DegreeStatus.HasDegree)
+                    .WithMessage("Must be set for candidates interested in teacher training that have a degree.");
 
                 RuleFor(request => request.DegreeTypeId)
                     .Must(type =>

@@ -9,7 +9,7 @@
   "ukDegreeGradeId": null,
   "degreeStatusId": 222750003,
   "degreeTypeId": 222750000,
-  "initialTeacherTrainingYearId": 22303,
+  "initialTeacherTrainingYearId": null,
   "preferredEducationPhaseId": null,
   "hasGcseMathsAndEnglishId": null,
   "hasGcseScienceId": null,
