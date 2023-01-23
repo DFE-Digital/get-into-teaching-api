@@ -105,9 +105,7 @@
       },
       {
         "Key": "dfe_ittyear",
-        "Value": {
-          "Value": 22303
-        }
+        "Value": null
       },
       {
         "Key": "dfe_newregistrant",
