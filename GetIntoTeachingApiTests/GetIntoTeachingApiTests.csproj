@@ -163,7 +163,7 @@
     <None Update="Contracts\Input\TeacherTrainingAdviser\sign_up_with_a_new_candidate_not_returning_has_degree_primary_has_gcses_in_the_uk_and_telephone.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Contracts\Input\TeacherTrainingAdviser\sign_up_with_a_new_candidate_not_returning_studying_for_degree_primary_has_retaking_gcses_overseas_and_telephone.json">
+    <None Update="Contracts\Input\TeacherTrainingAdviser\sign_up_with_a_new_candidate_not_returning_studying_for_degree_overseas_and_telephone.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Contracts\Input\TeacherTrainingAdviser\sign_up_with_a_new_candidate_not_returning_has_degree_secodary_retaking_gcses_overseas_and_no_telephone.json">

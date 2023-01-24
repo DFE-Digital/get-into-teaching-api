@@ -213,18 +213,11 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
             [Fact]
             public void Validate_WhenRequiredAttributesAreNull_HasErrors()
             {
-                _request.PreferredEducationPhaseId = null;
                 _request.InitialTeacherTrainingYearId = null;
                 _request.DegreeStatusId = null;
                 _request.DegreeTypeId = null;
 
                 var result = _validator.TestValidate(_request);
-
-                result.ShouldHaveValidationErrorFor(request => request.PreferredEducationPhaseId)
-                    .WithErrorMessage("Must be set for candidates interested in teacher training.");
-
-                result.ShouldHaveValidationErrorFor(request => request.PreferredEducationPhaseId)
-                    .WithErrorMessage("Must be set for candidates interested in teacher training.");
 
                 result.ShouldHaveValidationErrorFor(request => request.DegreeStatusId)
                     .WithErrorMessage("Must be set for candidates interested in teacher training.");
@@ -242,6 +235,26 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
 
                 result.ShouldHaveValidationErrorFor(request => request.DegreeStatusId)
                     .WithErrorMessage("Can not be no degree (ineligible for service).");
+            }
+
+            [Fact]
+            public void Validate_WhenPreferredEducationPhaseIdIsNull_AndHasADegree_HasError()
+            {
+                _request.PreferredEducationPhaseId = null;
+                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.FirstYear;
+
+                var result = _validator.TestValidate(_request);
+
+                result = _validator.TestValidate(_request);
+
+                result.ShouldNotHaveValidationErrorFor(request => request.PreferredEducationPhaseId);
+
+                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree;
+
+                result = _validator.TestValidate(_request);
+
+                result.ShouldHaveValidationErrorFor(request => request.PreferredEducationPhaseId)
+                    .WithErrorMessage("Must be set for candidates interested in teacher training that have a degree.");
             }
 
             [Fact]
@@ -299,11 +312,12 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
             }
 
             [Fact]
-            public void Validate_WhenNotHaveOrPlanningToRetakeGcseMathsAndEnglish_AndDegreeTypeIsNotDegreeEquivalent_AndPreferredEducationPhaseIdIsSecondary_HasError()
+            public void Validate_WhenNotHaveOrPlanningToRetakeGcseMathsAndEnglish_AndDegreeTypeIsHasDegreeNotStudying_AndPreferredEducationPhaseIdIsSecondary_HasError()
             {
                 _request.HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
                 _request.PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
                 _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
+                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree;
                 _request.PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary;
 
                 var result = _validator.TestValidate(_request);
@@ -331,16 +345,25 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
                 result = _validator.TestValidate(_request);
 
                 result.ShouldNotHaveValidationErrorFor(request => request);
+
+                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.FinalYear;
+                _request.HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
+                _request.PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
+
+                result = _validator.TestValidate(_request);
+
+                result.ShouldNotHaveValidationErrorFor(request => request);
             }
 
             [Fact]
-            public void Validate_WhenNotHaveOrPlanningToRetakeGcseMathsAndEnglishAndScience_AndDegreeTypeIsNotDegreeEquivalent_AndPreferredEducationPhaseIdIsPrimary_HasError()
+            public void Validate_WhenNotHaveOrPlanningToRetakeGcseMathsAndEnglishAndScience_AndDegreeTypeIsHasDegreeNotStudying_AndPreferredEducationPhaseIdIsPrimary_HasError()
             {
                 _request.HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
                 _request.PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
                 _request.HasGcseScienceId = (int)Candidate.GcseStatus.NotAnswered;
                 _request.PlanningToRetakeGcseScienceId = (int)Candidate.GcseStatus.NotAnswered;
                 _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
+                _request.DegreeStatusId = (int)CandidateQualification.DegreeType.Degree;
                 _request.PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Primary;
 
                 var result = _validator.TestValidate(_request);
@@ -367,6 +390,14 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
                 _request.HasGcseScienceId = (int)Candidate.GcseStatus.NotAnswered;
                 _request.PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking;
                 _request.PlanningToRetakeGcseScienceId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking;
+
+                result = _validator.TestValidate(_request);
+
+                result.ShouldNotHaveValidationErrorFor(request => request);
+
+                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.FinalYear;
+                _request.HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
+                _request.PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
 
                 result = _validator.TestValidate(_request);
 
@@ -399,16 +430,24 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
             }
 
             [Fact]
-            public void Validate_WhenUkDegreeGradeIsNull_AndDegreeTypeIsNotDegreeEquivalent_HasError()
+            public void Validate_WhenUkDegreeGradeIsNull_AndDegreeTypeIsNotHasADegeree_HasError()
             {
                 _request.UkDegreeGradeId = null;
                 _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
+                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree;
 
                 var result = _validator.TestValidate(_request);
 
                 result.ShouldHaveValidationErrorFor(request => request.UkDegreeGradeId)
-                    .WithErrorMessage("Must be set when candidate has a degree or is studying for a degree (predicted grade).");
+                    .WithErrorMessage("Must be set when candidate has a degree.");
 
+                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.FirstYear;
+
+                result = _validator.TestValidate(_request);
+
+                result.ShouldNotHaveValidationErrorFor(request => request.UkDegreeGradeId);
+
+                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree;
                 _request.UkDegreeGradeId = 0;
 
                 result = _validator.TestValidate(_request);

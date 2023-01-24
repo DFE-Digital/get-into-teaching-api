@@ -105,9 +105,7 @@
       },
       {
         "Key": "dfe_ittyear",
-        "Value": {
-          "Value": 22303
-        }
+        "Value": null
       },
       {
         "Key": "dfe_newregistrant",
@@ -119,9 +117,7 @@
       },
       {
         "Key": "dfe_preferrededucationphase01",
-        "Value": {
-          "Value": 222750000
-        }
+        "Value": null
       },
       {
         "Key": "dfe_preferredphonenumbertype",
@@ -131,13 +127,7 @@
       },
       {
         "Key": "dfe_preferredteachingsubject01",
-        "Value": {
-          "Id": "b02655a1-2afa-e811-a981-000d3a276620",
-          "LogicalName": "dfe_teachingsubjectlist",
-          "Name": null,
-          "KeyAttributes": [],
-          "RowVersion": null
-        }
+        "Value": null
       },
       {
         "Key": "dfe_typeofcandidate",
@@ -164,19 +154,19 @@
       {
         "Key": "dfe_websitehasgcsescience",
         "Value": {
-          "Value": 222750000
+          "Value": 222750001
         }
       },
       {
         "Key": "dfe_websiteplanningretakeenglishgcse",
         "Value": {
-          "Value": 222750000
+          "Value": 222750001
         }
       },
       {
         "Key": "dfe_websiteplanningretakemathsgcse",
         "Value": {
-          "Value": 222750000
+          "Value": 222750001
         }
       },
       {
@@ -327,9 +317,7 @@
       },
       {
         "Key": "dfe_ukdegreegrade",
-        "Value": {
-          "Value": 222750001
-        }
+        "Value": null
       }
     ],
     "EntityState": 1,
