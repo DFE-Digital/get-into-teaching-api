@@ -7,7 +7,7 @@
   "acceptedPolicyId": "8da7ae80-82f2-ea11-a815-000d3a44afcc",
   "typeId": 222750000,
   "ukDegreeGradeId": 222750001,
-  "degreeStatusId": 222750003,
+  "degreeStatusId": 222750001,
   "degreeTypeId": 222750000,
   "initialTeacherTrainingYearId": 22303,
   "preferredEducationPhaseId": 222750000,
@@ -24,6 +24,9 @@
   "teacherId": null,
   "degreeSubject": "Physics",
   "addressTelephone": "123456789",
+  "addressLine1": null,
+  "addressLine2": null,
+  "addressCity": null,
   "addressPostcode": null,
   "phoneCallScheduledAt": null
 }
