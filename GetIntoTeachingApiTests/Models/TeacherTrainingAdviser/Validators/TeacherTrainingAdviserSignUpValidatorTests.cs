@@ -89,36 +89,26 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
         }
 
         [Fact]
-        public void Validate_WhenCountryIdIsUk_AndAddressIsNull_HasError()
+        public void Validate_WhenCountryIdIsUk_AndAddressPostcodeIsNull_HasError()
         {
             _request.CountryId = LookupItem.UnitedKingdomCountryId;
-            _request.AddressLine1 = null;
-            _request.AddressCity = null;
             _request.AddressPostcode = null;
 
             var result = _validator.TestValidate(_request);
 
-            result.ShouldHaveValidationErrorFor(request => request.AddressLine1).WithErrorMessage("Must be set when the candidate is in the UK.");
-            result.ShouldHaveValidationErrorFor(request => request.AddressCity).WithErrorMessage("Must be set when the candidate is in the UK.");
             result.ShouldHaveValidationErrorFor(request => request.AddressPostcode).WithErrorMessage("Must be set when the candidate is in the UK.");
 
             _request.CountryId = Guid.NewGuid();
 
             result = _validator.TestValidate(_request);
 
-            result.ShouldNotHaveValidationErrorFor(request => request.AddressLine1);
-            result.ShouldNotHaveValidationErrorFor(request => request.AddressCity);
             result.ShouldNotHaveValidationErrorFor(request => request.AddressPostcode);
 
             _request.CountryId = LookupItem.UnitedKingdomCountryId;
-            _request.AddressLine1 = "Address Line 1";
-            _request.AddressCity = "Address City";
             _request.AddressPostcode = "TE5 1NG";
 
             result = _validator.TestValidate(_request);
 
-            result.ShouldNotHaveValidationErrorFor(request => request.AddressLine1);
-            result.ShouldNotHaveValidationErrorFor(request => request.AddressCity);
             result.ShouldNotHaveValidationErrorFor(request => request.AddressPostcode);
         }
 
@@ -148,9 +138,6 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
                 _request.DateOfBirth = DateTime.UtcNow;
                 _request.TeacherId = "abc123";
                 _request.AddressTelephone = "1234567";
-                _request.AddressLine1 = "Line 1";
-                _request.AddressLine2 = "Line 2";
-                _request.AddressCity = "City";
                 _request.AddressPostcode = "KY11 9YU";
 
                 var result = _validator.TestValidate(_request);
