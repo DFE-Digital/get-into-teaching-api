@@ -30,3 +30,8 @@
   description: "A service that allows candidates to book school experience"
   api_key_prefix: SE
   role: SchoolsExperience
+-
+  name: Apply
+  description: "A service that allows candidates to apply for teacher training"
+  api_key_prefix: APPLY
+  role: Apply
