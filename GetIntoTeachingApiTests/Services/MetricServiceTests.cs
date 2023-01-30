@@ -20,9 +20,9 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void FindApplySyncDuration_ReturnsMetric()
+        public void ApplySyncDuration_ReturnsMetric()
         {
-            _metrics.FindApplySyncDuration.Name.Should().Be("api_find_apply_sync_duration_seconds");
+            _metrics.ApplySyncDuration.Name.Should().Be("api_apply_sync_duration_seconds");
         }
 
         [Fact]

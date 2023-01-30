@@ -139,7 +139,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         
-        private static bool VerifyMatchCandidatesWithFindApplyIdAndEmailExpression(QueryExpression query, string findApplyId, string email)
+        private static bool VerifyMatchCandidatesWithApplyIdAndEmailExpression(QueryExpression query, string applyId, string email)
         {
             var hasEntityName = query.EntityName == "contact";
             var andConditions = query.Criteria.Conditions;
@@ -151,18 +151,18 @@ namespace GetIntoTeachingApiTests.Services
 
             var hasEmailAddressCondition = orConditions.Any(c => c.AttributeName == "emailaddress1" &&
                 c.Operator == ConditionOperator.Equal && c.Values[0].ToString() == email);
-            var hasFindApplyCondition = findApplyId == null ||
-                    orConditions.Any(c => c.AttributeName == "dfe_applyid" && c.Operator == ConditionOperator.Equal && c.Values[0].ToString() == findApplyId);
+            var hasApplyCondition = applyId == null ||
+                    orConditions.Any(c => c.AttributeName == "dfe_applyid" && c.Operator == ConditionOperator.Equal && c.Values[0].ToString() == applyId);
 
-            var hasFindApplyIdSortOrder = findApplyId == null ||
+            var hasApplyIdSortOrder = applyId == null ||
                     orders.Any(o => o.AttributeName == "dfe_applyid" && o.OrderType == OrderType.Descending);
             var hasDuplicateScoreOrder = orders.Any(o => o.AttributeName == "dfe_duplicatescorecalculated" && o.OrderType == OrderType.Descending);
             var hasModifiedOnOrder = orders.Any(o => o.AttributeName == "modifiedon" && o.OrderType == OrderType.Descending);
 
             var hasTopCount = query.TopCount == 1;
 
-            return hasEntityName && hasStateCodeCondition && hasEmailAddressCondition && hasFindApplyCondition
-                && hasDuplicateScoreOrder && hasFindApplyIdSortOrder && hasModifiedOnOrder && hasTopCount;
+            return hasEntityName && hasStateCodeCondition && hasEmailAddressCondition && hasApplyCondition
+                && hasDuplicateScoreOrder && hasApplyIdSortOrder && hasModifiedOnOrder && hasTopCount;
         }
 
         private static bool VerifyMatchCandidatesWithExistingCandidateRequestExpression(QueryExpression query, string email)
@@ -254,33 +254,33 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void GetFindApplyModels_WithExistingFindApplyIds_ReturnsMatchingModels()
+        public void GetApplyModels_WithExistingApplyIds_ReturnsMatchingModels()
         {
-            var findApplyId = "12345";
+            var applyId = "12345";
             _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
-                q => VerifyGetApplicationFormQueryExpression(q, findApplyId)))).Returns(MockApplicationForms());
+                q => VerifyGetApplicationFormQueryExpression(q, applyId)))).Returns(MockApplicationForms());
 
-            var results = _crm.GetFindApplyModels<ApplicationForm>(new string[] { findApplyId });
+            var results = _crm.GetApplyModels<ApplicationForm>(new string[] { applyId });
 
             results.Should().NotBeEmpty();
         }
 
         [Fact]
-        public void GetFindApplyModels_WithUnknownFindApplyIds_ReturnsEmpty()
+        public void GetApplyModels_WithUnknownApplyIds_ReturnsEmpty()
         {
-            var findApplyId = "12345";
+            var applyId = "12345";
             _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
-                q => VerifyGetApplicationFormQueryExpression(q, findApplyId)))).Returns(Array.Empty<Entity>());
+                q => VerifyGetApplicationFormQueryExpression(q, applyId)))).Returns(Array.Empty<Entity>());
 
-            var results = _crm.GetFindApplyModels<ApplicationForm>(new string[] { findApplyId });
+            var results = _crm.GetApplyModels<ApplicationForm>(new string[] { applyId });
 
             results.Should().BeEmpty();
         }
 
         [Fact]
-        public void GetFindApplyModels_WithEmptyFindApplyIds_ReturnsEmpty()
+        public void GetApplyModels_WithEmptyApplyIds_ReturnsEmpty()
         {
-            var results = _crm.GetFindApplyModels<ApplicationForm>(Array.Empty<string>());
+            var results = _crm.GetApplyModels<ApplicationForm>(Array.Empty<string>());
 
             results.Should().BeEmpty();
         }
@@ -505,15 +505,15 @@ namespace GetIntoTeachingApiTests.Services
             return hasEntityName && hasPendingCondition && hasLimit;
         }
 
-        private static bool VerifyGetApplicationFormQueryExpression(QueryExpression query, string findApplyId)
+        private static bool VerifyGetApplicationFormQueryExpression(QueryExpression query, string applyId)
         {
             var hasEntityName = query.EntityName == "dfe_applyapplicationform";
             var conditions = query.Criteria.Conditions;
 
-            var hasFindApplyIdCondition = conditions.Where(c => c.AttributeName == "dfe_applicationformid" &&
-                c.Operator == ConditionOperator.In && (c.Values.First() as string) == findApplyId).Any();
+            var hasApplyIdCondition = conditions.Where(c => c.AttributeName == "dfe_applicationformid" &&
+                c.Operator == ConditionOperator.In && (c.Values.First() as string) == applyId).Any();
 
-            return hasEntityName && hasFindApplyIdCondition;
+            return hasEntityName && hasApplyIdCondition;
         }
 
         private static bool VerifyGetCandidatesQueryExpression(QueryExpression query, IEnumerable<Guid> ids)
@@ -533,15 +533,15 @@ namespace GetIntoTeachingApiTests.Services
         [InlineData(null, "jane@doe.com", "Jane")]
         [InlineData("applybob", "bob@doe.com", null)]
         [InlineData(null, "inactive@doe.com", null)]
-        public void MatchCandidate_WithFindApplyIdAndEmail_MatchesOnFindApplyIdThenNewsetActiveByDuplicateScoreWithEmail(string findApplyId, string email, string expectedFirstName)
+        public void MatchCandidate_WithApplyIdAndEmail_MatchesOnApplyIdThenNewsetActiveByDuplicateScoreWithEmail(string applyId, string email, string expectedFirstName)
         {
             var candidates = MockCandidates().Where(c => c.GetAttributeValue<int>("statecode") == (int)Candidate.Status.Active
                 && c.GetAttributeValue<string>("emailaddress1").Equals(email));
 
             _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
-                q => VerifyMatchCandidatesWithFindApplyIdAndEmailExpression(q, findApplyId, email)))).Returns(candidates);
+                q => VerifyMatchCandidatesWithApplyIdAndEmailExpression(q, applyId, email)))).Returns(candidates);
 
-            var result = _crm.MatchCandidate(email, findApplyId);
+            var result = _crm.MatchCandidate(email, applyId);
 
             if (result == null)
             {

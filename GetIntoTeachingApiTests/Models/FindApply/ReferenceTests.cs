@@ -1,11 +1,11 @@
 ﻿using System;
 using FluentAssertions;
 using GetIntoTeachingApi.Models.Crm;
-using GetIntoTeachingApi.Models.FindApply;
+using GetIntoTeachingApi.Models.Apply;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace GetIntoTeachingApiTests.Models.FindApply
+namespace GetIntoTeachingApiTests.Models.Apply
 {
     public class ReferenceTests
     {
@@ -43,7 +43,7 @@ namespace GetIntoTeachingApiTests.Models.FindApply
 
             var crmReference = reference.ToCrmModel();
 
-            crmReference.FindApplyId.Should().Be(reference.Id.ToString());
+            crmReference.ApplyId.Should().Be(reference.Id.ToString());
             crmReference.FeedbackStatusId.Should().Be((int)ApplicationReference.FeedbackStatus.Cancelled);
             crmReference.Type.Should().Be(reference.RefereeType);
             crmReference.RequestedAt.Should().Be(reference.RequestedAt);

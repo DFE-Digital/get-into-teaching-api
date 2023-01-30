@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Flurl;
 using Flurl.Http;
 using GetIntoTeachingApi.Models;
-using GetIntoTeachingApi.Models.FindApply;
+using GetIntoTeachingApi.Models.Apply;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
@@ -14,17 +14,17 @@ using MoreLinq;
 
 namespace GetIntoTeachingApi.Jobs
 {
-    public class FindApplyBackfillJob : BaseJob
+    public class ApplyBackfillJob : BaseJob
     {
         private readonly IBackgroundJobClient _jobClient;
-        private readonly ILogger<FindApplyBackfillJob> _logger;
+        private readonly ILogger<ApplyBackfillJob> _logger;
         private readonly IAppSettings _appSettings;
 
-        public FindApplyBackfillJob(
+        public ApplyBackfillJob(
             IEnv env,
             IRedisService redis,
             IBackgroundJobClient jobClient,
-            ILogger<FindApplyBackfillJob> logger,
+            ILogger<ApplyBackfillJob> logger,
             IAppSettings appSettings)
             : base(env, redis)
         {
@@ -36,27 +36,27 @@ namespace GetIntoTeachingApi.Jobs
         [DisableConcurrentExecution(timeoutInSeconds: 60 * 60)]
         public async Task RunAsync()
         {
-            _appSettings.IsFindApplyBackfillInProgress = true;
-            _logger.LogInformation("FindApplyBackfillJob - Started");
+            _appSettings.IsApplyBackfillInProgress = true;
+            _logger.LogInformation("ApplyBackfillJob - Started");
             await QueueCandidateSyncJobs();
-            _logger.LogInformation("FindApplyBackfillJob - Succeeded");
-            _appSettings.IsFindApplyBackfillInProgress = false;
+            _logger.LogInformation("ApplyBackfillJob - Succeeded");
+            _appSettings.IsApplyBackfillInProgress = false;
         }
 
         private async Task QueueCandidateSyncJobs()
         {
-            var request = Env.FindApplyApiUrl
+            var request = Env.ApplyCandidateApiUrl
                 .AppendPathSegment("candidates")
                 .SetQueryParam("updated_since", DateTime.MinValue)
-                .WithOAuthBearerToken(Env.FindApplyApiKey);
+                .WithOAuthBearerToken(Env.ApplyCandidateApiKey);
 
             var paginator = new PaginatorClient<Response<IEnumerable<Candidate>>>(request);
 
             while (paginator.HasNext)
             {
                 var response = await paginator.NextAsync();
-                _logger.LogInformation("FindApplyBackfillJob - Syncing {Count} Candidates", response.Data.Count());
-                response.Data.ForEach(c => _jobClient.Schedule<FindApplyCandidateSyncJob>(x => x.Run(c), TimeSpan.FromMinutes(30)));
+                _logger.LogInformation("ApplyBackfillJob - Syncing {Count} Candidates", response.Data.Count());
+                response.Data.ForEach(c => _jobClient.Schedule<ApplyCandidateSyncJob>(x => x.Run(c), TimeSpan.FromMinutes(30)));
             }
         }
     }

@@ -1,7 +1,7 @@
 ﻿[
   {
     "Id": "823aa675-e6bf-41c5-ad5f-4e1e8de5d4ca",
-    "FindApplyId": "2",
+    "ApplyId": "2",
     "ApplicationChoiceId": "765aa675-e6bf-41c5-ad5f-4e1e8de5d4ab",
     "ScheduledAt": "2022-01-26T00:00:00+00:00",
     "CreatedAt": "2022-01-04T13:14:17+00:00",

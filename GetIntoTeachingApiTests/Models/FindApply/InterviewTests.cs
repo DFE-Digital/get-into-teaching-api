@@ -1,10 +1,10 @@
 ﻿using System;
 using FluentAssertions;
-using GetIntoTeachingApi.Models.FindApply;
+using GetIntoTeachingApi.Models.Apply;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace GetIntoTeachingApiTests.Models.FindApply
+namespace GetIntoTeachingApiTests.Models.Apply
 {
     public class InterviewTests
     {
@@ -39,7 +39,7 @@ namespace GetIntoTeachingApiTests.Models.FindApply
 
             var crmInterview = interview.ToCrmModel();
 
-            crmInterview.FindApplyId.Should().Be(interview.Id.ToString());
+            crmInterview.ApplyId.Should().Be(interview.Id.ToString());
             crmInterview.ScheduledAt.Should().Be(interview.DateAndTime);
             crmInterview.CreatedAt.Should().Be(interview.CreatedAt);
             crmInterview.UpdatedAt.Should().Be(interview.UpdatedAt);

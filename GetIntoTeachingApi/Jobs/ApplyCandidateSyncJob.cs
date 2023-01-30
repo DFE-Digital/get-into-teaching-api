@@ -1,5 +1,5 @@
 ﻿using System;
-using GetIntoTeachingApi.Models.FindApply;
+using GetIntoTeachingApi.Models.Apply;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
@@ -7,17 +7,17 @@ using Microsoft.Extensions.Logging;
 
 namespace GetIntoTeachingApi.Jobs
 {
-    public class FindApplyCandidateSyncJob : BaseJob
+    public class ApplyCandidateSyncJob : BaseJob
     {
-        private readonly ILogger<FindApplyCandidateSyncJob> _logger;
+        private readonly ILogger<ApplyCandidateSyncJob> _logger;
         private readonly IBackgroundJobClient _jobClient;
         private readonly ICrmService _crm;
         private readonly Models.IAppSettings _appSettings;
 
-        public FindApplyCandidateSyncJob(
+        public ApplyCandidateSyncJob(
             IEnv env,
             IRedisService redis,
-            ILogger<FindApplyCandidateSyncJob> logger,
+            ILogger<ApplyCandidateSyncJob> logger,
             ICrmService crm,
             IBackgroundJobClient jobClient,
             Models.IAppSettings appSettings)
@@ -29,33 +29,33 @@ namespace GetIntoTeachingApi.Jobs
             _appSettings = appSettings;
         }
 
-        public void Run(Candidate findApplyCandidate)
+        public void Run(Candidate applyCandidate)
         {
             if (_appSettings.IsCrmIntegrationPaused)
             {
-                throw new InvalidOperationException("FindApplyCandidateSyncJob - Aborting (CRM integration paused).");
+                throw new InvalidOperationException("ApplyCandidateSyncJob - Aborting (CRM integration paused).");
             }
 
-            _logger.LogInformation("FindApplyCandidateSyncJob - Started - {Id}", findApplyCandidate.Id);
-            SyncCandidate(findApplyCandidate);
-            _logger.LogInformation("FindApplyCandidateSyncJob - Succeeded - {Id}", findApplyCandidate.Id);
+            _logger.LogInformation("ApplyCandidateSyncJob - Started - {Id}", applyCandidate.Id);
+            SyncCandidate(applyCandidate);
+            _logger.LogInformation("ApplyCandidateSyncJob - Succeeded - {Id}", applyCandidate.Id);
         }
 
-        public void SyncCandidate(Candidate findApplyCandidate)
+        public void SyncCandidate(Candidate applyCandidate)
         {
-            var candidate = findApplyCandidate.ToCrmModel();
+            var candidate = applyCandidate.ToCrmModel();
             Models.Crm.Candidate match;
 
             if (Env.IsFeatureOn("APPLY_ID_MATCHBACK"))
             {
-                match = _crm.MatchCandidate(candidate.Email, findApplyCandidate.Id);
+                match = _crm.MatchCandidate(candidate.Email, applyCandidate.Id);
             }
             else
             {
                 match = _crm.MatchCandidate(candidate.Email);
             }
 
-            _logger.LogInformation("FindApplyCandidateSyncJob - {Status} - {Id}", match == null ? "Miss" : "Hit", findApplyCandidate.Id);
+            _logger.LogInformation("ApplyCandidateSyncJob - {Status} - {Id}", match == null ? "Miss" : "Hit", applyCandidate.Id);
 
             if (match != null)
             {

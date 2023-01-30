@@ -9,7 +9,7 @@ namespace GetIntoTeachingApi.Models.Crm.Validators
     {
         public ApplicationChoiceValidator(IStore store)
         {
-            RuleFor(choice => choice.FindApplyId).NotEmpty();
+            RuleFor(choice => choice.ApplyId).NotEmpty();
             RuleFor(choice => choice.CourseName).NotEmpty();
             RuleFor(choice => choice.CourseId).NotEmpty().Must(courseId => Guid.TryParse(courseId, out _));
             RuleFor(choice => choice.Provider).NotEmpty();

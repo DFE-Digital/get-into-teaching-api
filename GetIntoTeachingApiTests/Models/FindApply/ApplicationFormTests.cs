@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using GetIntoTeachingApi.Models.FindApply;
+using GetIntoTeachingApi.Models.Apply;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace GetIntoTeachingApiTests.Models.FindApply
+namespace GetIntoTeachingApiTests.Models.Apply
 {
     public class ApplicationFormTests
     {
@@ -77,14 +77,14 @@ namespace GetIntoTeachingApiTests.Models.FindApply
 
             var crmForm = form.ToCrmModel();
 
-            crmForm.FindApplyId.Should().Be(form.Id.ToString());
+            crmForm.ApplyId.Should().Be(form.Id.ToString());
             crmForm.CreatedAt.Should().Be(form.CreatedAt);
             crmForm.UpdatedAt.Should().Be(form.UpdatedAt);
             crmForm.StatusId.Should().Be((int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.NeverSignedIn);
             crmForm.PhaseId.Should().Be((int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply1);
             crmForm.RecruitmentCycleYearId.Should().Be((int)GetIntoTeachingApi.Models.Crm.ApplicationForm.RecruitmentCycleYear.Year2022);
-            crmForm.Choices.First().FindApplyId.Should().Be(choice.Id.ToString());
-            crmForm.References.First().FindApplyId.Should().Be(reference.Id.ToString());
+            crmForm.Choices.First().ApplyId.Should().Be(choice.Id.ToString());
+            crmForm.References.First().ApplyId.Should().Be(reference.Id.ToString());
             crmForm.ApplicationChoicesCompleted.Should().Be(form.ApplicationChoices.Completed);
             crmForm.ReferencesCompleted.Should().Be(form.References.Completed);
             crmForm.QualificationsCompleted.Should().Be(form.Qualifications.Completed);

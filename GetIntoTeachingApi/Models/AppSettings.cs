@@ -9,8 +9,8 @@ namespace GetIntoTeachingApi.Models
     {
         private const string DateFormat = "O";
         private const string CrmOfflineUntilKey = "app_settings.crm_offline_until";
-        private const string FindApplyLastSyncAtKey = "app_settings.find_apply_last_sync_at";
-        private const string FindApplyBackfillInProgressKey = "app_settings.find_apply_backfill_in_progress";
+        private const string ApplyLastSyncAtKey = "app_settings.apply_last_sync_at";
+        private const string ApplyBackfillInProgressKey = "app_settings.apply_backfill_in_progress";
         private readonly IRedisService _redis;
 
         public DateTime? CrmIntegrationPausedUntil
@@ -44,16 +44,16 @@ namespace GetIntoTeachingApi.Models
             }
         }
 
-        public DateTime? FindApplyLastSyncAt
+        public DateTime? ApplyLastSyncAt
         {
             get
             {
-                if (!_redis.Database.KeyExists(FindApplyLastSyncAtKey))
+                if (!_redis.Database.KeyExists(ApplyLastSyncAtKey))
                 {
                     return null;
                 }
 
-                var dateStr = _redis.Database.StringGet(FindApplyLastSyncAtKey);
+                var dateStr = _redis.Database.StringGet(ApplyLastSyncAtKey);
 
                 if (dateStr.IsNullOrEmpty)
                 {
@@ -71,27 +71,27 @@ namespace GetIntoTeachingApi.Models
             {
                 var dateStr = value?.ToString(DateFormat);
 
-                _redis.Database.StringSet(FindApplyLastSyncAtKey, dateStr);
+                _redis.Database.StringSet(ApplyLastSyncAtKey, dateStr);
             }
         }
 
-        public bool IsFindApplyBackfillInProgress
+        public bool IsApplyBackfillInProgress
         {
             get
             {
-                if (!_redis.Database.KeyExists(FindApplyBackfillInProgressKey))
+                if (!_redis.Database.KeyExists(ApplyBackfillInProgressKey))
                 {
                     return false;
                 }
 
-                var backfillString = _redis.Database.StringGet(FindApplyBackfillInProgressKey).ToString();
+                var backfillString = _redis.Database.StringGet(ApplyBackfillInProgressKey).ToString();
 
                 return backfillString.ToBool();
             }
 
             set
             {
-                _redis.Database.StringSet(FindApplyBackfillInProgressKey, value.ToString());
+                _redis.Database.StringSet(ApplyBackfillInProgressKey, value.ToString());
             }
         }
 
