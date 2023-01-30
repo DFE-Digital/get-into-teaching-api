@@ -8,12 +8,12 @@ namespace GetIntoTeachingApi.Models.Crm
 {
     [SwaggerIgnore]
     [Entity("dfe_applyinterview")]
-    public class ApplicationInterview : BaseModel, IHasFindApplyId
+    public class ApplicationInterview : BaseModel, IHasApplyId
     {
         [EntityField("dfe_applyapplicationchoice", typeof(EntityReference), "dfe_applyapplicationchoice")]
         public Guid ApplicationChoiceId { get; set; }
         [EntityField("dfe_interviewid")]
-        public string FindApplyId { get; set; }
+        public string ApplyId { get; set; }
         [EntityField("dfe_createdon")]
         public DateTime CreatedAt { get; set; }
         [EntityField("dfe_modifiedon")]
@@ -27,7 +27,7 @@ namespace GetIntoTeachingApi.Models.Crm
         {
             get
             {
-                return $"Application Interview {FindApplyId}";
+                return $"Application Interview {ApplyId}";
             }
             set
             {

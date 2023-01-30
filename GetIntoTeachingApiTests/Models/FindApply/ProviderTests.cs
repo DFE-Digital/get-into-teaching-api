@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
-using GetIntoTeachingApi.Models.FindApply;
+using GetIntoTeachingApi.Models.Apply;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace GetIntoTeachingApiTests.Models.FindApply
+namespace GetIntoTeachingApiTests.Models.Apply
 {
     public class ProviderTests
     {

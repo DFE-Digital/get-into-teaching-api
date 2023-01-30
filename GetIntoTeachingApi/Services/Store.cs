@@ -260,7 +260,7 @@ namespace GetIntoTeachingApi.Services
             await SyncPickListItem("phonecall", "dfe_channelcreation");
             await SyncPickListItem("dfe_servicesubscription", "dfe_servicesubscriptiontype");
 
-            if (_env.IsFeatureOn("APPLY_API"))
+            if (_env.IsFeatureOn("APPLY_CANDIDATE_API"))
             {
                 await SyncPickListItem("contact", "dfe_candidateapplystatus");
                 await SyncPickListItem("contact", "dfe_candidateapplyphase");
@@ -269,7 +269,7 @@ namespace GetIntoTeachingApi.Services
                 await SyncPickListItem("dfe_applyapplicationform", "dfe_recruitmentyear");
             }
 
-            if (_env.IsFeatureOn("APPLY_API_V1_2"))
+            if (_env.IsFeatureOn("APPLY_CANDIDATE_API_V1_2"))
             {
                 await SyncPickListItem("dfe_applyapplicationchoice", "dfe_applicationchoicestatus");
                 await SyncPickListItem("dfe_applyreference", "dfe_referencefeedbackstatus");

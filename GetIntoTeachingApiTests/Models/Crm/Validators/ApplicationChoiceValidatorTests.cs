@@ -34,7 +34,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
             var choice = new ApplicationChoice()
             {
                 ApplicationFormId = Guid.NewGuid(),
-                FindApplyId = "67890",
+                ApplyId = "67890",
                 CourseName = "Course Name",
                 Provider = "Course Provider",
                 CourseId = Guid.NewGuid().ToString(),
@@ -49,10 +49,10 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         [Fact]
         public void Validate_RequiredAttributeIsEmpty_HasError()
         {
-            var choice = new ApplicationChoice() { FindApplyId = "", CourseId = "", CourseName = "", Provider = "" };
+            var choice = new ApplicationChoice() { ApplyId = "", CourseId = "", CourseName = "", Provider = "" };
             var result = _validator.TestValidate(choice);
 
-            result.ShouldHaveValidationErrorFor("FindApplyId");
+            result.ShouldHaveValidationErrorFor("ApplyId");
             result.ShouldHaveValidationErrorFor("CourseId");
             result.ShouldHaveValidationErrorFor("CourseName");
             result.ShouldHaveValidationErrorFor("Provider");

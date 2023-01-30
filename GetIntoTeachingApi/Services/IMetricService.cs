@@ -5,7 +5,7 @@ namespace GetIntoTeachingApi.Services
     public interface IMetricService
     {
         Histogram CrmSyncDuration { get; }
-        Histogram FindApplySyncDuration { get; }
+        Histogram ApplySyncDuration { get; }
         Histogram LocationSyncDuration { get; }
         Histogram MagicLinkTokenGenerationDuration { get; }
         Histogram HangfireJobQueueDuration { get; }

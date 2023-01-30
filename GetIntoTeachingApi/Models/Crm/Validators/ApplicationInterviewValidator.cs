@@ -6,7 +6,7 @@ namespace GetIntoTeachingApi.Models.Crm.Validators
     {
         public ApplicationInterviewValidator()
         {
-            RuleFor(choice => choice.FindApplyId).NotEmpty();
+            RuleFor(choice => choice.ApplyId).NotEmpty();
         }
     }
 }

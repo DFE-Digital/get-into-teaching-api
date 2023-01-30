@@ -22,7 +22,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
             var interview = new ApplicationInterview()
             {
                 ApplicationChoiceId = Guid.NewGuid(),
-                FindApplyId = "67890",
+                ApplyId = "67890",
             };
 
             var result = _validator.TestValidate(interview);
@@ -33,10 +33,10 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         [Fact]
         public void Validate_RequiredAttributeIsEmpty_HasError()
         {
-            var interview = new ApplicationInterview() { FindApplyId = "" };
+            var interview = new ApplicationInterview() { ApplyId = "" };
             var result = _validator.TestValidate(interview);
 
-            result.ShouldHaveValidationErrorFor("FindApplyId");
+            result.ShouldHaveValidationErrorFor("ApplyId");
         }
     }
 }

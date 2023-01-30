@@ -3,7 +3,7 @@ using System.Globalization;
 using GetIntoTeachingApi.Utils;
 using Newtonsoft.Json;
 
-namespace GetIntoTeachingApi.Models.FindApply
+namespace GetIntoTeachingApi.Models.Apply
 {
 	public class Reference
 	{
@@ -24,7 +24,7 @@ namespace GetIntoTeachingApi.Models.FindApply
 		{
 			return new Crm.ApplicationReference()
 			{
-				FindApplyId = Id.ToString(CultureInfo.CurrentCulture),
+				ApplyId = Id.ToString(CultureInfo.CurrentCulture),
 				RequestedAt = RequestedAt,
 				CreatedAt = CreatedAt,
 				UpdatedAt = UpdatedAt,

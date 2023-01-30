@@ -14,7 +14,7 @@ namespace GetIntoTeachingApi.Services
         IEnumerable<PickListItem> GetPickListItems(string entityName, string attributeName);
         IEnumerable<PrivacyPolicy> GetPrivacyPolicies();
         Candidate MatchCandidate(ExistingCandidateRequest request);
-        Candidate MatchCandidate(string email, string findApplyId = null);
+        Candidate MatchCandidate(string email, string applyId = null);
         IEnumerable<Candidate> MatchCandidates(string magicLinkToken);
         Candidate GetCandidate(Guid id);
         IEnumerable<Candidate> GetCandidates(IEnumerable<Guid> ids);
@@ -23,7 +23,7 @@ namespace GetIntoTeachingApi.Services
         TeachingEvent GetTeachingEvent(string readableId);
         IEnumerable<CallbackBookingQuota> GetCallbackBookingQuotas();
         CallbackBookingQuota GetCallbackBookingQuota(DateTime scheduledAt);
-        public IEnumerable<T> GetFindApplyModels<T>(IEnumerable<string> findApplyIds) where T : BaseModel, IHasFindApplyId;
+        public IEnumerable<T> GetApplyModels<T>(IEnumerable<string> applyIds) where T : BaseModel, IHasApplyId;
         bool CandidateAlreadyHasLocalEventSubscriptionType(Guid candidateId);
         bool CandidateYetToAcceptPrivacyPolicy(Guid candidateId, Guid privacyPolicyId);
         bool CandidateYetToRegisterForTeachingEvent(Guid candidateId, Guid teachingEventId);

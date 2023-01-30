@@ -199,43 +199,43 @@ namespace GetIntoTeachingApiTests.Utils
         }
 
         [Fact]
-        public void FindApplyApiUrl_WhenV1_2FeatureIsOff_ReturnsCorrectly()
+        public void ApplyCandidateApiUrl_WhenV1_2FeatureIsOff_ReturnsCorrectly()
         {
-            var previousUrl = Environment.GetEnvironmentVariable("FIND_APPLY_API_URL");
-            var previousFeature = Environment.GetEnvironmentVariable("APPLY_API_V1_2_FEATURE");
+            var previousUrl = Environment.GetEnvironmentVariable("APPLY_CANDIDATE_API_URL");
+            var previousFeature = Environment.GetEnvironmentVariable("APPLY_CANDIDATE_API_V1_2_FEATURE");
 
-            Environment.SetEnvironmentVariable("FIND_APPLY_API_URL", "find-apply-api-url");
-            Environment.SetEnvironmentVariable("APPLY_API_V1_2_FEATURE", "false");
+            Environment.SetEnvironmentVariable("APPLY_CANDIDATE_API_URL", "apply-api-url");
+            Environment.SetEnvironmentVariable("APPLY_CANDIDATE_API_V1_2_FEATURE", "false");
 
-            _env.FindApplyApiUrl.Should().Be("find-apply-api-url");
+            _env.ApplyCandidateApiUrl.Should().Be("apply-api-url");
 
-            Environment.SetEnvironmentVariable("FIND_APPLY_API_URL", previousUrl);
-            Environment.SetEnvironmentVariable("APPLY_API_V1_2_FEATURE", previousFeature);
+            Environment.SetEnvironmentVariable("APPLY_CANDIDATE_API_URL", previousUrl);
+            Environment.SetEnvironmentVariable("APPLY_CANDIDATE_API_V1_2_FEATURE", previousFeature);
         }
 
         [Fact]
-        public void FindApplyApiUrl_WhenV1_2FeatreIsOn_ReturnsCorrectly()
+        public void ApplyCandidateApiUrl_WhenV1_2FeatreIsOn_ReturnsCorrectly()
         {
-            var previousUrl = Environment.GetEnvironmentVariable("FIND_APPLY_API_URL");
-            var previousFeature = Environment.GetEnvironmentVariable("APPLY_API_V1_2_FEATURE");
-            Environment.SetEnvironmentVariable("FIND_APPLY_API_URL", "find-apply-api-url");
-            Environment.SetEnvironmentVariable("APPLY_API_V1_2_FEATURE", "true");
+            var previousUrl = Environment.GetEnvironmentVariable("APPLY_CANDIDATE_API_URL");
+            var previousFeature = Environment.GetEnvironmentVariable("APPLY_CANDIDATE_API_V1_2_FEATURE");
+            Environment.SetEnvironmentVariable("APPLY_CANDIDATE_API_URL", "apply-api-url");
+            Environment.SetEnvironmentVariable("APPLY_CANDIDATE_API_V1_2_FEATURE", "true");
 
-            _env.FindApplyApiUrl.Should().Be("find-apply-api-url/v1.2");
+            _env.ApplyCandidateApiUrl.Should().Be("apply-api-url/v1.2");
 
-            Environment.SetEnvironmentVariable("FIND_APPLY_API_URL", previousUrl);
-            Environment.SetEnvironmentVariable("APPLY_API_V1_2_FEATURE", previousFeature);
+            Environment.SetEnvironmentVariable("APPLY_CANDIDATE_API_URL", previousUrl);
+            Environment.SetEnvironmentVariable("APPLY_CANDIDATE_API_V1_2_FEATURE", previousFeature);
         }
 
         [Fact]
-        public void FindApplyApiKey_ReturnsCorrectly()
+        public void ApplyCandidateApiKey_ReturnsCorrectly()
         {
-            var previous = Environment.GetEnvironmentVariable("FIND_APPLY_API_KEY");
-            Environment.SetEnvironmentVariable("FIND_APPLY_API_KEY", "find-apply-api-key");
+            var previous = Environment.GetEnvironmentVariable("APPLY_CANDIDATE_API_KEY");
+            Environment.SetEnvironmentVariable("APPLY_CANDIDATE_API_KEY", "apply-api-key");
 
-            _env.FindApplyApiKey.Should().Be("find-apply-api-key");
+            _env.ApplyCandidateApiKey.Should().Be("apply-api-key");
 
-            Environment.SetEnvironmentVariable("FIND_APPLY_API_KEY", previous);
+            Environment.SetEnvironmentVariable("APPLY_CANDIDATE_API_KEY", previous);
         }
 
         [Fact]

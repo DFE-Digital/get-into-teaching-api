@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Newtonsoft.Json;
 
-namespace GetIntoTeachingApi.Models.FindApply
+namespace GetIntoTeachingApi.Models.Apply
 {
     public class Candidate
     {
@@ -15,9 +15,9 @@ namespace GetIntoTeachingApi.Models.FindApply
             var candidate = new Crm.Candidate()
             {
                 Email = Attributes.Email,
-                FindApplyId = Id,
-                FindApplyCreatedAt = Attributes.CreatedAt,
-                FindApplyUpdatedAt = Attributes.UpdatedAt,
+                ApplyId = Id,
+                ApplyCreatedAt = Attributes.CreatedAt,
+                ApplyUpdatedAt = Attributes.UpdatedAt,
                 ApplicationForms = Attributes.ApplicationForms?.Select(f => f.ToCrmModel()).ToList(),
             };
 
@@ -25,12 +25,12 @@ namespace GetIntoTeachingApi.Models.FindApply
 
             if (latestForm == null)
             {
-                candidate.FindApplyStatusId = (int)Crm.ApplicationForm.Status.NeverSignedIn;
+                candidate.ApplyStatusId = (int)Crm.ApplicationForm.Status.NeverSignedIn;
             }
             else
             {
-                candidate.FindApplyStatusId = latestForm.StatusId;
-                candidate.FindApplyPhaseId = latestForm.PhaseId;
+                candidate.ApplyStatusId = latestForm.StatusId;
+                candidate.ApplyPhaseId = latestForm.PhaseId;
             }
 
             return candidate;

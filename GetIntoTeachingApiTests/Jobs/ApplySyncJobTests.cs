@@ -4,7 +4,7 @@ using System.Linq;
 using FluentAssertions;
 using Flurl.Http.Testing;
 using GetIntoTeachingApi.Jobs;
-using GetIntoTeachingApi.Models.FindApply;
+using GetIntoTeachingApi.Models.Apply;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
@@ -18,29 +18,29 @@ using Xunit;
 
 namespace GetIntoTeachingApiTests.Jobs
 {
-    public class FindApplySyncJobTests
+    public class ApplySyncJobTests
     {
         private readonly Mock<GetIntoTeachingApi.Models.IAppSettings> _mockAppSettings;
         private readonly MetricService _metrics;
-        private readonly Mock<ILogger<FindApplySyncJob>> _mockLogger;
+        private readonly Mock<ILogger<ApplySyncJob>> _mockLogger;
         private readonly Mock<IDateTimeProvider> _mockDateTime;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly Mock<IEnv> _mockEnv;
-        private readonly FindApplySyncJob _job;
+        private readonly ApplySyncJob _job;
 
-        public FindApplySyncJobTests()
+        public ApplySyncJobTests()
         {
-            _mockLogger = new Mock<ILogger<FindApplySyncJob>>();
+            _mockLogger = new Mock<ILogger<ApplySyncJob>>();
             _metrics = new MetricService();
             _mockAppSettings = new Mock<GetIntoTeachingApi.Models.IAppSettings>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
             _mockDateTime = new Mock<IDateTimeProvider>();
             _mockEnv = new Mock<IEnv>();
 
-            _mockEnv.Setup(m => m.FindApplyApiUrl).Returns("https://test.apply.api/candidates-api");
-            _mockEnv.Setup(m => m.FindApplyApiKey).Returns("1234567");
+            _mockEnv.Setup(m => m.ApplyCandidateApiUrl).Returns("https://test.apply.api/candidates-api");
+            _mockEnv.Setup(m => m.ApplyCandidateApiKey).Returns("1234567");
 
-            _job = new FindApplySyncJob(
+            _job = new ApplySyncJob(
                 _mockEnv.Object,
                 new Mock<IRedisService>().Object,
                 _mockLogger.Object,
@@ -53,7 +53,7 @@ namespace GetIntoTeachingApiTests.Jobs
         [Fact]
         public void DisableConcurrentExecutionAttribute()
         {
-            var type = typeof(FindApplySyncJob);
+            var type = typeof(ApplySyncJob);
 
             type.GetMethod("RunAsync").Should().BeDecoratedWith<DisableConcurrentExecutionAttribute>();
         }
@@ -61,9 +61,9 @@ namespace GetIntoTeachingApiTests.Jobs
         [Fact]
         public async void RunAsync_WithUpdatedCandidates_QueuesCandidateJobs()
         {
-            var metricCount = _metrics.FindApplySyncDuration.Count;
+            var metricCount = _metrics.ApplySyncDuration.Count;
             var lastSyncAt = new DateTime(2020, 1, 1);
-            _mockAppSettings.Setup(m => m.FindApplyLastSyncAt).Returns(lastSyncAt);
+            _mockAppSettings.Setup(m => m.ApplyLastSyncAt).Returns(lastSyncAt);
             var candidates = new Candidate[]
             {
                 new Candidate() { Id = "11111", Attributes = new CandidateAttributes() { Email = "email1@address.com" } },
@@ -78,20 +78,20 @@ namespace GetIntoTeachingApiTests.Jobs
             }
 
             _mockJobClient.Verify(x => x.Create(
-               It.Is<Job>(job => job.Type == typeof(FindApplyCandidateSyncJob) && job.Method.Name == "Run"),
+               It.Is<Job>(job => job.Type == typeof(ApplyCandidateSyncJob) && job.Method.Name == "Run"),
                It.IsAny<EnqueuedState>()), Times.Exactly(candidates.Length));
 
-            _mockLogger.VerifyInformationWasCalled("FindApplySyncJob - Started");
-            _mockLogger.VerifyInformationWasCalled("FindApplySyncJob - Syncing 2 Candidates");
-            _mockLogger.VerifyInformationWasCalled("FindApplySyncJob - Succeeded");
-            _metrics.FindApplySyncDuration.Count.Should().Be(metricCount + 1);
+            _mockLogger.VerifyInformationWasCalled("ApplySyncJob - Started");
+            _mockLogger.VerifyInformationWasCalled("ApplySyncJob - Syncing 2 Candidates");
+            _mockLogger.VerifyInformationWasCalled("ApplySyncJob - Succeeded");
+            _metrics.ApplySyncDuration.Count.Should().Be(metricCount + 1);
         }
 
         [Fact]
         public async void RunAsync_WhenMultiplePagesAvailable_QueuesCandidateJobsForEachPage()
         {
             var lastSyncAt = new DateTime(2020, 1, 1);
-            _mockAppSettings.Setup(m => m.FindApplyLastSyncAt).Returns(lastSyncAt);
+            _mockAppSettings.Setup(m => m.ApplyLastSyncAt).Returns(lastSyncAt);
             var candidates1 = new Candidate[]
             {
                 new Candidate() { Id = "11111", Attributes = new CandidateAttributes() { Email = "email1@address.com" } },
@@ -109,16 +109,16 @@ namespace GetIntoTeachingApiTests.Jobs
             }
 
             _mockJobClient.Verify(x => x.Create(
-               It.Is<Job>(job => job.Type == typeof(FindApplyCandidateSyncJob) && job.Method.Name == "Run"),
+               It.Is<Job>(job => job.Type == typeof(ApplyCandidateSyncJob) && job.Method.Name == "Run"),
                It.IsAny<EnqueuedState>()), Times.Exactly(candidates1.Length + candidates2.Length));
         }
 
         [Fact]
         public async void RunAsync_WithNoUpdatedCandidates_DoesNotQueueJobs()
         {
-            var metricCount = _metrics.FindApplySyncDuration.Count;
+            var metricCount = _metrics.ApplySyncDuration.Count;
             var lastSyncAt = new DateTime(2020, 1, 1);
-            _mockAppSettings.Setup(m => m.FindApplyLastSyncAt).Returns(lastSyncAt);
+            _mockAppSettings.Setup(m => m.ApplyLastSyncAt).Returns(lastSyncAt);
 
             using (var httpTest = new HttpTest())
             {
@@ -128,13 +128,13 @@ namespace GetIntoTeachingApiTests.Jobs
             }
 
             _mockJobClient.Verify(x => x.Create(
-               It.Is<Job>(job => job.Type == typeof(FindApplyCandidateSyncJob)),
+               It.Is<Job>(job => job.Type == typeof(ApplyCandidateSyncJob)),
                It.IsAny<EnqueuedState>()), Times.Never);
 
-            _mockLogger.VerifyInformationWasCalled("FindApplySyncJob - Started");
-            _mockLogger.VerifyInformationWasCalled("FindApplySyncJob - Syncing 0 Candidates");
-            _mockLogger.VerifyInformationWasCalled("FindApplySyncJob - Succeeded");
-            _metrics.FindApplySyncDuration.Count.Should().Be(metricCount + 1);
+            _mockLogger.VerifyInformationWasCalled("ApplySyncJob - Started");
+            _mockLogger.VerifyInformationWasCalled("ApplySyncJob - Syncing 0 Candidates");
+            _mockLogger.VerifyInformationWasCalled("ApplySyncJob - Succeeded");
+            _metrics.ApplySyncDuration.Count.Should().Be(metricCount + 1);
         }
 
         [Fact]
@@ -142,7 +142,7 @@ namespace GetIntoTeachingApiTests.Jobs
         {
             var now = DateTime.UtcNow;
             _mockDateTime.Setup(m => m.UtcNow).Returns(now);
-            _mockAppSettings.Setup(m => m.FindApplyLastSyncAt).Returns<DateTime>(null);
+            _mockAppSettings.Setup(m => m.ApplyLastSyncAt).Returns<DateTime>(null);
 
             using (var httpTest = new HttpTest())
             {
@@ -151,16 +151,16 @@ namespace GetIntoTeachingApiTests.Jobs
                 await _job.RunAsync();
             }
 
-            _mockLogger.VerifyInformationWasCalled("FindApplySyncJob - Started");
-            _mockLogger.VerifyInformationWasCalled("FindApplySyncJob - Syncing 0 Candidates");
-            _mockLogger.VerifyInformationWasCalled("FindApplySyncJob - Succeeded");
+            _mockLogger.VerifyInformationWasCalled("ApplySyncJob - Started");
+            _mockLogger.VerifyInformationWasCalled("ApplySyncJob - Syncing 0 Candidates");
+            _mockLogger.VerifyInformationWasCalled("ApplySyncJob - Succeeded");
         }
 
         [Fact]
         public async void RunAsync_OnSuccess_UpdatesLastSyncAt()
         {
             var lastSyncAt = DateTime.UtcNow.AddMonths(-1);
-            _mockAppSettings.Setup(m => m.FindApplyLastSyncAt).Returns(lastSyncAt);
+            _mockAppSettings.Setup(m => m.ApplyLastSyncAt).Returns(lastSyncAt);
             var now = DateTime.UtcNow;
             _mockDateTime.Setup(m => m.UtcNow).Returns(now);
 
@@ -171,7 +171,7 @@ namespace GetIntoTeachingApiTests.Jobs
                 await _job.RunAsync();
             }
 
-            _mockAppSettings.VerifySet(m => m.FindApplyLastSyncAt = now, Times.Once);
+            _mockAppSettings.VerifySet(m => m.ApplyLastSyncAt = now, Times.Once);
         }
 
         private void MockResponse(HttpTest httpTest, DateTime updatedSince, Response<IEnumerable<Candidate>> response, int page = 1, int totalPages = 1)
@@ -180,11 +180,11 @@ namespace GetIntoTeachingApiTests.Jobs
             var headers = new Dictionary<string, int>() {  { "Total-Pages", totalPages }, { "Current-Page", page } };
 
             httpTest
-                    .ForCallsTo($"{_mockEnv.Object.FindApplyApiUrl}/candidates")
+                    .ForCallsTo($"{_mockEnv.Object.ApplyCandidateApiUrl}/candidates")
                     .WithVerb("GET")
                     .WithQueryParam("page", page)
                     .WithQueryParam("updated_since", updatedSince)
-                    .WithHeader("Authorization", $"Bearer {_mockEnv.Object.FindApplyApiKey}")
+                    .WithHeader("Authorization", $"Bearer {_mockEnv.Object.ApplyCandidateApiKey}")
                     .RespondWith(json, 200, headers);
         }
     }

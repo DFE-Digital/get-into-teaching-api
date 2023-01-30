@@ -128,9 +128,9 @@ namespace GetIntoTeachingApi.AppStart
                 HangfireJobs.AddLocationSyncJob();
                 HangfireJobs.AddMagicLinkTokenGenerationJob();
 
-                if (_env.IsFeatureOn("APPLY_API"))
+                if (_env.IsFeatureOn("APPLY_CANDIDATE_API"))
                 {
-                    HangfireJobs.AddFindApplySyncJob();
+                    HangfireJobs.AddApplySyncJob();
                 }
             }
 

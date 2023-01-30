@@ -77,60 +77,60 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void FindApplyLastSyncAt_SetAndGetWithDate_WorkCorrectly()
+        public void ApplyLastSyncAt_SetAndGetWithDate_WorkCorrectly()
         {
             var date = DateTime.UtcNow;
             var dateStr = date.ToString("O");
-            _database.Setup(m => m.KeyExists("app_settings.find_apply_last_sync_at", CommandFlags.None)).Returns(true);
-            _database.Setup(m => m.StringGet("app_settings.find_apply_last_sync_at", CommandFlags.None)).Returns(dateStr);
+            _database.Setup(m => m.KeyExists("app_settings.apply_last_sync_at", CommandFlags.None)).Returns(true);
+            _database.Setup(m => m.StringGet("app_settings.apply_last_sync_at", CommandFlags.None)).Returns(dateStr);
 
-            _settings.FindApplyLastSyncAt = date;
-            _settings.FindApplyLastSyncAt.Should().Be(date);
+            _settings.ApplyLastSyncAt = date;
+            _settings.ApplyLastSyncAt.Should().Be(date);
 
-            _database.Verify(m => m.StringSet("app_settings.find_apply_last_sync_at", dateStr, null, false, When.Always, CommandFlags.None));
+            _database.Verify(m => m.StringSet("app_settings.apply_last_sync_at", dateStr, null, false, When.Always, CommandFlags.None));
         }
 
         [Fact]
-        public void FindApplyLastSyncAt_SetAndGetWithNull_WorkCorrectly()
+        public void ApplyLastSyncAt_SetAndGetWithNull_WorkCorrectly()
         {
-            _database.Setup(m => m.KeyExists("app_settings.find_apply_last_sync_at", CommandFlags.None)).Returns(true);
-            _database.Setup(m => m.StringGet("app_settings.find_apply_last_sync_at", CommandFlags.None)).Returns(null as string);
+            _database.Setup(m => m.KeyExists("app_settings.apply_last_sync_at", CommandFlags.None)).Returns(true);
+            _database.Setup(m => m.StringGet("app_settings.apply_last_sync_at", CommandFlags.None)).Returns(null as string);
 
-            _settings.FindApplyLastSyncAt = null;
-            _settings.FindApplyLastSyncAt.Should().BeNull();
+            _settings.ApplyLastSyncAt = null;
+            _settings.ApplyLastSyncAt.Should().BeNull();
 
-            _database.Verify(m => m.StringSet("app_settings.find_apply_last_sync_at", null as string, null, false, When.Always, CommandFlags.None));
+            _database.Verify(m => m.StringSet("app_settings.apply_last_sync_at", null as string, null, false, When.Always, CommandFlags.None));
         }
 
         [Fact]
-        public void FindApplyLastSyncAt_WhenNotYetSet_ReturnsFalse()
+        public void ApplyLastSyncAt_WhenNotYetSet_ReturnsFalse()
         {
-            _database.Setup(m => m.KeyExists("app_settings.find_apply_last_sync_at", CommandFlags.None)).Returns(false);
+            _database.Setup(m => m.KeyExists("app_settings.apply_last_sync_at", CommandFlags.None)).Returns(false);
 
-            _settings.FindApplyLastSyncAt.Should().BeNull();
+            _settings.ApplyLastSyncAt.Should().BeNull();
         }
 
         [Fact]
-        public void FindApplyBackfillInProgress_SetAndGet_WorkCorrectly()
+        public void ApplyBackfillInProgress_SetAndGet_WorkCorrectly()
         {
-            _database.Setup(m => m.KeyExists("app_settings.find_apply_backfill_in_progress", CommandFlags.None)).Returns(true);
-            _database.Setup(m => m.StringGet("app_settings.find_apply_backfill_in_progress", CommandFlags.None)).Returns(null as string);
-            _settings.IsFindApplyBackfillInProgress.Should().BeFalse();
+            _database.Setup(m => m.KeyExists("app_settings.apply_backfill_in_progress", CommandFlags.None)).Returns(true);
+            _database.Setup(m => m.StringGet("app_settings.apply_backfill_in_progress", CommandFlags.None)).Returns(null as string);
+            _settings.IsApplyBackfillInProgress.Should().BeFalse();
 
-            _database.Setup(m => m.StringGet("app_settings.find_apply_backfill_in_progress", CommandFlags.None)).Returns("True");
-            _settings.IsFindApplyBackfillInProgress.Should().BeTrue();
+            _database.Setup(m => m.StringGet("app_settings.apply_backfill_in_progress", CommandFlags.None)).Returns("True");
+            _settings.IsApplyBackfillInProgress.Should().BeTrue();
 
-            _database.Setup(m => m.StringGet("app_settings.find_apply_backfill_in_progress", CommandFlags.None)).Returns("False");
-            _settings.IsFindApplyBackfillInProgress.Should().BeFalse();
+            _database.Setup(m => m.StringGet("app_settings.apply_backfill_in_progress", CommandFlags.None)).Returns("False");
+            _settings.IsApplyBackfillInProgress.Should().BeFalse();
 
-            _settings.IsFindApplyBackfillInProgress = false;
-            _database.Verify(m => m.StringSet("app_settings.find_apply_backfill_in_progress", "False", null, false, When.Always, CommandFlags.None));
+            _settings.IsApplyBackfillInProgress = false;
+            _database.Verify(m => m.StringSet("app_settings.apply_backfill_in_progress", "False", null, false, When.Always, CommandFlags.None));
 
-            _settings.IsFindApplyBackfillInProgress = true;
-            _database.Verify(m => m.StringSet("app_settings.find_apply_backfill_in_progress", "True", null, false, When.Always, CommandFlags.None));
+            _settings.IsApplyBackfillInProgress = true;
+            _database.Verify(m => m.StringSet("app_settings.apply_backfill_in_progress", "True", null, false, When.Always, CommandFlags.None));
 
-            _database.Setup(m => m.KeyExists("app_settings.find_apply_backfill_in_progress", CommandFlags.None)).Returns(false);
-            _settings.IsFindApplyBackfillInProgress.Should().BeFalse();
+            _database.Setup(m => m.KeyExists("app_settings.apply_backfill_in_progress", CommandFlags.None)).Returns(false);
+            _settings.IsApplyBackfillInProgress.Should().BeFalse();
         }
     }
 }

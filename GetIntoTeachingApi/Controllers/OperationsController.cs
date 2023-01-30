@@ -127,23 +127,23 @@ namespace GetIntoTeachingApi.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        [Route("backfill_find_apply_candidates")]
+        [Route("backfill_apply_candidates")]
         [SwaggerOperation(
-            Summary = "Triggers a backfill job to sync the CRM with the Find/Apply candidates.",
-            Description = "The backfill will query all candidate information from the Find/Apply API and " +
+            Summary = "Triggers a backfill job to sync the CRM with the Apply candidates.",
+            Description = "The backfill will query all candidate information from the Apply API and " +
             "queue jobs to sync the data with the CRM.",
-            OperationId = "BackfillFindApplyCandidates",
+            OperationId = "BackfillApplyCandidates",
             Tags = new[] { "Operations" })]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult BackfillFindApplyCandidates()
+        public IActionResult BackfillApplyCandidates()
         {
-            if (_appSettings.IsFindApplyBackfillInProgress)
+            if (_appSettings.IsApplyBackfillInProgress)
             {
                 return BadRequest("Backfill already in progress");
             }
 
-            _jobClient.Enqueue<FindApplyBackfillJob>((x) => x.RunAsync());
+            _jobClient.Enqueue<ApplyBackfillJob>((x) => x.RunAsync());
 
             return NoContent();
         }
