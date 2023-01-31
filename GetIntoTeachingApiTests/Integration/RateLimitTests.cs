@@ -23,6 +23,7 @@ namespace GetIntoTeachingApiTests.Integration
             Environment.SetEnvironmentVariable($"ADMIN_API_KEY", "admin-secret");
             Environment.SetEnvironmentVariable($"TTA_API_KEY", "tta-secret");
             Environment.SetEnvironmentVariable($"SE_API_KEY", "se-secret");
+            Environment.SetEnvironmentVariable($"APPLY_API_KEY", "apply-secret");
             Environment.SetEnvironmentVariable($"ADMIN_API_KEY", "admin-secret");
 
             var factory = new GitWebApplicationFactory<Startup>();
@@ -38,6 +39,8 @@ namespace GetIntoTeachingApiTests.Integration
         [InlineData("/api/get_into_teaching/callbacks", "GIT", 250)]
         [InlineData("/api/candidates/access_tokens", "TTA", 500)]
         [InlineData("/api/teacher_training_adviser/candidates", "TTA", 250)]
+        [InlineData("/api/candidates/matchback", "APPLY", 500)]
+        [InlineData("/api/teacher_training_adviser/candidates", "APPLY", 250)]
         [InlineData("/api/candidates/access_tokens", "SE", 500)]
         [InlineData("/api/schools_experience/candidates", "SE", 250)]
         [InlineData("/api/candidates/access_tokens", "ADMIN", 60)]
