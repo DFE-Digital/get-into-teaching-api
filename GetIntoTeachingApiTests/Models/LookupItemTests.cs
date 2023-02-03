@@ -23,11 +23,12 @@ namespace GetIntoTeachingApiTests.Models
         {
             var entity = new Entity
             {
-                Id = Guid.NewGuid()
+                Id = Guid.NewGuid(),
+                LogicalName = "entityName",
             };
             entity["dfe_name"] = "name";
 
-            var lookupItem = new LookupItem(entity, "entityName");
+            var lookupItem = new LookupItem(entity);
 
             lookupItem.Id.Should().Be(entity.Id);
             lookupItem.Value.Should().Be(entity.GetAttributeValue<string>("dfe_name"));

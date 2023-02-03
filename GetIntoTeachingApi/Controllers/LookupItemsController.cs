@@ -31,10 +31,10 @@ namespace GetIntoTeachingApi.Controllers
             Summary = "Retrieves the list of countries.",
             OperationId = "GetCountries",
             Tags = new[] { "Lookup Items" })]
-        [ProducesResponseType(typeof(IEnumerable<LookupItem>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Country>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCountries()
         {
-            var countries = await _store.GetLookupItems("dfe_country").ToListAsync();
+            var countries = await _store.GetCountries().ToListAsync();
 
             return Ok(countries.OrderBy(c => c.Value));
         }
@@ -45,10 +45,10 @@ namespace GetIntoTeachingApi.Controllers
             Summary = "Retrieves the list of teaching subjects.",
             OperationId = "GetTeachingSubjects",
             Tags = new[] { "Lookup Items" })]
-        [ProducesResponseType(typeof(IEnumerable<LookupItem>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<TeachingSubject>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetTeachingSubjects()
         {
-            var subjects = await _store.GetLookupItems("dfe_teachingsubjectlist").ToListAsync();
+            var subjects = await _store.GetTeachingSubjects().ToListAsync();
 
             return Ok(subjects.OrderBy(c => c.Value));
         }

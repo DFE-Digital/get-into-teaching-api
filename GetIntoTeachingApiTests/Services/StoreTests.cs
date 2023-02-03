@@ -242,14 +242,14 @@ namespace GetIntoTeachingApiTests.Services
         [Fact]
         public async void SyncAsync_InsertsNewLookupItems()
         {
-            var mockCountries = MockCountries().ToList();
-            _mockCrm.Setup(m => m.GetLookupItems("dfe_country")).Returns(mockCountries);
+            var mockCountries = MockCountries();
+            _mockCrm.Setup(m => m.GetCountries()).Returns(mockCountries);
 
             await _store.SyncAsync();
 
-            var ids = DbContext.LookupItems.Select(e => e.Id);
+            var ids = DbContext.Countries.Select(e => e.Id);
             ids.Should().BeEquivalentTo(mockCountries.Select(e => e.Id));
-            DbContext.LookupItems.Count().Should().Be(3);
+            DbContext.Countries.Count().Should().Be(3);
         }
 
         [Fact]
@@ -257,24 +257,24 @@ namespace GetIntoTeachingApiTests.Services
         {
             var updatedCountries = (await SeedMockCountriesAsync()).ToList();
             updatedCountries.ForEach(c => c.Value += "Updated");
-            _mockCrm.Setup(m => m.GetLookupItems("dfe_country")).Returns(updatedCountries);
+            _mockCrm.Setup(m => m.GetCountries()).Returns((IEnumerable<Country>)updatedCountries);
 
             await _store.SyncAsync();
 
-            var countries = DbContext.LookupItems.ToList();
+            var countries = DbContext.Countries.ToList();
             countries.Select(c => c.Value).ToList().ForEach(value => value.Should().Contain("Updated"));
-            DbContext.LookupItems.Count().Should().Be(3);
+            DbContext.Countries.Count().Should().Be(3);
         }
 
         [Fact]
         public async void SyncAsync_DeletesOrphanedLookupItems()
         {
             var countries = (await SeedMockCountriesAsync()).ToList();
-            _mockCrm.Setup(m => m.GetLookupItems("dfe_country")).Returns(countries.GetRange(0, 2));
+            _mockCrm.Setup(m => m.GetCountries()).Returns((IEnumerable<Country>)countries.GetRange(0, 2));
 
             await _store.SyncAsync();
 
-            var remainingCountries = DbContext.LookupItems.Where(l => l.EntityName == "dfe_country").ToArray();
+            var remainingCountries = DbContext.Countries.ToArray();
             remainingCountries.Should().BeEquivalentTo(countries.GetRange(0, 2));
         }
 
@@ -363,7 +363,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             await SeedMockCountriesAsync();
 
-            var result = _store.GetLookupItems("dfe_country");
+            var result = _store.GetCountries();
 
             result.Select(t => t.Value).Should().BeEquivalentTo(new string[] { "Country 1", "Country 2", "Country 3" });
         }
@@ -928,23 +928,23 @@ namespace GetIntoTeachingApiTests.Services
             return privacyPolicies;
         }
 
-        private static IEnumerable<LookupItem> MockCountries()
+        private static IEnumerable<Country> MockCountries()
         {
-            var country1 = new LookupItem() { Id = new Guid("00000000-0000-0000-0000-000000000000"), Value = "Country 1", EntityName = "dfe_country" };
-            var country2 = new LookupItem() { Id = new Guid("00000000-0000-0000-0000-000000000001"), Value = "Country 2", EntityName = "dfe_country" };
-            var country3 = new LookupItem() { Id = new Guid("00000000-0000-0000-0000-000000000002"), Value = "Country 3", EntityName = "dfe_country" };
+            var country1 = new Country() { Id = new Guid("00000000-0000-0000-0000-000000000000"), Value = "Country 1" };
+            var country2 = new Country() { Id = new Guid("00000000-0000-0000-0000-000000000001"), Value = "Country 2" };
+            var country3 = new Country() { Id = new Guid("00000000-0000-0000-0000-000000000002"), Value = "Country 3" };
 
-            return new LookupItem[] { country2, country1, country3 };
+            return new Country[] { country2, country1, country3 };
         }
 
-        private async Task<IEnumerable<LookupItem>> SeedMockCountriesAsync()
+        private async Task<IEnumerable<Country>> SeedMockCountriesAsync()
         {
-            var lookupItems = MockCountries().ToList();
-            _mockCrm.Setup(m => m.GetLookupItems("dfe_country")).Returns(lookupItems);
+            var countries = MockCountries();
+            _mockCrm.Setup(m => m.GetCountries()).Returns(countries);
 
             await _store.SyncAsync();
 
-            return lookupItems;
+            return countries;
         }
 
         private static IEnumerable<PickListItem> MockInitialTeacherTrainingYears()

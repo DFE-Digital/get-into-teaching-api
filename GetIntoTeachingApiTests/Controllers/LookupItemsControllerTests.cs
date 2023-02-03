@@ -40,36 +40,46 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public async void GetCountries_ReturnsAllCountriesSortedByCountryName()
         {
-            var mockLookupItems = MockLookupItems();
-            _mockStore.Setup(mock => mock.GetLookupItems("dfe_country")).Returns(mockLookupItems.AsAsyncQueryable());
+            var mockCountries = MockCountries();
+            _mockStore.Setup(mock => mock.GetCountries()).Returns(mockCountries.AsAsyncQueryable());
 
             var response = await _controller.GetCountries();
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
-            var countries = (IEnumerable<LookupItem>)ok.Value;
+            var countries = (IEnumerable<Country>)ok.Value;
             countries.Select(c => c.Value).Should().BeEquivalentTo(new[] { "Item 1", "Item 2", "Item 3" });
         }
 
         [Fact]
         public async void GetTeachingSubjects_ReturnsAllSubjectsSortedBySubjectName()
         {
-            var mockLookupItems = MockLookupItems();
-            _mockStore.Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist")).Returns(mockLookupItems.AsAsyncQueryable());
+            var mockSubjects = MockTeachingSubjects();
+            _mockStore.Setup(mock => mock.GetTeachingSubjects()).Returns(mockSubjects.AsAsyncQueryable());
 
             var response = await _controller.GetTeachingSubjects();
 
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
-            var subjects = (IEnumerable<LookupItem>)ok.Value;
+            var subjects = (IEnumerable<TeachingSubject>)ok.Value;
             subjects.Select(c => c.Value).Should().BeEquivalentTo(new[] { "Item 1", "Item 2", "Item 3" });
         }
 
-        private static LookupItem[] MockLookupItems()
+        private static TeachingSubject[] MockTeachingSubjects()
         {
             return new[]
             {
-                new LookupItem {Id = Guid.NewGuid(), Value = "Item 2"},
-                new LookupItem {Id = Guid.NewGuid(), Value = "Item 3"},
-                new LookupItem {Id = Guid.NewGuid(), Value = "Item 1"},
+                new TeachingSubject {Id = Guid.NewGuid(), Value = "Item 2"},
+                new TeachingSubject {Id = Guid.NewGuid(), Value = "Item 3"},
+                new TeachingSubject {Id = Guid.NewGuid(), Value = "Item 1"},
+            };
+        }
+
+        private static Country[] MockCountries()
+        {
+            return new[]
+            {
+                new Country {Id = Guid.NewGuid(), Value = "Item 2"},
+                new Country {Id = Guid.NewGuid(), Value = "Item 3"},
+                new Country {Id = Guid.NewGuid(), Value = "Item 1"},
             };
         }
     }
