@@ -137,6 +137,7 @@ namespace GetIntoTeachingApi.AppStart
             if (!_env.IsTest)
             {
                 DatabaseUtility.Seed(serviceScope);
+                DatabaseUtility.SeedCountriesAndTeachingSubjects(serviceScope);
             }
 
             // Configure rate limiting.
