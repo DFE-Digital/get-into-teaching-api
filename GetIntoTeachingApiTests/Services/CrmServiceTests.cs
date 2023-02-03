@@ -97,18 +97,30 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void GetLookupItems_ReturnsMatchingOrderedByIdAscending()
+        public void GetCountries_ReturnsMatching()
         {
-            var queryableCountries = MockCountries();
+            var querableItems = MockLookupItems("dfe_country");
             _mockService.Setup(mock => mock.CreateQuery("dfe_country", _context))
-                .Returns(queryableCountries);
+                .Returns(querableItems);
 
-            var result = _crm.GetLookupItems("dfe_country").ToList();
+            var result = _crm.GetCountries().ToList();
 
             result.Select(country => country.Value).Should().BeEquivalentTo(
-                new object[] { "Country 1", "Country 2", "Country 3" },
-                options => options.WithStrictOrdering());
-            result.Select(country => country.EntityName).Should().OnlyContain(name => name == "dfe_country");
+                new object[] { "Item 2", "Item 1", "Item 3" });
+        }
+
+        [Fact]
+        public void GetTeachingSubjects_ReturnsMatching()
+        {
+            var querableItems = MockLookupItems("dfe_teachingsubjectlist");
+            _mockService.Setup(mock => mock.CreateQuery("dfe_teachingsubjectlist", _context))
+                .Returns(querableItems);
+
+
+            var result = _crm.GetTeachingSubjects().ToList();
+
+            result.Select(subject => subject.Value).Should().BeEquivalentTo(
+                new object[] { "Item 2", "Item 1", "Item 3" });
         }
 
         [Fact]
@@ -1059,18 +1071,18 @@ namespace GetIntoTeachingApiTests.Services
             return new[] { policy1, policy2, policy3, policy4, policy5, policy6 }.AsQueryable();
         }
 
-        private static IQueryable<Entity> MockCountries()
+        private static IQueryable<Entity> MockLookupItems(string entityName)
         {
-            var country1 = new Entity("dfe_country");
-            country1["dfe_name"] = "Country 1";
+            var item1 = new Entity(entityName);
+            item1["dfe_name"] = "Item 1";
 
-            var country2 = new Entity("dfe_country");
-            country2["dfe_name"] = "Country 2";
+            var item2 = new Entity(entityName);
+            item2["dfe_name"] = "Item 2";
 
-            var country3 = new Entity("dfe_country");
-            country3["dfe_name"] = "Country 3";
+            var item3 = new Entity(entityName);
+            item3["dfe_name"] = "Item 3";
 
-            return new[] { country1, country2, country3 }.AsQueryable();
+            return new[] { item1, item2, item3 }.AsQueryable();
         }
 
         private static IEnumerable<Microsoft.PowerPlatform.Dataverse.Client.Extensions.PickListItem> MockInitialTeacherTrainingYears()

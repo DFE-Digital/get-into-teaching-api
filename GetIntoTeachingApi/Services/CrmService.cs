@@ -59,9 +59,14 @@ namespace GetIntoTeachingApi.Services
 
         }
 
-        public IEnumerable<LookupItem> GetLookupItems(string entityName)
+        public IEnumerable<Country> GetCountries()
         {
-            return _service.CreateQuery(entityName, Context()).Select((entity) => new LookupItem(entity, entityName));
+            return _service.CreateQuery("dfe_country", Context()).ToList().Select((entity) => new Country(entity));
+        }
+
+        public IEnumerable<TeachingSubject> GetTeachingSubjects()
+        {
+            return _service.CreateQuery("dfe_teachingsubjectlist", Context()).ToList().Select((entity) => new TeachingSubject(entity));
         }
 
         public IEnumerable<PickListItem> GetPickListItems(string entityName, string attributeName)

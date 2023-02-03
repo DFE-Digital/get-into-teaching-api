@@ -145,8 +145,21 @@ namespace GetIntoTeachingApiTests.Contracts
             foreach (string file in files)
             {
                 var json = File.ReadAllText(file);
-                var items = JsonConvert.DeserializeObject<IEnumerable<LookupItem>>(json);
-                await DbContext.AddRangeAsync(items);
+
+                if (file.EndsWith("countries.json"))
+                {
+                    var items = JsonConvert.DeserializeObject<IEnumerable<Country>>(json);
+                    await DbContext.AddRangeAsync(items);
+                }
+                else if (file.EndsWith("teaching_subjects.json"))
+                {
+                    var items = JsonConvert.DeserializeObject<IEnumerable<TeachingSubject>>(json);
+                    await DbContext.AddRangeAsync(items);
+                }
+                else
+                {
+                    throw new ArgumentException($"Unrecognized lookup items: {file}");
+                }
             }
 
             await DbContext.SaveChangesAsync();

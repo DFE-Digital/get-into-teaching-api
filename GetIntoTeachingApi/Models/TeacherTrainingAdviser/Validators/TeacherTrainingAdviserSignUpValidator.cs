@@ -34,7 +34,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
                 .Unless(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.DegreeEquivalent)
                 .WithMessage("Can only be set for candidates with an equivalent degree.");
 
-            When(request => request.CountryId == LookupItem.UnitedKingdomCountryId, () =>
+            When(request => request.CountryId == Country.UnitedKingdomCountryId, () =>
             {
                 RuleFor(request => request.AddressPostcode).NotNull().WithMessage("Must be set when the candidate is in the UK.");
             });

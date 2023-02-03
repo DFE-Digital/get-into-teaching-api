@@ -10,7 +10,8 @@ namespace GetIntoTeachingApi.Services
     public interface ICrmService
     {
         string CheckStatus();
-        IEnumerable<LookupItem> GetLookupItems(string entityName);
+        IEnumerable<Country> GetCountries();
+        IEnumerable<TeachingSubject> GetTeachingSubjects();
         IEnumerable<PickListItem> GetPickListItems(string entityName, string attributeName);
         IEnumerable<PrivacyPolicy> GetPrivacyPolicies();
         Candidate MatchCandidate(ExistingCandidateRequest request);
