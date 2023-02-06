@@ -102,37 +102,37 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public void BackfillFindApplyCandidates_Authorize_IsPresent()
+        public void BackfillApplyCandidates_Authorize_IsPresent()
         {
-            typeof(OperationsController).GetMethod("BackfillFindApplyCandidates")
+            typeof(OperationsController).GetMethod("BackfillApplyCandidates")
                 .Should().BeDecoratedWith<AuthorizeAttribute>(a => a.Roles == "Admin");
         }
 
         [Fact]
-        public void BackfillFindApplyCandidates_WhenNotAlreadyRunning_EnqueuesJob()
+        public void BackfillApplyCandidates_WhenNotAlreadyRunning_EnqueuesJob()
         {
-            _mockAppSettings.Setup(m => m.IsFindApplyBackfillInProgress).Returns(false);
+            _mockAppSettings.Setup(m => m.IsApplyBackfillInProgress).Returns(false);
 
-            var response = _controller.BackfillFindApplyCandidates();
+            var response = _controller.BackfillApplyCandidates();
 
             response.Should().BeOfType<NoContentResult>();
 
             _mockJobClient.Verify(x => x.Create(
-                It.Is<Job>(job => job.Type == typeof(FindApplyBackfillJob) && job.Method.Name == "RunAsync"),
+                It.Is<Job>(job => job.Type == typeof(ApplyBackfillJob) && job.Method.Name == "RunAsync"),
                 It.IsAny<EnqueuedState>()), Times.Once);
         }
 
         [Fact]
-        public void BackfillFindApplyCandidates_WhenAlreadyRunning_ReturnsBadRequest()
+        public void BackfillApplyCandidates_WhenAlreadyRunning_ReturnsBadRequest()
         {
-            _mockAppSettings.Setup(m => m.IsFindApplyBackfillInProgress).Returns(true);
+            _mockAppSettings.Setup(m => m.IsApplyBackfillInProgress).Returns(true);
 
-            var response = _controller.BackfillFindApplyCandidates();
+            var response = _controller.BackfillApplyCandidates();
 
             response.Should().BeOfType<BadRequestObjectResult>();
 
             _mockJobClient.Verify(x => x.Create(
-                It.Is<Job>(job => job.Type == typeof(FindApplyBackfillJob) && job.Method.Name == "RunAsync"),
+                It.Is<Job>(job => job.Type == typeof(ApplyBackfillJob) && job.Method.Name == "RunAsync"),
                 It.IsAny<EnqueuedState>()),Times.Never);
         }
 

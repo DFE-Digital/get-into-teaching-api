@@ -5,7 +5,7 @@ using System.Linq;
 using GetIntoTeachingApi.Utils;
 using Newtonsoft.Json;
 
-namespace GetIntoTeachingApi.Models.FindApply
+namespace GetIntoTeachingApi.Models.Apply
 {
     public class ApplicationChoice
     {
@@ -28,7 +28,7 @@ namespace GetIntoTeachingApi.Models.FindApply
         {
             return new Crm.ApplicationChoice()
             {
-                FindApplyId = Id.ToString(CultureInfo.CurrentCulture),
+                ApplyId = Id.ToString(CultureInfo.CurrentCulture),
                 CreatedAt = CreatedAt,
                 UpdatedAt = UpdatedAt,
                 StatusId = (int)Enum.Parse(typeof(Crm.ApplicationChoice.Status), Status.ToPascalCase()),

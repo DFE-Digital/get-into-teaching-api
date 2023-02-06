@@ -40,7 +40,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
             var form = new ApplicationForm()
             {
                 CandidateId = Guid.NewGuid(),
-                FindApplyId = "67890",
+                ApplyId = "67890",
                 PhaseId = mockPickListItem.Id,
                 StatusId = mockPickListItem.Id,
                 RecruitmentCycleYearId = mockPickListItem.Id,
@@ -52,12 +52,12 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         }
 
         [Fact]
-        public void Validate_FindApplyIdIsEmpty_HasError()
+        public void Validate_ApplyIdIsEmpty_HasError()
         {
-            var form = new ApplicationForm() { FindApplyId = "" };
+            var form = new ApplicationForm() { ApplyId = "" };
             var result = _validator.TestValidate(form);
 
-            result.ShouldHaveValidationErrorFor("FindApplyId");
+            result.ShouldHaveValidationErrorFor("ApplyId");
         }
 
         [Fact]

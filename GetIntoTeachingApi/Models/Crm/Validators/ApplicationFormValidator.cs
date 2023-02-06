@@ -8,7 +8,7 @@ namespace GetIntoTeachingApi.Models.Crm.Validators
     {
         public ApplicationFormValidator(IStore store)
         {
-            RuleFor(form => form.FindApplyId).NotEmpty();
+            RuleFor(form => form.ApplyId).NotEmpty();
             RuleFor(form => form.PhaseId)
                 .NotNull()
                 .SetValidator(new PickListItemIdValidator<ApplicationForm>("dfe_applyapplicationform", "dfe_applyphase", store));

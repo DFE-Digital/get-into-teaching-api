@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using GetIntoTeachingApi.Models.FindApply;
+using GetIntoTeachingApi.Models.Apply;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace GetIntoTeachingApiTests.Models.FindApply
+namespace GetIntoTeachingApiTests.Models.Apply
 {
     public class ApplicationChoiceTests
     {
@@ -56,14 +56,14 @@ namespace GetIntoTeachingApiTests.Models.FindApply
 
             var crmChoice = choice.ToCrmModel();
 
-            crmChoice.FindApplyId.Should().Be(choice.Id.ToString());
+            crmChoice.ApplyId.Should().Be(choice.Id.ToString());
             crmChoice.CreatedAt.Should().Be(choice.CreatedAt);
             crmChoice.UpdatedAt.Should().Be(choice.UpdatedAt);
             crmChoice.StatusId.Should().Be((int)GetIntoTeachingApi.Models.Crm.ApplicationChoice.Status.Cancelled);
             crmChoice.Provider.Should().Be(choice.Provider.Name);
             crmChoice.CourseId.Should().Be(choice.Course.Id.ToString());
             crmChoice.CourseName.Should().Be(choice.Course.Name);
-            crmChoice.Interviews.First().FindApplyId.Should().Be(interview.Id.ToString());
+            crmChoice.Interviews.First().ApplyId.Should().Be(interview.Id.ToString());
         }
 
         [Fact]

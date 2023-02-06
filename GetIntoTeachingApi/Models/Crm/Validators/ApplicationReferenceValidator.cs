@@ -8,7 +8,7 @@ namespace GetIntoTeachingApi.Models.Crm.Validators
     {
         public ApplicationReferenceValidator(IStore store)
         {
-            RuleFor(choice => choice.FindApplyId).NotEmpty();
+            RuleFor(choice => choice.ApplyId).NotEmpty();
             RuleFor(choice => choice.Type).NotEmpty();
             RuleFor(choice => choice.FeedbackStatusId)
                 .NotNull()

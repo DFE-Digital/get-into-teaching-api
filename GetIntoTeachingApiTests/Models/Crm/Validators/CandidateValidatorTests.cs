@@ -120,8 +120,8 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 MailingListSubscriptionChannelId = mockPickListItem.Id,
                 EventsSubscriptionChannelId = mockPickListItem.Id,
                 TeacherTrainingAdviserSubscriptionChannelId = mockPickListItem.Id,
-                FindApplyPhaseId = mockPickListItem.Id,
-                FindApplyStatusId = mockPickListItem.Id,
+                ApplyPhaseId = mockPickListItem.Id,
+                ApplyStatusId = mockPickListItem.Id,
                 PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id }
             };
 
@@ -444,8 +444,8 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 PlanningToRetakeGcseScienceId = 123,
                 PlanningToRetakeGcseEnglishId = 123,
                 ConsiderationJourneyStageId = 123,
-                FindApplyPhaseId = 123,
-                FindApplyStatusId = 123,
+                ApplyPhaseId = 123,
+                ApplyStatusId = 123,
             };
             var result = _validator.TestValidate(candidate);
 
@@ -466,8 +466,8 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
             result.ShouldHaveValidationErrorFor(c => c.PlanningToRetakeGcseScienceId);
             result.ShouldHaveValidationErrorFor(c => c.PlanningToRetakeGcseEnglishId);
             result.ShouldHaveValidationErrorFor(c => c.ConsiderationJourneyStageId);
-            result.ShouldHaveValidationErrorFor(c => c.FindApplyPhaseId);
-            result.ShouldHaveValidationErrorFor(c => c.FindApplyStatusId);
+            result.ShouldHaveValidationErrorFor(c => c.ApplyPhaseId);
+            result.ShouldHaveValidationErrorFor(c => c.ApplyStatusId);
         }
 
         [Fact]

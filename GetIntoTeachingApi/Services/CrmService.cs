@@ -89,9 +89,9 @@ namespace GetIntoTeachingApi.Services
                 .FirstOrDefault();
         }
 
-        public IEnumerable<T> GetFindApplyModels<T>(IEnumerable<string> findApplyIds) where T : BaseModel, IHasFindApplyId
+        public IEnumerable<T> GetApplyModels<T>(IEnumerable<string> applyIds) where T : BaseModel, IHasApplyId
         {
-            if (!findApplyIds.Any())
+            if (!applyIds.Any())
             {
                 return Array.Empty<T>();
             }
@@ -99,9 +99,9 @@ namespace GetIntoTeachingApi.Services
             var query = new QueryExpression(BaseModel.LogicalName(typeof(T)));
             query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(T)));
 
-            var property = typeof(T).GetProperty("FindApplyId");
+            var property = typeof(T).GetProperty("ApplyId");
             var attribute = BaseModel.EntityFieldAttribute(property);
-            query.Criteria.AddCondition(new ConditionExpression(attribute.Name, ConditionOperator.In, findApplyIds.ToArray()));
+            query.Criteria.AddCondition(new ConditionExpression(attribute.Name, ConditionOperator.In, applyIds.ToArray()));
 
             var entities = _service.RetrieveMultiple(query);
 
@@ -149,9 +149,9 @@ namespace GetIntoTeachingApi.Services
             return new Candidate(entity, this, _serviceProvider);
         }
 
-        public Candidate MatchCandidate(string email, string findApplyId = null)
+        public Candidate MatchCandidate(string email, string applyId = null)
         {
-            var query = MatchBackQuery(email, findApplyId);
+            var query = MatchBackQuery(email, applyId);
             query.TopCount = 1;
 
             var entities = _service.RetrieveMultiple(query);
@@ -353,7 +353,7 @@ namespace GetIntoTeachingApi.Services
                 .Select((entity) => new TeachingEventBuilding(entity, this, _serviceProvider)).ToList();
         }
 
-        private static QueryExpression MatchBackQuery(string email, string findApplyId = null)
+        private static QueryExpression MatchBackQuery(string email, string applyId = null)
         {
             var query = new QueryExpression("contact");
             query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
@@ -363,10 +363,10 @@ namespace GetIntoTeachingApi.Services
             var filter = new FilterExpression(LogicalOperator.Or);
             filter.AddCondition(new ConditionExpression("emailaddress1", ConditionOperator.Equal, email));
 
-            if (findApplyId != null)
+            if (applyId != null)
             {
                 // We match records on email or apply id.
-                filter.AddCondition(new ConditionExpression("dfe_applyid", ConditionOperator.Equal, findApplyId));
+                filter.AddCondition(new ConditionExpression("dfe_applyid", ConditionOperator.Equal, applyId));
 
                 // Ensure apply id takes presedence over email and duplicate score/modified on.
                 query.Orders.Add(new OrderExpression("dfe_applyid", OrderType.Descending));

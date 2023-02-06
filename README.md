@@ -254,10 +254,10 @@ bool IsFeatureOff(string feature);
 It expects features to be present in the environment variables in the format `<feature_name>_FEATURE`. For example, with the environment variable:
 
 ```
-APPLY_API_FEATURE=on
+APPLY_CANDIDATE_API_FEATURE=on
 ```
 
-We can check for the feature with `env.IsFeatureOn("APPLY_API")`.
+We can check for the feature with `env.IsFeatureOn("APPLY_CANDIDATE_API")`.
 
 ## CRM Changes
 

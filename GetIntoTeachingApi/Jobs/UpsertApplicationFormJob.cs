@@ -68,7 +68,7 @@ namespace GetIntoTeachingApi.Jobs
 
         private void SaveApplicationForm(ApplicationForm form)
         {
-            var existing = _crm.GetFindApplyModels<ApplicationForm>(new string[] { form.FindApplyId }).FirstOrDefault();
+            var existing = _crm.GetApplyModels<ApplicationForm>(new string[] { form.ApplyId }).FirstOrDefault();
 
             if (existing != null)
             {
@@ -80,11 +80,11 @@ namespace GetIntoTeachingApi.Jobs
 
         private void SaveApplicationChoices(IEnumerable<ApplicationChoice> choices, Guid formId)
         {
-            var existing = _crm.GetFindApplyModels<ApplicationChoice>(choices.Select(c => c.FindApplyId));
+            var existing = _crm.GetApplyModels<ApplicationChoice>(choices.Select(c => c.ApplyId));
 
             choices?.ForEach(c =>
             {
-                c.Id = existing.FirstOrDefault(e => e.FindApplyId == c.FindApplyId)?.Id;
+                c.Id = existing.FirstOrDefault(e => e.ApplyId == c.ApplyId)?.Id;
                 c.ApplicationFormId = formId;
                 _crm.Save(c);
 
@@ -94,11 +94,11 @@ namespace GetIntoTeachingApi.Jobs
 
         private void SaveApplicationReferences(IEnumerable<ApplicationReference> references, Guid formId)
         {
-            var existing = _crm.GetFindApplyModels<ApplicationReference>(references.Select(r => r.FindApplyId));
+            var existing = _crm.GetApplyModels<ApplicationReference>(references.Select(r => r.ApplyId));
 
             references?.ForEach(r =>
             {
-                r.Id = existing.FirstOrDefault(e => e.FindApplyId == r.FindApplyId)?.Id;
+                r.Id = existing.FirstOrDefault(e => e.ApplyId == r.ApplyId)?.Id;
                 r.ApplicationFormId = formId;
                 _crm.Save(r);
             });
@@ -106,11 +106,11 @@ namespace GetIntoTeachingApi.Jobs
 
         private void SaveApplicationInterviews(IEnumerable<ApplicationInterview> interviews, Guid choiceId)
         {
-            var existing = _crm.GetFindApplyModels<ApplicationInterview>(interviews.Select(i => i.FindApplyId));
+            var existing = _crm.GetApplyModels<ApplicationInterview>(interviews.Select(i => i.ApplyId));
 
             interviews?.ForEach(i =>
             {
-                i.Id = existing.FirstOrDefault(e => e.FindApplyId == i.FindApplyId)?.Id;
+                i.Id = existing.FirstOrDefault(e => e.ApplyId == i.ApplyId)?.Id;
                 i.ApplicationChoiceId = choiceId;
                 _crm.Save(i);
             });

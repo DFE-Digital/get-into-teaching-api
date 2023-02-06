@@ -43,12 +43,12 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
 
-            _reference = new ApplicationReference() { FindApplyId = "2" };
-            _interview = new ApplicationInterview() { FindApplyId = "4" };
-            _choice = new ApplicationChoice() { FindApplyId = "3", Interviews = new List<ApplicationInterview> { _interview } };
+            _reference = new ApplicationReference() { ApplyId = "2" };
+            _interview = new ApplicationInterview() { ApplyId = "4" };
+            _choice = new ApplicationChoice() { ApplyId = "3", Interviews = new List<ApplicationInterview> { _interview } };
             _form = new ApplicationForm()
             {
-                FindApplyId = "1",
+                ApplyId = "1",
                 References = new List<ApplicationReference> { _reference },
                 Choices = new List<ApplicationChoice> { _choice },
             };
@@ -64,10 +64,10 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
 
-            _mockCrm.Setup(m => m.GetFindApplyModels<ApplicationForm>(new[] { _form.FindApplyId })).Returns(Array.Empty<ApplicationForm>());
-            _mockCrm.Setup(m => m.GetFindApplyModels<ApplicationChoice>(new[] { _choice.FindApplyId })).Returns(Array.Empty<ApplicationChoice>());
-            _mockCrm.Setup(m => m.GetFindApplyModels<ApplicationInterview>(new[] { _interview.FindApplyId })).Returns(Array.Empty<ApplicationInterview>());
-            _mockCrm.Setup(m => m.GetFindApplyModels<ApplicationReference>(new[] { _reference.FindApplyId })).Returns(Array.Empty<ApplicationReference>());
+            _mockCrm.Setup(m => m.GetApplyModels<ApplicationForm>(new[] { _form.ApplyId })).Returns(Array.Empty<ApplicationForm>());
+            _mockCrm.Setup(m => m.GetApplyModels<ApplicationChoice>(new[] { _choice.ApplyId })).Returns(Array.Empty<ApplicationChoice>());
+            _mockCrm.Setup(m => m.GetApplyModels<ApplicationInterview>(new[] { _interview.ApplyId })).Returns(Array.Empty<ApplicationInterview>());
+            _mockCrm.Setup(m => m.GetApplyModels<ApplicationReference>(new[] { _reference.ApplyId })).Returns(Array.Empty<ApplicationReference>());
 
             _mockCrm.Setup(m => m.Save(It.IsAny<ApplicationForm>())).Callback<BaseModel>(f => f.Id = formId);
             _mockCrm.Setup(m => m.Save(It.IsAny<ApplicationChoice>())).Callback<BaseModel>(c => c.Id = choiceId);
@@ -106,14 +106,14 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockContext.Setup(m => m.GetRetryCount(null)).Returns(0);
 
-            _mockCrm.Setup(m => m.GetFindApplyModels<ApplicationForm>(new[] { _form.FindApplyId }))
-                .Returns(new[] { new ApplicationForm() { Id = formId, FindApplyId = _form.FindApplyId } });
-            _mockCrm.Setup(m => m.GetFindApplyModels<ApplicationChoice>(new[] { _choice.FindApplyId }))
-                .Returns(new[] { new ApplicationChoice() { Id = choiceId, FindApplyId = _choice.FindApplyId } });
-            _mockCrm.Setup(m => m.GetFindApplyModels<ApplicationInterview>(new[] { _interview.FindApplyId }))
-                .Returns(new[] { new ApplicationInterview() { Id = interviewId, FindApplyId = _interview.FindApplyId } });
-            _mockCrm.Setup(m => m.GetFindApplyModels<ApplicationReference>(new[] { _reference.FindApplyId }))
-                .Returns(new[] { new ApplicationReference() { Id = referenceId, FindApplyId = _reference.FindApplyId } });
+            _mockCrm.Setup(m => m.GetApplyModels<ApplicationForm>(new[] { _form.ApplyId }))
+                .Returns(new[] { new ApplicationForm() { Id = formId, ApplyId = _form.ApplyId } });
+            _mockCrm.Setup(m => m.GetApplyModels<ApplicationChoice>(new[] { _choice.ApplyId }))
+                .Returns(new[] { new ApplicationChoice() { Id = choiceId, ApplyId = _choice.ApplyId } });
+            _mockCrm.Setup(m => m.GetApplyModels<ApplicationInterview>(new[] { _interview.ApplyId }))
+                .Returns(new[] { new ApplicationInterview() { Id = interviewId, ApplyId = _interview.ApplyId } });
+            _mockCrm.Setup(m => m.GetApplyModels<ApplicationReference>(new[] { _reference.ApplyId }))
+                .Returns(new[] { new ApplicationReference() { Id = referenceId, ApplyId = _reference.ApplyId } });
 
             var json = _form.SerializeChangeTracked();
             _job.Run(json, null);

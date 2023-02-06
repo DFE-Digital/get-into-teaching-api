@@ -22,7 +22,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
             type.GetProperty("FeedbackStatusId").Should().BeDecoratedWith<EntityFieldAttribute>(
                     a => a.Name == "dfe_referencefeedbackstatus" && a.Type == typeof(OptionSetValue));
 
-            type.GetProperty("FindApplyId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_referenceid");
+            type.GetProperty("ApplyId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_referenceid");
             type.GetProperty("RequestedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_requestedat");
             type.GetProperty("CreatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_createdon");
             type.GetProperty("UpdatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_modifiedon");
@@ -30,9 +30,9 @@ namespace GetIntoTeachingApiTests.Models.Crm
         }
 
         [Fact]
-        public void Name_IsDerivedFromFindApplyId()
+        public void Name_IsDerivedFromApplyId()
         {
-            var form = new ApplicationInterview() { FindApplyId = "123" };
+            var form = new ApplicationInterview() { ApplyId = "123" };
 
             form.Name.Should().Be("Application Interview 123");
         }

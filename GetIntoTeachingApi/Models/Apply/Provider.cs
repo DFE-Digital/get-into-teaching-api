@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace GetIntoTeachingApi.Models.FindApply
+namespace GetIntoTeachingApi.Models.Apply
 {
 	public class Provider
 	{

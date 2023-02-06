@@ -9,7 +9,7 @@ namespace GetIntoTeachingApi.Models.Crm
 {
     [SwaggerIgnore]
     [Entity("dfe_applyapplicationform")]
-    public class ApplicationForm : BaseModel, IHasCandidateId, IHasFindApplyId
+    public class ApplicationForm : BaseModel, IHasCandidateId, IHasApplyId
     {
         // The keys for this enum need to mirror the
         // Apply API naming so we can match them up.
@@ -51,27 +51,27 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityField("dfe_recruitmentyear", typeof(OptionSetValue))]
         public int? RecruitmentCycleYearId { get; set; }
         [EntityField("dfe_applicationformid")]
-        public string FindApplyId { get; set; }
+        public string ApplyId { get; set; }
         [EntityField("dfe_createdon")]
         public DateTime CreatedAt { get; set; }
         [EntityField("dfe_modifiedon")]
         public DateTime UpdatedAt { get; set; }
         [EntityField("dfe_submittedatdate")]
         public DateTime? SubmittedAt { get; set; }
-        [EntityField("dfe_qualificationscompleted", null, null, new[] { "APPLY_API_V1_2" })]
+        [EntityField("dfe_qualificationscompleted", null, null, new[] { "APPLY_CANDIDATE_API_V1_2" })]
         public bool? QualificationsCompleted { get; set; }
-        [EntityField("dfe_referencescompleted", null, null, new[] { "APPLY_API_V1_2" })]
+        [EntityField("dfe_referencescompleted", null, null, new[] { "APPLY_CANDIDATE_API_V1_2" })]
         public bool? ReferencesCompleted { get; set; }
-        [EntityField("dfe_applicationchoicescompleted", null, null, new[] { "APPLY_API_V1_2" })]
+        [EntityField("dfe_applicationchoicescompleted", null, null, new[] { "APPLY_CANDIDATE_API_V1_2" })]
         public bool? ApplicationChoicesCompleted { get; set; }
-        [EntityField("dfe_personalstatementcompleted", null, null, new[] { "APPLY_API_V1_2" })]
+        [EntityField("dfe_personalstatementcompleted", null, null, new[] { "APPLY_CANDIDATE_API_V1_2" })]
         public bool? PersonalStatementCompleted { get; set; }
         [EntityField("dfe_name")]
         public string Name
         {
             get
             {
-                return $"Application Form {FindApplyId}";
+                return $"Application Form {ApplyId}";
             }
             set
             {

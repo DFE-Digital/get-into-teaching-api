@@ -79,13 +79,11 @@
 	  <Folder Include="Middleware\" />
 	  <Folder Include="Controllers\SchoolsExperience\" />
 	  <Folder Include="Controllers\GetIntoTeaching\" />
-	  <Folder Include="Models\FindApply\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="Controllers\GetIntoTeaching\" />
 	  <None Remove="Flurl" />
 	  <None Remove="Flurl.Http" />
-	  <None Remove="Models\FindApply\" />
 	  <None Remove="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" />
 	  <None Remove="AspNetCoreRateLimit.Redis" />
 	  <None Remove="Hangfire.Dashboard.Basic.Authentication" />

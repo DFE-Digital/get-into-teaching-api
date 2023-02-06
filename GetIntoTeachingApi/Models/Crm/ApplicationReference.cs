@@ -8,7 +8,7 @@ namespace GetIntoTeachingApi.Models.Crm
 {
     [SwaggerIgnore]
     [Entity("dfe_applyreference")]
-    public class ApplicationReference : BaseModel, IHasFindApplyId
+    public class ApplicationReference : BaseModel, IHasApplyId
     {
         // The keys for this enum need to mirror the
         // Apply API naming so we can match them up.
@@ -28,7 +28,7 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityField("dfe_referencefeedbackstatus", typeof(OptionSetValue))]
         public int? FeedbackStatusId { get; set; }
         [EntityField("dfe_referenceid")]
-        public string FindApplyId { get; set; }
+        public string ApplyId { get; set; }
         [EntityField("dfe_requestedat")]
         public DateTime? RequestedAt { get; set; }
         [EntityField("dfe_createdon")]
@@ -42,7 +42,7 @@ namespace GetIntoTeachingApi.Models.Crm
         {
             get
             {
-                return $"Application Reference {FindApplyId}";
+                return $"Application Reference {ApplyId}";
             }
             set
             {

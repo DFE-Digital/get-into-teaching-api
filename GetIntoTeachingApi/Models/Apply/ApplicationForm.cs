@@ -5,7 +5,7 @@ using System.Linq;
 using GetIntoTeachingApi.Utils;
 using Newtonsoft.Json;
 
-namespace GetIntoTeachingApi.Models.FindApply
+namespace GetIntoTeachingApi.Models.Apply
 {
     public class ApplicationForm
     {
@@ -38,7 +38,7 @@ namespace GetIntoTeachingApi.Models.FindApply
 
             return new Crm.ApplicationForm()
             {
-                FindApplyId = Id.ToString(CultureInfo.CurrentCulture),
+                ApplyId = Id.ToString(CultureInfo.CurrentCulture),
                 CreatedAt = CreatedAt,
                 UpdatedAt = UpdatedAt,
                 SubmittedAt = SubmittedAt,

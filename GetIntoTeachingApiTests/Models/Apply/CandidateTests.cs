@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using GetIntoTeachingApi.Models.FindApply;
+using GetIntoTeachingApi.Models.Apply;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace GetIntoTeachingApiTests.Models.FindApply
+namespace GetIntoTeachingApiTests.Models.Apply
 {
     public class CandidateTests
     {
@@ -45,12 +45,12 @@ namespace GetIntoTeachingApiTests.Models.FindApply
 
             var crmCandidate = candidate.ToCrmModel();
 
-            crmCandidate.FindApplyId.Should().Be(candidate.Id);
-            crmCandidate.FindApplyCreatedAt.Should().Be(candidate.Attributes.CreatedAt);
-            crmCandidate.FindApplyUpdatedAt.Should().Be(candidate.Attributes.UpdatedAt);
-            crmCandidate.FindApplyStatusId.Should().Be((int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.OfferDeferred);
-            crmCandidate.FindApplyPhaseId.Should().Be((int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply1);
-            crmCandidate.ApplicationForms.First().FindApplyId.Should().Be(form.Id.ToString());
+            crmCandidate.ApplyId.Should().Be(candidate.Id);
+            crmCandidate.ApplyCreatedAt.Should().Be(candidate.Attributes.CreatedAt);
+            crmCandidate.ApplyUpdatedAt.Should().Be(candidate.Attributes.UpdatedAt);
+            crmCandidate.ApplyStatusId.Should().Be((int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.OfferDeferred);
+            crmCandidate.ApplyPhaseId.Should().Be((int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply1);
+            crmCandidate.ApplicationForms.First().ApplyId.Should().Be(form.Id.ToString());
         }
 
         [Fact]
@@ -67,9 +67,9 @@ namespace GetIntoTeachingApiTests.Models.FindApply
 
             var crmCandidate = candidate.ToCrmModel();
 
-            crmCandidate.FindApplyId.Should().Be(candidate.Id);
-            crmCandidate.FindApplyStatusId.Should().Be((int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.NeverSignedIn);
-            crmCandidate.FindApplyPhaseId.Should().BeNull();
+            crmCandidate.ApplyId.Should().Be(candidate.Id);
+            crmCandidate.ApplyStatusId.Should().Be((int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.NeverSignedIn);
+            crmCandidate.ApplyPhaseId.Should().BeNull();
         }
     }
 }
