@@ -1,6 +1,6 @@
 ﻿using System;
 using GetIntoTeachingApi.Jobs;
-using GetIntoTeachingApi.Models.FindApply;
+using GetIntoTeachingApi.Models.Apply;
 using GetIntoTeachingApiTests.Helpers;
 using Hangfire;
 using Newtonsoft.Json;
@@ -13,8 +13,8 @@ namespace GetIntoTeachingApiTests.Contracts
     {
         public ApplyCandidateApiTests(DatabaseFixture databaseFixture) : base(databaseFixture)
         {
-            Environment.SetEnvironmentVariable($"APPLY_API_FEATURE", "on");
-            Environment.SetEnvironmentVariable($"APPLY_API_V1_2_FEATURE", "on");
+            Environment.SetEnvironmentVariable($"APPLY_CANDIDATE_API_FEATURE", "on");
+            Environment.SetEnvironmentVariable($"APPLY_CANDIDATE_API_V1_2_FEATURE", "on");
             Environment.SetEnvironmentVariable($"APPLY_ID_MATCHBACK_FEATURE", "on");
         }
 
@@ -25,7 +25,7 @@ namespace GetIntoTeachingApiTests.Contracts
             await Setup();
 
             var candidate = ConstructCandidate(ReadInput(scenario));
-            JobClient.Enqueue<FindApplyCandidateSyncJob>(c => c.Run(candidate));
+            JobClient.Enqueue<ApplyCandidateSyncJob>(c => c.Run(candidate));
 
             await AssertRequestMatchesSnapshot(scenario);
         }

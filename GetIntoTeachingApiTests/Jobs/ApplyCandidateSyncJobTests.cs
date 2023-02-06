@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using FluentAssertions;
 using GetIntoTeachingApi.Jobs;
-using GetIntoTeachingApi.Models.FindApply;
+using GetIntoTeachingApi.Models.Apply;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
@@ -15,26 +15,26 @@ using Xunit;
 
 namespace GetIntoTeachingApiTests.Jobs
 {
-    public class FindApplyCandidateSyncJobTests
+    public class ApplyCandidateSyncJobTests
     {
         private readonly Mock<GetIntoTeachingApi.Models.IAppSettings> _mockAppSettings;
-        private readonly Mock<ILogger<FindApplyCandidateSyncJob>> _mockLogger;
+        private readonly Mock<ILogger<ApplyCandidateSyncJob>> _mockLogger;
         private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<IEnv> _mockEnv;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
-        private readonly FindApplyCandidateSyncJob _job;
+        private readonly ApplyCandidateSyncJob _job;
         private readonly Candidate _candidate;
         private readonly CandidateAttributes _attributes;
         private readonly IList<ApplicationForm> _forms;
 
-        public FindApplyCandidateSyncJobTests()
+        public ApplyCandidateSyncJobTests()
         {
             _mockEnv = new Mock<IEnv>();
-            _mockLogger = new Mock<ILogger<FindApplyCandidateSyncJob>>();
+            _mockLogger = new Mock<ILogger<ApplyCandidateSyncJob>>();
             _mockAppSettings = new Mock<GetIntoTeachingApi.Models.IAppSettings>();
             _mockCrm = new Mock<ICrmService>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
-            _job = new FindApplyCandidateSyncJob(
+            _job = new ApplyCandidateSyncJob(
                 _mockEnv.Object,
                 new Mock<IRedisService>().Object,
                 _mockLogger.Object,
@@ -96,7 +96,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             var form1 = new GetIntoTeachingApi.Models.Crm.ApplicationForm()
             {
-                FindApplyId = _forms[1].Id.ToString(),
+                ApplyId = _forms[1].Id.ToString(),
                 CreatedAt = _forms[1].CreatedAt,
                 PhaseId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply2,
                 StatusId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.NeverSignedIn,
@@ -111,7 +111,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             var form2 = new GetIntoTeachingApi.Models.Crm.ApplicationForm()
             {
-                FindApplyId = _forms[0].Id.ToString(),
+                ApplyId = _forms[0].Id.ToString(),
                 PhaseId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply1,
                 StatusId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.AwaitingCandidateResponse,
                 RecruitmentCycleYearId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.RecruitmentCycleYear.Year2021,
@@ -127,12 +127,12 @@ namespace GetIntoTeachingApiTests.Jobs
             var candidate = new GetIntoTeachingApi.Models.Crm.Candidate()
             {
                 Id = match.Id,
-                FindApplyId = _candidate.Id,
+                ApplyId = _candidate.Id,
                 Email = _attributes.Email,
-                FindApplyStatusId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.NeverSignedIn,
-                FindApplyPhaseId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply2,
-                FindApplyCreatedAt = _attributes.CreatedAt,
-                FindApplyUpdatedAt = _attributes.UpdatedAt,
+                ApplyStatusId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.NeverSignedIn,
+                ApplyPhaseId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply2,
+                ApplyCreatedAt = _attributes.CreatedAt,
+                ApplyUpdatedAt = _attributes.UpdatedAt,
                 ApplicationForms = new List<GetIntoTeachingApi.Models.Crm.ApplicationForm>() { form2, form1 },
             };
 
@@ -141,9 +141,9 @@ namespace GetIntoTeachingApiTests.Jobs
                 IsMatch(candidate, (string)job.Args[0])),
                 It.IsAny<EnqueuedState>()));
 
-            _mockLogger.VerifyInformationWasCalled($"FindApplyCandidateSyncJob - Started - {_candidate.Id}");
-            _mockLogger.VerifyInformationWasCalled($"FindApplyCandidateSyncJob - Hit - {_candidate.Id}");
-            _mockLogger.VerifyInformationWasCalled($"FindApplyCandidateSyncJob - Succeeded - {_candidate.Id}");
+            _mockLogger.VerifyInformationWasCalled($"ApplyCandidateSyncJob - Started - {_candidate.Id}");
+            _mockLogger.VerifyInformationWasCalled($"ApplyCandidateSyncJob - Hit - {_candidate.Id}");
+            _mockLogger.VerifyInformationWasCalled($"ApplyCandidateSyncJob - Succeeded - {_candidate.Id}");
         }
 
         [Fact]
@@ -156,7 +156,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             var form1 = new GetIntoTeachingApi.Models.Crm.ApplicationForm()
             {
-                FindApplyId = _forms[1].Id.ToString(),
+                ApplyId = _forms[1].Id.ToString(),
                 CreatedAt = _forms[1].CreatedAt,
                 PhaseId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply2,
                 StatusId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.NeverSignedIn,
@@ -171,7 +171,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             var form2 = new GetIntoTeachingApi.Models.Crm.ApplicationForm()
             {
-                FindApplyId = _forms[0].Id.ToString(),
+                ApplyId = _forms[0].Id.ToString(),
                 PhaseId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply1,
                 StatusId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.AwaitingCandidateResponse,
                 RecruitmentCycleYearId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.RecruitmentCycleYear.Year2021,
@@ -186,12 +186,12 @@ namespace GetIntoTeachingApiTests.Jobs
 
             var candidate = new GetIntoTeachingApi.Models.Crm.Candidate()
             {
-                FindApplyId = _candidate.Id,
+                ApplyId = _candidate.Id,
                 Email = _attributes.Email,
-                FindApplyStatusId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.NeverSignedIn,
-                FindApplyPhaseId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply2,
-                FindApplyCreatedAt = _attributes.CreatedAt,
-                FindApplyUpdatedAt = _attributes.UpdatedAt,
+                ApplyStatusId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.NeverSignedIn,
+                ApplyPhaseId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply2,
+                ApplyCreatedAt = _attributes.CreatedAt,
+                ApplyUpdatedAt = _attributes.UpdatedAt,
                 ApplicationForms = new List<GetIntoTeachingApi.Models.Crm.ApplicationForm>() { form2, form1 },
                 ChannelId = (int)GetIntoTeachingApi.Models.Crm.Candidate.Channel.ApplyForTeacherTraining,
             };
@@ -224,7 +224,7 @@ namespace GetIntoTeachingApiTests.Jobs
             Action action = () => _job.Run(_candidate);
 
             action.Should().Throw<InvalidOperationException>()
-                .WithMessage("FindApplyCandidateSyncJob - Aborting (CRM integration paused).");
+                .WithMessage("ApplyCandidateSyncJob - Aborting (CRM integration paused).");
         }
 
         private static bool IsMatch(GetIntoTeachingApi.Models.Crm.Candidate candidateA, string candidateBJson)

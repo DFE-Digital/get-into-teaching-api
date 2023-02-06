@@ -27,10 +27,10 @@ namespace GetIntoTeachingApi.AppStart
                     Cron.Hourly());
         }
 
-        public static void AddFindApplySyncJob()
+        public static void AddApplySyncJob()
         {
-            RecurringJob.AddOrUpdate<FindApplySyncJob>(
-                                    JobConfiguration.FindApplySyncJobId,
+            RecurringJob.AddOrUpdate<ApplySyncJob>(
+                                    JobConfiguration.ApplySyncJobId,
                                     (x) => x.RunAsync(),
                                     Cron.Hourly());
         }

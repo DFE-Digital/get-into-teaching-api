@@ -5,7 +5,7 @@ using FluentAssertions;
 using Flurl.Http.Testing;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
-using GetIntoTeachingApi.Models.FindApply;
+using GetIntoTeachingApi.Models.Apply;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
@@ -19,25 +19,25 @@ using Xunit;
 
 namespace GetIntoTeachingApiTests.Jobs
 {
-    public class FindApplyBackfillJobTests
+    public class ApplyBackfillJobTests
     {
-        private readonly Mock<ILogger<FindApplyBackfillJob>> _mockLogger;
+        private readonly Mock<ILogger<ApplyBackfillJob>> _mockLogger;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly Mock<IEnv> _mockEnv;
         private readonly Mock<IAppSettings> _mockAppSettings;
-        private readonly FindApplyBackfillJob _job;
+        private readonly ApplyBackfillJob _job;
 
-        public FindApplyBackfillJobTests()
+        public ApplyBackfillJobTests()
         {
-            _mockLogger = new Mock<ILogger<FindApplyBackfillJob>>();
+            _mockLogger = new Mock<ILogger<ApplyBackfillJob>>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
             _mockEnv = new Mock<IEnv>();
             _mockAppSettings = new Mock<IAppSettings>();
 
-            _mockEnv.Setup(m => m.FindApplyApiUrl).Returns("https://test.apply.api/candidates-api");
-            _mockEnv.Setup(m => m.FindApplyApiKey).Returns("1234567");
+            _mockEnv.Setup(m => m.ApplyCandidateApiUrl).Returns("https://test.apply.api/candidates-api");
+            _mockEnv.Setup(m => m.ApplyCandidateApiKey).Returns("1234567");
 
-            _job = new FindApplyBackfillJob(
+            _job = new ApplyBackfillJob(
                 _mockEnv.Object,
                 new Mock<IRedisService>().Object,
                 _mockJobClient.Object,
@@ -48,7 +48,7 @@ namespace GetIntoTeachingApiTests.Jobs
         [Fact]
         public void DisableConcurrentExecutionAttribute()
         {
-            var type = typeof(FindApplyBackfillJob);
+            var type = typeof(ApplyBackfillJob);
 
             type.GetMethod("RunAsync").Should().BeDecoratedWith<DisableConcurrentExecutionAttribute>();
         }
@@ -73,15 +73,15 @@ namespace GetIntoTeachingApiTests.Jobs
             }
 
             _mockJobClient.Verify(x => x.Create(
-               It.Is<Job>(job => job.Type == typeof(FindApplyCandidateSyncJob) && job.Method.Name == "Run"),
+               It.Is<Job>(job => job.Type == typeof(ApplyCandidateSyncJob) && job.Method.Name == "Run"),
                It.IsAny<ScheduledState>()), Times.Exactly(candidates1.Length + candidates2.Length));
 
-            _mockAppSettings.VerifySet(m => m.IsFindApplyBackfillInProgress = true, Times.Once);
-            _mockLogger.VerifyInformationWasCalled("FindApplyBackfillJob - Started");
-            _mockLogger.VerifyInformationWasCalled("FindApplyBackfillJob - Syncing 1 Candidates");
-            _mockLogger.VerifyInformationWasCalled("FindApplyBackfillJob - Syncing 1 Candidates");
-            _mockLogger.VerifyInformationWasCalled("FindApplyBackfillJob - Succeeded");
-            _mockAppSettings.VerifySet(m => m.IsFindApplyBackfillInProgress = false, Times.Once);
+            _mockAppSettings.VerifySet(m => m.IsApplyBackfillInProgress = true, Times.Once);
+            _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Started");
+            _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Syncing 1 Candidates");
+            _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Syncing 1 Candidates");
+            _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Succeeded");
+            _mockAppSettings.VerifySet(m => m.IsApplyBackfillInProgress = false, Times.Once);
         }
 
         [Fact]
@@ -95,14 +95,14 @@ namespace GetIntoTeachingApiTests.Jobs
             }
 
             _mockJobClient.Verify(x => x.Create(
-               It.Is<Job>(job => job.Type == typeof(FindApplyCandidateSyncJob)),
+               It.Is<Job>(job => job.Type == typeof(ApplyCandidateSyncJob)),
                It.IsAny<ScheduledState>()), Times.Never);
 
-            _mockAppSettings.VerifySet(m => m.IsFindApplyBackfillInProgress = true, Times.Once);
-            _mockLogger.VerifyInformationWasCalled("FindApplyBackfillJob - Started");
-            _mockLogger.VerifyInformationWasCalled("FindApplyBackfillJob - Syncing 0 Candidates");
-            _mockLogger.VerifyInformationWasCalled("FindApplyBackfillJob - Succeeded");
-            _mockAppSettings.VerifySet(m => m.IsFindApplyBackfillInProgress = false, Times.Once);
+            _mockAppSettings.VerifySet(m => m.IsApplyBackfillInProgress = true, Times.Once);
+            _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Started");
+            _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Syncing 0 Candidates");
+            _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Succeeded");
+            _mockAppSettings.VerifySet(m => m.IsApplyBackfillInProgress = false, Times.Once);
         }
 
         private void MockResponse(HttpTest httpTest, Response<IEnumerable<Candidate>> response, int page = 1, int totalPages = 1)
@@ -111,11 +111,11 @@ namespace GetIntoTeachingApiTests.Jobs
             var headers = new Dictionary<string, int>() { { "Total-Pages", totalPages }, { "Current-Page", page } };
 
             httpTest
-                    .ForCallsTo($"{_mockEnv.Object.FindApplyApiUrl}/candidates")
+                    .ForCallsTo($"{_mockEnv.Object.ApplyCandidateApiUrl}/candidates")
                     .WithVerb("GET")
                     .WithQueryParam("page", page)
                     .WithQueryParam("updated_since", DateTime.MinValue)
-                    .WithHeader("Authorization", $"Bearer {_mockEnv.Object.FindApplyApiKey}")
+                    .WithHeader("Authorization", $"Bearer {_mockEnv.Object.ApplyCandidateApiKey}")
                     .RespondWith(json, 200, headers);
         }
     }

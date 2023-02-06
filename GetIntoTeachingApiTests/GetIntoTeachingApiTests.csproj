@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <None Remove="Controllers\GetIntoTeaching\" />
-    <None Remove="Models\FindApply\" />
+    <None Remove="Models\Apply\" />
     <None Remove="FluentAssertions.Json" />
     <None Remove="Microsoft.CodeAnalysis.Common" />
     <None Remove="Microsoft.CodeAnalysis.CSharp" />
@@ -234,7 +234,7 @@
     <Folder Include="JsonConverters\" />
     <Folder Include="Middleware\" />
     <Folder Include="Controllers\GetIntoTeaching\" />
-    <Folder Include="Models\FindApply\" />
+    <Folder Include="Models\Apply\" />
     <Folder Include="Contracts\" />
     <Folder Include="Contracts\Data\" />
     <Folder Include="Contracts\Input\" />

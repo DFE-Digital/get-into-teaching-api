@@ -23,8 +23,8 @@
         string CrmServiceUrl { get; }
         string CrmClientId { get; }
         string CrmClientSecret { get; }
-        string FindApplyApiUrl { get; }
-        string FindApplyApiKey { get; }
+        string ApplyCandidateApiUrl { get; }
+        string ApplyCandidateApiKey { get; }
         string NotifyApiKey { get; }
         string GoogleApiKey { get; }
         bool IsMasterInstance { get; }

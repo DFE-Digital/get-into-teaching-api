@@ -9,7 +9,7 @@ namespace GetIntoTeachingApi.Models.Crm
 {
     [SwaggerIgnore]
     [Entity("dfe_applyapplicationchoice")]
-    public class ApplicationChoice : BaseModel, IHasFindApplyId
+    public class ApplicationChoice : BaseModel, IHasApplyId
     {
         // The keys for this enum need to mirror the
         // Apply API naming so we can match them up.
@@ -36,7 +36,7 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityField("dfe_applicationchoicestatus", typeof(OptionSetValue))]
         public int? StatusId { get; set; }
         [EntityField("dfe_applicationchoiceid")]
-        public string FindApplyId { get; set; }
+        public string ApplyId { get; set; }
         [EntityField("dfe_createdon")]
         public DateTime CreatedAt { get; set; }
         [EntityField("dfe_modifiedon")]
@@ -52,7 +52,7 @@ namespace GetIntoTeachingApi.Models.Crm
         {
             get
             {
-                return $"Application Choice {FindApplyId}";
+                return $"Application Choice {ApplyId}";
             }
             set
             {

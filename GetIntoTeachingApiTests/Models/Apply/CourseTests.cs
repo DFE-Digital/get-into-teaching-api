@@ -1,17 +1,19 @@
 ﻿using FluentAssertions;
-using GetIntoTeachingApi.Models.FindApply;
+using GetIntoTeachingApi.Models.Apply;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace GetIntoTeachingApiTests.Models.FindApply
+namespace GetIntoTeachingApiTests.Models.Apply
 {
-    public class ProviderTests
+    public class CourseTests
     {
         [Fact]
         public void JsonAttributes()
         {
-            var type = typeof(Provider);
+            var type = typeof(Course);
 
+            type.GetProperty("Id").Should()
+                .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "uuid");
             type.GetProperty("Name").Should()
                 .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "name");
         }

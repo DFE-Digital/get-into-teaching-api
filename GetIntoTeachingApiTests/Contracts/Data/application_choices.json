@@ -1,7 +1,7 @@
 ﻿[
   {
     "Id": "765aa675-e6bf-41c5-ad5f-4e1e8de5d4ab",
-    "FindApplyId": "2",
+    "ApplyId": "2",
     "ApplicationFormId": "351aa675-e6bf-41c5-ad5f-4e1e8de5d5fe",
     "CreatedAt": "2021-12-16T00:00:00+00:00",
     "UpdatedAt": "2022-03-14T14:23:39+00:00",

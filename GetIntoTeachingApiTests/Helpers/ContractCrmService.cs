@@ -95,18 +95,18 @@ namespace GetIntoTeachingApiTests.Helpers
             _crmService.DeleteLink(source, relationship, target, context);
         }
 
-        public IEnumerable<T> GetFindApplyModels<T>(IEnumerable<string> findApplyIds) where T : BaseModel, IHasFindApplyId
+        public IEnumerable<T> GetApplyModels<T>(IEnumerable<string> applyIds) where T : BaseModel, IHasApplyId
         {
             switch (typeof(T).ToString())
             {
                 case "GetIntoTeachingApi.Models.Crm.ApplicationForm":
-                    return ApplicationForms.Where(f => findApplyIds.Contains(f.FindApplyId)) as IEnumerable<T>;
+                    return ApplicationForms.Where(f => applyIds.Contains(f.ApplyId)) as IEnumerable<T>;
                 case "GetIntoTeachingApi.Models.Crm.ApplicationChoice":
-                    return ApplicationChoices.Where(c => findApplyIds.Contains(c.FindApplyId)) as IEnumerable<T>;
+                    return ApplicationChoices.Where(c => applyIds.Contains(c.ApplyId)) as IEnumerable<T>;
                 case "GetIntoTeachingApi.Models.Crm.ApplicationInterview":
-                    return ApplicationInterviews.Where(i => findApplyIds.Contains(i.FindApplyId)) as IEnumerable<T>;
+                    return ApplicationInterviews.Where(i => applyIds.Contains(i.ApplyId)) as IEnumerable<T>;
                 case "GetIntoTeachingApi.Models.Crm.ApplicationReference":
-                    return ApplicationReferences.Where(r => findApplyIds.Contains(r.FindApplyId)) as IEnumerable<T>;
+                    return ApplicationReferences.Where(r => applyIds.Contains(r.ApplyId)) as IEnumerable<T>;
                 default:
                     throw new NotImplementedException();
             }
@@ -172,9 +172,9 @@ namespace GetIntoTeachingApiTests.Helpers
             return _crmService.MatchCandidate(request);
         }
 
-        public Candidate MatchCandidate(string email, string findApplyId)
+        public Candidate MatchCandidate(string email, string applyId)
         {
-            return Candidates.FirstOrDefault(c => c.Email == email || c.FindApplyId == findApplyId);
+            return Candidates.FirstOrDefault(c => c.Email == email || c.ApplyId == applyId);
         }
 
         public IEnumerable<Candidate> MatchCandidates(string magicLinkToken)

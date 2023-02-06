@@ -2,7 +2,7 @@
 using System.Globalization;
 using Newtonsoft.Json;
 
-namespace GetIntoTeachingApi.Models.FindApply
+namespace GetIntoTeachingApi.Models.Apply
 {
 	public class Interview
 	{
@@ -21,7 +21,7 @@ namespace GetIntoTeachingApi.Models.FindApply
 		{
 			return new Crm.ApplicationInterview()
 			{
-				FindApplyId = Id.ToString(CultureInfo.CurrentCulture),
+				ApplyId = Id.ToString(CultureInfo.CurrentCulture),
 				CreatedAt = CreatedAt,
 				UpdatedAt = UpdatedAt,
 				ScheduledAt = DateAndTime,

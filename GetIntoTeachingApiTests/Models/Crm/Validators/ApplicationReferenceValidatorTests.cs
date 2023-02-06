@@ -34,7 +34,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
             var reference = new ApplicationReference()
             {
                 ApplicationFormId = Guid.NewGuid(),
-                FindApplyId = "67890",
+                ApplyId = "67890",
                 Type = "Type",
                 FeedbackStatusId = mockPickListItem.Id,
             };
@@ -47,10 +47,10 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         [Fact]
         public void Validate_RequiredAttributeIsEmpty_HasError()
         {
-            var reference = new ApplicationReference() { FindApplyId = "", Type = "" };
+            var reference = new ApplicationReference() { ApplyId = "", Type = "" };
             var result = _validator.TestValidate(reference);
 
-            result.ShouldHaveValidationErrorFor("FindApplyId");
+            result.ShouldHaveValidationErrorFor("ApplyId");
             result.ShouldHaveValidationErrorFor("Type");
         }
 
