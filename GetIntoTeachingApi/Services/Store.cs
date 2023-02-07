@@ -68,9 +68,14 @@ namespace GetIntoTeachingApi.Services
             await SyncPickListItems();
         }
 
-        public IQueryable<LookupItem> GetLookupItems(string entityName)
+        public IQueryable<Country> GetCountries()
         {
-            return _dbContext.LookupItems.AsNoTracking().Where(t => t.EntityName == entityName).OrderBy(t => t.Id);
+            return _dbContext.Countries.AsNoTracking().OrderBy(t => t.Id);
+        }
+
+        public IQueryable<TeachingSubject> GetTeachingSubjects()
+        {
+            return _dbContext.TeachingSubjects.AsNoTracking().OrderBy(t => t.Id);
         }
 
         public IQueryable<PickListItem> GetPickListItems(string entityName, string attributeName)
@@ -231,8 +236,8 @@ namespace GetIntoTeachingApi.Services
 
         private async Task SyncLookupItems()
         {
-            await SyncLookupItem("dfe_country");
-            await SyncLookupItem("dfe_teachingsubjectlist");
+            await SyncCountries();
+            await SyncTeachingSubjects();
         }
 
         private async Task SyncPickListItems()
@@ -293,15 +298,25 @@ namespace GetIntoTeachingApi.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        private async Task SyncLookupItem(string entityName)
+        private async Task SyncCountries()
         {
-            var items = _crm.GetLookupItems(entityName);
+            var items = _crm.GetCountries();
             var ids = items.Select(t => t.Id);
-            var existingIds = _dbContext.LookupItems
-                .Where(t => t.EntityName == entityName)
-                .Select(t => t.Id);
+            var existingIds = GetCountries().Select(t => t.Id);
 
-            _dbContext.RemoveRange(_dbContext.LookupItems.Where(t => t.EntityName == entityName && !ids.Contains(t.Id)));
+            _dbContext.RemoveRange(_dbContext.Countries.Where(t => !ids.Contains(t.Id)));
+            _dbContext.UpdateRange(items.Where(t => existingIds.Contains(t.Id)));
+            await _dbContext.AddRangeAsync(items.Where(t => !existingIds.Contains(t.Id)));
+            await _dbContext.SaveChangesAsync();
+        }
+
+        private async Task SyncTeachingSubjects()
+        {
+            var items = _crm.GetTeachingSubjects();
+            var ids = items.Select(t => t.Id);
+            var existingIds = GetTeachingSubjects().Select(t => t.Id);
+
+            _dbContext.RemoveRange(_dbContext.TeachingSubjects.Where(t => !ids.Contains(t.Id)));
             _dbContext.UpdateRange(items.Where(t => existingIds.Contains(t.Id)));
             await _dbContext.AddRangeAsync(items.Where(t => !existingIds.Contains(t.Id)));
             await _dbContext.SaveChangesAsync();

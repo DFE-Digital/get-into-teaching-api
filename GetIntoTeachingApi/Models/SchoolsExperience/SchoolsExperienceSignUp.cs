@@ -82,7 +82,7 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
             var candidate = new Candidate()
             {
                 Id = CandidateId,
-                CountryId = LookupItem.UnitedKingdomCountryId,
+                CountryId = Country.UnitedKingdomCountryId,
                 Email = Email,
                 FirstName = FirstName,
                 LastName = LastName,

@@ -223,7 +223,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
 
             var candidate = request.Candidate;
 
-            candidate.PreferredTeachingSubjectId.Should().Be(LookupItem.PrimaryTeachingSubjectId);
+            candidate.PreferredTeachingSubjectId.Should().Be(TeachingSubject.PrimaryTeachingSubjectId);
         }
 
         [Fact]
@@ -359,7 +359,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
         [Fact]
         public void Candidate_UkCountry_PhoneCallDestinationIsCorrect()
         {
-            var request = new TeacherTrainingAdviserSignUp() { CountryId = LookupItem.UnitedKingdomCountryId, AddressTelephone = "123456789", PhoneCallScheduledAt = DateTime.UtcNow };
+            var request = new TeacherTrainingAdviserSignUp() { CountryId = Country.UnitedKingdomCountryId, AddressTelephone = "123456789", PhoneCallScheduledAt = DateTime.UtcNow };
 
             request.Candidate.PhoneCall.DestinationId.Should().Be((int)PhoneCall.Destination.Uk);
         }

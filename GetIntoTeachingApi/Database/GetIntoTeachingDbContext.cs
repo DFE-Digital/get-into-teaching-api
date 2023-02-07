@@ -13,6 +13,8 @@ namespace GetIntoTeachingApi.Database
         public DbSet<PrivacyPolicy> PrivacyPolicies { get; set; }
         public DbSet<LookupItem> LookupItems { get; set; }
         public DbSet<PickListItem> PickListItems { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<TeachingSubject> TeachingSubjects { get; set; }
 
         public GetIntoTeachingDbContext(DbContextOptions<GetIntoTeachingDbContext> options)
             : base(options)

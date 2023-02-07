@@ -137,9 +137,15 @@ namespace GetIntoTeachingApiTests.Helpers
             return _crmService.GetCandidatesPendingMagicLinkTokenGeneration(limit);
         }
 
-        public IEnumerable<LookupItem> GetLookupItems(string entityName)
+        public IEnumerable<Country> GetCountries()
         {
-            return _crmService.GetLookupItems(entityName);
+            return _crmService.GetCountries();
+        }
+
+
+        public IEnumerable<TeachingSubject> GetTeachingSubjects()
+        {
+            return _crmService.GetTeachingSubjects();
         }
 
         public IEnumerable<PickListItem> GetPickListItems(string entityName, string attributeName)
