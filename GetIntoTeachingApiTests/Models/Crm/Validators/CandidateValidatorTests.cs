@@ -26,16 +26,17 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var mockLookupItem = new LookupItem { Id = Guid.NewGuid() };
+            var mockSubject = new TeachingSubject { Id = Guid.NewGuid() };
+            var mockCountry = new Country { Id = Guid.NewGuid() };
             var mockPickListItem = new PickListItem { Id = 123 };
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
 
             _mockStore
-                .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
-                .Returns(new[] { mockLookupItem }.AsQueryable());
+                .Setup(mock => mock.GetTeachingSubjects())
+                .Returns(new[] { mockSubject }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetLookupItems("dfe_country"))
-                .Returns(new[] { mockLookupItem }.AsQueryable());
+                .Setup(mock => mock.GetCountries())
+                .Returns(new[] { mockCountry }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_preferrededucationphase01"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
@@ -112,8 +113,8 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 DoNotPostalMail = false,
                 EligibilityRulesPassed = "true",
                 ConsiderationJourneyStageId = mockPickListItem.Id,
-                CountryId = mockLookupItem.Id,
-                PreferredTeachingSubjectId = mockLookupItem.Id,
+                CountryId = mockCountry.Id,
+                PreferredTeachingSubjectId = mockSubject.Id,
                 PreferredEducationPhaseId = mockPickListItem.Id,
                 InitialTeacherTrainingYearId = mockPickListItem.Id,
                 ChannelId = mockPickListItem.Id,

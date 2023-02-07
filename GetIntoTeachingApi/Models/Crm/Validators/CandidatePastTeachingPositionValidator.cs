@@ -12,7 +12,7 @@ namespace GetIntoTeachingApi.Models.Crm.Validators
                 .SetValidator(new PickListItemIdValidator<CandidatePastTeachingPosition>("dfe_candidatepastteachingposition", "dfe_educationphase", store))
                 .Unless(position => position.EducationPhaseId == null);
             RuleFor(position => position.SubjectTaughtId)
-                .SetValidator(new LookupItemIdValidator<CandidatePastTeachingPosition>("dfe_teachingsubjectlist", store))
+                .SetValidator(new TeachingSubjectIdValidator<CandidatePastTeachingPosition>(store))
                 .Unless(position => position.SubjectTaughtId == null);
         }
     }

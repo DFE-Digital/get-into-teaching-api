@@ -42,13 +42,13 @@ namespace GetIntoTeachingApi.Models.Crm.Validators
             RuleForEach(candidate => candidate.TeachingEventRegistrations).SetValidator(new TeachingEventRegistrationValidator(store));
 
             RuleFor(candidate => candidate.PreferredTeachingSubjectId)
-                .SetValidator(new LookupItemIdValidator<Candidate>("dfe_teachingsubjectlist", store))
+                .SetValidator(new TeachingSubjectIdValidator<Candidate>(store))
                 .Unless(candidate => candidate.PreferredTeachingSubjectId == null);
             RuleFor(candidate => candidate.SecondaryPreferredTeachingSubjectId)
-                .SetValidator(new LookupItemIdValidator<Candidate>("dfe_teachingsubjectlist", store))
+                .SetValidator(new TeachingSubjectIdValidator<Candidate>(store))
                 .Unless(candidate => candidate.SecondaryPreferredTeachingSubjectId == null);
             RuleFor(candidate => candidate.CountryId)
-                .SetValidator(new LookupItemIdValidator<Candidate>("dfe_country", store))
+                .SetValidator(new CountryIdValidator<Candidate>(store))
                 .Unless(candidate => candidate.CountryId == null);
             RuleFor(candidate => candidate.PreferredEducationPhaseId)
                 .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_preferrededucationphase01", store))

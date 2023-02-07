@@ -26,18 +26,18 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         public void Validate_WhenValid_HasNoErrors()
         {
             var mockPickListItem = new PickListItem { Id = 123 };
-            var mockLookupItem = new LookupItem { Id = Guid.NewGuid() };
+            var mockSubject = new TeachingSubject { Id = Guid.NewGuid() };
 
             _mockStore
-                .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
-                .Returns(new[] { mockLookupItem }.AsQueryable());
+                .Setup(mock => mock.GetTeachingSubjects())
+                .Returns(new[] { mockSubject }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("dfe_candidatepastteachingposition", "dfe_educationphase"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
 
             var position = new CandidatePastTeachingPosition
             {
-                SubjectTaughtId = mockLookupItem.Id,
+                SubjectTaughtId = mockSubject.Id,
                 EducationPhaseId = mockPickListItem.Id,
             };
 

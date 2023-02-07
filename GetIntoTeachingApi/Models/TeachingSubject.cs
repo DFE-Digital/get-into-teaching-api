@@ -1,27 +1,25 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 using Microsoft.Xrm.Sdk;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GetIntoTeachingApi.Models
 {
-    public class LookupItem
+    public class TeachingSubject
     {
+        public static readonly Guid PrimaryTeachingSubjectId = new("b02655a1-2afa-e811-a981-000d3a276620");
+
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid? Id { get; set; }
         public string Value { get; set; }
-        [JsonIgnore]
-        public string EntityName { get; set; }
 
-        public LookupItem()
+        public TeachingSubject()
         {
         }
 
-        public LookupItem(Entity entity)
+        public TeachingSubject(Entity entity)
         {
             Id = entity.Id;
             Value = entity.GetAttributeValue<string>("dfe_name");
-            EntityName = entity.LogicalName;
         }
     }
 }

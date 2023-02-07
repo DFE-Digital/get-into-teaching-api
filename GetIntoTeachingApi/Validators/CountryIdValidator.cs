@@ -6,21 +6,19 @@ using GetIntoTeachingApi.Services;
 
 namespace GetIntoTeachingApi.Validators
 {
-    public class LookupItemIdValidator<T> : PropertyValidator<T, Guid?>
+    public class CountryIdValidator<T> : PropertyValidator<T, Guid?>
     {
-        private readonly string _entityName;
         private readonly IStore _store;
 
-        public LookupItemIdValidator(string entityName, IStore store)
+        public CountryIdValidator(IStore store)
             : base()
         {
-            _entityName = entityName;
             _store = store;
         }
 
         public override bool IsValid(ValidationContext<T> context, Guid? value)
         {
-            var exists = _store.GetLookupItems(_entityName).Any(i => i.Id == value);
+            var exists = _store.GetCountries().Any(i => i.Id == value);
 
             if (exists)
             {
@@ -28,13 +26,12 @@ namespace GetIntoTeachingApi.Validators
             }
 
             context.MessageFormatter.AppendArgument("PropertyName", context.PropertyName);
-            context.MessageFormatter.AppendArgument("EntityName", _entityName);
 
             return false;
         }
 
-        public override string Name => "LookupItemIdValidator";
+        public override string Name => "CountryIdValidator";
 
-        protected override string GetDefaultMessageTemplate(string errorCode) => "{PropertyName} must be a valid {EntityName} item.";
+        protected override string GetDefaultMessageTemplate(string errorCode) => "{PropertyName} must be a valid country id.";
     }
 }

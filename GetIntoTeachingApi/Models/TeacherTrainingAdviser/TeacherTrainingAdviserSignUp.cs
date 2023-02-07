@@ -88,7 +88,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         [JsonIgnore]
         public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
         [JsonIgnore]
-        private bool IsOverseas => CountryId != LookupItem.UnitedKingdomCountryId;
+        private bool IsOverseas => CountryId != Country.UnitedKingdomCountryId;
 
         public TeacherTrainingAdviserSignUp()
         {
@@ -126,7 +126,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         {
             if (candidate.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Primary)
             {
-                candidate.PreferredTeachingSubjectId = LookupItem.PrimaryTeachingSubjectId;
+                candidate.PreferredTeachingSubjectId = TeachingSubject.PrimaryTeachingSubjectId;
             }
         }
 

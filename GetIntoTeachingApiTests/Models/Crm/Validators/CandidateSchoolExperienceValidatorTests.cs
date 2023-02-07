@@ -26,10 +26,10 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var mockTeachingSubject = new LookupItem { Id = Guid.NewGuid() };
+            var mockTeachingSubject = new TeachingSubject { Id = Guid.NewGuid() };
 
             _mockStore
-               .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
+               .Setup(mock => mock.GetTeachingSubjects())
                .Returns(new[] { mockTeachingSubject }.AsQueryable());
 
             var candidateSchoolExperience = new CandidateSchoolExperience()
@@ -76,8 +76,8 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         public void Validate_TeachingSubjectIdNotFound_HasError()
         {
             _mockStore
-              .Setup(mock => mock.GetLookupItems("dfe_teachingsubjectlist"))
-              .Returns(new List<LookupItem>().AsQueryable());
+              .Setup(mock => mock.GetTeachingSubjects())
+              .Returns(new List<TeachingSubject>().AsQueryable());
             var candidateSchoolExperience = new CandidateSchoolExperience()
             {
                 TeachingSubjectId = Guid.NewGuid(),

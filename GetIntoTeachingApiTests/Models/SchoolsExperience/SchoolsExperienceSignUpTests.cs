@@ -85,7 +85,7 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience
             candidate.Id.Should().Be(request.CandidateId);
             candidate.PreferredTeachingSubjectId.Should().Be(request.PreferredTeachingSubjectId);
             candidate.SecondaryPreferredTeachingSubjectId.Should().Be(request.SecondaryPreferredTeachingSubjectId);
-            candidate.CountryId.Should().Be(LookupItem.UnitedKingdomCountryId);
+            candidate.CountryId.Should().Be(Country.UnitedKingdomCountryId);
             candidate.Email.Should().Be(request.Email);
             candidate.FirstName.Should().Be(request.FirstName);
             candidate.LastName.Should().Be(request.LastName);

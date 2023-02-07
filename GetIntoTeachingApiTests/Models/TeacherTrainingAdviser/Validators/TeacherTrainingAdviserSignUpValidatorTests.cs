@@ -91,7 +91,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
         [Fact]
         public void Validate_WhenCountryIdIsUk_AndAddressPostcodeIsNull_HasError()
         {
-            _request.CountryId = LookupItem.UnitedKingdomCountryId;
+            _request.CountryId = Country.UnitedKingdomCountryId;
             _request.AddressPostcode = null;
 
             var result = _validator.TestValidate(_request);
@@ -104,7 +104,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
 
             result.ShouldNotHaveValidationErrorFor(request => request.AddressPostcode);
 
-            _request.CountryId = LookupItem.UnitedKingdomCountryId;
+            _request.CountryId = Country.UnitedKingdomCountryId;
             _request.AddressPostcode = "TE5 1NG";
 
             result = _validator.TestValidate(_request);
@@ -453,7 +453,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
             public void Validate_WhenPhoneCallScheduledAtIsInPast_AndDegreeTypeIsDegreeEquivalent_AndCountryIdIsUk_HasError()
             {
                 _request.PhoneCallScheduledAt = null;
-                _request.CountryId = LookupItem.UnitedKingdomCountryId;
+                _request.CountryId = Country.UnitedKingdomCountryId;
                 _request.DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent;
 
                 var result = _validator.TestValidate(_request);

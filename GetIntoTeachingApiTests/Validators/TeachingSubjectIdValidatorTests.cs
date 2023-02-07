@@ -11,19 +11,19 @@ using FluentAssertions;
 
 namespace GetIntoTeachingApiTests.Validators
 {
-    public class LookupItemIdValidatorTests
+    public class TeachingSubjectIdValidatorTests
     {
         private readonly Mock<IStore> _mockStore;
-        private readonly LookupItem _item;
-        private readonly LookupItemIdValidator<object> _validator;
+        private readonly TeachingSubject _item;
+        private readonly TeachingSubjectIdValidator<object> _validator;
 
-        public LookupItemIdValidatorTests()
+        public TeachingSubjectIdValidatorTests()
         {
             _mockStore = new Mock<IStore>();
-            _validator = new LookupItemIdValidator<object>("dfe_country", _mockStore.Object);
-            _item = new LookupItem() { Id = Guid.NewGuid() };
+            _validator = new TeachingSubjectIdValidator<object>(_mockStore.Object);
+            _item = new TeachingSubject() { Id = Guid.NewGuid() };
 
-            _mockStore.Setup(m => m.GetLookupItems("dfe_country")).Returns(new List<LookupItem>() { _item }.AsQueryable());
+            _mockStore.Setup(m => m.GetTeachingSubjects()).Returns(new List<TeachingSubject>() { _item }.AsQueryable());
         }
 
         [Fact]
