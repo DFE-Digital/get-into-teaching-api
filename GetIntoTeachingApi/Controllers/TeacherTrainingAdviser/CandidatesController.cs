@@ -15,7 +15,7 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
 {
     [Route("api/teacher_training_adviser/candidates")]
     [ApiController]
-    [Authorize(Roles = "Admin,GetAnAdviser")]
+    [Authorize(Roles = "Admin,GetAnAdviser,Apply")]
     public class CandidatesController : ControllerBase
     {
         private readonly ICandidateAccessTokenService _tokenService;
