@@ -13,7 +13,7 @@ namespace GetIntoTeachingApi.Controllers
 {
     [Route("api/candidates")]
     [ApiController]
-    [Authorize(Roles = "Admin,GetIntoTeaching,GetAnAdviser,SchoolsExperience")]
+    [Authorize(Roles = "Admin,GetIntoTeaching,GetAnAdviser,SchoolsExperience,Apply")]
     public class CandidatesController : ControllerBase
     {
         private readonly ICandidateAccessTokenService _accessTokenService;
@@ -91,6 +91,51 @@ namespace GetIntoTeachingApi.Controllers
             _notifyService.SendEmailAsync(request.Email, NotifyService.NewPinCodeEmailTemplateId, personalisation);
 
             return NoContent();
+        }
+
+        [HttpPost]
+        [Route("matchback")]
+        [SwaggerOperation(
+            Summary = "Perform a matchback operation, returning the match candidate id.",
+            Description = @"Attempts to matchback against a known candidate and returns the candidate id.",
+            OperationId = "MatchbackCandidate",
+            Tags = new[] { "Candidates" })]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
+        public IActionResult Matchback([FromBody, SwaggerRequestBody("Candidate details to matchback.", Required = true)] ExistingCandidateRequest request)
+        {
+            request.Reference ??= User.Identity.Name;
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (_appSettings.IsCrmIntegrationPaused)
+            {
+                _logger.LogInformation("CandidatesController - potential duplicate (CRM integration paused)");
+                return NotFound();
+            }
+
+            Candidate candidate;
+
+            try
+            {
+                candidate = _crm.MatchCandidate(request);
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation("CandidatesController - potential duplicate (CRM exception) - {Message}", e.Message);
+                throw;
+            }
+
+            if (candidate == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new CandidateMatchbackResponse(candidate));
         }
     }
 }
