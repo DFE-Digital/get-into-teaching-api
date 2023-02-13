@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.TeacherTrainingAdviser;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
@@ -9,6 +10,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
@@ -22,17 +24,23 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
         private readonly ICrmService _crm;
         private readonly IBackgroundJobClient _jobClient;
         private readonly IDateTimeProvider _dateTime;
+        private readonly IAppSettings _appSettings;
+        private readonly ILogger<CandidatesController> _logger;
 
         public CandidatesController(
             ICandidateAccessTokenService tokenService,
             ICrmService crm,
             IBackgroundJobClient jobClient,
-            IDateTimeProvider dateTime)
+            IDateTimeProvider dateTime,
+            IAppSettings appSettings,
+            ILogger<CandidatesController> logger)
         {
             _crm = crm;
             _tokenService = tokenService;
             _jobClient = jobClient;
             _dateTime = dateTime;
+            _appSettings = appSettings;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -83,6 +91,51 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
             if (candidate == null || !_tokenService.IsValid(accessToken, request, (Guid)candidate.Id))
             {
                 return Unauthorized();
+            }
+
+            return Ok(new TeacherTrainingAdviserSignUp(candidate));
+        }
+
+        [HttpPost]
+        [Route("matchback")]
+        [SwaggerOperation(
+           Summary = "Perform a matchback operation to retrieve a pre-populated TeacherTrainingAdviserSignUp for the candidate.",
+           Description = @"Attempts to matchback against a known candidate and returns a pre-populated TeacherTrainingAdviser sign up if a match is found.",
+           OperationId = "MatchbackCandidate",
+           Tags = new[] { "Candidates" })]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
+        public IActionResult Matchback([FromBody, SwaggerRequestBody("Candidate details to matchback.", Required = true)] ExistingCandidateRequest request)
+        {
+            request.Reference ??= User.Identity.Name;
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (_appSettings.IsCrmIntegrationPaused)
+            {
+                _logger.LogInformation("TeacherTrainingAdviser - CandidatesController - potential duplicate (CRM integration paused)");
+                return NotFound();
+            }
+
+            Candidate candidate;
+
+            try
+            {
+                candidate = _crm.MatchCandidate(request);
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation("TeacherTrainingAdviser - CandidatesController - potential duplicate (CRM exception) - {Message}", e.Message);
+                throw;
+            }
+
+            if (candidate == null)
+            {
+                return NotFound();
             }
 
             return Ok(new TeacherTrainingAdviserSignUp(candidate));
