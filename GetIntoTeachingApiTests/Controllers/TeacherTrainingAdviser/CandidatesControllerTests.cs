@@ -15,6 +15,7 @@ using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.TeacherTrainingAdviser;
 using GetIntoTeachingApiTests.Helpers;
+using Microsoft.Extensions.Logging;
 
 namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
 {
@@ -24,6 +25,8 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
         private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly Mock<IDateTimeProvider> _mockDateTime;
+        private readonly Mock<IAppSettings> _mockAppSettings;
+        private readonly Mock<ILogger<CandidatesController>> _mockLogger;
         private readonly CandidatesController _controller;
         private readonly ExistingCandidateRequest _request;
 
@@ -33,8 +36,11 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
             _mockCrm = new Mock<ICrmService>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
             _mockDateTime = new Mock<IDateTimeProvider>();
+            _mockLogger = new Mock<ILogger<CandidatesController>>();
+            _mockAppSettings = new Mock<IAppSettings>();
             _request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
-            _controller = new CandidatesController(_mockTokenService.Object, _mockCrm.Object, _mockJobClient.Object, _mockDateTime.Object);
+            _controller = new CandidatesController(_mockTokenService.Object, _mockCrm.Object,
+                _mockJobClient.Object, _mockDateTime.Object, _mockAppSettings.Object, _mockLogger.Object);
             _controller.MockUser("TTA");
 
             // Freeze time.
@@ -111,6 +117,75 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
                 It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
                 IsMatch(request.Candidate, (string)job.Args[0])),
                 It.IsAny<EnqueuedState>()));
+        }
+
+        [Fact]
+        public void Matchback_InvalidRequest_RespondsWithValidationErrors()
+        {
+            var request = new ExistingCandidateRequest { Email = "invalid-email@", Reference = "Ref" };
+            _controller.ModelState.AddModelError("Email", "Email is invalid.");
+
+            var response = _controller.Matchback(request);
+
+            request.Reference.Should().Be("Ref");
+            var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
+            var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
+            errors.Should().ContainKey("Email").WhoseValue.Should().BeOfType<string[]>().Which.Should().Contain("Email is invalid.");
+        }
+
+        [Fact]
+        public void Matchback_ValidRequest_ReturnsCandidateMatchbackResponse()
+        {
+            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
+            var candidate = new Candidate { Id = Guid.NewGuid(), Email = request.Email, FirstName = request.FirstName, LastName = request.LastName };
+            _mockCrm.Setup(mock => mock.MatchCandidate(request)).Returns(candidate);
+            _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
+
+            var response = _controller.Matchback(request);
+
+            request.Reference.Should().Be("TTA");
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            var matchbackResponse = (TeacherTrainingAdviserSignUp)ok.Value;
+            matchbackResponse.CandidateId.Should().Be((Guid)candidate.Id);
+        }
+
+        [Fact]
+        public void Matchback_MismatchedCandidate_ReturnsNotFound()
+        {
+            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
+            _mockCrm.Setup(mock => mock.MatchCandidate(request)).Returns<Candidate>(null);
+            _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
+
+            var response = _controller.Matchback(request);
+
+            response.Should().BeOfType<NotFoundResult>();
+        }
+
+        [Fact]
+        public void Matchback_CrmThrowsException_LogsAndReRaises()
+        {
+            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
+            _mockCrm.Setup(m => m.MatchCandidate(request)).Throws(new Exception("Error"));
+            _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
+
+            _controller.Invoking(c => c.Matchback(request))
+                .Should().Throw<Exception>()
+                .WithMessage("Error");
+
+            _mockLogger.VerifyInformationWasCalled("TeacherTrainingAdviser - CandidatesController - potential duplicate (CRM exception) - Error");
+        }
+
+        [Fact]
+        public void Matchback_CrmIntegrationIsPaused_ReturnsNotFound()
+        {
+            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
+            _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(true);
+
+            var response = _controller.Matchback(request);
+
+            response.Should().BeOfType<NotFoundResult>();
+
+            _mockLogger.VerifyInformationWasCalled("TeacherTrainingAdviser - CandidatesController - potential duplicate (CRM integration paused)");
         }
 
         private static bool IsMatch(Candidate candidateA, string candidateBJson)
