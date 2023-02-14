@@ -299,18 +299,18 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
             }
 
             [Fact]
-            public void Validate_WhenNotHaveOrPlanningToRetakeGcseMathsAndEnglish_AndDegreeTypeIsHasDegreeNotStudying_AndPreferredEducationPhaseIdIsSecondary_HasError()
+            public void Validate_WhenNotHaveOrPlanningToRetakeGcseMathsAndEnglish_AndDegreeTypeIsHasDegreeNotStudying_AndPreferredEducationPhaseIsNotNull_HasError()
             {
                 _request.HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
                 _request.PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
+                _request.PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Primary;
                 _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
                 _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree;
-                _request.PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary;
 
                 var result = _validator.TestValidate(_request);
 
                 result.ShouldHaveValidationErrorFor(request => request)
-                    .WithErrorMessage("Must have or be retaking Maths and English GCSEs when preferred education phase is secondary.");
+                    .WithErrorMessage("Must have or be retaking Maths and English GCSEs.");
 
                 _request.DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent;
 
@@ -328,55 +328,6 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
                 _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
                 _request.HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
                 _request.PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking;
-
-                result = _validator.TestValidate(_request);
-
-                result.ShouldNotHaveValidationErrorFor(request => request);
-
-                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.FinalYear;
-                _request.HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
-                _request.PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
-
-                result = _validator.TestValidate(_request);
-
-                result.ShouldNotHaveValidationErrorFor(request => request);
-            }
-
-            [Fact]
-            public void Validate_WhenNotHaveOrPlanningToRetakeGcseMathsAndEnglishAndScience_AndDegreeTypeIsHasDegreeNotStudying_AndPreferredEducationPhaseIdIsPrimary_HasError()
-            {
-                _request.HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
-                _request.PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
-                _request.HasGcseScienceId = (int)Candidate.GcseStatus.NotAnswered;
-                _request.PlanningToRetakeGcseScienceId = (int)Candidate.GcseStatus.NotAnswered;
-                _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
-                _request.DegreeStatusId = (int)CandidateQualification.DegreeType.Degree;
-                _request.PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Primary;
-
-                var result = _validator.TestValidate(_request);
-
-                result.ShouldHaveValidationErrorFor(request => request)
-                    .WithErrorMessage("Must have or be retaking all GCSEs when preferred education phase is primary.");
-
-                _request.DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent;
-
-                result = _validator.TestValidate(_request);
-
-                result.ShouldNotHaveValidationErrorFor(request => request);
-
-                _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
-                _request.HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking;
-                _request.HasGcseScienceId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking;
-
-                result = _validator.TestValidate(_request);
-
-                result.ShouldNotHaveValidationErrorFor(request => request);
-
-                _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
-                _request.HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
-                _request.HasGcseScienceId = (int)Candidate.GcseStatus.NotAnswered;
-                _request.PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking;
-                _request.PlanningToRetakeGcseScienceId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking;
 
                 result = _validator.TestValidate(_request);
 

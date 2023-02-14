@@ -95,13 +95,8 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
                 {
                     RuleFor(request => request)
                         .Must(request => HasOrIsPlanningOnRetakingEnglishAndMaths(request))
-                        .When(request => request.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Secondary)
-                        .WithMessage("Must have or be retaking Maths and English GCSEs when preferred education phase is secondary.");
-
-                    RuleFor(request => request)
-                        .Must(request => HasOrIsPlanningOnRetakingEnglishAndMaths(request) && HasOrIsPlanningOnRetakingScience(request))
-                        .When(request => request.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Primary)
-                        .WithMessage("Must have or be retaking all GCSEs when preferred education phase is primary.");
+                        .When(request => request.PreferredEducationPhaseId != null)
+                        .WithMessage("Must have or be retaking Maths and English GCSEs.");
 
                     RuleFor(request => request.UkDegreeGradeId).NotNull()
                         .WithMessage("Must be set when candidate has a degree.");
@@ -138,15 +133,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
             {
                 request.HasGcseMathsAndEnglishId,
                 request.PlanningToRetakeGcseMathsAndEnglishId,
-            }.Any(value => (int?)Candidate.GcseStatus.HasOrIsPlanningOnRetaking == value);
-        }
-
-        private static bool HasOrIsPlanningOnRetakingScience(TeacherTrainingAdviserSignUp request)
-        {
-            return new[]
-            {
-                request.HasGcseScienceId,
-                request.PlanningToRetakeGcseScienceId,
             }.Any(value => (int?)Candidate.GcseStatus.HasOrIsPlanningOnRetaking == value);
         }
     }
