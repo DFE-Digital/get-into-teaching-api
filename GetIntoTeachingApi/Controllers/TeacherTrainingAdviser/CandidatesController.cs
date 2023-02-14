@@ -102,7 +102,7 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
            Summary = "Perform a matchback operation to retrieve a pre-populated TeacherTrainingAdviserSignUp for the candidate.",
            Description = @"Attempts to matchback against a known candidate and returns a pre-populated TeacherTrainingAdviser sign up if a match is found.",
            OperationId = "MatchbackCandidate",
-           Tags = new[] { "Candidates" })]
+           Tags = new[] { "Teacher Training Adviser" })]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
