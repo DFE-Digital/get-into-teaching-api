@@ -43,7 +43,7 @@ module "prometheus" {
   grafana_google_jwt                = lookup(local.monitoring_secrets, "GOOGLE_JWT", "")
   grafana_runtime_version           = "8.3.2"
   grafana_anonymous_auth            = true
-  prometheus_memory                 = 5120
+  prometheus_memory                 = 6144
   prometheus_disk_quota             = 5120
   internal_apps                     = var.monitor_scrape_applications
   influxdb_service_plan             = var.influxdb_1_plan
