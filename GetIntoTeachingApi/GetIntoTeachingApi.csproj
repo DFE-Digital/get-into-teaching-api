@@ -59,10 +59,6 @@
 		<PackageReference Include="Castle.Core" Version="5.1.1" />
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.1" />
-		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="7.0.0">
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		  <PrivateAssets>all</PrivateAssets>
-		</PackageReference>
 		<PackageReference Include="Hangfire.PostgreSql" Version="1.9.9" />
 		<PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.0.26" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
