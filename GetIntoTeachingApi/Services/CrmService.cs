@@ -61,12 +61,12 @@ namespace GetIntoTeachingApi.Services
 
         public IEnumerable<Country> GetCountries()
         {
-            return _service.CreateQuery("dfe_country", Context()).ToList().Select((entity) => new Country(entity));
+            return _service.CreateQuery("dfe_country", Context()).AsEnumerable().Select((entity) => new Country(entity));
         }
 
         public IEnumerable<TeachingSubject> GetTeachingSubjects()
         {
-            return _service.CreateQuery("dfe_teachingsubjectlist", Context()).ToList().Select((entity) => new TeachingSubject(entity));
+            return _service.CreateQuery("dfe_teachingsubjectlist", Context()).AsEnumerable().Select((entity) => new TeachingSubject(entity));
         }
 
         public IEnumerable<PickListItem> GetPickListItems(string entityName, string attributeName)
@@ -82,7 +82,7 @@ namespace GetIntoTeachingApi.Services
                                    entity.GetAttributeValue<DateTime>("dfe_starttime") < _dateTime.UtcNow.AddDays(MaximumCallbackBookingQuotaDaysInAdvance))
                 .OrderBy((entity) => entity.GetAttributeValue<DateTime>("dfe_starttime"))
                 .Select((entity) => new CallbackBookingQuota(entity, this, _serviceProvider))
-                .ToList()
+                .AsEnumerable()
                 .Where((quota) => quota.IsAvailable); // Doing this in the Dynamics query throws an exception, though I'm not sure why.
         }
 
