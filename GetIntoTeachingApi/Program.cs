@@ -5,8 +5,6 @@ using GetIntoTeachingApi.Database;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Serilog.Events;
-using Serilog.Formatting.Compact;
 
 namespace GetIntoTeachingApi
 {
@@ -14,6 +12,9 @@ namespace GetIntoTeachingApi
     {
         public static async Task Main(string[] args)
         {
+            // Set global Regex timeout.
+            AppDomain.CurrentDomain.SetData("REGEX_DEFAULT_MATCH_TIMEOUT", TimeSpan.FromMilliseconds(500));
+
             GetIntoTeachingDbContext.ConfigureNpgsql();
 
             var webHost = CreateHostBuilder(args).Build();

@@ -34,7 +34,7 @@ namespace GetIntoTeachingApi.Utils
         {
             get
             {
-                var url = Environment.GetEnvironmentVariable("APPLY_CANDIDATE_API_URL"); ;
+                var url = Environment.GetEnvironmentVariable("APPLY_CANDIDATE_API_URL");
 
                 if (IsFeatureOn("APPLY_CANDIDATE_API_V1_2"))
                 {
