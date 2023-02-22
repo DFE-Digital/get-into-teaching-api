@@ -103,7 +103,7 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
            Description = @"Attempts to matchback against a known candidate and returns a pre-populated TeacherTrainingAdviser sign up if a match is found.",
            OperationId = "MatchbackCandidate",
            Tags = new[] { "Teacher Training Adviser" })]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(TeacherTrainingAdviserSignUp), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
         public IActionResult Matchback([FromBody, SwaggerRequestBody("Candidate details to matchback.", Required = true)] ExistingCandidateRequest request)
