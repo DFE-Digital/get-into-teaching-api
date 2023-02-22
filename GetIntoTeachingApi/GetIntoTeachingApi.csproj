@@ -59,11 +59,11 @@
 		<PackageReference Include="Castle.Core" Version="5.1.1" />
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.3" />
-		<PackageReference Include="Hangfire.PostgreSql" Version="1.9.10" />
 		<PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.0.26" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="7.0.3" />
+		<PackageReference Include="Hangfire.PostgreSql" Version="1.9.9" />
 	</ItemGroup>
 
 	<ItemGroup>
