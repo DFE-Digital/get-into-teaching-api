@@ -38,7 +38,7 @@ namespace GetIntoTeachingApiTests.Jobs
                 new Env(), new Mock<IRedisService>().Object, _mockContext.Object, _metrics, _mockCrm.Object,
                 _mockLogger.Object, _mockAppSettings.Object);
 
-            _metrics.HangfireJobQueueDuration.RemoveLabelled(new[] { "UpsertApplicationFormJob" });
+            _metrics.HangfireJobQueueDuration.RemoveLabelled("UpsertApplicationFormJob");
             _mockContext.Setup(m => m.GetJobCreatedAt(null)).Returns(DateTime.UtcNow.AddDays(-1));
 
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
@@ -93,7 +93,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockLogger.VerifyInformationWasCalled("UpsertApplicationFormJob - Started (1/24)");
             _mockLogger.VerifyInformationWasCalled($"UpsertApplicationFormJob - Payload {Redactor.RedactJson(json)}");
             _mockLogger.VerifyInformationWasCalled($"UpsertApplicationFormJob - Succeeded - {_form.Id}");
-            _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertApplicationFormJob" }).Count.Should().Be(1);
+            _metrics.HangfireJobQueueDuration.WithLabels("UpsertApplicationFormJob").Count.Should().Be(1);
         }
 
         [Fact]
@@ -143,7 +143,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockLogger.VerifyInformationWasCalled("UpsertApplicationFormJob - Started (24/24)");
             _mockLogger.VerifyInformationWasCalled("UpsertApplicationFormJob - Deleted");
-            _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertApplicationFormJob" }).Count.Should().Be(1);
+            _metrics.HangfireJobQueueDuration.WithLabels("UpsertApplicationFormJob").Count.Should().Be(1);
         }
 
         [Fact]

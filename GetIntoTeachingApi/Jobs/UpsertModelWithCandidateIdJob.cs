@@ -78,7 +78,7 @@ namespace GetIntoTeachingApi.Jobs
             }
 
             var duration = (DateTime.UtcNow - _contextAdapter.GetJobCreatedAt(context)).TotalSeconds;
-            _metrics.HangfireJobQueueDuration.WithLabels(new[] { $"UpsertModelJob<{typeName}>" }).Observe(duration);
+            _metrics.HangfireJobQueueDuration.WithLabels($"UpsertModelJob<{typeName}>").Observe(duration);
         }
     }
 }

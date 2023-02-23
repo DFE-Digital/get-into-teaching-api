@@ -75,7 +75,7 @@ namespace GetIntoTeachingApi.Jobs
             }
 
             var duration = (DateTime.UtcNow - _contextAdapter.GetJobCreatedAt(context)).TotalSeconds;
-            _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Observe(duration);
+            _metrics.HangfireJobQueueDuration.WithLabels("UpsertCandidateJob").Observe(duration);
         }
 
         private static string Signature(Candidate candidate)

@@ -131,7 +131,7 @@ namespace GetIntoTeachingApi.Jobs
                 return;
             }
 
-            var parameters = batch.SelectMany((location, index) => DbParameters(location, index));
+            var parameters = batch.SelectMany(DbParameters);
             var values = string.Join(", ", batch.Select((_, index) => $"(@postcode{index}, @coordinate{index}, @source{index})"));
 
             await _dbContext.Database.ExecuteSqlRawAsync(
