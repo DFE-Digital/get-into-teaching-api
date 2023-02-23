@@ -46,7 +46,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _job = new UpsertCandidateJob(new Env(), mockRedis.Object, _mockUpserter.Object, _mockNotifyService.Object,
                 _mockContext.Object, _metrics, _mockLogger.Object, _mockAppSettings.Object);
 
-            _metrics.HangfireJobQueueDuration.RemoveLabelled(new[] { "UpsertCandidateJob" });
+            _metrics.HangfireJobQueueDuration.RemoveLabelled("UpsertCandidateJob");
             _mockContext.Setup(m => m.GetJobCreatedAt(null)).Returns(DateTime.UtcNow.AddDays(-1));
 
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
@@ -66,7 +66,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockLogger.VerifyInformationWasCalled("UpsertCandidateJob - Started (1/24)");
             _mockLogger.VerifyInformationWasCalled($"UpsertCandidateJob - Payload {Redactor.RedactJson(json)}");
             _mockLogger.VerifyInformationWasCalled($"UpsertCandidateJob - Succeeded - {_candidate.Id}");
-            _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Count.Should().Be(1);
+            _metrics.HangfireJobQueueDuration.WithLabels("UpsertCandidateJob").Count.Should().Be(1);
             _mockDatabase.Verify(m => m.StringSet(key, true, TimeSpan.FromSeconds(5), false, When.Always, CommandFlags.None));
         }
 
@@ -82,7 +82,7 @@ namespace GetIntoTeachingApiTests.Jobs
                 NotifyService.CandidateRegistrationFailedEmailTemplateId, It.IsAny<Dictionary<string, dynamic>>()));
             _mockLogger.VerifyInformationWasCalled("UpsertCandidateJob - Started (24/24)");
             _mockLogger.VerifyInformationWasCalled("UpsertCandidateJob - Deleted");
-            _metrics.HangfireJobQueueDuration.WithLabels(new[] { "UpsertCandidateJob" }).Count.Should().Be(1);
+            _metrics.HangfireJobQueueDuration.WithLabels("UpsertCandidateJob").Count.Should().Be(1);
         }
 
         [Fact]

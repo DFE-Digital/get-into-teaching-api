@@ -63,7 +63,7 @@ namespace GetIntoTeachingApi.Jobs
             }
 
             var duration = (DateTime.UtcNow - _contextAdapter.GetJobCreatedAt(context)).TotalSeconds;
-            _metrics.HangfireJobQueueDuration.WithLabels(new[] { $"ClaimCallbackBookingSlotJob" }).Observe(duration);
+            _metrics.HangfireJobQueueDuration.WithLabels("ClaimCallbackBookingSlotJob").Observe(duration);
         }
     }
 }

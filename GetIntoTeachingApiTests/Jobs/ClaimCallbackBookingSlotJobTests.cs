@@ -35,7 +35,7 @@ namespace GetIntoTeachingApiTests.Jobs
                 new Env(), new Mock<IRedisService>().Object, _mockContext.Object, _mockCrm.Object,
                 _metrics, _mockLogger.Object, _mockAppSettings.Object);
 
-            _metrics.HangfireJobQueueDuration.RemoveLabelled(new[] { "ClaimCallbackBookingSlotJob" });
+            _metrics.HangfireJobQueueDuration.RemoveLabelled("ClaimCallbackBookingSlotJob");
             _mockContext.Setup(m => m.GetJobCreatedAt(null)).Returns(DateTime.UtcNow.AddDays(-1));
 
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
@@ -57,7 +57,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockLogger.VerifyInformationWasCalled("ClaimCallbackBookingSlotJob - Started (1/24)");
             _mockLogger.VerifyInformationWasCalled($"ClaimCallbackBookingSlotJob - Payload {_scheduledAt}");
             _mockLogger.VerifyInformationWasCalled($"ClaimCallbackBookingSlotJob - Succeeded - {_scheduledAt}");
-            _metrics.HangfireJobQueueDuration.WithLabels(new[] { "ClaimCallbackBookingSlotJob" }).Count.Should().Be(1);
+            _metrics.HangfireJobQueueDuration.WithLabels("ClaimCallbackBookingSlotJob").Count.Should().Be(1);
         }
 
 
