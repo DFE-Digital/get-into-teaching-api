@@ -63,7 +63,7 @@ namespace GetIntoTeachingApi.Jobs
             }
 
             var duration = (DateTime.UtcNow - _contextAdapter.GetJobCreatedAt(context)).TotalSeconds;
-            _metrics.HangfireJobQueueDuration.WithLabels(new[] { $"UpsertApplicationFormJob" }).Observe(duration);
+            _metrics.HangfireJobQueueDuration.WithLabels("UpsertApplicationFormJob").Observe(duration);
         }
 
         private void SaveApplicationForm(ApplicationForm form)
