@@ -4,18 +4,6 @@
     "Id": "371aa675-e6bf-41c5-ad5f-4e1e8de5d7ad",
     "Attributes": [
       {
-        "Key": "address1_city",
-        "Value": null
-      },
-      {
-        "Key": "address1_line1",
-        "Value": null
-      },
-      {
-        "Key": "address1_line2",
-        "Value": null
-      },
-      {
         "Key": "address1_postalcode",
         "Value": null
       },

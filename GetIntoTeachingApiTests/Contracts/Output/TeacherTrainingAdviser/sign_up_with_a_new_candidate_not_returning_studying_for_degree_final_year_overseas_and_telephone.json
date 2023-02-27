@@ -4,18 +4,6 @@
     "Id": "00000000-0000-0000-0000-000000000000",
     "Attributes": [
       {
-        "Key": "address1_city",
-        "Value": null
-      },
-      {
-        "Key": "address1_line1",
-        "Value": null
-      },
-      {
-        "Key": "address1_line2",
-        "Value": null
-      },
-      {
         "Key": "address1_postalcode",
         "Value": null
       },
