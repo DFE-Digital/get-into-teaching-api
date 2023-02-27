@@ -27,14 +27,14 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience.Validators
         public void Validate_WhenValid_HasNoErrors()
         {
             var mockPickListItem = new PickListItem { Id = 123 };
-            var mockLookupItem = new LookupItem { Id = Guid.NewGuid() };
+            var mockSubject = new TeachingSubject { Id = Guid.NewGuid() };
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
 
             var request = new SchoolsExperienceSignUp()
             {
                 CandidateId = null,
-                PreferredTeachingSubjectId = mockLookupItem.Id,
-                SecondaryPreferredTeachingSubjectId = mockLookupItem.Id,
+                PreferredTeachingSubjectId = mockSubject.Id,
+                SecondaryPreferredTeachingSubjectId = mockSubject.Id,
                 AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id,
                 Email = "email@address.com",
                 FirstName = "John",

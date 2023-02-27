@@ -11,7 +11,6 @@ namespace GetIntoTeachingApi.Database
         public DbSet<TeachingEvent> TeachingEvents { get; set; }
         public DbSet<TeachingEventBuilding> TeachingEventBuildings { get; set; }
         public DbSet<PrivacyPolicy> PrivacyPolicies { get; set; }
-        public DbSet<LookupItem> LookupItems { get; set; }
         public DbSet<PickListItem> PickListItems { get; set; }
         public DbSet<Country> Countries { get; set; }
         public DbSet<TeachingSubject> TeachingSubjects { get; set; }
@@ -32,7 +31,6 @@ namespace GetIntoTeachingApi.Database
         {
             modelBuilder.Entity<TeachingEvent>().HasOne(c => c.Building).WithMany(b => b.TeachingEvents)
                 .HasForeignKey(e => e.BuildingId).OnDelete(DeleteBehavior.SetNull);
-            modelBuilder.Entity<LookupItem>().HasKey(t => new { t.Id, t.EntityName });
             modelBuilder.Entity<PickListItem>().HasKey(t => new { t.Id, t.EntityName, t.AttributeName });
         }
     }
