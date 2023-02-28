@@ -74,9 +74,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         public string DegreeSubject { get; set; }
         public string AddressTelephone { get; set; }
 
-        public string AddressLine1 { get; set; }
-        public string AddressLine2 { get; set; }
-        public string AddressCity { get; set; }
         public string AddressPostcode { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public DateTime? PhoneCallScheduledAt { get; set; }
@@ -157,9 +154,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
             DateOfBirth = candidate.DateOfBirth;
             TeacherId = candidate.TeacherId;
             AddressTelephone = candidate.AddressTelephone.StripExitCode();
-            AddressLine1 = candidate.AddressLine1;
-            AddressLine2 = candidate.AddressLine2;
-            AddressCity = candidate.AddressCity;
             AddressPostcode = candidate.AddressPostcode;
             TypeId = candidate.TypeId;
             AdviserStatusId = candidate.AdviserStatusId;
@@ -197,9 +191,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                 FirstName = FirstName,
                 LastName = LastName,
                 DateOfBirth = DateOfBirth,
-                AddressLine1 = AddressLine1,
-                AddressLine2 = AddressLine2,
-                AddressCity = AddressCity,
                 AddressPostcode = AddressPostcode.AsFormattedPostcode(),
                 AddressTelephone = AddressTelephone.AsFormattedTelephone(IsOverseas),
                 TeacherId = TeacherId,
