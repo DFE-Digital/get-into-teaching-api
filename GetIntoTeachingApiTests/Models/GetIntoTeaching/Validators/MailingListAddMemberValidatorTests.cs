@@ -27,13 +27,13 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         public void Validate_WhenValid_HasNoErrors()
         {
             var mockPickListItem = new PickListItem { Id = 123 };
-            var mockLookupItem = new LookupItem { Id = Guid.NewGuid() };
+            var mockSubject = new TeachingSubject { Id = Guid.NewGuid() };
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
 
             var request = new MailingListAddMember()
             {
                 CandidateId = null,
-                PreferredTeachingSubjectId = mockLookupItem.Id,
+                PreferredTeachingSubjectId = mockSubject.Id,
                 AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id,
                 ConsiderationJourneyStageId = mockPickListItem.Id,
                 DegreeStatusId = mockPickListItem.Id,
