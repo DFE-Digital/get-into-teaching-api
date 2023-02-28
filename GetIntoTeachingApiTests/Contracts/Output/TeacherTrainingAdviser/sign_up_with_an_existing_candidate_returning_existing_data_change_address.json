@@ -4,18 +4,6 @@
     "Id": "271aa675-e6bf-41c5-ad5f-4e1e8de5d7ad",
     "Attributes": [
       {
-        "Key": "address1_city",
-        "Value": "Edinburgh"
-      },
-      {
-        "Key": "address1_line1",
-        "Value": "5 Main Street"
-      },
-      {
-        "Key": "address1_line2",
-        "Value": "Dalkeith"
-      },
-      {
         "Key": "address1_postalcode",
         "Value": "TE7 5TR"
       },

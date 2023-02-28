@@ -4,18 +4,6 @@
     "Id": "00000000-0000-0000-0000-000000000000",
     "Attributes": [
       {
-        "Key": "address1_city",
-        "Value": "Edinburgh"
-      },
-      {
-        "Key": "address1_line1",
-        "Value": "5 Main Street"
-      },
-      {
-        "Key": "address1_line2",
-        "Value": "Dalkeith"
-      },
-      {
         "Key": "address1_postalcode",
         "Value": "TE7 5TR"
       },
