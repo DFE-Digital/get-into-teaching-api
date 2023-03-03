@@ -59,10 +59,7 @@ namespace GetIntoTeachingApi.Jobs
 
             if (match != null)
             {
-                candidate.Id = match.Id;
-                // The existing email address in the CRM should always
-                // take presedence over the email from the Apply candidate.
-                candidate.Email = match.Email;
+                UpdateCandidateWithMatch(candidate, match);
             }
             else
             {
@@ -71,6 +68,26 @@ namespace GetIntoTeachingApi.Jobs
 
             string json = candidate.SerializeChangeTracked();
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
+        }
+
+        private void UpdateCandidateWithMatch(Models.Crm.Candidate candidate, Models.Crm.Candidate match)
+        {
+            candidate.Id = match.Id;
+
+            if (candidate.Email == match.Email)
+            {
+                return;
+            }
+
+
+            if (Env.IsFeatureOn("APPLY_ID_MATCHBACK") && match.SecondaryEmail == null)
+            {
+                // Write Apply email to the SecondaryEmail field.
+                candidate.SecondaryEmail = candidate.Email;
+            }
+
+            // Retain the existing Email in the CRM.
+            candidate.Email = match.Email;
         }
     }
 }
