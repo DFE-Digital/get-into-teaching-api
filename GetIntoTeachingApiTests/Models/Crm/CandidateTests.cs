@@ -83,6 +83,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
             type.GetProperty("ApplyCreatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applycreatedon" && a.Features.Contains("APPLY_CANDIDATE_API"));
             type.GetProperty("Merged").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "merged");
             type.GetProperty("Email").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "emailaddress1");
+            type.GetProperty("SecondaryEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "emailaddress2");
             type.GetProperty("FirstName").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "firstname");
             type.GetProperty("LastName").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "lastname");
             type.GetProperty("DateOfBirth").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "birthdate");
