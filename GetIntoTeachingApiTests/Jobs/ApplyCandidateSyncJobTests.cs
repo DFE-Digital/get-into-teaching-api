@@ -88,7 +88,7 @@ namespace GetIntoTeachingApiTests.Jobs
         [Fact]
         public void Run_OnSuccessWithExistingCandidate_SetsIdAndQueuesUpsertJobForCandidateWithApplicationForms()
         {
-            var match = new GetIntoTeachingApi.Models.Crm.Candidate() { Id = Guid.NewGuid(), Email = _candidate.Attributes.Email };
+            var match = new GetIntoTeachingApi.Models.Crm.Candidate() { Id = Guid.NewGuid(), Email = "different@email.com" };
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
             _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email, null)).Returns(match);
 
@@ -128,7 +128,7 @@ namespace GetIntoTeachingApiTests.Jobs
             {
                 Id = match.Id,
                 ApplyId = _candidate.Id,
-                Email = _attributes.Email,
+                Email = match.Email,
                 ApplyStatusId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.NeverSignedIn,
                 ApplyPhaseId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply2,
                 ApplyCreatedAt = _attributes.CreatedAt,
@@ -203,15 +203,32 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public void Run_WhenApplyIdMatchbackFeatureIsOn_MatchesBackOnApplyIdAsWellAsEmail()
+        public void Run_WhenApplyIdMatchbackFeatureIsOn_MatchesBackOnApplyIdAsWellAsEmailAndWritesApplyEmailToSecondaryEmail()
         {
             _mockEnv.Setup(m => m.IsFeatureOn("APPLY_ID_MATCHBACK")).Returns(true);
 
-            var match = new GetIntoTeachingApi.Models.Crm.Candidate() { Id = Guid.NewGuid(), Email = _candidate.Attributes.Email };
+            var match = new GetIntoTeachingApi.Models.Crm.Candidate() { Id = Guid.NewGuid(), Email = "different@email.com" };
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
             _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email, _candidate.Id)).Returns(match);
+            _candidate.Attributes.ApplicationForms = Array.Empty<ApplicationForm>();
 
             _job.Run(_candidate);
+
+            var candidate = new GetIntoTeachingApi.Models.Crm.Candidate()
+            {
+                Id = match.Id,
+                ApplyId = _candidate.Id,
+                Email = match.Email,
+                SecondaryEmail = _candidate.Attributes.Email,
+                ApplyStatusId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.NeverSignedIn,
+                ApplyCreatedAt = _attributes.CreatedAt,
+                ApplyUpdatedAt = _attributes.UpdatedAt,
+            };
+
+            _mockJobClient.Verify(x => x.Create(
+                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
+                IsMatch(candidate, (string)job.Args[0])),
+                It.IsAny<EnqueuedState>()));
 
             _mockCrm.VerifyAll();
         }

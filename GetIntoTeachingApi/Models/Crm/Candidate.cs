@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentValidation;
 using GetIntoTeachingApi.Attributes;
-using GetIntoTeachingApi.Models.SchoolsExperience;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Microsoft.Xrm.Sdk;
@@ -171,6 +169,8 @@ namespace GetIntoTeachingApi.Models.Crm
         public DateTime? ApplyCreatedAt { get; set; }
         [EntityField("emailaddress1")]
         public string Email { get; set; }
+        [EntityField("emailaddress2")]
+        public string SecondaryEmail { get; set; }
         [EntityField("firstname")]
         public string FirstName { get; set; }
         [EntityField("lastname")]
