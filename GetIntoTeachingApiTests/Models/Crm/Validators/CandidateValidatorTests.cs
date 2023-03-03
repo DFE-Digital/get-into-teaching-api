@@ -218,30 +218,33 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         public void Validate_EmailAddressInvalid_HasError()
         {
             var invalidEmail = "invalid-email@";
-            var candidate = new Candidate() { Email = invalidEmail };
+            var candidate = new Candidate() { Email = invalidEmail, SecondaryEmail = invalidEmail };
             var result = _validator.TestValidate(candidate);
 
             result.ShouldHaveValidationErrorFor(c => c.Email);
+            result.ShouldHaveValidationErrorFor(c => c.SecondaryEmail);
         }
 
         [Fact]
         public void Validate_EmailAddressTooLong_HasError()
         {
             var tooLongEmail = $"{new string('a', 50)}@{new string('a', 50)}.com";
-            var candidate = new Candidate() { Email = tooLongEmail };
+            var candidate = new Candidate() { Email = tooLongEmail, SecondaryEmail = tooLongEmail };
             var result = _validator.TestValidate(candidate);
 
             result.ShouldHaveValidationErrorFor(c => c.Email);
+            result.ShouldHaveValidationErrorFor(c => c.SecondaryEmail);
         }
 
         [Fact]
         public void Validate_EmailAddressIsValid_HasNoError()
         {
             var validEmail = "valid@email.com";
-            var candidate = new Candidate() { Email = validEmail };
+            var candidate = new Candidate() { Email = validEmail, SecondaryEmail = validEmail };
             var result = _validator.TestValidate(candidate);
 
             result.ShouldNotHaveValidationErrorFor(c => c.Email);
+            result.ShouldNotHaveValidationErrorFor(c => c.SecondaryEmail);
         }
 
         [Fact]
