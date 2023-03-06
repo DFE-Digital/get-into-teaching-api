@@ -364,7 +364,8 @@ namespace GetIntoTeachingApi.Services
 
         private QueryExpression MatchBackQuery(string email, string applyId = null)
         {
-            var emails = EmailReconciler.EquivalentEmails(email);
+            // The ToList() is important or Dynamics throws an error.
+            var emails = EmailReconciler.EquivalentEmails(email).ToList();
             var query = new QueryExpression("contact");
             query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
 
