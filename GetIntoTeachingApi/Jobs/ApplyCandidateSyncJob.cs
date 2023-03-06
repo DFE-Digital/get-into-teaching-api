@@ -85,9 +85,6 @@ namespace GetIntoTeachingApi.Jobs
                 // Write Apply email to the SecondaryEmail field.
                 candidate.SecondaryEmail = candidate.Email;
             }
-
-            // Retain the existing Email in the CRM.
-            candidate.Email = match.Email;
         }
     }
 }

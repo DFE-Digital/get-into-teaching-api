@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net.Mail;
 using FluentValidation;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
@@ -360,13 +362,14 @@ namespace GetIntoTeachingApi.Services
 
         private static QueryExpression MatchBackQuery(string email, string applyId = null)
         {
+            var emails = EmailReconciler.EquivalentEmails(email);
             var query = new QueryExpression("contact");
             query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
 
             var mainFilter = new FilterExpression(LogicalOperator.And);
 
             var filter = new FilterExpression(LogicalOperator.Or);
-            filter.AddCondition(new ConditionExpression("emailaddress1", ConditionOperator.Equal, email));
+            filter.AddCondition(new ConditionExpression("emailaddress1", ConditionOperator.In, emails));
 
             if (applyId != null)
             {

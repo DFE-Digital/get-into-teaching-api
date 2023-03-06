@@ -18,6 +18,7 @@ namespace GetIntoTeachingApiTests.Services
         private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly Candidate _candidate;
+        private readonly Candidate _existingCandidate;
 
         public CandidateUpserterTests()
         {
@@ -25,11 +26,33 @@ namespace GetIntoTeachingApiTests.Services
             _mockJobClient = new Mock<IBackgroundJobClient>();
             _upserter = new CandidateUpserter(_mockCrm.Object, _mockJobClient.Object);
             _candidate = new Candidate() { Id = Guid.NewGuid(), Email = "test@test.com" };
+            _existingCandidate = new Candidate() { Id = _candidate.Id, Email = "existing@email.com" };
+
+            _mockCrm.Setup(m => m.GetCandidate((Guid)_candidate.Id)).Returns(_existingCandidate);
         }
+
 
         [Fact]
         public void Upsert_WithCandidate_SavesCandidate()
         {
+            _upserter.Upsert(_candidate);
+
+            _mockCrm.Verify(mock => mock.Save(It.Is<Candidate>(c => IsMatch(_candidate, c))), Times.Once);
+        }
+
+        [Fact]
+        public void Upsert_WhenExistingCandidateFound_RetainsExistingCandidateEmail()
+        {
+            _upserter.Upsert(_candidate);
+
+            _mockCrm.Verify(mock => mock.Save(It.Is<Candidate>(c => c.Email == _existingCandidate.Email)), Times.Once);
+        }
+
+        [Fact]
+        public void Upsert_WhenExistingCandidateNotFound_SavesCandidate()
+        {
+            _mockCrm.Setup(m => m.GetCandidate((Guid)_candidate.Id)).Returns<Candidate>(null);
+
             _upserter.Upsert(_candidate);
 
             _mockCrm.Verify(mock => mock.Save(It.Is<Candidate>(c => IsMatch(_candidate, c))), Times.Once);

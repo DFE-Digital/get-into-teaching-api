@@ -1,0 +1,5 @@
+﻿# List of email hosts that are equivalent (i.e. point to the same
+# mailbox/are associated to the same person). We use these to reduce
+# duplicate records in the CRM during matchback.
+
+- ["gmail.com", "googlemail.com"]
