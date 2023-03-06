@@ -28,6 +28,8 @@ namespace GetIntoTeachingApi.Services
             var applicationForms = ClearApplicationForms(candidate);
             var schoolExperiences = ClearSchoolExperiences(candidate);
 
+            PreventCandidateEmailFromBeingOverwritten(candidate);
+
             SaveCandidate(candidate);
 
             SaveQualifications(qualifications, candidate);
@@ -104,6 +106,21 @@ namespace GetIntoTeachingApi.Services
             var privacyPolicy = candidate.PrivacyPolicy;
             candidate.PrivacyPolicy = null;
             return privacyPolicy;
+        }
+
+        private void PreventCandidateEmailFromBeingOverwritten(Candidate candidate)
+        {
+            if (candidate.Id == null)
+            {
+                return;
+            }
+
+            var existingCandidate = _crm.GetCandidate((Guid)candidate.Id);
+
+            if (existingCandidate != null)
+            {
+                candidate.Email = existingCandidate.Email;
+            }
         }
 
         private void SaveCandidate(Candidate candidate)

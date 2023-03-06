@@ -99,6 +99,9 @@
 	  <None Update="Fixtures\clients.yml">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <None Update="Fixtures\equivalent_email_hosts.yml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update=".env.development">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>

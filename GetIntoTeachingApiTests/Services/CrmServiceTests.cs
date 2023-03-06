@@ -15,6 +15,7 @@ using FluentValidation;
 using GetIntoTeachingApi.Models.Crm;
 using Microsoft.Extensions.Logging;
 using GetIntoTeachingApiTests.Helpers;
+using GetIntoTeachingApi.Utils;
 
 namespace GetIntoTeachingApiTests.Services
 {
@@ -157,17 +158,19 @@ namespace GetIntoTeachingApiTests.Services
             var andConditions = query.Criteria.Conditions;
             var orConditions = query.Criteria.Filters.First().Conditions;
             var orders = query.Orders;
+            var emails = EmailReconciler.EquivalentEmails(email);
 
             var hasStateCodeCondition = andConditions.Any(c => c.AttributeName == "statecode" &&
                 c.Operator == ConditionOperator.Equal && (int)c.Values[0] == (int)Candidate.Status.Active);
 
             var hasEmailAddressCondition = orConditions.Any(c => c.AttributeName == "emailaddress1" &&
-                c.Operator == ConditionOperator.Equal && c.Values[0].ToString() == email);
+                c.Operator == ConditionOperator.In && Enumerable.SequenceEqual(c.Values[0] as IEnumerable<string>, emails));
+
             var hasApplyCondition = applyId == null ||
                     orConditions.Any(c => c.AttributeName == "dfe_applyid" && c.Operator == ConditionOperator.Equal && c.Values[0].ToString() == applyId);
-
             var hasApplyIdSortOrder = applyId == null ||
                     orders.Any(o => o.AttributeName == "dfe_applyid" && o.OrderType == OrderType.Descending);
+
             var hasDuplicateScoreOrder = orders.Any(o => o.AttributeName == "dfe_duplicatescorecalculated" && o.OrderType == OrderType.Descending);
             var hasModifiedOnOrder = orders.Any(o => o.AttributeName == "modifiedon" && o.OrderType == OrderType.Descending);
 
@@ -183,11 +186,14 @@ namespace GetIntoTeachingApiTests.Services
             var andConditions = query.Criteria.Conditions;
             var orConditions = query.Criteria.Filters.First().Conditions;
             var orders = query.Orders;
+            var emails = EmailReconciler.EquivalentEmails(email);
+
 
             var hasStateCodeCondition = andConditions.Any(c => c.AttributeName == "statecode" &&
                 c.Operator == ConditionOperator.Equal && (int)c.Values[0] == (int)Candidate.Status.Active);
+
             var hasEmailAddressCondition = orConditions.Any(c => c.AttributeName == "emailaddress1" &&
-                c.Operator == ConditionOperator.Equal && c.Values[0].ToString() == email);
+                c.Operator == ConditionOperator.In && Enumerable.SequenceEqual(c.Values[0] as IEnumerable<string>, emails));
 
             var hasDuplicateScoreOrder = orders.Any(o => o.AttributeName == "dfe_duplicatescorecalculated" && o.OrderType == OrderType.Descending);
             var hasModifiedOnOrder = orders.Any(o => o.AttributeName == "modifiedon" && o.OrderType == OrderType.Descending);
