@@ -12,6 +12,7 @@ using GetIntoTeachingApi.Mocks;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
@@ -35,10 +36,13 @@ namespace GetIntoTeachingApiTests.Models.Crm
             _mockServiceProvider = new Mock<IServiceProvider>();
             _mockServiceProvider.Setup(m => m.GetService(It.IsAny<Type>())).Returns<IValidator>(null);
 
+            var mockEnv = new Mock<IEnv>();
+
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _mockLogger = new Mock<ILogger<ICrmService>>();
             _context = _mockService.Object.Context();
-            _crm = new CrmService(_mockService.Object, _mockServiceProvider.Object, mockAppSettings.Object, new DateTimeProvider(), _mockLogger.Object);
+            _crm = new CrmService(_mockService.Object, _mockServiceProvider.Object,
+                mockAppSettings.Object, new DateTimeProvider(), _mockLogger.Object, mockEnv.Object);
         }
 
         [Fact]
