@@ -36,16 +36,20 @@ namespace GetIntoTeachingApiTests.Services
             var mockServiceProvider = new Mock<IServiceProvider>();
             mockServiceProvider.Setup(m => m.GetService(It.IsAny<Type>())).Returns<IValidator>(null);
 
+            var mockEnv = new Mock<IEnv>();
+
             _mockAppSettings = new Mock<IAppSettings>();
             _mockService = new Mock<IOrganizationServiceAdapter>();
             _mockLogger = new Mock<ILogger<ICrmService>>();
             _mockDateTime = new Mock<IDateTimeProvider>();
             _context = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
             _mockService.Setup(mock => mock.Context()).Returns(_context);
-            _crm = new CrmService(_mockService.Object, mockServiceProvider.Object, _mockAppSettings.Object, _mockDateTime.Object, _mockLogger.Object);
+            _crm = new CrmService(_mockService.Object, mockServiceProvider.Object, _mockAppSettings.Object, _mockDateTime.Object, _mockLogger.Object, mockEnv.Object);
 
             // Freeze time.
             _mockDateTime.Setup(m => m.UtcNow).Returns(DateTime.UtcNow);
+
+            mockEnv.Setup(m => m.IsFeatureOn("SECONDARY_EMAIL_MATCHBACK")).Returns(true);
         }
 
         [Fact]
@@ -165,6 +169,8 @@ namespace GetIntoTeachingApiTests.Services
 
             var hasEmailAddressCondition = orConditions.Any(c => c.AttributeName == "emailaddress1" &&
                 c.Operator == ConditionOperator.In && Enumerable.SequenceEqual(c.Values[0] as IEnumerable<string>, emails));
+            var hasSecondaryEmailAddressCondition = orConditions.Any(c => c.AttributeName == "emailaddress2" &&
+                c.Operator == ConditionOperator.In && Enumerable.SequenceEqual(c.Values[0] as IEnumerable<string>, emails));
 
             var hasApplyCondition = applyId == null ||
                     orConditions.Any(c => c.AttributeName == "dfe_applyid" && c.Operator == ConditionOperator.Equal && c.Values[0].ToString() == applyId);
@@ -176,7 +182,7 @@ namespace GetIntoTeachingApiTests.Services
 
             var hasTopCount = query.TopCount == 1;
 
-            return hasEntityName && hasStateCodeCondition && hasEmailAddressCondition && hasApplyCondition
+            return hasEntityName && hasStateCodeCondition && hasEmailAddressCondition && hasSecondaryEmailAddressCondition && hasApplyCondition
                 && hasDuplicateScoreOrder && hasApplyIdSortOrder && hasModifiedOnOrder && hasTopCount;
         }
 
@@ -194,13 +200,16 @@ namespace GetIntoTeachingApiTests.Services
 
             var hasEmailAddressCondition = orConditions.Any(c => c.AttributeName == "emailaddress1" &&
                 c.Operator == ConditionOperator.In && Enumerable.SequenceEqual(c.Values[0] as IEnumerable<string>, emails));
+            var hasSecondaryEmailAddressCondition = orConditions.Any(c => c.AttributeName == "emailaddress2" &&
+                c.Operator == ConditionOperator.In && Enumerable.SequenceEqual(c.Values[0] as IEnumerable<string>, emails));
 
             var hasDuplicateScoreOrder = orders.Any(o => o.AttributeName == "dfe_duplicatescorecalculated" && o.OrderType == OrderType.Descending);
             var hasModifiedOnOrder = orders.Any(o => o.AttributeName == "modifiedon" && o.OrderType == OrderType.Descending);
 
             var hasTopCount = query.TopCount == 20;
 
-            return hasEntityName && hasStateCodeCondition && hasEmailAddressCondition && hasDuplicateScoreOrder && hasModifiedOnOrder && hasTopCount;
+            return hasEntityName && hasStateCodeCondition && hasEmailAddressCondition && hasSecondaryEmailAddressCondition
+                && hasDuplicateScoreOrder && hasModifiedOnOrder && hasTopCount;
         }
 
         private static bool VerifyMatchCandidatesWithMagicLinkQueryExpression(QueryExpression query, string magicLink)
