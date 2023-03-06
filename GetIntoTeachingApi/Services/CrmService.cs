@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net.Mail;
 using FluentValidation;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
@@ -25,6 +24,7 @@ namespace GetIntoTeachingApi.Services
         private readonly IDateTimeProvider _dateTime;
         private readonly IAppSettings _appSettings;
         private readonly ILogger<ICrmService> _logger;
+        private readonly IEnv _env;
         private readonly TimeSpan _statusCheckInterval = TimeSpan.FromMinutes(1);
         private DateTime _previousStatusCheckAt = DateTime.UtcNow;
         private string _previousStatus;
@@ -34,13 +34,15 @@ namespace GetIntoTeachingApi.Services
             IServiceProvider serviceProvider,
             IAppSettings appSettings,
             IDateTimeProvider dateTime,
-            ILogger<ICrmService> logger)
+            ILogger<ICrmService> logger,
+            IEnv env)
         {
             _appSettings = appSettings;
             _service = service;
             _serviceProvider = serviceProvider;
             _dateTime = dateTime;
             _logger = logger;
+            _env = env;
         }
 
         public string CheckStatus()
@@ -360,7 +362,7 @@ namespace GetIntoTeachingApi.Services
                 .Select((entity) => new TeachingEventBuilding(entity, this, _serviceProvider)).ToList();
         }
 
-        private static QueryExpression MatchBackQuery(string email, string applyId = null)
+        private QueryExpression MatchBackQuery(string email, string applyId = null)
         {
             var emails = EmailReconciler.EquivalentEmails(email);
             var query = new QueryExpression("contact");
@@ -370,6 +372,11 @@ namespace GetIntoTeachingApi.Services
 
             var filter = new FilterExpression(LogicalOperator.Or);
             filter.AddCondition(new ConditionExpression("emailaddress1", ConditionOperator.In, emails));
+
+            if (_env.IsFeatureOn("SECONDARY_EMAIL_MATCHBACK"))
+            {
+                filter.AddCondition(new ConditionExpression("emailaddress2", ConditionOperator.In, emails));
+            }
 
             if (applyId != null)
             {
