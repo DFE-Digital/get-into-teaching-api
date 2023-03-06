@@ -128,7 +128,7 @@ namespace GetIntoTeachingApiTests.Jobs
             {
                 Id = match.Id,
                 ApplyId = _candidate.Id,
-                Email = match.Email,
+                Email = _attributes.Email,
                 ApplyStatusId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.NeverSignedIn,
                 ApplyPhaseId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply2,
                 ApplyCreatedAt = _attributes.CreatedAt,
@@ -218,7 +218,7 @@ namespace GetIntoTeachingApiTests.Jobs
             {
                 Id = match.Id,
                 ApplyId = _candidate.Id,
-                Email = match.Email,
+                Email = _attributes.Email,
                 SecondaryEmail = _candidate.Attributes.Email,
                 ApplyStatusId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Status.NeverSignedIn,
                 ApplyCreatedAt = _attributes.CreatedAt,
