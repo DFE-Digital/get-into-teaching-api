@@ -168,9 +168,9 @@ namespace GetIntoTeachingApiTests.Services
                 c.Operator == ConditionOperator.Equal && (int)c.Values[0] == (int)Candidate.Status.Active);
 
             var hasEmailAddressCondition = orConditions.Any(c => c.AttributeName == "emailaddress1" &&
-                c.Operator == ConditionOperator.In && Enumerable.SequenceEqual(c.Values[0] as IEnumerable<string>, emails));
+                c.Operator == ConditionOperator.In && Enumerable.SequenceEqual(c.Values, emails));
             var hasSecondaryEmailAddressCondition = orConditions.Any(c => c.AttributeName == "emailaddress2" &&
-                c.Operator == ConditionOperator.In && Enumerable.SequenceEqual(c.Values[0] as IEnumerable<string>, emails));
+                c.Operator == ConditionOperator.In && Enumerable.SequenceEqual(c.Values, emails));
 
             var hasApplyCondition = applyId == null ||
                     orConditions.Any(c => c.AttributeName == "dfe_applyid" && c.Operator == ConditionOperator.Equal && c.Values[0].ToString() == applyId);
@@ -199,9 +199,9 @@ namespace GetIntoTeachingApiTests.Services
                 c.Operator == ConditionOperator.Equal && (int)c.Values[0] == (int)Candidate.Status.Active);
 
             var hasEmailAddressCondition = orConditions.Any(c => c.AttributeName == "emailaddress1" &&
-                c.Operator == ConditionOperator.In && Enumerable.SequenceEqual(c.Values[0] as IEnumerable<string>, emails));
+                c.Operator == ConditionOperator.In && Enumerable.SequenceEqual(c.Values, emails));
             var hasSecondaryEmailAddressCondition = orConditions.Any(c => c.AttributeName == "emailaddress2" &&
-                c.Operator == ConditionOperator.In && Enumerable.SequenceEqual(c.Values[0] as IEnumerable<string>, emails));
+                c.Operator == ConditionOperator.In && Enumerable.SequenceEqual(c.Values, emails));
 
             var hasDuplicateScoreOrder = orders.Any(o => o.AttributeName == "dfe_duplicatescorecalculated" && o.OrderType == OrderType.Descending);
             var hasModifiedOnOrder = orders.Any(o => o.AttributeName == "modifiedon" && o.OrderType == OrderType.Descending);
