@@ -203,45 +203,6 @@ namespace GetIntoTeachingApiTests.Models.Crm
         }
 
         [Fact]
-        public void ToEntity_WhenPrivacyPolicyAlreadyAccepted_DoesNotCreatePrivacyPolicyEntity()
-        {
-            var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context();
-            var mockCrm = new Mock<ICrmService>();
-
-            var candidate = new Candidate()
-            {
-                Id = Guid.NewGuid(),
-                PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = Guid.NewGuid() }
-            };
-
-            mockCrm.Setup(m => m.BlankExistingEntity("contact", candidate.Id.Value, context)).Returns(new Entity("contact"));
-            mockCrm.Setup(m => m.CandidateYetToAcceptPrivacyPolicy((Guid)candidate.Id,
-                candidate.PrivacyPolicy.AcceptedPolicyId)).Returns(false);
-
-            candidate.ToEntity(mockCrm.Object, context);
-
-            mockService.Verify(m => m.NewEntity("dfe_candidateprivacypolicy", null, context), Times.Never);
-        }
-
-        [Fact]
-        public void ToEntity_WhenPrivacyPolicyIsNull_DoesNotCreatePrivacyPolicyEntity()
-        {
-            var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context();
-            var mockCrm = new Mock<ICrmService>();
-            var candidate = new Candidate() { Id = Guid.NewGuid(), PrivacyPolicy = null };
-
-            mockCrm.Setup(m => m.BlankExistingEntity("contact", candidate.Id.Value, context)).Returns(new Entity("contact"));
-
-            candidate.ToEntity(mockCrm.Object, context);
-
-            mockCrm.Verify(m => m.CandidateYetToAcceptPrivacyPolicy(
-                It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
-            mockService.Verify(m => m.NewEntity("dfe_candidateprivacypolicy", null, context), Times.Never);
-        }
-
-        [Fact]
         public void ToEntity_WhenChangingEventSubscriptionFromSingleToLocal_RetainsLocalSubscription()
         {
             var mockService = new Mock<IOrganizationServiceAdapter>();

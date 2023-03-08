@@ -351,19 +351,5 @@ namespace GetIntoTeachingApi.Models.Crm
 
             return base.ShouldMap(crm);
         }
-
-        protected override bool ShouldMapRelationship(string propertyName, dynamic value, ICrmService crm)
-        {
-            if (value == null)
-            {
-                return false;
-            }
-
-            return propertyName switch
-            {
-                "PrivacyPolicy" when Id != null => crm.CandidateYetToAcceptPrivacyPolicy((Guid)Id, value.AcceptedPolicyId),
-                _ => true,
-            };
-        }
     }
 }
