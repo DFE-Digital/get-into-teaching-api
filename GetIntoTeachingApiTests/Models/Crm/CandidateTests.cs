@@ -203,55 +203,6 @@ namespace GetIntoTeachingApiTests.Models.Crm
         }
 
         [Fact]
-        public void ToEntity_WhenChangingEventSubscriptionFromSingleToLocal_RetainsLocalSubscription()
-        {
-            var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context();
-            var mockCrm = new Mock<ICrmService>();
-            var candidate = new Candidate() { Id = Guid.NewGuid(), EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.SingleEvent };
-            var candidateEntity = new Entity("contact");
-            mockCrm.Setup(m => m.BlankExistingEntity("contact", candidate.Id.Value, context)).Returns(candidateEntity);
-            mockCrm.Setup(m => m.CandidateAlreadyHasLocalEventSubscriptionType((Guid)candidate.Id)).Returns(true);
-
-            candidate.ToEntity(mockCrm.Object, context);
-
-            candidateEntity.GetAttributeValue<bool>("dfe_newregistrant").Should().BeFalse();
-
-            candidateEntity.GetAttributeValue<OptionSetValue>("dfe_gitiseventsservicesubscriptiontype")
-                .Value.Should().Be((int)Candidate.SubscriptionType.LocalEvent);
-        }
-
-        [Fact]
-        public void ToEntity_WithNullId_SetsIsNewRegistrantToTrue()
-        {
-            var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context();
-            var mockCrm = new Mock<ICrmService>();
-            var candidate = new Candidate() { Id = null };
-            var candidateEntity = new Entity("contact");
-            mockCrm.Setup(m => m.NewEntity("contact", null, context)).Returns(candidateEntity);
-
-            candidate.ToEntity(mockCrm.Object, context);
-
-            candidateEntity.GetAttributeValue<bool>("dfe_newregistrant").Should().BeTrue();
-        }
-
-        [Fact]
-        public void ToEntity_WithId_SetsIsNewRegistrantToFalse()
-        {
-            var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context();
-            var mockCrm = new Mock<ICrmService>();
-            var candidate = new Candidate() { Id = Guid.NewGuid() };
-            var candidateEntity = new Entity("contact");
-            mockCrm.Setup(m => m.BlankExistingEntity("contact", candidate.Id.Value, context)).Returns(candidateEntity);
-
-            candidate.ToEntity(mockCrm.Object, context);
-
-            candidateEntity.GetAttributeValue<bool>("dfe_newregistrant").Should().BeFalse();
-        }
-
-        [Fact]
         public void FullName_ReturnsCorrectly()
         {
             var candidate = new Candidate() { FirstName = "John", LastName = "Doe" };

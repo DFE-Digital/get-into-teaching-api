@@ -335,21 +335,5 @@ namespace GetIntoTeachingApi.Models.Crm
 
         public bool MagicLinkTokenExpired() => MagicLinkTokenExpiresAt == null || MagicLinkTokenExpiresAt < DateTime.UtcNow;
         public bool MagicLinkTokenAlreadyExchanged() => MagicLinkTokenStatusId == (int)MagicLinkTokenStatus.Exchanged;
-
-        protected override bool ShouldMap(ICrmService crm)
-        {
-            IsNewRegistrant = Id == null;
-
-            var changingEventSubscriptionType = !IsNewRegistrant && EventsSubscriptionTypeId != null;
-
-            if (changingEventSubscriptionType && crm.CandidateAlreadyHasLocalEventSubscriptionType((Guid)Id))
-            {
-                // Never down-grade to a 'single event' subscription type from
-                // a 'local event' subscription type.
-                EventsSubscriptionTypeId = (int)SubscriptionType.LocalEvent;
-            }
-
-            return base.ShouldMap(crm);
-        }
     }
 }
