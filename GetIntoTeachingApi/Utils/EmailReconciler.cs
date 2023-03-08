@@ -11,7 +11,7 @@ namespace GetIntoTeachingApi.Utils
 {
 	public static class EmailReconciler
 	{
-        private const string EquivalentEmailHostsFile = "./Fixtures/equivalent_email_hosts.yml";
+        private const string EquivalentEmailHostsFile = "./Config/equivalent_email_hosts.yml";
         private static readonly Lazy<Dictionary<string, IEnumerable<string>>> _equivalentEmailHosts = new (() => {
             var deserializer = new DeserializerBuilder()
                 .WithNamingConvention(UnderscoredNamingConvention.Instance)

@@ -12,7 +12,7 @@ namespace GetIntoTeachingApi.Services
     public class ClientManager : IClientManager
     {
         public virtual IEnumerable<Client> Clients { get; }
-        private const string ClientsFile = "./Fixtures/clients.yml";
+        private const string ClientsFile = "./Config/clients.yml";
         private readonly IEnv _env;
 
         public ClientManager(IEnv env)
