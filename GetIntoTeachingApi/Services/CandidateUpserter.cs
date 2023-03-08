@@ -4,6 +4,7 @@ using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
+using YamlDotNet.Core.Tokens;
 
 namespace GetIntoTeachingApi.Services
 {
@@ -201,6 +202,12 @@ namespace GetIntoTeachingApi.Services
         private void SavePrivacyPolicy(CandidatePrivacyPolicy privacyPolicy, Candidate candidate)
         {
             if (privacyPolicy == null)
+            {
+                return;
+            }
+
+            // Ignore if they have already accepted this privacy policy.
+            if (candidate.Id != null && !_crm.CandidateYetToAcceptPrivacyPolicy((Guid)candidate.Id, privacyPolicy.AcceptedPolicyId))
             {
                 return;
             }

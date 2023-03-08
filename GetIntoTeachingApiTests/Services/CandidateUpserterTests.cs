@@ -173,12 +173,13 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void Upsert_WithPrivacyPolicy_SavesPrivacyPolicy()
+        public void Upsert_WhenPrivacyPolicyNotYetAccepted_SavesPrivacyPolicy()
         {
             var candidateId = Guid.NewGuid();
             var policy = new CandidatePrivacyPolicy() { AcceptedPolicyId = Guid.NewGuid() };
             _candidate.PrivacyPolicy = policy;
             _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
+            _mockCrm.Setup(m => m.CandidateYetToAcceptPrivacyPolicy(candidateId, policy.AcceptedPolicyId)).Returns(true);
 
             _upserter.Upsert(_candidate);
 
@@ -188,6 +189,36 @@ namespace GetIntoTeachingApiTests.Services
                It.Is<Job>(job => job.Type == typeof(UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>) && job.Method.Name == "Run" &&
                IsMatch(policy, (string)job.Args[0])),
                It.IsAny<EnqueuedState>()));
+        }
+
+        [Fact]
+        public void Upsert_WhenPrivacyPolicyAlreadyAccepted_DoesNotUpsertPrivacyPolicy()
+        {
+            var candidateId = Guid.NewGuid();
+            var policy = new CandidatePrivacyPolicy() { AcceptedPolicyId = Guid.NewGuid() };
+            _candidate.PrivacyPolicy = policy;
+            _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
+            _mockCrm.Setup(m => m.CandidateYetToAcceptPrivacyPolicy(candidateId, policy.AcceptedPolicyId)).Returns(false);
+
+            _upserter.Upsert(_candidate);
+
+            policy.CandidateId = candidateId;
+
+            _mockJobClient.Verify(x => x.Create(
+               It.Is<Job>(job => job.Type == typeof(UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>)),
+               It.IsAny<EnqueuedState>()), Times.Never);
+        }
+
+        [Fact]
+        public void Upsert_WhenPrivacyPolicyIsNull_DoesNotUpsertPrivacyPolicy()
+        {
+            _candidate.PrivacyPolicy = null;
+
+            _upserter.Upsert(_candidate);
+
+            _mockJobClient.Verify(x => x.Create(
+               It.Is<Job>(job => job.Type == typeof(UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>)),
+               It.IsAny<EnqueuedState>()), Times.Never);
         }
 
         private static bool IsMatch(object objectA, object objectB)

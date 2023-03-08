@@ -113,12 +113,6 @@ namespace GetIntoTeachingApi.Models.Crm
             HasUpfrontId = true;
         }
 
-        protected virtual bool ShouldMapRelationship(string propertyName, dynamic value, ICrmService crm)
-        {
-            // Hook.
-            return true;
-        }
-
         protected virtual bool ShouldMap(ICrmService crm)
         {
             // Hook.
