@@ -4,7 +4,7 @@ using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
-using YamlDotNet.Core.Tokens;
+using static GetIntoTeachingApi.Models.Crm.Candidate;
 
 namespace GetIntoTeachingApi.Services
 {
@@ -30,6 +30,7 @@ namespace GetIntoTeachingApi.Services
             var schoolExperiences = ClearSchoolExperiences(candidate);
 
             PreventCandidateEmailFromBeingOverwritten(candidate);
+            UpdateEventSubscriptionType(candidate);
 
             SaveCandidate(candidate);
 
@@ -124,8 +125,22 @@ namespace GetIntoTeachingApi.Services
             }
         }
 
+        private void UpdateEventSubscriptionType(Candidate candidate)
+        {
+            var changingEventSubscriptionType = !candidate.IsNewRegistrant && candidate.EventsSubscriptionTypeId != null;
+
+            if (changingEventSubscriptionType && _crm.CandidateAlreadyHasLocalEventSubscriptionType((Guid)candidate.Id))
+            {
+                // Never down-grade to a 'single event' subscription type from
+                // a 'local event' subscription type.
+                candidate.EventsSubscriptionTypeId = (int)SubscriptionType.LocalEvent;
+            }
+        }
+
         private void SaveCandidate(Candidate candidate)
         {
+            candidate.IsNewRegistrant = candidate.Id == null;
+
             _crm.Save(candidate);
         }
 
@@ -134,6 +149,13 @@ namespace GetIntoTeachingApi.Services
             foreach (var registration in registrations)
             {
                 registration.CandidateId = (Guid)candidate.Id;
+
+                // Skip over if the candidate has already registered for this event.
+                if (!_crm.CandidateYetToRegisterForTeachingEvent(registration.CandidateId, registration.EventId))
+                {
+                    continue;
+                }
+
                 string json = registration.SerializeChangeTracked();
                 _jobClient.Enqueue<UpsertModelWithCandidateIdJob<TeachingEventRegistration>>((x) => x.Run(json, null));
             }

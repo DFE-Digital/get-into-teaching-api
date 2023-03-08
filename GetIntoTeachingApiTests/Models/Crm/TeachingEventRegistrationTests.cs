@@ -33,37 +33,5 @@ namespace GetIntoTeachingApiTests.Models.Crm
             type.GetProperty("RegistrationNotificationSeen").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "msevtmgt_registrationnotificationseen");
         }
-
-        [Fact]
-        public void ToEntity_WhenAlreadyRegisteredForEvent_DoesNotCreateTeachingEventRegistrationEntity()
-        {
-            var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context();
-            var mockCrm = new Mock<ICrmService>();
-            var registration = new TeachingEventRegistration() { CandidateId = Guid.NewGuid(), EventId = Guid.NewGuid() };
-
-            mockCrm.Setup(m => m.CandidateYetToRegisterForTeachingEvent(registration.CandidateId, registration.EventId)).Returns(false);
-
-            var entity = registration.ToEntity(mockCrm.Object, context);
-
-            entity.Should().BeNull();
-            mockService.Verify(m => m.NewEntity("msevtmgt_eventregistration", null, context), Times.Never);
-        }
-
-        [Fact]
-        public void ToEntity_WhenNotAlreadyRegisteredForEvent_CreatesATeachingEventRegistrationEntity()
-        {
-            var mockService = new Mock<IOrganizationServiceAdapter>();
-            var context = mockService.Object.Context();
-            var mockCrm = new Mock<ICrmService>();
-            var registration = new TeachingEventRegistration() { CandidateId = Guid.NewGuid(), EventId = Guid.NewGuid() };
-
-            mockCrm.Setup(m => m.NewEntity("msevtmgt_eventregistration", null, context)).Returns(new Entity("msevtmgt_eventregistration"));
-            mockCrm.Setup(m => m.CandidateYetToRegisterForTeachingEvent(registration.CandidateId, registration.EventId)).Returns(true);
-
-            registration.ToEntity(mockCrm.Object, context);
-
-            mockCrm.Verify(m => m.NewEntity("msevtmgt_eventregistration", null, context), Times.Once);
-        }
     }
 }

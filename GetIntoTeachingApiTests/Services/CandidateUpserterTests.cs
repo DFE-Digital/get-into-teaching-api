@@ -58,6 +58,36 @@ namespace GetIntoTeachingApiTests.Services
             _mockCrm.Verify(mock => mock.Save(It.Is<Candidate>(c => IsMatch(_candidate, c))), Times.Once);
         }
 
+        [Fact] 
+        public void Upsert_WhenChangingEventSubscriptionFromSingleToLocal_RetainsLocalSubscription()
+        {
+            _mockCrm.Setup(m => m.CandidateAlreadyHasLocalEventSubscriptionType((Guid)_candidate.Id)).Returns(true);
+            _candidate.EventsSubscriptionTypeId = (int)Candidate.SubscriptionType.SingleEvent;
+
+            _upserter.Upsert(_candidate);
+
+            _mockCrm.Verify(mock => mock.Save(It.Is<Candidate>(c => c.EventsSubscriptionTypeId ==
+            (int)Candidate.SubscriptionType.LocalEvent)), Times.Once);
+        }
+
+        [Fact]
+        public void Upsert_WithNullCandidateId_SetsIsNewRegistrantToTrue()
+        {
+            _candidate.Id = null;
+
+            _upserter.Upsert(_candidate);
+
+            _mockCrm.Verify(mock => mock.Save(It.Is<Candidate>(c => c.IsNewRegistrant)), Times.Once);
+        }
+
+        [Fact]
+        public void Upsert_WithExistingCandidate_SetsIsNewRegistrantToFalse()
+        {
+            _upserter.Upsert(_candidate);
+
+            _mockCrm.Verify(mock => mock.Save(It.Is<Candidate>(c => !c.IsNewRegistrant)), Times.Once);
+        }
+
         [Fact]
         public void Upsert_WithQualifications_SavesQualifications()
         {
@@ -131,21 +161,38 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void Upsert_WithTeachingEventRegistrations_SavesTeachingEventRegistrations()
+        public void Upsert_WhenNotAlreadyRegisteredForEvent_CreatesATeachingEventRegistrationEntity()
         {
-            var candidateId = Guid.NewGuid();
             var registration = new TeachingEventRegistration() { EventId = Guid.NewGuid() };
             _candidate.TeachingEventRegistrations.Add(registration);
-            _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
+            _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = _candidate.Id);
+            _mockCrm.Setup(m => m.CandidateYetToRegisterForTeachingEvent((Guid)_candidate.Id, registration.EventId)).Returns(true);
 
             _upserter.Upsert(_candidate);
 
-            registration.CandidateId = candidateId;
+            registration.CandidateId = (Guid)_candidate.Id;
 
             _mockJobClient.Verify(x => x.Create(
                It.Is<Job>(job => job.Type == typeof(UpsertModelWithCandidateIdJob<TeachingEventRegistration>) && job.Method.Name == "Run" &&
                IsMatch(registration, (string)job.Args[0])),
                It.IsAny<EnqueuedState>()));
+        }
+
+        [Fact]
+        public void Upsert_WhenAlreadyRegisteredForEvent_DoesNotCreateTeachingEventRegistration()
+        {
+            var registration = new TeachingEventRegistration() { EventId = Guid.NewGuid() };
+            _candidate.TeachingEventRegistrations.Add(registration);
+            _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = _candidate.Id);
+            _mockCrm.Setup(m => m.CandidateYetToRegisterForTeachingEvent((Guid)_candidate.Id, registration.EventId)).Returns(false);
+
+            _upserter.Upsert(_candidate);
+
+            registration.CandidateId = (Guid)_candidate.Id;
+
+            _mockJobClient.Verify(x => x.Create(
+               It.Is<Job>(job => job.Type == typeof(UpsertModelWithCandidateIdJob<TeachingEventRegistration>)),
+               It.IsAny<EnqueuedState>()), Times.Never);
         }
 
         [Fact]
