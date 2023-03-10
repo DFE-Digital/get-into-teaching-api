@@ -111,28 +111,30 @@ namespace GetIntoTeachingApiTests.Controllers
         [Fact]
         public void BackfillApplyCandidates_WhenNotAlreadyRunning_EnqueuesJob()
         {
+            var updatedSince = DateTime.MinValue;
             _mockAppSettings.Setup(m => m.IsApplyBackfillInProgress).Returns(false);
 
-            var response = _controller.BackfillApplyCandidates();
+            var response = _controller.BackfillApplyCandidates(updatedSince);
 
             response.Should().BeOfType<NoContentResult>();
 
             _mockJobClient.Verify(x => x.Create(
-                It.Is<Job>(job => job.Type == typeof(ApplyBackfillJob) && job.Method.Name == "RunAsync"),
+                It.Is<Job>(job => job.Type == typeof(ApplyBackfillJob) && job.Method.Name == "RunAsync" && (DateTime)job.Args[0] == updatedSince),
                 It.IsAny<EnqueuedState>()), Times.Once);
         }
 
         [Fact]
         public void BackfillApplyCandidates_WhenAlreadyRunning_ReturnsBadRequest()
         {
+            var updatedSince = DateTime.MinValue;
             _mockAppSettings.Setup(m => m.IsApplyBackfillInProgress).Returns(true);
 
-            var response = _controller.BackfillApplyCandidates();
+            var response = _controller.BackfillApplyCandidates(updatedSince);
 
             response.Should().BeOfType<BadRequestObjectResult>();
 
             _mockJobClient.Verify(x => x.Create(
-                It.Is<Job>(job => job.Type == typeof(ApplyBackfillJob) && job.Method.Name == "RunAsync"),
+                It.Is<Job>(job => job.Type == typeof(ApplyBackfillJob) && job.Method.Name == "RunAsync" && (DateTime)job.Args[0] == updatedSince),
                 It.IsAny<EnqueuedState>()),Times.Never);
         }
 

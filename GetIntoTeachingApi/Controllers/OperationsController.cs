@@ -136,14 +136,14 @@ namespace GetIntoTeachingApi.Controllers
             Tags = new[] { "Operations" })]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult BackfillApplyCandidates()
+        public IActionResult BackfillApplyCandidates(DateTime updatedSince)
         {
             if (_appSettings.IsApplyBackfillInProgress)
             {
                 return BadRequest("Backfill already in progress");
             }
 
-            _jobClient.Enqueue<ApplyBackfillJob>((x) => x.RunAsync());
+            _jobClient.Enqueue<ApplyBackfillJob>((x) => x.RunAsync(updatedSince));
 
             return NoContent();
         }
