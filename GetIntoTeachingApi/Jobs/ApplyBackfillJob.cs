@@ -34,20 +34,20 @@ namespace GetIntoTeachingApi.Jobs
         }
 
         [DisableConcurrentExecution(timeoutInSeconds: 60 * 60)]
-        public async Task RunAsync()
+        public async Task RunAsync(DateTime updatedSince)
         {
             _appSettings.IsApplyBackfillInProgress = true;
             _logger.LogInformation("ApplyBackfillJob - Started");
-            await QueueCandidateSyncJobs();
+            await QueueCandidateSyncJobs(updatedSince);
             _logger.LogInformation("ApplyBackfillJob - Succeeded");
             _appSettings.IsApplyBackfillInProgress = false;
         }
 
-        private async Task QueueCandidateSyncJobs()
+        private async Task QueueCandidateSyncJobs(DateTime updatedSince)
         {
             var request = Env.ApplyCandidateApiUrl
                 .AppendPathSegment("candidates")
-                .SetQueryParam("updated_since", DateTime.MinValue)
+                .SetQueryParam("updated_since", updatedSince)
                 .WithOAuthBearerToken(Env.ApplyCandidateApiKey);
 
             var paginator = new PaginatorClient<Response<IEnumerable<Candidate>>>(request);

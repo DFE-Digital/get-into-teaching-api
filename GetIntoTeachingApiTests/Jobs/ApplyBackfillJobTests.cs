@@ -56,6 +56,7 @@ namespace GetIntoTeachingApiTests.Jobs
         [Fact]
         public async void RunAsync_WhenMultiplePagesAvailable_QueuesCandidateJobsForEachPage()
         {
+            var updatedSince = DateTime.MinValue;
             var candidates1 = new Candidate[]
             {
                 new Candidate() { Id = "11111", Attributes = new CandidateAttributes() { Email = "email1@address.com" } },
@@ -69,7 +70,7 @@ namespace GetIntoTeachingApiTests.Jobs
             {
                 MockResponse(httpTest, new Response<IEnumerable<Candidate>>() { Data = candidates1 }, 1, 2);
                 MockResponse(httpTest, new Response<IEnumerable<Candidate>>() { Data = candidates2 }, 2, 2);
-                await _job.RunAsync();
+                await _job.RunAsync(updatedSince);
             }
 
             _mockJobClient.Verify(x => x.Create(
@@ -87,11 +88,12 @@ namespace GetIntoTeachingApiTests.Jobs
         [Fact]
         public async void RunAsync_WithNoCandidates_DoesNotQueueJobs()
         {
+            var updatedSince = DateTime.MinValue;
             using (var httpTest = new HttpTest())
             {
                 var response = new Response<IEnumerable<Candidate>>() { Data = Array.Empty<Candidate>() };
                 MockResponse(httpTest, response);
-                await _job.RunAsync();
+                await _job.RunAsync(updatedSince);
             }
 
             _mockJobClient.Verify(x => x.Create(
