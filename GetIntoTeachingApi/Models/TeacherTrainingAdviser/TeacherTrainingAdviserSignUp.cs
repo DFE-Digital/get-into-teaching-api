@@ -79,6 +79,8 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         public DateTime? PhoneCallScheduledAt { get; set; }
         [SwaggerSchema(ReadOnly = true)]
         public bool CanSubscribeToTeacherTrainingAdviser { get; set; }
+        [SwaggerSchema(ReadOnly = true)]
+        public int? AssignmentStatusId { get; set; }
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
@@ -157,6 +159,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
             AddressPostcode = candidate.AddressPostcode;
             TypeId = candidate.TypeId;
             AdviserStatusId = candidate.AdviserStatusId;
+            AssignmentStatusId = candidate.AssignmentStatusId;
 
             CanSubscribeToTeacherTrainingAdviser = CanSubscribe(candidate);
 

@@ -60,6 +60,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
                 PlanningToRetakeGcseMathsId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 PlanningToRetakeGcseScienceId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking,
                 AdviserStatusId = (int)TeacherTrainingAdviserSignUp.ResubscribableAdviserStatus.AcceptedIttOffer,
+                AssignmentStatusId = (int)Candidate.AssignmentStatus.WaitingToBeAssigned,
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
@@ -85,6 +86,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             response.PlanningToRetakeGcseMathsAndEnglishId.Should().Be((int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking);
             response.TypeId.Should().Be((int)Candidate.Type.ReturningToTeacherTraining);
             response.AdviserStatusId.Should().Be((int)TeacherTrainingAdviserSignUp.ResubscribableAdviserStatus.AcceptedIttOffer);
+            response.AssignmentStatusId.Should().Be(candidate.AssignmentStatusId);
             response.Email.Should().Be(candidate.Email);
             response.FirstName.Should().Be(candidate.FirstName);
             response.LastName.Should().Be(candidate.LastName);
