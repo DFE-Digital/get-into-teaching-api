@@ -81,11 +81,6 @@ namespace GetIntoTeachingApi.Models.Crm
 
         public virtual Entity ToEntity(ICrmService crm, OrganizationServiceContext context)
         {
-            if (!ShouldMap(crm))
-            {
-                return null;
-            }
-
             var entity = MappableEntity(LogicalName(GetType()), crm, context);
             MapFieldAttributesToEntity(entity);
             FinaliseEntity(entity, crm, context);
@@ -111,18 +106,6 @@ namespace GetIntoTeachingApi.Models.Crm
 
             Id = Guid.NewGuid();
             HasUpfrontId = true;
-        }
-
-        protected virtual bool ShouldMapRelationship(string propertyName, dynamic value, ICrmService crm)
-        {
-            // Hook.
-            return true;
-        }
-
-        protected virtual bool ShouldMap(ICrmService crm)
-        {
-            // Hook.
-            return true;
         }
 
         protected virtual void FinaliseEntity(Entity source, ICrmService crm, OrganizationServiceContext context)
