@@ -16,7 +16,7 @@ The GIT API aims to provide:
 
 ### Adding a New Client
 
-The API can be integrated into a new service by creating a 'client' in `Fixtures/clients.yml`:
+The API can be integrated into a new service by creating a 'client' in `Config/clients.yml`:
 
 ```
 name: My Service

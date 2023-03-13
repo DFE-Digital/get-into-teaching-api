@@ -69,7 +69,7 @@
 	<ItemGroup>
 	  <Folder Include="Redis\" />
 	  <Folder Include="Validators\" />
-	  <Folder Include="Fixtures\" />
+	  <Folder Include="Config\" />
 	  <Folder Include="JsonConverters\" />
 	  <Folder Include="Mocks\" />
 	  <Folder Include="Middleware\" />
@@ -96,10 +96,10 @@
 	  <None Remove="FluentValidation.AspNetCore" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Update="Fixtures\clients.yml">
+	  <None Update="Config\clients.yml">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="Fixtures\equivalent_email_hosts.yml">
+	  <None Update="Config\equivalent_email_hosts.yml">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update=".env.development">
