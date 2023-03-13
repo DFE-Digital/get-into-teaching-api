@@ -41,7 +41,7 @@
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
 		<PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
 		<PackageReference Include="dotenv.net" Version="3.1.2" />
-		<PackageReference Include="YamlDotNet" Version="13.0.1" />
+		<PackageReference Include="YamlDotNet" Version="13.0.2" />
 		<PackageReference Include="Fody" Version="6.6.4">
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		  <PrivateAssets>all</PrivateAssets>
