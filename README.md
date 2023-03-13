@@ -362,11 +362,11 @@ public List<CandidateQualification> Qualifications { get; set; }
 
 ### Customising the Mapping Behaviour
 
-Occasionally it can be useful to hook into the mapping behaviour that is encapsulated in the `BaseModel`. An example of this may be to prevent mapping to an entity if we know that it will create a duplicate in the CRM. We do this as part of `TeachingEventRegistration` to ensure we don't register the same candidate as an attendee of the event more than once:
+Occasionally it can be useful to hook into the mapping behaviour that is encapsulated in the `BaseModel`. An example of this may be to delete a related entity from the CRM, for example:
 
 ```
-protected override bool ShouldMap(ICrmService crm)
+protected override void FinaliseEntity(Entity source, ICrmService crm, OrganizationServiceContext context)
 {
-    return crm.CandidateYetToRegisterForTeachingEvent(CandidateId, EventId);
+    DeleteLink(source, crm, context, someModel, nameof(someModel));
 }
 ```
