@@ -127,7 +127,7 @@ namespace GetIntoTeachingApi.Services
 
         private void UpdateEventSubscriptionType(Candidate candidate)
         {
-            var changingEventSubscriptionType = !candidate.IsNewRegistrant && candidate.EventsSubscriptionTypeId != null;
+            var changingEventSubscriptionType = candidate.Id != null && candidate.EventsSubscriptionTypeId != null;
 
             if (changingEventSubscriptionType && _crm.CandidateAlreadyHasLocalEventSubscriptionType((Guid)candidate.Id))
             {
