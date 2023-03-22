@@ -154,9 +154,9 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             candidate.PlanningToRetakeGcseMathsId.Should().Be(request.PlanningToRetakeGcseMathsAndEnglishId);
             candidate.PlanningToRetakeGcseScienceId.Should().Be(request.PlanningToRetakeGcseScienceId);
             candidate.AdviserStatusId.Should().BeNull();
-            candidate.AdviserRequirementId.Should().Be((int)Candidate.AdviserRequirement.Yes);
-            candidate.AdviserEligibilityId.Should().Be((int)Candidate.AdviserEligibility.Yes);
-            candidate.AssignmentStatusId.Should().Be((int)Candidate.AssignmentStatus.WaitingToBeAssigned);
+            candidate.AdviserRequirementId.Should().BeNull();
+            candidate.AdviserEligibilityId.Should().BeNull();
+            candidate.AssignmentStatusId.Should().BeNull();
             candidate.TypeId.Should().Be((int)Candidate.Type.ReturningToTeacherTraining);
             candidate.Email.Should().Be(request.Email);
             candidate.FirstName.Should().Be(request.FirstName);
@@ -387,47 +387,26 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
         }
 
         [Fact]
-        public void Candidate_DegreeTypeDegree_IsEligibleForAdviser()
+        public void Candidate_PhoneCallScheduled_IsNotEligibleForAdviser()
         {
-            var request = new TeacherTrainingAdviserSignUp() { DegreeTypeId = (int)CandidateQualification.DegreeType.Degree };
+            var request = new TeacherTrainingAdviserSignUp() { PhoneCallScheduledAt = DateTime.UtcNow };
 
-            request.Candidate.AssignmentStatusId.Should().Be((int)Candidate.AssignmentStatus.WaitingToBeAssigned);
-            request.Candidate.AdviserEligibilityId.Should().Be((int)Candidate.AdviserEligibility.Yes);
-            request.Candidate.AdviserRequirementId.Should().Be((int)Candidate.AdviserRequirement.Yes);
-        }
-
-        [Fact]
-        public void Candidate_DegreeTypeDegreeEquivalent_IsNotEligibleForAdviser()
-        {
-            var request = new TeacherTrainingAdviserSignUp() { DegreeTypeId = (int)CandidateQualification.DegreeType.DegreeEquivalent };
-
+            request.Candidate.StatusIsWaitingToBeAssignedAt.Should().BeNull();
             request.Candidate.AssignmentStatusId.Should().BeNull();
             request.Candidate.AdviserEligibilityId.Should().BeNull();
             request.Candidate.AdviserRequirementId.Should().BeNull();
         }
 
         [Fact]
-        public void Candidate_ReturningToTeaching_IsEligibleForAdviser()
+        public void Candidate_PhoneCallNotScheduled_IsEligibleForAdviser()
         {
-            var request = new TeacherTrainingAdviserSignUp() { TypeId = (int)Candidate.Type.ReturningToTeacherTraining };
+            var request = new TeacherTrainingAdviserSignUp() { PhoneCallScheduledAt = null };
 
-            request.Candidate.IsReturningToTeaching().Should().BeTrue();
+
             request.Candidate.AssignmentStatusId.Should().Be((int)Candidate.AssignmentStatus.WaitingToBeAssigned);
             request.Candidate.AdviserEligibilityId.Should().Be((int)Candidate.AdviserEligibility.Yes);
             request.Candidate.AdviserRequirementId.Should().Be((int)Candidate.AdviserRequirement.Yes);
             request.Candidate.StatusIsWaitingToBeAssignedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(30));
-        }
-
-        [Fact]
-        public void Candidate_InterestedInTeaching_IsNotEligibleForAdviser()
-        {
-            var request = new TeacherTrainingAdviserSignUp() { TypeId = (int)Candidate.Type.InterestedInTeacherTraining };
-
-            request.Candidate.IsReturningToTeaching().Should().BeFalse();
-            request.Candidate.AssignmentStatusId.Should().BeNull();
-            request.Candidate.AdviserEligibilityId.Should().BeNull();
-            request.Candidate.AdviserRequirementId.Should().BeNull();
-            request.Candidate.StatusIsWaitingToBeAssignedAt.Should().BeNull();
         }
 
         [Fact]
