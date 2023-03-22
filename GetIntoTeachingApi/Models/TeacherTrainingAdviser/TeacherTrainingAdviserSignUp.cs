@@ -336,7 +336,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
 
         private void SetAdviserEligibility(Candidate candidate)
         {
-            var eligibleForAnAdviser = DegreeTypeId == (int)CandidateQualification.DegreeType.Degree || candidate.IsReturningToTeaching();
+            var eligibleForAnAdviser = PhoneCallScheduledAt == null;
             if (eligibleForAnAdviser)
             {
                 candidate.AssignmentStatusId = (int)Candidate.AssignmentStatus.WaitingToBeAssigned;
