@@ -36,11 +36,12 @@ namespace GetIntoTeachingApi.Jobs
         [DisableConcurrentExecution(timeoutInSeconds: 60 * 60)]
         public async Task RunAsync(DateTime updatedSince)
         {
-            _appSettings.IsApplyBackfillInProgress = true;
-            _logger.LogInformation("ApplyBackfillJob - Started");
-            await QueueCandidateSyncJobs(updatedSince);
-            _logger.LogInformation("ApplyBackfillJob - Succeeded");
-            _appSettings.IsApplyBackfillInProgress = false;
+            await Task.FromResult(true);
+            //_appSettings.IsApplyBackfillInProgress = true;
+            //_logger.LogInformation("ApplyBackfillJob - Started");
+            //await QueueCandidateSyncJobs(updatedSince);
+            //_logger.LogInformation("ApplyBackfillJob - Succeeded");
+            //_appSettings.IsApplyBackfillInProgress = false;
         }
 
         private async Task QueueCandidateSyncJobs(DateTime updatedSince)
