@@ -131,6 +131,9 @@ namespace GetIntoTeachingApi.AppStart
                 if (_env.IsFeatureOn("APPLY_CANDIDATE_API"))
                 {
                     HangfireJobs.AddApplySyncJob();
+                } else
+                {
+                    HangfireJobs.RemoveApplySyncJob();
                 }
             }
 

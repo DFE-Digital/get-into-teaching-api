@@ -34,5 +34,10 @@ namespace GetIntoTeachingApi.AppStart
                                     (x) => x.RunAsync(),
                                     Cron.Hourly());
         }
+
+        public static void RemoveApplySyncJob()
+        {
+            RecurringJob.RemoveIfExists(JobConfiguration.ApplySyncJobId);
+        }
     }
 }
