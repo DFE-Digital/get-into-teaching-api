@@ -39,31 +39,31 @@ namespace GetIntoTeachingApi.Jobs
 
         public void Run(string json, PerformContext context)
         {
-            var form = json.DeserializeChangeTracked<ApplicationForm>();
+            //var form = json.DeserializeChangeTracked<ApplicationForm>();
 
-            if (_appSettings.IsCrmIntegrationPaused)
-            {
-                throw new InvalidOperationException("UpsertApplicationFormJob - Aborting (CRM integration paused).");
-            }
+            //if (_appSettings.IsCrmIntegrationPaused)
+            //{
+            //    throw new InvalidOperationException("UpsertApplicationFormJob - Aborting (CRM integration paused).");
+            //}
 
-            _logger.LogInformation("UpsertApplicationFormJob - Started ({Attempt})", AttemptInfo(context, _contextAdapter));
-            _logger.LogInformation("UpsertApplicationFormJob - Payload {Payload}", Redactor.RedactJson(json));
+            //_logger.LogInformation("UpsertApplicationFormJob - Started ({Attempt})", AttemptInfo(context, _contextAdapter));
+            //_logger.LogInformation("UpsertApplicationFormJob - Payload {Payload}", Redactor.RedactJson(json));
 
-            if (IsLastAttempt(context, _contextAdapter))
-            {
-                _logger.LogInformation("UpsertApplicationFormJob - Deleted");
-            }
-            else
-            {
-                SaveApplicationForm(form);
-                SaveApplicationReferences(form.References, (Guid)form.Id);
-                SaveApplicationChoices(form.Choices, (Guid)form.Id);
+            //if (IsLastAttempt(context, _contextAdapter))
+            //{
+            //    _logger.LogInformation("UpsertApplicationFormJob - Deleted");
+            //}
+            //else
+            //{
+            //    SaveApplicationForm(form);
+            //    SaveApplicationReferences(form.References, (Guid)form.Id);
+            //    SaveApplicationChoices(form.Choices, (Guid)form.Id);
 
-                _logger.LogInformation("UpsertApplicationFormJob - Succeeded - {Id}", form.Id);
-            }
+            //    _logger.LogInformation("UpsertApplicationFormJob - Succeeded - {Id}", form.Id);
+            //}
 
-            var duration = (DateTime.UtcNow - _contextAdapter.GetJobCreatedAt(context)).TotalSeconds;
-            _metrics.HangfireJobQueueDuration.WithLabels("UpsertApplicationFormJob").Observe(duration);
+            //var duration = (DateTime.UtcNow - _contextAdapter.GetJobCreatedAt(context)).TotalSeconds;
+            //_metrics.HangfireJobQueueDuration.WithLabels("UpsertApplicationFormJob").Observe(duration);
         }
 
         private void SaveApplicationForm(ApplicationForm form)

@@ -31,14 +31,14 @@ namespace GetIntoTeachingApi.Jobs
 
         public void Run(Candidate applyCandidate)
         {
-            if (_appSettings.IsCrmIntegrationPaused)
-            {
-                throw new InvalidOperationException("ApplyCandidateSyncJob - Aborting (CRM integration paused).");
-            }
+            //if (_appSettings.IsCrmIntegrationPaused)
+            //{
+            //    throw new InvalidOperationException("ApplyCandidateSyncJob - Aborting (CRM integration paused).");
+            //}
 
-            _logger.LogInformation("ApplyCandidateSyncJob - Started - {Id}", applyCandidate.Id);
-            SyncCandidate(applyCandidate);
-            _logger.LogInformation("ApplyCandidateSyncJob - Succeeded - {Id}", applyCandidate.Id);
+            //_logger.LogInformation("ApplyCandidateSyncJob - Started - {Id}", applyCandidate.Id);
+            //SyncCandidate(applyCandidate);
+            //_logger.LogInformation("ApplyCandidateSyncJob - Succeeded - {Id}", applyCandidate.Id);
         }
 
         public void SyncCandidate(Candidate applyCandidate)
