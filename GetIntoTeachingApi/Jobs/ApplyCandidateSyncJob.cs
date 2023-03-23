@@ -44,16 +44,7 @@ namespace GetIntoTeachingApi.Jobs
         public void SyncCandidate(Candidate applyCandidate)
         {
             var candidate = applyCandidate.ToCrmModel();
-            Models.Crm.Candidate match;
-
-            if (Env.IsFeatureOn("APPLY_ID_MATCHBACK"))
-            {
-                match = _crm.MatchCandidate(candidate.Email, applyCandidate.Id);
-            }
-            else
-            {
-                match = _crm.MatchCandidate(candidate.Email);
-            }
+            var match = _crm.MatchCandidate(candidate.Email, applyCandidate.Id);
 
             _logger.LogInformation("ApplyCandidateSyncJob - {Status} - {Id}", match == null ? "Miss" : "Hit", applyCandidate.Id);
 
@@ -70,21 +61,17 @@ namespace GetIntoTeachingApi.Jobs
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
         }
 
-        private void UpdateCandidateWithMatch(Models.Crm.Candidate candidate, Models.Crm.Candidate match)
+        private static void UpdateCandidateWithMatch(Models.Crm.Candidate candidate, Models.Crm.Candidate match)
         {
             candidate.Id = match.Id;
 
-            if (candidate.Email == match.Email)
+            if (candidate.Email == match.Email || match.SecondaryEmail != null)
             {
                 return;
             }
 
-
-            if (Env.IsFeatureOn("APPLY_ID_MATCHBACK") && match.SecondaryEmail == null)
-            {
-                // Write Apply email to the SecondaryEmail field.
-                candidate.SecondaryEmail = candidate.Email;
-            }
+            // Write Apply email to the SecondaryEmail field.
+            candidate.SecondaryEmail = candidate.Email;
         }
     }
 }

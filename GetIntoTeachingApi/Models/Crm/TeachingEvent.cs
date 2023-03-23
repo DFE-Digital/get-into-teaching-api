@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
@@ -39,7 +38,7 @@ namespace GetIntoTeachingApi.Models.Crm
         public int TypeId { get; set; }
         [EntityField("dfe_eventstatus", typeof(OptionSetValue))]
         public int StatusId { get; set; }
-        [EntityField("dfe_eventregion", typeof(OptionSetValue), null, new[] { "GET_INTO_TEACHING_EVENTS" })]
+        [EntityField("dfe_eventregion", typeof(OptionSetValue))]
         public int? RegionId { get; set; }
         [EntityField("dfe_websiteeventpartialurl")]
         public string ReadableId { get; set; }

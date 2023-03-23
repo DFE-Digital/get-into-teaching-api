@@ -255,35 +255,30 @@ namespace GetIntoTeachingApi.Services
             await SyncPickListItem("contact", "dfe_gitismlservicesubscriptionchannel");
             await SyncPickListItem("contact", "dfe_gitiseventsservicesubscriptionchannel");
             await SyncPickListItem("contact", "dfe_gitisttaservicesubscriptionchannel");
+            await SyncPickListItem("contact", "dfe_candidateapplystatus");
+            await SyncPickListItem("contact", "dfe_candidateapplyphase");
+
             await SyncPickListItem("dfe_candidatequalification", "dfe_degreestatus");
             await SyncPickListItem("dfe_candidatequalification", "dfe_ukdegreegrade");
             await SyncPickListItem("dfe_candidatequalification", "dfe_type");
+
             await SyncPickListItem("dfe_candidatepastteachingposition", "dfe_educationphase");
+
             await SyncPickListItem("msevtmgt_event", "dfe_event_type");
             await SyncPickListItem("msevtmgt_event", "dfe_eventstatus");
+            await SyncPickListItem("msevtmgt_event", "dfe_eventregion");
+
             await SyncPickListItem("msevtmgt_eventregistration", "dfe_channelcreation");
+
             await SyncPickListItem("phonecall", "dfe_channelcreation");
+
             await SyncPickListItem("dfe_servicesubscription", "dfe_servicesubscriptiontype");
 
-            if (_env.IsFeatureOn("APPLY_CANDIDATE_API"))
-            {
-                await SyncPickListItem("contact", "dfe_candidateapplystatus");
-                await SyncPickListItem("contact", "dfe_candidateapplyphase");
-                await SyncPickListItem("dfe_applyapplicationform", "dfe_applyphase");
-                await SyncPickListItem("dfe_applyapplicationform", "dfe_applystatus");
-                await SyncPickListItem("dfe_applyapplicationform", "dfe_recruitmentyear");
-            }
-
-            if (_env.IsFeatureOn("APPLY_CANDIDATE_API_V1_2"))
-            {
-                await SyncPickListItem("dfe_applyapplicationchoice", "dfe_applicationchoicestatus");
-                await SyncPickListItem("dfe_applyreference", "dfe_referencefeedbackstatus");
-            }
-
-            if (_env.IsFeatureOn("GET_INTO_TEACHING_EVENTS"))
-            {
-                await SyncPickListItem("msevtmgt_event", "dfe_eventregion");
-            }
+            await SyncPickListItem("dfe_applyapplicationform", "dfe_applyphase");
+            await SyncPickListItem("dfe_applyapplicationform", "dfe_applystatus");
+            await SyncPickListItem("dfe_applyapplicationform", "dfe_recruitmentyear");
+            await SyncPickListItem("dfe_applyapplicationchoice", "dfe_applicationchoicestatus");
+            await SyncPickListItem("dfe_applyreference", "dfe_referencefeedbackstatus");     
         }
 
         private async Task SyncModels<T>(IEnumerable<T> models, IQueryable<T> dbSet)
