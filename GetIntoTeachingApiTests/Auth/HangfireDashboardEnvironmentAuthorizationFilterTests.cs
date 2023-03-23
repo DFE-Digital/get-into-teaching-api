@@ -33,8 +33,15 @@ namespace GetIntoTeachingApiTests.Auth
             _filter.Authorize(null).Should().BeTrue();
         }
 
+        [Fact]
+        public void Authorize_Production_IsTrue()
+        {
+            _mockEnv.Setup(m => m.EnvironmentName).Returns("Production");
+
+            _filter.Authorize(null).Should().BeTrue();
+        }
+
         [Theory]
-        [InlineData("Production")]
         [InlineData("Development1")]
         [InlineData("prod")]
         [InlineData("")]
