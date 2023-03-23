@@ -58,13 +58,13 @@ namespace GetIntoTeachingApi.Models.Crm
         public DateTime UpdatedAt { get; set; }
         [EntityField("dfe_submittedatdate")]
         public DateTime? SubmittedAt { get; set; }
-        [EntityField("dfe_qualificationscompleted", null, null, new[] { "APPLY_CANDIDATE_API_V1_2" })]
+        [EntityField("dfe_qualificationscompleted")]
         public bool? QualificationsCompleted { get; set; }
-        [EntityField("dfe_referencescompleted", null, null, new[] { "APPLY_CANDIDATE_API_V1_2" })]
+        [EntityField("dfe_referencescompleted")]
         public bool? ReferencesCompleted { get; set; }
-        [EntityField("dfe_applicationchoicescompleted", null, null, new[] { "APPLY_CANDIDATE_API_V1_2" })]
+        [EntityField("dfe_applicationchoicescompleted")]
         public bool? ApplicationChoicesCompleted { get; set; }
-        [EntityField("dfe_personalstatementcompleted", null, null, new[] { "APPLY_CANDIDATE_API_V1_2" })]
+        [EntityField("dfe_personalstatementcompleted")]
         public bool? PersonalStatementCompleted { get; set; }
         [EntityField("dfe_name")]
         public string Name

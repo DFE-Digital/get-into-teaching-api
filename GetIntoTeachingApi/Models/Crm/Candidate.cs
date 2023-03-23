@@ -153,19 +153,19 @@ namespace GetIntoTeachingApi.Models.Crm
         public int? AdviserStatusId { get; set; }
         [EntityField("dfe_candidatereregisterstatus", typeof(OptionSetValue))]
         public int? RegistrationStatusId { get; set; }
-        [EntityField("dfe_candidateapplystatus", typeof(OptionSetValue), null, new[] { "APPLY_CANDIDATE_API" })]
+        [EntityField("dfe_candidateapplystatus", typeof(OptionSetValue))]
         public int? ApplyStatusId { get; set; }
-        [EntityField("dfe_candidateapplyphase", typeof(OptionSetValue), null, new[] { "APPLY_CANDIDATE_API" })]
+        [EntityField("dfe_candidateapplyphase", typeof(OptionSetValue))]
         public int? ApplyPhaseId { get; set; }
         [EntityField("dfe_waitingtobeassigneddate")]
         public DateTime? StatusIsWaitingToBeAssignedAt { get; set; }
         [EntityField("merged")]
         public bool Merged { get; set; }
-        [EntityField("dfe_applyid", null, null, new[] { "APPLY_CANDIDATE_API" })]
+        [EntityField("dfe_applyid")]
         public string ApplyId { get; set; }
-        [EntityField("dfe_applylastmodifiedon", null, null, new[] { "APPLY_CANDIDATE_API" })]
+        [EntityField("dfe_applylastmodifiedon")]
         public DateTime? ApplyUpdatedAt { get; set; }
-        [EntityField("dfe_applycreatedon", null, null, new[] { "APPLY_CANDIDATE_API" })]
+        [EntityField("dfe_applycreatedon")]
         public DateTime? ApplyCreatedAt { get; set; }
         [EntityField("emailaddress1")]
         public string Email { get; set; }

@@ -33,33 +33,13 @@ namespace GetIntoTeachingApiTests.Models
         }
 
         [Fact]
-        public void Constructor_WithEntity_WhenCountryCodeFeatureIsOn_SetsCountryCode()
+        public void Constructor_WithEntity_MapsCorrectly()
         {
-            var previousFeature = Environment.GetEnvironmentVariable("COUNTRY_CODES_FEATURE");
-            Environment.SetEnvironmentVariable("COUNTRY_CODES_FEATURE", "true");
-
             var country = new Country(_entity);
 
             country.Id.Should().Be(_entity.Id);
             country.Value.Should().Be(_entity.GetAttributeValue<string>("dfe_name"));
             country.IsoCode.Should().Be(_entity.GetAttributeValue<string>("dfe_countrykey"));
-
-            Environment.SetEnvironmentVariable("COUNTRY_CODES_FEATURE", previousFeature);
-        }
-
-        [Fact]
-        public void Constructor_WithEntity_WhenCountryCodeFeatureIsOff_DoesNotSetCountryCode()
-        {
-            var previousFeature = Environment.GetEnvironmentVariable("COUNTRY_CODES_FEATURE");
-            Environment.SetEnvironmentVariable("COUNTRY_CODES_FEATURE", "false");
-
-            var country = new Country(_entity);
-
-            country.Id.Should().Be(_entity.Id);
-            country.Value.Should().Be(_entity.GetAttributeValue<string>("dfe_name"));
-            country.IsoCode.Should().BeNull();
-
-            Environment.SetEnvironmentVariable("COUNTRY_CODES_FEATURE", previousFeature);
         }
     }
 }

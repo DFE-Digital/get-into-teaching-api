@@ -48,8 +48,6 @@ namespace GetIntoTeachingApiTests.Services
 
             // Freeze time.
             _mockDateTime.Setup(m => m.UtcNow).Returns(DateTime.UtcNow);
-
-            mockEnv.Setup(m => m.IsFeatureOn("SECONDARY_EMAIL_MATCHBACK")).Returns(true);
         }
 
         [Fact]

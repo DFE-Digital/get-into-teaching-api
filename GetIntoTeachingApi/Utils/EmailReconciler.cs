@@ -36,12 +36,6 @@ namespace GetIntoTeachingApi.Utils
         public static IEnumerable<string> EquivalentEmails(string email)
 		{
             var env = new Env();
-
-            if (!env.IsFeatureOn("RECONCILE_EMAILS"))
-            {
-                return new string[] {  email };
-            }
-
             var address = new MailAddress(email);
             var hosts = new List<string> { address.Host };
 

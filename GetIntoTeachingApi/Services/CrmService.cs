@@ -360,7 +360,7 @@ namespace GetIntoTeachingApi.Services
                 .Select((entity) => new TeachingEventBuilding(entity, this, _serviceProvider)).ToList();
         }
 
-        private QueryExpression MatchBackQuery(string email, string applyId = null)
+        private static QueryExpression MatchBackQuery(string email, string applyId = null)
         {
             // The ToList() is important or Dynamics throws an error.
             var emails = EmailReconciler.EquivalentEmails(email).ToList();
@@ -371,11 +371,7 @@ namespace GetIntoTeachingApi.Services
 
             var filter = new FilterExpression(LogicalOperator.Or);
             filter.AddCondition(new ConditionExpression("emailaddress1", ConditionOperator.In, emails));
-
-            if (_env.IsFeatureOn("SECONDARY_EMAIL_MATCHBACK"))
-            {
-                filter.AddCondition(new ConditionExpression("emailaddress2", ConditionOperator.In, emails));
-            }
+            filter.AddCondition(new ConditionExpression("emailaddress2", ConditionOperator.In, emails));
 
             if (applyId != null)
             {
