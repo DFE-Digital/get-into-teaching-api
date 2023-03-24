@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography;
-using System.Text;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;

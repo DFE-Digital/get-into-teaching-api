@@ -6,5 +6,6 @@ namespace GetIntoTeachingApi.Services
     {
         Task<T> NextAsync();
         bool HasNext { get; }
+        int Page { get; }
     }
 }

@@ -54,35 +54,36 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public async void RunAsync_WhenMultiplePagesAvailable_QueuesCandidateJobsForEachPage()
+        public async void RunAsync_WhenMultiplePagesAvailable_QueuesCandidateJobsForEachPageAndRequeuesBackfillJobOnEndPage()
         {
             var updatedSince = DateTime.MinValue;
-            var candidates1 = new Candidate[]
-            {
-                new Candidate() { Id = "11111", Attributes = new CandidateAttributes() { Email = "email1@address.com" } },
-            };
-            var candidates2 = new Candidate[]
-            {
-                new Candidate() { Id = "11111", Attributes = new CandidateAttributes() { Email = "email1@address.com" } },
-            };
+
+            var totalPages = ApplyBackfillJob.PagesPerJob + 1;
+            var candidate = new Candidate() { Id = "123", Attributes = new CandidateAttributes() { Email = $"email@address.com" } };
 
             using (var httpTest = new HttpTest())
             {
-                MockResponse(httpTest, new Response<IEnumerable<Candidate>>() { Data = candidates1 }, 1, 2);
-                MockResponse(httpTest, new Response<IEnumerable<Candidate>>() { Data = candidates2 }, 2, 2);
+                for (int page = 1; page <= totalPages; page++)
+                {
+                    MockResponse(httpTest, new Response<IEnumerable<Candidate>>() { Data = new Candidate[] { candidate } }, page, totalPages);
+                }
+
                 await _job.RunAsync(updatedSince);
             }
 
             _mockJobClient.Verify(x => x.Create(
                It.Is<Job>(job => job.Type == typeof(ApplyCandidateSyncJob) && job.Method.Name == "Run"),
-               It.IsAny<ScheduledState>()), Times.Exactly(candidates1.Length + candidates2.Length));
+               It.IsAny<ScheduledState>()), Times.Exactly(ApplyBackfillJob.PagesPerJob));
 
             _mockAppSettings.VerifySet(m => m.IsApplyBackfillInProgress = true, Times.Once);
-            _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Started");
-            _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Syncing 1 Candidates");
-            _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Syncing 1 Candidates");
-            _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Succeeded");
+            _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Started - Pages 1 to 10");
+            _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Succeeded - Pages 1 to 10");
             _mockAppSettings.VerifySet(m => m.IsApplyBackfillInProgress = false, Times.Once);
+
+            _mockJobClient.Verify(x => x.Create(
+                It.Is<Job>(job => job.Type == typeof(ApplyBackfillJob) && job.Method.Name == "RunAsync" &&
+                (DateTime)job.Args[0] == updatedSince && (int)job.Args[1] == (ApplyBackfillJob.PagesPerJob + 1)),
+                It.IsAny<EnqueuedState>()), Times.Once);
         }
 
         [Fact]
@@ -101,9 +102,9 @@ namespace GetIntoTeachingApiTests.Jobs
                It.IsAny<ScheduledState>()), Times.Never);
 
             _mockAppSettings.VerifySet(m => m.IsApplyBackfillInProgress = true, Times.Once);
-            _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Started");
+            _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Started - Pages 1 to 10");
             _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Syncing 0 Candidates");
-            _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Succeeded");
+            _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Succeeded - Pages 1 to 10");
             _mockAppSettings.VerifySet(m => m.IsApplyBackfillInProgress = false, Times.Once);
         }
 
