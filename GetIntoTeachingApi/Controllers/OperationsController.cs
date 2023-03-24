@@ -143,7 +143,7 @@ namespace GetIntoTeachingApi.Controllers
                 return BadRequest("Backfill already in progress");
             }
 
-            _jobClient.Enqueue<ApplyBackfillJob>((x) => x.RunAsync(updatedSince));
+            _jobClient.Enqueue<ApplyBackfillJob>((x) => x.RunAsync(updatedSince, 1));
 
             return NoContent();
         }

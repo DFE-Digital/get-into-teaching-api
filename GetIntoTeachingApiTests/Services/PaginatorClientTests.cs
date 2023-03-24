@@ -12,14 +12,49 @@ namespace GetIntoTeachingApiTests.Services
     public class PaginatorClientTests
     {
         private readonly IPaginatorClient<string> _paginator;
+        private readonly IFlurlRequest _request;
 
         public PaginatorClientTests()
         {
-            var request = "https://test.com"
+            _request = "https://test.com"
                .AppendPathSegment("data")
                .WithOAuthBearerToken("abc-123");
 
-            _paginator = new PaginatorClient<string>(request);
+            _paginator = new PaginatorClient<string>(_request);
+        }
+
+
+        [Fact]
+        public async void Constructot_WithCustomStartPage()
+        {
+            var paginator = new PaginatorClient<string>(_request, 2);
+            using var httpTest = new HttpTest();
+            MockResponse(httpTest, "page 2 data", 2, 3);
+            MockResponse(httpTest, "page 3 data", 3, 3);
+
+            paginator.Page.Should().Be(2);
+
+            await paginator.NextAsync();
+
+            paginator.Page.Should().Be(3);
+        }
+
+        [Fact]
+        public async void Page_Increments()
+        {
+            using var httpTest = new HttpTest();
+            MockResponse(httpTest, "page 1 data", 1, 2);
+            MockResponse(httpTest, "page 2 data", 2, 2);
+
+            _paginator.Page.Should().Be(1);
+
+            await _paginator.NextAsync();
+
+            _paginator.Page.Should().Be(2);
+
+            await _paginator.NextAsync();
+
+            _paginator.Page.Should().Be(3);
         }
 
         [Fact]

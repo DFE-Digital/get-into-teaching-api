@@ -8,7 +8,7 @@ namespace GetIntoTeachingApi.Services
     {
         private readonly IFlurlRequest _request;
         private bool _hasNext;
-        private int _page;
+        public int Page { get; private set; }
 
         public bool HasNext
         {
@@ -18,17 +18,17 @@ namespace GetIntoTeachingApi.Services
             }
         }
 
-        public PaginatorClient(IFlurlRequest request)
+        public PaginatorClient(IFlurlRequest request, int startPage = 1)
         {
             _request = request;
             _hasNext = true;
-            _page = 1;
+            Page = startPage;
         }
 
         public async Task<T> NextAsync()
         {
             var response = await _request
-                .SetQueryParam("page", _page)
+                .SetQueryParam("page", Page)
                 .GetAsync();
             var headers = response.Headers;
 
@@ -41,7 +41,7 @@ namespace GetIntoTeachingApi.Services
             var currentPage = headers.FirstOrDefault("Current-Page");
             _hasNext = currentPage != totalPages;
 
-            _page++;
+            Page++;
 
             return await response.GetJsonAsync<T>();
         }
