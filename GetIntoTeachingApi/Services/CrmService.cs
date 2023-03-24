@@ -135,15 +135,10 @@ namespace GetIntoTeachingApi.Services
             query.TopCount = MaximumNumberOfCandidatesToMatch;
 
             var entities = _service.RetrieveMultiple(query);
-            var entity = entities.FirstOrDefault(request.IsFullMatch);
+            var entity = entities.FirstOrDefault();
 
-            if (entity == null)
-            {
-                entity = entities.FirstOrDefault(request.IsEmailMatch);
-
-                var status = entity == null ? "Miss" : "Hit";
-                _logger.LogInformation("MatchCandidate - EmailMatch - {Status}", status);
-            }
+            var status = entity == null ? "Miss" : "Hit";
+            _logger.LogInformation("MatchCandidate - EmailMatch - {Status}", status);
 
             if (entity == null)
             {
@@ -165,6 +160,9 @@ namespace GetIntoTeachingApi.Services
 
             var entities = _service.RetrieveMultiple(query);
             var entity = entities.FirstOrDefault();
+
+            var status = entity == null ? "Miss" : "Hit";
+            _logger.LogInformation("MatchCandidate - EmailMatch (Apply) - {Status}", status);
 
             if (entity == null)
             {
