@@ -573,51 +573,17 @@ namespace GetIntoTeachingApiTests.Services
             if (result == null)
             {
                 expectedFirstName.Should().BeNull();
+                _mockLogger.VerifyInformationWasCalled("MatchCandidate - EmailMatch (Apply) - Miss");
             }
             else
             {
                 result.FirstName.Should().Be(expectedFirstName);
-            }
-        }
-
-        [Theory]
-        [InlineData("john@doe.com", "New John", "Doe", "john@doe.com")]
-        [InlineData("jane@doe.com", "Jane", "Doe", "jane@doe.com")]
-        [InlineData("bob@doe.com", "Bob", "Doe", null)]
-        [InlineData("inactive@doe.com", "Inactive", "Doe", null)]
-        public void MatchCandidate_WithExistingCandidateRequestFullMatch_MatchesOnNewestCandidateWithEmail(
-            string email,
-            string firstName,
-            string lastName,
-            string expectedEmail
-        )
-        {
-            var request = new ExistingCandidateRequest { Email = email, FirstName = firstName, LastName = lastName };
-            var candidates = MockCandidates().Where(c => c.GetAttributeValue<int>("statecode") == (int)Candidate.Status.Active
-                && c.GetAttributeValue<string>("emailaddress1").Contains(email));
-
-            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
-                q => VerifyMatchCandidatesWithExistingCandidateRequestExpression(q, email)))).Returns(candidates);
-
-            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
-                new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), _context));
-            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
-                new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), _context));
-            _mockService.Setup(mock => mock.LoadProperty(It.IsAny<Entity>(),
-                new Relationship("msevtmgt_contact_msevtmgt_eventregistration_Contact"), _context));
-
-            var result = _crm.MatchCandidate(request);
-
-            result?.Email.Should().Be(expectedEmail);
-
-            if (expectedEmail == null)
-            {
-                _mockLogger.VerifyInformationWasCalled("MatchCandidate - EmailMatch - Miss");
+                _mockLogger.VerifyInformationWasCalled("MatchCandidate - EmailMatch (Apply) - Hit");
             }
         }
 
         [Fact]
-        public void MatchCandidate_WithExistingCandidateRequestEmailOnlyMatch_MatchesOnNewestCandidateWithEmail()
+        public void MatchCandidate_WithExistingCandidateReques_MatchesOnNewestCandidateWithEmail()
         {
             var email = "no@name.com";
             var request = new ExistingCandidateRequest { Email = email };
@@ -637,7 +603,7 @@ namespace GetIntoTeachingApiTests.Services
             var result = _crm.MatchCandidate(request);
 
             result?.Email.Should().Be(email);
-            _mockLogger.VerifyInformationWasCalled("MatchCandidate - EmailMatch - Hit");
+            _mockLogger.VerifyInformationWasCalled($"MatchCandidate - EmailMatch - {(result == null ? "Miss" : "Hit")}");
         }
 
         [Fact]
