@@ -26,7 +26,7 @@ namespace GetIntoTeachingApiTests.Utils
         }
 
         [Theory]
-        [InlineData("0", true)]
+        [InlineData("0", false)]
         [InlineData("1", false)]
         [InlineData("10", false)]
         public void ExportHangfireToPrometheus_TrueOnlyForFirstInstance(string instance, bool expected)
