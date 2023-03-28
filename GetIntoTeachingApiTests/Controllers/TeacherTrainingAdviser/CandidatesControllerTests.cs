@@ -117,6 +117,8 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
                 It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
                 IsMatch(request.Candidate, (string)job.Args[0])),
                 It.IsAny<EnqueuedState>()));
+
+            _mockLogger.VerifyInformationWasCalled("TeacherTrainingAdviser - CandidatesController - Sign Up - TTA");
         }
 
         [Fact]
