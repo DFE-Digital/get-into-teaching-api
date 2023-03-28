@@ -8,6 +8,12 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       },
       {
@@ -25,15 +31,15 @@
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 16,
-  "iteration": 1638966235972,
+  "id": 8,
+  "iteration": 1679991086033,
   "links": [],
+  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -46,21 +52,23 @@
       "type": "row"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "Elasticseach",
+      "datasource": {
+        "type": "elasticsearch",
+        "uid": "PA77D83F9E9F10FB5"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -89,7 +97,6 @@
         "y": 1
       },
       "id": 29,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -106,7 +113,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "targets": [
         {
           "bucketAggs": [
@@ -121,6 +128,10 @@
               "type": "date_histogram"
             }
           ],
+          "datasource": {
+            "type": "elasticsearch",
+            "uid": "PA77D83F9E9F10FB5"
+          },
           "metrics": [
             {
               "field": "select field",
@@ -128,32 +139,32 @@
               "type": "count"
             }
           ],
-          "query": "access.url:\"api/teacher_training_adviser/candidates\" AND access.method: POST AND access.response_code: 204 AND cf.app:\"$App\"",
+          "query": "\"TeacherTrainingAdviser - CandidatesController - Sign Up\" AND Client: \"Get an adviser\" AND cf.app:\"$App\"",
           "refId": "A",
           "timeField": "@timestamp"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Teacher Training Adviser Sign Ups",
+      "title": "Get an Adviser Sign Ups",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "Elasticseach",
+      "datasource": {
+        "type": "elasticsearch",
+        "uid": "PA77D83F9E9F10FB5"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -181,8 +192,7 @@
         "x": 6,
         "y": 1
       },
-      "id": 31,
-      "interval": null,
+      "id": 71,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -199,7 +209,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "targets": [
         {
           "bucketAggs": [
@@ -214,6 +224,10 @@
               "type": "date_histogram"
             }
           ],
+          "datasource": {
+            "type": "elasticsearch",
+            "uid": "PA77D83F9E9F10FB5"
+          },
           "metrics": [
             {
               "field": "select field",
@@ -221,32 +235,32 @@
               "type": "count"
             }
           ],
-          "query": "access.url:\"api/mailing_list/members\" AND access.method: POST AND access.response_code: 204 AND cf.app:\"$App\"",
+          "query": "\"TeacherTrainingAdviser - CandidatesController - Sign Up\" AND Client: \"Apply\" AND cf.app:\"$App\"",
           "refId": "A",
           "timeField": "@timestamp"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Mailing List Sign Ups",
+      "title": "Apply Adviser Sign Ups",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "Elasticseach",
+      "datasource": {
+        "type": "elasticsearch",
+        "uid": "PA77D83F9E9F10FB5"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -275,7 +289,6 @@
         "y": 1
       },
       "id": 30,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -292,7 +305,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "targets": [
         {
           "bucketAggs": [
@@ -319,27 +332,27 @@
           "timeField": "@timestamp"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Teaching Event Sign Ups",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "Elasticseach",
+      "datasource": {
+        "type": "elasticsearch",
+        "uid": "PA77D83F9E9F10FB5"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -368,7 +381,6 @@
         "y": 1
       },
       "id": 68,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -385,7 +397,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "targets": [
         {
           "bucketAggs": [
@@ -412,27 +424,27 @@
           "timeField": "@timestamp"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Callback Bookings",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "Elasticseach",
+      "datasource": {
+        "type": "elasticsearch",
+        "uid": "PA77D83F9E9F10FB5"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -461,7 +473,6 @@
         "y": 10
       },
       "id": 67,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -478,7 +489,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "targets": [
         {
           "bucketAggs": [
@@ -505,27 +516,310 @@
           "timeField": "@timestamp"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "School Experience Sign Ups",
       "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "elasticsearch",
+        "uid": "PA77D83F9E9F10FB5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#FF9830",
+                "value": null
+              },
+              {
+                "color": "#FF9830",
+                "value": 0
+              },
+              {
+                "color": "#299c46",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 6,
+        "y": 10
+      },
+      "id": 31,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.3.2",
+      "targets": [
+        {
+          "bucketAggs": [
+            {
+              "field": "@timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "field": "select field",
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "access.url:\"api/mailing_list/members\" AND access.method: POST AND access.response_code: 204 AND cf.app:\"$App\"",
+          "refId": "A",
+          "timeField": "@timestamp"
+        }
+      ],
+      "title": "Mailing List Sign Ups",
+      "type": "stat"
+    },
+    {
+      "aliasColors": {
+        "Unverified": "#F2495C",
+        "Verified": "#73BF69"
+      },
+      "breakPoint": "50%",
+      "combine": {
+        "label": "Others",
+        "threshold": 0
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "description": "",
+      "fontSize": "80%",
+      "format": "short",
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 12,
+        "y": 10
+      },
+      "id": 63,
+      "legend": {
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "values": true
+      },
+      "legendType": "Under graph",
+      "links": [],
+      "nullPointMode": "connected",
+      "pieType": "pie",
+      "pluginVersion": "7.2.2",
+      "strokeWidth": 1,
+      "targets": [
+        {
+          "expr": "sum(increase(api_generated_totps[$__range])) by (reference)",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "{{reference}}",
+          "refId": "A"
+        }
+      ],
+      "title": "TOTPs Generated",
+      "type": "grafana-piechart-panel",
+      "valueName": "current"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 18,
+        "y": 10
+      },
+      "id": 64,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "max"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.3.2",
+      "targets": [
+        {
+          "expr": "sum(increase(api_verified_totps{valid=\"False\"}[$__range]))",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "B"
+        }
+      ],
+      "title": "TOTP Failed Attempts",
+      "type": "stat"
+    },
+    {
+      "aliasColors": {
+        "Failed Attempt": "#F2495C",
+        "Mailing List (failure)": "#F2495C",
+        "Miss": "#5794F2"
+      },
+      "breakPoint": "50%",
+      "combine": {
+        "label": "Others",
+        "threshold": 0
+      },
+      "datasource": {
+        "type": "elasticsearch",
+        "uid": "PA77D83F9E9F10FB5"
+      },
+      "fontSize": "80%",
+      "format": "short",
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 0,
+        "y": 20
+      },
+      "id": 65,
+      "legend": {
+        "show": true,
+        "values": true
+      },
+      "legendType": "Under graph",
+      "links": [],
+      "nullPointMode": "connected",
+      "pieType": "pie",
+      "strokeWidth": 1,
+      "targets": [
+        {
+          "alias": "Mailing List",
+          "bucketAggs": [
+            {
+              "field": "@timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "field": "select field",
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "\"/api/mailing_list/members/exchange_magic_link_token/\" AND access.method: GET AND access.response_code: 200 AND cf.app:\"$App\"",
+          "refId": "A",
+          "timeField": "@timestamp"
+        },
+        {
+          "alias": "Failed Attempt",
+          "bucketAggs": [
+            {
+              "field": "@timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": 0,
+                "trimEdges": 0
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "metrics": [
+            {
+              "field": "select field",
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "\"/exchange_magic_link_token/\" AND access.method: GET AND access.response_code: 401 AND cf.app:\"$App\"",
+          "refId": "B",
+          "timeField": "@timestamp"
+        }
+      ],
+      "title": "Magic Link Requests",
+      "type": "grafana-piechart-panel",
+      "valueName": "total"
     },
     {
       "aliasColors": {
         "Miss": "#5794F2"
       },
       "breakPoint": "50%",
-      "cacheTimeout": null,
       "combine": {
         "label": "Others",
         "threshold": 0
       },
-      "datasource": "Elasticseach",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
+      "datasource": {
+        "type": "elasticsearch",
+        "uid": "PA77D83F9E9F10FB5"
       },
       "fontSize": "80%",
       "format": "short",
@@ -533,10 +827,9 @@
         "h": 10,
         "w": 6,
         "x": 6,
-        "y": 10
+        "y": 20
       },
       "id": 32,
-      "interval": null,
       "legend": {
         "show": true,
         "values": true
@@ -648,236 +941,21 @@
           "timeField": "@timestamp"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Matchback Requests",
       "type": "grafana-piechart-panel",
       "valueName": "total"
     },
     {
-      "aliasColors": {
-        "Unverified": "#F2495C",
-        "Verified": "#73BF69"
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
       },
-      "breakPoint": "50%",
-      "cacheTimeout": null,
-      "combine": {
-        "label": "Others",
-        "threshold": 0
-      },
-      "datasource": "Prometheus",
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "fontSize": "80%",
-      "format": "short",
-      "gridPos": {
-        "h": 10,
-        "w": 6,
-        "x": 12,
-        "y": 10
-      },
-      "id": 63,
-      "interval": null,
-      "legend": {
-        "show": true,
-        "sort": "current",
-        "sortDesc": true,
-        "values": true
-      },
-      "legendType": "Under graph",
-      "links": [],
-      "nullPointMode": "connected",
-      "pieType": "pie",
-      "pluginVersion": "7.2.2",
-      "strokeWidth": 1,
-      "targets": [
-        {
-          "expr": "sum(increase(api_generated_totps[$__range])) by (reference)",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "{{reference}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "TOTPs Generated",
-      "type": "grafana-piechart-panel",
-      "valueName": "current"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "Prometheus",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
           "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 6,
-        "x": 18,
-        "y": 10
-      },
-      "id": 64,
-      "interval": null,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "max"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "7.2.2",
-      "targets": [
-        {
-          "expr": "sum(increase(api_verified_totps{valid=\"False\"}[$__range]))",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "B"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "TOTP Failed Attempts",
-      "type": "stat"
-    },
-    {
-      "aliasColors": {
-        "Failed Attempt": "#F2495C",
-        "Mailing List (failure)": "#F2495C",
-        "Miss": "#5794F2"
-      },
-      "breakPoint": "50%",
-      "cacheTimeout": null,
-      "combine": {
-        "label": "Others",
-        "threshold": 0
-      },
-      "datasource": "Elasticseach",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "fontSize": "80%",
-      "format": "short",
-      "gridPos": {
-        "h": 10,
-        "w": 6,
-        "x": 0,
-        "y": 20
-      },
-      "id": 65,
-      "interval": null,
-      "legend": {
-        "show": true,
-        "values": true
-      },
-      "legendType": "Under graph",
-      "links": [],
-      "nullPointMode": "connected",
-      "pieType": "pie",
-      "strokeWidth": 1,
-      "targets": [
-        {
-          "alias": "Mailing List",
-          "bucketAggs": [
-            {
-              "field": "@timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": 0,
-                "trimEdges": 0
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "metrics": [
-            {
-              "field": "select field",
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "\"/api/mailing_list/members/exchange_magic_link_token/\" AND access.method: GET AND access.response_code: 200 AND cf.app:\"$App\"",
-          "refId": "A",
-          "timeField": "@timestamp"
-        },
-        {
-          "alias": "Failed Attempt",
-          "bucketAggs": [
-            {
-              "field": "@timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": 0,
-                "trimEdges": 0
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "metrics": [
-            {
-              "field": "select field",
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "\"/exchange_magic_link_token/\" AND access.method: GET AND access.response_code: 401 AND cf.app:\"$App\"",
-          "refId": "B",
-          "timeField": "@timestamp"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Magic Link Requests",
-      "type": "grafana-piechart-panel",
-      "valueName": "total"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "Prometheus",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": null,
-            "filterable": false
-          },
-          "mappings": [],
+          "max": 100,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -905,12 +983,11 @@
       },
       "gridPos": {
         "h": 10,
-        "w": 18,
-        "x": 6,
+        "w": 12,
+        "x": 12,
         "y": 20
       },
       "id": 69,
-      "interval": null,
       "links": [],
       "options": {
         "colorMode": "value",
@@ -926,7 +1003,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "targets": [
         {
           "expr": "(sum(increase(api_verified_totps{reference=\"teacher_training_adviser_wizard\"}[$__range])) by (reference) / sum(increase(api_generated_totps{reference=\"teacher_training_adviser_wizard\"}[$__range])) by (reference)) * 100",
@@ -943,23 +1020,21 @@
           "refId": "C"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "TOTP Success Rates by Service",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {
-            "align": null,
-            "filterable": false
-          },
           "decimals": 0,
           "mappings": [],
+          "max": 100,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -992,7 +1067,6 @@
         "y": 30
       },
       "id": 70,
-      "interval": null,
       "links": [],
       "options": {
         "colorMode": "value",
@@ -1008,7 +1082,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "targets": [
         {
           "expr": "(sum(increase(api_verified_totps{reference=\"events_wizard-unverified\"}[$__range])) by (reference) / sum(increase(api_generated_totps{reference=\"events_wizard-unverified\"}[$__range])) by (reference)) * 100",
@@ -1039,14 +1113,11 @@
           "refId": "D"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "GiT TOTP Success Rates",
       "type": "stat"
     },
     {
       "collapsed": false,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1063,11 +1134,13 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "description": "4xx and 5xx status codes",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -1102,7 +1175,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1119,9 +1192,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Error Rate by Controller",
       "tooltip": {
         "shared": true,
@@ -1130,33 +1201,25 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "reqps",
-          "label": null,
           "logBase": 1,
-          "max": null,
           "min": "0",
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -1168,10 +1231,12 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "-- Mixed --",
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Mixed --"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -1203,7 +1268,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1226,7 +1291,10 @@
               "type": "date_histogram"
             }
           ],
-          "datasource": "Elasticseach",
+          "datasource": {
+            "type": "elasticsearch",
+            "uid": "PA77D83F9E9F10FB5"
+          },
           "hide": false,
           "metrics": [
             {
@@ -1255,7 +1323,10 @@
               "type": "date_histogram"
             }
           ],
-          "datasource": "Elasticseach",
+          "datasource": {
+            "type": "elasticsearch",
+            "uid": "PA77D83F9E9F10FB5"
+          },
           "hide": false,
           "metrics": [
             {
@@ -1282,7 +1353,10 @@
               "type": "date_histogram"
             }
           ],
-          "datasource": "Elasticseach",
+          "datasource": {
+            "type": "elasticsearch",
+            "uid": "PA77D83F9E9F10FB5"
+          },
           "metrics": [
             {
               "field": "select field",
@@ -1308,7 +1382,10 @@
               "type": "date_histogram"
             }
           ],
-          "datasource": "Elasticseach",
+          "datasource": {
+            "type": "elasticsearch",
+            "uid": "PA77D83F9E9F10FB5"
+          },
           "metrics": [
             {
               "field": "select field",
@@ -1322,9 +1399,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Status",
       "tooltip": {
         "shared": true,
@@ -1333,15 +1408,12 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
-          "decimals": null,
           "format": "short",
           "label": "",
           "logBase": 1,
@@ -1351,21 +1423,16 @@
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
       "collapsed": false,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1382,10 +1449,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -1416,7 +1485,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1433,9 +1502,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "CPU Utilization",
       "tooltip": {
         "shared": true,
@@ -1444,33 +1511,24 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "percent",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -1478,10 +1536,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -1512,7 +1572,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1529,9 +1589,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Memory Usage",
       "tooltip": {
         "shared": true,
@@ -1540,33 +1598,24 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "bytes",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -1574,10 +1623,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -1608,7 +1659,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1642,9 +1693,7 @@
           "yaxis": "left"
         }
       ],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Database Connections",
       "tooltip": {
         "shared": true,
@@ -1653,16 +1702,13 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
           "max": "120",
           "min": "0",
@@ -1670,21 +1716,16 @@
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
       "collapsed": false,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1697,22 +1738,24 @@
       "type": "row"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "description": "Across ALL controllers globally!",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1733,7 +1776,6 @@
         "y": 77
       },
       "id": 50,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -1750,7 +1792,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "targets": [
         {
           "expr": "sum(http_requests_in_progress)",
@@ -1758,28 +1800,28 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Requests in Progress",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1800,7 +1842,6 @@
         "y": 77
       },
       "id": 48,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -1817,7 +1858,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "targets": [
         {
           "expr": "sum(rate(http_requests_received_total[3m]))",
@@ -1825,27 +1866,27 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Total req/s",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1874,7 +1915,6 @@
         "y": 77
       },
       "id": 6,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -1891,7 +1931,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "targets": [
         {
           "expr": "avg(rate(api_crm_sync_duration_seconds_sum[$__range]) / rate(api_crm_sync_duration_seconds_count[$__range]))",
@@ -1901,27 +1941,27 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "CRM Sync Duration",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1950,7 +1990,6 @@
         "y": 77
       },
       "id": 66,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -1967,7 +2006,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "targets": [
         {
           "expr": "avg(rate(api_crm_sync_duration_seconds_sum[$__range]) / rate(api_crm_sync_duration_seconds_count[$__range]))",
@@ -1977,27 +2016,27 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "CRM Sync Duration",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -2026,7 +2065,6 @@
         "y": 77
       },
       "id": 21,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -2043,7 +2081,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "targets": [
         {
           "expr": "avg(rate(api_magic_link_token_generation_duration_seconds_sum[$__range]) / rate(api_magic_link_token_generation_duration_seconds_count[$__range]) > 0)",
@@ -2053,8 +2091,6 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Magic Link Token Generation Duration",
       "type": "stat"
     },
@@ -2063,10 +2099,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -2097,7 +2135,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2125,9 +2163,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Response Time",
       "tooltip": {
         "shared": true,
@@ -2136,50 +2172,37 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
-          "decimals": null,
           "format": "s",
           "label": "",
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
       "aliasColors": {},
       "breakPoint": "50%",
-      "cacheTimeout": null,
       "combine": {
         "label": "Others",
         "threshold": 0
       },
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
       },
       "fontSize": "80%",
       "format": "short",
@@ -2190,7 +2213,6 @@
         "y": 87
       },
       "id": 25,
-      "interval": null,
       "legend": {
         "show": true,
         "values": true
@@ -2220,8 +2242,6 @@
           "refId": "B"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Cache Hit Ratio",
       "type": "grafana-piechart-panel",
       "valueName": "total"
@@ -2229,17 +2249,13 @@
     {
       "aliasColors": {},
       "breakPoint": "50%",
-      "cacheTimeout": null,
       "combine": {
         "label": "Others",
         "threshold": 0
       },
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
       },
       "fontSize": "80%",
       "format": "short",
@@ -2250,7 +2266,6 @@
         "y": 87
       },
       "id": 14,
-      "interval": null,
       "legend": {
         "show": true,
         "values": true
@@ -2298,8 +2313,6 @@
           "refId": "E"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "HTTP Status Codes",
       "type": "grafana-piechart-panel",
       "valueName": "total"
@@ -2319,12 +2332,9 @@
           "value": "max"
         }
       ],
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
       },
       "fontSize": "100%",
       "gridPos": {
@@ -2334,7 +2344,6 @@
         "y": 99
       },
       "id": 16,
-      "pageSize": null,
       "showHeader": true,
       "sort": {
         "col": 1,
@@ -2368,8 +2377,6 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Response Time by Action",
       "transform": "timeseries_aggregations",
       "type": "table-old"
@@ -2379,10 +2386,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -2413,7 +2422,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2428,9 +2437,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Requests/s",
       "tooltip": {
         "shared": true,
@@ -2439,56 +2446,39 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "reqps",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
-      "cards": {
-        "cardPadding": null,
-        "cardRound": null
-      },
+      "cards": {},
       "color": {
         "cardColor": "#b4ff00",
         "colorScale": "sqrt",
         "colorScheme": "interpolateGnBu",
         "exponent": 0.5,
-        "max": null,
-        "min": null,
         "mode": "spectrum"
       },
       "dataFormat": "timeseries",
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
       },
       "gridPos": {
         "h": 12,
@@ -2513,8 +2503,6 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Response Time",
       "tooltip": {
         "show": true,
@@ -2524,31 +2512,25 @@
       "xAxis": {
         "show": true
       },
-      "xBucketNumber": null,
-      "xBucketSize": null,
       "yAxis": {
-        "decimals": null,
         "format": "ms",
         "logBase": 1,
-        "max": null,
-        "min": null,
-        "show": true,
-        "splitFactor": null
+        "show": true
       },
-      "yBucketBound": "auto",
-      "yBucketNumber": null,
-      "yBucketSize": null
+      "yBucketBound": "auto"
     },
     {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "description": "Counts all requests, both successful and failed",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -2583,7 +2565,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2600,9 +2582,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Requests Received by Controller",
       "tooltip": {
         "shared": true,
@@ -2630,33 +2610,25 @@
       ],
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "reqps",
-          "label": null,
           "logBase": 1,
-          "max": null,
           "min": "0",
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -2664,12 +2636,9 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Elasticseach",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
+      "datasource": {
+        "type": "elasticsearch",
+        "uid": "PA77D83F9E9F10FB5"
       },
       "fill": 1,
       "fillGradient": 0,
@@ -2697,7 +2666,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2841,9 +2810,7 @@
           "yaxis": "left"
         }
       ],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Rate Limited Requests",
       "tooltip": {
         "shared": true,
@@ -2852,9 +2819,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -2871,7 +2836,6 @@
         {
           "decimals": 0,
           "format": "short",
-          "label": null,
           "logBase": 1,
           "max": "50",
           "min": "0",
@@ -2879,13 +2843,11 @@
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
       "collapsed": false,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2902,10 +2864,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -2936,7 +2900,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2984,9 +2948,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Job Time Spent in Queue",
       "tooltip": {
         "shared": true,
@@ -2995,34 +2957,25 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
-          "decimals": null,
           "format": "s",
           "label": "",
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -3036,10 +2989,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -3070,7 +3025,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3089,9 +3044,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Hangfire Jobs",
       "tooltip": {
         "shared": true,
@@ -3100,39 +3053,29 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
-          "decimals": null,
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
           "min": "0",
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
       "collapsed": false,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -3145,22 +3088,24 @@
       "type": "row"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "Prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "decimals": 0,
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -3189,7 +3134,6 @@
         "y": 146
       },
       "id": 27,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -3206,7 +3150,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "targets": [
         {
           "expr": "sum(increase(api_google_api_calls[$__interval]))",
@@ -3215,27 +3159,27 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Google API Calls",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "Elasticseach",
+      "datasource": {
+        "type": "elasticsearch",
+        "uid": "PA77D83F9E9F10FB5"
+      },
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -3264,7 +3208,6 @@
         "y": 146
       },
       "id": 55,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -3281,7 +3224,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "targets": [
         {
           "bucketAggs": [
@@ -3308,8 +3251,6 @@
           "timeField": "@timestamp"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Notify Service API Calls",
       "type": "stat"
     },
@@ -3318,11 +3259,13 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "-- Mixed --",
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Mixed --"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -3357,7 +3300,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.2.2",
+      "pluginVersion": "8.3.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3380,7 +3323,10 @@
               "type": "date_histogram"
             }
           ],
-          "datasource": "Elasticseach",
+          "datasource": {
+            "type": "elasticsearch",
+            "uid": "PA77D83F9E9F10FB5"
+          },
           "metrics": [
             {
               "field": "select field",
@@ -3393,7 +3339,10 @@
           "timeField": "@timestamp"
         },
         {
-          "datasource": "Prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
           "expr": "sum(rate(api_google_api_calls{result != \"success\"}[3m])) by (result)",
           "interval": "",
           "legendFormat": "Google Geocoder - {{result}}",
@@ -3401,9 +3350,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Error Rate by External Provider",
       "tooltip": {
         "shared": true,
@@ -3412,44 +3359,35 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "reqps",
-          "label": null,
           "logBase": 1,
-          "max": null,
           "min": "0",
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     }
   ],
   "refresh": false,
-  "schemaVersion": 26,
+  "schemaVersion": 33,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
-        "allValue": null,
         "current": {
           "selected": true,
           "text": "get-into-teaching-api-prod",
@@ -3457,7 +3395,6 @@
         },
         "hide": 0,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "App",
         "options": [
@@ -3478,7 +3415,6 @@
         "type": "custom"
       },
       {
-        "allValue": null,
         "current": {
           "selected": true,
           "text": "get-into-teaching-production",
@@ -3486,7 +3422,6 @@
         },
         "hide": 0,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "Space",
         "options": [
@@ -3534,5 +3469,6 @@
   "timezone": "",
   "title": "Get into Teaching API",
   "uid": "28EURzZGz",
-  "version": 1
+  "version": 1,
+  "weekStart": ""
 }
