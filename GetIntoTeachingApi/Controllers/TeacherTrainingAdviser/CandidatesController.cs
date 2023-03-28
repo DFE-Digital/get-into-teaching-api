@@ -65,6 +65,8 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
             string json = request.Candidate.SerializeChangeTracked();
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
 
+            _logger.LogInformation("TeacherTrainingAdviser - CandidatesController - Sign Up - {Client}", User.Identity.Name);
+
             return NoContent();
         }
 
