@@ -74,13 +74,13 @@ namespace GetIntoTeachingApiTests.Models.Crm
             type.GetProperty("RegistrationStatusId").Should().BeDecoratedWith<EntityFieldAttribute>(
                 a => a.Name == "dfe_candidatereregisterstatus" && a.Type == typeof(OptionSetValue));
             type.GetProperty("ApplyStatusId").Should().BeDecoratedWith<EntityFieldAttribute>(
-                a => a.Name == "dfe_candidateapplystatus" && a.Type == typeof(OptionSetValue) && a.Features.Contains("APPLY_CANDIDATE_API"));
+                a => a.Name == "dfe_candidateapplystatus" && a.Type == typeof(OptionSetValue));
             type.GetProperty("ApplyPhaseId").Should().BeDecoratedWith<EntityFieldAttribute>(
-                a => a.Name == "dfe_candidateapplyphase" && a.Type == typeof(OptionSetValue) && a.Features.Contains("APPLY_CANDIDATE_API"));
+                a => a.Name == "dfe_candidateapplyphase" && a.Type == typeof(OptionSetValue));
 
-            type.GetProperty("ApplyId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applyid" && a.Features.Contains("APPLY_CANDIDATE_API"));
-            type.GetProperty("ApplyUpdatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applylastmodifiedon" && a.Features.Contains("APPLY_CANDIDATE_API"));
-            type.GetProperty("ApplyCreatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applycreatedon" && a.Features.Contains("APPLY_CANDIDATE_API"));
+            type.GetProperty("ApplyId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applyid");
+            type.GetProperty("ApplyUpdatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applylastmodifiedon");
+            type.GetProperty("ApplyCreatedAt").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_applycreatedon");
             type.GetProperty("Merged").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "merged");
             type.GetProperty("Email").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "emailaddress1");
             type.GetProperty("SecondaryEmail").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "emailaddress2");

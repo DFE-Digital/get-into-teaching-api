@@ -26,24 +26,10 @@ namespace GetIntoTeachingApi.Utils
         public string NotifyApiKey => Environment.GetEnvironmentVariable("NOTIFY_API_KEY");
         public string GoogleApiKey => Environment.GetEnvironmentVariable("GOOGLE_API_KEY");
         public string ApplyCandidateApiKey => Environment.GetEnvironmentVariable("APPLY_CANDIDATE_API_KEY");
+        public string ApplyCandidateApiUrl => Environment.GetEnvironmentVariable("APPLY_CANDIDATE_API_URL");
         public string AppName => AppServices.ApplicationName;
         public string Organization => AppServices.OrganizationName;
         public string Space => AppServices.SpaceName;
-
-        public string ApplyCandidateApiUrl
-        {
-            get
-            {
-                var url = Environment.GetEnvironmentVariable("APPLY_CANDIDATE_API_URL");
-
-                if (IsFeatureOn("APPLY_CANDIDATE_API_V1_2"))
-                {
-                    url += "/v1.2";
-                }
-
-                return url;
-            }
-        }
 
         // The master instance boots first on deploy.
         public bool IsMasterInstance

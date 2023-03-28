@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Xrm.Sdk;
-using GetIntoTeachingApi.Utils;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GetIntoTeachingApi.Models
@@ -22,11 +21,7 @@ namespace GetIntoTeachingApi.Models
         {
             Id = entity.Id;
             Value = entity.GetAttributeValue<string>("dfe_name");
-
-            if (new Env().IsFeatureOn("COUNTRY_CODES"))
-            {
-                IsoCode = entity.GetAttributeValue<string>("dfe_countrykey");
-            }
+            IsoCode = entity.GetAttributeValue<string>("dfe_countrykey");
         }
     }
 }

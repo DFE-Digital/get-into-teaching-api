@@ -86,11 +86,11 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public void Run_OnSuccessWithExistingCandidate_SetsIdAndQueuesUpsertJobForCandidateWithApplicationForms()
+        public void Run_OnSuccessWithExistingCandidateHavingSecondaryEmail_SetsIdAndQueuesUpsertJobForCandidateWithApplicationForms()
         {
-            var match = new GetIntoTeachingApi.Models.Crm.Candidate() { Id = Guid.NewGuid(), Email = "different@email.com" };
+            var match = new GetIntoTeachingApi.Models.Crm.Candidate() { Id = Guid.NewGuid(), Email = "different@email.com", SecondaryEmail = "other@email.com" };
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
-            _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email, null)).Returns(match);
+            _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email, _candidate.Id)).Returns(match);
 
             _job.Run(_candidate);
 
@@ -150,7 +150,7 @@ namespace GetIntoTeachingApiTests.Jobs
         public void Run_OnSuccessWithNewCandidate_SetsChannelAndQueuesUpsertJobForCandidateWithApplicationForms()
         {
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
-            _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email, null)).Returns<Candidate>(null);
+            _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email, _candidate.Id)).Returns<Candidate>(null);
 
             _job.Run(_candidate);
 
@@ -203,10 +203,8 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public void Run_WhenApplyIdMatchbackFeatureIsOn_MatchesBackOnApplyIdAsWellAsEmailAndWritesApplyEmailToSecondaryEmail()
+        public void Run_MatchesBackOnApplyIdAsWellAsEmailAndWritesApplyEmailToSecondaryEmail()
         {
-            _mockEnv.Setup(m => m.IsFeatureOn("APPLY_ID_MATCHBACK")).Returns(true);
-
             var match = new GetIntoTeachingApi.Models.Crm.Candidate() { Id = Guid.NewGuid(), Email = "different@email.com" };
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
             _mockCrm.Setup(m => m.MatchCandidate(_candidate.Attributes.Email, _candidate.Id)).Returns(match);
