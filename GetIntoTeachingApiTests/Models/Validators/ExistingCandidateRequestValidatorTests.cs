@@ -20,7 +20,7 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "First" };
+            var request = new ExistingCandidateRequest { Email = "email@address.com" };
 
             var result = _validator.TestValidate(request);
 
@@ -50,14 +50,6 @@ namespace GetIntoTeachingApiTests.Models.Validators
             var result = _validator.TestValidate(new ExistingCandidateRequest() { Email = $"{new string('a', 50)}@{new string('a', 50)}.com" });
 
             result.ShouldHaveValidationErrorFor(r => r.Email);
-        }
-
-        [Fact]
-        public void Validate_FirstNameIsEmpty_HasError()
-        {
-            var result = _validator.TestValidate(new ExistingCandidateRequest() { FirstName = "" });
-
-            result.ShouldHaveValidationErrorFor(r => r.FirstName);
         }
     }
 }
