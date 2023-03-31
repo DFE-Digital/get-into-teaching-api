@@ -7,7 +7,6 @@ namespace GetIntoTeachingApi.Models.Validators
     {
         public ExistingCandidateRequestValidator()
         {
-            RuleFor(request => request.FirstName).NotEmpty();
             RuleFor(request => request.Email).NotEmpty().EmailAddress(EmailValidationMode.AspNetCoreCompatible).MaximumLength(100);
         }
     }
