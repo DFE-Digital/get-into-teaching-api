@@ -74,12 +74,14 @@ namespace GetIntoTeachingApi.AppStart
         {
             using var serviceScope = app.ApplicationServices.CreateScope();
 
+            PrometheusMetrics.Configure();
+
             // We can't do this in test as the DefaultRegistry is shared between runs
             // and we get an error trying to set static labels once metrics have been registed.
             // There doesn't appear to be a way to clear the DefaultRegistry between tests.
             if (!_env.IsTest)
             {
-                PrometheusMetricLabels.SetLabels(_env);
+                PrometheusMetrics.SetStaticLabels(_env);
             }
 
             if (!_env.IsStaging)
