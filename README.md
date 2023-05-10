@@ -242,18 +242,27 @@ It can be useful on occasion to test changes in a hosted dev/test environment pr
 
 ### Logs
 
-Logs are available by logging into [logit.io](https://logit.io).
+We use [logit.io](https://kibana.logit.io/app/kibana) to host a Kibana instance for our logs. The logs persist for **14 days** and contain logs for all our production and test instances. You can filter to a specific instance using the `cf.app` field.
 
 ### Metrics
 
-Metrics are exposed to Prometheus on the `/metrics` endpoint; [prometheus-net](https://github.com/prometheus-net/prometheus-net) is used for collecting and exposing the metrics.
+We use [Prometheus](https://prometheus-prod-get-into-teaching.london.cloudapps.digital/) to collect our metrics into an InfluxDB instance.  Metrics are exposed to Prometheus on the `/metrics` endpoint; [prometheus-net](https://github.com/prometheus-net/prometheus-net) is used for collecting and exposing the metrics.
 
-Prometheous and Grafana have been added to gather and display Metric information
+The metrics are presented using [Grafana](https://grafana-prod-get-into-teaching.london.cloudapps.digital/). All the configuration/infrastructure is currently configured in the terraform files. 
 
-### Error Monitoring
+Note that if you change the Grafana dashboard **it will not persist** and you need to instead export the dashboard and [updated it in the GitHub repository](https://github.com/DFE-Digital/get-into-teaching-api/tree/master/monitoring/grafana/dashboards). These are re-applied on API deployment.
 
-[Sentry](https://sentry.io) is used for error monitoring.
-[Logit](https://logit.io) is used to capture log files
+## Alerts
+
+We use [Prometheus Alert Manager](https://alertmanager-prod-get-into-teaching.london.cloudapps.digital/#/alerts) to notify us when something has gone wrong. It will post to the relevant Slack channel and contain a link to the appropriate Grafana dashboard and/or runbook.
+
+You can add/configure alerts in the [alert.rules file](https://github.com/DFE-Digital/get-into-teaching-api/blob/master/monitoring/prometheus/alert.rules).
+
+All the runbooks are also [hosted in GitHub](https://github.com/DFE-Digital/get-into-teaching-api/tree/master/docs/runbooks).
+
+## Error reporting
+
+We use [Sentry](sentry.io) to capture application errors. They will be posted to the relvant Slack channel when they first occur.
 
 ### HTTP Caching
 
