@@ -202,7 +202,30 @@ The rate limit counters are currently stored in memory, but we will change this 
 
 ### Deployment
 
-Deployment is via Terraform and the key will be stored in Azure.
+#### Environments
+
+The API is deployed to GOV.UK PAAS. We currently have three hosted environments; `development`, `test` and `production`. This can get confusing because our ASP.NET Core environments are `development`, `staging`, `test` and `production` (we should look to address this as part of the migration away from GOV.UK PAAS!). Here is a table to try and make sense of the combinations:
+
+| Environment             | ASP.NET Core Environment |
+| ----------------------- | ------------------------ |
+| development (PAAS)      | staging                  |
+| test (PAAS)             | staging                  |
+| production (PASS)       | production               |
+| development (local)     | development              |
+| test (local)            | test                     |
+
+#### Process
+
+When you merge a branch to `master` it will automatically be deployed to the [development](https://get-into-teaching-api-dev.london.cloudapps.digital/) and [test](https://get-into-teaching-api-test.london.cloudapps.digital/) environments via GitHub Actions and a tagged release will be created (the tag will use the PR number). You can then test the changes using the corresponding dev/test environments of the other GiT services. Once you're happy and want to ship to [production](https://get-into-teaching-api-prod.london.cloudapps.digital/) you need to note the tag of your release and go to the `Manual Release` GitHub Action; from there you can select `Run workflow`, choose the `Production` environment and enter your release number.
+
+#### Rollbacks
+
+If you make a deployment and need to roll it back the quickest way is to `Manual Release` a previous version and revert your changes.
+
+
+#### Deploying to Test/Dev Manually
+
+It can be useful on occasion to test changes in a hosted dev/test environment prior to merging. If you want to do this you need to raise a PR with your changes and manually create a tagged release (be sure to use something other than your PR number as the release tag) that can then be deployed to the dev/test environment as in the above process.
 
 ### Logs
 
