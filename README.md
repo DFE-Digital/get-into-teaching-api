@@ -86,6 +86,10 @@ When the application runs in development it will open the Swagger documentation 
 
 On the first run it will do a long sync of UK postcode information into the Postgres instance running in Docker - you can monitor the progress via the Hangfire dashboard (subsequent start ups should be quicker).
 
+### Useful Links
+
+As the API is service-facing it has no user interface, but in non-production environments you can access a [dashboard for Hangfire](https://get-into-teaching-api-dev.london.cloudapps.digital/hangfire/) and the [Swagger UI](https://get-into-teaching-api-dev.london.cloudapps.digital/swagger/index.html). You will need the basic auth credentials to access these dashboards.
+
 ### Environment
 
 If you want to run the API locally end-to-end you will need to populate the local development environment variables. Run:
@@ -112,6 +116,15 @@ You then need to update the `VCAP_SERVICES` environment variable (in `launchSett
 ```
 {\"postgres\": [{\"instance_name\": \"rdsbroker_277c8858_eb3a_427b_99ed_0f4f4171701e\",\"credentials\": {\"host\": \"127.0.0.1\",\"name\": \"rdsbroker_277c8858_eb3a_427b_99ed_0f4f4171701e\",\"username\": \"******\",\"password\": \"******\",\"port\": \"7080\"}}]}
 
+```
+
+### Secrets
+
+Secrets are stored in Azure keyvaults. There is a Makefile that should be used to view or edit the secrets, for example:
+
+```
+make development print-app-secrets
+make test edit-app-secrets
 ```
 
 ### Documentation
