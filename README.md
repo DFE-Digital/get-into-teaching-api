@@ -103,6 +103,7 @@ Quick start steps:
 - Set properties of the created env.local to "Always copy"
 - `docker-compose up`
 - Run the application in Visual Studio 
+- Open the Swagger UI at `/swagger/index/html` or view the job queue at `/hangfire`
 
 ## Useful Links
 
