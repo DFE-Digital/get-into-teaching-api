@@ -100,7 +100,7 @@ namespace GetIntoTeachingApi.AppStart
 
             app.UseRequestResponseLogging();
 
-            app.ConfigureHangfire(addBasicAuthFilter: true, _env);
+            app.ConfigureHangfire(addBasicAuthFilter: !_env.IsDevelopment, _env);
 
             app.UseSwagger();
 
