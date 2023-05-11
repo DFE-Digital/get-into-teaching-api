@@ -1,8 +1,18 @@
 # Get into Teaching API 
 
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 [![Build](https://github.com/DFE-Digital/get-into-teaching-api/actions/workflows/build.yml/badge.svg)](https://github.com/DFE-Digital/get-into-teaching-api/actions/workflows/build.yml)
 
 > Provides a RESTful API for integrating with the Get into Teaching CRM.
+
+* [API Clients](#api-clients)
+* [Getting Started](#getting-started)
+* [Useful Links](#useful-links)
+* [Deployment](#deployment)
+* [Technical Details](#technical-details)
+* [Monitoring](#monitoring)
+* [CRM Integration](#crm-integration)
 
 The Get into Teaching (GIT) API sits in front of the GIT CRM, which uses the [Microsoft Dynamics365](https://docs.microsoft.com/en-us/dynamics365/) platform (the [Customer Engagement](https://docs.microsoft.com/en-us/dynamics365/customerengagement/on-premises/developer/overview) module is used for storing Candidate information and the [Marketing](https://docs.microsoft.com/en-us/dynamics365/marketing/developer/using-events-api) module for managing Events).
 
@@ -80,15 +90,51 @@ When the client is configured to point to the API, we need to ensure it uses the
 
 The API is an ASP.NET Core web application; to get up and running clone the repository and open `GetIntoTeachingApi.sln` in Visual Studio.
 
-You will need to set up the environment (see the `Environment` section below) before booting up the dependent services in Docker with `docker-compose up`.
+You will need to set up the environment before booting up the dependent services in Docker with `docker-compose up`.
 
 When the application runs in development it will open the Swagger documentation by default (the development shared secret for the admin client is `secret-admin`).
 
-On the first run it will do a long sync of UK postcode information into the Postgres instance running in Docker - you can monitor the progress via the Hangfire dashboard (subsequent start ups should be quicker).
+On the first run it will do a long sync of UK postcode information into the Postgres instance running in Docker - you can monitor the progress via the Hangfire dashboard accessible at `/hangfire` (subsequent start ups should be quicker).
 
-### Useful Links
+Quick start steps:
+
+- `az login`
+- `make local setup-local-env`
+- Set properties of the created env.local to "Always copy"
+- `docker-compose up`
+- Run the application in Visual Studio 
+
+## Useful Links
 
 As the API is service-facing it has no user interface, but in non-production environments you can access a [dashboard for Hangfire](https://get-into-teaching-api-dev.london.cloudapps.digital/hangfire/) and the [Swagger UI](https://get-into-teaching-api-dev.london.cloudapps.digital/swagger/index.html). You will need the basic auth credentials to access these dashboards.
+
+## Deployment
+
+### Environments
+
+The API is deployed to GOV.UK PAAS. We currently have three hosted environments; `development`, `test` and `production`. This can get confusing because our ASP.NET Core environments are `development`, `staging`, `test` and `production` (we should look to address this as part of the migration away from GOV.UK PAAS!). Here is a table to try and make sense of the combinations:
+
+| Environment             | ASP.NET Core Environment | URL                                                         |
+| ----------------------- | ------------------------ | ----------------------------------------------------------- |
+| development (PAAS)      | staging                  | https://get-into-teaching-api-dev.london.cloudapps.digital  |
+| test (PAAS)             | staging                  | https://get-into-teaching-api-test.london.cloudapps.digital |
+| production (PASS)       | production               | https://get-into-teaching-api-prod.london.cloudapps.digital |
+| development (local)     | development              | localhost                                                   |
+| test (local)            | test                     | n/a                                                         |
+
+### Process
+
+When you merge a branch to `master` it will automatically be deployed to the [development](https://get-into-teaching-api-dev.london.cloudapps.digital/) and [test](https://get-into-teaching-api-test.london.cloudapps.digital/) environments via GitHub Actions and a tagged release will be created (the tag will use the PR number). You can then test the changes using the corresponding dev/test environments of the other GiT services. Once you're happy and want to ship to [production](https://get-into-teaching-api-prod.london.cloudapps.digital/) you need to note the tag of your release and go to the `Manual Release` GitHub Action; from there you can select `Run workflow`, choose the `Production` environment and enter your release number.
+
+### Rollbacks
+
+If you make a deployment and need to roll it back the quickest way is to `Manual Release` a previous version and revert your changes.
+
+### Deploying to Test/Dev Manually
+
+It can be useful on occasion to test changes in a hosted dev/test environment prior to merging. If you want to do this you need to raise a PR with your changes and manually create a tagged release (be sure to use something other than your PR number as the release tag) that can then be deployed to the dev/test environment as in the above process.
+
+## Technical Details
 
 ### Environment
 
@@ -101,9 +147,7 @@ make local setup-local-env
 
 Then **set properties of the created env.local to "Always copy"**.
 
-A number of non-secret, default development environment variables are pre-set in `GetIntoTeachingApi/Properties/launchSettings.json` (such as a development `ADMIN_API_KEY` of `admin-secret` and the `VCAP_SERVICES` setup for the Postgres instance running in Docker).
-
-Other environment variables are available (see the `IEnv` interface) but not necessary to run the bare-bones application.
+Other environment variables are available (see the `IEnv` interface) but are not necessary to run the bare-bones application.
 
 The Postgres connections (for Hangfire and our database) are setup dynamically from the `VCAP_SERVICES` environment variable provided by GOV.UK PaaS. If you want to connect to a Postgres instance running in PaaS instead of the one in Docker - such as the test environment instance - you can do so by creating a conduit to it using Cloud Foundry:
 
@@ -111,7 +155,7 @@ The Postgres connections (for Hangfire and our database) are setup dynamically f
 cf conduit get-into-teaching-api-dev-pg-svc
 ```
 
-You then need to update the `VCAP_SERVICES` environment variable (in `launchSettings.json`) to reflect the connection details for your conduit session:
+You then need to update the `VCAP_SERVICES` environment variable (in `env.local`) to reflect the connection details for your conduit session:
 
 ```
 {\"postgres\": [{\"instance_name\": \"rdsbroker_277c8858_eb3a_427b_99ed_0f4f4171701e\",\"credentials\": {\"host\": \"127.0.0.1\",\"name\": \"rdsbroker_277c8858_eb3a_427b_99ed_0f4f4171701e\",\"username\": \"******\",\"password\": \"******\",\"port\": \"7080\"}}]}
@@ -213,60 +257,9 @@ We apply the same rate limits irrespective of client at the moment, but going fo
 
 The rate limit counters are currently stored in memory, but we will change this going forward to use Redis so that they are shared between instances.
 
-### Deployment
-
-#### Environments
-
-The API is deployed to GOV.UK PAAS. We currently have three hosted environments; `development`, `test` and `production`. This can get confusing because our ASP.NET Core environments are `development`, `staging`, `test` and `production` (we should look to address this as part of the migration away from GOV.UK PAAS!). Here is a table to try and make sense of the combinations:
-
-| Environment             | ASP.NET Core Environment |
-| ----------------------- | ------------------------ |
-| development (PAAS)      | staging                  |
-| test (PAAS)             | staging                  |
-| production (PASS)       | production               |
-| development (local)     | development              |
-| test (local)            | test                     |
-
-#### Process
-
-When you merge a branch to `master` it will automatically be deployed to the [development](https://get-into-teaching-api-dev.london.cloudapps.digital/) and [test](https://get-into-teaching-api-test.london.cloudapps.digital/) environments via GitHub Actions and a tagged release will be created (the tag will use the PR number). You can then test the changes using the corresponding dev/test environments of the other GiT services. Once you're happy and want to ship to [production](https://get-into-teaching-api-prod.london.cloudapps.digital/) you need to note the tag of your release and go to the `Manual Release` GitHub Action; from there you can select `Run workflow`, choose the `Production` environment and enter your release number.
-
-#### Rollbacks
-
-If you make a deployment and need to roll it back the quickest way is to `Manual Release` a previous version and revert your changes.
-
-
-#### Deploying to Test/Dev Manually
-
-It can be useful on occasion to test changes in a hosted dev/test environment prior to merging. If you want to do this you need to raise a PR with your changes and manually create a tagged release (be sure to use something other than your PR number as the release tag) that can then be deployed to the dev/test environment as in the above process.
-
-### Logs
-
-We use [logit.io](https://kibana.logit.io/app/kibana) to host a Kibana instance for our logs. The logs persist for **14 days** and contain logs for all our production and test instances. You can filter to a specific instance using the `cf.app` field.
-
-### Metrics
-
-We use [Prometheus](https://prometheus-prod-get-into-teaching.london.cloudapps.digital/) to collect our metrics into an InfluxDB instance.  Metrics are exposed to Prometheus on the `/metrics` endpoint; [prometheus-net](https://github.com/prometheus-net/prometheus-net) is used for collecting and exposing the metrics.
-
-The metrics are presented using [Grafana](https://grafana-prod-get-into-teaching.london.cloudapps.digital/). All the configuration/infrastructure is currently configured in the terraform files. 
-
-Note that if you change the Grafana dashboard **it will not persist** and you need to instead export the dashboard and [updated it in the GitHub repository](https://github.com/DFE-Digital/get-into-teaching-api/tree/master/monitoring/grafana/dashboards). These are re-applied on API deployment.
-
-## Alerts
-
-We use [Prometheus Alert Manager](https://alertmanager-prod-get-into-teaching.london.cloudapps.digital/#/alerts) to notify us when something has gone wrong. It will post to the relevant Slack channel and contain a link to the appropriate Grafana dashboard and/or runbook.
-
-You can add/configure alerts in the [alert.rules file](https://github.com/DFE-Digital/get-into-teaching-api/blob/master/monitoring/prometheus/alert.rules).
-
-All the runbooks are also [hosted in GitHub](https://github.com/DFE-Digital/get-into-teaching-api/tree/master/docs/runbooks).
-
-## Error reporting
-
-We use [Sentry](sentry.io) to capture application errors. They will be posted to the relvant Slack channel when they first occur.
-
 ### HTTP Caching
 
-The content that we cache in Postgres that originates from the CRM is served with HTTP ETag cache headers. There is a `CrmETag` annotation that can be added to an action to apply the appropriate cache headers to the response and check the request for the `If-None-Match` header. The ETag value changes when we sync new content from the CRM, meaning if the `If-None-Match` header matches the current `ETag` value we don't even need to fulfill the request, instead returning `304 Not Modified' immediately.
+The content that we cache in Postgres that originates from the CRM is served with HTTP cache headers. There is a `PrivateShortTermResponseCache` annotation that can be added to an action to apply the appropriate cache headers.
 
 ### Postcode Geocoding
 
@@ -304,7 +297,33 @@ APPLY_CANDIDATE_API_FEATURE=on
 
 We can check for the feature with `env.IsFeatureOn("APPLY_CANDIDATE_API")`.
 
-## CRM Changes
+## Monitoring
+
+### Logs
+
+We use [logit.io](https://kibana.logit.io/app/kibana) to host a Kibana instance for our logs. The logs persist for **14 days** and contain logs for all our production and test instances. You can filter to a specific instance using the `cf.app` field.
+
+### Metrics
+
+We use [Prometheus](https://prometheus-prod-get-into-teaching.london.cloudapps.digital/) to collect our metrics into an InfluxDB instance.  Metrics are exposed to Prometheus on the `/metrics` endpoint; [prometheus-net](https://github.com/prometheus-net/prometheus-net) is used for collecting and exposing the metrics.
+
+The metrics are presented using [Grafana](https://grafana-prod-get-into-teaching.london.cloudapps.digital/). All the configuration/infrastructure is currently configured in the terraform files. 
+
+Note that if you change the Grafana dashboard **it will not persist** and you need to instead export the dashboard and [updated it in the GitHub repository](https://github.com/DFE-Digital/get-into-teaching-api/tree/master/monitoring/grafana/dashboards). These are re-applied on API deployment.
+
+### Alerts
+
+We use [Prometheus Alert Manager](https://alertmanager-prod-get-into-teaching.london.cloudapps.digital/#/alerts) to notify us when something has gone wrong. It will post to the relevant Slack channel and contain a link to the appropriate Grafana dashboard and/or runbook.
+
+You can add/configure alerts in the [alert.rules file](https://github.com/DFE-Digital/get-into-teaching-api/blob/master/monitoring/prometheus/alert.rules).
+
+All the runbooks are also [hosted in GitHub](https://github.com/DFE-Digital/get-into-teaching-api/tree/master/docs/runbooks).
+
+### Error reporting
+
+We use [Sentry](sentry.io) to capture application errors. They will be posted to the relvant Slack channel when they first occur.
+
+## CRM Integration
 
 The application is designed to make supporting new attribtues and entities in the CRM as easy as possible. All of the 'heavy lifting' is done in the `BaseModel` class using reflection to inspect model attributes and relevant `Entity*` annotations.
 
