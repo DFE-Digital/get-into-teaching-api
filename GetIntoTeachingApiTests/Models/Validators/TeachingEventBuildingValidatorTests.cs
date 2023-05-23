@@ -1,4 +1,5 @@
 ﻿using FluentValidation.TestHelper;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.Validators;
 using Xunit;
 
@@ -14,18 +15,22 @@ namespace GetIntoTeachingApiTests.Models.Validators
         }
 
         [Fact]
-        public void Validate_NameIsNullOrEmpty_HasError()
+        public void Validate_NameAndPostcodeIsNullOrEmpty_HasError()
         {
-            _validator.ShouldHaveValidationErrorFor(building => building.Venue, "");
-            _validator.ShouldHaveValidationErrorFor(building => building.Venue, null as string);
+            var building = new TeachingEventBuilding() { Venue = "", AddressPostcode = "" };
+            var result = _validator.TestValidate(building);
+
+            result.ShouldHaveValidationErrorFor(building => building.Venue);
+            result.ShouldHaveValidationErrorFor(building => building.AddressPostcode);
+
+            building.Venue = null;
+            building.AddressPostcode = null;
+            result = _validator.TestValidate(building);
+
+            result.ShouldHaveValidationErrorFor(building => building.Venue);
+            result.ShouldHaveValidationErrorFor(building => building.AddressPostcode);
         }
 
-        [Fact]
-        public void Validate_AddressPostcodeIsNullOrEmpty_HasError()
-        {
-            _validator.ShouldHaveValidationErrorFor(building => building.AddressPostcode, "");
-            _validator.ShouldHaveValidationErrorFor(building => building.AddressPostcode, null as string);
-        }
 
         [Theory]
         [InlineData("KY119YU", false)]
@@ -37,13 +42,16 @@ namespace GetIntoTeachingApiTests.Models.Validators
         [InlineData("AZ1VS1", true)]
         public void Validate_AddressPostcodeFormat_ValidatesCorrectly(string postcode, bool hasError)
         {
+            var building = new TeachingEventBuilding() { AddressPostcode = postcode };
+            var result = _validator.TestValidate(building);
+
             if (hasError)
             {
-                _validator.ShouldHaveValidationErrorFor(building => building.AddressPostcode, postcode);
+                result.ShouldHaveValidationErrorFor(building => building.AddressPostcode);
             }
             else
             {
-                _validator.ShouldNotHaveValidationErrorFor(building => building.AddressPostcode, postcode);
+                result.ShouldNotHaveValidationErrorFor(building => building.AddressPostcode);
             }
         }
     }

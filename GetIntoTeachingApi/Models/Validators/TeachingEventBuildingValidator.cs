@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Validators;
 
 namespace GetIntoTeachingApi.Models.Validators
@@ -8,7 +9,7 @@ namespace GetIntoTeachingApi.Models.Validators
         public TeachingEventBuildingValidator()
         {
             RuleFor(building => building.Venue).NotEmpty();
-            RuleFor(building => building.AddressPostcode).SetValidator(new PostcodeValidator());
+            RuleFor(building => building.AddressPostcode).SetValidator(new PostcodeValidator<TeachingEventBuilding>());
         }
     }
 }
