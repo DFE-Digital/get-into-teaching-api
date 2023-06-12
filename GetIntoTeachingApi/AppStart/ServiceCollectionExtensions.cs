@@ -131,8 +131,7 @@ The GIT API aims to provide:
                     config.UseMemoryStorage().WithJobExpirationTimeout(JobConfiguration.ExpirationTimeout);
                 }
                 else
-                {
-                    config.UsePostgreSqlStorage(DbConfiguration.HangfireConnectionString(env), new PostgreSqlStorageOptions
+                {                    config.UsePostgreSqlStorage(DbConfiguration.HangfireConnectionString(env), new PostgreSqlStorageOptions
                     {
                         SchemaName = "hangfire_postgres"
                     });
