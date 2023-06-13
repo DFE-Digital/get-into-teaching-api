@@ -113,6 +113,46 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
                 It.IsAny<EnqueuedState>()));
         }
 
+        [Fact]
+        public void Matchback_InvalidRequest_RespondsWithValidationErrors()
+        {
+            var request = new ExistingCandidateRequest { Email = "invalid-email@", Reference = "Ref" };
+            _controller.ModelState.AddModelError("Email", "Email is invalid.");
+
+            var response = _controller.Matchback(request);
+
+            request.Reference.Should().Be("Ref");
+            var badRequest = response.Should().BeOfType<BadRequestObjectResult>().Subject;
+            var errors = badRequest.Value.Should().BeOfType<SerializableError>().Subject;
+            errors.Should().ContainKey("Email").WhoseValue.Should().BeOfType<string[]>().Which.Should().Contain("Email is invalid.");
+        }
+
+        [Fact]
+        public void Matchback_ValidRequest_ReturnsCandidateMatchbackResponse()
+        {
+            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
+            var candidate = new Candidate { Id = Guid.NewGuid(), Email = request.Email, FirstName = request.FirstName, LastName = request.LastName };
+            _mockCrm.Setup(mock => mock.MatchCandidate(request)).Returns(candidate);
+
+            var response = _controller.Matchback(request);
+
+            request.Reference.Should().Be("GIT");
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            var matchbackResponse = (GetIntoTeachingCallback)ok.Value;
+            matchbackResponse.CandidateId.Should().Be((Guid)candidate.Id);
+        }
+
+        [Fact]
+        public void Matchback_MismatchedCandidate_ReturnsNotFound()
+        {
+            var request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
+            _mockCrm.Setup(mock => mock.MatchCandidate(request)).Returns<Candidate>(null);
+
+            var response = _controller.Matchback(request);
+
+            response.Should().BeOfType<NotFoundResult>();
+        }
+
         private static bool IsMatch(Candidate candidateA, string candidateBJson)
         {
             var candidateB = candidateBJson.DeserializeChangeTracked<Candidate>();

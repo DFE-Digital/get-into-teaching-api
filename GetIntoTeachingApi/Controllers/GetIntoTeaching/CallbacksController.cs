@@ -86,5 +86,34 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
 
             return Ok(new GetIntoTeachingCallback(candidate));
         }
+
+        [HttpPost]
+        [Route("matchback")]
+        [SwaggerOperation(
+           Summary = "Perform a matchback operation to retrieve a pre-populated GetIntoTeachingCallback for the candidate.",
+           Description = @"Attempts to matchback against a known candidate and returns a pre-populated GetIntoTeachingCallback if a match is found.",
+           OperationId = "MatchbackCandidate",
+           Tags = new[] { "Get into Teaching" })]
+        [ProducesResponseType(typeof(GetIntoTeachingCallback), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
+        public IActionResult Matchback([FromBody, SwaggerRequestBody("Candidate details to matchback.", Required = true)] ExistingCandidateRequest request)
+        {
+            request.Reference ??= User.Identity.Name;
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var candidate = _crm.MatchCandidate(request);
+
+            if (candidate == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new GetIntoTeachingCallback(candidate));
+        }
     }
 }
