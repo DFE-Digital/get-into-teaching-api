@@ -92,7 +92,7 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
         [SwaggerOperation(
            Summary = "Perform a matchback operation to retrieve a pre-populated GetIntoTeachingCallback for the candidate.",
            Description = @"Attempts to matchback against a known candidate and returns a pre-populated GetIntoTeachingCallback if a match is found.",
-           OperationId = "MatchbackCandidate",
+           OperationId = "MatchbackGetIntoTeachingCallback",
            Tags = new[] { "Get into Teaching" })]
         [ProducesResponseType(typeof(GetIntoTeachingCallback), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
