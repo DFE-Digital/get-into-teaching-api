@@ -1,3 +1,8 @@
+TERRAFILE_VERSION=0.8
+ARM_TEMPLATE_TAG=1.1.0
+RG_TAGS={"Product" : "Get into teaching"}
+SERVICE_SHORT=gitapi
+
 ifndef VERBOSE
 .SILENT:
 endif
@@ -33,6 +38,9 @@ INFRASTRUCTURE_SECRETS=INFRA-KEYS
 development:
 	$(eval export KEY_VAULT=s146d01-kv)
 	$(eval export AZ_SUBSCRIPTION=s146-getintoteachingwebsite-development)
+
+development_aks:
+	$(eval include global_config/development.sh)
 
 .PHONY: local
 local:
@@ -89,3 +97,10 @@ print-infrastructure-secrets: install-fetch-config set-azure-account
 
 setup-local-env: install-fetch-config set-azure-account
 	./fetch_config.rb -s azure-key-vault-secret:s146d01-local2-kv/${APPLICATION_SECRETS} -f shell-env-var > GetIntoTeachingApi/env.local
+
+arm-deployment: set-azure-account
+	az deployment sub create --name "resourcedeploy-tsc-$(shell date +%Y%m%d%H%M%S)" \
+		-l "UK South" --template-uri "https://raw.githubusercontent.com/DFE-Digital/tra-shared-services/${ARM_TEMPLATE_TAG}/azure/resourcedeploy.json" \
+		--parameters "resourceGroupName=${AZURE_RESOURCE_PREFIX}-${SERVICE_SHORT}-${CONFIG_SHORT}-rg" 'tags=${RG_TAGS}' \
+			"tfStorageAccountName=${AZURE_RESOURCE_PREFIX}${SERVICE_SHORT}tfstate${CONFIG_SHORT}sa" "tfStorageContainerName=terraform-state" \
+			"keyVaultName=${AZURE_RESOURCE_PREFIX}-${SERVICE_SHORT}-${CONFIG_SHORT}-kv" ${WHAT_IF}
