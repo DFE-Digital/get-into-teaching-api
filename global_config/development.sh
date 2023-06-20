@@ -1,4 +1,4 @@
-CONFIG=development
+CONFIG=development_aks
 ENVIRONMENT=development
 CONFIG_SHORT=dv
 AZ_SUBSCRIPTION=s189-teacher-services-cloud-test

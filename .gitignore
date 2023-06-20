@@ -48,3 +48,8 @@ env.local
 
 # DevOps file
 fetch_config.rb
+
+bin/terrafile
+
+# Downloaded terraform modules
+terraform/aks/vendor/
