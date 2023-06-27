@@ -1,8 +1,9 @@
 TERRAFILE_VERSION=0.8
-ARM_TEMPLATE_TAG=1.1.0
+ARM_TEMPLATE_TAG=1.1.6
 RG_TAGS={"Product" : "Get into teaching"}
 SERVICE_SHORT=gitapi
 SERVICE_NAME=getintoteachingapi
+REGION=UK South
 
 ifndef VERBOSE
 .SILENT:
@@ -48,6 +49,11 @@ development:
 
 development_aks:
 	$(eval include global_config/development.sh)
+
+.PHONY: set-key-vault-names
+set-key-vault-names:
+	$(eval KEY_VAULT_APPLICATION_NAME=$(AZURE_RESOURCE_PREFIX)-$(SERVICE_SHORT)-$(CONFIG_SHORT)-app-kv)
+	$(eval KEY_VAULT_INFRASTRUCTURE_NAME=$(AZURE_RESOURCE_PREFIX)-$(SERVICE_SHORT)-$(CONFIG_SHORT)-inf-kv)
 
 .PHONY: local
 local:
@@ -127,12 +133,13 @@ terraform-apply: terraform-init
 set-what-if:
 	$(eval WHAT_IF=--what-if)
 
-arm-deployment: set-azure-account
+arm-deployment: set-azure-account set-key-vault-names
 	az deployment sub create --name "resourcedeploy-tsc-$(shell date +%Y%m%d%H%M%S)" \
-		-l "UK South" --template-uri "https://raw.githubusercontent.com/DFE-Digital/tra-shared-services/${ARM_TEMPLATE_TAG}/azure/resourcedeploy.json" \
+		-l "${REGION}" --template-uri "https://raw.githubusercontent.com/DFE-Digital/tra-shared-services/${ARM_TEMPLATE_TAG}/azure/resourcedeploy.json" \
 		--parameters "resourceGroupName=${AZURE_RESOURCE_PREFIX}-${SERVICE_SHORT}-${CONFIG_SHORT}-rg" 'tags=${RG_TAGS}' \
-			"tfStorageAccountName=${AZURE_RESOURCE_PREFIX}${SERVICE_SHORT}tfstate${CONFIG_SHORT}sa" "tfStorageContainerName=${SERVICE_SHORT}-tfstate" \
-			"keyVaultName=${AZURE_RESOURCE_PREFIX}-${SERVICE_SHORT}-${CONFIG_SHORT}-kv" ${WHAT_IF}
+			"tfStorageAccountName=${STORAGE_ACCOUNT_NAME}" "tfStorageContainerName=${SERVICE_SHORT}-tfstate" \
+			keyVaultNames='("${KEY_VAULT_APPLICATION_NAME}", "${KEY_VAULT_INFRASTRUCTURE_NAME}")' \
+			"enableKVPurgeProtection=${KEY_VAULT_PURGE_PROTECTION}" ${WHAT_IF}
 
 deploy-arm-resources: arm-deployment
 
