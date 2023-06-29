@@ -96,6 +96,17 @@ namespace GetIntoTeachingApiTests.Utils
         }
 
         [Fact]
+        public void PgConnString_ReturnsCorrectly()
+        {
+            var previous = Environment.GetEnvironmentVariable("PG_CONN_STR");
+            Environment.SetEnvironmentVariable("PG_CONN_STR", "postgresql://localhost:4432/gis?user=docker&password=docker");
+
+            _env.PgConnectionString.Should().Be("postgresql://localhost:4432/gis?user=docker&password=docker");
+
+            Environment.SetEnvironmentVariable("PG_CONN_STR", previous);
+        }
+
+        [Fact]
         public void HangfireInstanceName_ReturnsCorrectly()
         {
             var previous = Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME");
@@ -108,7 +119,7 @@ namespace GetIntoTeachingApiTests.Utils
 
         [Fact]
         public void InstanceIndex_ReturnsCorrectly()
-        { 
+        {
             Environment.SetEnvironmentVariable("CF_INSTANCE_INDEX", "123");
 
             _env.InstanceIndex.Should().Be("123");
