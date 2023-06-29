@@ -38,6 +38,10 @@ namespace GetIntoTeachingApi.Database
 
         private static string GenerateConnectionString(IEnv env, string instanceName)
         {
+            if (!string.IsNullOrEmpty(env.PgConnectionString)) {
+              return env.PgConnectionString;
+            }
+
             var options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
             var vcap = JsonSerializer.Deserialize<VcapServices>(env.VcapServices, options);
             var postgres = vcap.Postgres.First(p => p.InstanceName == instanceName);

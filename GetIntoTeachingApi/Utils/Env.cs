@@ -15,6 +15,7 @@ namespace GetIntoTeachingApi.Utils
         public bool ExportHangireToPrometheus => InstanceIndex == "0";
         public string InstanceIndex => Environment.GetEnvironmentVariable("CF_INSTANCE_INDEX");
         public string DatabaseInstanceName => Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME");
+        public string PgConnectionString => Environment.GetEnvironmentVariable("PG_CONN_STR");
         public string HangfireInstanceName => Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME");
         public string HangfireUsername => Environment.GetEnvironmentVariable("HANGFIRE_USERNAME");
         public string HangfirePassword => Environment.GetEnvironmentVariable("HANGFIRE_PASSWORD");

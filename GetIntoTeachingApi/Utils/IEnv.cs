@@ -10,6 +10,7 @@
         string InstanceIndex { get; }
         string GitCommitSha { get; }
         string DatabaseInstanceName { get; }
+        string PgConnectionString { get; }
         string HangfireInstanceName { get; }
         string HangfireUsername { get; }
         string HangfirePassword { get; }
