@@ -11,6 +11,7 @@
         string GitCommitSha { get; }
         string DatabaseInstanceName { get; }
         string PgConnectionString { get; }
+        string AksEnvName { get; }
         string HangfireInstanceName { get; }
         string HangfireUsername { get; }
         string HangfirePassword { get; }
