@@ -38,6 +38,7 @@ namespace GetIntoTeachingApi.Database
 
         private static string GenerateConnectionString(IEnv env, string instanceName)
         {
+            Console.WriteLine($"PG_CONN_STRING var: {env.PgConnectionString}");
             if (!string.IsNullOrEmpty(env.PgConnectionString)) {
               return env.PgConnectionString;
             }
