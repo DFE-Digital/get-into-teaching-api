@@ -149,13 +149,16 @@ The GIT API aims to provide:
 
         public static void ConfigureRedis(this IServiceCollection services, IEnv env)
         {
-            var redisOptions = RedisConfiguration.ConfigurationOptions(env);
-            if (!string.IsNullOrEmpty(env.RedisConnectionString)) {
-              redisOptions = env.RedisConnectionString;
+            if (string.IsNullOrEmpty(env.RedisConnectionString)) {
+              var redisOptions = RedisConfiguration.ConfigurationOptions(env);
+              var connection = ConnectionMultiplexer.Connect(redisOptions);
+              services.AddSingleton<IConnectionMultiplexer>(_ => connection);
+              services.AddDataProtection().PersistKeysToStackExchangeRedis(connection, "DataProtection-Keys");
+            } else {
+              var connection = ConnectionMultiplexer.Connect(env.RedisConnectionString);
+              services.AddSingleton<IConnectionMultiplexer>(_ => connection);
+              services.AddDataProtection().PersistKeysToStackExchangeRedis(connection, "DataProtection-Keys");
             }
-            var connection = ConnectionMultiplexer.Connect(redisOptions);
-            services.AddSingleton<IConnectionMultiplexer>(_ => connection);
-            services.AddDataProtection().PersistKeysToStackExchangeRedis(connection, "DataProtection-Keys");
         }
 
         private static void ConfigureRateLimiting(IServiceCollection services, IConfiguration configuration)
