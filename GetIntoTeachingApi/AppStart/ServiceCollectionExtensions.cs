@@ -150,6 +150,9 @@ The GIT API aims to provide:
         public static void ConfigureRedis(this IServiceCollection services, IEnv env)
         {
             var redisOptions = RedisConfiguration.ConfigurationOptions(env);
+            if (!string.IsNullOrEmpty(env.RedisConnectionString)) {
+              redisOptions = env.RedisConnectionString;
+            }
             var connection = ConnectionMultiplexer.Connect(redisOptions);
             services.AddSingleton<IConnectionMultiplexer>(_ => connection);
             services.AddDataProtection().PersistKeysToStackExchangeRedis(connection, "DataProtection-Keys");
