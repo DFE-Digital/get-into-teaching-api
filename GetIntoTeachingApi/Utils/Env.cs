@@ -16,6 +16,7 @@ namespace GetIntoTeachingApi.Utils
         public string InstanceIndex => Environment.GetEnvironmentVariable("CF_INSTANCE_INDEX");
         public string DatabaseInstanceName => Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME");
         public string PgConnectionString => Environment.GetEnvironmentVariable("PG_CONN_STR");
+        public string RedisConnectionString => Environment.GetEnvironmentVariable("REDIS_CONN_STR");
         public string AksEnvName => Environment.GetEnvironmentVariable("AKS_ENV_NAME");
         public string HangfireInstanceName => Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME");
         public string HangfireUsername => Environment.GetEnvironmentVariable("HANGFIRE_USERNAME");
