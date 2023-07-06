@@ -17,6 +17,7 @@ namespace GetIntoTeachingApi.Utils
         public string DatabaseInstanceName => Environment.GetEnvironmentVariable("DATABASE_INSTANCE_NAME");
         public string PgConnectionString => Environment.GetEnvironmentVariable("PG_CONN_STR");
         public string AksEnvName => Environment.GetEnvironmentVariable("AKS_ENV_NAME");
+        public bool EnableMetrics => Environment.GetEnvironmentVariable("ENABLE_METRICS") == "1";
         public string HangfireInstanceName => Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME");
         public string HangfireUsername => Environment.GetEnvironmentVariable("HANGFIRE_USERNAME");
         public string HangfirePassword => Environment.GetEnvironmentVariable("HANGFIRE_PASSWORD");
