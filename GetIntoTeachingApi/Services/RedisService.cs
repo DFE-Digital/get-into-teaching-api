@@ -4,7 +4,7 @@ using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Redis;
 using GetIntoTeachingApi.Utils;
 using StackExchange.Redis;
-using System.Net;
+using System.Net; 
 
 namespace GetIntoTeachingApi.Services
 {
