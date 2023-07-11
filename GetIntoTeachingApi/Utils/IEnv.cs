@@ -13,6 +13,7 @@
         string PgConnectionString { get; }
         string RedisConnectionString { get; }
         string AksEnvName { get; }
+        bool EnableMetrics { get; }
         string HangfireInstanceName { get; }
         string HangfireUsername { get; }
         string HangfirePassword { get; }

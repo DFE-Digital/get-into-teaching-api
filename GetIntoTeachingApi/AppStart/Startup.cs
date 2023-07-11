@@ -83,9 +83,9 @@ namespace GetIntoTeachingApi.AppStart
             // We can't do this in test as the DefaultRegistry is shared between runs
             // and we get an error trying to set static labels once metrics have been registed.
             // There doesn't appear to be a way to clear the DefaultRegistry between tests.
-            if (!_env.IsTest)
+            if (!_env.IsTest && _env.EnableMetrics)
             {
-                PrometheusMetrics.SetStaticLabels(_env);
+              PrometheusMetrics.SetStaticLabels(_env);
             }
 
             if (!_env.IsStaging)
@@ -115,12 +115,15 @@ namespace GetIntoTeachingApi.AppStart
 
             app.UseRouting();
 
-            if (_env.ExportHangireToPrometheus)
+            if (_env.ExportHangireToPrometheus && _env.EnableMetrics)
             {
                 app.UsePrometheusHangfireExporter();
             }
 
-            app.UseHttpMetrics();
+            if (_env.EnableMetrics)
+            {
+              app.UseHttpMetrics();
+            }
 
             app.UseAuthorization();
 
