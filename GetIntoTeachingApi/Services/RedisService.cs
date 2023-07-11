@@ -4,7 +4,7 @@ using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Redis;
 using GetIntoTeachingApi.Utils;
 using StackExchange.Redis;
-using System.Net; 
+using System.Net;
 
 namespace GetIntoTeachingApi.Services
 {
@@ -23,8 +23,8 @@ namespace GetIntoTeachingApi.Services
             _endpoint = _options.EndPoints[0];
             _redis = ConnectionMultiplexer.Connect(_options);
           } else {
-            _endpoint = _redis.GetEndPoints()[0];
             _redis = ConnectionMultiplexer.Connect(env.RedisConnectionString);
+            _endpoint = _redis.GetEndPoints()[0];
           }
         }
 
