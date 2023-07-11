@@ -76,12 +76,12 @@ groups:
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighMemory-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/0PRnzc2Mk/get-into-teaching-apps?viewPanel=33&orgId=1
       - alert: HighCspViolations (App)
-        expr: 'sum(increase(app_csp_violations_total{app="get-into-teaching-app-prod",blocked_uri!~".*google.*"}[5m])) by (blocked_uri) > 35' 
+        expr: 'sum(increase(app_csp_violations_total{app="get-into-teaching-app-prod",blocked_uri!~".*google.*|.*clarity.*"}[5m])) by (blocked_uri) > 35' 
         labels:
           severity: medium
         annotations:
-          summary: Alerts when more than 20 CSP violations for the same URI are reported in a 5 minute period.
-          description: Alerts when more than 20 CSP violations for the same URI are reported in a 5 minute period.
+          summary: Alerts when more than 35 CSP violations for the same URI are reported in a 5 minute period.
+          description: Alerts when more than 35 CSP violations for the same URI are reported in a 5 minute period.
           runbook: https://dfedigital.atlassian.net/wiki/spaces/GGIT/pages/2156036281/App+TTA+Runbook#HighCspViolations-MEDIUM
           dashboard: https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/qZjcqcpGz/csp-violations?orgId=1
   - name: TTA
