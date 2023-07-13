@@ -60,7 +60,7 @@ jobs:
       - name: Build
         uses: docker/build-push-action@v4
         with:
-          push: true
+          push: ${{ github.ref == 'refs/heads/master' }}
           builder: ${{ steps.buildx.outputs.name }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
