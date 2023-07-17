@@ -92,19 +92,6 @@ namespace GetIntoTeachingApi.Controllers
             return Ok(response);
         }
 
-        [HttpGet]
-        [Route("simple_healthcheck")]
-        [SwaggerOperation(
-            Summary = "Performs a simple health check.",
-            OperationId = "SimpleHealthcheck",
-            Tags = new[] { "Operations" })]
-        [ProducesResponseType(typeof(OkResult), StatusCodes.Status200OK)]
-        public IActionResult SimpleHealthcheck()
-        {
-            OkResult okResult = Ok();
-            return okResult;
-        }
-
         [HttpPut]
         [Authorize(Roles = "Admin,Crm")]
         [Route("pause_crm_integration")]
