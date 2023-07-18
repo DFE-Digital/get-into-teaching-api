@@ -8,6 +8,7 @@ using GetIntoTeachingApi.JsonConverters;
 using GetIntoTeachingApi.ModelBinders;
 using GetIntoTeachingApi.Utils;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -152,7 +153,6 @@ namespace GetIntoTeachingApi.AppStart
                 DatabaseUtility.SeedCountriesAndTeachingSubjects(serviceScope);
             }
 
-            // Configure rate limiting.
             var clientPolicyStore = serviceScope.ServiceProvider.GetRequiredService<IClientPolicyStore>();
             clientPolicyStore.SeedAsync().GetAwaiter().GetResult();
 
@@ -160,6 +160,10 @@ namespace GetIntoTeachingApi.AppStart
             {
                 endpoints.MapMetrics();
                 endpoints.MapControllers();
+
+                endpoints.MapGet("/healthcheck", async context => {
+                    await context.Response.WriteAsync("OK");
+                });
             });
         }
     }
