@@ -36,11 +36,12 @@ MONITORING_SECRETS=MONITORING-KEYS
 APPLICATION_SECRETS=API-KEYS
 INFRASTRUCTURE_SECRETS=INFRA-KEYS
 
-install-terrafile: ## Install terrafile to manage terraform modules
-	[ ! -f bin/terrafile ] \
-		&& curl -sL https://github.com/coretech/terrafile/releases/download/v${TERRAFILE_VERSION}/terrafile_${TERRAFILE_VERSION}_$$(uname)_x86_64.tar.gz \
-		| tar xz -C ./bin terrafile \
-		|| true
+bin/terrafile: ## Install terrafile to manage terraform modules
+	curl -sL https://github.com/coretech/terrafile/releases/download/v${TERRAFILE_VERSION}/terrafile_${TERRAFILE_VERSION}_$$(uname)_x86_64.tar.gz \
+		| tar xz -C ./bin terrafile
+
+bin/yaq:
+	curl -sL https://github.com/uk-devops/yaq/releases/download/v0.0.3/yaq_linux_amd64_v0.0.3.zip -o yaq.zip && unzip -o yaq.zip -d ./bin/ && rm yaq.zip
 
 .PHONY: development
 development:
@@ -78,46 +79,28 @@ production:
 set-azure-account: ${environment}
 	az account set -s ${AZ_SUBSCRIPTION}
 
-clean:
-	[ ! -f fetch_config.rb ]  \
-	    rm -f fetch_config.rb \
-	    || true
+print-app-secrets: bin/yaq set-azure-account set-key-vault-names
+	yaq -i keyvault-secrets:${KEY_VAULT_APPLICATION_NAME} -d yaml
 
-install-fetch-config:
-	[ ! -f fetch_config.rb ]  \
-	    && echo "Installing fetch_config.rb" \
-	    && curl -s https://raw.githubusercontent.com/DFE-Digital/bat-platform-building-blocks/master/scripts/fetch_config/fetch_config.rb -o fetch_config.rb \
-	    && chmod +x fetch_config.rb \
-	    || true
+print-infra-secrets: bin/yaq set-azure-account set-key-vault-names
+	yaq -i keyvault-secrets:${KEY_VAULT_INFRASTRUCTURE_NAME} -d yaml
 
-edit-app-secrets: install-fetch-config set-azure-account
-	./fetch_config.rb -s azure-key-vault-secret:${KEY_VAULT}/${APPLICATION_SECRETS} -e -d azure-key-vault-secret:${KEY_VAULT}/${APPLICATION_SECRETS} -f yaml -c
+setup-local-env: bin/yaq set-azure-account
+	yaq -i keyvault-secret-map:s146d01-local2-kv/${APPLICATION_SECRETS}  -d yaml > GetIntoTeachingApi/env.local
 
-print-app-secrets: install-fetch-config set-azure-account
-	./fetch_config.rb -s azure-key-vault-secret:${KEY_VAULT}/${APPLICATION_SECRETS}  -f yaml
+setup-aks-local-env: bin/yaq set-azure-account set-key-vault-names
+	yaq -i keyvault-secrets:${KEY_VAULT_APPLICATION_NAME} -d yaml -d yaml > GetIntoTeachingApi/env.local
 
-edit-monitoring-secrets: install-fetch-config set-azure-account
-	./fetch_config.rb -s azure-key-vault-secret:${KEY_VAULT}/${MONITORING_SECRETS} -e -d azure-key-vault-secret:${KEY_VAULT}/${MONITORING_SECRETS} -f yaml -c
 
-print-monitoring-secrets: install-fetch-config set-azure-account
-	./fetch_config.rb -s azure-key-vault-secret:${KEY_VAULT}/${MONITORING_SECRETS}  -f yaml
-
-edit-infrastructure-secrets: install-fetch-config set-azure-account
-	./fetch_config.rb -s azure-key-vault-secret:${KEY_VAULT}/${INFRASTRUCTURE_SECRETS} -e -d azure-key-vault-secret:${KEY_VAULT}/${INFRASTRUCTURE_SECRETS} -f yaml -c
-
-print-infrastructure-secrets: install-fetch-config set-azure-account
-	./fetch_config.rb -s azure-key-vault-secret:${KEY_VAULT}/${INFRASTRUCTURE_SECRETS}  -f yaml
-
-setup-local-env: install-fetch-config set-azure-account
-	./fetch_config.rb -s azure-key-vault-secret:s146d01-local2-kv/${APPLICATION_SECRETS} -f shell-env-var > GetIntoTeachingApi/env.local
-
-terraform-init: install-terrafile set-azure-account
+terraform-init: bin/terrafile set-azure-account
 	./bin/terrafile -p terraform/aks/vendor/modules -f terraform/aks/config/$(CONFIG)_Terrafile
 	terraform -chdir=terraform/aks init -upgrade -reconfigure \
 		-backend-config=resource_group_name=${RESOURCE_GROUP_NAME} \
 		-backend-config=storage_account_name=${STORAGE_ACCOUNT_NAME} \
 		-backend-config=key=${CONFIG}.tfstate
 
+	$(if $(IMAGE_TAG), , $(eval export IMAGE_TAG=sha-194cbc9))
+	$(eval export TF_VAR_paas_app_docker_image=ghcr.io/dfe-digital/get-into-teaching-api:$(IMAGE_TAG))
 	$(eval export TF_VAR_azure_resource_prefix=$(AZURE_RESOURCE_PREFIX))
 	$(eval export TF_VAR_config_short=$(CONFIG_SHORT))
 	$(eval export TF_VAR_service_short=$(SERVICE_SHORT))

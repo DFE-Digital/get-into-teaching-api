@@ -50,6 +50,7 @@ env.local
 fetch_config.rb
 
 bin/terrafile
+bin/yaq
 
 # Downloaded terraform modules
 terraform/aks/vendor/

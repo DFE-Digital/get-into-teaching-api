@@ -1,15 +1,23 @@
 variable "environment" {}
 
+variable "file_environment" {}
+
 variable "postgres_version" { default = 14 }
+
+# PaaS variables
+variable "paas_app_docker_image" {}
 
 # Key Vault variables
 variable "azure_credentials" { default = null }
 
-variable "key_vault_name" {}
+variable "app_key_vault_name" {}
 
-variable "key_vault_infra_secret_name" {}
+variable "infra_key_vault_name" {}
 
-variable "key_vault_app_secret_name" {}
+variable "gov_uk_host_names" {
+  default = []
+  type    = list(any)
+}
 
 # Kubernetes variables
 variable "namespace" {}
@@ -30,6 +38,14 @@ variable "postgres_flexible_server_sku" { default = "B_Standard_B1ms" }
 variable "postgres_enable_high_availability" { default = false }
 variable "azure_enable_backup_storage" { default = true }
 
+variable "replicas" { default = 1 }
+variable "memory_max" { default = "1Gi" }
+
 locals {
-  azure_credentials = try(jsondecode(var.azure_credentials), null)
+  azure_credentials       = try(jsondecode(var.azure_credentials), null)
+  app_resource_group_name = "${var.azure_resource_prefix}-${var.service_short}-${var.config_short}-rg"
+  app_secrets = {
+    PG_CONN_STR    = module.postgres.dotnet_connection_string
+    REDIS_CONN_STR = module.redis-cache.connection_string
+  }
 }
