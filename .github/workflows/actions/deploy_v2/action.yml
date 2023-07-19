@@ -4,10 +4,10 @@ description: deploys application
 on:
   push:
     branches:
-      - my-branch
+      - 353-deploy-dev-environment-to-aks-6
   pull_request:
     branches:
-      - my-branch
+      - 353-deploy-dev-environment-to-aks-6
 
 inputs:
   environment:
