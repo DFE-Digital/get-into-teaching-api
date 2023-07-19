@@ -1,13 +1,14 @@
 name: deploy
 description: deploys application
-
-inputs:
-  environment:
-    description: Environment to deploy to
-    required: true
-  sha:
-    description: Commit sha to be deployed
-    required: true
+on:
+  workflow_dispatch:
+  inputs:
+    environment:
+      description: Environment to deploy to
+      required: true
+    sha:
+      description: Commit sha to be deployed
+      required: true
 
 outputs:
   deploy-url:
