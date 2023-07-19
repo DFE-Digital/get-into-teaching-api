@@ -1,14 +1,21 @@
 name: deploy
 description: deploys application
+
 on:
-  workflow_dispatch:
-  inputs:
-    environment:
-      description: Environment to deploy to
-      required: true
-    sha:
-      description: Commit sha to be deployed
-      required: true
+  push:
+    branches:
+      - my-branch
+  pull_request:
+    branches:
+      - my-branch
+
+inputs:
+  environment:
+    description: Environment to deploy to
+    required: true
+  sha:
+    description: Commit sha to be deployed
+    required: true
 
 outputs:
   deploy-url:
