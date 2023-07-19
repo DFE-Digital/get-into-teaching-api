@@ -1,0 +1,47 @@
+name: deploy
+description: deploys application
+
+inputs:
+  environment:
+    description: Environment to deploy to
+    required: true
+  sha:
+    description: Commit sha to be deployed
+    required: true
+
+outputs:
+  deploy-url:
+    value: ${{ steps.set_env_var.outputs.deploy_url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set Environment variables
+      id: set_env_var
+      shell: bash
+      run: |
+        tf_vars_file=terraform/aks/config/${{ inputs.environment }}.tfvars.json
+        terraform_version=$(awk '/{/{f=/^terraform/;next}f' terraform/aks/provider.tf | grep -o [0-9\.]*)
+        echo "cluster=$(jq -r '.cluster' ${tf_vars_file})" >> $GITHUB_ENV
+        echo "aks_app_environment=$(jq -r '.environment' ${tf_vars_file})" >> $GITHUB_ENV
+        echo "TERRAFORM_VERSION=$terraform_version" >> $GITHUB_ENV
+        echo "namespace=$(jq -r '.namespace' ${tf_vars_file})" >> $GITHUB_ENV
+        if [[ ${{ inputs.environment }} == 'development_aks' ]]; then
+          echo "deploy_url=https://getintoteachingapi.${{ aks_app_environment }}.test.teacherservices.cloud" >> $GITHUB_OUTPUT
+          echo "DEPLOY_REF=${{ github.head_ref }}" >> $GITHUB_ENV
+        fi
+
+    - name: Use Terraform ${{ env.TERRAFORM_VERSION }}
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+    - uses: DFE-Digital/github-actions/set-arm-environment-variables@master
+      with:
+        azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Terraform init, plan & apply
+      shell: bash
+      run: make ${{ inputs.environment }} terraform-apply
+      env:
+        IMAGE_TAG: ${{ inputs.sha }}
