@@ -1,82 +1,126 @@
----
-name: Manual Release
+name: Build v2
 on:
   workflow_dispatch:
     inputs:
       environment:
-        description: Environment to release to
+        description: Environment to deploy to
         required: true
-        type: environment
-      tag:
-        description: Release Tag
-        required: true
+        type: choice
+        default: development_aks
+        options:
+        - development_aks
 
 jobs:
-  manual:
-    name: Deploy to ${{github.event.inputs.environment}}
+  build:
+    name: Build and push to Github Container Registry
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    outputs:
+      image: ${{steps.docker_image.outputs.IMAGE}}
+      image_tag_sha: "sha-${{ steps.vars.outputs.sha_short }}"
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      - name: set-up-environment
+        uses: DFE-Digital/github-actions/set-up-environment@master
+
+      - uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Fetch Slack Webhook Value
+        id: get-slack-webhook
+        uses: DFE-Digital/github-actions/fetch-key-vault-secrets@master
+        with:
+          keyvault: ${{ secrets.INFRA_KEY_VAULT}}
+          secrets: SLACK-WEBHOOK
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@master
+        with:
+          version: v0.9.1
+
+      - name: Get Short SHA
+        id: vars
+        run: |
+          echo "sha_short=$(echo $GITHUB_SHA | cut -c -7)" >> $GITHUB_OUTPUT
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          builder: ${{ steps.buildx.outputs.name }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+          tags: |
+            ${{env.DOCKER_REPOSITORY}}:sha-${{ steps.vars.outputs.sha_short }}
+          build-args: GIT_COMMIT_SHA=${{ steps.vars.outputs.sha_short }}
+
+      - name: Slack Notification
+        if: failure() && github.ref == 'refs/heads/master'
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_COLOR: ${{env.SLACK_FAILURE}}
+          SLACK_MESSAGE: 'The pipeline has failed to build the API image'
+          SLACK_TITLE: 'Failure to Build API '
+          SLACK_WEBHOOK: "${{ steps.get-slack-webhook.outputs.SLACK-WEBHOOK }}"
+
+  development:
+    name: Development Deployment
+    needs: build
+    if: github.ref == 'refs/heads/test-deploy-workflow'
     runs-on: ubuntu-latest
     environment:
-        name: ${{github.event.inputs.environment}}
-    concurrency: ${{github.event.inputs.environment}}
-    defaults:
-      run:
-        shell: bash
+      name: development_aks
     steps:
-       - name: Checkout
-         uses: actions/checkout@v3
+      - name: Check out the repo
+        uses: actions/checkout@v3
 
-       - name: set-up-environment
-         uses: DFE-Digital/github-actions/set-up-environment@master
+      - name: set-up-environment
+        uses: DFE-Digital/github-actions/set-up-environment@master
 
-       - uses: Azure/login@v1
-         with:
-            creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-       - uses: DfE-Digital/keyvault-yaml-secret@v1
-         id:  keyvault-yaml-secret
-         with:
-           keyvault: ${{ secrets.KEY_VAULT}}
-           secret: INFRA-KEYS
-           key: SLACK-WEBHOOK,SLACK-RELEASE-NOTE-WEBHOOK
+      - name: Fetch Slack Webhook Value
+        id: get-slack-webhook
+        uses: DFE-Digital/github-actions/fetch-key-vault-secrets@master
+        with:
+          keyvault: ${{ secrets.INFRA_KEY_VAULT}}
+          secrets: SLACK-WEBHOOK
 
-       - name: Get Release Id from Tag
-         id: tag_id
-         uses: DFE-Digital/github-actions/DraftReleaseByTag@master
-         with:
-           TAG: ${{ github.event.inputs.tag }}
-           TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Trigger Development Deployment
+        uses: ./.github/workflows/actions/deploy_v2
+        id: deploy
+        with:
+          environment: development_aks
+          sha: ${{needs.build.outputs.image_tag_sha}}
+          azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
-       - name: Check if found
-         if:  steps.tag_id.outputs.release_id == ''
-         run: |
-              echo "::error ::Tag ${{ github.event.inputs.tag }} cannot be found in releases"
-              exit 1
 
-       - name: Trigger Deployment to ${{github.event.inputs.environment}}
-         uses: ./.github/workflows/actions/deploy
-         id: deploy
-         with:
-           environment: "${{github.event.inputs.environment}}"
-           sha:  "${{steps.tag_id.outputs.release_sha}}"
-           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-           KEY_VAULT:         ${{ secrets.KEY_VAULT }}
-           ARM_ACCESS_KEY:    ${{ secrets.ARM_ACCESS_KEY }}
-
-       - name: Slack Release Notification
-         if: steps.tag_id.outputs.release_id && github.event.inputs.environment == 'Production'
-         uses: rtCamp/action-slack-notify@master
-         env:
-           SLACK_COLOR:    ${{env.SLACK_SUCCESS}}
-           SLACK_TITLE:    "Release Published to ${{github.event.inputs.environment}}: ${{steps.tag_id.outputs.release_name}}"
-           SLACK_MESSAGE:  ${{ fromJson( steps.tag_id.outputs.release_body) }}
-           SLACK_WEBHOOK:  ${{steps.keyvault-yaml-secret.outputs.SLACK-RELEASE-NOTE-WEBHOOK}}
-           MSG_MINIMAL:    true
-
-       - name: Slack Notification
-         if: failure()
-         uses: rtCamp/action-slack-notify@master
-         env:
-           SLACK_COLOR:    ${{env.SLACK_FAILURE}}
-           SLACK_TITLE:    "Manual Release Failed: ${{steps.tag_id.outputs.release_name}}"
-           SLACK_MESSAGE:  Failure deploying ${{github.event.inputs.environment}} release
-           SLACK_WEBHOOK:  ${{steps.keyvault-yaml-secret.outputs.SLACK-WEBHOOK}}
+      - name: Slack Notification
+        if: failure() && github.ref == 'refs/heads/master'
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_COLOR: ${{env.SLACK_FAILURE}}
+          SLACK_MESSAGE: 'The pipeline has failed to build the API image'
+          SLACK_TITLE: 'Failure to Build API '
+          SLACK_WEBHOOK: "${{ steps.get-slack-webhook.outputs.SLACK-WEBHOOK }}"
