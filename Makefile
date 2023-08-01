@@ -37,11 +37,11 @@ APPLICATION_SECRETS=API-KEYS
 INFRASTRUCTURE_SECRETS=INFRA-KEYS
 
 bin/terrafile: ## Install terrafile to manage terraform modules
-	curl -sL https://github.com/coretech/terrafile/releases/download/v${TERRAFILE_VERSION}/terrafile_${TERRAFILE_VERSION}_$$(uname)_x86_64.tar.gz \
+	mkdir -p bin | curl -sL https://github.com/coretech/terrafile/releases/download/v${TERRAFILE_VERSION}/terrafile_${TERRAFILE_VERSION}_$$(uname)_x86_64.tar.gz \
 		| tar xz -C ./bin terrafile
 
 bin/yaq:
-	curl -sL https://github.com/uk-devops/yaq/releases/download/v0.0.3/yaq_linux_amd64_v0.0.3.zip -o yaq.zip && unzip -o yaq.zip -d ./bin/ && rm yaq.zip
+	mkdir -p bin | curl -sL https://github.com/uk-devops/yaq/releases/download/v0.0.3/yaq_linux_amd64_v0.0.3.zip -o yaq.zip && unzip -o yaq.zip -d ./bin/ && rm yaq.zip
 
 .PHONY: development
 development:
@@ -75,6 +75,11 @@ test:
 production:
 	$(eval export KEY_VAULT=s146p01-kv)
 	$(eval export AZ_SUBSCRIPTION=s146-getintoteachingwebsite-production)
+
+.PHONY: ci
+ci:	## Run in automation environment
+	$(eval export DISABLE_PASSCODE=true)
+	$(eval export AUTO_APPROVE=-auto-approve)
 
 set-azure-account: ${environment}
 	az account set -s ${AZ_SUBSCRIPTION}
@@ -111,7 +116,7 @@ terraform-plan: terraform-init
 	terraform -chdir=terraform/aks plan -var-file "config/${CONFIG}.tfvars.json"
 
 terraform-apply: terraform-init
-	terraform -chdir=terraform/aks apply -var-file "config/${CONFIG}.tfvars.json"
+	terraform -chdir=terraform/aks apply -var-file "config/${CONFIG}.tfvars.json" $(AUTO_APPROVE)
 
 set-what-if:
 	$(eval WHAT_IF=--what-if)
