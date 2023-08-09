@@ -27,9 +27,9 @@ runs:
         echo "TERRAFORM_VERSION=$terraform_version" >> $GITHUB_ENV
         echo "namespace=$(jq -r '.namespace' ${tf_vars_file})" >> $GITHUB_ENV
         if [[ $cluster == 'production' ]]; then
-              echo "deploy_url=https://getintoteaching-${{ env.aks_app_environment }}.teacherservices.cloud" >> $GITHUB_OUTPUT
+              echo "deploy_url=https://getintoteachingapi-${{ env.aks_app_environment }}.teacherservices.cloud" >> $GITHUB_OUTPUT
             else
-              echo "deploy_url=https://getintoteaching-${{ env.aks_app_environment }}.${cluster}.teacherservices.cloud" >> $GITHUB_OUTPUT
+              echo "deploy_url=https://getintoteachingapi-${{ env.aks_app_environment }}.${cluster}.teacherservices.cloud" >> $GITHUB_OUTPUT
         fi
 
     - name: Use Terraform ${{ env.TERRAFORM_VERSION }}

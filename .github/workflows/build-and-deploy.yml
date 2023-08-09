@@ -1,4 +1,4 @@
-name: Build v2
+name: Build and Deploy
 on:
   workflow_dispatch:
     inputs:
@@ -9,6 +9,7 @@ on:
         default: development_aks
         options:
         - development_aks
+        - test_aks
 
 jobs:
   build:
@@ -115,6 +116,48 @@ jobs:
           sha: ${{needs.build.outputs.image_tag_sha}}
           azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
+
+      - name: Slack Notification
+        if: failure() && github.ref == 'refs/heads/master'
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_COLOR: ${{env.SLACK_FAILURE}}
+          SLACK_MESSAGE: 'The pipeline has failed to build the API image'
+          SLACK_TITLE: 'Failure to Build API '
+          SLACK_WEBHOOK: "${{ steps.get-slack-webhook.outputs.SLACK-WEBHOOK }}"
+
+  test:
+    name: Test Deployment
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    environment:
+      name: test_aks
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      - name: set-up-environment
+        uses: DFE-Digital/github-actions/set-up-environment@master
+
+      - uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Fetch Slack Webhook Value
+        id: get-slack-webhook
+        uses: DFE-Digital/github-actions/fetch-key-vault-secrets@master
+        with:
+          keyvault: ${{ secrets.INFRA_KEY_VAULT}}
+          secrets: SLACK-WEBHOOK
+
+      - name: Trigger Test Deployment
+        uses: ./.github/workflows/actions/deploy_v2
+        id: deploy
+        with:
+          environment: test_aks
+          sha: ${{needs.build.outputs.image_tag_sha}}
+          azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Slack Notification
         if: failure() && github.ref == 'refs/heads/master'

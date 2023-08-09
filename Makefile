@@ -49,7 +49,10 @@ development:
 	$(eval export AZ_SUBSCRIPTION=s146-getintoteachingwebsite-development)
 
 development_aks:
-	$(eval include global_config/development.sh)
+	$(eval include global_config/development_aks.sh)
+
+test_aks:
+	$(eval include global_config/test_aks.sh)
 
 .PHONY: set-key-vault-names
 set-key-vault-names:
@@ -100,8 +103,8 @@ setup-aks-local-env: bin/yaq set-azure-account set-key-vault-names
 terraform-init: bin/terrafile set-azure-account
 	./bin/terrafile -p terraform/aks/vendor/modules -f terraform/aks/config/$(CONFIG)_Terrafile
 	terraform -chdir=terraform/aks init -upgrade -reconfigure \
-		-backend-config=resource_group_name=${RESOURCE_GROUP_NAME} \
-		-backend-config=storage_account_name=${STORAGE_ACCOUNT_NAME} \
+		-backend-config=resource_group_name=${AZURE_RESOURCE_PREFIX}-${SERVICE_SHORT}-${CONFIG_SHORT}-rg \
+		-backend-config=storage_account_name=${AZURE_RESOURCE_PREFIX}${SERVICE_SHORT}tfstate${CONFIG_SHORT}sa \
 		-backend-config=key=${CONFIG}.tfstate
 
 	$(if $(IMAGE_TAG), , $(eval export IMAGE_TAG=sha-194cbc9))
@@ -109,7 +112,7 @@ terraform-init: bin/terrafile set-azure-account
 	$(eval export TF_VAR_azure_resource_prefix=$(AZURE_RESOURCE_PREFIX))
 	$(eval export TF_VAR_config_short=$(CONFIG_SHORT))
 	$(eval export TF_VAR_service_short=$(SERVICE_SHORT))
-	$(eval export TF_VAR_rg_name=$(RESOURCE_GROUP_NAME))
+	$(eval export TF_VAR_rg_name=${AZURE_RESOURCE_PREFIX}-${SERVICE_SHORT}-${CONFIG_SHORT}-rg)
 	$(eval export TF_VAR_service_name=$(SERVICE_NAME))
 
 terraform-plan: terraform-init
@@ -118,6 +121,9 @@ terraform-plan: terraform-init
 terraform-apply: terraform-init
 	terraform -chdir=terraform/aks apply -var-file "config/${CONFIG}.tfvars.json" $(AUTO_APPROVE)
 
+terraform-destroy: terraform-init
+	terraform -chdir=terraform/aks destroy -var-file "config/${CONFIG}.tfvars.json" $(AUTO_APPROVE)
+
 set-what-if:
 	$(eval WHAT_IF=--what-if)
 
@@ -125,7 +131,7 @@ arm-deployment: set-azure-account set-key-vault-names
 	az deployment sub create --name "resourcedeploy-tsc-$(shell date +%Y%m%d%H%M%S)" \
 		-l "${REGION}" --template-uri "https://raw.githubusercontent.com/DFE-Digital/tra-shared-services/${ARM_TEMPLATE_TAG}/azure/resourcedeploy.json" \
 		--parameters "resourceGroupName=${AZURE_RESOURCE_PREFIX}-${SERVICE_SHORT}-${CONFIG_SHORT}-rg" 'tags=${RG_TAGS}' \
-			"tfStorageAccountName=${STORAGE_ACCOUNT_NAME}" "tfStorageContainerName=${SERVICE_SHORT}-tfstate" \
+			"tfStorageAccountName=${AZURE_RESOURCE_PREFIX}${SERVICE_SHORT}tfstate${CONFIG_SHORT}sa" "tfStorageContainerName=${SERVICE_SHORT}-tfstate" \
 			keyVaultNames='("${KEY_VAULT_APPLICATION_NAME}", "${KEY_VAULT_INFRASTRUCTURE_NAME}")' \
 			"enableKVPurgeProtection=${KEY_VAULT_PURGE_PROTECTION}" ${WHAT_IF}
 
