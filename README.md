@@ -1,4 +1,4 @@
-# Get into Teaching API 
+# Get into Teaching API
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
@@ -99,10 +99,10 @@ On the first run it will do a long sync of UK postcode information into the Post
 Quick start steps:
 
 - `az login`
-- `make local setup-local-env`
+- `make setup-local-env`
 - Set properties of the created env.local to "Always copy"
 - `docker-compose up`
-- Run the application in Visual Studio 
+- Run the application in Visual Studio
 - Open the Swagger UI at `/swagger/index/html` or view the job queue at `/hangfire`
 
 ## Useful Links
@@ -170,6 +170,11 @@ Secrets are stored in Azure keyvaults. There is a Makefile that should be used t
 ```
 make development print-app-secrets
 make test edit-app-secrets
+```
+If you want to edit the local secrets, you can run:
+
+```
+make edit-local-app-secrets
 ```
 
 ### Documentation
@@ -308,7 +313,7 @@ We use [logit.io](https://kibana.logit.io/app/kibana) to host a Kibana instance 
 
 We use [Prometheus](https://prometheus-prod-get-into-teaching.london.cloudapps.digital/) to collect our metrics into an InfluxDB instance.  Metrics are exposed to Prometheus on the `/metrics` endpoint; [prometheus-net](https://github.com/prometheus-net/prometheus-net) is used for collecting and exposing the metrics.
 
-The metrics are presented using [Grafana](https://grafana-prod-get-into-teaching.london.cloudapps.digital/). All the configuration/infrastructure is currently configured in the terraform files. 
+The metrics are presented using [Grafana](https://grafana-prod-get-into-teaching.london.cloudapps.digital/). All the configuration/infrastructure is currently configured in the terraform files.
 
 Note that if you change the Grafana dashboard **it will not persist** and you need to instead export the dashboard and [updated it in the GitHub repository](https://github.com/DFE-Digital/get-into-teaching-api/tree/master/monitoring/grafana/dashboards). These are re-applied on API deployment.
 
@@ -407,7 +412,7 @@ public string Telephone { get; set; }
 
 ### Adding Relationships
 
-Relationships (unlike `EntityReference` fields) contain the attributes of the related entity or entities. 
+Relationships (unlike `EntityReference` fields) contain the attributes of the related entity or entities.
 
 They can be established using the `EntityRelationship` annotation, passing in the CRM relationship name and the type of the model we map that related entity to:
 

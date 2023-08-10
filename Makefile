@@ -36,6 +36,13 @@ MONITORING_SECRETS=MONITORING-KEYS
 APPLICATION_SECRETS=API-KEYS
 INFRASTRUCTURE_SECRETS=INFRA-KEYS
 
+install-fetch-config:
+	[ ! -f fetch_config.rb ]  \
+	    && echo "Installing fetch_config.rb" \
+	    && curl -s https://raw.githubusercontent.com/DFE-Digital/bat-platform-building-blocks/master/scripts/fetch_config/fetch_config.rb -o fetch_config.rb \
+	    && chmod +x fetch_config.rb \
+	    || true
+
 bin/terrafile: ## Install terrafile to manage terraform modules
 	mkdir -p bin | curl -sL https://github.com/coretech/terrafile/releases/download/v${TERRAFILE_VERSION}/terrafile_${TERRAFILE_VERSION}_$$(uname)_x86_64.tar.gz \
 		| tar xz -C ./bin terrafile
@@ -53,6 +60,10 @@ development_aks:
 
 test_aks:
 	$(eval include global_config/test_aks.sh)
+
+local_aks:
+	$(eval export KEY_VAULT=s189t01-gitapi-dv-loc-kv)
+	$(eval export AZ_SUBSCRIPTION=s189-teacher-services-cloud-test)
 
 .PHONY: set-key-vault-names
 set-key-vault-names:
@@ -93,12 +104,11 @@ print-app-secrets: bin/yaq set-azure-account set-key-vault-names
 print-infra-secrets: bin/yaq set-azure-account set-key-vault-names
 	yaq -i keyvault-secrets:${KEY_VAULT_INFRASTRUCTURE_NAME} -d yaml
 
-setup-local-env: bin/yaq set-azure-account
-	yaq -i keyvault-secret-map:s146d01-local2-kv/${APPLICATION_SECRETS}  -d yaml > GetIntoTeachingApi/env.local
+setup-local-env: local_aks install-fetch-config set-azure-account set-key-vault-names
+	./fetch_config.rb -s azure-key-vault-secret:${KEY_VAULT}/API-KEYS -f shell-env-var > GetIntoTeachingApi/env.local
 
-setup-aks-local-env: bin/yaq set-azure-account set-key-vault-names
-	yaq -i keyvault-secrets:${KEY_VAULT_APPLICATION_NAME} -d yaml -d yaml > GetIntoTeachingApi/env.local
-
+edit-local-app-secrets: local_aks install-fetch-config set-azure-account
+	./fetch_config.rb -s azure-key-vault-secret:${KEY_VAULT}/API-KEYS -e -d azure-key-vault-secret:${KEY_VAULT}/API-KEYS -f yaml -c
 
 terraform-init: bin/terrafile set-azure-account
 	./bin/terrafile -p terraform/aks/vendor/modules -f terraform/aks/config/$(CONFIG)_Terrafile
