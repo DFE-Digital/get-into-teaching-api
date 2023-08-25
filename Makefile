@@ -61,6 +61,9 @@ development_aks:
 test_aks:
 	$(eval include global_config/test_aks.sh)
 
+production_aks:
+	$(eval include global_config/production_aks.sh)
+
 local_aks:
 	$(eval export KEY_VAULT=s189t01-gitapi-dv-loc-kv)
 	$(eval export AZ_SUBSCRIPTION=s189-teacher-services-cloud-test)
