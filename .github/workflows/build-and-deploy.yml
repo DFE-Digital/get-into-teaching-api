@@ -10,6 +10,7 @@ on:
         options:
         - development_aks
         - test_aks
+        - production_aks
 
 jobs:
   build:
@@ -30,12 +31,15 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Fetch Slack Webhook Value
-        id: get-slack-webhook
-        uses: DFE-Digital/github-actions/fetch-key-vault-secrets@master
+      - name: Retrieve Slack Webhook from KV
+        uses: azure/CLI@v1
+        id: fetch-slack-webhook
         with:
-          keyvault: ${{ secrets.INFRA_KEY_VAULT}}
-          secrets: SLACK-WEBHOOK
+          inlineScript: |
+            SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value")
+            SANITIZED_SECRET=$(echo $SECRET_VALUE | tr -d \")
+            echo "::add-mask::$SANITIZED_SECRET"
+            echo "SLACK-WEBHOOK=$SANITIZED_SECRET" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         id: buildx
@@ -81,7 +85,7 @@ jobs:
           SLACK_COLOR: ${{env.SLACK_FAILURE}}
           SLACK_MESSAGE: 'The pipeline has failed to build the API image'
           SLACK_TITLE: 'Failure to Build API '
-          SLACK_WEBHOOK: "${{ steps.get-slack-webhook.outputs.SLACK-WEBHOOK }}"
+          SLACK_WEBHOOK: "${{ steps.fetch-slack-webhook.outputs.SLACK-WEBHOOK }}"
 
   development:
     name: Development Deployment
@@ -101,12 +105,15 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Fetch Slack Webhook Value
-        id: get-slack-webhook
-        uses: DFE-Digital/github-actions/fetch-key-vault-secrets@master
+      - name: Retrieve Slack Webhook from KV
+        uses: azure/CLI@v1
+        id: fetch-slack-webhook
         with:
-          keyvault: ${{ secrets.INFRA_KEY_VAULT}}
-          secrets: SLACK-WEBHOOK
+          inlineScript: |
+            SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value")
+            SANITIZED_SECRET=$(echo $SECRET_VALUE | tr -d \")
+            echo "::add-mask::$SANITIZED_SECRET"
+            echo "SLACK-WEBHOOK=$SANITIZED_SECRET" >> $GITHUB_OUTPUT
 
       - name: Trigger Development Deployment
         uses: ./.github/workflows/actions/deploy_v2
@@ -122,9 +129,9 @@ jobs:
         uses: rtCamp/action-slack-notify@master
         env:
           SLACK_COLOR: ${{env.SLACK_FAILURE}}
-          SLACK_MESSAGE: 'The pipeline has failed to build the API image'
-          SLACK_TITLE: 'Failure to Build API '
-          SLACK_WEBHOOK: "${{ steps.get-slack-webhook.outputs.SLACK-WEBHOOK }}"
+          SLACK_MESSAGE: 'TEST MESSAGE'
+          SLACK_TITLE: 'TEST SLACK TITLE GIT API'
+          SLACK_WEBHOOK: '${{ steps.fetch-slack-webhook.outputs.SLACK-WEBHOOK }}'
 
   test:
     name: Test Deployment
@@ -144,12 +151,15 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Fetch Slack Webhook Value
-        id: get-slack-webhook
-        uses: DFE-Digital/github-actions/fetch-key-vault-secrets@master
+      - name: Retrieve Slack Webhook from KV
+        uses: azure/CLI@v1
+        id: fetch-slack-webhook
         with:
-          keyvault: ${{ secrets.INFRA_KEY_VAULT}}
-          secrets: SLACK-WEBHOOK
+          inlineScript: |
+            SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value")
+            SANITIZED_SECRET=$(echo $SECRET_VALUE | tr -d \")
+            echo "::add-mask::$SANITIZED_SECRET"
+            echo "SLACK-WEBHOOK=$SANITIZED_SECRET" >> $GITHUB_OUTPUT
 
       - name: Trigger Test Deployment
         uses: ./.github/workflows/actions/deploy_v2
@@ -166,4 +176,49 @@ jobs:
           SLACK_COLOR: ${{env.SLACK_FAILURE}}
           SLACK_MESSAGE: 'The pipeline has failed to build the API image'
           SLACK_TITLE: 'Failure to Build API '
-          SLACK_WEBHOOK: "${{ steps.get-slack-webhook.outputs.SLACK-WEBHOOK }}"
+          SLACK_WEBHOOK: "${{ steps.fetch-slack-webhook.outputs.SLACK-WEBHOOK }}"
+
+  production:
+    name: Production Deployment
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    environment:
+      name: production_aks
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      - name: set-up-environment
+        uses: DFE-Digital/github-actions/set-up-environment@master
+
+      - uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Retrieve Slack Webhook from KV
+        uses: azure/CLI@v1
+        id: fetch-slack-webhook
+        with:
+          inlineScript: |
+            SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value")
+            SANITIZED_SECRET=$(echo $SECRET_VALUE | tr -d \")
+            echo "::add-mask::$SANITIZED_SECRET"
+            echo "SLACK-WEBHOOK=$SANITIZED_SECRET" >> $GITHUB_OUTPUT
+
+      - name: Trigger Production  Deployment
+        uses: ./.github/workflows/actions/deploy_v2
+        id: deploy
+        with:
+          environment: production_aks
+          sha: ${{needs.build.outputs.image_tag_sha}}
+          azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Slack Notification
+        if: failure() && github.ref == 'refs/heads/master'
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_COLOR: ${{env.SLACK_FAILURE}}
+          SLACK_MESSAGE: 'The pipeline has failed to build the API image'
+          SLACK_TITLE: 'Failure to Build API '
+          SLACK_WEBHOOK: "${{ steps.fetch-slack-webhook.outputs.SLACK-WEBHOOK }}"
