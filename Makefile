@@ -1,6 +1,6 @@
 TERRAFILE_VERSION=0.8
 ARM_TEMPLATE_TAG=1.1.6
-RG_TAGS={"Product" : "Get Into Teaching Website"}
+RG_TAGS={"Product" : "Get into teaching website"}
 SERVICE_SHORT=gitapi
 SERVICE_NAME=getintoteachingapi
 REGION=UK South
