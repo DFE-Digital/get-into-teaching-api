@@ -26,6 +26,8 @@ variable "cluster" {}
 
 variable "enable_monitoring" { default = true }
 
+variable "enable_statuscake_alerts" { default = false }
+
 variable "azure_resource_prefix" {}
 
 variable "config_short" {}
