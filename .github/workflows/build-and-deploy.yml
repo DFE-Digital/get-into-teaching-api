@@ -37,8 +37,7 @@ jobs:
         with:
           inlineScript: |
             SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
-            # SANITIZED_SECRET=$(echo $SECRET_VALUE | tr -d \")
-            # echo "::add-mask::$SANITIZED_SECRET"
+            echo "::add-mask::$SECRET_VALUE"
             echo "SLACK-WEBHOOK=$SECRET_VALUE" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
