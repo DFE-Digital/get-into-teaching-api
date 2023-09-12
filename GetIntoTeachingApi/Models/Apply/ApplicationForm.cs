@@ -47,10 +47,6 @@ namespace GetIntoTeachingApi.Models.Apply
                 RecruitmentCycleYearId = yearId,
                 Choices = ApplicationChoices?.Data?.Select(c => c.ToCrmModel()).ToList(),
                 References = References?.Data?.Select(c => c.ToCrmModel()).ToList(),
-                ApplicationChoicesCompleted = ApplicationChoices?.Completed,
-                ReferencesCompleted = References?.Completed,
-                PersonalStatementCompleted = PersonalStatement?.Completed,
-                QualificationsCompleted = Qualifications?.Completed,
             };
         }
     }
