@@ -69,10 +69,10 @@ namespace GetIntoTeachingApiTests.Models.Apply
                 ApplicationStatus = "never_signed_in",
                 ApplicationPhase = "apply_1",
                 RecruitmentCycleYear = 2022,
-                ApplicationChoices = new ApplicationResponse<IEnumerable<ApplicationChoice>>() { Completed = true, Data = new List<ApplicationChoice> { choice } },
-                References = new ApplicationResponse<IEnumerable<Reference>>() { Completed = false, Data = new List<Reference> { reference } },
-                Qualifications = new ApplicationResponse<IEnumerable<object>>() { Completed = true },
-                PersonalStatement = new ApplicationResponse<IEnumerable<object>>() { Completed = null },
+                ApplicationChoices = new ApplicationResponse<IEnumerable<ApplicationChoice>>() { Data = new List<ApplicationChoice> { choice } },
+                References = new ApplicationResponse<IEnumerable<Reference>>() { Data = new List<Reference> { reference } },
+                Qualifications = new ApplicationResponse<IEnumerable<object>>() ,
+                PersonalStatement = new ApplicationResponse<IEnumerable<object>>() ,
             };
 
             var crmForm = form.ToCrmModel();
@@ -85,10 +85,6 @@ namespace GetIntoTeachingApiTests.Models.Apply
             crmForm.RecruitmentCycleYearId.Should().Be((int)GetIntoTeachingApi.Models.Crm.ApplicationForm.RecruitmentCycleYear.Year2022);
             crmForm.Choices.First().ApplyId.Should().Be(choice.Id.ToString());
             crmForm.References.First().ApplyId.Should().Be(reference.Id.ToString());
-            crmForm.ApplicationChoicesCompleted.Should().Be(form.ApplicationChoices.Completed);
-            crmForm.ReferencesCompleted.Should().Be(form.References.Completed);
-            crmForm.QualificationsCompleted.Should().Be(form.Qualifications.Completed);
-            crmForm.PersonalStatementCompleted.Should().Be(form.PersonalStatement.Completed);
         }
 
         [Fact]
