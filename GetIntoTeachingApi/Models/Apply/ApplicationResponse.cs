@@ -6,7 +6,5 @@ namespace GetIntoTeachingApi.Models.Apply
     {
         [JsonProperty("data")]
         public T Data { get; set; }
-        [JsonProperty("completed")]
-        public bool? Completed { get; set; }
     }
 }
