@@ -51,10 +51,7 @@ namespace GetIntoTeachingApiTests.Jobs
                     ApplicationStatus = "awaiting_candidate_response",
                     ApplicationPhase = "apply_1",
                     RecruitmentCycleYear = 2021,
-                    ApplicationChoices = new ApplicationResponse<IEnumerable<ApplicationChoice>>() { Completed = false },
-                    References = new ApplicationResponse<IEnumerable<Reference>>() { Completed = false },
-                    Qualifications = new ApplicationResponse<IEnumerable<object>>() { Completed = true },
-                    PersonalStatement = new ApplicationResponse<IEnumerable<object>>() { Completed = null },
+                    ApplicationChoices = new ApplicationResponse<IEnumerable<ApplicationChoice>>(),
                 },
                 new ApplicationForm()
                 {
@@ -65,10 +62,7 @@ namespace GetIntoTeachingApiTests.Jobs
                     ApplicationStatus = "never_signed_in",
                     ApplicationPhase = "apply_2",
                     RecruitmentCycleYear = 2022,
-                    ApplicationChoices = new ApplicationResponse<IEnumerable<ApplicationChoice>>() { Completed = false },
-                    References = new ApplicationResponse<IEnumerable<Reference>>() { Completed = false },
-                    Qualifications = new ApplicationResponse<IEnumerable<object>>() { Completed = true },
-                    PersonalStatement = new ApplicationResponse<IEnumerable<object>>() { Completed = null },
+                    ApplicationChoices = new ApplicationResponse<IEnumerable<ApplicationChoice>>(),
                 },
             };
             _attributes = new CandidateAttributes()
@@ -103,10 +97,6 @@ namespace GetIntoTeachingApiTests.Jobs
                 RecruitmentCycleYearId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.RecruitmentCycleYear.Year2022,
                 UpdatedAt = _forms[1].UpdatedAt,
                 SubmittedAt = _forms[1].SubmittedAt,
-                ApplicationChoicesCompleted = _forms[1].ApplicationChoices.Completed,
-                ReferencesCompleted = _forms[1].References.Completed,
-                PersonalStatementCompleted = _forms[1].PersonalStatement.Completed,
-                QualificationsCompleted = _forms[1].Qualifications.Completed,
             };
 
             var form2 = new GetIntoTeachingApi.Models.Crm.ApplicationForm()
@@ -118,10 +108,6 @@ namespace GetIntoTeachingApiTests.Jobs
                 CreatedAt = _forms[0].CreatedAt,
                 UpdatedAt = _forms[0].UpdatedAt,
                 SubmittedAt = null,
-                ApplicationChoicesCompleted = _forms[0].ApplicationChoices.Completed,
-                ReferencesCompleted = _forms[0].References.Completed,
-                PersonalStatementCompleted = _forms[0].PersonalStatement.Completed,
-                QualificationsCompleted = _forms[0].Qualifications.Completed,
             };
 
             var candidate = new GetIntoTeachingApi.Models.Crm.Candidate()
@@ -163,10 +149,6 @@ namespace GetIntoTeachingApiTests.Jobs
                 RecruitmentCycleYearId = (int)GetIntoTeachingApi.Models.Crm.ApplicationForm.RecruitmentCycleYear.Year2022,
                 UpdatedAt = _forms[1].UpdatedAt,
                 SubmittedAt = _forms[1].SubmittedAt,
-                ApplicationChoicesCompleted = _forms[1].ApplicationChoices.Completed,
-                ReferencesCompleted = _forms[1].References.Completed,
-                PersonalStatementCompleted = _forms[1].PersonalStatement.Completed,
-                QualificationsCompleted = _forms[1].Qualifications.Completed,
             };
 
             var form2 = new GetIntoTeachingApi.Models.Crm.ApplicationForm()
@@ -178,10 +160,6 @@ namespace GetIntoTeachingApiTests.Jobs
                 CreatedAt = _forms[0].CreatedAt,
                 UpdatedAt = _forms[0].UpdatedAt,
                 SubmittedAt = null,
-                ApplicationChoicesCompleted = _forms[0].ApplicationChoices.Completed,
-                ReferencesCompleted = _forms[0].References.Completed,
-                PersonalStatementCompleted = _forms[0].PersonalStatement.Completed,
-                QualificationsCompleted = _forms[0].Qualifications.Completed,
             };
 
             var candidate = new GetIntoTeachingApi.Models.Crm.Candidate()
