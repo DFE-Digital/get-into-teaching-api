@@ -98,6 +98,10 @@
       },
       {
         "Key": "dfe_name",
+        "Value": "0001-01-01T00:00:00"
+      },
+      {
+        "Key": "dfe_senttoproviderat",
         "Value": "Application Choice 1"
       }
     ],
@@ -111,10 +115,6 @@
     "LogicalName": "dfe_applyapplicationform",
     "Id": "00000000-0000-0000-0000-000000000000",
     "Attributes": [
-      {
-        "Key": "dfe_applicationchoicescompleted",
-        "Value": true
-      },
       {
         "Key": "dfe_applicationformid",
         "Value": "1"
