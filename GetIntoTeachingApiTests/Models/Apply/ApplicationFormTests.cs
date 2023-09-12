@@ -55,6 +55,7 @@ namespace GetIntoTeachingApiTests.Models.Apply
                 Id = 456,
                 CreatedAt = new DateTime(2021, 1, 3),
                 UpdatedAt = new DateTime(2021, 1, 4),
+                SentToProviderAt = new DateTime(2021, 1, 5),
                 Status = "cancelled",
                 Provider = new Provider() { Name = "Provider Name" },
                 Course = new Course() { Id = Guid.NewGuid(), Name = "Course Name" },
@@ -70,9 +71,9 @@ namespace GetIntoTeachingApiTests.Models.Apply
                 ApplicationPhase = "apply_1",
                 RecruitmentCycleYear = 2022,
                 ApplicationChoices = new ApplicationResponse<IEnumerable<ApplicationChoice>>() { Data = new List<ApplicationChoice> { choice } },
-                References = new ApplicationResponse<IEnumerable<Reference>>() { Data = new List<Reference> { reference } },
-                Qualifications = new ApplicationResponse<IEnumerable<object>>() ,
-                PersonalStatement = new ApplicationResponse<IEnumerable<object>>() ,
+                References = new ApplicationResponse<IEnumerable<Reference>>() { Completed = false, Data = new List<Reference> { reference } },
+                Qualifications = new ApplicationResponse<IEnumerable<object>>() { Completed = true },
+                PersonalStatement = new ApplicationResponse<IEnumerable<object>>() { Completed = null },
             };
 
             var crmForm = form.ToCrmModel();
@@ -84,7 +85,11 @@ namespace GetIntoTeachingApiTests.Models.Apply
             crmForm.PhaseId.Should().Be((int)GetIntoTeachingApi.Models.Crm.ApplicationForm.Phase.Apply1);
             crmForm.RecruitmentCycleYearId.Should().Be((int)GetIntoTeachingApi.Models.Crm.ApplicationForm.RecruitmentCycleYear.Year2022);
             crmForm.Choices.First().ApplyId.Should().Be(choice.Id.ToString());
+            crmForm.Choices.First().SentToProviderAt.Should().Be(choice.SentToProviderAt);
             crmForm.References.First().ApplyId.Should().Be(reference.Id.ToString());
+            crmForm.ReferencesCompleted.Should().Be(form.References.Completed);
+            crmForm.QualificationsCompleted.Should().Be(form.Qualifications.Completed);
+            crmForm.PersonalStatementCompleted.Should().Be(form.PersonalStatement.Completed);
         }
 
         [Fact]

@@ -14,6 +14,8 @@ namespace GetIntoTeachingApiTests.Models.Apply
 
             type.GetProperty("Data").Should()
                 .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "data");
+            type.GetProperty("Completed").Should()
+                .BeDecoratedWith<JsonPropertyAttribute>(a => a.PropertyName == "completed");
         }
     }
 }

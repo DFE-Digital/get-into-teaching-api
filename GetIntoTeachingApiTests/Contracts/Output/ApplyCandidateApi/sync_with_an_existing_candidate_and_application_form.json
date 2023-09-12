@@ -51,10 +51,6 @@
     "Id": "351aa675-e6bf-41c5-ad5f-4e1e8de5d5fe",
     "Attributes": [
       {
-        "Key": "dfe_applicationchoicescompleted",
-        "Value": null
-      },
-      {
         "Key": "dfe_applicationformid",
         "Value": "2"
       },
