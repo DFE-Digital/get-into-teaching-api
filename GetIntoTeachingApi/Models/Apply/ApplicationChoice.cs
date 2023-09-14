@@ -24,7 +24,7 @@ namespace GetIntoTeachingApi.Models.Apply
         [JsonProperty("interviews")]
         public IEnumerable<Interview> Interviews { get; set; }
         [JsonProperty("sent_to_provider_at")]
-        public DateTime SentToProviderAt { get; set; }
+        public DateTime? SentToProviderAt { get; set; }
 
         public Crm.ApplicationChoice ToCrmModel()
         {

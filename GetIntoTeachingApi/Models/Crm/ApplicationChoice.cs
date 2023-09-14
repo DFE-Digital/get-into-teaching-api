@@ -47,9 +47,9 @@ namespace GetIntoTeachingApi.Models.Crm
         public string CourseId { get; set; }
         [EntityField("dfe_applicationchoiceprovider")]
         public string Provider { get; set; }
-        [EntityField("dfe_name")]
-        public DateTime SentToProviderAt { get; set; }
         [EntityField("dfe_senttoproviderat")]
+        public DateTime? SentToProviderAt { get; set; }
+        [EntityField("dfe_name")]
         public string Name
         {
             get
