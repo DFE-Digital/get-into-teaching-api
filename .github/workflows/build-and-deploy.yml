@@ -126,32 +126,32 @@ jobs:
           sha: ${{needs.build.outputs.image_tag_sha}}
           azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
-       - name: Generate Tag from PR Number
-         id:   tag_version
-         uses: DFE-Digital/github-actions/GenerateReleaseFromSHA@master
-         with:
-           sha: ${{github.sha}}
+      - name: Generate Tag from PR Number
+        id:   tag_version
+        uses: DFE-Digital/github-actions/GenerateReleaseFromSHA@master
+        with:
+          sha: ${{github.sha}}
 
-       - name: Create a GitHub Release
-         id: release
-         if:   steps.tag_version.outputs.pr_found == 1
-         uses: actions/create-release@v1
-         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-         with:
-            tag_name: ${{ steps.tag_version.outputs.pr_number }}
-            release_name: Release ${{ steps.tag_version.outputs.pr_number }}
-            commitish: ${{github.sha}}
-            prerelease: false
-            draft:      false
+      - name: Create a GitHub Release
+        id: release
+        if:   steps.tag_version.outputs.pr_found == 1
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.tag_version.outputs.pr_number }}
+          release_name: Release ${{ steps.tag_version.outputs.pr_number }}
+          commitish: ${{github.sha}}
+          prerelease: false
+          draft:      false
 
-       - name: Copy PR Info to Release
-         if: steps.release.outputs.id
-         uses: DFE-Digital/github-actions/CopyPRtoRelease@master
-         with:
-           PR_NUMBER:  ${{ steps.tag_version.outputs.pr_number }}
-           RELEASE_ID: ${{ steps.release.outputs.id }}
-           TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Copy PR Info to Release
+        if: steps.release.outputs.id
+        uses: DFE-Digital/github-actions/CopyPRtoRelease@master
+        with:
+          PR_NUMBER:  ${{ steps.tag_version.outputs.pr_number }}
+          RELEASE_ID: ${{ steps.release.outputs.id }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Slack Notification
         if: failure() && github.ref == 'refs/heads/master'
