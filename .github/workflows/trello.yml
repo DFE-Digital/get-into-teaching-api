@@ -14,17 +14,22 @@ jobs:
         with:
             creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - uses: DfE-Digital/keyvault-yaml-secret@v1
-        id:  keyvault-yaml-secret
+      - name: Fetch secrets from key vault
+        uses: azure/CLI@v1
+        id: fetch-secrets
         with:
-          keyvault: ${{ secrets.KEY_VAULT}}
-          secret: INFRA-KEYS
-          key: TRELLO-KEY , TRELLO-TOKEN
+          inlineScript: |
+            SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
+            echo "::add-mask::$SECRET_VALUE"
+            echo "SLACK-WEBHOOK=$SECRET_VALUE" >> $GITHUB_OUTPUT
+            SECRET_VALUE=$(az keyvault secret show --name "TRELLO-TOKEN" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
+            echo "::add-mask::$SECRET_VALUE"
+            echo "TRELLO-TOKEN=$SECRET_VALUE" >> $GITHUB_OUTPUT
 
       - name: Add Trello Comment
         uses: DFE-Digital/github-actions/AddTrelloComment@master
         with:
           MESSAGE:      ${{ github.event.pull_request.html_url }}
           CARD:         ${{ github.event.pull_request.body }}
-          TRELLO-KEY:   ${{ steps.keyvault-yaml-secret.outputs.TRELLO-KEY }}
-          TRELLO-TOKEN: ${{ steps.keyvault-yaml-secret.outputs.TRELLO-TOKEN }}
+          TRELLO-KEY:   ${{ steps.fetch-secrets.outputs.TRELLO-KEY }}
+          TRELLO-TOKEN: ${{ steps.fetch-secrets.outputs.TRELLO-TOKEN }}

@@ -21,12 +21,17 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - uses: DfE-Digital/keyvault-yaml-secret@v1
-        id:  keyvault-yaml-secret
+      - name: Fetch secrets from key vault
+        uses: azure/CLI@v1
+        id: fetch-secrets
         with:
-          keyvault: ${{ secrets.KEY_VAULT}}
-          secret: INFRA-KEYS
-          key: SLACK-WEBHOOK, SNYK-TOKEN
+          inlineScript: |
+            SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
+            echo "::add-mask::$SECRET_VALUE"
+            echo "SLACK-WEBHOOK=$SECRET_VALUE" >> $GITHUB_OUTPUT
+            SECRET_VALUE=$(az keyvault secret show --name "SNYK-TOKEN" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
+            echo "::add-mask::$SECRET_VALUE"
+            echo "SNYK-TOKEN=$SECRET_VALUE" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@master
@@ -53,7 +58,7 @@ jobs:
       - name: Run Snyk to check Docker image for vulnerabilities
         uses: snyk/actions/docker@master
         env:
-          SNYK_TOKEN: ${{ steps.keyvault-yaml-secret.outputs.SNYK-TOKEN }}
+          SNYK_TOKEN: ${{ steps.fetch-secrets.outputs.SNYK-TOKEN }}
         with:
           image: ${{ env.DOCKER_REPOSITORY }}:master
           args: --severity-threshold=high --file=Dockerfile
@@ -69,4 +74,4 @@ jobs:
            SLACK_COLOR: ${{ env.SLACK_ERROR }}
            SLACK_MESSAGE: 'There has been a failure building the application'
            SLACK_TITLE: 'Failure Building Application'
-           SLACK_WEBHOOK: ${{ steps.keyvault-yaml-secret.outputs.SLACK-WEBHOOK }}
+           SLACK_WEBHOOK: ${{ steps.fetch-secrets.outputs.SLACK-WEBHOOK }}

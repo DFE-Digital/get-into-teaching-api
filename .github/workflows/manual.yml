@@ -32,12 +32,17 @@ jobs:
          with:
             creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-       - uses: DfE-Digital/keyvault-yaml-secret@v1
-         id:  keyvault-yaml-secret
+       - name: Fetch secrets from key vault
+         uses: azure/CLI@v1
+         id: fetch-secrets
          with:
-           keyvault: ${{ secrets.KEY_VAULT}}
-           secret: INFRA-KEYS
-           key: SLACK-WEBHOOK,SLACK-RELEASE-NOTE-WEBHOOK
+           inlineScript: |
+             SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
+             echo "::add-mask::$SECRET_VALUE"
+             echo "SLACK-WEBHOOK=$SECRET_VALUE" >> $GITHUB_OUTPUT
+             SECRET_VALUE=$(az keyvault secret show --name "SLACK-RELEASE-NOTE-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
+             echo "::add-mask::$SECRET_VALUE"
+             echo "SLACK-RELEASE-NOTE-WEBHOOK=$SECRET_VALUE" >> $GITHUB_OUTPUT
 
        - name: Get Release Id from Tag
          id: tag_id
@@ -52,15 +57,23 @@ jobs:
               echo "::error ::Tag ${{ github.event.inputs.tag }} cannot be found in releases"
               exit 1
 
+      #  - name: Trigger Deployment to ${{github.event.inputs.environment}}
+      #    uses: ./.github/workflows/actions/deploy
+      #    id: deploy
+      #    with:
+      #      environment: "${{github.event.inputs.environment}}"
+      #      sha:  "${{steps.tag_id.outputs.release_sha}}"
+      #      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      #      KEY_VAULT:         ${{ secrets.KEY_VAULT }}
+      #      ARM_ACCESS_KEY:    ${{ secrets.ARM_ACCESS_KEY }}
+
        - name: Trigger Deployment to ${{github.event.inputs.environment}}
-         uses: ./.github/workflows/actions/deploy
+         uses: ./.github/workflows/actions/deploy_v2
          id: deploy
          with:
            environment: "${{github.event.inputs.environment}}"
            sha:  "${{steps.tag_id.outputs.release_sha}}"
-           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-           KEY_VAULT:         ${{ secrets.KEY_VAULT }}
-           ARM_ACCESS_KEY:    ${{ secrets.ARM_ACCESS_KEY }}
+           azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
        - name: Slack Release Notification
          if: steps.tag_id.outputs.release_id && github.event.inputs.environment == 'Production'
