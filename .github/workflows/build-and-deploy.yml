@@ -72,7 +72,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v4
         with:
           push: ${{ github.ref == 'refs/heads/master' }}
           builder: ${{ steps.buildx.outputs.name }}
