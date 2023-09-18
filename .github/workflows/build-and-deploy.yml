@@ -16,6 +16,7 @@ on:
   push:
     branches:
       - master
+      - 651-fix-git-api-build-workflow
 
 jobs:
   build:
@@ -36,9 +37,9 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Retrieve Slack Webhook from KV
+      - name: Fetch secrets from key vault
         uses: azure/CLI@v1
-        id: fetch-slack-webhook
+        id: fetch-secrets
         with:
           inlineScript: |
             SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
@@ -49,7 +50,7 @@ jobs:
         id: buildx
         uses: docker/setup-buildx-action@master
         with:
-          version: v0.9.1
+          version: v0.9.1  # More recent buildx versions generate an OCI manifest which is incompatible with Cloud Foundry
 
       - name: Get Short SHA
         id: vars
@@ -89,7 +90,7 @@ jobs:
           SLACK_COLOR: ${{env.SLACK_FAILURE}}
           SLACK_MESSAGE: 'The pipeline has failed to build the API image'
           SLACK_TITLE: 'Failure to Build API '
-          SLACK_WEBHOOK: "${{ steps.fetch-slack-webhook.outputs.SLACK-WEBHOOK }}"
+          SLACK_WEBHOOK: "${{ steps.fetch-secrets.outputs.SLACK-WEBHOOK }}"
 
   development:
     name: Development Deployment
@@ -109,9 +110,9 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Retrieve Slack Webhook from KV
+      - name: Fetch secrets from key vault
         uses: azure/CLI@v1
-        id: fetch-slack-webhook
+        id: fetch-secrets
         with:
           inlineScript: |
             SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
@@ -158,9 +159,9 @@ jobs:
         uses: rtCamp/action-slack-notify@master
         env:
           SLACK_COLOR: ${{env.SLACK_FAILURE}}
-          SLACK_MESSAGE: 'TEST MESSAGE'
-          SLACK_TITLE: 'TEST SLACK TITLE GIT API'
-          SLACK_WEBHOOK: '${{ steps.fetch-slack-webhook.outputs.SLACK-WEBHOOK }}'
+          SLACK_MESSAGE: 'Deployment to the development environment has failed'
+          SLACK_TITLE: 'Deployment to the development environment has failed'
+          SLACK_WEBHOOK: '${{ steps.fetch-secrets.outputs.SLACK-WEBHOOK }}'
 
   test:
     name: Test Deployment
@@ -180,9 +181,9 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Retrieve Slack Webhook from KV
+      - name: Fetch secrets from key vault
         uses: azure/CLI@v1
-        id: fetch-slack-webhook
+        id: fetch-secrets
         with:
           inlineScript: |
             SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
@@ -202,9 +203,9 @@ jobs:
         uses: rtCamp/action-slack-notify@master
         env:
           SLACK_COLOR: ${{env.SLACK_FAILURE}}
-          SLACK_MESSAGE: 'The pipeline has failed to build the API image'
-          SLACK_TITLE: 'Failure to Build API '
-          SLACK_WEBHOOK: "${{ steps.fetch-slack-webhook.outputs.SLACK-WEBHOOK }}"
+          SLACK_MESSAGE: 'Deployment to the test environment has failed'
+          SLACK_TITLE: 'Deployment to the test environment has failed'
+          SLACK_WEBHOOK: "${{ steps.fetch-secrets.outputs.SLACK-WEBHOOK }}"
 
   # production:
   #   name: Production Deployment
@@ -224,9 +225,9 @@ jobs:
   #       with:
   #         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-  #     - name: Retrieve Slack Webhook from KV
+  #     - name: Fetch secrets from key vault
   #       uses: azure/CLI@v1
-  #       id: fetch-slack-webhook
+  #       id: fetch-secrets
   #       with:
   #         inlineScript: |
   #           SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
@@ -248,4 +249,4 @@ jobs:
   #         SLACK_COLOR: ${{env.SLACK_FAILURE}}
   #         SLACK_MESSAGE: 'The pipeline has failed to build the API image'
   #         SLACK_TITLE: 'Failure to Build API '
-  #         SLACK_WEBHOOK: "${{ steps.fetch-slack-webhook.outputs.SLACK-WEBHOOK }}"
+  #         SLACK_WEBHOOK: "${{ steps.fetch-secrets.outputs.SLACK-WEBHOOK }}"
