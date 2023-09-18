@@ -1,16 +1,21 @@
 name: Build and Deploy
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: Environment to deploy to
-        required: true
-        type: choice
-        default: development_aks
-        options:
-        - development_aks
-        - test_aks
-        - production_aks
+  # workflow_dispatch:
+  #   inputs:
+  #     environment:
+  #       description: Environment to deploy to
+  #       required: true
+  #       type: choice
+  #       default: development_aks
+  #       options:
+  #       - development_aks
+  #       - test_aks
+  #       - production_aks
+  pull_request:
+    types: [assigned, opened, synchronize, reopened, ready_for_review]
+  push:
+    branches:
+      - master
 
 jobs:
   build:
@@ -121,6 +126,32 @@ jobs:
           sha: ${{needs.build.outputs.image_tag_sha}}
           azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
+       - name: Generate Tag from PR Number
+         id:   tag_version
+         uses: DFE-Digital/github-actions/GenerateReleaseFromSHA@master
+         with:
+           sha: ${{github.sha}}
+
+       - name: Create a GitHub Release
+         id: release
+         if:   steps.tag_version.outputs.pr_found == 1
+         uses: actions/create-release@v1
+         env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         with:
+            tag_name: ${{ steps.tag_version.outputs.pr_number }}
+            release_name: Release ${{ steps.tag_version.outputs.pr_number }}
+            commitish: ${{github.sha}}
+            prerelease: false
+            draft:      false
+
+       - name: Copy PR Info to Release
+         if: steps.release.outputs.id
+         uses: DFE-Digital/github-actions/CopyPRtoRelease@master
+         with:
+           PR_NUMBER:  ${{ steps.tag_version.outputs.pr_number }}
+           RELEASE_ID: ${{ steps.release.outputs.id }}
+           TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Slack Notification
         if: failure() && github.ref == 'refs/heads/master'
@@ -175,46 +206,46 @@ jobs:
           SLACK_TITLE: 'Failure to Build API '
           SLACK_WEBHOOK: "${{ steps.fetch-slack-webhook.outputs.SLACK-WEBHOOK }}"
 
-  production:
-    name: Production Deployment
-    needs: build
-    if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    environment:
-      name: production_aks
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v3
+  # production:
+  #   name: Production Deployment
+  #   needs: build
+  #   if: github.ref == 'refs/heads/master'
+  #   runs-on: ubuntu-latest
+  #   environment:
+  #     name: production_aks
+  #   steps:
+  #     - name: Check out the repo
+  #       uses: actions/checkout@v3
 
-      - name: set-up-environment
-        uses: DFE-Digital/github-actions/set-up-environment@master
+  #     - name: set-up-environment
+  #       uses: DFE-Digital/github-actions/set-up-environment@master
 
-      - uses: Azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+  #     - uses: Azure/login@v1
+  #       with:
+  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Retrieve Slack Webhook from KV
-        uses: azure/CLI@v1
-        id: fetch-slack-webhook
-        with:
-          inlineScript: |
-            SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
-            echo "::add-mask::$SECRET_VALUE"
-            echo "SLACK-WEBHOOK=$SECRET_VALUE" >> $GITHUB_OUTPUT
+  #     - name: Retrieve Slack Webhook from KV
+  #       uses: azure/CLI@v1
+  #       id: fetch-slack-webhook
+  #       with:
+  #         inlineScript: |
+  #           SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
+  #           echo "::add-mask::$SECRET_VALUE"
+  #           echo "SLACK-WEBHOOK=$SECRET_VALUE" >> $GITHUB_OUTPUT
 
-      - name: Trigger Production  Deployment
-        uses: ./.github/workflows/actions/deploy_v2
-        id: deploy
-        with:
-          environment: production_aks
-          sha: ${{needs.build.outputs.image_tag_sha}}
-          azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+  #     - name: Trigger Production  Deployment
+  #       uses: ./.github/workflows/actions/deploy_v2
+  #       id: deploy
+  #       with:
+  #         environment: production_aks
+  #         sha: ${{needs.build.outputs.image_tag_sha}}
+  #         azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Slack Notification
-        if: failure() && github.ref == 'refs/heads/master'
-        uses: rtCamp/action-slack-notify@master
-        env:
-          SLACK_COLOR: ${{env.SLACK_FAILURE}}
-          SLACK_MESSAGE: 'The pipeline has failed to build the API image'
-          SLACK_TITLE: 'Failure to Build API '
-          SLACK_WEBHOOK: "${{ steps.fetch-slack-webhook.outputs.SLACK-WEBHOOK }}"
+  #     - name: Slack Notification
+  #       if: failure() && github.ref == 'refs/heads/master'
+  #       uses: rtCamp/action-slack-notify@master
+  #       env:
+  #         SLACK_COLOR: ${{env.SLACK_FAILURE}}
+  #         SLACK_MESSAGE: 'The pipeline has failed to build the API image'
+  #         SLACK_TITLE: 'Failure to Build API '
+  #         SLACK_WEBHOOK: "${{ steps.fetch-slack-webhook.outputs.SLACK-WEBHOOK }}"
