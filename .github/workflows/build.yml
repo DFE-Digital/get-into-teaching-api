@@ -24,12 +24,14 @@ jobs:
         with:
             creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - uses: DfE-Digital/keyvault-yaml-secret@v1
-        id:  keyvault-yaml-secret
+      - name: Fetch secrets from key vault
+        uses: azure/CLI@v1
+        id: fetch-secrets
         with:
-          keyvault: ${{ secrets.KEY_VAULT}}
-          secret: INFRA-KEYS
-          key: SLACK-WEBHOOK
+          inlineScript: |
+            SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
+            echo "::add-mask::$SECRET_VALUE"
+            echo "SLACK-WEBHOOK=$SECRET_VALUE" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         id: buildx
@@ -75,7 +77,7 @@ jobs:
            SLACK_COLOR:   ${{env.SLACK_FAILURE}}
            SLACK_MESSAGE: 'The pipeline has failed to build the API image'
            SLACK_TITLE:   'Failure to Build API '
-           SLACK_WEBHOOK: ${{ steps.keyvault-yaml-secret.outputs.SLACK-WEBHOOK }}
+           SLACK_WEBHOOK: ${{ steps.fetch-secrets.outputs.SLACK-WEBHOOK }}
 
   development:
     name: Development Deployment
@@ -96,12 +98,14 @@ jobs:
          with:
             creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-       - uses: DfE-Digital/keyvault-yaml-secret@v1
-         id:  keyvault-yaml-secret
+       - name: Fetch secrets from key vault
+         uses: azure/CLI@v1
+         id: fetch-secrets
          with:
-           keyvault: ${{ secrets.KEY_VAULT}}
-           secret: INFRA-KEYS
-           key: SLACK-WEBHOOK
+           inlineScript: |
+             SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
+             echo "::add-mask::$SECRET_VALUE"
+             echo "SLACK-WEBHOOK=$SECRET_VALUE" >> $GITHUB_OUTPUT
 
        - name: Trigger Development Deployment
          uses: ./.github/workflows/actions/deploy
@@ -159,12 +163,14 @@ jobs:
          with:
             creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-       - uses: DfE-Digital/keyvault-yaml-secret@v1
-         id:  keyvault-yaml-secret
+       - name: Fetch secrets from key vault
+         uses: azure/CLI@v1
+         id: fetch-secrets
          with:
-           keyvault: ${{ secrets.KEY_VAULT}}
-           secret: INFRA-KEYS
-           key: SLACK-WEBHOOK
+           inlineScript: |
+             SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
+             echo "::add-mask::$SECRET_VALUE"
+             echo "SLACK-WEBHOOK=$SECRET_VALUE" >> $GITHUB_OUTPUT
 
        - name: Trigger Deployment to QA
          uses: ./.github/workflows/actions/deploy
@@ -183,4 +189,4 @@ jobs:
            SLACK_COLOR:   ${{env.SLACK_FAILURE}}
            SLACK_TITLE:   Failure in Post-Development Deploy
            SLACK_MESSAGE: Failure with initialising QA deployment for ${{env.APPLICATION}}
-           SLACK_WEBHOOK: ${{ steps.keyvault-yaml-secret.outputs.SLACK-WEBHOOK }}
+           SLACK_WEBHOOK: ${{ steps.fetch-secrets.outputs.SLACK-WEBHOOK }}
