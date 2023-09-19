@@ -20,12 +20,17 @@ jobs:
         with:
            creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - uses: DfE-Digital/keyvault-yaml-secret@v1
-        id:  keyvault-yaml-secret
+      - name: Fetch secrets from key vault
+        uses: azure/CLI@v1
+        id: fetch-secrets
         with:
-          keyvault: ${{ secrets.KEY_VAULT}}
-          secret: INFRA-KEYS
-          key: SLACK-WEBHOOK, SONAR-TOKEN
+          inlineScript: |
+            SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
+            echo "::add-mask::$SECRET_VALUE"
+            echo "SLACK-WEBHOOK=$SECRET_VALUE" >> $GITHUB_OUTPUT
+            SECRET_VALUE=$(az keyvault secret show --name "SONAR-TOKEN" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
+            echo "::add-mask::$SECRET_VALUE"
+            echo "SONAR-TOKEN=$SECRET_VALUE" >> $GITHUB_OUTPUT
 
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3
@@ -49,7 +54,7 @@ jobs:
             /k:"DFE-Digital_get-into-teaching-api" \
             /o:"dfe-digital" \
             /n:"get-into-teaching-api" \
-            /d:sonar.login="${{ steps.keyvault-yaml-secret.outputs.SONAR-TOKEN }}" \
+            /d:sonar.login="${{ steps.fetch-secrets.outputs.SONAR-TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.cpd.exclusions="GetIntoTeachingApi/Migrations/*.cs" \
             /d:sonar.cs.opencover.reportsPaths="GetIntoTeachingApiTests/coverage.opencover.xml" \
@@ -67,7 +72,7 @@ jobs:
             /d:sonar.log.level="DEBUG"
              dotnet build
              dotnet test --no-build --logger:trx -e:CollectCoverage=true -e:CoverletOutputFormat=opencover
-             dotnet sonarscanner end /d:sonar.login="${{ steps.keyvault-yaml-secret.outputs.SONAR-TOKEN }}"
+             dotnet sonarscanner end /d:sonar.login="${{ steps.fetch-secrets.outputs.SONAR-TOKEN }}"
 
       - name: Slack Notification
         if: failure() && github.ref == 'refs/heads/master'
@@ -76,4 +81,4 @@ jobs:
            SLACK_COLOR:   ${{env.SLACK_FAILURE }}
            SLACK_MESSAGE: Pipeline Failure carrying out job ${{github.job}}
            SLACK_TITLE:   'Failure: ${{ github.workflow }}'
-           SLACK_WEBHOOK: ${{ steps.keyvault-yaml-secret.outputs.SLACK-WEBHOOK  }}
+           SLACK_WEBHOOK: ${{ steps.fetch-secrets.outputs.SLACK-WEBHOOK  }}
