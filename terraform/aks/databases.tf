@@ -14,6 +14,10 @@ module "redis-cache" {
   azure_enable_monitoring = var.enable_monitoring
   azure_patch_schedule    = [{ "day_of_week" : "Sunday", "start_hour_utc" : 01 }]
   azure_maxmemory_policy  = "allkeys-lfu"
+  server_version          = 6
+  azure_capacity          = var.redis_capacity
+  azure_family            = var.redis_family
+  azure_sku_name          = var.redis_sku_name
 }
 
 module "postgres" {
