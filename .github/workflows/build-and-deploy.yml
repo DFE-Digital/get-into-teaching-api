@@ -11,6 +11,11 @@ on:
         - development_aks
         - test_aks
         - production_aks
+  pull_request:
+    types: [assigned, opened, synchronize, reopened, ready_for_review]
+  push:
+    branches:
+      - master
 
 jobs:
   build:
@@ -31,9 +36,9 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Retrieve Slack Webhook from KV
+      - name: Fetch secrets from key vault
         uses: azure/CLI@v1
-        id: fetch-slack-webhook
+        id: fetch-secrets
         with:
           inlineScript: |
             SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
@@ -44,7 +49,7 @@ jobs:
         id: buildx
         uses: docker/setup-buildx-action@master
         with:
-          version: v0.9.1
+          version: v0.9.1  # More recent buildx versions generate an OCI manifest which is incompatible with Cloud Foundry
 
       - name: Get Short SHA
         id: vars
@@ -84,7 +89,7 @@ jobs:
           SLACK_COLOR: ${{env.SLACK_FAILURE}}
           SLACK_MESSAGE: 'The pipeline has failed to build the API image'
           SLACK_TITLE: 'Failure to Build API '
-          SLACK_WEBHOOK: "${{ steps.fetch-slack-webhook.outputs.SLACK-WEBHOOK }}"
+          SLACK_WEBHOOK: "${{ steps.fetch-secrets.outputs.SLACK-WEBHOOK }}"
 
   development:
     name: Development Deployment
@@ -104,9 +109,9 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Retrieve Slack Webhook from KV
+      - name: Fetch secrets from key vault
         uses: azure/CLI@v1
-        id: fetch-slack-webhook
+        id: fetch-secrets
         with:
           inlineScript: |
             SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
@@ -121,15 +126,41 @@ jobs:
           sha: ${{needs.build.outputs.image_tag_sha}}
           azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Generate Tag from PR Number
+        id:   tag_version
+        uses: DFE-Digital/github-actions/GenerateReleaseFromSHA@master
+        with:
+          sha: ${{github.sha}}
+
+      - name: Create a GitHub Release
+        id: release
+        if:   steps.tag_version.outputs.pr_found == 1
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.tag_version.outputs.pr_number }}
+          release_name: Release ${{ steps.tag_version.outputs.pr_number }}
+          commitish: ${{github.sha}}
+          prerelease: false
+          draft:      false
+
+      - name: Copy PR Info to Release
+        if: steps.release.outputs.id
+        uses: DFE-Digital/github-actions/CopyPRtoRelease@master
+        with:
+          PR_NUMBER:  ${{ steps.tag_version.outputs.pr_number }}
+          RELEASE_ID: ${{ steps.release.outputs.id }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Slack Notification
         if: failure() && github.ref == 'refs/heads/master'
         uses: rtCamp/action-slack-notify@master
         env:
           SLACK_COLOR: ${{env.SLACK_FAILURE}}
-          SLACK_MESSAGE: 'TEST MESSAGE'
-          SLACK_TITLE: 'TEST SLACK TITLE GIT API'
-          SLACK_WEBHOOK: '${{ steps.fetch-slack-webhook.outputs.SLACK-WEBHOOK }}'
+          SLACK_MESSAGE: 'Deployment to the development environment has failed'
+          SLACK_TITLE: 'Deployment to the development environment has failed'
+          SLACK_WEBHOOK: '${{ steps.fetch-secrets.outputs.SLACK-WEBHOOK }}'
 
   test:
     name: Test Deployment
@@ -149,9 +180,9 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Retrieve Slack Webhook from KV
+      - name: Fetch secrets from key vault
         uses: azure/CLI@v1
-        id: fetch-slack-webhook
+        id: fetch-secrets
         with:
           inlineScript: |
             SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
@@ -171,50 +202,6 @@ jobs:
         uses: rtCamp/action-slack-notify@master
         env:
           SLACK_COLOR: ${{env.SLACK_FAILURE}}
-          SLACK_MESSAGE: 'The pipeline has failed to build the API image'
-          SLACK_TITLE: 'Failure to Build API '
-          SLACK_WEBHOOK: "${{ steps.fetch-slack-webhook.outputs.SLACK-WEBHOOK }}"
-
-  production:
-    name: Production Deployment
-    needs: build
-    if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    environment:
-      name: production_aks
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v3
-
-      - name: set-up-environment
-        uses: DFE-Digital/github-actions/set-up-environment@master
-
-      - uses: Azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Retrieve Slack Webhook from KV
-        uses: azure/CLI@v1
-        id: fetch-slack-webhook
-        with:
-          inlineScript: |
-            SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
-            echo "::add-mask::$SECRET_VALUE"
-            echo "SLACK-WEBHOOK=$SECRET_VALUE" >> $GITHUB_OUTPUT
-
-      - name: Trigger Production  Deployment
-        uses: ./.github/workflows/actions/deploy_v2
-        id: deploy
-        with:
-          environment: production_aks
-          sha: ${{needs.build.outputs.image_tag_sha}}
-          azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Slack Notification
-        if: failure() && github.ref == 'refs/heads/master'
-        uses: rtCamp/action-slack-notify@master
-        env:
-          SLACK_COLOR: ${{env.SLACK_FAILURE}}
-          SLACK_MESSAGE: 'The pipeline has failed to build the API image'
-          SLACK_TITLE: 'Failure to Build API '
-          SLACK_WEBHOOK: "${{ steps.fetch-slack-webhook.outputs.SLACK-WEBHOOK }}"
+          SLACK_MESSAGE: 'Deployment to the test environment has failed'
+          SLACK_TITLE: 'Deployment to the test environment has failed'
+          SLACK_WEBHOOK: "${{ steps.fetch-secrets.outputs.SLACK-WEBHOOK }}"
