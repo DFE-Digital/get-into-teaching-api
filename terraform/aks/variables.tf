@@ -43,6 +43,19 @@ variable "azure_enable_backup_storage" { default = true }
 variable "replicas" { default = 1 }
 variable "memory_max" { default = "1Gi" }
 
+variable "redis_capacity" {
+  type    = number
+  default = 1
+}
+variable "redis_family" {
+  type    = string
+  default = "C"
+}
+variable "redis_sku_name" {
+  type    = string
+  default = "Standard"
+}
+
 locals {
   azure_credentials       = try(jsondecode(var.azure_credentials), null)
   app_resource_group_name = "${var.azure_resource_prefix}-${var.service_short}-${var.config_short}-rg"
