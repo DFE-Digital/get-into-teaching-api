@@ -52,6 +52,7 @@ namespace GetIntoTeachingApiTests.Models.Apply
                 Provider = new Provider() { Name = "Provider Name" },
                 Course = new Course() { Id = Guid.NewGuid(), Name = "Course Name" },
                 Interviews = new List<Interview>() { interview },
+                SentToProviderAt = new DateTime(2021, 1, 3),
             };
 
             var crmChoice = choice.ToCrmModel();
@@ -64,6 +65,7 @@ namespace GetIntoTeachingApiTests.Models.Apply
             crmChoice.CourseId.Should().Be(choice.Course.Id.ToString());
             crmChoice.CourseName.Should().Be(choice.Course.Name);
             crmChoice.Interviews.First().ApplyId.Should().Be(interview.Id.ToString());
+            crmChoice.SentToProviderAt.Should().Be(choice.SentToProviderAt);
         }
 
         [Fact]
