@@ -12,6 +12,7 @@ namespace GetIntoTeachingApi.Models.Crm
     {
         public enum EducationPhase
         {
+            Primary = 222750000,
             Secondary = 222750001,
         }
 

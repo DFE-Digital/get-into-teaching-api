@@ -154,10 +154,80 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
                 var result = _validator.TestValidate(_request);
 
                 result.ShouldHaveValidationErrorFor(request => request.SubjectTaughtId)
-                    .WithErrorMessage("Must be set for candidates returning to teacher training.");
+                    .WithErrorMessage("For candidates returning to teacher training, must be set when stage taught defaults to secondary.");
 
                 result.ShouldHaveValidationErrorFor(request => request.PreferredTeachingSubjectId)
-                    .WithErrorMessage("Must be set for candidates returning to teacher training.");
+                    .WithErrorMessage("For candidates returning to teacher training, must be set when preferred education phase is secondary.");
+            }
+            
+            [Fact]
+            public void Validate_WhenPreferredEducationPhaseNullRequiredAttributesAreNull_HasErrors()
+            {
+                _request.PreferredEducationPhaseId = null;
+                _request.PreferredTeachingSubjectId = null;
+
+                var result = _validator.TestValidate(_request);
+                
+                result.ShouldHaveValidationErrorFor(request => request.PreferredTeachingSubjectId)
+                    .WithErrorMessage("For candidates returning to teacher training, must be set when preferred education phase is secondary.");
+            }
+            
+            [Fact]
+            public void Validate_WhenPreferredEducationPhasePrimaryRequiredAttributesAreNull_HasErrors()
+            {
+                _request.PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Primary;
+                _request.PreferredTeachingSubjectId = null;
+
+                var result = _validator.TestValidate(_request);
+                
+                result.ShouldNotHaveValidationErrorFor(request => request.PreferredTeachingSubjectId);
+            }
+            
+            [Fact]
+            public void Validate_WhenPreferredEducationPhaseSecondaryRequiredAttributesAreNull_HasErrors()
+            {
+                _request.PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary;
+                _request.PreferredTeachingSubjectId = null;
+
+                var result = _validator.TestValidate(_request);
+                
+                result.ShouldHaveValidationErrorFor(request => request.PreferredTeachingSubjectId)
+                    .WithErrorMessage("For candidates returning to teacher training, must be set when preferred education phase is secondary.");
+            }
+            
+            [Fact]
+            public void Validate_WhenStageTaughtNullRequiredAttributesAreNull_HasErrors()
+            {
+                _request.StageTaughtId = null;
+                _request.SubjectTaughtId = null;
+
+                var result = _validator.TestValidate(_request);
+                
+                result.ShouldHaveValidationErrorFor(request => request.SubjectTaughtId)
+                    .WithErrorMessage("For candidates returning to teacher training, must be set when stage taught defaults to secondary.");
+            }
+            
+            [Fact]
+            public void Validate_WhenStageTaughtPrimaryRequiredAttributesAreNull_HasErrors()
+            {
+                _request.StageTaughtId = (int)CandidatePastTeachingPosition.EducationPhase.Primary;
+                _request.SubjectTaughtId = null;
+
+                var result = _validator.TestValidate(_request);
+                
+                result.ShouldNotHaveValidationErrorFor(request => request.SubjectTaughtId);
+            }
+            
+            [Fact]
+            public void Validate_WhenStageTaughtSecondaryRequiredAttributesAreNull_HasErrors()
+            {
+                _request.StageTaughtId = (int)CandidatePastTeachingPosition.EducationPhase.Secondary;
+                _request.SubjectTaughtId = null;
+
+                var result = _validator.TestValidate(_request);
+                
+                result.ShouldHaveValidationErrorFor(request => request.SubjectTaughtId)
+                    .WithErrorMessage("For candidates returning to teacher training, must be set when stage taught is secondary.");
             }
         }
 
