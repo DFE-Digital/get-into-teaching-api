@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
@@ -81,12 +82,12 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
             var typeIds = request.TypeIds == null ? string.Empty : string.Join(",", request.TypeIds);
 
             _metrics.TeachingEventSearchResults
-                .WithLabels(typeIds, request.Radius.ToString())
+                .WithLabels(typeIds, String.Format(CultureInfo.InvariantCulture, "{0}", request.Radius))
                 .Observe(teachingEvents.Count());
 
             var inPesonTeachingEvents = teachingEvents.Where(e => e.IsInPerson);
             _metrics.InPersonTeachingEventResults
-                .WithLabels(typeIds, request.Radius.ToString())
+                .WithLabels(typeIds, String.Format(CultureInfo.InvariantCulture, "{0}", request.Radius)) 
                 .Observe(inPesonTeachingEvents.Count());
 
             return Ok(teachingEvents);
