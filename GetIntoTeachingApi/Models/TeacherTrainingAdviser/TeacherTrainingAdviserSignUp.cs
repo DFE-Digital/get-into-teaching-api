@@ -56,6 +56,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         public int? DegreeStatusId { get; set; }
         public int? DegreeTypeId { get; set; }
         public int? InitialTeacherTrainingYearId { get; set; }
+        public int? StageTaughtId { get; set; }
         public int? PreferredEducationPhaseId { get; set; }
         public int? HasGcseMathsAndEnglishId { get; set; }
         public int? HasGcseScienceId { get; set; }
@@ -115,7 +116,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
 
         private static void DefaultPreferredEducationPhase(Candidate candidate)
         {
-            if (candidate.IsReturningToTeaching())
+            if (candidate.IsReturningToTeaching() && candidate.PreferredEducationPhaseId == null)
             {
                 candidate.PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Secondary;
             }
@@ -323,14 +324,31 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
 
         private void AddPastTeachingPosition(Candidate candidate)
         {
-            if (ContainsPastTeachingPosition())
+            // NB:  StageTaughtId is a new parameter and might not be set by older clients.
+            // NB:  If the StageTaughtId==primary, SubjectTaughtId will be null
+            if (candidate.IsReturningToTeaching())
             {
-                candidate.PastTeachingPositions.Add(new CandidatePastTeachingPosition()
+                if (StageTaughtId == (int)CandidatePastTeachingPosition.EducationPhase.Primary ||
+                    SubjectTaughtId == TeachingSubject.PrimaryTeachingSubjectId)
                 {
-                    Id = PastTeachingPositionId,
-                    SubjectTaughtId = SubjectTaughtId,
-                    EducationPhaseId = (int)CandidatePastTeachingPosition.EducationPhase.Secondary,
-                });
+                    candidate.PastTeachingPositions.Add(new CandidatePastTeachingPosition()
+                    {
+                        Id = PastTeachingPositionId,
+                        SubjectTaughtId = TeachingSubject.PrimaryTeachingSubjectId,
+                        EducationPhaseId = (int)CandidatePastTeachingPosition.EducationPhase.Primary,
+                    });
+                }
+                else if ((StageTaughtId == null ||
+                          StageTaughtId == (int)CandidatePastTeachingPosition.EducationPhase.Secondary) &&
+                         SubjectTaughtId != null)
+                {
+                    candidate.PastTeachingPositions.Add(new CandidatePastTeachingPosition()
+                    {
+                        Id = PastTeachingPositionId,
+                        SubjectTaughtId = SubjectTaughtId,
+                        EducationPhaseId = (int)CandidatePastTeachingPosition.EducationPhase.Secondary,
+                    });
+                }
             }
         }
 
@@ -359,11 +377,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         private bool ContainsQualification()
         {
             return UkDegreeGradeId != null || DegreeStatusId != null || DegreeSubject != null || DegreeTypeId != null;
-        }
-
-        private bool ContainsPastTeachingPosition()
-        {
-            return SubjectTaughtId != null;
         }
     }
 }

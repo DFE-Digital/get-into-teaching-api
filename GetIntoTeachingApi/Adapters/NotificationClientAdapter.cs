@@ -37,12 +37,12 @@ namespace GetIntoTeachingApi.Adapters
 
         private NotificationClient Client(string apiKey)
         {
-            if (!_clients.ContainsKey(apiKey))
+            if (!_clients.TryGetValue(apiKey, out NotificationClient value))
             {
-                _clients[apiKey] = new NotificationClient(apiKey);
+                value = new NotificationClient(apiKey);
+                _clients[apiKey] = value;
             }
-
-            return _clients[apiKey];
+            return value;
         }
     }
 }

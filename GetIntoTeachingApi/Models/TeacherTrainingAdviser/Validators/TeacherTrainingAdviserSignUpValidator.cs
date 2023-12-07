@@ -41,10 +41,21 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
 
             When(request => request.Candidate.IsReturningToTeaching(), () =>
             {
-                RuleFor(request => request.SubjectTaughtId).NotNull()
-                    .WithMessage("Must be set for candidates returning to teacher training.");
                 RuleFor(request => request.PreferredTeachingSubjectId).NotNull()
-                    .WithMessage("Must be set for candidates returning to teacher training.");
+                    .When(request => request.Candidate.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Secondary)
+                    .WithMessage("For candidates returning to teacher training, must be set when preferred education phase is secondary.");
+                
+                RuleFor(request => request.PreferredTeachingSubjectId).NotNull()
+                    .When(request => request.Candidate.PreferredEducationPhaseId == null)
+                    .WithMessage("For candidates returning to teacher training, must be set when preferred education phase defaults to secondary.");
+                
+                RuleFor(request => request.SubjectTaughtId).NotNull()
+                    .When(request => request.StageTaughtId == null)
+                    .WithMessage("For candidates returning to teacher training, must be set when stage taught defaults to secondary.");
+                
+                RuleFor(request => request.SubjectTaughtId).NotNull()
+                    .When(request => request.StageTaughtId == (int) CandidatePastTeachingPosition.EducationPhase.Secondary)
+                    .WithMessage("For candidates returning to teacher training, must be set when stage taught is secondary.");
             });
 
             When(request => request.Candidate.IsInterestedInTeaching(), () =>
