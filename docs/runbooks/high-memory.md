@@ -1,4 +1,4 @@
-# HighMemory  
+# HighMemory
 
 ## Description
 
@@ -10,6 +10,6 @@ See the potential causes in the HighCpu alert.
 
 ## Resolutions
 
-[Check the Grafana panel for an indication of what’s going on](https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=12&orgId=1&var-App=get-into-teaching-api-prod).
+Check the Grafana panel for an indication of what’s going on.
 
 See resolutions in the HighCpu alert.
