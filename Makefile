@@ -73,7 +73,7 @@ terraform-init: bin/terrafile set-azure-account
 		-backend-config=key=${CONFIG}.tfstate
 
 	$(if $(IMAGE_TAG), , $(error The IMAGE_TAG variable must be provided))
-	$(eval export TF_VAR_paas_app_docker_image=ghcr.io/dfe-digital/get-into-teaching-api:$(IMAGE_TAG))
+	$(eval export TF_VAR_app_docker_image=ghcr.io/dfe-digital/get-into-teaching-api:$(IMAGE_TAG))
 	$(eval export TF_VAR_azure_resource_prefix=$(AZURE_RESOURCE_PREFIX))
 	$(eval export TF_VAR_config_short=$(CONFIG_SHORT))
 	$(eval export TF_VAR_service_short=$(SERVICE_SHORT))

@@ -4,8 +4,7 @@ variable "file_environment" {}
 
 variable "postgres_version" { default = 14 }
 
-# PaaS variables
-variable "paas_app_docker_image" {}
+variable "app_docker_image" {}
 
 # Key Vault variables
 variable "azure_credentials" { default = null }
