@@ -96,6 +96,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: development_aks
+      url: ${{ steps.deploy.outputs.deploy-url }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -167,6 +168,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: test_aks
+      url: ${{ steps.deploy.outputs.deploy-url }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
