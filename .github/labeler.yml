@@ -1,18 +1,23 @@
 ---
 
 VisualCSharp:
-  - GetIntoTeachingApi/**/*.cs
+- changed-files:
+  - any-glob-to-any-file: 'GetIntoTeachingApi/**/*.cs'
 
 Test:
-  - GetIntoTeachingApiTests/**/*
+- changed-files:
+  - any-glob-to-any-file: 'GetIntoTeachingApiTests/**/*'
 
 Monitoring:
-  - monitoring/**/*
+- changed-files:
+  - any-glob-to-any-file: 'monitoring/**/*'
 
 DevOps:
-  - terraform/**/*
-  - .github/**/*.yml
+- changed-files:
+  - any-glob-to-any-file: 'terraform/**/*'
+  - any-glob-to-any-file: '.github/**/*.yml'
 
 Docker:
-  - Dockerfile 
-  - docker-compose.yml
+- changed-files:
+  - any-glob-to-any-file: 'Dockerfile'
+  - any-glob-to-any-file: 'docker-compose.yml'
