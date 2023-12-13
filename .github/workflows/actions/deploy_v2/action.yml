@@ -12,7 +12,7 @@ inputs:
     required: true
 outputs:
   deploy-url:
-    value: ${{ steps.set_env_var.outputs.deploy_url }}
+    value: https://${{ steps.set_env_var.outputs.deploy_url }}
 runs:
   using: composite
   steps:
@@ -22,15 +22,16 @@ runs:
       run: |
         tf_vars_file=terraform/aks/config/${{ inputs.environment }}.tfvars.json
         terraform_version=$(awk '/{/{f=/^terraform/;next}f' terraform/aks/provider.tf | grep -o [0-9\.]*)
-        echo "cluster=$(jq -r '.cluster' ${tf_vars_file})" >> $GITHUB_ENV
-        echo "aks_app_environment=$(jq -r '.environment' ${tf_vars_file})" >> $GITHUB_ENV
+        cluster=$(jq -r '.cluster' ${tf_vars_file})
+        aks_app_environment=$(jq -r '.environment' ${tf_vars_file})
         echo "TERRAFORM_VERSION=$terraform_version" >> $GITHUB_ENV
-        echo "namespace=$(jq -r '.namespace' ${tf_vars_file})" >> $GITHUB_ENV
+
         if [[ $cluster == 'production' ]]; then
-              echo "deploy_url=https://getintoteachingapi-${{ env.aks_app_environment }}.teacherservices.cloud" >> $GITHUB_OUTPUT
-            else
-              echo "deploy_url=https://getintoteachingapi-${{ env.aks_app_environment }}.${cluster}.teacherservices.cloud" >> $GITHUB_OUTPUT
+          app_hostname=getintoteachingapi-${aks_app_environment}.teacherservices.cloud
+        else
+          app_hostname=getintoteachingapi-${aks_app_environment}.${cluster}.teacherservices.cloud
         fi
+        echo "app_hostname=${app_hostname}" >> $GITHUB_OUTPUT
 
     - name: Use Terraform ${{ env.TERRAFORM_VERSION }}
       uses: hashicorp/setup-terraform@v2
@@ -41,14 +42,16 @@ runs:
       with:
         azure-credentials: ${{ inputs.azure-credentials }}
 
-    - name: Print Sha
-      id: print-sha
-      shell: bash
-      run: |
-        echo "${{ inputs.sha }}"
-
     - name: Terraform init, plan & apply
       shell: bash
       run: make ci ${{ inputs.environment }} terraform-apply
       env:
+        IMAGE_TAG: ${{ inputs.sha }}
+
+    - name: Smoke tests
+      shell: bash
+      run: |
+        tests/confidence/healthcheck.sh "${APP_HOSTNAME}" "${IMAGE_TAG#sha-}"
+      env:
+        APP_HOSTNAME: ${{ steps.set_env_var.outputs.app_hostname }}
         IMAGE_TAG: ${{ inputs.sha }}

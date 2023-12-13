@@ -1,6 +1,6 @@
 # HighDatabaseConnections
 
-MEDIUM 
+MEDIUM
 
 ## Description
 
@@ -15,6 +15,6 @@ In the past we’ve seen this happen for two reasons:
 
 ## Resolutions
 
-[Check the Grafana panel for an indication of what’s going on](https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=4&orgId=1&var-App=get-into-teaching-api-prod).
+Check the Grafana panel for an indication of what’s going on.
 
 Look for any recent changes in the application source code or it’s dependencies that may be causing this; it’s usually a tricky one to pin down and the cause could be obscure, so it will just need investigating. If it’s causing issues in production and you can safely revert to before it was occurring then I would advise that course of action initially.

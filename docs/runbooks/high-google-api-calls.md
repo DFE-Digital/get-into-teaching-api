@@ -1,6 +1,6 @@
-# HighGoogleApiCalls 
+# HighGoogleApiCalls
 
-HIGH 
+HIGH
 
 ## Description
 
@@ -20,7 +20,7 @@ The most likely cause of this is that a teaching event has been added to the CRM
 
 ## Resolutions
 
-[Check the Grafana panel for an indication of what’s going on](https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=57&orgId=1&var-App=get-into-teaching-api-prod).
+Check the Grafana panel for an indication of what’s going on.
 
 If a postcode is repeatedly failing to geolocate then in 99.9% of cases it’s going to be invalid and we should ask the CRM team to correct it in Dynamics. Once that’s done the calls out to Google’s Geocoding API should stop.
 

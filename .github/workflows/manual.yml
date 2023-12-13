@@ -16,7 +16,8 @@ jobs:
     name: Deploy to ${{github.event.inputs.environment}}
     runs-on: ubuntu-latest
     environment:
-        name: ${{github.event.inputs.environment}}
+      name: ${{github.event.inputs.environment}}
+      url: ${{ steps.deploy.outputs.deploy-url }}
     concurrency: ${{github.event.inputs.environment}}
     defaults:
       run:
