@@ -1,10 +1,10 @@
-# TooManyRequests 
+# TooManyRequests
 
-MEDIUM 
+MEDIUM
 
 ## Description
 
-Alerts when the API has received too many requests from a client and has responded with a 429 status code. 
+Alerts when the API has received too many requests from a client and has responded with a 429 status code.
 
 ## Potential Causes
 
@@ -24,7 +24,7 @@ A more sinister cause of this alert would be if the website is the target of an 
 
 ## Resolutions
 
-[Check the Grafana panel for an indication of what’s going on](https://grafana-prod-get-into-teaching.london.cloudapps.digital/d/28EURzZGz/get-into-teaching-api?viewPanel=60&orgId=1&var-App=get-into-teaching-api-prod).
+Check the Grafana panel for an indication of what’s going on.
 
 The likelihood of this alert firing multiple times in quick succession is low and, given time, sign ups should return to a normal level without intervention. We also handle this gracefully in the GiT website and TTA service.
 

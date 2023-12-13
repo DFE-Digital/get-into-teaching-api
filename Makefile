@@ -9,29 +9,6 @@ ifndef VERBOSE
 .SILENT:
 endif
 
-help:
-	echo "Secrets:"
-	echo "  This makefile gives the user the ability to safely display and edit azure secrets which are used by this project. "
-	echo ""
-	echo "Commands:"
-	echo "  edit-app-secrets  - Edit Application specific Secrets."
-	echo "  print-app-secrets - Display Application specific Secrets."
-	echo "  edit-monitoring-secrets  - Edit Monitoring specific Secrets."
-	echo "  print-monitoring-secrets - Display Monitoring specific Secrets."
-	echo "  edit-infrastructure-secrets  - Edit Infrastructure specific Secrets."
-	echo "  print-infrastructure-secrets - Display Infrastructure specific Secrets."
-	echo ""
-	echo "Parameters:"
-	echo "All commands take the parameter development|review|test|production"
-	echo ""
-	echo "Examples:"
-	echo ""
-	echo "To edit the Application secrets for Development"
-	echo "        make  development edit-app-secrets"
-	echo ""
-	echo "To print the Monitoring secrets for Production"
-	echo "        make  production print-monitoring-secrets"
-
 MONITORING_SECRETS=MONITORING-KEYS
 APPLICATION_SECRETS=API-KEYS
 INFRASTRUCTURE_SECRETS=INFRA-KEYS
@@ -50,11 +27,6 @@ bin/terrafile: ## Install terrafile to manage terraform modules
 bin/yaq:
 	mkdir -p bin | curl -sL https://github.com/uk-devops/yaq/releases/download/v0.0.3/yaq_linux_amd64_v0.0.3.zip -o yaq.zip && unzip -o yaq.zip -d ./bin/ && rm yaq.zip
 
-.PHONY: development
-development:
-	$(eval export KEY_VAULT=s146d01-kv)
-	$(eval export AZ_SUBSCRIPTION=s146-getintoteachingwebsite-development)
-
 development_aks:
 	$(eval include global_config/development_aks.sh)
 
@@ -72,26 +44,6 @@ local_aks:
 set-key-vault-names:
 	$(eval KEY_VAULT_APPLICATION_NAME=$(AZURE_RESOURCE_PREFIX)-$(SERVICE_SHORT)-$(CONFIG_SHORT)-app-kv)
 	$(eval KEY_VAULT_INFRASTRUCTURE_NAME=$(AZURE_RESOURCE_PREFIX)-$(SERVICE_SHORT)-$(CONFIG_SHORT)-inf-kv)
-
-.PHONY: local
-local:
-	$(eval export KEY_VAULT=s146d01-local2-kv)
-	$(eval export AZ_SUBSCRIPTION=s146-getintoteachingwebsite-development)
-
-.PHONY: review
-review:
-	$(eval export KEY_VAULT=s146d01-kv)
-	$(eval export AZ_SUBSCRIPTION=s146-getintoteachingwebsite-development)
-
-.PHONY: test
-test:
-	$(eval export KEY_VAULT=s146t01-kv)
-	$(eval export AZ_SUBSCRIPTION=s146-getintoteachingwebsite-test)
-
-.PHONY: production
-production:
-	$(eval export KEY_VAULT=s146p01-kv)
-	$(eval export AZ_SUBSCRIPTION=s146-getintoteachingwebsite-production)
 
 .PHONY: ci
 ci:	## Run in automation environment
@@ -121,7 +73,7 @@ terraform-init: bin/terrafile set-azure-account
 		-backend-config=key=${CONFIG}.tfstate
 
 	$(if $(IMAGE_TAG), , $(error The IMAGE_TAG variable must be provided))
-	$(eval export TF_VAR_paas_app_docker_image=ghcr.io/dfe-digital/get-into-teaching-api:$(IMAGE_TAG))
+	$(eval export TF_VAR_app_docker_image=ghcr.io/dfe-digital/get-into-teaching-api:$(IMAGE_TAG))
 	$(eval export TF_VAR_azure_resource_prefix=$(AZURE_RESOURCE_PREFIX))
 	$(eval export TF_VAR_config_short=$(CONFIG_SHORT))
 	$(eval export TF_VAR_service_short=$(SERVICE_SHORT))

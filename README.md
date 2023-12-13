@@ -107,25 +107,25 @@ Quick start steps:
 
 ## Useful Links
 
-As the API is service-facing it has no user interface, but in non-production environments you can access a [dashboard for Hangfire](https://get-into-teaching-api-dev.london.cloudapps.digital/hangfire/) and the [Swagger UI](https://get-into-teaching-api-dev.london.cloudapps.digital/swagger/index.html). You will need the basic auth credentials to access these dashboards.
+As the API is service-facing it has no user interface, but in non-production environments you can access a [dashboard for Hangfire](https://getintoteachingapi-development.test.teacherservices.cloud/hangfire/) and the [Swagger UI](https://getintoteachingapi-development.test.teacherservices.cloud/swagger/index.html). You will need the basic auth credentials to access these dashboards.
 
 ## Deployment
 
 ### Environments
 
-The API is deployed to GOV.UK PAAS. We currently have three hosted environments; `development`, `test` and `production`. This can get confusing because our ASP.NET Core environments are `development`, `staging`, `test` and `production` (we should look to address this as part of the migration away from GOV.UK PAAS!). Here is a table to try and make sense of the combinations:
+The API is deployed to [AKS](https://github.com/DFE-Digital/teacher-services-cloud/). We currently have three hosted environments; `development`, `test` and `production`. This can get confusing because our ASP.NET Core environments are `development`, `staging`, `test` and `production`. Here is a table to try and make sense of the combinations:
 
-| Environment             | ASP.NET Core Environment | URL                                                         |
-| ----------------------- | ------------------------ | ----------------------------------------------------------- |
-| development (PAAS)      | staging                  | https://get-into-teaching-api-dev.london.cloudapps.digital  |
-| test (PAAS)             | staging                  | https://get-into-teaching-api-test.london.cloudapps.digital |
-| production (PASS)       | production               | https://get-into-teaching-api-prod.london.cloudapps.digital |
-| development (local)     | development              | localhost                                                   |
-| test (local)            | test                     | n/a                                                         |
+| Environment             | ASP.NET Core Environment | URL                                                               |
+| ----------------------- | ------------------------ | ----------------------------------------------------------------- |
+| development (AKS)       | staging                  | https://getintoteachingapi-development.test.teacherservices.cloud/|
+| test (AKS)              | staging                  | https://getintoteachingapi-test.test.teacherservices.cloud/       |
+| production (AKS)        | production               | https://getintoteachingapi-production.teacherservices.cloud/      |
+| development (local)     | development              | localhost                                                         |
+| test (local)            | test                     | n/a                                                               |
 
 ### Process
 
-When you merge a branch to `master` it will automatically be deployed to the [development](https://get-into-teaching-api-dev.london.cloudapps.digital/) and [test](https://get-into-teaching-api-test.london.cloudapps.digital/) environments via GitHub Actions and a tagged release will be created (the tag will use the PR number). You can then test the changes using the corresponding dev/test environments of the other GiT services. Once you're happy and want to ship to [production](https://get-into-teaching-api-prod.london.cloudapps.digital/) you need to note the tag of your release and go to the `Manual Release` GitHub Action; from there you can select `Run workflow`, choose the `Production` environment and enter your release number.
+When you merge a branch to `master` it will automatically be deployed to the [development](#environments) and [test](#environments) environments via GitHub Actions and a tagged release will be created (the tag will use the PR number). You can then test the changes using the corresponding dev/test environments of the other GiT services. Once you're happy and want to ship to [production](#environments) you need to note the tag of your release and go to the `Manual Release` GitHub Action; from there you can select `Run workflow`, choose the `Production` environment and enter your release number.
 
 ### Rollbacks
 
@@ -149,19 +149,6 @@ make local setup-local-env
 Then **set properties of the created env.local to "Always copy"**.
 
 Other environment variables are available (see the `IEnv` interface) but are not necessary to run the bare-bones application.
-
-The Postgres connections (for Hangfire and our database) are setup dynamically from the `VCAP_SERVICES` environment variable provided by GOV.UK PaaS. If you want to connect to a Postgres instance running in PaaS instead of the one in Docker - such as the test environment instance - you can do so by creating a conduit to it using Cloud Foundry:
-
-```
-cf conduit get-into-teaching-api-dev-pg-svc
-```
-
-You then need to update the `VCAP_SERVICES` environment variable (in `env.local`) to reflect the connection details for your conduit session:
-
-```
-{\"postgres\": [{\"instance_name\": \"rdsbroker_277c8858_eb3a_427b_99ed_0f4f4171701e\",\"credentials\": {\"host\": \"127.0.0.1\",\"name\": \"rdsbroker_277c8858_eb3a_427b_99ed_0f4f4171701e\",\"username\": \"******\",\"password\": \"******\",\"port\": \"7080\"}}]}
-
-```
 
 ### Secrets
 
@@ -311,15 +298,15 @@ We use [logit.io](https://kibana.logit.io/app/kibana) to host a Kibana instance 
 
 ### Metrics
 
-We use [Prometheus](https://prometheus-prod-get-into-teaching.london.cloudapps.digital/) to collect our metrics into an InfluxDB instance.  Metrics are exposed to Prometheus on the `/metrics` endpoint; [prometheus-net](https://github.com/prometheus-net/prometheus-net) is used for collecting and exposing the metrics.
+We use Prometheus to collect our metrics into an InfluxDB instance.  Metrics are exposed to Prometheus on the `/metrics` endpoint; [prometheus-net](https://github.com/prometheus-net/prometheus-net) is used for collecting and exposing the metrics.
 
-The metrics are presented using [Grafana](https://grafana-prod-get-into-teaching.london.cloudapps.digital/). All the configuration/infrastructure is currently configured in the terraform files.
+The metrics are presented using Grafana. All the configuration/infrastructure is currently configured in the terraform files.
 
 Note that if you change the Grafana dashboard **it will not persist** and you need to instead export the dashboard and [updated it in the GitHub repository](https://github.com/DFE-Digital/get-into-teaching-api/tree/master/monitoring/grafana/dashboards). These are re-applied on API deployment.
 
 ### Alerts
 
-We use [Prometheus Alert Manager](https://alertmanager-prod-get-into-teaching.london.cloudapps.digital/#/alerts) to notify us when something has gone wrong. It will post to the relevant Slack channel and contain a link to the appropriate Grafana dashboard and/or runbook.
+We use Prometheus Alert Manager to notify us when something has gone wrong. It will post to the relevant Slack channel and contain a link to the appropriate Grafana dashboard and/or runbook.
 
 You can add/configure alerts in the [alert.rules file](https://github.com/DFE-Digital/get-into-teaching-api/blob/master/monitoring/prometheus/alert.rules).
 
