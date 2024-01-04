@@ -157,6 +157,14 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         }
 
         [Fact]
+        public void Candidate_WithNonNullChannelIdWhenCandidateIdIsNull_IsMailingList()
+        {
+            var request = new TeachingEventAddAttendee() { CandidateId = null, ChannelId = 456 };
+
+            request.Candidate.ChannelId.Should().Be(456);
+        }
+
+        [Fact]
         public void Candidate_ChannelIdWhenCandidateIdIsNotNull_IsNotChanged()
         {
             var request = new TeachingEventAddAttendee() { CandidateId = Guid.NewGuid() };
