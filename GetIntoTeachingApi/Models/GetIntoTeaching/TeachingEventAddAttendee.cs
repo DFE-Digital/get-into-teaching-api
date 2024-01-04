@@ -15,6 +15,10 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
 
         [SwaggerSchema(WriteOnly = true)]
         public Guid? EventId { get; set; }
+
+        [SwaggerSchema(WriteOnly = true)]
+        public int? ChannelId { get; set; }
+
         [SwaggerSchema(WriteOnly = true)]
         public Guid? AcceptedPolicyId { get; set; }
         public Guid? PreferredTeachingSubjectId { get; set; }
@@ -136,7 +140,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         {
             if (CandidateId == null)
             {
-                candidate.ChannelId = (int?)Candidate.Channel.Event;
+                candidate.ChannelId = ChannelId ?? (int?)Candidate.Channel.Event;
             }
         }
 
