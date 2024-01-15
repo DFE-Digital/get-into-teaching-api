@@ -1,3 +1,4 @@
 aks:
     source:  "https://github.com/DFE-Digital/terraform-modules"
-    version: "testing"
+    version: "786-terraform-modules-postgres-log-retentionpolicy-is-deprecated"
+:q
