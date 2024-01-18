@@ -43,7 +43,7 @@ jobs:
           dotnet-version: '7.0'
 
       - name: Install dotnet-sonarscanner
-        run:  dotnet tool install --global dotnet-sonarscanner --version 5.9.1
+        run:  dotnet tool install --global dotnet-sonarscanner --version 5.15.0
 
       - name: Install dependencies
         run:  dotnet restore
