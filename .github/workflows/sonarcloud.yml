@@ -16,6 +16,11 @@ jobs:
       - name: set-up-environment
         uses: DFE-Digital/github-actions/set-up-environment@master
 
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
       - uses: Azure/login@v1
         with:
            creds: ${{ secrets.AZURE_CREDENTIALS }}
@@ -38,7 +43,7 @@ jobs:
           dotnet-version: '7.0'
 
       - name: Install dotnet-sonarscanner
-        run:  dotnet tool install --global dotnet-sonarscanner --version 5.9.1
+        run:  dotnet tool install --global dotnet-sonarscanner --version 5.15.0
 
       - name: Install dependencies
         run:  dotnet restore
@@ -70,9 +75,9 @@ jobs:
             " \
             /d:sonar.verbose=true \
             /d:sonar.log.level="DEBUG"
-             dotnet build
-             dotnet test --no-build --logger:trx -e:CollectCoverage=true -e:CoverletOutputFormat=opencover
-             dotnet sonarscanner end /d:sonar.login="${{ steps.fetch-secrets.outputs.SONAR-TOKEN }}"
+          dotnet build
+          dotnet test --no-build --logger:trx -e:CollectCoverage=true -e:CoverletOutputFormat=opencover
+          dotnet sonarscanner end /d:sonar.login="${{ steps.fetch-secrets.outputs.SONAR-TOKEN }}"
 
       - name: Slack Notification
         if: failure() && github.ref == 'refs/heads/master'
