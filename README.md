@@ -117,15 +117,15 @@ The API is deployed to [AKS](https://github.com/DFE-Digital/teacher-services-clo
 
 | Environment             | ASP.NET Core Environment | URL                                                               |
 | ----------------------- | ------------------------ | ----------------------------------------------------------------- |
-| development (AKS)       | staging                  | https://getintoteachingapi-development.test.teacherservices.cloud/|
-| test (AKS)              | staging                  | https://getintoteachingapi-test.test.teacherservices.cloud/       |
-| production (AKS)        | production               | https://getintoteachingapi-production.teacherservices.cloud/      |
-| development (local)     | development              | localhost                                                         |
-| test (local)            | test                     | n/a                                                               |
+| development (AKS)       | Staging                  | https://getintoteachingapi-development.test.teacherservices.cloud/|
+| test (AKS)              | Staging                  | https://getintoteachingapi-test.test.teacherservices.cloud/       |
+| production (AKS)        | Production               | https://getintoteachingapi-production.teacherservices.cloud/      |
+| development (local)     | Development              | localhost                                                         |
+| test (local)            | Test                     | n/a                                                               |
 
 ### Process
 
-When you merge a branch to `master` it will automatically be deployed to the [development](#environments) and [test](#environments) environments via GitHub Actions and a tagged release will be created (the tag will use the PR number). You can then test the changes using the corresponding dev/test environments of the other GiT services. Once you're happy and want to ship to [production](#environments) you need to note the tag of your release and go to the `Manual Release` GitHub Action; from there you can select `Run workflow`, choose the `Production` environment and enter your release number.
+When you merge a branch to `master` it will automatically be deployed to the [development](#environments) and [test](#environments) environments via GitHub Actions and a tagged release will be created (the tag will use the PR number). You can then test the changes using the corresponding dev/test environments of the other GiT services. Once you're happy and want to ship to [production](#environments) you need to note the tag of your release and go to the `Manual Release` GitHub Action; from there you can select `Run workflow`, choose the `production_aks` environment and enter your release number.
 
 ### Rollbacks
 

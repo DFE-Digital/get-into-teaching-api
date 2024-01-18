@@ -72,7 +72,7 @@ jobs:
            azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
        - name: Slack Release Notification
-         if: steps.tag_id.outputs.release_id && github.event.inputs.environment == 'Production'
+         if: steps.tag_id.outputs.release_id && github.event.inputs.environment == 'production_aks'
          uses: rtCamp/action-slack-notify@master
          env:
            SLACK_COLOR:    ${{env.SLACK_SUCCESS}}
