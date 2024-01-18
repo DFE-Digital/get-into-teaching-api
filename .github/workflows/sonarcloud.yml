@@ -16,6 +16,11 @@ jobs:
       - name: set-up-environment
         uses: DFE-Digital/github-actions/set-up-environment@master
 
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
       - uses: Azure/login@v1
         with:
            creds: ${{ secrets.AZURE_CREDENTIALS }}
