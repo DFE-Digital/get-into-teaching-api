@@ -8,7 +8,7 @@ jobs:
     name: Link Trello card to this PR
     if: "!contains( 'dependabot[bot] snyk-bot' , github.actor )"
     runs-on: ubuntu-latest
-    environment: Development
+    environment: development_aks
     steps:
       - uses: Azure/login@v1
         with:
