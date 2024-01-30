@@ -27,13 +27,13 @@ bin/terrafile: ## Install terrafile to manage terraform modules
 bin/yaq:
 	mkdir -p bin | curl -sL https://github.com/uk-devops/yaq/releases/download/v0.0.3/yaq_linux_amd64_v0.0.3.zip -o yaq.zip && unzip -o yaq.zip -d ./bin/ && rm yaq.zip
 
-development_aks:
+development_aks: test-cluster
 	$(eval include global_config/development_aks.sh)
 
-test_aks:
+test_aks: test-cluster
 	$(eval include global_config/test_aks.sh)
 
-production_aks:
+production_aks: production-cluster
 	$(eval include global_config/production_aks.sh)
 
 local_aks:
@@ -103,3 +103,15 @@ arm-deployment: set-azure-account set-key-vault-names
 deploy-arm-resources: arm-deployment
 
 validate-arm-resources: set-what-if arm-deployment
+
+test-cluster:
+	$(eval CLUSTER_RESOURCE_GROUP_NAME=s189t01-tsc-ts-rg)
+	$(eval CLUSTER_NAME=s189t01-tsc-test-aks)
+
+production-cluster:
+	$(eval CLUSTER_RESOURCE_GROUP_NAME=s189p01-tsc-pd-rg)
+	$(eval CLUSTER_NAME=s189p01-tsc-production-aks)
+
+get-cluster-credentials: set-azure-account
+	az aks get-credentials --overwrite-existing -g ${CLUSTER_RESOURCE_GROUP_NAME} -n ${CLUSTER_NAME}
+	kubelogin convert-kubeconfig -l $(if ${GITHUB_ACTIONS},spn,azurecli)
