@@ -78,7 +78,7 @@ jobs:
            SLACK_COLOR:    ${{env.SLACK_SUCCESS}}
            SLACK_TITLE:    "Release Published to ${{github.event.inputs.environment}}: ${{steps.tag_id.outputs.release_name}}"
            SLACK_MESSAGE:  ${{ fromJson( steps.tag_id.outputs.release_body) }}
-           SLACK_WEBHOOK:  ${{steps.keyvault-yaml-secret.outputs.SLACK-RELEASE-NOTE-WEBHOOK}}
+           SLACK_WEBHOOK:  ${{steps.fetch-secrets.outputs.SLACK-RELEASE-NOTE-WEBHOOK}}
            MSG_MINIMAL:    true
 
        - name: Slack Notification
@@ -88,4 +88,4 @@ jobs:
            SLACK_COLOR:    ${{env.SLACK_FAILURE}}
            SLACK_TITLE:    "Manual Release Failed: ${{steps.tag_id.outputs.release_name}}"
            SLACK_MESSAGE:  Failure deploying ${{github.event.inputs.environment}} release
-           SLACK_WEBHOOK:  ${{steps.keyvault-yaml-secret.outputs.SLACK-WEBHOOK}}
+           SLACK_WEBHOOK:  ${{steps.fetch-secrets.outputs.SLACK-WEBHOOK}}
