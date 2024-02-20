@@ -18,11 +18,11 @@
 		<PackageReference Include="Hangfire.MemoryStorage" Version="1.8.0" />
 		<PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="5.7.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.16" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.15">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.16">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.15">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.16">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -58,7 +58,7 @@
 		<PackageReference Include="Serilog" Version="3.1.1" />
 		<PackageReference Include="Castle.Core" Version="5.1.1" />
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.15" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.16" />
 		<PackageReference Include="Hangfire.PostgreSql" Version="1.19.12" />
 		<PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.1.17" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
