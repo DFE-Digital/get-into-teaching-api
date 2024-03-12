@@ -31,18 +31,19 @@ namespace GetIntoTeachingApiTests.ModelBinders
         }
 
         [Fact]
-        public void BindModelAsync_WhenValueProviderResultIsNone_CompletesTask()
+        public async Task BindModelAsync_WhenValueProviderResultIsNone_CompletesTask()
         {
             _mockValueProvider.Setup(m => m.GetValue("key")).Returns(ValueProviderResult.None);
 
             var task = _binder.BindModelAsync(_mockContext.Object);
 
-            task.Wait();
+            // task.Wait();
+            await task;
             task.Should().Be(Task.CompletedTask);
         }
 
         [Fact]
-        public void BindModelAsync_WhenValueIsString_TrimsStringAndCompletesTask()
+        public async Task BindModelAsync_WhenValueIsString_TrimsStringAndCompletesTask()
         {
             var modelState = new ModelStateDictionary();
             var valueProviderResult = new ValueProviderResult("  value  ");
@@ -51,7 +52,8 @@ namespace GetIntoTeachingApiTests.ModelBinders
 
             var task = _binder.BindModelAsync(_mockContext.Object);
 
-            task.Wait();
+            // task.Wait();
+            await task;
             task.Should().Be(Task.CompletedTask);
             _mockContext.VerifySet(m => m.Result = ModelBindingResult.Success("value"));
         }
