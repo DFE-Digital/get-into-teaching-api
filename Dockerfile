@@ -15,7 +15,7 @@ WORKDIR /source/GetIntoTeachingApi
 RUN dotnet publish -c release -o /app
 
 # final stage/image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
+FROM mcr.microsoft.com/dotnet/aspnet:7.0-alpine
 
 WORKDIR /app
 COPY --from=build /app ./
