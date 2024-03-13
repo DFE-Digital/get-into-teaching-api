@@ -37,7 +37,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Fetch secrets from key vault
-        uses: azure/CLI@v2
+        uses: azure/CLI@v1
         id: fetch-secrets
         with:
           inlineScript: |
@@ -109,7 +109,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Fetch secrets from key vault
-        uses: azure/CLI@v2
+        uses: azure/CLI@v1
         id: fetch-secrets
         with:
           inlineScript: |
@@ -181,7 +181,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Fetch secrets from key vault
-        uses: azure/CLI@v2
+        uses: azure/CLI@v1
         id: fetch-secrets
         with:
           inlineScript: |
