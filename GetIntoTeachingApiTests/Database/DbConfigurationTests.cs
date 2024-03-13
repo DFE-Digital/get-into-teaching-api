@@ -32,8 +32,7 @@ namespace GetIntoTeachingApiTests.Database
                                          "Username=username2;" +
                                          "Password=password2;" +
                                          "Port=1234;" +
-                                         "SSL Mode=Require;" +
-                                         "Trust Server Certificate=True");
+                                         "SSL Mode=Require");
         }
 
         [Fact]
@@ -47,7 +46,6 @@ namespace GetIntoTeachingApiTests.Database
                                          "Password=password1;" +
                                          "Port=1234;" +
                                          "SSL Mode=Require;" +
-                                         "Trust Server Certificate=True;" +
                                          "SearchPath=hangfire");
         }
     }
