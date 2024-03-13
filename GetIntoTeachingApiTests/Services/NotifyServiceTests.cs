@@ -9,6 +9,7 @@ using FluentAssertions;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Utils;
 using Xunit;
+using System.Threading.Tasks;
 
 namespace GetIntoTeachingApiTests.Services
 {
@@ -68,7 +69,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public void SendEmailAsync_WhenSendingFails_LogsException()
+        public async Task SendEmailAsync_WhenSendingFails_LogsException()
         {
             _mockNotificationClient.Setup(
                 mock => mock.SendEmailAsync(
@@ -79,7 +80,7 @@ namespace GetIntoTeachingApiTests.Services
                 )
             ).ThrowsAsync(new Exception("bang"));
 
-            _service.SendEmailAsync("email@address.com", NotifyService.NewPinCodeEmailTemplateId, _personalisation).Wait();
+            await _service.SendEmailAsync("email@address.com", NotifyService.NewPinCodeEmailTemplateId, _personalisation);
 
             _mockLogger.VerifyWarningWasCalled("NotifyService - Failed to send email");
         }
