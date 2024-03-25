@@ -38,8 +38,9 @@ namespace GetIntoTeachingApi.Database
 
         private static string GenerateConnectionString(IEnv env, string instanceName)
         {
-            if (!string.IsNullOrEmpty(env.PgConnectionString)) {
-              return env.PgConnectionString;
+            if (!string.IsNullOrEmpty(env.PgConnectionString))
+            {
+                return env.PgConnectionString;
             }
 
             var options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
@@ -54,7 +55,6 @@ namespace GetIntoTeachingApi.Database
                 Password = postgres.Credentials.Password,
                 Port = postgres.Credentials.Port,
                 SslMode = SslMode.Require,
-                TrustServerCertificate = true,
             };
 
             return builder.ConnectionString;
