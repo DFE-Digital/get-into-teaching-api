@@ -55,7 +55,7 @@ jobs:
           echo "sha_short=$(echo $GITHUB_SHA | cut -c -7)" >> $GITHUB_OUTPUT
 
       - name: Cache Docker layers
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
