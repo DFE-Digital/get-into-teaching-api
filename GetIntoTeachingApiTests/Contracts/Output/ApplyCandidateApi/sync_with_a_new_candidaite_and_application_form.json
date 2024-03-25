@@ -57,10 +57,6 @@
     "Id": "00000000-0000-0000-0000-000000000000",
     "Attributes": [
       {
-        "Key": "dfe_applicationchoicescompleted",
-        "Value": null
-      },
-      {
         "Key": "dfe_applicationformid",
         "Value": "1"
       },
