@@ -63,7 +63,7 @@
 		<PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.1.17" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.2" />
-		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="7.0.11" />
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="8.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>
