@@ -5,5 +5,5 @@ module "statuscake" {
 
   uptime_urls = [module.api_application.probe_url]
 
-  contact_groups = [185037]
+  contact_groups = [185037, 282453]
 }
