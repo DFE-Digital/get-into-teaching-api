@@ -42,7 +42,7 @@ jobs:
       run: docker-compose up -d
 
     - name: Test
-      run: dotnet test --no-restore --verbosity normal --environment SENTRY_DSN=""
+      run: dotnet test --no-restore --verbosity normal
 
     - name: Lint Dockerfile
       uses: brpaz/hadolint-action@master
