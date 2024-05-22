@@ -43,7 +43,7 @@ jobs:
 
     - name: Test
       env:
-        Sentry__Dsn: ' '
+        Sentry__Dsn: ""
       run: dotnet test --no-restore --verbosity normal
 
     - name: Lint Dockerfile
