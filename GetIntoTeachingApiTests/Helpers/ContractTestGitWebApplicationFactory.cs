@@ -25,6 +25,8 @@ namespace GetIntoTeachingApiTests.Helpers
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.UseSentry(dsn: "");
+            
             builder.ConfigureServices(services =>
             {
                 // Use in-memory rate limit counters for tests.
