@@ -12,6 +12,8 @@ namespace GetIntoTeachingApiTests.Helpers
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.UseSentry(dsn: "");
+            
             builder.ConfigureServices(services =>
             {
                 // Remove Redis rate limiting.
