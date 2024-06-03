@@ -105,6 +105,20 @@ Quick start steps:
 - Run the application in Visual Studio
 - Open the Swagger UI at `/swagger/index/html` or view the job queue at `/hangfire`
 
+### Building and testing locally
+
+This project is known to run in Mono, Microsoft Visual Studio and JetBrains Rider, including on a macos platform. The project must be built for .NET version 7.0. When running locally, be sure to start the docker-compose container prior to running the project.
+
+Configure a local instance of the Get Into Teaching application to connect to a local instance of the API by setting the application's environment variables to match the API, e.g.
+
+```bash
+export GIT_API_ENDPOINT=https://localhost:5001/api
+export GIT_API_TOKEN=secret-git
+```
+The application will skip self-certified SSL certificate validation if communicating with a local API _and_ running in development mode.
+
+Be aware that any change to the API will affect multiple applications and **all changes must be non-breaking**.
+
 ## Useful Links
 
 As the API is service-facing it has no user interface, but in non-production environments you can access a [dashboard for Hangfire](https://getintoteachingapi-development.test.teacherservices.cloud/hangfire/) and the [Swagger UI](https://getintoteachingapi-development.test.teacherservices.cloud/swagger/index.html). You will need the basic auth credentials to access these dashboards.
