@@ -25,6 +25,9 @@ jobs:
             SECRET_VALUE=$(az keyvault secret show --name "TRELLO-TOKEN" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
             echo "::add-mask::$SECRET_VALUE"
             echo "TRELLO-TOKEN=$SECRET_VALUE" >> $GITHUB_OUTPUT
+            SECRET_VALUE=$(az keyvault secret show --name "TRELLO-KEY" --vault-name "${{ secrets.INFRA_KEY_VAULT }}" --query "value" -o tsv)
+            echo "::add-mask::$SECRET_VALUE"
+            echo "TRELLO-KEY=$SECRET_VALUE" >> $GITHUB_OUTPUT
 
       - name: Add Trello Comment
         uses: DFE-Digital/github-actions/AddTrelloComment@master
