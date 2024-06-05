@@ -98,7 +98,11 @@
       },
       {
         "Key": "dfe_name",
-        "Value": "Application Choice 1"
+        "Value": "Application Form 1"
+      },
+      {
+        "Key": "dfe_senttoproviderat",
+        "Value": "2022-03-14T14:23:39+00:00"
       }
     ],
     "EntityState": 1,
@@ -111,10 +115,6 @@
     "LogicalName": "dfe_applyapplicationform",
     "Id": "00000000-0000-0000-0000-000000000000",
     "Attributes": [
-      {
-        "Key": "dfe_applicationchoicescompleted",
-        "Value": true
-      },
       {
         "Key": "dfe_applicationformid",
         "Value": "1"
