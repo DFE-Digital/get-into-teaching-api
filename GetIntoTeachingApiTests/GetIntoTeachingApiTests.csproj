@@ -199,10 +199,10 @@
     <None Update="Fixtures\ukpostcodes_malformed_rows.csv.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Contracts\Input\ApplyCandidateApi\sync_with_a_new_candidaite_and_no_application_form.json">
+    <None Update="Contracts\Input\ApplyCandidateApi\sync_with_a_new_candidate_and_no_application_form.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Contracts\Input\ApplyCandidateApi\sync_with_a_new_candidaite_and_application_form.json">
+    <None Update="Contracts\Input\ApplyCandidateApi\sync_with_a_new_candidate_and_application_form.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Contracts\Input\ApplyCandidateApi\sync_with_an_existing_candidate_and_application_form.json">

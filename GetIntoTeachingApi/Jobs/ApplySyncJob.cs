@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Flurl;
 using Flurl.Http;
+using Flurl.Http.Newtonsoft;
 using GetIntoTeachingApi.Models.Apply;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
@@ -53,6 +54,9 @@ namespace GetIntoTeachingApi.Jobs
 
         private async Task QueueCandidateSyncJobs()
         {
+            // Enforce use of the Newtonsoft Json serializer
+            FlurlHttp.Clients.UseNewtonsoft();
+            
             var request = Env.ApplyCandidateApiUrl
                 .AppendPathSegment("candidates")
                 .SetQueryParam("updated_since", UpdatedSince())
