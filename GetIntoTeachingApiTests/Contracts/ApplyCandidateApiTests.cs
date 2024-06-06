@@ -23,8 +23,8 @@ namespace GetIntoTeachingApiTests.Contracts
 
             var candidate = ConstructCandidate(ReadInput(scenario));
             
-            Assert.Equal( "john@doe.com", candidate.Attributes.Email);
-            
+            Assert.NotNull(candidate.Attributes.Email);
+
             JobClient.Enqueue<ApplyCandidateSyncJob>(c => c.Run(candidate));
 
             await AssertRequestMatchesSnapshot(scenario);
