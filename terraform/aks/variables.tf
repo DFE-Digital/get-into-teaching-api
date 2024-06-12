@@ -54,6 +54,10 @@ variable "redis_sku_name" {
   type    = string
   default = "Standard"
 }
+variable "enable_logit" {
+  type    = bool
+  default = false
+}
 
 locals {
   azure_credentials       = try(jsondecode(var.azure_credentials), null)
