@@ -11,6 +11,7 @@ using Xunit;
 using GetIntoTeachingApi.Attributes;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -38,7 +39,7 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void GetCountries_ReturnsAllCountriesSortedByCountryName()
+        public async Task GetCountries_ReturnsAllCountriesSortedByCountryName()
         {
             var mockCountries = MockCountries();
             _mockStore.Setup(mock => mock.GetCountries()).Returns(mockCountries.AsAsyncQueryable());
@@ -51,7 +52,7 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void GetTeachingSubjects_ReturnsAllSubjectsSortedBySubjectName()
+        public async Task GetTeachingSubjects_ReturnsAllSubjectsSortedBySubjectName()
         {
             var mockSubjects = MockTeachingSubjects();
             _mockStore.Setup(mock => mock.GetTeachingSubjects()).Returns(mockSubjects.AsAsyncQueryable());

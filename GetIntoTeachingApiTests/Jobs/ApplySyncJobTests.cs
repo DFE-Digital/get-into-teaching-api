@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Linq;
 using FluentAssertions;
 using Flurl.Http.Testing;
@@ -59,7 +60,7 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public async void RunAsync_WithUpdatedCandidates_QueuesCandidateJobs()
+        public async Task RunAsync_WithUpdatedCandidates_QueuesCandidateJobs()
         {
             var metricCount = _metrics.ApplySyncDuration.Count;
             var lastSyncAt = new DateTime(2020, 1, 1);
@@ -88,7 +89,7 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public async void RunAsync_WhenMultiplePagesAvailable_QueuesCandidateJobsForEachPage()
+        public async Task RunAsync_WhenMultiplePagesAvailable_QueuesCandidateJobsForEachPage()
         {
             var lastSyncAt = new DateTime(2020, 1, 1);
             _mockAppSettings.Setup(m => m.ApplyLastSyncAt).Returns(lastSyncAt);
@@ -114,7 +115,7 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public async void RunAsync_WithNoUpdatedCandidates_DoesNotQueueJobs()
+        public async Task RunAsync_WithNoUpdatedCandidates_DoesNotQueueJobs()
         {
             var metricCount = _metrics.ApplySyncDuration.Count;
             var lastSyncAt = new DateTime(2020, 1, 1);
@@ -138,7 +139,7 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public async void RunAsync_OnFirstRun_GetsUpdatedSinceNow()
+        public async Task RunAsync_OnFirstRun_GetsUpdatedSinceNow()
         {
             var now = DateTime.UtcNow;
             _mockDateTime.Setup(m => m.UtcNow).Returns(now);
@@ -157,7 +158,7 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public async void RunAsync_OnSuccess_UpdatesLastSyncAt()
+        public async Task RunAsync_OnSuccess_UpdatesLastSyncAt()
         {
             var lastSyncAt = DateTime.UtcNow.AddMonths(-1);
             _mockAppSettings.Setup(m => m.ApplyLastSyncAt).Returns(lastSyncAt);

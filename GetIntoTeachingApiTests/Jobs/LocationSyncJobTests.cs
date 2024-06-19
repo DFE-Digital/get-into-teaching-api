@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
@@ -41,7 +42,7 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public async void RunAsync_UpsertsLocations()
+        public async Task RunAsync_UpsertsLocations()
         {
             _mockEnv.Setup(m => m.IsDevelopment).Returns(false);
             var server = WireMockServer.Start();
@@ -75,7 +76,7 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public async void RunAsync_WhenCsvOmitsHeaderRow_UpsertsLocations()
+        public async Task RunAsync_WhenCsvOmitsHeaderRow_UpsertsLocations()
         {
             _mockEnv.Setup(m => m.IsDevelopment).Returns(false);
             var server = WireMockServer.Start();
@@ -99,7 +100,7 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public async void RunAsync_WhenCsvContainsMalformedRows_SkipsMalformedRows()
+        public async Task RunAsync_WhenCsvContainsMalformedRows_SkipsMalformedRows()
         {
             _mockEnv.Setup(m => m.IsDevelopment).Returns(false);
             var server = WireMockServer.Start();
