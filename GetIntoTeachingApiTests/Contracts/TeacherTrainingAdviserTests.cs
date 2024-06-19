@@ -5,6 +5,7 @@ using System.Text;
 using FluentAssertions;
 using FluentAssertions.Json;
 using GetIntoTeachingApiTests.Helpers;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Contracts
@@ -19,7 +20,7 @@ namespace GetIntoTeachingApiTests.Contracts
 
         [Theory]
         [ContractTestInputs("./Contracts/Input/TeacherTrainingAdviser")]
-        public async void Contract(string scenario)
+        public async Task Contract(string scenario)
         {
             await Setup();
 

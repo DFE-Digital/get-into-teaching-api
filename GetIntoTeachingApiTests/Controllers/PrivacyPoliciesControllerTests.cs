@@ -4,6 +4,7 @@ using GetIntoTeachingApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Xunit;
 using GetIntoTeachingApi.Attributes;
@@ -35,7 +36,7 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void Get_ReturnsPrivacyPolicy()
+        public async Task Get_ReturnsPrivacyPolicy()
         {
             var policy = new PrivacyPolicy() { Id = Guid.NewGuid() };
             _mockStore.Setup(mock => mock.GetPrivacyPolicyAsync((Guid)policy.Id)).ReturnsAsync(policy);
@@ -47,7 +48,7 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void Get_WithMissingEvent_ReturnsNotFound()
+        public async Task Get_WithMissingEvent_ReturnsNotFound()
         {
             _mockStore.Setup(mock => mock.GetTeachingEventAsync(It.IsAny<Guid>())).ReturnsAsync(null as TeachingEvent);
 
@@ -57,7 +58,7 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
-        public async void GetLatest_ReturnsLatestPrivacyPolicy()
+        public async Task GetLatest_ReturnsLatestPrivacyPolicy()
         {
             var mockPolicy = MockPrivacyPolicy();
             _mockStore.Setup(mock => mock.GetLatestPrivacyPolicyAsync()).ReturnsAsync(mockPolicy);

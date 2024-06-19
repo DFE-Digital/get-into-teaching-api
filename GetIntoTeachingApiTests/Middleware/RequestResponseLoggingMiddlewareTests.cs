@@ -34,7 +34,7 @@ namespace GetIntoTeachingApiTests.Middleware
         }
 
         [Fact]
-        public async void Invoke_WithJsonPayloadAndCompactLoggingPath_LogsRequestAndResponseWithoutPayload()
+        public async Task Invoke_WithJsonPayloadAndCompactLoggingPath_LogsRequestAndResponseWithoutPayload()
         {
             var regex = new Regex(@"^GET /path", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             _mockConfig.Setup(m => m.CompactLoggingPatterns).Returns(new Regex[] { regex });
@@ -61,7 +61,7 @@ namespace GetIntoTeachingApiTests.Middleware
         }
 
         [Fact]
-        public async void Invoke_WithJsonPayload_LogsRequestAndResponseWithRedactedPayloads()
+        public async Task Invoke_WithJsonPayload_LogsRequestAndResponseWithRedactedPayloads()
         {
             string json = JsonSerializer.Serialize(new
                 {
@@ -94,7 +94,7 @@ namespace GetIntoTeachingApiTests.Middleware
         }
 
         [Fact]
-        public async void Invoke_WithNonJsonPayload_LogsRequestAndResponseWithEmptyPayloads()
+        public async Task Invoke_WithNonJsonPayload_LogsRequestAndResponseWithEmptyPayloads()
         {
             var text = "my password is 123456";
 

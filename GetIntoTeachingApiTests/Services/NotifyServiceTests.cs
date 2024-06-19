@@ -31,7 +31,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void CheckStatusAsync_WhenHealthy_ReturnsOk()
+        public async Task CheckStatusAsync_WhenHealthy_ReturnsOk()
         {
             _mockNotificationClient.Setup(mock => mock.CheckStatusAsync("api_key")).ReturnsAsync(HealthCheckResponse.StatusOk);
 
@@ -39,7 +39,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void CheckStatusAsync_WhenUnhealthy_ReturnsError()
+        public async Task CheckStatusAsync_WhenUnhealthy_ReturnsError()
         {
             _mockNotificationClient.Setup(mock => mock.CheckStatusAsync("api_key")).ReturnsAsync("some error");
 

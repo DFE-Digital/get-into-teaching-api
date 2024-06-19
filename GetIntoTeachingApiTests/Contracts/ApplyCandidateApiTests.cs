@@ -4,6 +4,7 @@ using GetIntoTeachingApi.Models.Apply;
 using GetIntoTeachingApiTests.Helpers;
 using Hangfire;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Contracts
@@ -17,7 +18,7 @@ namespace GetIntoTeachingApiTests.Contracts
 
         [Theory]
         [ContractTestInputs("./Contracts/Input/ApplyCandidateApi")]
-        public async void Contract(string scenario)
+        public async Task Contract(string scenario)
         {
             await Setup();
 
