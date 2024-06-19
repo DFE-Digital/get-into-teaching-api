@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Flurl.Http.Testing;
 using GetIntoTeachingApi.Jobs;
@@ -54,7 +55,7 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public async void RunAsync_WhenMultiplePagesAvailable_QueuesCandidateJobsForEachPageAndRequeuesBackfillJobOnEndPage()
+        public async Task RunAsync_WhenMultiplePagesAvailable_QueuesCandidateJobsForEachPageAndRequeuesBackfillJobOnEndPage()
         {
             var updatedSince = DateTime.MinValue;
 
@@ -87,7 +88,7 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public async void RunAsync_WithNoCandidates_DoesNotQueueJobs()
+        public async Task RunAsync_WithNoCandidates_DoesNotQueueJobs()
         {
             var updatedSince = DateTime.MinValue;
             using (var httpTest = new HttpTest())

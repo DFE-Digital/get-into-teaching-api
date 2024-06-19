@@ -40,20 +40,20 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void CheckStatusAsync_WhenHealthy_ReturnsOk()
+        public async Task CheckStatusAsync_WhenHealthy_ReturnsOk()
         {
             (await _store.CheckStatusAsync()).Should().Be(HealthCheckResponse.StatusOk);
         }
 
         [Fact]
-        public async void CheckStatusAsync_WhenUnhealthy_ReturnsError()
+        public async Task CheckStatusAsync_WhenUnhealthy_ReturnsError()
         {
             await DbContext.DisposeAsync();
             (await _store.CheckStatusAsync()).Should().Contain("Cannot access a disposed context instance.");
         }
 
         [Fact]
-        public async void SyncAsync_WithFailure_RetainsExistingData()
+        public async Task SyncAsync_WithFailure_RetainsExistingData()
         {
             await SeedMockPrivacyPoliciesAsync();
             var countBefore = DbContext.PrivacyPolicies.Count();
@@ -67,7 +67,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_InsertsNewTeachingEvents()
+        public async Task SyncAsync_InsertsNewTeachingEvents()
         {
             await SeedMockTeachingEventBuildingsAsync();
             var mockTeachingEvents = MockTeachingEvents().ToList();
@@ -81,7 +81,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_UpdatesExistingTeachingEvents()
+        public async Task SyncAsync_UpdatesExistingTeachingEvents()
         {
             var updatedTeachingEvents = (await SeedMockTeachingEventsAndBuildingsAsync()).ToList();
             updatedTeachingEvents.ForEach(te =>
@@ -102,7 +102,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_DeletesOrphanedTeachingEvents()
+        public async Task SyncAsync_DeletesOrphanedTeachingEvents()
         {
             await SeedMockTeachingEventsAndBuildingsAsync();
             var teachingEvent = MockTeachingEvents().ToList().GetRange(0, 1);
@@ -117,7 +117,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_InsertsNewTeachingEventBuildings()
+        public async Task SyncAsync_InsertsNewTeachingEventBuildings()
         {
             var mockTeachingEventBuildings = MockTeachingEventBuildings();
             _mockCrm.Setup(m => m.GetTeachingEventBuildings()).Returns(mockTeachingEventBuildings);
@@ -130,7 +130,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_UpdatesExistingTeachingEventBuildings()
+        public async Task SyncAsync_UpdatesExistingTeachingEventBuildings()
         {
             var updatedTeachingEventBuildings = (await SeedMockTeachingEventBuildingsAsync()).ToList();
             updatedTeachingEventBuildings.ForEach(building =>
@@ -147,7 +147,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_DeletesOrphanedTeachingEventBuildings()
+        public async Task SyncAsync_DeletesOrphanedTeachingEventBuildings()
         {
             var buildings = await SeedMockTeachingEventBuildingsAsync();
             var building = buildings.ToList().GetRange(0, 1);
@@ -160,7 +160,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_PopulatesTeachingEventBuildingCoordinates()
+        public async Task SyncAsync_PopulatesTeachingEventBuildingCoordinates()
         {
             await SeedMockTeachingEventBuildingsAsync();
             SeedMockLocations();
@@ -176,7 +176,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_FallbackToGeocodeClient_PopulatesTeachingEventBuildingCoordinatesAndCachesLocation()
+        public async Task SyncAsync_FallbackToGeocodeClient_PopulatesTeachingEventBuildingCoordinatesAndCachesLocation()
         {
             await SeedMockTeachingEventBuildingsAsync();
             SeedMockLocations();
@@ -201,7 +201,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_InsertsNewPrivacyPolicies()
+        public async Task SyncAsync_InsertsNewPrivacyPolicies()
         {
             var mockPolicies = MockPrivacyPolicies().ToList();
             _mockCrm.Setup(m => m.GetPrivacyPolicies()).Returns(mockPolicies);
@@ -214,7 +214,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_UpdatesExistingPrivacyPolicies()
+        public async Task SyncAsync_UpdatesExistingPrivacyPolicies()
         {
             var updatedPolicies = (await SeedMockPrivacyPoliciesAsync()).ToList();
             updatedPolicies.ForEach(te => te.Text += "Updated");
@@ -228,7 +228,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_DeletesOrphanedPrivacyPolicies()
+        public async Task SyncAsync_DeletesOrphanedPrivacyPolicies()
         {
             var policies = (await SeedMockPrivacyPoliciesAsync()).ToList();
             _mockCrm.Setup(m => m.GetPrivacyPolicies()).Returns(policies.GetRange(0, 2));
@@ -240,7 +240,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_InsertsNewLookupItems()
+        public async Task SyncAsync_InsertsNewLookupItems()
         {
             var mockCountries = MockCountries();
             _mockCrm.Setup(m => m.GetCountries()).Returns(mockCountries);
@@ -253,7 +253,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_UpdatesExistingLookupItems()
+        public async Task SyncAsync_UpdatesExistingLookupItems()
         {
             var updatedCountries = (await SeedMockCountriesAsync()).ToList();
             updatedCountries.ForEach(c => c.Value += "Updated");
@@ -267,7 +267,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_DeletesOrphanedLookupItems()
+        public async Task SyncAsync_DeletesOrphanedLookupItems()
         {
             var countries = (await SeedMockCountriesAsync()).ToList();
             _mockCrm.Setup(m => m.GetCountries()).Returns((IEnumerable<Country>)countries.GetRange(0, 2));
@@ -279,7 +279,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_InsertsNewPickListItems()
+        public async Task SyncAsync_InsertsNewPickListItems()
         {
             var mockYears = MockInitialTeacherTrainingYears().ToList();
             _mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_ittyear")).Returns(mockYears);
@@ -292,7 +292,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_UpdatesExistingPickListItems()
+        public async Task SyncAsync_UpdatesExistingPickListItems()
         {
             var updatedYears = (await SeedMockInitialTeacherTrainingYearsAsync()).ToList();
             updatedYears.ForEach(c => c.Value += "Updated");
@@ -306,7 +306,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_InsertsApplyPickListItems()
+        public async Task SyncAsync_InsertsApplyPickListItems()
         {
             _mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_candidateapplystatus")).Returns(Array.Empty<PickListItem>()).Verifiable();
             _mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_candidateapplyphase")).Returns(Array.Empty<PickListItem>()).Verifiable();
@@ -321,7 +321,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SyncAsync_InsertsRegionIdPickListItem()
+        public async Task SyncAsync_InsertsRegionIdPickListItem()
         {
             _mockCrm.Setup(m => m.GetPickListItems("msevtmgt_event", "dfe_eventregion")).Returns(Array.Empty<PickListItem>()).Verifiable();
 
@@ -331,7 +331,7 @@ namespace GetIntoTeachingApiTests.Services
         }
       
         [Fact]
-        public async void SyncAsync_DeletesOrphanedPickListItems()
+        public async Task SyncAsync_DeletesOrphanedPickListItems()
         {
             var years = (await SeedMockInitialTeacherTrainingYearsAsync()).ToList();
             _mockCrm.Setup(m => m.GetPickListItems("contact", "dfe_ittyear")).Returns(years.GetRange(0, 2));
@@ -344,7 +344,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void GetLookupItems_ReturnsMatchingOrderedByIdAscending()
+        public async Task GetLookupItems_ReturnsMatchingOrderedByIdAscending()
         {
             await SeedMockCountriesAsync();
 
@@ -354,7 +354,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void GetPickListItems_ReturnsMatchingOrderedByIdAscending()
+        public async Task GetPickListItems_ReturnsMatchingOrderedByIdAscending()
         {
             await SeedMockInitialTeacherTrainingYearsAsync();
 
@@ -364,7 +364,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void GetPrivacyPolicies_ReturnsAll()
+        public async Task GetPrivacyPolicies_ReturnsAll()
         {
             await SeedMockPrivacyPoliciesAsync();
 
@@ -374,7 +374,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void GetLatestPrivacyPolicy_ReturnsMostRecent()
+        public async Task GetLatestPrivacyPolicy_ReturnsMostRecent()
         {
             await SeedMockPrivacyPoliciesAsync();
 
@@ -384,7 +384,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void GetPrivacyPolicy_ReturnsMatchingPolicy()
+        public async Task GetPrivacyPolicy_ReturnsMatchingPolicy()
         {
             var policies = await SeedMockPrivacyPoliciesAsync();
             var result = await _store.GetPrivacyPolicyAsync((Guid)policies.First().Id);
@@ -393,7 +393,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEvents_WithoutFilters_ReturnsAll()
+        public async Task SearchTeachingEvents_WithoutFilters_ReturnsAll()
         {
             await SeedMockTeachingEventsAndBuildingsAsync();
             var request = new TeachingEventSearchRequest() { };
@@ -406,7 +406,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEventsAsync_WithInvalidPostcode_IsCached()
+        public async Task SearchTeachingEventsAsync_WithInvalidPostcode_IsCached()
         {
             var request = new TeachingEventSearchRequest() { Postcode = "TE7 1NG", Radius = 100 };
             var sanitizedPostcode = Location.SanitizePostcode(request.Postcode);
@@ -420,7 +420,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEvents_WithFilters_ReturnsMatching()
+        public async Task SearchTeachingEvents_WithFilters_ReturnsMatching()
         {
             SeedMockLocations();
             await SeedMockTeachingEventsAndBuildingsAsync();
@@ -442,7 +442,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEvents_WithFilters_ReturnsEventNarrowlyInRange()
+        public async Task SearchTeachingEvents_WithFilters_ReturnsEventNarrowlyInRange()
         {
             SeedMockLocations();
             await SeedMockTeachingEventsAndBuildingsAsync();
@@ -463,7 +463,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEvents_WithFilters_ExcludesEventNarrowlyOutOfRange()
+        public async Task SearchTeachingEvents_WithFilters_ExcludesEventNarrowlyOutOfRange()
         {
             SeedMockLocations();
             await SeedMockTeachingEventsAndBuildingsAsync();
@@ -482,7 +482,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEvents_FilteredByRadius_ReturnsMatchingAndOnlineEvents()
+        public async Task SearchTeachingEvents_FilteredByRadius_ReturnsMatchingAndOnlineEvents()
         {
             SeedMockLocations();
             await SeedMockTeachingEventsAndBuildingsAsync();
@@ -495,7 +495,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEvents_FilteredByRadiusWithoutPostcode_ReturnsAll()
+        public async Task SearchTeachingEvents_FilteredByRadiusWithoutPostcode_ReturnsAll()
         {
             SeedMockLocations();
             await SeedMockTeachingEventsAndBuildingsAsync();
@@ -509,7 +509,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEvents_FilteredByRadiusWithOutwardOnlyPostcode_ReturnsMatchingAndOnlineEvents()
+        public async Task SearchTeachingEvents_FilteredByRadiusWithOutwardOnlyPostcode_ReturnsMatchingAndOnlineEvents()
         {
             SeedMockLocations();
             await SeedMockTeachingEventsAndBuildingsAsync();
@@ -522,7 +522,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEvents_FilteredByRadiusWithFailedPostcodeGeocoding_ReturnsEmpty()
+        public async Task SearchTeachingEvents_FilteredByRadiusWithFailedPostcodeGeocoding_ReturnsEmpty()
         {
             SeedMockLocations();
             await SeedMockTeachingEventsAndBuildingsAsync();
@@ -534,7 +534,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEvents_FilteredByMultipleTypes_ReturnsMatching()
+        public async Task SearchTeachingEvents_FilteredByMultipleTypes_ReturnsMatching()
         {
             SeedMockLocations();
             await SeedMockTeachingEventsAndBuildingsAsync();
@@ -553,7 +553,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEvents_FilteredByType_ReturnsMatching()
+        public async Task SearchTeachingEvents_FilteredByType_ReturnsMatching()
         {
             SeedMockLocations();
             await SeedMockTeachingEventsAndBuildingsAsync();
@@ -566,7 +566,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEvents_FilteredByStartAfter_ReturnsMatching()
+        public async Task SearchTeachingEvents_FilteredByStartAfter_ReturnsMatching()
         {
             await SeedMockTeachingEventsAndBuildingsAsync();
             var request = new TeachingEventSearchRequest() { StartAfter = DateTime.UtcNow.AddDays(6) };
@@ -578,7 +578,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEvents_FilteredByStartBefore_ReturnsMatching()
+        public async Task SearchTeachingEvents_FilteredByStartBefore_ReturnsMatching()
         {
             await SeedMockTeachingEventsAndBuildingsAsync();
             var request = new TeachingEventSearchRequest() { StartBefore = DateTime.UtcNow.AddDays(6) };
@@ -590,7 +590,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEvents_FilteredByDefaultStatusId_ReturnsOpenAndClosedEvents()
+        public async Task SearchTeachingEvents_FilteredByDefaultStatusId_ReturnsOpenAndClosedEvents()
         {
             await SeedMockTeachingEventsAndBuildingsAsync();
             var request = new TeachingEventSearchRequest();
@@ -603,7 +603,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEvents_FilteredByStatusId_ReturnsMatching()
+        public async Task SearchTeachingEvents_FilteredByStatusId_ReturnsMatching()
         {
             await SeedMockTeachingEventsAndBuildingsAsync();
             var request = new TeachingEventSearchRequest()
@@ -619,7 +619,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEvents_FilteredByMultipleStatusIds_ReturnsMatching()
+        public async Task SearchTeachingEvents_FilteredByMultipleStatusIds_ReturnsMatching()
         {
             await SeedMockTeachingEventsAndBuildingsAsync();
             var request = new TeachingEventSearchRequest()
@@ -635,7 +635,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEvents_FilteredByOnline_ReturnsOnlyOnlineEvents()
+        public async Task SearchTeachingEvents_FilteredByOnline_ReturnsOnlyOnlineEvents()
         {
             await SeedMockTeachingEventsAndBuildingsAsync();
             var request = new TeachingEventSearchRequest() { Online = true };
@@ -646,7 +646,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void SearchTeachingEvents_FilteredByOffline_ReturnsOnlyInPersonEvents()
+        public async Task SearchTeachingEvents_FilteredByOffline_ReturnsOnlyInPersonEvents()
         {
             await SeedMockTeachingEventsAndBuildingsAsync();
             var request = new TeachingEventSearchRequest() { Online = false };
@@ -657,7 +657,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void GetTeachingEventAsync_WithId_ReturnsMatchingEvent()
+        public async Task GetTeachingEventAsync_WithId_ReturnsMatchingEvent()
         {
             var events = await SeedMockTeachingEventsAndBuildingsAsync();
             var result = await _store.GetTeachingEventAsync((Guid)events.First().Id);
@@ -667,7 +667,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void GetTeachingEventAsync_WithReadableId_ReturnsMatchingEvent()
+        public async Task GetTeachingEventAsync_WithReadableId_ReturnsMatchingEvent()
         {
             var events = await SeedMockTeachingEventsAndBuildingsAsync();
             var result = await _store.GetTeachingEventAsync(events.First().ReadableId);

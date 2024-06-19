@@ -8,6 +8,7 @@ using Hangfire;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
+using System.Threading.Tasks;
 
 namespace GetIntoTeachingApiTests.Jobs
 {
@@ -37,7 +38,7 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public async void RunAsync_CallsSync()
+        public async Task RunAsync_CallsSync()
         {
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
 
@@ -50,7 +51,7 @@ namespace GetIntoTeachingApiTests.Jobs
         }
 
         [Fact]
-        public async void RunAsync_WhenCrmIntegrationPaused_DoesNotCallSync()
+        public async Task RunAsync_WhenCrmIntegrationPaused_DoesNotCallSync()
         {
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(true);
 

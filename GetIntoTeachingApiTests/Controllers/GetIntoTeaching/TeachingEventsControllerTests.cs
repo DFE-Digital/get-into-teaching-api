@@ -113,7 +113,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
         }
 
         [Fact]
-        public async void Search_InvalidRequest_RespondsWithValidationErrors()
+        public async Task Search_InvalidRequest_RespondsWithValidationErrors()
         {
             var request = new TeachingEventSearchRequest() { Postcode = null };
             _controller.ModelState.AddModelError("Postcode", "Postcode must be specified.");
@@ -126,7 +126,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
         }
 
         [Fact]
-        public async void Search_ValidRequest_ReturnsTeachingEvents()
+        public async Task Search_ValidRequest_ReturnsTeachingEvents()
         {
             var request = new TeachingEventSearchRequest() { Postcode = "KY12 8FG" };
             var metricCountBefore = _metrics.TeachingEventSearchResults.WithLabels(new[] { string.Empty, request.Radius.ToString() }).Count;
@@ -146,7 +146,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
         }
 
         [Fact]
-        public async void Get_ReturnsTeachingEvent()
+        public async Task Get_ReturnsTeachingEvent()
         {
             var teachingEvent = new TeachingEvent() { ReadableId = "123" };
             _mockStore.Setup(mock => mock.GetTeachingEventAsync(teachingEvent.ReadableId)).ReturnsAsync(teachingEvent);
@@ -158,7 +158,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
         }
 
         [Fact]
-        public async void Get_WithMissingEvent_ReturnsNotFound()
+        public async Task Get_WithMissingEvent_ReturnsNotFound()
         {
             _mockStore.Setup(mock => mock.GetTeachingEventAsync(It.IsAny<Guid>())).ReturnsAsync(null as TeachingEvent);
 
