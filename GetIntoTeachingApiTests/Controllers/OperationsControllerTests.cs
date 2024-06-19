@@ -14,6 +14,7 @@ using Hangfire;
 using Hangfire.Common;
 using GetIntoTeachingApi.Jobs;
 using Hangfire.States;
+using System.Threading.Tasks;
 
 namespace GetIntoTeachingApiTests.Controllers
 {
@@ -149,7 +150,7 @@ namespace GetIntoTeachingApiTests.Controllers
         [InlineData(false, false, false, true, true, "unhealthy")]
         [InlineData(true, false, false, false, true, "unhealthy")]
         [InlineData(false, false, false, false, false, "unhealthy")]
-        public async void HealthCheck_ReturnsCorrectly(bool database, bool hangfire, bool redis, bool crm, bool notify, string expectedStatus)
+        public async Task HealthCheck_ReturnsCorrectly(bool database, bool hangfire, bool redis, bool crm, bool notify, string expectedStatus)
         {
             const string sha = "3c42c1051f6eb535c2017eafb660d1a884a39722";
             const string environmentName = "Test";

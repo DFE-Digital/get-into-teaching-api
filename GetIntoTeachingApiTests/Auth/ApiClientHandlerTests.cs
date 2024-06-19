@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Auth
@@ -44,7 +45,7 @@ namespace GetIntoTeachingApiTests.Auth
         [InlineData("", false)]
         [InlineData(" ", false)]
         [InlineData(null, false)]
-        public async void InitializeAsync_WithApiClient_AuthenticatesCorrectly(string authHeaderValue, bool expected)
+        public async Task InitializeAsync_WithApiClient_AuthenticatesCorrectly(string authHeaderValue, bool expected)
         {
             var client = new Client() { Name = "Admin", Description = "Admin account", Role = "Service", ApiKey = "api_key", ApiKeyPrefix = "ADMIN" };
             _mockClientManager.Setup(m => m.GetClient(client.ApiKey)).Returns(client);
@@ -78,7 +79,7 @@ namespace GetIntoTeachingApiTests.Auth
         [InlineData(" ", " ")]
         [InlineData(" ", "")]
         [InlineData(" ", null)]
-        public async void InitializeAsync_EmptyOrNullHeaderAndApiKey_ReturnsUnauthorized(string authHeaderValue, string apiKey)
+        public async Task InitializeAsync_EmptyOrNullHeaderAndApiKey_ReturnsUnauthorized(string authHeaderValue, string apiKey)
         {
             var client = new Client() { Name = "Admin", Description = "Admin account", Role = "Admin", ApiKey = apiKey, ApiKeyPrefix = "ADMIN" };
             _mockClientManager.Setup(m => m.GetClient(client.ApiKey)).Returns(client);
@@ -95,7 +96,7 @@ namespace GetIntoTeachingApiTests.Auth
         }
 
         [Fact]
-        public async void InitializeAsync_NoAuthorizationHeader_ReturnsUnauthorized()
+        public async Task InitializeAsync_NoAuthorizationHeader_ReturnsUnauthorized()
         {
             var context = new DefaultHttpContext();
             var scheme = new AuthenticationScheme("ApiClientHandler", null, typeof(ApiClientHandler));

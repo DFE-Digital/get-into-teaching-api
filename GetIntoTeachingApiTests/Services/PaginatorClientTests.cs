@@ -6,6 +6,7 @@ using Flurl.Http.Testing;
 using GetIntoTeachingApi.Services;
 using Newtonsoft.Json;
 using Xunit;
+using System.Threading.Tasks;
 
 namespace GetIntoTeachingApiTests.Services
 {
@@ -25,7 +26,7 @@ namespace GetIntoTeachingApiTests.Services
 
 
         [Fact]
-        public async void Constructot_WithCustomStartPage()
+        public async Task Constructot_WithCustomStartPage()
         {
             var paginator = new PaginatorClient<string>(_request, 2);
             using var httpTest = new HttpTest();
@@ -40,7 +41,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void Page_Increments()
+        public async Task Page_Increments()
         {
             using var httpTest = new HttpTest();
             MockResponse(httpTest, "page 1 data", 1, 2);
@@ -64,7 +65,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void HasNext_WhenThereAreMorePages_IsTrue()
+        public async Task HasNext_WhenThereAreMorePages_IsTrue()
         {
             using var httpTest = new HttpTest();
             MockResponse(httpTest, "page 1 data", 1, 2);
@@ -76,7 +77,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void HasNext_WhenThereAreNoMorePages_IsFalse()
+        public async Task HasNext_WhenThereAreNoMorePages_IsFalse()
         {
             using var httpTest = new HttpTest();
             MockResponse(httpTest, "page 1 data", 1, 2);
@@ -89,7 +90,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void NextAsync_FirstCall_RetrievesPage1()
+        public async Task NextAsync_FirstCall_RetrievesPage1()
         {
             using var httpTest = new HttpTest();
             MockResponse(httpTest, "page 1 data");
@@ -100,7 +101,7 @@ namespace GetIntoTeachingApiTests.Services
         }
 
         [Fact]
-        public async void NextAsync_SecondCall_RetrievesPage2()
+        public async Task NextAsync_SecondCall_RetrievesPage2()
         {
             using var httpTest = new HttpTest();
             MockResponse(httpTest, "page 1 data", 1, 2);
