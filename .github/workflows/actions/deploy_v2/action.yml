@@ -34,7 +34,7 @@ runs:
         echo "app_hostname=${app_hostname}" >> $GITHUB_OUTPUT
 
     - name: Use Terraform ${{ env.TERRAFORM_VERSION }}
-      uses: hashicorp/setup-terraform@v2
+      uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: ${{ env.TERRAFORM_VERSION }}
 
