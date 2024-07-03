@@ -54,6 +54,9 @@ namespace GetIntoTeachingApiTests.Contracts
         {
             await FlushState();
             await SeedDatabase();
+            
+            // add delay to allow for the queue to empty between tests
+            await Task.Delay(3000);
         }
 
         protected async Task AssertRequestMatchesSnapshot(string scenario)
