@@ -59,6 +59,11 @@ variable "enable_logit" {
   default = false
 }
 
+variable "enable_prometheus_monitoring" {
+  type    = bool
+  default = false
+}
+
 locals {
   azure_credentials       = try(jsondecode(var.azure_credentials), null)
   app_resource_group_name = "${var.azure_resource_prefix}-${var.service_short}-${var.config_short}-rg"
