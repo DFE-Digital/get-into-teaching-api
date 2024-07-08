@@ -18,6 +18,8 @@ module "api_application" {
   web_external_hostnames = var.gov_uk_host_names
   web_port               = 8080
   enable_logit           = var.enable_logit
+
+  enable_prometheus_monitoring  = var.enable_prometheus_monitoring
 }
 
 module "application_configuration" {
