@@ -49,7 +49,7 @@ jobs:
         run:  dotnet restore
 
       - name: Spin Up Stack
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: SonarCloud
         env:
