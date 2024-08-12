@@ -90,7 +90,7 @@ When the client is configured to point to the API, we need to ensure it uses the
 
 The API is an ASP.NET Core web application; to get up and running clone the repository and open `GetIntoTeachingApi.sln` in Visual Studio.
 
-You will need to set up the environment before booting up the dependent services in Docker with `docker-compose up`.
+You will need to set up the environment before booting up the dependent services in Docker with `docker compose up`.
 
 When the application runs in development it will open the Swagger documentation by default (the development shared secret for the admin client is `secret-admin`).
 
@@ -101,13 +101,13 @@ Quick start steps:
 - `az login`
 - `make setup-local-env`
 - Set properties of the created env.local to "Always copy"
-- `docker-compose up`
+- `docker compose up`
 - Run the application in Visual Studio
 - Open the Swagger UI at `/swagger/index/html` or view the job queue at `/hangfire`
 
 ### Building and testing locally
 
-This project is known to run in Mono, Microsoft Visual Studio and JetBrains Rider, including on a macos platform. The project must be built for .NET version 7.0. When running locally, be sure to start the docker-compose container prior to running the project.
+This project is known to run in Mono, Microsoft Visual Studio and JetBrains Rider, including on a macos platform. The project must be built for .NET version 7.0. When running locally, be sure to start the docker compose container prior to running the project.
 
 Configure a local instance of the Get Into Teaching application to connect to a local instance of the API by setting the application's environment variables to match the API, e.g.
 
