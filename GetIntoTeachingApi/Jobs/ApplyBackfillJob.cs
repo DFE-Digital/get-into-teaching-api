@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 using Flurl;
 using Flurl.Http;
@@ -12,8 +14,10 @@ using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Hangfire.Server;
+using Microsoft.AspNetCore.Connections;
 using Microsoft.Extensions.Logging;
 using MoreLinq;
+using NuGet.Protocol;
 
 namespace GetIntoTeachingApi.Jobs
 {
@@ -21,6 +25,7 @@ namespace GetIntoTeachingApi.Jobs
     public class ApplyBackfillJob : BaseJob
     {
         public static readonly int PagesPerJob = 10;
+        public static readonly int RecordsPerJob = 20;
         private readonly IBackgroundJobClient _jobClient;
         private readonly ILogger<ApplyBackfillJob> _logger;
         private readonly IAppSettings _appSettings;
@@ -39,12 +44,16 @@ namespace GetIntoTeachingApi.Jobs
         }
 
         [DisableConcurrentExecution(timeoutInSeconds: 60 * 60)]
-        public async Task RunAsync(DateTime updatedSince, int startPage = 1)
+        public async Task RunAsync(DateTime updatedSince, int startPage = 1, IEnumerable<int> candidateIds = null)
         {
             _appSettings.IsApplyBackfillInProgress = true;
-            _logger.LogInformation("ApplyBackfillJob - Started - Pages {StartPage} to {EndPage}", startPage, EndPage(startPage));
-            await QueueCandidateSyncJobs(updatedSince, startPage);
-            _logger.LogInformation("ApplyBackfillJob - Succeeded - Pages {StartPage} to {EndPage}", startPage, EndPage(startPage));
+            _logger.LogInformation("ApplyBackfillJob - Started - Pages {StartPage} to {EndPage} (candidate IDs: {CandidateIds})", startPage, EndPage(startPage), candidateIds?.Any());
+
+            await (candidateIds?.Any() ?? false
+                ? QueueCandidateSyncJobsCandidateIds(candidateIds)
+                : QueueCandidateSyncJobsUpdatedSince(updatedSince, startPage));
+
+            _logger.LogInformation("ApplyBackfillJob - Succeeded - Pages {StartPage} to {EndPage} (candidate IDs: {CandidateIds})", startPage, EndPage(startPage), candidateIds?.Any());
             _appSettings.IsApplyBackfillInProgress = false;
         }
 
@@ -53,7 +62,7 @@ namespace GetIntoTeachingApi.Jobs
             return startPage + PagesPerJob - 1;
         }
 
-        private async Task QueueCandidateSyncJobs(DateTime updatedSince, int startPage)
+        private async Task QueueCandidateSyncJobsUpdatedSince(DateTime updatedSince, int startPage)
         {
             // Enforce use of the Newtonsoft Json serializer
             FlurlHttp.Clients.UseNewtonsoft();
@@ -76,7 +85,48 @@ namespace GetIntoTeachingApi.Jobs
             // to process the next batch of pages.
             if (paginator.HasNext)
             {
-                _jobClient.Enqueue<ApplyBackfillJob>((x) => x.RunAsync(updatedSince, paginator.Page));
+                _jobClient.Enqueue<ApplyBackfillJob>((x) => x.RunAsync(updatedSince, paginator.Page, null));
+            }
+        }
+        
+        private async Task QueueCandidateSyncJobsCandidateIds(IEnumerable<int> candidateIds)
+        {
+            // Enforce use of the Newtonsoft Json serializer
+            FlurlHttp.Clients.UseNewtonsoft();
+            
+            var batch = candidateIds.Take(RecordsPerJob);
+            var remainder = candidateIds.Skip(RecordsPerJob);
+
+            foreach (int candidateId in batch) 
+            {
+                _logger.LogInformation("Fetching CandidateID C{CandidateId} from the Apply API", candidateId);
+
+                try
+                {
+                    var request = Env.ApplyCandidateApiUrl
+                        .AppendPathSegment("candidates")
+                        .AppendPathSegment(String.Format(CultureInfo.InvariantCulture, "C{0}", candidateId))
+                        .WithOAuthBearerToken(Env.ApplyCandidateApiKey);
+
+                    var candidate = await request.GetJsonAsync<Response<GetIntoTeachingApi.Models.Apply.Candidate>>();
+
+                    _logger.LogInformation("Scheduling ApplyBackfillJob - Syncing CandidateID: C{Id}", candidateId);
+                    
+                    _jobClient.Schedule<ApplyCandidateSyncJob>(x => x.Run(candidate.Data), TimeSpan.FromSeconds(60));
+                }
+                catch (FlurlHttpException ex)
+                {
+                    _logger.LogError("Failed to fetch CandidateID C{CandidateId} from the Apply API (status: {Status})", candidateId, ex.StatusCode);
+                }
+
+                await Task.Delay(100); // add a short delay so as not to overwhelm the Apply API
+            }
+            
+            // When we reach the end page we re-queue the backfill job
+            // to process the next batch of candidate IDs.
+            if (remainder?.Any() ?? false)
+            {
+                _jobClient.Enqueue<ApplyBackfillJob>((x) => x.RunAsync(DateTime.MinValue, 1, remainder.ToArray()));
             }
         }
     }
