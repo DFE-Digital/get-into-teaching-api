@@ -138,6 +138,43 @@ namespace GetIntoTeachingApiTests.Controllers
                 It.Is<Job>(job => job.Type == typeof(ApplyBackfillJob) && job.Method.Name == "RunAsync" && (DateTime)job.Args[0] == updatedSince),
                 It.IsAny<EnqueuedState>()),Times.Never);
         }
+        
+        [Fact]
+        public void BackfillApplyCandidatesFromIds_Authorize_IsPresent()
+        {
+            typeof(OperationsController).GetMethod("BackfillApplyCandidatesFromIds")
+                .Should().BeDecoratedWith<AuthorizeAttribute>(a => a.Roles == "Admin");
+        }
+        
+        [Fact]
+        public void BackfillApplyCandidatesFromIds_WhenNotAlreadyRunning_EnqueuesJob()
+        {
+            _mockAppSettings.Setup(m => m.IsApplyBackfillInProgress).Returns(false);
+            var candidateIds = new[] { 1, 2, 3 };
+            var request = new CandidateIdsRequest { CandidateIds = candidateIds };
+            var response = _controller.BackfillApplyCandidatesFromIds(request);
+            
+            response.Should().BeOfType<NoContentResult>();
+
+            _mockJobClient.Verify(x => x.Create(
+                It.Is<Job>(job => job.Type == typeof(ApplyBackfillJob) && job.Method.Name == "RunAsync" && (int[])job.Args[2] == candidateIds),
+                It.IsAny<EnqueuedState>()), Times.Once);
+        }
+        
+        [Fact]
+        public void BackfillApplyCandidatesFromIds_WhenAlreadyRunning_ReturnsBadRequest()
+        {
+            _mockAppSettings.Setup(m => m.IsApplyBackfillInProgress).Returns(true);
+            var candidateIds = new[] { 1, 2, 3 };
+            var request = new CandidateIdsRequest { CandidateIds = candidateIds };
+            var response = _controller.BackfillApplyCandidatesFromIds(request);
+            
+            response.Should().BeOfType<BadRequestObjectResult>();
+
+            _mockJobClient.Verify(x => x.Create(
+                It.Is<Job>(job => job.Type == typeof(ApplyBackfillJob) && job.Method.Name == "RunAsync" && (int[])job.Args[2] == candidateIds),
+                It.IsAny<EnqueuedState>()),Times.Never);
+        }
 
         [Theory]
         [InlineData(true, true, true, true, true, "healthy")]

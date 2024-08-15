@@ -142,8 +142,31 @@ namespace GetIntoTeachingApi.Controllers
             {
                 return BadRequest("Backfill already in progress");
             }
+            
+            _jobClient.Enqueue<ApplyBackfillJob>((x) => x.RunAsync(updatedSince, 1, null));
 
-            _jobClient.Enqueue<ApplyBackfillJob>((x) => x.RunAsync(updatedSince, 1));
+            return NoContent();
+        }
+        
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [Route("backfill_apply_candidates_from_ids")]
+        [SwaggerOperation(
+            Summary = "Triggers a backfill job to sync the CRM with the Apply candidates for specified candidate Ids.",
+            Description = "The backfill will query all candidate information from the Apply API and " +
+                          "queue jobs to sync the data with the CRM.",
+            OperationId = "BackfillApplyCandidatesFromIds",
+            Tags = new[] { "Operations" })]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult BackfillApplyCandidatesFromIds([FromBody, SwaggerRequestBody("Candidate IDs to backfill", Required = true)] CandidateIdsRequest request)
+        {
+            if (_appSettings.IsApplyBackfillInProgress)
+            {
+                return BadRequest("Backfill already in progress");
+            }
+            
+            _jobClient.Enqueue<ApplyBackfillJob>((x) => x.RunAsync(DateTime.MinValue, 1, request.CandidateIds));
 
             return NoContent();
         }

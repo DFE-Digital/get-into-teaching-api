@@ -86,6 +86,33 @@ namespace GetIntoTeachingApiTests.Jobs
                 (DateTime)job.Args[0] == updatedSince && (int)job.Args[1] == (ApplyBackfillJob.PagesPerJob + 1)),
                 It.IsAny<EnqueuedState>()), Times.Once);
         }
+        
+        [Fact]
+        public async Task RunAsync_WithCandidateIds()
+        {
+            int[] candidateIds = new[] { 1,2,3 };
+            var candidate1 = new Candidate() { Id = "1", Attributes = new CandidateAttributes() { Email = $"email1@address.com" } };
+            var candidate2 = new Candidate() { Id = "2", Attributes = new CandidateAttributes() { Email = $"email2@address.com" } };
+            var candidate3 = new Candidate() { Id = "3", Attributes = new CandidateAttributes() { Email = $"email3@address.com" } };
+            
+            using (var httpTest = new HttpTest())
+            {
+                MockIndividualResponse(httpTest, new Response<Candidate>() { Data = candidate1 }, 1);
+                MockIndividualResponse(httpTest, new Response<Candidate>() { Data = candidate2 }, 2);
+                MockIndividualResponse(httpTest, new Response<Candidate>() { Data = candidate3 }, 3);
+                
+                await _job.RunAsync(DateTime.MinValue, 1, candidateIds);
+            }
+
+            _mockJobClient.Verify(x => x.Create(
+                It.Is<Job>(job => job.Type == typeof(ApplyCandidateSyncJob) && job.Method.Name == "Run"),
+                It.IsAny<ScheduledState>()), Times.Exactly(3));
+
+            _mockAppSettings.VerifySet(m => m.IsApplyBackfillInProgress = true, Times.Once);
+            _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Started - Pages 1 to 10");
+            _mockLogger.VerifyInformationWasCalled("ApplyBackfillJob - Succeeded - Pages 1 to 10");
+            _mockAppSettings.VerifySet(m => m.IsApplyBackfillInProgress = false, Times.Once);
+        }
 
         [Fact]
         public async Task RunAsync_WithNoCandidates_DoesNotQueueJobs()
@@ -121,6 +148,17 @@ namespace GetIntoTeachingApiTests.Jobs
                     .WithQueryParam("updated_since", DateTime.MinValue)
                     .WithHeader("Authorization", $"Bearer {_mockEnv.Object.ApplyCandidateApiKey}")
                     .RespondWith(json, 200, headers);
+        }
+        
+        private void MockIndividualResponse(HttpTest httpTest, Response<Candidate> response, int candidateId)
+        {
+            var json = JsonConvert.SerializeObject(response);
+            
+            httpTest
+                .ForCallsTo($"{_mockEnv.Object.ApplyCandidateApiUrl}/candidates/C{candidateId}")
+                .WithVerb("GET")
+                .WithHeader("Authorization", $"Bearer {_mockEnv.Object.ApplyCandidateApiKey}")
+                .RespondWith(json, 200);
         }
     }
 }
