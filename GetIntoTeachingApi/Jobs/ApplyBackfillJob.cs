@@ -48,13 +48,10 @@ namespace GetIntoTeachingApi.Jobs
         {
             _appSettings.IsApplyBackfillInProgress = true;
             _logger.LogInformation("ApplyBackfillJob - Started - Pages {StartPage} to {EndPage} (candidate IDs: {CandidateIds})", startPage, EndPage(startPage), candidateIds?.Any());
-            
-            if (candidateIds?.Any() ?? false)
-            {
-                await QueueCandidateSyncJobsCandidateIds(candidateIds);
-            }  else {
-                await QueueCandidateSyncJobsUpdatedSince(updatedSince, startPage);
-            }
+
+            await (candidateIds?.Any() ?? false
+                ? QueueCandidateSyncJobsCandidateIds(candidateIds)
+                : QueueCandidateSyncJobsUpdatedSince(updatedSince, startPage));
 
             _logger.LogInformation("ApplyBackfillJob - Succeeded - Pages {StartPage} to {EndPage} (candidate IDs: {CandidateIds})", startPage, EndPage(startPage), candidateIds?.Any());
             _appSettings.IsApplyBackfillInProgress = false;
@@ -122,7 +119,7 @@ namespace GetIntoTeachingApi.Jobs
                     _logger.LogError("Failed to fetch CandidateID C{CandidateId} from the Apply API (status: {Status})", candidateId, ex.StatusCode);
                 }
 
-                await Task.Delay(100);
+                await Task.Delay(100); // add a short delay so as not to overwhelm the Apply API
             }
             
             // When we reach the end page we re-queue the backfill job
