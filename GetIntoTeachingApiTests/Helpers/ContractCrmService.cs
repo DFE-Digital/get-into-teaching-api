@@ -85,6 +85,11 @@ namespace GetIntoTeachingApiTests.Helpers
             return _crmService.CandidateYetToRegisterForTeachingEvent(candidateId, teachingEventId);
         }
 
+        public bool CandidateHasDegreeQualification(Guid candidateId, CandidateQualification.DegreeType degreeType, string degreeSubject)
+        {
+            return _crmService.CandidateHasDegreeQualification(candidateId, degreeType, degreeSubject);
+        }
+
         public string CheckStatus()
         {
             return _crmService.CheckStatus();

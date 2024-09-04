@@ -28,6 +28,9 @@ namespace GetIntoTeachingApi.Services
         bool CandidateAlreadyHasLocalEventSubscriptionType(Guid candidateId);
         bool CandidateYetToAcceptPrivacyPolicy(Guid candidateId, Guid privacyPolicyId);
         bool CandidateYetToRegisterForTeachingEvent(Guid candidateId, Guid teachingEventId);
+
+        bool CandidateHasDegreeQualification(Guid candidateId, CandidateQualification.DegreeType degreeType,
+            string degreeSubject);
         void Save(BaseModel model);
         void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);
         void DeleteLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);
