@@ -75,6 +75,11 @@ namespace GetIntoTeachingApi.Services
             candidate.Qualifications.Clear();
             return qualifications;
         }
+        
+        private static void AddQualifications(IEnumerable<CandidateQualification> candidateQualifications, Candidate candidate)
+        {
+            candidate.Qualifications.AddRange(candidateQualifications);
+        }
 
         private static IEnumerable<CandidateSchoolExperience> ClearSchoolExperiences(Candidate candidate)
         {
@@ -165,9 +170,14 @@ namespace GetIntoTeachingApi.Services
         {
             foreach (var qualification in qualifications)
             {
-                qualification.CandidateId = (Guid)candidate.Id;
-                string json = qualification.SerializeChangeTracked();
-                _jobClient.Enqueue<UpsertModelWithCandidateIdJob<CandidateQualification>>((x) => x.Run(json, null));
+                if (!_crm.CandidateHasDegreeQualification((Guid)candidate.Id, CandidateQualification.DegreeType.Degree,
+                        qualification.DegreeSubject))
+                {
+                    qualification.CandidateId = (Guid)candidate.Id;
+                    string json = qualification.SerializeChangeTracked();
+
+                    _jobClient.Enqueue<UpsertModelWithCandidateIdJob<CandidateQualification>>((x) => x.Run(json, null));    
+                }
             }
         }
 
