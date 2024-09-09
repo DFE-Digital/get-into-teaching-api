@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
@@ -33,6 +34,11 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
         public string Telephone { get; set; }
         public bool? HasDbsCertificate { get; set; }
         public DateTime? DbsCertificateIssuedAt { get; set; }
+        public Guid? QualificationId { get; set; }
+        public int? DegreeStatusId { get; set; }
+        public int? DegreeTypeId { get; set; }
+        public string DegreeSubject { get; set; }
+        public int? UkDegreeGradeId { get; set; }
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
@@ -75,6 +81,17 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
 
             HasDbsCertificate = candidate.HasDbsCertificate;
             DbsCertificateIssuedAt = candidate.DbsCertificateIssuedAt;
+            
+            var latestQualification = candidate.Qualifications.OrderByDescending(q => q.CreatedAt).FirstOrDefault();
+
+            if (latestQualification != null)
+            {
+                QualificationId = latestQualification.Id;
+                DegreeSubject = latestQualification.DegreeSubject;
+                UkDegreeGradeId = latestQualification.UkDegreeGradeId;
+                DegreeStatusId = latestQualification.DegreeStatusId;
+                DegreeTypeId = latestQualification.TypeId;
+            }
         }
 
         private Candidate CreateCandidate()
@@ -109,6 +126,7 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
 
             ConfigureChannel(candidate);
             AcceptPrivacyPolicy(candidate);
+            AddQualification(candidate);
 
             return candidate;
         }
@@ -131,6 +149,26 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
                     AcceptedAt = DateTimeProvider.UtcNow,
                 };
             }
+        }
+        
+        private void AddQualification(Candidate candidate)
+        {
+            if (ContainsQualification() && !candidate.Qualifications.Any())
+            {
+                candidate.Qualifications.Add(new CandidateQualification()
+                {
+                    Id = QualificationId,
+                    UkDegreeGradeId = UkDegreeGradeId,
+                    DegreeStatusId = DegreeStatusId,
+                    DegreeSubject = DegreeSubject,
+                    TypeId = DegreeTypeId ?? (int)CandidateQualification.DegreeType.Degree
+                });
+            }
+        }
+        
+        private bool ContainsQualification()
+        {
+            return UkDegreeGradeId != null || DegreeStatusId != null || DegreeSubject != null || DegreeTypeId != null;
         }
     }
 }

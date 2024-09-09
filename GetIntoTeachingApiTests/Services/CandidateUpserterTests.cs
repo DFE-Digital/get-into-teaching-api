@@ -99,11 +99,8 @@ namespace GetIntoTeachingApiTests.Services
             _upserter.Upsert(_candidate);
 
             qualification.CandidateId = candidateId;
-
-            _mockJobClient.Verify(x => x.Create(
-                           It.Is<Job>(job => job.Type == typeof(UpsertModelWithCandidateIdJob<CandidateQualification>) && job.Method.Name == "Run" &&
-                           IsMatch(qualification, (string)job.Args[0])),
-                           It.IsAny<EnqueuedState>()));
+            
+            _mockCrm.Verify(mock => mock.Save(It.Is<CandidateQualification>(q => q.CandidateId == candidateId)), Times.Once);
         }
 
         [Fact]
