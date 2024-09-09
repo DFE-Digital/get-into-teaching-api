@@ -41,7 +41,7 @@ namespace GetIntoTeachingApi.Jobs
         public void Run(string json, PerformContext context)
         {
             var candidate = json.DeserializeChangeTracked<Candidate>();
-
+            
             if (Deduplicate(Signature(candidate), context, _contextAdapter))
             {
                 _logger.LogInformation("UpsertCandidateJob - Deduplicating");

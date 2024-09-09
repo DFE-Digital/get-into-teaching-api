@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using FluentValidation;
+using Flurl.Util;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
+using NuGet.Protocol;
 
 namespace GetIntoTeachingApi.Services
 {
@@ -247,6 +249,14 @@ namespace GetIntoTeachingApi.Services
             return _service.CreateQuery("msevtmgt_eventregistration", Context()).FirstOrDefault(entity =>
                 entity.GetAttributeValue<EntityReference>("msevtmgt_contactid").Id == candidateId &&
                 entity.GetAttributeValue<EntityReference>("msevtmgt_eventid").Id == teachingEventId) == null;
+        }
+
+        public bool CandidateHasDegreeQualification(Guid candidateId, CandidateQualification.DegreeType degreeType, string degreeSubject)
+        {
+            // this check helps prevent duplicate qualification records from being created
+            return !(_service.CreateQuery("dfe_candidatequalification", Context()).FirstOrDefault(entity =>
+                entity.GetAttributeValue<EntityReference>("dfe_contactid").Id == candidateId &&
+                entity.GetAttributeValue<int?>("dfe_type") == (int)CandidateQualification.DegreeType.Degree) == null);
         }
 
         public void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context)

@@ -33,8 +33,8 @@ namespace GetIntoTeachingApi.Services
             UpdateEventSubscriptionType(candidate);
 
             SaveCandidate(candidate);
-
             SaveQualifications(qualifications, candidate);
+            
             SavePastTeachingPositions(pastTeachingPositions, candidate);
             SaveApplicationForms(applicationForms, candidate);
             SaveTeachingEventRegistrations(registrations, candidate);
@@ -43,6 +43,9 @@ namespace GetIntoTeachingApi.Services
             SaveSchoolExperiences(schoolExperiences, candidate);
 
             IncrementCallbackBookingQuotaNumberOfBookings(phoneCall);
+            
+            // Re-add qualifications back to candidate object to ensure it is correctly returned
+            AddQualifications(qualifications, candidate);
         }
 
         private static IEnumerable<TeachingEventRegistration> ClearTeachingEventRegistrations(Candidate candidate)
@@ -74,6 +77,11 @@ namespace GetIntoTeachingApi.Services
             var qualifications = new List<CandidateQualification>(candidate.Qualifications);
             candidate.Qualifications.Clear();
             return qualifications;
+        }
+        
+        private static void AddQualifications(IEnumerable<CandidateQualification> candidateQualifications, Candidate candidate)
+        {
+            candidate.Qualifications.AddRange(candidateQualifications);
         }
 
         private static IEnumerable<CandidateSchoolExperience> ClearSchoolExperiences(Candidate candidate)
@@ -140,8 +148,22 @@ namespace GetIntoTeachingApi.Services
         private void SaveCandidate(Candidate candidate)
         {
             candidate.IsNewRegistrant = candidate.Id == null;
-
             _crm.Save(candidate);
+        }
+        
+        private void SaveQualifications(IEnumerable<CandidateQualification> qualifications, Candidate candidate)
+        {
+            foreach (var qualification in qualifications)
+            {
+                // only add the degree qualification to the CRM if it doesn't already exist
+                if (!_crm.CandidateHasDegreeQualification((Guid)candidate.Id, CandidateQualification.DegreeType.Degree,
+                        qualification.DegreeSubject))
+                {
+                    qualification.CandidateId = (Guid)candidate.Id;
+                    // call the CRM immediate so we get qualification ID and prevent duplicate records from being created
+                    _crm.Save(qualification);
+                }
+            }
         }
 
         private void SaveTeachingEventRegistrations(IEnumerable<TeachingEventRegistration> registrations, Candidate candidate)
@@ -160,16 +182,7 @@ namespace GetIntoTeachingApi.Services
                 _jobClient.Enqueue<UpsertModelWithCandidateIdJob<TeachingEventRegistration>>((x) => x.Run(json, null));
             }
         }
-
-        private void SaveQualifications(IEnumerable<CandidateQualification> qualifications, Candidate candidate)
-        {
-            foreach (var qualification in qualifications)
-            {
-                qualification.CandidateId = (Guid)candidate.Id;
-                string json = qualification.SerializeChangeTracked();
-                _jobClient.Enqueue<UpsertModelWithCandidateIdJob<CandidateQualification>>((x) => x.Run(json, null));
-            }
-        }
+        
 
         private void SaveApplicationForms(IEnumerable<ApplicationForm> applicationForms, Candidate candidate)
         {
