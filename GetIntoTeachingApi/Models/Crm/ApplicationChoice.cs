@@ -29,6 +29,7 @@ namespace GetIntoTeachingApi.Models.Crm
             Withdrawn = 222750011,
             ConditionsNotMet = 222750012,
             OfferDeferred = 222750013,
+            Inactive = 222750014,
         }
 
         [EntityField("dfe_applyapplicationform", typeof(EntityReference), "dfe_applyapplicationform")]
