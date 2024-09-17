@@ -55,8 +55,7 @@ namespace GetIntoTeachingApiTests.Middleware
                 _context.Request.QueryString,
                 Payload = string.Empty,
             };
-
-            _mockLogger.VerifyInformationWasCalled($"HTTP Request: {expectedInfo}");
+            
             _mockLogger.VerifyInformationWasCalled($"HTTP Response: {expectedInfo}");
         }
 
@@ -88,8 +87,7 @@ namespace GetIntoTeachingApiTests.Middleware
                 _context.Request.QueryString,
                 Payload = redactedJson,
             };
-
-            _mockLogger.VerifyInformationWasCalled($"HTTP Request: {expectedInfo}");
+            
             _mockLogger.VerifyInformationWasCalled($"HTTP Response: {expectedInfo}");
         }
 
@@ -108,8 +106,7 @@ namespace GetIntoTeachingApiTests.Middleware
                 _context.Request.QueryString,
                 Payload = string.Empty,
             };
-
-            _mockLogger.VerifyInformationWasCalled($"HTTP Request: {expectedInfo}");
+            
             _mockLogger.VerifyInformationWasCalled($"HTTP Response: {expectedInfo}");
         }
 

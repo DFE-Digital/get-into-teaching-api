@@ -28,7 +28,6 @@ namespace GetIntoTeachingApi.Middleware
 
         public async Task Invoke(HttpContext context)
         {
-            await LogRequest(context);
             await LogResponse(context);
         }
 
@@ -81,18 +80,6 @@ namespace GetIntoTeachingApi.Middleware
         {
             var input = $"{method} {path}";
             return _config.CompactLoggingPatterns.All(regex => !regex.IsMatch(input));
-        }
-
-        private async Task LogRequest(HttpContext context)
-        {
-            context.Request.EnableBuffering();
-
-            // Copy request body stream, resetting position for next middleware.
-            await using var stream = _recyclableMemoryStreamManager.GetStream();
-            await context.Request.Body.CopyToAsync(stream);
-            context.Request.Body.Position = 0;
-
-            LogInformation("HTTP Request", ReadStream(stream), context.Request);
         }
 
         private async Task LogResponse(HttpContext context)
