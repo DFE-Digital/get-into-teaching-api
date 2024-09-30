@@ -73,7 +73,7 @@ namespace GetIntoTeachingApiTests.Middleware
                 new
                 {
                     password = "******",
-                    addressPostcode = "TE7 1NG",
+                    addressPostcode = "******",
                 }
             );
 
