@@ -36,7 +36,7 @@ namespace GetIntoTeachingApiTests.Utils
                         password = "******",
                     },
                     email = "******",
-                    addressPostcode = "TE7 1NG",
+                    addressPostcode = "******",
                 }
             );
 
