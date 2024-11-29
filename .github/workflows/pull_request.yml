@@ -36,7 +36,7 @@ jobs:
       run: dotnet restore
 
     - name: Build
-      run: dotnet build --configuration Release --no-restore /warnaserror
+      run: dotnet build --configuration Release --no-restore /warnaserror /p:CheckEolTargetFramework=false
 
     - name: Spin Up Stack
       run: docker compose up -d
