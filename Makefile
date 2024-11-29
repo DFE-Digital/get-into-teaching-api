@@ -1,4 +1,3 @@
-TERRAFILE_VERSION=0.8
 ARM_TEMPLATE_TAG=1.1.6
 RG_TAGS={"Product" : "Get into teaching website"}
 SERVICE_SHORT=gitapi
@@ -19,10 +18,6 @@ install-fetch-config:
 	    && curl -s https://raw.githubusercontent.com/DFE-Digital/bat-platform-building-blocks/master/scripts/fetch_config/fetch_config.rb -o fetch_config.rb \
 	    && chmod +x fetch_config.rb \
 	    || true
-
-bin/terrafile: ## Install terrafile to manage terraform modules
-	mkdir -p bin | curl -sL https://github.com/coretech/terrafile/releases/download/v${TERRAFILE_VERSION}/terrafile_${TERRAFILE_VERSION}_$$(uname)_x86_64.tar.gz \
-		| tar xz -C ./bin terrafile
 
 bin/yaq:
 	mkdir -p bin | curl -sL https://github.com/uk-devops/yaq/releases/download/v0.0.3/yaq_linux_amd64_v0.0.3.zip -o yaq.zip && unzip -o yaq.zip -d ./bin/ && rm yaq.zip
@@ -65,8 +60,12 @@ setup-local-env: local_aks install-fetch-config set-azure-account set-key-vault-
 edit-local-app-secrets: local_aks install-fetch-config set-azure-account
 	./fetch_config.rb -s azure-key-vault-secret:${KEY_VAULT}/API-KEYS -e -d azure-key-vault-secret:${KEY_VAULT}/API-KEYS -f yaml -c
 
-terraform-init: bin/terrafile set-azure-account
-	./bin/terrafile -p terraform/aks/vendor/modules -f terraform/aks/config/$(CONFIG)_Terrafile
+.PHONY: vendor-modules
+vendor-modules:
+	rm -rf terraform/aks/vendor/modules/aks
+	git -c advice.detachedHead=false clone --depth=1 --single-branch --branch ${TERRAFORM_MODULES_TAG} https://github.com/DFE-Digital/terraform-modules.git terraform/aks/vendor/modules/aks
+
+terraform-init: vendor-modules set-azure-account
 	terraform -chdir=terraform/aks init -upgrade -reconfigure \
 		-backend-config=resource_group_name=${AZURE_RESOURCE_PREFIX}-${SERVICE_SHORT}-${CONFIG_SHORT}-rg \
 		-backend-config=storage_account_name=${AZURE_RESOURCE_PREFIX}${SERVICE_SHORT}tfstate${CONFIG_SHORT}sa \
