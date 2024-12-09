@@ -78,10 +78,11 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityField("createdby", typeof(EntityReference), "systemuser")]
         public Guid? CreatedBy { get; set; }
         
-        [EntityField("dfe_ContactID", typeof(EntityReference), "contact")]
+        [EntityField("dfe_contactid", typeof(EntityReference), "contact")]
         public Guid ContactId { get; set; }
-        
-        public bool? CreationChannel { get; set; }
+
+        [EntityField("dfe_creationchannel")] 
+        public bool? CreationChannel { get; set; } = false;
         
         [EntityField("dfe_creationchannelsource", typeof(OptionSetValue))]
         public int? CreationChannelSourceId { get; set; }
@@ -91,6 +92,14 @@ namespace GetIntoTeachingApi.Models.Crm
         
         [EntityField("dfe_creationchannelactivities", typeof(OptionSetValue))]
         public int? CreationChannelActivityId { get; set; }
-
+        
+        public ContactChannelCreation() : base()
+        {
+        }
+        
+        public ContactChannelCreation(Entity entity, ICrmService crm, IServiceProvider serviceProvider)
+            : base(entity, crm, serviceProvider)
+        {
+        }
     }
 }
