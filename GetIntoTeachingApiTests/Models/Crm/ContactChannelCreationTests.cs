@@ -24,7 +24,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
                 a => a.Name == "dfe_creationchannelactivities" && a.Type == typeof(OptionSetValue));
 
             type.GetProperty("CreatedBy").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "createdby");
-            type.GetProperty("ContactId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_contactid");
+            type.GetProperty("CandidateId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_contactid");
             type.GetProperty("CreationChannel").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_creationchannel");
             type.GetProperty("CreationChannelSourceId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_creationchannelsource");
             type.GetProperty("CreationChannelServiceId").Should().BeDecoratedWith<EntityFieldAttribute>(a => a.Name == "dfe_creationchannelservice");

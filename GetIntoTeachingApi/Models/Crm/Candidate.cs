@@ -297,6 +297,8 @@ namespace GetIntoTeachingApi.Models.Crm
         public CandidatePrivacyPolicy PrivacyPolicy { get; set; }
         [EntityRelationship("dfe_contact_dfe_candidateschoolexperience_ContactId", typeof(CandidateSchoolExperience))]
         public List<CandidateSchoolExperience> SchoolExperiences { get; set; } = new List<CandidateSchoolExperience>();
+        [EntityRelationship("dfe_contact_dfe_contactchannelcreation_ContactId", typeof(ContactChannelCreation))]
+        public List<ContactChannelCreation> ContactChannelCreations { get; set; } = new List<ContactChannelCreation>();
 
         public Candidate()
             : base()

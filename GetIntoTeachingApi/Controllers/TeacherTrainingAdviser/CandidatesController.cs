@@ -69,6 +69,12 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
 
             return NoContent();
         }
+        
+        
+        
+        
+        
+        
 
         [HttpPost]
         [Route("exchange_access_token/{accessToken}")]
