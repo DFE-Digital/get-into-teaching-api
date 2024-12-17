@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
@@ -8,7 +9,7 @@ namespace GetIntoTeachingApi.Models.Crm
 {
     [SwaggerIgnore]
     [Entity("dfe_contactchannelcreation")]
-    public class ContactChannelCreation : BaseModel
+    public class ContactChannelCreation : BaseModel, IHasCandidateId
     {
         public enum CreationChannelSource
         {
@@ -74,13 +75,13 @@ namespace GetIntoTeachingApi.Models.Crm
             Webinar = 222750024
         }
         
+        [JsonIgnore]
+        [EntityField("dfe_contactid", typeof(EntityReference), "contact")]
+        public Guid CandidateId { get; set; }
         
         [EntityField("createdby", typeof(EntityReference), "systemuser")]
         public Guid? CreatedBy { get; set; }
         
-        [EntityField("dfe_contactid", typeof(EntityReference), "contact")]
-        public Guid ContactId { get; set; }
-
         [EntityField("dfe_creationchannel")] 
         public bool? CreationChannel { get; set; } = false;
         

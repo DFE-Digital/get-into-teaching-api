@@ -33,5 +33,11 @@ namespace GetIntoTeachingApi.Database
                 .HasForeignKey(e => e.BuildingId).OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<PickListItem>().HasKey(t => new { t.Id, t.EntityName, t.AttributeName });
         }
+
+        //TODO: remove this extra logging
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.EnableSensitiveDataLogging();
+        }
     }
 }
