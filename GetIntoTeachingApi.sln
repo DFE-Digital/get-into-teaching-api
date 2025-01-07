@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30011.22
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GetIntoTeachingApi", "GetIntoTeachingApi\GetIntoTeachingApi.csproj", "{C878757F-E660-40B5-B706-0140A2DEA2BF}"
 EndProject
@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetIntoTeaching", "GetIntoTeaching\GetIntoTeaching.csproj", "{596DDF14-B666-415E-B33F-947512864C69}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +28,10 @@ Global
 		{CAC77B5B-9DBF-41DB-9BC2-EFD5A8C4CB69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CAC77B5B-9DBF-41DB-9BC2-EFD5A8C4CB69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CAC77B5B-9DBF-41DB-9BC2-EFD5A8C4CB69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{596DDF14-B666-415E-B33F-947512864C69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{596DDF14-B666-415E-B33F-947512864C69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{596DDF14-B666-415E-B33F-947512864C69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{596DDF14-B666-415E-B33F-947512864C69}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
