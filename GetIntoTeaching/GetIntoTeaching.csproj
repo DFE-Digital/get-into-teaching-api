@@ -10,4 +10,10 @@
 		<PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.1.32" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Domain\CandidateProfile\" />
+	  <Folder Include="Domain\Common\" />
+	  <Folder Include="Infrastructure\Persistence\CandidateManagement\DataModel\" />
+	</ItemGroup>
+
 </Project>
