@@ -12,7 +12,7 @@ namespace GetIntoTeaching.Infrastructure.Persistence.CandidateManagement
     /// <summary>
     /// 
     /// </summary>
-    public sealed class DynamicsCrmQueryHandler : IQueryHandler
+    public sealed class DynamicsCrmQueryHandler : ICrmQueryHandler
     {
         private readonly ServiceClient _dataverseServiceClient;
         private readonly OrganizationServiceContext _serviceContext;

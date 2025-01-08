@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -6,14 +6,26 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Domain\CandidateProfile\**" />
+    <Compile Remove="Domain\Common\**" />
+    <EmbeddedResource Remove="Domain\CandidateProfile\**" />
+    <EmbeddedResource Remove="Domain\Common\**" />
+    <None Remove="Domain\CandidateProfile\**" />
+    <None Remove="Domain\Common\**" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.1.32" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Domain\CandidateProfile\" />
-	  <Folder Include="Domain\Common\" />
+	  <Folder Include="Infrastructure\Persistence\CandidateBackgroundProcessing\" />
 	  <Folder Include="Infrastructure\Persistence\CandidateManagement\DataModel\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\GetIntoTeaching.Core\GetIntoTeaching.Core.csproj" />
 	</ItemGroup>
 
 </Project>

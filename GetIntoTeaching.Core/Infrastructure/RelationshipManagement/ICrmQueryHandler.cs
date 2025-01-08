@@ -7,7 +7,7 @@ namespace GetIntoTeaching.Infrastructure.Persistence.CandidateManagement.Common
     /// <summary>
     /// 
     /// </summary>
-    public interface IQueryHandler
+    public interface ICrmQueryHandler
     {
         /// <summary>
         /// Performs a query by creating a LINQ query for entities over the precribed CRM, utilising the
