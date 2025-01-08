@@ -9,19 +9,17 @@
   <ItemGroup>
     <Compile Remove="Domain\CandidateProfile\**" />
     <Compile Remove="Domain\Common\**" />
+    <Compile Remove="Infrastructure\Persistence\CandidateManagement\DataModel\**" />
     <EmbeddedResource Remove="Domain\CandidateProfile\**" />
     <EmbeddedResource Remove="Domain\Common\**" />
+    <EmbeddedResource Remove="Infrastructure\Persistence\CandidateManagement\DataModel\**" />
     <None Remove="Domain\CandidateProfile\**" />
     <None Remove="Domain\Common\**" />
+    <None Remove="Infrastructure\Persistence\CandidateManagement\DataModel\**" />
   </ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.1.32" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Infrastructure\Persistence\CandidateBackgroundProcessing\" />
-	  <Folder Include="Infrastructure\Persistence\CandidateManagement\DataModel\" />
 	</ItemGroup>
 
 	<ItemGroup>
