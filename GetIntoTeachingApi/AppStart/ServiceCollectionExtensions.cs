@@ -95,15 +95,16 @@ The GIT API aims to provide:
                         },
                     });
 
-                c.AddSecurityDefinition("apiKey", new OpenApiSecurityScheme
-                {
-                    Type = SecuritySchemeType.ApiKey,
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                });
+                //c.AddSecurityDefinition("apiKey", new OpenApiSecurityScheme
+                //{
+                //    Type = SecuritySchemeType.ApiKey,
+                //    Name = "Authorization",
+                //    In = ParameterLocation.Header,
+                //}
+                //);
 
-                c.OperationFilter<AuthOperationFilter>();
-                c.DocumentFilter<SwaggerDefinitionsFilter>();
+                //c.OperationFilter<AuthOperationFilter>();
+                //c.DocumentFilter<SwaggerDefinitionsFilter>();
                 c.EnableAnnotations();
             });
             services.AddFluentValidationRulesToSwagger();

@@ -1,4 +1,5 @@
-﻿using Microsoft.PowerPlatform.Dataverse.Client;
+﻿using GetIntoTeaching.Infrastructure.Persistence.CandidateManagement.Common;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
@@ -6,7 +7,7 @@ using System.Collections.Immutable;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 
-namespace GetIntoTeaching.Infrastructure.Persistence.CandidateManagement.Common
+namespace GetIntoTeaching.Infrastructure.Persistence.CandidateManagement
 {
     /// <summary>
     /// 
@@ -40,12 +41,12 @@ namespace GetIntoTeaching.Infrastructure.Persistence.CandidateManagement.Common
         /// <param name="selector"></param>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        public ImmutableList<IExtensibleDataObject> ReadItemsAsync(
+        public ImmutableList<IExtensibleDataObject> ReadItems(
             string entityName,
             Expression<Func<IExtensibleDataObject, IExtensibleDataObject>> selector,
             Expression<Func<IExtensibleDataObject, bool>> predicate)
         {
-            ArgumentNullException.ThrowIfNullOrEmpty(entityName);
+            ArgumentException.ThrowIfNullOrEmpty(entityName);
 
             return _serviceContext.CreateQuery(entityName)
                 .Where(predicate)
@@ -58,7 +59,7 @@ namespace GetIntoTeaching.Infrastructure.Persistence.CandidateManagement.Common
         /// <param name="query"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public ImmutableList<IExtensibleDataObject> ReadItemsAsync(IExtensibleDataObject query)
+        public ImmutableList<IExtensibleDataObject> ReadItems(IExtensibleDataObject query)
         {
             ArgumentNullException.ThrowIfNull(query);
 

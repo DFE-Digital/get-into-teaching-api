@@ -32,7 +32,7 @@ namespace GetIntoTeaching.Infrastructure.Persistence.CandidateManagement.Common
         /// A configured instance of the specified generic type which encapsulates the
         /// requested CRM entity item.
         /// </returns>
-        ImmutableList<IExtensibleDataObject> ReadItemsAsync(
+        ImmutableList<IExtensibleDataObject> ReadItems(
             string entityName,
             Expression<Func<IExtensibleDataObject, IExtensibleDataObject>> selector,
             Expression<Func<IExtensibleDataObject, bool>> predicate);
@@ -40,8 +40,12 @@ namespace GetIntoTeaching.Infrastructure.Persistence.CandidateManagement.Common
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
-        public ImmutableList<IExtensibleDataObject> ReadItemsAsync(IExtensibleDataObject query);
+        /// <param name="query">
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        /// </returns>
+        public ImmutableList<IExtensibleDataObject> ReadItems(IExtensibleDataObject query);
     }
 }
