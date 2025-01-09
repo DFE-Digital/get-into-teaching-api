@@ -74,7 +74,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         [SwaggerSchema(WriteOnly = true)]
         public int? CreationChannelActivityId { get; set; }
 
-
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -259,16 +258,15 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         {
             if (CandidateId == null)
             {
-                if (CreationChannelSourceId.HasValue && CreationChannelServiceId.HasValue &&
-                    CreationChannelActivityId.HasValue)
+                if (CreationChannelSourceId.HasValue)
                 {
                     candidate.ChannelId = null;
                     candidate.ContactChannelCreations.Add(new ContactChannelCreation()
                     {
                         CreationChannel = true,
                         CreationChannelSourceId = CreationChannelSourceId.Value,
-                        CreationChannelServiceId = CreationChannelServiceId.Value,
-                        CreationChannelActivityId = CreationChannelActivityId.Value,
+                        CreationChannelServiceId = CreationChannelServiceId,
+                        CreationChannelActivityId = CreationChannelActivityId,
                     });
                 }
                 else
@@ -281,15 +279,14 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                 // NB: we do not update a candidate's ChannelId for an existing record
                 // NB: CreationChannel should be true only if it is the first ContactChannelCreation record
                 
-                if (CreationChannelSourceId.HasValue && CreationChannelServiceId.HasValue &&
-                    CreationChannelActivityId.HasValue)
+                if (CreationChannelSourceId.HasValue)
                 {
                     candidate.ContactChannelCreations.Add(new ContactChannelCreation()
                     {
                         CreationChannel = !candidate.ContactChannelCreations.Any(),
                         CreationChannelSourceId = CreationChannelSourceId.Value,
-                        CreationChannelServiceId = CreationChannelServiceId.Value,
-                        CreationChannelActivityId = CreationChannelActivityId.Value,
+                        CreationChannelServiceId = CreationChannelServiceId,
+                        CreationChannelActivityId = CreationChannelActivityId,
                     });
                 }
             }
