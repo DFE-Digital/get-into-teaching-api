@@ -289,6 +289,24 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
         }
         
         [Fact]
+        public void Candidate_ContactChannelCreationWhenCandidateIdIsNull()
+        {
+            var request = new TeacherTrainingAdviserSignUp()
+            {
+                CandidateId = null, 
+                CreationChannelSourceId = 222750000,
+                CreationChannelServiceId = 222750001,
+                CreationChannelActivityId = 222750002,
+            };
+
+            request.Candidate.ChannelId.Should().BeNull();
+            request.Candidate.ChangedPropertyNames.Should().Contain("ContactChannelCreations");
+            request.Candidate.ContactChannelCreations.First().CreationChannelSourceId.Should().Be(222750000);
+            request.Candidate.ContactChannelCreations.First().CreationChannelServiceId.Should().Be(222750001);
+            request.Candidate.ContactChannelCreations.First().CreationChannelActivityId.Should().Be(222750002);
+        }
+        
+        [Fact]
         public void Candidate_ContactChannelCreationWhenCandidateIdIsNotNull()
         {
             var request = new TeacherTrainingAdviserSignUp()
