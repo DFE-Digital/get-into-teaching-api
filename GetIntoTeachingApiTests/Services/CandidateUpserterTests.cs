@@ -264,6 +264,28 @@ namespace GetIntoTeachingApiTests.Services
                It.Is<Job>(job => job.Type == typeof(UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>)),
                It.IsAny<EnqueuedState>()), Times.Never);
         }
+        
+        // FIXME: This new test is broken and needs fixing
+        [Fact]
+        public void Upsert_WithContactChannelCreation_SavesContactChannelCreations()
+        {
+            var candidateId = Guid.NewGuid();
+            var contactChannelCreation = new ContactChannelCreation {
+                CreationChannelActivityId = 222750000,
+                CreationChannelServiceId = 222750001,
+                CreationChannelSourceId = 222750002,
+            };
+            
+            _candidate.ContactChannelCreations.Add(contactChannelCreation);
+            _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
+
+            _upserter.Upsert(_candidate);
+
+            contactChannelCreation.CandidateId = candidateId;
+            
+            _mockCrm.Verify(mock => mock.Save(It.Is<ContactChannelCreation>(q => q.CandidateId == candidateId)), Times.Once);
+        }
+
 
         private static bool IsMatch(object objectA, object objectB)
         {
