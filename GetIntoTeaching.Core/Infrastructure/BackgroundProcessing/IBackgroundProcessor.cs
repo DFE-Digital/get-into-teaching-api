@@ -8,10 +8,9 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="TEntity"></typeparam>
         /// <typeparam name="TResult"></typeparam>
-        /// <param name="entity"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
-        TResult Process<TEntity, TResult>(TEntity entity);
+        TResult Process<TResult>(IBackgroundProcessorRequest request);
     }
 }
