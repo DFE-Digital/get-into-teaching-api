@@ -4,7 +4,7 @@ namespace GetIntoTeaching.Infrastructure.Persistence.CandidateBackgroundProcessi
 {
     public sealed class UpsertCandidateProcessor : IBackgroundProcessor
     {
-        public TResult Process<TResult>(IBackgroundProcessorRequest request)
+        public void Process(IBackgroundProcessorRequest request)
         {
             throw new NotImplementedException();
         }

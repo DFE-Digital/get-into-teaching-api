@@ -1,7 +1,9 @@
-﻿namespace GetIntoTeaching.Core.Infrastructure.BackgroundProcessing
+﻿using GetIntoTeaching.Infrastructure.Persistence.CandidateEventProcessing.Common;
+
+namespace GetIntoTeaching.Core.Infrastructure.BackgroundProcessing
 {
     public interface IBackgroundProcessHandler
     {
-        TResult InvokeProcessor<TResult>();
+        void InvokeProcessor(IBackgroundProcessorRequest processorRequest);
     }
 }
