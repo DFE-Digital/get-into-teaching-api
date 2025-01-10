@@ -1,6 +1,6 @@
 ﻿namespace GetIntoTeaching.Core.Infrastructure.BackgroundProcessing
 {
-    internal interface IBackgroundProcessHandler
+    public interface IBackgroundProcessHandler
     {
         TResult InvokeProcessor<TResult>();
     }

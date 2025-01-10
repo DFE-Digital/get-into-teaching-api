@@ -26,4 +26,8 @@
 	  <ProjectReference Include="..\GetIntoTeaching.Core\GetIntoTeaching.Core.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Domain\Events\" />
+	</ItemGroup>
+
 </Project>
