@@ -7,14 +7,20 @@ namespace GetIntoTeaching.Infrastructure.Persistence.CandidateBackgroundProcessi
     {
         private readonly IReadOnlyDictionary<IBackgroundProcessorRequest, IBackgroundProcessor> _backgroundProcessors;
 
-        public HangfireBackgroundProcessHandler(IReadOnlyDictionary<IBackgroundProcessorRequest, IBackgroundProcessor> backgroundProcessors)
+        public HangfireBackgroundProcessHandler(
+            IReadOnlyDictionary<IBackgroundProcessorRequest, IBackgroundProcessor> backgroundProcessors)
         {
             _backgroundProcessors = backgroundProcessors;
         }
 
-        public TResult InvokeProcessor<TResult>()
+        public void InvokeProcessor(IBackgroundProcessorRequest processorRequest)
         {
-            throw new NotImplementedException();
+            IBackgroundProcessor? backgroundProcessor =
+                _backgroundProcessors[processorRequest] ??
+                throw new KeyNotFoundException(
+                    "Unable to derive the requested background processor.");
+
+            backgroundProcessor.Process(processorRequest);
         }
     }
 }

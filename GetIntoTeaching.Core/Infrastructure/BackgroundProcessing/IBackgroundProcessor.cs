@@ -8,9 +8,7 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="TResult"></typeparam>
         /// <param name="request"></param>
-        /// <returns></returns>
-        TResult Process<TResult>(IBackgroundProcessorRequest request);
+        void Process(IBackgroundProcessorRequest request);
     }
 }

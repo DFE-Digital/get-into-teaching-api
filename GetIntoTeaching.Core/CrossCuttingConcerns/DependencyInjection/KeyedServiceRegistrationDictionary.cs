@@ -9,18 +9,18 @@ namespace GetIntoTeaching.Core.CrossCuttingConcerns.DependencyInjection
             where TService : notnull
     {
         public KeyedServiceRegistrationDictionary(
-            KeyedServiceCache<TKey, TService> keys, IServiceProvider provider) :
-            base(Create(keys, provider)){
+            KeyedServiceCache<TKey, TService> keys, IServiceProvider serviceProvider) :
+            base(Create(keys, serviceProvider)){
         }
 
         private static Dictionary<TKey, TService> Create(
-            KeyedServiceCache<TKey, TService> keys, IServiceProvider provider)
+            KeyedServiceCache<TKey, TService> keys, IServiceProvider serviceProvider)
         {
             Dictionary<TKey, TService> dict = new(capacity: keys.Keys.Length);
 
             foreach (TKey key in keys.Keys)
             {
-                dict[key] = provider.GetRequiredKeyedService<TService>(key);
+                dict[key] = serviceProvider.GetRequiredKeyedService<TService>(key);
             }
 
             return dict;
@@ -31,15 +31,15 @@ namespace GetIntoTeaching.Core.CrossCuttingConcerns.DependencyInjection
         where TKey : notnull
         where TService : notnull
     {
-        private readonly IServiceCollection _services;
+        private readonly IServiceCollection _serviceCollection;
 
-        public KeyedServiceCache(IServiceCollection services)  
+        public KeyedServiceCache(IServiceCollection serviceCollection)  
         {
-            _services = services;
+            _serviceCollection = serviceCollection;
         }
 
         public TKey[] Keys => (
-            from service in _services
+            from service in _serviceCollection
             where service.ServiceKey != null
             where service.ServiceKey!.GetType() == typeof(TKey)
             where service.ServiceType == typeof(TService)

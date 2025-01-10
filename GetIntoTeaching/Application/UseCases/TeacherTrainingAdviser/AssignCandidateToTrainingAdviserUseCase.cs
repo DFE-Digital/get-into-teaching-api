@@ -4,21 +4,21 @@ using GetIntoTeaching.Domain;
 
 namespace GetIntoTeaching.Application.UseCases.TeacherTrainingAdviser
 {
-    public sealed class AssignCandidateToTrainingAdviserUseCase : IUseCase<object, object>
+    public sealed class AssignCandidateToTrainingAdviserUseCase : IUseCase<object, UseCaseResponse<Candidate>>
     {
-
         public readonly ICandidateReadOnlyRepository _candidateReadOnlyRepository;
+
         public AssignCandidateToTrainingAdviserUseCase(ICandidateReadOnlyRepository candidateReadOnlyRepository)
         {
             _candidateReadOnlyRepository = candidateReadOnlyRepository;
         }
 
-        public async Task<object> HandleRequest(object request)
+        public async Task<UseCaseResponse<Candidate>> HandleRequest(object request)
         {
-            Candidate? candidate =
+            Candidate candidate =
                 await _candidateReadOnlyRepository.GetCandidateByIdentifiert(Guid.NewGuid());
 
-            // TODO: if no candidate found add exception to Result object
+            return UseCaseResponse<Candidate>.Success(candidate);
         }
     }
 }
