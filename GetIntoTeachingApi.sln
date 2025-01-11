@@ -16,6 +16,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetIntoTeaching", "GetIntoT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetIntoTeaching.Core", "GetIntoTeaching.Core\GetIntoTeaching.Core.csproj", "{DB51FC64-6D22-4A48-B1E2-5AD7C2BE6B2A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetIntoTeaching.Tests", "GetIntoTeaching.Tests\GetIntoTeaching.Tests.csproj", "{C8D3CF91-F007-412A-8BDB-584494E7DA20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetIntoTeaching.Core.Tests", "GetIntoTeaching.Core.Tests\GetIntoTeaching.Core.Tests.csproj", "{8368D1CF-325D-48F2-B14C-039F96E1AACD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +42,14 @@ Global
 		{DB51FC64-6D22-4A48-B1E2-5AD7C2BE6B2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB51FC64-6D22-4A48-B1E2-5AD7C2BE6B2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB51FC64-6D22-4A48-B1E2-5AD7C2BE6B2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8D3CF91-F007-412A-8BDB-584494E7DA20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8D3CF91-F007-412A-8BDB-584494E7DA20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8D3CF91-F007-412A-8BDB-584494E7DA20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8D3CF91-F007-412A-8BDB-584494E7DA20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8368D1CF-325D-48F2-B14C-039F96E1AACD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8368D1CF-325D-48F2-B14C-039F96E1AACD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8368D1CF-325D-48F2-B14C-039F96E1AACD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8368D1CF-325D-48F2-B14C-039F96E1AACD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
