@@ -263,7 +263,8 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                     candidate.ChannelId = null;
                     candidate.ContactChannelCreations.Add(new ContactChannelCreation()
                     {
-                        CreationChannel = true,
+                        // NB: CreationChannel should be true only if it is the first ContactChannelCreation record
+                        CreationChannel = !candidate.ContactChannelCreations.Any(),
                         CreationChannelSourceId = CreationChannelSourceId.Value,
                         CreationChannelServiceId = CreationChannelServiceId,
                         CreationChannelActivityId = CreationChannelActivityId,
@@ -277,13 +278,12 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
             else // CandidateId is present (i.e. candidate record exists) 
             {
                 // NB: we do not update a candidate's ChannelId for an existing record
-                // NB: CreationChannel should be true only if it is the first ContactChannelCreation record
-                
+                // NB: CreationChannel should always be false for existing candidates
                 if (CreationChannelSourceId.HasValue)
                 {
                     candidate.ContactChannelCreations.Add(new ContactChannelCreation()
                     {
-                        CreationChannel = !candidate.ContactChannelCreations.Any(),
+                        CreationChannel = false,
                         CreationChannelSourceId = CreationChannelSourceId.Value,
                         CreationChannelServiceId = CreationChannelServiceId,
                         CreationChannelActivityId = CreationChannelActivityId,
