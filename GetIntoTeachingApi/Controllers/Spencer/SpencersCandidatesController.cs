@@ -1,4 +1,5 @@
-﻿using GetIntoTeachingApi.Jobs;
+﻿using GetIntoTeaching.Core.CrossCuttingConcerns.Mediator;
+using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models.TeacherTrainingAdviser;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
@@ -19,7 +20,9 @@ namespace GetIntoTeachingApi.Controllers.Spencer
         public SpencersCandidatesController(
             IBackgroundJobClient jobClient,
             IDateTimeProvider dateTime,
-            ILogger<CandidatesController> logger)
+            ILogger<CandidatesController> logger,
+
+            IMediator mediator)
         {
             _jobClient = jobClient;
             _dateTime = dateTime;

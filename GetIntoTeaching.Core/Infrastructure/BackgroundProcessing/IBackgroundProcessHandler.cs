@@ -2,8 +2,11 @@
 
 namespace GetIntoTeaching.Core.Infrastructure.BackgroundProcessing
 {
-    public interface IBackgroundProcessHandler
+    public interface IBackgroundProcessMediator
     {
-        void InvokeProcessor(IBackgroundProcessorRequest processorRequest);
+        public Task<TResponse> InvokeProcessor<TRequest, TResponse>(TRequest request)
+            where TRequest : IBackgroundProcessorRequest<TResponse>;
+        //public Task<TResponse> InvokeProcessor<TRequest, TResponse>(TRequest request, CancellationToken cancellationToken)
+        //    where TRequest : IRequest<TResponse>;
     }
 }

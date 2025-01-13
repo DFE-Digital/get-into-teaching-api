@@ -98,6 +98,9 @@
 	  <None Remove="FluentValidation.AspNetCore" />
 	</ItemGroup>
 	<ItemGroup>
+	  <ProjectReference Include="..\GetIntoTeaching.Core\GetIntoTeaching.Core.csproj" />
+	</ItemGroup>
+	<ItemGroup>
 	  <None Update="Config\clients.yml">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
