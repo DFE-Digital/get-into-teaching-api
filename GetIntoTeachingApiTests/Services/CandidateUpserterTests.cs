@@ -265,7 +265,6 @@ namespace GetIntoTeachingApiTests.Services
                It.IsAny<EnqueuedState>()), Times.Never);
         }
         
-        // FIXME: This new test is broken and needs fixing
         [Fact]
         public void Upsert_WithContactChannelCreation_SavesContactChannelCreations()
         {
@@ -277,15 +276,16 @@ namespace GetIntoTeachingApiTests.Services
             };
             
             _candidate.ContactChannelCreations.Add(contactChannelCreation);
-            _mockCrm.Setup(mock => mock.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => c.Id = candidateId);
 
             _upserter.Upsert(_candidate);
 
             contactChannelCreation.CandidateId = candidateId;
-            
-            _mockCrm.Verify(mock => mock.Save(It.Is<ContactChannelCreation>(q => q.CandidateId == candidateId)), Times.Once);
-        }
 
+            _mockJobClient.Verify(backgroundJobClient =>
+                backgroundJobClient.Create(
+                    It.Is<Job>(job => job.Type == typeof(UpsertModelWithCandidateIdJob<ContactChannelCreation>)),
+                    It.IsAny<EnqueuedState>()), Times.Once);
+        }
 
         private static bool IsMatch(object objectA, object objectB)
         {
