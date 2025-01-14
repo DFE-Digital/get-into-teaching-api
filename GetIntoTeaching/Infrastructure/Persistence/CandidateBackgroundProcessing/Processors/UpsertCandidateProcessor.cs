@@ -1,12 +1,15 @@
-﻿using GetIntoTeaching.Infrastructure.Persistence.CandidateEventProcessing.Common;
+﻿using GetIntoTeaching.Core.CrossCuttingConcerns.Mediator;
 
 namespace GetIntoTeaching.Infrastructure.Persistence.CandidateBackgroundProcessing.Processors
 {
-    public sealed class UpsertCandidateProcessor : IBackgroundProcessor
+    public sealed class UpsertCandidateProcessor : IHandler<UpsertCandidateProcessorRequest, bool>
     {
-        public void Process(IBackgroundProcessorRequest request)
+        public Task<bool> Handle(UpsertCandidateProcessorRequest request, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
     }
+
+    public sealed class UpsertCandidateProcessorRequest : IRequest<bool>
+    { }
 }

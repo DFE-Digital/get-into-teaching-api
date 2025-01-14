@@ -1,5 +1,4 @@
-﻿using GetIntoTeaching.Core.Infrastructure.BackgroundProcessing;
-using GetIntoTeaching.Infrastructure.Persistence.CandidateBackgroundProcessing.Processors;
+﻿using GetIntoTeaching.Core.CrossCuttingConcerns.Mediator;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models.TeacherTrainingAdviser;
 using GetIntoTeachingApi.Services;
@@ -27,7 +26,7 @@ namespace GetIntoTeachingApi.Controllers.Spencer
             IDateTimeProvider dateTime,
             ILogger<CandidatesController> logger,
 
-            IBackgroundProcessHandler backgroundProcessHandler)
+            IMediator mediator)
         {
             _jobClient = jobClient;
             _dateTime = dateTime;
