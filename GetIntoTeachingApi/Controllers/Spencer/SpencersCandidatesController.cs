@@ -1,4 +1,6 @@
 ﻿using GetIntoTeaching.Core.CrossCuttingConcerns.Mediator;
+using GetIntoTeaching.Core.Infrastructure.BackgroundProcessing;
+using GetIntoTeaching.Infrastructure.Persistence.CandidateBackgroundProcessing.Processors;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models.TeacherTrainingAdviser;
 using GetIntoTeachingApi.Services;
@@ -10,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GetIntoTeachingApi.Controllers.Spencer
 {
@@ -19,10 +22,11 @@ namespace GetIntoTeachingApi.Controllers.Spencer
         private readonly IDateTimeProvider _dateTime;
         private readonly ILogger<CandidatesController> _logger;
 
-        private readonly IBackgroundProcessHandler _backgroundProcessHandler;
+        private readonly IBackgroundJobProcessService _backgroundJobProcessHandler;
 
         public SpencersCandidatesController(
             IBackgroundJobClient jobClient,
+            IBackgroundJobProcessService backgroundJobProcessHandler,
             IDateTimeProvider dateTime,
             ILogger<CandidatesController> logger,
 
@@ -32,7 +36,7 @@ namespace GetIntoTeachingApi.Controllers.Spencer
             _dateTime = dateTime;
             _logger = logger;
 
-            _backgroundProcessHandler = backgroundProcessHandler;
+            _backgroundJobProcessHandler = backgroundJobProcessHandler;
         }
 
         [HttpPost("TESTER/")]
@@ -45,7 +49,10 @@ namespace GetIntoTeachingApi.Controllers.Spencer
             //    return BadRequest(this.ModelState);
             //}
 
-            _backgroundProcessHandler.InvokeProcessor(new UpsertCandidateProcessorRequest());
+             _backgroundJobProcessHandler
+                .Handle<UpsertCandidateProcessorRequest, BackgroundProcessorResult>(
+                    new UpsertCandidateProcessorRequest());
+
 
             // This is the only way we can mock/freeze the current date/time
             // in contract tests (there's no other way to inject it into this class).

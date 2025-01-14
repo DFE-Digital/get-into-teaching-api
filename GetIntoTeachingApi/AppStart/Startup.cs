@@ -1,11 +1,11 @@
-﻿using System.IO;
-using System.Text.Json.Serialization;
-using AspNetCoreRateLimit;
+﻿using AspNetCoreRateLimit;
 using dotenv.net;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using GetIntoTeaching.Core.CrossCuttingConcerns.Mediator;
 using GetIntoTeaching.Core.Infrastructure.BackgroundProcessing;
 using GetIntoTeaching.Infrastructure.Persistence.CandidateBackgroundProcessing;
+using GetIntoTeaching.Infrastructure.Persistence.CandidateBackgroundProcessing.Processors;
 using GetIntoTeachingApi.JsonConverters;
 using GetIntoTeachingApi.ModelBinders;
 using GetIntoTeachingApi.Utils;
@@ -14,13 +14,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Prometheus;
-
-
-using GetIntoTeaching.Core.CrossCuttingConcerns.DependencyInjection;
-using GetIntoTeaching.Infrastructure.Persistence.CandidateEventProcessing.Common;
-using GetIntoTeaching.Infrastructure.Persistence.CandidateBackgroundProcessing.Processors;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Prometheus;
+using System.IO;
+using System.Text.Json.Serialization;
 
 
 namespace GetIntoTeachingApi.AppStart
@@ -83,18 +80,10 @@ namespace GetIntoTeachingApi.AppStart
             services.AddHangfire(_env, useMemoryStorage: _env.IsTest);
 
 
-            services.AddScoped<IBackgroundProcessHandler, HangfireBackgroundProcessHandler>();
+            services.AddMediatorRegistrations(ServiceLifetime.Singleton, typeof(UpsertCandidateProcessor).Assembly);
 
-            services.RegisterKeyedServicesAsDictionary();
+            services.AddScoped<IBackgroundJobProcessService, HangfireBackgroundProcessingService>();
 
-            services.AddKeyedTransient<IBackgroundProcessor, UpsertCandidateProcessor>("UpsertCandidateProcessorRequest");
-
-
-            services.Scan(scan => scan
-    .FromAssembliesOf(typeof(ICrmQuery<>))
-    .AddClasses(classes => classes.AssignableTo(typeof(ICrmQueryHandler<,>)))
-        .AsImplementedInterfaces()
-        .WithTransientLifetime()
 
         }
 
