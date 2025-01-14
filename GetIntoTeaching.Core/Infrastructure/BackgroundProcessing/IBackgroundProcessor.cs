@@ -1,14 +1,8 @@
 ﻿namespace GetIntoTeaching.Infrastructure.Persistence.CandidateEventProcessing.Common
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public interface IBackgroundProcessor
+    public interface IBackgroundProcessor<in TRequest, TResponse>
+        where TRequest : IBackgroundProcessorRequest<TResponse>
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="request"></param>
-        void Process(IBackgroundProcessorRequest request);
+        Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken = default);
     }
 }
