@@ -20,6 +20,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.1.32" />
+		<PackageReference Include="Hangfire.AspNetCore" Version="1.8.14" />
+		<PackageReference Include="Hangfire.Core" Version="1.8.14" />
 	</ItemGroup>
 
 	<ItemGroup>

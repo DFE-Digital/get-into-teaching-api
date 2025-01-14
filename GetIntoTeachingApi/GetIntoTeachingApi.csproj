@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
@@ -96,6 +96,10 @@
 	  <None Remove="Hangfire.PostgreSql" />
 	  <None Remove="FluentValidation" />
 	  <None Remove="FluentValidation.AspNetCore" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\GetIntoTeaching.Core\GetIntoTeaching.Core.csproj" />
+	  <ProjectReference Include="..\GetIntoTeaching\GetIntoTeaching.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="Config\clients.yml">

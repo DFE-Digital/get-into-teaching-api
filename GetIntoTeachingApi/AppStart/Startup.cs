@@ -4,6 +4,8 @@ using AspNetCoreRateLimit;
 using dotenv.net;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using GetIntoTeaching.Core.Infrastructure.BackgroundProcessing;
+using GetIntoTeaching.Infrastructure.Persistence.CandidateBackgroundProcessing;
 using GetIntoTeachingApi.JsonConverters;
 using GetIntoTeachingApi.ModelBinders;
 using GetIntoTeachingApi.Utils;
@@ -13,6 +15,13 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Prometheus;
+
+
+using GetIntoTeaching.Core.CrossCuttingConcerns.DependencyInjection;
+using GetIntoTeaching.Infrastructure.Persistence.CandidateEventProcessing.Common;
+using GetIntoTeaching.Infrastructure.Persistence.CandidateBackgroundProcessing.Processors;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
 
 namespace GetIntoTeachingApi.AppStart
 {
@@ -72,6 +81,21 @@ namespace GetIntoTeachingApi.AppStart
             services.AddSwagger();
 
             services.AddHangfire(_env, useMemoryStorage: _env.IsTest);
+
+
+            services.AddScoped<IBackgroundProcessHandler, HangfireBackgroundProcessHandler>();
+
+            services.RegisterKeyedServicesAsDictionary();
+
+            services.AddKeyedTransient<IBackgroundProcessor, UpsertCandidateProcessor>("UpsertCandidateProcessorRequest");
+
+
+            services.Scan(scan => scan
+    .FromAssembliesOf(typeof(ICrmQuery<>))
+    .AddClasses(classes => classes.AssignableTo(typeof(ICrmQueryHandler<,>)))
+        .AsImplementedInterfaces()
+        .WithTransientLifetime()
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

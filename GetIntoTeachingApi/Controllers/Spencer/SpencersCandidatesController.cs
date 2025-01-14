@@ -1,11 +1,15 @@
-﻿using GetIntoTeachingApi.Jobs;
+﻿using GetIntoTeaching.Core.Infrastructure.BackgroundProcessing;
+using GetIntoTeaching.Infrastructure.Persistence.CandidateBackgroundProcessing.Processors;
+using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models.TeacherTrainingAdviser;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
+using Hangfire.States;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 
 namespace GetIntoTeachingApi.Controllers.Spencer
@@ -16,14 +20,20 @@ namespace GetIntoTeachingApi.Controllers.Spencer
         private readonly IDateTimeProvider _dateTime;
         private readonly ILogger<CandidatesController> _logger;
 
+        private readonly IBackgroundProcessHandler _backgroundProcessHandler;
+
         public SpencersCandidatesController(
             IBackgroundJobClient jobClient,
             IDateTimeProvider dateTime,
-            ILogger<CandidatesController> logger)
+            ILogger<CandidatesController> logger,
+
+            IBackgroundProcessHandler backgroundProcessHandler)
         {
             _jobClient = jobClient;
             _dateTime = dateTime;
             _logger = logger;
+
+            _backgroundProcessHandler = backgroundProcessHandler;
         }
 
         [HttpPost("TESTER/")]
@@ -35,6 +45,8 @@ namespace GetIntoTeachingApi.Controllers.Spencer
             //{
             //    return BadRequest(this.ModelState);
             //}
+
+            _backgroundProcessHandler.InvokeProcessor(new UpsertCandidateProcessorRequest());
 
             // This is the only way we can mock/freeze the current date/time
             // in contract tests (there's no other way to inject it into this class).
