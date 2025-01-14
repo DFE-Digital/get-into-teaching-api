@@ -261,14 +261,8 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                 if (CreationChannelSourceId.HasValue)
                 {
                     candidate.ChannelId = null;
-                    candidate.ContactChannelCreations.Add(new ContactChannelCreation()
-                    {
-                        // NB: CreationChannel should be true only if it is the first ContactChannelCreation record
-                        CreationChannel = !candidate.ContactChannelCreations.Any(),
-                        CreationChannelSourceId = CreationChannelSourceId.Value,
-                        CreationChannelServiceId = CreationChannelServiceId,
-                        CreationChannelActivityId = CreationChannelActivityId,
-                    });
+                    // NB: CreationChannel should be true only if it is the first ContactChannelCreation record
+                    AddCandidateCreationChannel(candidate, !candidate.ContactChannelCreations.Any());
                 }
                 else
                 {
@@ -281,15 +275,21 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                 // NB: CreationChannel should always be false for existing candidates
                 if (CreationChannelSourceId.HasValue)
                 {
-                    candidate.ContactChannelCreations.Add(new ContactChannelCreation()
-                    {
-                        CreationChannel = false,
-                        CreationChannelSourceId = CreationChannelSourceId.Value,
-                        CreationChannelServiceId = CreationChannelServiceId,
-                        CreationChannelActivityId = CreationChannelActivityId,
-                    });
+                    AddCandidateCreationChannel(candidate, false);
                 }
             }
+        }
+
+        private void AddCandidateCreationChannel(Candidate candidate, bool creationChannel)
+        {
+            candidate.ContactChannelCreations.Add(new ContactChannelCreation()
+            {
+                // NB: CreationChannel should be true only if it is the first ContactChannelCreation record
+                CreationChannel = creationChannel,
+                CreationChannelSourceId = CreationChannelSourceId,
+                CreationChannelServiceId = CreationChannelServiceId,
+                CreationChannelActivityId = CreationChannelActivityId,
+            });
         }
 
         private void ConfigureGcseStatus(Candidate candidate)
