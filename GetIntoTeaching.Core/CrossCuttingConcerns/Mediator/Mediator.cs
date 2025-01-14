@@ -1,40 +1,63 @@
-﻿using GetIntoTeaching.Core.CrossCuttingConcerns.Mediator.Extensions;
+﻿using GetIntoTeaching.Core.CrossCuttingConcerns.DependencyInjection;
 using System.Collections.Concurrent;
 
 namespace GetIntoTeaching.Core.CrossCuttingConcerns.Mediator
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Mediator : IMediator
     {
         private readonly ServiceFactory _serviceFactory;
-        private readonly ConcurrentDictionary<Type, Type> _handlerInfos;
+        private readonly ConcurrentDictionary<Type, Type> _handlersMetadata;
 
-        public Mediator(ServiceFactory serviceFactory, ConcurrentDictionary<Type, Type> handlerInfos)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serviceFactory"></param>
+        /// <param name="handlersMetadata"></param>
+        public Mediator(
+            ServiceFactory serviceFactory,
+            ConcurrentDictionary<Type, Type> handlersMetadata)
         {
             _serviceFactory = serviceFactory;
-            _handlerInfos = handlerInfos;
+            _handlersMetadata = handlersMetadata;
         }
 
-        public Task<TResponse> Send<TRequest, TResponse>(TRequest request)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TRequest"></typeparam>
+        /// <typeparam name="TResponse"></typeparam>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public Task<TResponse> Handle<TRequest, TResponse>(TRequest request)
             where TRequest : IRequest<TResponse>
-            => Send<TRequest, TResponse>(request, CancellationToken.None);
+                => Handle<TRequest, TResponse>(request, CancellationToken.None);
 
-        public Task<TResponse> Send<TRequest, TResponse>(TRequest request, CancellationToken cancellationToken)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TRequest"></typeparam>
+        /// <typeparam name="TResponse"></typeparam>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public Task<TResponse> Handle<TRequest, TResponse>(TRequest request, CancellationToken cancellationToken)
             where TRequest : IRequest<TResponse>
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             Type? requestType = request.GetType();
 
-            if (!_handlerInfos.TryGetValue(requestType, out Type? handlerType))
-            {
+            if (!_handlersMetadata.TryGetValue(requestType, out Type? handlerType)){
                 throw new InvalidOperationException($"No handler found for {requestType.FullName}");
             }
 
             IHandler<TRequest, TResponse> handler =
-                _serviceFactory.GetInstanceWithCast<IHandler<TRequest, TResponse>>(handlerType);
+                _serviceFactory
+                    .GetInstanceWithCast<IHandler<TRequest, TResponse>>(handlerType);
 
             return handler.Handle(request, cancellationToken);
         }
