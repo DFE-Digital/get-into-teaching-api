@@ -28,6 +28,6 @@
             /// </summary>
             /// <param name="query"></param>
             /// <returns></returns>
-            public abstract Func<TResult> ExecuteCommand(TCommandQuery query);
+            public abstract TResult ExecuteCommand(TCommandQuery query);
         }
 }
