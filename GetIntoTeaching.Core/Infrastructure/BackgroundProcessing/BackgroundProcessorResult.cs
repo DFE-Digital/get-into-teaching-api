@@ -1,4 +1,4 @@
-﻿namespace GetIntoTeaching.Infrastructure.Persistence.CandidateBackgroundProcessing.Processors
+﻿namespace GetIntoTeaching.Infrastructure.BackgroundProcessing
 {
     public class BackgroundProcessorResult
     {

@@ -8,6 +8,7 @@
 
         public Task<TResponse> Handle<TRequest, TResponse>(
             TRequest request,
-            CancellationToken cancellationToken) where TRequest : IRequest<TResponse>;
+            CancellationToken cancellationToken)
+            where TRequest : IRequest<TResponse>;
     }
 }

@@ -1,9 +1,9 @@
-﻿using GetIntoTeaching.Core.Infrastructure.RelationshipManagement;
+﻿using GetIntoTeaching.Core.Infrastructure.Persistence;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 
-namespace GetIntoTeaching.Infrastructure.Persistence.CandidateManagement
+namespace GetIntoTeaching.Infrastructure.Persistence
 {
     /// <summary>
     /// 

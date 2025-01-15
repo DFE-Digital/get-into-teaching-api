@@ -1,4 +1,4 @@
-﻿namespace GetIntoTeaching.Core.Infrastructure.RelationshipManagement
+﻿namespace GetIntoTeaching.Core.Infrastructure.Persistence
 {
     /// <summary>
     /// 

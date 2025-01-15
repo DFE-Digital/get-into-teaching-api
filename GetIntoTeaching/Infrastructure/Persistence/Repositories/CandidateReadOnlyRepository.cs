@@ -1,6 +1,6 @@
 ﻿using GetIntoTeaching.Application.Repositories;
+using GetIntoTeaching.Core.Infrastructure.Persistence;
 using GetIntoTeaching.Domain;
-using GetIntoTeaching.Infrastructure.Persistence.CandidateManagement.Common;
 
 namespace GetIntoTeaching.Infrastructure.Persistence.Repositories
 {
