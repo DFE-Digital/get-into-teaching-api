@@ -7,7 +7,6 @@ namespace GetIntoTeaching.Infrastructure.Persistence.CandidateEventProcessing.Co
     /// 
     /// </summary>
     public interface IBackgroundJobProcessorRequest :
-        IRequest<BackgroundProcessorResult>
-    {
+        IRequest<BackgroundProcessorResult>{
     }
 }
