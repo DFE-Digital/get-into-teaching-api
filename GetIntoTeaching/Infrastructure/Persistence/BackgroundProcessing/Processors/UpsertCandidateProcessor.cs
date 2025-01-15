@@ -1,4 +1,4 @@
-﻿using GetIntoTeaching.Infrastructure.Persistence.CandidateEventProcessing.Common;
+﻿using GetIntoTeaching.Infrastructure.BackgroundProcessing;
 using Hangfire;
 
 namespace GetIntoTeaching.Infrastructure.Persistence.CandidateBackgroundProcessing.Processors

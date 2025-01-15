@@ -1,7 +1,6 @@
 ﻿using GetIntoTeaching.Core.CrossCuttingConcerns.Mediator;
-using GetIntoTeaching.Infrastructure.Persistence.CandidateBackgroundProcessing.Processors;
 
-namespace GetIntoTeaching.Infrastructure.Persistence.CandidateEventProcessing.Common
+namespace GetIntoTeaching.Infrastructure.BackgroundProcessing
 {
     /// <summary>
     /// 
