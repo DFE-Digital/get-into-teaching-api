@@ -3,16 +3,16 @@
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TQuery"></typeparam>
-    /// <typeparam name="TResult"></typeparam>
-    public interface ICrmQueryHandler<TQuery, TResult>
-        where TQuery : ICrmQuery<TResult>
-        {
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="query"></param>
-            /// <returns></returns>
-            Task<TResult> ExecuteQuery(TQuery query);
-        }
+    public interface ICrmQueryHandler
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TQuery"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        Task<TResult> ExecuteQuery<TQuery, TResult>(TQuery query)
+            where TQuery : ICrmQuery<TResult>;
+    }
 }
