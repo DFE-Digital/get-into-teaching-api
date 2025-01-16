@@ -3,31 +3,28 @@
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TCommandQuery"></typeparam>
-    /// <typeparam name="TResult"></typeparam>
-    public abstract class CrmCommandHandler<TCommandQuery, TResult> :
-        ICrmCommandHandler<TCommandQuery, TResult>
-            where TCommandQuery : ICrmCommandQuery<TResult>
+    public abstract class CrmCommandHandler : ICrmCommandHandler
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        protected ICrmServiceClientProvider CrmClientProvider { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="crmClientProvider"></param>
+        protected CrmCommandHandler(ICrmServiceClientProvider crmClientProvider)
         {
-            /// <summary>
-            /// 
-            /// </summary>
-            protected ICrmServiceClientProvider CrmClientProvider { get; }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="crmClientProvider"></param>
-            protected CrmCommandHandler(ICrmServiceClientProvider crmClientProvider)
-            {
-                CrmClientProvider = crmClientProvider;
-            }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="query"></param>
-            /// <returns></returns>
-            public abstract TResult ExecuteCommand(TCommandQuery query);
+            CrmClientProvider = crmClientProvider;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public abstract TResult ExecuteCommand<TCommandQuery, TResult>(TCommandQuery query)
+            where TCommandQuery : ICrmCommandQuery<TResult>;
+    }
 }

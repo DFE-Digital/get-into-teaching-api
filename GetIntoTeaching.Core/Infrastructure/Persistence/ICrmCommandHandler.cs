@@ -3,16 +3,16 @@
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TCommandQuery"></typeparam>
-    /// <typeparam name="TResult"></typeparam>
-    public interface ICrmCommandHandler<TCommandQuery, out TResult>
-        where TCommandQuery : ICrmCommandQuery<TResult>
-        {
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="query"></param>
-            /// <returns></returns>
-            TResult ExecuteCommand(TCommandQuery query);
-        }
+    public interface ICrmCommandHandler
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TCommandQuery"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        TResult ExecuteCommand<TCommandQuery, TResult>(TCommandQuery query)
+            where TCommandQuery : ICrmCommandQuery<TResult>;
+    }
 }
