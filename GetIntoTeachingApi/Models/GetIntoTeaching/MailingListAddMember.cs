@@ -20,6 +20,13 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public int? DegreeStatusId { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public int? ChannelId { get; set; }
+        
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelSourceId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelServiceId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelActivityId { get; set; }
 
         public string Email { get; set; }
         public string FirstName { get; set; }
@@ -104,8 +111,37 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         {
             if (CandidateId == null)
             {
-                candidate.ChannelId = ChannelId ?? (int?)Candidate.Channel.MailingList;
+                if (CreationChannelSourceId.HasValue)
+                {
+                    candidate.ChannelId = null;
+                    // NB: CreationChannel should be true only if it is the first ContactChannelCreation record
+                    AddCandidateCreationChannel(candidate, !candidate.ContactChannelCreations.Any());
+                }
+                else
+                {
+                    candidate.ChannelId = ChannelId ?? (int?)Candidate.Channel.MailingList;
+                }
             }
+            else // Candidate record already exists 
+            {
+                // NB: we do not update a candidate's ChannelId for an existing record
+                // NB: CreationChannel should always be false for existing candidates
+                if (CreationChannelSourceId.HasValue)
+                {
+                    AddCandidateCreationChannel(candidate, false);
+                }
+            }
+        }
+        
+        private void AddCandidateCreationChannel(Candidate candidate, bool creationChannel)
+        {
+            candidate.ContactChannelCreations.Add(new ContactChannelCreation()
+            {
+                CreationChannel = creationChannel,
+                CreationChannelSourceId = CreationChannelSourceId,
+                CreationChannelServiceId = CreationChannelServiceId,
+                CreationChannelActivityId = CreationChannelActivityId,
+            });
         }
 
         private void AddQualification(Candidate candidate)
