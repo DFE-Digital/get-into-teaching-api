@@ -25,6 +25,7 @@
         /// <param name="query"></param>
         /// <returns></returns>
         public abstract TResult ExecuteCommand<TCommandQuery, TResult>(TCommandQuery query)
-            where TCommandQuery : ICrmCommandQuery<TResult>;
+            where TCommandQuery : ICrmCommandQuery<TResult>
+            where TResult : new();
     }
 }
