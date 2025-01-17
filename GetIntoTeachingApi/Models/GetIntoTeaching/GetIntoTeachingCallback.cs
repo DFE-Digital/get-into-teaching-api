@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.Json.Serialization;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
@@ -20,6 +21,13 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         [SwaggerSchema(WriteOnly = true)]
         public DateTime? PhoneCallScheduledAt { get; set; }
         public string TalkingPoints { get; set; }
+        
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelSourceId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelServiceId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelActivityId { get; set; }
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
@@ -83,8 +91,37 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         {
             if (CandidateId == null)
             {
-                candidate.ChannelId = (int?)Candidate.Channel.GetIntoTeachingCallback;
+                if (CreationChannelSourceId.HasValue)
+                {
+                    candidate.ChannelId = null;
+                    // NB: CreationChannel should be true only if it is the first ContactChannelCreation record
+                    AddCandidateCreationChannel(candidate, !candidate.ContactChannelCreations.Any());
+                }
+                else
+                {
+                    candidate.ChannelId = (int?)Candidate.Channel.GetIntoTeachingCallback;
+                }
+            } 
+            else // Candidate record already exists 
+            {
+                // NB: we do not update a candidate's ChannelId for an existing record
+                // NB: CreationChannel should always be false for existing candidates
+                if (CreationChannelSourceId.HasValue)
+                {
+                    AddCandidateCreationChannel(candidate, false);
+                }
             }
+        }
+        
+        private void AddCandidateCreationChannel(Candidate candidate, bool creationChannel)
+        {
+            candidate.ContactChannelCreations.Add(new ContactChannelCreation()
+            {
+                CreationChannel = creationChannel,
+                CreationChannelSourceId = CreationChannelSourceId,
+                CreationChannelServiceId = CreationChannelServiceId,
+                CreationChannelActivityId = CreationChannelActivityId,
+            });
         }
 
         private void AcceptPrivacyPolicy(Candidate candidate)

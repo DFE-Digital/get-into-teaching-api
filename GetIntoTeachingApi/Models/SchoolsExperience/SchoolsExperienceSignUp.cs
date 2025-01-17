@@ -39,6 +39,13 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
         public int? DegreeTypeId { get; set; }
         public string DegreeSubject { get; set; }
         public int? UkDegreeGradeId { get; set; }
+        
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelSourceId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelServiceId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelActivityId { get; set; }
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
@@ -135,8 +142,37 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
         {
             if (CandidateId == null)
             {
-                candidate.ChannelId = (int?)Candidate.Channel.SchoolsExperience;
+                if (CreationChannelSourceId.HasValue)
+                {
+                    candidate.ChannelId = null;
+                    // NB: CreationChannel should be true only if it is the first ContactChannelCreation record
+                    AddCandidateCreationChannel(candidate, !candidate.ContactChannelCreations.Any());
+                }
+                else
+                {
+                    candidate.ChannelId = (int?)Candidate.Channel.SchoolsExperience;
+                }
             }
+            else // Candidate record already exists 
+            {
+                // NB: we do not update a candidate's ChannelId for an existing record
+                // NB: CreationChannel should always be false for existing candidates
+                if (CreationChannelSourceId.HasValue)
+                {
+                    AddCandidateCreationChannel(candidate, false);
+                }
+            }
+        }
+        
+        private void AddCandidateCreationChannel(Candidate candidate, bool creationChannel)
+        {
+            candidate.ContactChannelCreations.Add(new ContactChannelCreation()
+            {
+                CreationChannel = creationChannel,
+                CreationChannelSourceId = CreationChannelSourceId,
+                CreationChannelServiceId = CreationChannelServiceId,
+                CreationChannelActivityId = CreationChannelActivityId,
+            });
         }
 
         private void AcceptPrivacyPolicy(Candidate candidate)
