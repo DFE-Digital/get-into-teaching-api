@@ -11,26 +11,42 @@ namespace GetIntoTeaching.Infrastructure.Persistence
     {
         private readonly ServiceClient _crmServiceClient;
 
-        public DynamicsCrmCommandHandler(ICrmServiceClientProvider crmClientProvider) :
-            base(crmClientProvider)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="crmClientProvider"></param>
+        /// <param name="crmServiceClientKey"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public DynamicsCrmCommandHandler(
+            ICrmServiceClientProvider crmClientProvider, string crmServiceClientKey) : base(crmClientProvider)
         {
             ServiceClient? serviceClient =
                 base.CrmClientProvider
-                    .GetCrmServiceClient("DynamicsCrmServiceClient") as ServiceClient;
+                    .GetCrmServiceClient(crmServiceClientKey) as ServiceClient;
 
             _crmServiceClient =
-                serviceClient ??
-                throw new ArgumentNullException(nameof(crmClientProvider));
+                serviceClient ?? throw new ArgumentNullException(nameof(crmClientProvider));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TCommandQuery"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
         public override TResult ExecuteCommand<TCommandQuery, TResult>(TCommandQuery query)
         {
             using (var crmServiceContext = new OrganizationServiceContext(_crmServiceClient))
             {
-                crmServiceContext.SaveChanges(); // This performs the actual call against the CRM 
+                // invoke query here.....
+
+                crmServiceContext.SaveChanges(); 
             }
 
-            return (TResult)true;
+            TResult result = new();
+
+            return result;
         }
     }
 }
