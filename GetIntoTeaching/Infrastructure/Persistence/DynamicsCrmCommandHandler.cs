@@ -18,11 +18,12 @@ namespace GetIntoTeaching.Infrastructure.Persistence
         /// <param name="crmServiceClientKey"></param>
         /// <exception cref="ArgumentNullException"></exception>
         public DynamicsCrmCommandHandler(
-            ICrmServiceClientProvider crmClientProvider, string crmServiceClientKey) : base(crmClientProvider)
+            ICrmServiceClientProvider crmClientProvider,
+            string dynamicsCrmServiceClientKey) : base(crmClientProvider)
         {
             ServiceClient? serviceClient =
                 base.CrmClientProvider
-                    .GetCrmServiceClient(crmServiceClientKey) as ServiceClient;
+                    .GetCrmServiceClient(dynamicsCrmServiceClientKey) as ServiceClient;
 
             _crmServiceClient =
                 serviceClient ?? throw new ArgumentNullException(nameof(crmClientProvider));

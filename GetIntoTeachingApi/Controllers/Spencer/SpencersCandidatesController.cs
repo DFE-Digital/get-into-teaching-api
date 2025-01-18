@@ -1,18 +1,16 @@
 ﻿using GetIntoTeaching.Core.CrossCuttingConcerns.Mediator;
 using GetIntoTeaching.Core.Infrastructure.BackgroundProcessing;
+using GetIntoTeaching.Infrastructure.BackgroundProcessing;
 using GetIntoTeaching.Infrastructure.Persistence.CandidateBackgroundProcessing.Processors;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models.TeacherTrainingAdviser;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
-using Hangfire.States;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace GetIntoTeachingApi.Controllers.Spencer
 {
