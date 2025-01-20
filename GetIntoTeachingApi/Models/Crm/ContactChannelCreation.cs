@@ -1,9 +1,8 @@
-using System;
-using System.Text.Json.Serialization;
-using FluentValidation;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
+using System;
+using System.Text.Json.Serialization;
 
 namespace GetIntoTeachingApi.Models.Crm
 {
@@ -94,13 +93,29 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityField("dfe_creationchannelactivities", typeof(OptionSetValue))]
         public int? CreationChannelActivityId { get; set; }
         
-        public ContactChannelCreation() : base()
-        {
+        public ContactChannelCreation() : base(){
         }
         
         public ContactChannelCreation(Entity entity, ICrmService crm, IServiceProvider serviceProvider)
-            : base(entity, crm, serviceProvider)
-        {
+            : base(entity, crm, serviceProvider){
         }
+
+        /// <summary>
+        /// Factory method for creating a ContactChannelCreation instance.
+        /// </summary>
+        /// <returns>
+        /// A configured <see cref="ContactChannelCreation"/> instance.
+        /// </returns>
+        public static ContactChannelCreation Create(
+            bool creationChannel,
+            int? sourceId,
+            int? serviceId,
+            int? activityId) => new()
+            {
+                CreationChannel = creationChannel,
+                CreationChannelSourceId = sourceId,
+                CreationChannelServiceId = serviceId,
+                CreationChannelActivityId = activityId,
+            };
     }
 }

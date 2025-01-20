@@ -1,14 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Text.Json.Serialization;
-using GetIntoTeachingApi.Models.Crm;
+﻿using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace GetIntoTeachingApi.Models.GetIntoTeaching
 {
-    public class TeachingEventAddAttendee
+    public class TeachingEventAddAttendee : ICreateContactChannel
     {
         public Guid? CandidateId { get; set; }
         public Guid? QualificationId { get; set; }
@@ -55,8 +55,10 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         [JsonIgnore]
         public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
 
-        public TeachingEventAddAttendee()
-        {
+        public int? DefaultContactCreationChannel =>
+            ChannelId ?? (int?)Candidate.Channel.Event; // Use the assigned channel ID if available, else assign default.
+
+        public TeachingEventAddAttendee(){
         }
 
         public TeachingEventAddAttendee(Candidate candidate)
@@ -133,51 +135,13 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
             {
                 candidate.PreferredTeachingSubjectId = PreferredTeachingSubjectId;
             }
-
-            ConfigureChannel(candidate);
+            candidate.ConfigureChannel(contactChannelCreator: this, candidateId: CandidateId);
             AddTeachingEventRegistration(candidate);
             AddQualification(candidate);
             AcceptPrivacyPolicy(candidate);
             ConfigureSubscriptions(candidate);
 
             return candidate;
-        }
-
-        private void ConfigureChannel(Candidate candidate)
-        {
-            if (CandidateId == null)
-            {
-                if (CreationChannelSourceId.HasValue)
-                {
-                    candidate.ChannelId = null;
-                    // NB: CreationChannel should be true only if it is the first ContactChannelCreation record
-                    AddCandidateCreationChannel(candidate, !candidate.ContactChannelCreations.Any());
-                }
-                else
-                {
-                    candidate.ChannelId = ChannelId ?? (int?)Candidate.Channel.Event;
-                }
-            }
-            else // Candidate record already exists 
-            {
-                // NB: we do not update a candidate's ChannelId for an existing record
-                // NB: CreationChannel should always be false for existing candidates
-                if (CreationChannelSourceId.HasValue)
-                {
-                    AddCandidateCreationChannel(candidate, false);
-                }
-            }
-        }
-        
-        private void AddCandidateCreationChannel(Candidate candidate, bool creationChannel)
-        {
-            candidate.ContactChannelCreations.Add(new ContactChannelCreation()
-            {
-                CreationChannel = creationChannel,
-                CreationChannelSourceId = CreationChannelSourceId,
-                CreationChannelServiceId = CreationChannelServiceId,
-                CreationChannelActivityId = CreationChannelActivityId,
-            });
         }
 
         private void AddQualification(Candidate candidate)
