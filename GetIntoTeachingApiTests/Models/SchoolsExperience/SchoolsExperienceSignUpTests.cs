@@ -106,7 +106,7 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
             candidate.PrivacyPolicy.AcceptedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(30));
             
-            var contactChannelCreation = candidate.ContactChannelCreations.First();
+            var contactChannelCreation = candidate.ContactChannelCreations.GetContactChannelCreations().First();
             contactChannelCreation.CreationChannel.Should().Be(false);
             contactChannelCreation.CreationChannelSourceId.Should().Be(request.CreationChannelSourceId);
             contactChannelCreation.CreationChannelServiceId.Should().Be(request.CreationChannelServiceId);
@@ -125,7 +125,7 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience
                 CreationChannelActivityId = 222750001,
             };
             
-            var contactChannelCreation = request.Candidate.ContactChannelCreations.First();
+            var contactChannelCreation = request.Candidate.ContactChannelCreations.GetContactChannelCreations().First();
             contactChannelCreation.CreationChannel.Should().Be(true);
             contactChannelCreation.CreationChannelSourceId.Should().Be(request.CreationChannelSourceId);
             contactChannelCreation.CreationChannelServiceId.Should().Be(request.CreationChannelServiceId);

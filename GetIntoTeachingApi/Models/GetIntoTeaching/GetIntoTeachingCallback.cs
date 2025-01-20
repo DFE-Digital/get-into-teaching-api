@@ -1,14 +1,13 @@
-﻿using System;
-using System.Linq;
-using System.Text.Json.Serialization;
-using GetIntoTeachingApi.Models.Crm;
+﻿using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Text.Json.Serialization;
 
 namespace GetIntoTeachingApi.Models.GetIntoTeaching
 {
-    public class GetIntoTeachingCallback
+    public class GetIntoTeachingCallback : ICreateContactChannel
     {
         public Guid? CandidateId { get; set; }
         [SwaggerSchema(WriteOnly = true)]
@@ -34,8 +33,9 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         [JsonIgnore]
         public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
 
-        public GetIntoTeachingCallback()
-        {
+        public int? DefaultContactCreationChannel => (int?)Candidate.Channel.GetIntoTeachingCallback;
+
+        public GetIntoTeachingCallback(){
         }
 
         public GetIntoTeachingCallback(Candidate candidate)
@@ -63,8 +63,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                 LastName = LastName,
                 AddressTelephone = AddressTelephone,
             };
-
-            ConfigureChannel(candidate);
+            candidate.ConfigureChannel(contactChannelCreator: this, candidateId: CandidateId);
             SchedulePhoneCall(candidate);
             AcceptPrivacyPolicy(candidate);
 
@@ -85,43 +84,6 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                     TalkingPoints = TalkingPoints,
                 };
             }
-        }
-
-        private void ConfigureChannel(Candidate candidate)
-        {
-            if (CandidateId == null)
-            {
-                if (CreationChannelSourceId.HasValue)
-                {
-                    candidate.ChannelId = null;
-                    // NB: CreationChannel should be true only if it is the first ContactChannelCreation record
-                    AddCandidateCreationChannel(candidate, !candidate.ContactChannelCreations.Any());
-                }
-                else
-                {
-                    candidate.ChannelId = (int?)Candidate.Channel.GetIntoTeachingCallback;
-                }
-            } 
-            else // Candidate record already exists 
-            {
-                // NB: we do not update a candidate's ChannelId for an existing record
-                // NB: CreationChannel should always be false for existing candidates
-                if (CreationChannelSourceId.HasValue)
-                {
-                    AddCandidateCreationChannel(candidate, false);
-                }
-            }
-        }
-        
-        private void AddCandidateCreationChannel(Candidate candidate, bool creationChannel)
-        {
-            candidate.ContactChannelCreations.Add(new ContactChannelCreation()
-            {
-                CreationChannel = creationChannel,
-                CreationChannelSourceId = CreationChannelSourceId,
-                CreationChannelServiceId = CreationChannelServiceId,
-                CreationChannelActivityId = CreationChannelActivityId,
-            });
         }
 
         private void AcceptPrivacyPolicy(Candidate candidate)

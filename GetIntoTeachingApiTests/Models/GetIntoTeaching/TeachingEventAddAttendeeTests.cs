@@ -125,7 +125,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
             candidate.Qualifications.First().TypeId.Should().Be((int)CandidateQualification.DegreeType.Degree);
             candidate.Qualifications.First().Id.Should().Be(request.QualificationId);
             
-            var contactChannelCreation = candidate.ContactChannelCreations.First();
+            var contactChannelCreation = candidate.ContactChannelCreations.GetContactChannelCreations().First();
             contactChannelCreation.CreationChannel.Should().Be(false);
             contactChannelCreation.CreationChannelSourceId.Should().Be(request.CreationChannelSourceId);
             contactChannelCreation.CreationChannelServiceId.Should().Be(request.CreationChannelServiceId);
@@ -144,7 +144,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
                 CreationChannelActivityId = 222750001,
             };
             
-            var contactChannelCreation = request.Candidate.ContactChannelCreations.First();
+            var contactChannelCreation = request.Candidate.ContactChannelCreations.GetContactChannelCreations().First();
             contactChannelCreation.CreationChannel.Should().Be(true);
             contactChannelCreation.CreationChannelSourceId.Should().Be(request.CreationChannelSourceId);
             contactChannelCreation.CreationChannelServiceId.Should().Be(request.CreationChannelServiceId);
