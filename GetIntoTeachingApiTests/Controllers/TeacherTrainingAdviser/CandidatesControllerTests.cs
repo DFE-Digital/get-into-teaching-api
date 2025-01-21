@@ -16,31 +16,38 @@ using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.TeacherTrainingAdviser;
 using GetIntoTeachingApiTests.Helpers;
 using Microsoft.Extensions.Logging;
+using GetIntoTeachingApi.Adapters;
+using GetIntoTeachingApi.CrossCuttingConcerns.Logging;
 
 namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
 {
     public class CandidatesControllerTests
     {
+        private readonly Mock<IPerformContextAdapter> _mockContextAdapter;
         private readonly Mock<ICandidateAccessTokenService> _mockTokenService;
         private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly Mock<IDateTimeProvider> _mockDateTime;
         private readonly Mock<IAppSettings> _mockAppSettings;
+        private readonly Mock<IHttpContextCorrelationIdProvider> _mockHttpContextCorrelationIdProvider;
         private readonly Mock<ILogger<CandidatesController>> _mockLogger;
         private readonly CandidatesController _controller;
         private readonly ExistingCandidateRequest _request;
 
         public CandidatesControllerTests()
         {
+            _mockContextAdapter = new Mock<IPerformContextAdapter>();
             _mockTokenService = new Mock<ICandidateAccessTokenService>();
             _mockCrm = new Mock<ICrmService>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
             _mockDateTime = new Mock<IDateTimeProvider>();
             _mockLogger = new Mock<ILogger<CandidatesController>>();
+            _mockHttpContextCorrelationIdProvider = new Mock<IHttpContextCorrelationIdProvider>();
             _mockAppSettings = new Mock<IAppSettings>();
             _request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
-            _controller = new CandidatesController(_mockTokenService.Object, _mockCrm.Object,
-                _mockJobClient.Object, _mockDateTime.Object, _mockAppSettings.Object, _mockLogger.Object);
+            _controller = new CandidatesController(
+                _mockContextAdapter.Object, _mockTokenService.Object, _mockCrm.Object,
+                _mockJobClient.Object, _mockDateTime.Object, _mockAppSettings.Object, _mockHttpContextCorrelationIdProvider.Object,  _mockLogger.Object);
             _controller.MockUser("TTA");
 
             // Freeze time.

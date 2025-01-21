@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using GetIntoTeachingApi.Adapters;
+using GetIntoTeachingApi.CrossCuttingConcerns.Logging;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Collections.Generic;
 
 namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
 {
@@ -20,26 +22,32 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
     [Authorize(Roles = "Admin,GetAnAdviser,Apply,GetIntoTeaching")]
     public class CandidatesController : ControllerBase
     {
+        private readonly IPerformContextAdapter _contextAdapter;
         private readonly ICandidateAccessTokenService _tokenService;
         private readonly ICrmService _crm;
         private readonly IBackgroundJobClient _jobClient;
         private readonly IDateTimeProvider _dateTime;
         private readonly IAppSettings _appSettings;
+        private readonly IHttpContextCorrelationIdProvider _httpContextCorrelationIdProvider;
         private readonly ILogger<CandidatesController> _logger;
 
         public CandidatesController(
+            IPerformContextAdapter contextAdapter,
             ICandidateAccessTokenService tokenService,
             ICrmService crm,
             IBackgroundJobClient jobClient,
             IDateTimeProvider dateTime,
             IAppSettings appSettings,
+            IHttpContextCorrelationIdProvider httpContextCorrelationIdProvider,
             ILogger<CandidatesController> logger)
         {
+            _contextAdapter = contextAdapter;
             _crm = crm;
             _tokenService = tokenService;
             _jobClient = jobClient;
             _dateTime = dateTime;
             _appSettings = appSettings;
+            _httpContextCorrelationIdProvider = httpContextCorrelationIdProvider;
             _logger = logger;
         }
 
@@ -59,11 +67,17 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
                 return BadRequest(this.ModelState);
             }
 
+            Guid correlationId = _httpContextCorrelationIdProvider.GetCorrelationId();
+
+            if (correlationId != Guid.Empty){
+                _contextAdapter.JobCorrelationContext = correlationId;
+            }
+
             // This is the only way we can mock/freeze the current date/time
             // in contract tests (there's no other way to inject it into this class).
             request.DateTimeProvider = _dateTime;
             string json = request.Candidate.SerializeChangeTracked();
-            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
+            _jobClient.Enqueue<UpsertCandidateJob>((upsertCandidateJob) => upsertCandidateJob.Run(json, null));
 
             _logger.LogInformation("TeacherTrainingAdviser - CandidatesController - Sign Up - {Client}", User.Identity.Name);
 

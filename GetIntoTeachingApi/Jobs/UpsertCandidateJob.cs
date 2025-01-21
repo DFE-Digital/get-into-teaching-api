@@ -52,9 +52,9 @@ namespace GetIntoTeachingApi.Jobs
             {
                 throw new InvalidOperationException("UpsertCandidateJob - Aborting (CRM integration paused).");
             }
-
-            _logger.LogInformation("UpsertCandidateJob - Started ({Attempt})", AttemptInfo(context, _contextAdapter));
-            _logger.LogInformation("UpsertCandidateJob - Payload {Payload}", Redactor.RedactJson(json));
+            _logger.LogInformation("UpsertCandidateJob - Started ({CorrelationId})", _contextAdapter.JobCorrelationContext);
+            _logger.LogInformation("UpsertCandidateJob - Started ({Attempt}) {CorrelationId}", AttemptInfo(context, _contextAdapter), _contextAdapter.JobCorrelationContext);
+            _logger.LogInformation("UpsertCandidateJob - Payload {Payload} {CorrelationId}", Redactor.RedactJson(json), _contextAdapter.JobCorrelationContext);
 
             if (IsLastAttempt(context, _contextAdapter))
             {
@@ -71,7 +71,7 @@ namespace GetIntoTeachingApi.Jobs
             {
                 _upserter.Upsert(candidate);
 
-                _logger.LogInformation("UpsertCandidateJob - Succeeded - {Id}", candidate.Id);
+                _logger.LogInformation("UpsertCandidateJob - Succeeded - {Id} {CorrelationId}", candidate.Id, _contextAdapter.JobCorrelationContext);
             }
 
             var duration = (DateTime.UtcNow - _contextAdapter.GetJobCreatedAt(context)).TotalSeconds;
