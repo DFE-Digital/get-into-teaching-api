@@ -36,18 +36,21 @@ namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnricher
 
             if (httpContext is not null)
             {
-                logEvent.LogProperty(propertyFactory, PropertyKeys.RequestMethodPropertyNameKey, httpContext.Request.Method);
-                logEvent.LogProperty(propertyFactory, PropertyKeys.RequestPathPropertyNameKey, httpContext.Request.Path);
-                logEvent.LogProperty(propertyFactory, PropertyKeys.UserAgentPropertyNameKey,
-                    httpContext.Request.Headers[PropertyKeys.UserAgentPropertyNameKey]);
+                logEvent
+                    .LogProperty(propertyFactory,
+                        LogPropertyKeys.RequestMethodPropertyNameKey, httpContext.Request.Method)
+                    .LogProperty(propertyFactory,
+                        LogPropertyKeys.RequestPathPropertyNameKey, httpContext.Request.Path)
+                    .LogProperty(propertyFactory,
+                        LogPropertyKeys.UserAgentPropertyNameKey,
+                        httpContext.Request.Headers[LogPropertyKeys.UserAgentHeaderNameKey]);
 
                 Guid correlationId = _httpContextCorrelationIdProvider.GetCorrelationId();
 
                 if (correlationId != Guid.Empty)
                 {
-                    logEvent.LogProperty(
-                        propertyFactory,
-                        PropertyKeys.CorrelationIdNameKey, correlationId);
+                    logEvent.LogProperty(propertyFactory,
+                        LogPropertyKeys.CorrelationIdNameKey, correlationId);
                 }
             }
         }
@@ -55,31 +58,12 @@ namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnricher
         /// <summary>
         /// 
         /// </summary>
-        internal static class PropertyKeys
+        internal readonly struct LogPropertyKeys
         {
-            /// <summary>
-            /// 
-            /// </summary>
             public static readonly string RequestMethodPropertyNameKey = "RequestMethod";
-
-            /// <summary>
-            /// 
-            /// </summary>
             public static readonly string RequestPathPropertyNameKey = "RequestPath";
-
-            /// <summary>
-            /// 
-            /// </summary>
             public static readonly string UserAgentPropertyNameKey = "UserAgent";
-
-            /// <summary>
-            /// 
-            /// </summary>
             public static readonly string UserAgentHeaderNameKey = "User-Agent";
-
-            /// <summary>
-            /// 
-            /// </summary>
             public static readonly string CorrelationIdNameKey = "CorrelationId";
         }
     }

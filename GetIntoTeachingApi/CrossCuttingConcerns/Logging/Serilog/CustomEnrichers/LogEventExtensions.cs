@@ -4,6 +4,9 @@ using System;
 
 namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class LogEventExtensions
     {
         /// <summary>
@@ -13,7 +16,8 @@ namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnricher
         /// <param name="propertyFactory"></param>
         /// <param name="propertyKey"></param>
         /// <param name="propertyValue"></param>
-        public static void LogProperty(
+        /// <returns></returns>
+        public static LogEvent LogProperty(
             this LogEvent logEvent,
             ILogEventPropertyFactory propertyFactory,
             string propertyKey,
@@ -25,6 +29,8 @@ namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnricher
 
             logEvent.AddPropertyIfAbsent(
                 propertyFactory.CreateProperty(propertyKey, propertyValue));
+
+            return logEvent;
         }
     }
 }
