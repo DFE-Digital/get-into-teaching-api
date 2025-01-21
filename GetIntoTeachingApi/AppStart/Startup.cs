@@ -4,6 +4,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using GetIntoTeaching.Core.CrossCuttingConcerns.Mediator;
 using GetIntoTeaching.Core.Infrastructure.BackgroundProcessing;
+using GetIntoTeaching.Infrastructure.Persistence.BackgroundProcessing;
 using GetIntoTeaching.Infrastructure.Persistence.CandidateBackgroundProcessing;
 using GetIntoTeaching.Infrastructure.Persistence.CandidateBackgroundProcessing.Processors;
 using GetIntoTeachingApi.JsonConverters;
