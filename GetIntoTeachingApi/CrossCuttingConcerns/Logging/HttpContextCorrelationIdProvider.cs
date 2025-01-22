@@ -11,7 +11,6 @@ namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging
     public sealed class HttpContextCorrelationIdProvider : IHttpContextCorrelationIdProvider
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private static readonly string PerRequestCorrelationIdPropertyNameKey = "PerRequestCorrelationId";
 
         /// <summary>
         /// 
@@ -37,6 +36,7 @@ namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging
                     httpContext.Features.GetRequiredFeature<IHttpActivityFeature>();
 
                 Activity activity = httpActivityFeature.Activity;
+                const string PerRequestCorrelationIdPropertyNameKey = "PerRequestCorrelationId";
 
                 object httpRequestCorrelationId =
                     activity.GetTagItem(PerRequestCorrelationIdPropertyNameKey);

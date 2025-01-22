@@ -7,6 +7,7 @@ using GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers;
 using GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.Middleware;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
+using GetIntoTeachingApi.Jobs.FilterAttributes;
 using GetIntoTeachingApi.Middleware;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.OperationFilters;
@@ -117,7 +118,7 @@ namespace GetIntoTeachingApi.AppStart
 
         public static void AddHangfire(this IServiceCollection services, IEnv env, bool useMemoryStorage)
         {
-            services.AddHangfire((_, config) =>
+            services.AddHangfire((serviceProvider, config) =>
             {
                 var automaticRetry = new AutomaticRetryAttribute
                 {
@@ -129,8 +130,10 @@ namespace GetIntoTeachingApi.AppStart
                 config
                     .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                     .UseSimpleAssemblyNameTypeSerializer()
-                    .UseRecommendedSerializerSettings()
-                    .UseFilter(automaticRetry);
+                .UseRecommendedSerializerSettings()
+                    .UseFilter(automaticRetry)
+                    .UseFilter(new CorrelationIdFilter(
+                        serviceProvider.GetService<IHttpContextCorrelationIdProvider>()));
 
                 if (useMemoryStorage)
                 {
