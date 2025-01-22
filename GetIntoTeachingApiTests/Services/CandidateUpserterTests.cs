@@ -275,7 +275,7 @@ namespace GetIntoTeachingApiTests.Services
                 CreationChannelSourceId = 222750002,
             };
             
-            _candidate.ContactChannelCreations.AddContactChannelCreation(contactChannelCreation);
+            _candidate.ContactChannelCreations.Add(contactChannelCreation);
 
             _upserter.Upsert(_candidate);
 

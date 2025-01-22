@@ -298,7 +298,7 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityRelationship("dfe_contact_dfe_candidateschoolexperience_ContactId", typeof(CandidateSchoolExperience))]
         public List<CandidateSchoolExperience> SchoolExperiences { get; set; } = new List<CandidateSchoolExperience>();
         [EntityRelationship("dfe_contact_dfe_contactchannelcreation_ContactId", typeof(ContactChannelCreation))]
-        public ContactChannelCreations ContactChannelCreations { get; set; } = new ContactChannelCreations();
+        public List<ContactChannelCreation> ContactChannelCreations { get; set; } = new List<ContactChannelCreation>();
 
         public Candidate() : base(){
         }
@@ -344,7 +344,7 @@ namespace GetIntoTeachingApi.Models.Crm
                 {
                     ChannelId = null;
                     AddContactChannelCreation(
-                        channelCreation: !ContactChannelCreations.HasExistingContactChannelCreations,
+                        channelCreation: !ContactChannelCreations.Any(),
                         contactChannelCreator: contactChannelCreator);
                 }
                 else
@@ -378,7 +378,7 @@ namespace GetIntoTeachingApi.Models.Crm
         /// </param>
         private void AddContactChannelCreation(bool channelCreation, ICreateContactChannel contactChannelCreator)
         {
-            ContactChannelCreations.AddContactChannelCreation(
+            ContactChannelCreations.Add(
                 ContactChannelCreation.Create(
                     creationChannel: channelCreation,
                     sourceId: contactChannelCreator.CreationChannelSourceId,
