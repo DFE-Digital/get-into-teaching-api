@@ -203,9 +203,9 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             candidate.Qualifications.First().DegreeSubject.Should().Be(request.DegreeSubject);
             candidate.Qualifications.First().TypeId.Should().Be(request.DegreeTypeId);
 
-            candidate.ContactChannelCreations.GetContactChannelCreations().First().CreationChannelSourceId.Should().Be(request.CreationChannelSourceId);
-            candidate.ContactChannelCreations.GetContactChannelCreations().First().CreationChannelServiceId.Should().Be(request.CreationChannelServiceId);
-            candidate.ContactChannelCreations.GetContactChannelCreations().First().CreationChannelActivityId.Should().Be(request.CreationChannelActivityId);
+            candidate.ContactChannelCreations.First().CreationChannelSourceId.Should().Be(request.CreationChannelSourceId);
+            candidate.ContactChannelCreations.First().CreationChannelServiceId.Should().Be(request.CreationChannelServiceId);
+            candidate.ContactChannelCreations.First().CreationChannelActivityId.Should().Be(request.CreationChannelActivityId);
 
             candidate.HasTeacherTrainingAdviserSubscription.Should().BeTrue();
         }
@@ -301,9 +301,9 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
 
             request.Candidate.ChannelId.Should().BeNull();
             request.Candidate.ChangedPropertyNames.Should().Contain("ContactChannelCreations");
-            request.Candidate.ContactChannelCreations.GetContactChannelCreations().First().CreationChannelSourceId.Should().Be(222750000);
-            request.Candidate.ContactChannelCreations.GetContactChannelCreations().First().CreationChannelServiceId.Should().Be(222750001);
-            request.Candidate.ContactChannelCreations.GetContactChannelCreations().First().CreationChannelActivityId.Should().Be(222750002);
+            request.Candidate.ContactChannelCreations.First().CreationChannelSourceId.Should().Be(222750000);
+            request.Candidate.ContactChannelCreations.First().CreationChannelServiceId.Should().Be(222750001);
+            request.Candidate.ContactChannelCreations.First().CreationChannelActivityId.Should().Be(222750002);
         }
         
         [Fact]
@@ -320,9 +320,9 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             request.Candidate.ChannelId.Should().BeNull();
             request.Candidate.ChangedPropertyNames.Should().NotContain("ChannelId");
             request.Candidate.ChangedPropertyNames.Should().Contain("ContactChannelCreations");
-            request.Candidate.ContactChannelCreations.GetContactChannelCreations().First().CreationChannelSourceId.Should().Be(222750000);
-            request.Candidate.ContactChannelCreations.GetContactChannelCreations().First().CreationChannelServiceId.Should().Be(222750001);
-            request.Candidate.ContactChannelCreations.GetContactChannelCreations().First().CreationChannelActivityId.Should().Be(222750002);
+            request.Candidate.ContactChannelCreations.First().CreationChannelSourceId.Should().Be(222750000);
+            request.Candidate.ContactChannelCreations.First().CreationChannelServiceId.Should().Be(222750001);
+            request.Candidate.ContactChannelCreations.First().CreationChannelActivityId.Should().Be(222750002);
         }
 
         [Fact]
