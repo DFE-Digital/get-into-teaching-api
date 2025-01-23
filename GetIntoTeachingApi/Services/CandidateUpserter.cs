@@ -95,8 +95,10 @@ namespace GetIntoTeachingApi.Services
         
         private static IEnumerable<ContactChannelCreation> ClearContactChannelCreations(Candidate candidate)
         {
-            var contactChannelCreations = new List<ContactChannelCreation>(candidate.ContactChannelCreations);
+            List<ContactChannelCreation> contactChannelCreations =
+                new(candidate.ContactChannelCreations);
             candidate.ContactChannelCreations.Clear();
+
             return contactChannelCreations;
         }
 

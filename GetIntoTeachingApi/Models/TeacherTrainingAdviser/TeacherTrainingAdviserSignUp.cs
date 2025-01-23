@@ -1,14 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Text.Json.Serialization;
-using GetIntoTeachingApi.Models.Crm;
+﻿using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
 {
-    public class TeacherTrainingAdviserSignUp
+    public class TeacherTrainingAdviserSignUp : ICreateContactChannel
     {
         public enum ResubscribableAdviserStatus
         {
@@ -98,8 +98,10 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         [JsonIgnore]
         private bool IsOverseas => CountryId != Country.UnitedKingdomCountryId;
 
-        public TeacherTrainingAdviserSignUp()
-        {
+        public int? DefaultContactCreationChannel =>
+            ChannelId ?? (int?)Candidate.Channel.TeacherTrainingAdviser; // Use the assigned channel ID if available, else assign default.
+
+        public TeacherTrainingAdviserSignUp(){
         }
 
         public TeacherTrainingAdviserSignUp(Candidate candidate)
@@ -225,7 +227,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                 OptOutOfGdpr = false,
             };
 
-            ConfigureChannel(candidate);
+            candidate.ConfigureChannel(contactChannelCreator: this, candidateId: CandidateId);
             ConfigureGcseStatus(candidate);
             AcceptPrivacyPolicy(candidate);
             SchedulePhoneCall(candidate);
@@ -252,44 +254,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
             candidate.AssignmentStatusId = (int)Candidate.AssignmentStatus.WaitingToBeAssigned;
             candidate.RegistrationStatusId = (int)Candidate.RegistrationStatus.ReRegistered;
             candidate.StatusIsWaitingToBeAssignedAt = DateTimeProvider.UtcNow;
-        }
-
-        private void ConfigureChannel(Candidate candidate)
-        {
-            if (CandidateId == null)
-            {
-                if (CreationChannelSourceId.HasValue)
-                {
-                    candidate.ChannelId = null;
-                    // NB: CreationChannel should be true only if it is the first ContactChannelCreation record
-                    AddCandidateCreationChannel(candidate, !candidate.ContactChannelCreations.Any());
-                }
-                else
-                {
-                    candidate.ChannelId = ChannelId ?? (int?)Candidate.Channel.TeacherTrainingAdviser;    
-                }
-            }
-            else // CandidateId is present (i.e. candidate record exists) 
-            {
-                // NB: we do not update a candidate's ChannelId for an existing record
-                // NB: CreationChannel should always be false for existing candidates
-                if (CreationChannelSourceId.HasValue)
-                {
-                    AddCandidateCreationChannel(candidate, false);
-                }
-            }
-        }
-
-        private void AddCandidateCreationChannel(Candidate candidate, bool creationChannel)
-        {
-            candidate.ContactChannelCreations.Add(new ContactChannelCreation()
-            {
-                // NB: CreationChannel should be true only if it is the first ContactChannelCreation record
-                CreationChannel = creationChannel,
-                CreationChannelSourceId = CreationChannelSourceId,
-                CreationChannelServiceId = CreationChannelServiceId,
-                CreationChannelActivityId = CreationChannelActivityId,
-            });
         }
 
         private void ConfigureGcseStatus(Candidate candidate)

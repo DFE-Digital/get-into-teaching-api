@@ -8,7 +8,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models.SchoolsExperience
 {
-    public class SchoolsExperienceSignUp
+    public class SchoolsExperienceSignUp : ICreateContactChannel
     {
         public Guid? CandidateId { get; set; }
         public Guid? PreferredTeachingSubjectId { get; set; }
@@ -39,14 +39,22 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
         public int? DegreeTypeId { get; set; }
         public string DegreeSubject { get; set; }
         public int? UkDegreeGradeId { get; set; }
+        
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelSourceId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelServiceId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelActivityId { get; set; }
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
         [JsonIgnore]
         public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
 
-        public SchoolsExperienceSignUp()
-        {
+        public int? DefaultContactCreationChannel => (int?)Candidate.Channel.SchoolsExperience;
+
+        public SchoolsExperienceSignUp(){
         }
 
         public SchoolsExperienceSignUp(Candidate candidate)
@@ -123,20 +131,11 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
             {
                 candidate.SecondaryPreferredTeachingSubjectId = SecondaryPreferredTeachingSubjectId;
             }
-
-            ConfigureChannel(candidate);
+            candidate.ConfigureChannel(contactChannelCreator: this, candidateId: CandidateId);
             AcceptPrivacyPolicy(candidate);
             AddQualification(candidate);
 
             return candidate;
-        }
-
-        private void ConfigureChannel(Candidate candidate)
-        {
-            if (CandidateId == null)
-            {
-                candidate.ChannelId = (int?)Candidate.Channel.SchoolsExperience;
-            }
         }
 
         private void AcceptPrivacyPolicy(Candidate candidate)

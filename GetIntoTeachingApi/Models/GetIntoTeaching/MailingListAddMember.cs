@@ -8,7 +8,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models.GetIntoTeaching
 {
-    public class MailingListAddMember
+    public class MailingListAddMember : ICreateContactChannel
     {
         public Guid? CandidateId { get; set; }
         public Guid? QualificationId { get; set; }
@@ -45,8 +45,10 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         [JsonIgnore]
         public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
 
-        public MailingListAddMember()
-        {
+        public int? DefaultContactCreationChannel =>
+            ChannelId ?? (int?)Candidate.Channel.MailingList; // Use the assigned channel ID if available, else assign default.
+
+        public MailingListAddMember(){
         }
 
         public MailingListAddMember(Candidate candidate)
@@ -98,50 +100,12 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                 GdprConsentId = (int)Candidate.GdprConsent.Consent,
                 OptOutOfGdpr = false,
             };
-
-            ConfigureChannel(candidate);
+            candidate.ConfigureChannel(contactChannelCreator: this, candidateId: CandidateId);
             ConfigureSubscriptions(candidate);
             AddQualification(candidate);
             AcceptPrivacyPolicy(candidate);
 
             return candidate;
-        }
-
-        private void ConfigureChannel(Candidate candidate)
-        {
-            if (CandidateId == null)
-            {
-                if (CreationChannelSourceId.HasValue)
-                {
-                    candidate.ChannelId = null;
-                    // NB: CreationChannel should be true only if it is the first ContactChannelCreation record
-                    AddCandidateCreationChannel(candidate, !candidate.ContactChannelCreations.Any());
-                }
-                else
-                {
-                    candidate.ChannelId = ChannelId ?? (int?)Candidate.Channel.MailingList;
-                }
-            }
-            else // Candidate record already exists 
-            {
-                // NB: we do not update a candidate's ChannelId for an existing record
-                // NB: CreationChannel should always be false for existing candidates
-                if (CreationChannelSourceId.HasValue)
-                {
-                    AddCandidateCreationChannel(candidate, false);
-                }
-            }
-        }
-        
-        private void AddCandidateCreationChannel(Candidate candidate, bool creationChannel)
-        {
-            candidate.ContactChannelCreations.Add(new ContactChannelCreation()
-            {
-                CreationChannel = creationChannel,
-                CreationChannelSourceId = CreationChannelSourceId,
-                CreationChannelServiceId = CreationChannelServiceId,
-                CreationChannelActivityId = CreationChannelActivityId,
-            });
         }
 
         private void AddQualification(Candidate candidate)
