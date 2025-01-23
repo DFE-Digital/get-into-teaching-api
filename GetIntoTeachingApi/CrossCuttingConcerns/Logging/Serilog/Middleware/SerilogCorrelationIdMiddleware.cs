@@ -22,7 +22,7 @@ namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.Middleware
         /// <param name="context"></param>
         /// <param name="next"></param>
         /// <returns></returns>
-        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+        public Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             Guid correleationId = Guid.NewGuid();
 
@@ -31,7 +31,7 @@ namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.Middleware
             Activity activity = activityFeature.Activity;
             activity.AddTag(PerRequestCorrelationIdPropertyNameKey, correleationId);
 
-            await next(context);
+            return next(context);
         }
     }
 }
