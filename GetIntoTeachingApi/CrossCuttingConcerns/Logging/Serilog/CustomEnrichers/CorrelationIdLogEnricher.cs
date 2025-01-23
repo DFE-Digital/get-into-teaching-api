@@ -6,7 +6,9 @@ using System;
 namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers
 {
     /// <summary>
-    /// 
+    /// Log event enricher allows associated events to have a
+    /// correlation Id (GUID) to be assigned to a named property
+    /// to allow to allow various log events to be aggregated across a single request.
     /// </summary>
     public class CorrelationIdLogEnricher : ILogEventEnricher
     {
@@ -16,7 +18,9 @@ namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnricher
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="httpContextAccessor"></param>
+        /// <param name="httpContextAccessor">
+        /// 
+        /// </param>
         public CorrelationIdLogEnricher(
             IHttpContextAccessor httpContextAccessor,
             IHttpContextCorrelationIdProvider httpContextCorrelationIdProvider)

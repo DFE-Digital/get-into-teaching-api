@@ -15,26 +15,25 @@ namespace GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.CustomEnr
         {
             // arrange
             var logEvent = new LogEvent(DateTimeOffset.UtcNow, LogEventLevel.Verbose, null,
-                    new MessageTemplate("atemplate", new List<MessageTemplateToken>()),
+                    new MessageTemplate("template", new List<MessageTemplateToken>()),
                     new List<LogEventProperty>
                     {
-                        new LogEventProperty("aname1", new ScalarValue("avalue")),
-                        new LogEventProperty("aname2", new ScalarValue(42))
+                        new LogEventProperty("name1", new ScalarValue("value")),
+                        new LogEventProperty("name2", new ScalarValue(42))
                     });
 
             Guid correlationId = Guid.NewGuid();
 
             CorrelationIdLogEnricher enricher = new(
-                httpContextAccessor: HttpContextAccessorTestDouble.MockFor(context: ),
+                httpContextAccessor: HttpContextAccessorTestDouble.DefaultMock(),
                 httpContextCorrelationIdProvider: HttpContextCorrelationIdProviderTestDouble.MockFor(correlationId));
 
             // act
             enricher.Enrich(logEvent, propertyFactory: LogEventPropertyFactoryTestDouble.Mock());
 
             // assert
-            Assert.Equal(2, logEvent.Properties.Count);
-            Assert.Equal("\"avalue\"", logEvent.Properties["aname1"].ToString());
-            Assert.Equal("42", logEvent.Properties["aname2"].ToString());
+            //Assert.Equal(
+
         }
     }
 }

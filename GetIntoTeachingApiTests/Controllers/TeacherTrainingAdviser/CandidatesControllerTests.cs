@@ -45,9 +45,8 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
             _mockHttpContextCorrelationIdProvider = new Mock<IHttpContextCorrelationIdProvider>();
             _mockAppSettings = new Mock<IAppSettings>();
             _request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
-            _controller = new CandidatesController(
-                _mockContextAdapter.Object, _mockTokenService.Object, _mockCrm.Object,
-                _mockJobClient.Object, _mockDateTime.Object, _mockAppSettings.Object, _mockHttpContextCorrelationIdProvider.Object,  _mockLogger.Object);
+            _controller = new CandidatesController( _mockTokenService.Object, _mockCrm.Object,
+                _mockJobClient.Object, _mockDateTime.Object, _mockAppSettings.Object,  _mockLogger.Object);
             _controller.MockUser("TTA");
 
             // Freeze time.

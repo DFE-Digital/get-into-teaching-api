@@ -7,6 +7,9 @@ namespace GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.CustomEnr
     {
         public static Mock<IHttpContextAccessor> Mock() => new();
 
+        public static IHttpContextAccessor DefaultMock() =>
+            MockFor(HttpContextTestDouble.MockFor());
+
         public static IHttpContextAccessor MockFor(HttpContext context)
         {
             var httpContextAccessor = Mock();
