@@ -1,9 +1,7 @@
 ﻿using GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers;
 using GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers.TestDoubles;
 using Serilog.Events;
-using Serilog.Parsing;
 using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers
@@ -14,13 +12,7 @@ namespace GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.CustomEnr
         public void Enrich_WithNoFilterParam_AssignsCorrectPropertyValues()
         {
             // arrange
-            var logEvent = new LogEvent(DateTimeOffset.UtcNow, LogEventLevel.Verbose, null,
-                    new MessageTemplate("template", new List<MessageTemplateToken>()),
-                    new List<LogEventProperty>
-                    {
-                        new LogEventProperty("name1", new ScalarValue("value")),
-                        new LogEventProperty("name2", new ScalarValue(42))
-                    });
+            LogEvent logEvent = LogEventTestDouble.LogEventStub();
 
             Guid correlationId = Guid.NewGuid();
 
@@ -29,7 +21,7 @@ namespace GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.CustomEnr
                 httpContextCorrelationIdProvider: HttpContextCorrelationIdProviderTestDouble.MockFor(correlationId));
 
             // act
-            enricher.Enrich(logEvent, propertyFactory: LogEventPropertyFactoryTestDouble.Mock());
+            enricher.Enrich(logEvent, propertyFactory: LogEventPropertyFactoryTestDouble.MockFor());
 
             // assert
             //Assert.Equal(

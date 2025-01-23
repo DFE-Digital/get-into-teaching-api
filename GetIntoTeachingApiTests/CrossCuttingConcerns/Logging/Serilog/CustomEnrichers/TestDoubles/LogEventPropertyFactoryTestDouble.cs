@@ -5,9 +5,11 @@ namespace GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.CustomEnr
 {
     public static class LogEventPropertyFactoryTestDouble
     {
-        public static ILogEventPropertyFactory Mock()
+        public static Mock<ILogEventPropertyFactory> Mock() => new();
+
+        public static ILogEventPropertyFactory MockFor()
         {
-            Mock<ILogEventPropertyFactory> logEventPropertyFactory = new();
+            Mock<ILogEventPropertyFactory> logEventPropertyFactory = Mock();
 
             return logEventPropertyFactory.Object;
         }
