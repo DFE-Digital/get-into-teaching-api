@@ -1,9 +1,10 @@
 ﻿using System;
-using GetIntoTeachingApi.Models.Apply;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Microsoft.Extensions.Logging;
+using ApplyCandidate = GetIntoTeachingApi.Models.Apply.Candidate;
 
 namespace GetIntoTeachingApi.Jobs
 {
@@ -29,7 +30,7 @@ namespace GetIntoTeachingApi.Jobs
             _appSettings = appSettings;
         }
 
-        public void Run(Candidate applyCandidate)
+        public void Run(ApplyCandidate applyCandidate)
         {
             if (_appSettings.IsCrmIntegrationPaused)
             {
@@ -41,23 +42,22 @@ namespace GetIntoTeachingApi.Jobs
             _logger.LogInformation("ApplyCandidateSyncJob - Succeeded - {Id}", applyCandidate.Id);
         }
 
-        public void SyncCandidate(Candidate applyCandidate)
+        public void SyncCandidate(ApplyCandidate applyCandidate)
         {
-            var candidate = applyCandidate.ToCrmModel();
-            var match = _crm.MatchCandidate(candidate.Email, applyCandidate.Id);
+            ContactChannelCandidateWrapper wrappedCandidate = new(applyCandidate.ToCrmModel());
+            
+            var match = _crm.MatchCandidate(wrappedCandidate.ScopedCandidate.Email, applyCandidate.Id);
 
             _logger.LogInformation("ApplyCandidateSyncJob - {Status} - {Id}", match == null ? "Miss" : "Hit", applyCandidate.Id);
 
             if (match != null)
             {
-                UpdateCandidateWithMatch(candidate, match);
+                UpdateCandidateWithMatch(wrappedCandidate.ScopedCandidate, match);
             }
-            else
-            {
-                candidate.ChannelId = (int)Models.Crm.Candidate.Channel.ApplyForTeacherTraining;
-            }
-
-            string json = candidate.SerializeChangeTracked();
+            
+            wrappedCandidate.ScopedCandidate.ConfigureChannel(wrappedCandidate, wrappedCandidate.ScopedCandidate.Id);
+            
+            string json = wrappedCandidate.ScopedCandidate.SerializeChangeTracked();
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
         }
 
