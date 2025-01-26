@@ -13,6 +13,7 @@
         /// <param name="query"></param>
         /// <returns></returns>
         Task<TResult> ExecuteQuery<TQuery, TResult>(TQuery query)
-            where TQuery : ICrmQuery<TResult>;
+            where TQuery : ICrmQuery<TResult>
+            where TResult : new();
     }
 }

@@ -10,6 +10,6 @@
         /// </summary>
         /// <param name="clientServiceKey"></param>
         /// <returns></returns>
-        ICrmServiceClient GetCrmServiceClient(string clientServiceKey);
+        TServiceClient GetCrmServiceClient<TServiceClient>(string clientServiceKey) where TServiceClient : class;
     }
 }
