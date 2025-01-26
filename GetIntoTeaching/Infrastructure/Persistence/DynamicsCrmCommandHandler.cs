@@ -7,7 +7,7 @@ namespace GetIntoTeaching.Infrastructure.Persistence
     /// <summary>
     /// 
     /// </summary>
-    public sealed class DynamicsCrmCommandHandler : CrmCommandHandler
+    public sealed class DynamicsCrmCommandHandler : ICrmCommandHandler
     {
         private readonly ServiceClient _crmServiceClient;
 
@@ -15,18 +15,12 @@ namespace GetIntoTeaching.Infrastructure.Persistence
         /// 
         /// </summary>
         /// <param name="crmClientProvider"></param>
-        /// <param name="crmServiceClientKey"></param>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <param name="dynamicsCrmServiceClientKey"></param>
         public DynamicsCrmCommandHandler(
-            ICrmServiceClientProvider crmClientProvider,
-            string dynamicsCrmServiceClientKey) : base(crmClientProvider)
+            ICrmServiceClientProvider crmClientProvider, string dynamicsCrmServiceClientKey)
         {
-            ServiceClient? serviceClient =
-                base.CrmClientProvider
-                    .GetCrmServiceClient(dynamicsCrmServiceClientKey) as ServiceClient;
-
-            _crmServiceClient =
-                serviceClient ?? throw new ArgumentNullException(nameof(crmClientProvider));
+            ServiceClient serviceClient =
+                crmClientProvider.GetCrmServiceClient<ServiceClient>(dynamicsCrmServiceClientKey);
         }
 
         /// <summary>
@@ -36,7 +30,9 @@ namespace GetIntoTeaching.Infrastructure.Persistence
         /// <typeparam name="TResult"></typeparam>
         /// <param name="query"></param>
         /// <returns></returns>
-        public override TResult ExecuteCommand<TCommandQuery, TResult>(TCommandQuery query)
+        public TResult ExecuteCommand<TCommandQuery, TResult>(TCommandQuery query)
+            where TCommandQuery : ICrmCommandQuery<TResult>
+            where TResult : new()
         {
             using (var crmServiceContext = new OrganizationServiceContext(_crmServiceClient))
             {
