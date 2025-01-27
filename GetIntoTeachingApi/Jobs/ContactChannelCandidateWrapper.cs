@@ -1,10 +1,9 @@
 using GetIntoTeachingApi.Models.Crm;
 
-namespace GetIntoTeachingApi.Jobs;
-
-public class ContactChannelCandidateWrapper : ICreateContactChannel
+namespace GetIntoTeachingApi.Jobs
 {
-  
+    public class ContactChannelCandidateWrapper : ICreateContactChannel
+    {
         /// <summary>
         /// Provides the default read-only contact creation channel integer value.
         /// </summary>
@@ -26,12 +25,17 @@ public class ContactChannelCandidateWrapper : ICreateContactChannel
         /// </summary>
         public int? CreationChannelActivityId { get; set; }
         
- 
+        /// <summary>
+        /// Provides the ability to retrieve the underlying CRM candidate record.
+        /// </summary>
         public Candidate ScopedCandidate { get; }
-        
-        // Todo: add some documentation
+
+        /// <summary>
+        /// Initialises the instance with an underlying CRM candidate record.
+        /// </summary>
         public ContactChannelCandidateWrapper(Candidate candidate)
         {
-               ScopedCandidate = candidate;
+            ScopedCandidate = candidate;
         }
+    }
 }

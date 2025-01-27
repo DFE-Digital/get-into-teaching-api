@@ -44,7 +44,10 @@ namespace GetIntoTeachingApi.Jobs
 
         public void SyncCandidate(ApplyCandidate applyCandidate)
         {
-            ContactChannelCandidateWrapper wrappedCandidate = new(applyCandidate.ToCrmModel());
+            ContactChannelCandidateWrapper wrappedCandidate = new(applyCandidate.ToCrmModel())
+            {
+                CreationChannelSourceId = (int?) ContactChannelCreation.CreationChannelSource.Apply
+            };
             
             var match = _crm.MatchCandidate(wrappedCandidate.ScopedCandidate.Email, applyCandidate.Id);
 
