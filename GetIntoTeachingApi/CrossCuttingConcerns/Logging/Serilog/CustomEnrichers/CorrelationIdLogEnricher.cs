@@ -16,10 +16,18 @@ namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnricher
         private readonly IHttpContextCorrelationIdProvider _httpContextCorrelationIdProvider;
 
         /// <summary>
-        /// 
+        /// Initialisation requires a <see cref="IHttpContextAccessor"/> which provides
+        /// access to the current <see cref="HttpContext"/>, if one is available; and a
+        /// <see cref="IHttpContextCorrelationIdProvider"/> which provides a correlation 
+        /// Id (GUID) used to aggregates log events across a single request.
         /// </summary>
         /// <param name="httpContextAccessor">
-        /// 
+        /// Instance of <see cref="IHttpContextAccessor"/> which provides
+        /// access to the current <see cref="HttpContext"/>, if available.
+        /// </param>
+        /// /// <param name="httpContextCorrelationIdProvider">
+        /// Instance of <see cref="IHttpContextCorrelationIdProvider"/> which provides
+        /// a correlation Id (GUID) used to aggregates log events across a single request.
         /// </param>
         public CorrelationIdLogEnricher(
             IHttpContextAccessor httpContextAccessor,
@@ -30,10 +38,17 @@ namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnricher
         }
 
         /// <summary>
-        /// 
+        /// Call to enrich decorates each 'enriched' log event with additional
+        /// properties, including the correlation Id derived from the current request.
         /// </summary>
-        /// <param name="logEvent"></param>
-        /// <param name="propertyFactory"></param>
+        /// <param name="logEvent">
+        /// The contextual <see cref="LogEvent"/> on which additional
+        /// properties will be applied/enriched. 
+        /// </param>
+        /// <param name="propertyFactory">
+        /// The <see cref="ILogEventPropertyFactory"/> factory object used to create
+        /// log event properties from regular .NET objects, applying policies as required.
+        /// </param>
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
             HttpContext httpContext = _httpContextAccessor.HttpContext;
@@ -60,14 +75,29 @@ namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnricher
         }
 
         /// <summary>
-        /// 
+        /// Aggregation of related log property keys used to define a given log property name.
         /// </summary>
         internal readonly struct LogPropertyKeys
         {
+            /// <summary>
+            /// httpContext.Request.Method property name key.
+            /// </summary>
             public static readonly string RequestMethodPropertyNameKey = "RequestMethod";
+            /// <summary>
+            /// httpContext.Request.Path property name key.
+            /// </summary>
             public static readonly string RequestPathPropertyNameKey = "RequestPath";
+            /// <summary>
+            /// httpContext.Request.Headers user agent property name key.
+            /// </summary>
             public static readonly string UserAgentPropertyNameKey = "UserAgent";
+            /// <summary>
+            /// httpContext.Request.Headers user agent header index key.
+            /// </summary>
             public static readonly string UserAgentHeaderNameKey = "User-Agent";
+            /// <summary>
+            /// The specific request correlation Id (GUID).
+            /// </summary>
             public static readonly string CorrelationIdNameKey = "CorrelationId";
         }
     }
