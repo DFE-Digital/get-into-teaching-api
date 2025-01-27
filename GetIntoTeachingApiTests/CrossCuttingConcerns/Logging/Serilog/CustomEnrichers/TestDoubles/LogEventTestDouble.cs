@@ -74,7 +74,6 @@ namespace GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.CustomEnr
                 new(
                     name: faker.Random.Word(),
                     value: new ScalarValue(faker.Random.Word()));
-            
         }
     }
 }

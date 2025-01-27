@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System.Diagnostics;
 using System;
+using GetIntoTeachingApi.CrossCuttingConcerns.Logging.Common;
 
 namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging
 {
@@ -36,10 +37,9 @@ namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging
                     httpContext.Features.GetRequiredFeature<IHttpActivityFeature>();
 
                 Activity activity = httpActivityFeature.Activity;
-                const string PerRequestCorrelationIdPropertyNameKey = "PerRequestCorrelationId";
 
                 object httpRequestCorrelationId =
-                    activity.GetTagItem(PerRequestCorrelationIdPropertyNameKey);
+                    activity.GetTagItem(CorrelationPropertyKeys.PerRequestCorrelationIdPropertyNameKey);
 
                 if (httpRequestCorrelationId is not null)
                 {

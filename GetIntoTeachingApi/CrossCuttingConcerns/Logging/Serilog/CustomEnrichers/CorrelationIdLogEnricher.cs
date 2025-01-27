@@ -7,8 +7,8 @@ namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnricher
 {
     /// <summary>
     /// Log event enricher allows associated events to have a
-    /// correlation Id (GUID) to be assigned to a named property
-    /// to allow to allow various log events to be aggregated across a single request.
+    /// correlation Id (GUID) to be assigned to a named property allowing
+    /// various log events to be aggregated across a single request.
     /// </summary>
     public class CorrelationIdLogEnricher : ILogEventEnricher
     {
