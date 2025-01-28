@@ -54,7 +54,7 @@ namespace GetIntoTeachingApi.Jobs
             if (_appSettings.IsCrmIntegrationPaused)
             {
                 throw new InvalidOperationException(
-                    $"UpsertCandidateJob - Aborting (CRM integration paused {correlationId}).");
+                    $"UpsertCandidateJob - Aborting (CRM integration paused).");
             }
 
             _logger.LogInformation("UpsertCandidateJob - Started ({CorrelationId})", correlationId);

@@ -61,11 +61,16 @@ namespace GetIntoTeachingApi.Jobs
         }
 
         /// <summary>
-        /// 
+        /// Gets teh correlation Id (content) from the given context (if available).
         /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
+        /// <param name="context">
+        /// The <see cref="PerformContext"/> instance provides
+        /// the job parameters on which to extract (if available), the correlation Id.
+        /// </param>
+        /// <returns>
+        /// The correlation Id (GUID) from the given context.
+        /// </returns>
         protected Guid GetCorrelationId(PerformContext context) =>
-            context.GetJobParameter<Guid>(CorrelationIdFilter.CorrelationIdKey);
+            (context != null) ? context.GetJobParameter<Guid>(CorrelationIdFilter.CorrelationIdKey) : Guid.Empty;
     }
 }
