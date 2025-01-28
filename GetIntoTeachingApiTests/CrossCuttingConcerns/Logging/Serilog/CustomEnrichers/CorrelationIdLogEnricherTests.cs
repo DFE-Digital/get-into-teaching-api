@@ -1,11 +1,9 @@
-﻿using Bogus;
-using FluentAssertions;
+﻿using FluentAssertions;
 using GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers;
 using GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers.TestDoubles;
 using Serilog.Events;
 using System;
 using Xunit;
-using static GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers.TestDoubles.HttpContextTestDouble;
 
 namespace GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers
 {

@@ -36,6 +36,7 @@ namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnricher
         {
             ArgumentNullException.ThrowIfNull(logEvent);
             ArgumentNullException.ThrowIfNull(propertyFactory);
+            ArgumentNullException.ThrowIfNull(propertyKey);
             ArgumentNullException.ThrowIfNull(propertyValue);
 
             logEvent.AddPropertyIfAbsent(
