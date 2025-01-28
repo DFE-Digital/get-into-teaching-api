@@ -41,6 +41,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
                 FirstName = "John",
                 LastName = "Doe",
                 AddressPostcode = "KY11 9YU",
+                CreationChannelSourceId = 222750003,
+                CreationChannelServiceId = 222750002,
+                CreationChannelActivityId = 222750001,
             };
 
             var result = _validator.TestValidate(request);
