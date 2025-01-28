@@ -3,7 +3,7 @@
 namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging
 {
     /// <summary>
-    /// Provides the ability to extract a given correlation Id (if available) from the current HTTP context
+    /// Provides the ability to extract a given correlation Id (if available) from the current HTTP context.
     /// </summary>
     public interface IHttpContextCorrelationIdProvider
     {
