@@ -70,7 +70,7 @@ namespace GetIntoTeachingApi.Jobs
                     candidate.Email,
                     NotifyService.CandidateRegistrationFailedEmailTemplateId,
                     personalisation);
-                _logger.LogInformation("UpsertCandidateJob - Deleted ({ CorrelationId})", correlationId);
+                _logger.LogInformation("UpsertCandidateJob - Deleted ({CorrelationId})", correlationId);
             }
             else
             {
