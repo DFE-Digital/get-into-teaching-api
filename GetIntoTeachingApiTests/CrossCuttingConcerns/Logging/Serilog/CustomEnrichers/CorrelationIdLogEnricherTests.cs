@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers;
 using GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers.TestDoubles;
+using GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.Shared.TestDoubles;
 using Serilog.Events;
 using System;
 using Xunit;

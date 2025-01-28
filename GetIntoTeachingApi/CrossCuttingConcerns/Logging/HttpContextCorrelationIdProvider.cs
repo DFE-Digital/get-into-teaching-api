@@ -7,25 +7,31 @@ using GetIntoTeachingApi.CrossCuttingConcerns.Logging.Common;
 namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging
 {
     /// <summary>
-    /// 
+    /// Provides the ability to extract a given correlation Id (if available) from
+    /// the current HTTP context using the provisioned <see cref="IHttpContextAccessor"/> instance.
     /// </summary>
     public sealed class HttpContextCorrelationIdProvider : IHttpContextCorrelationIdProvider
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         /// <summary>
-        /// 
+        /// Provisions the <see cref="IHttpContextAccessor"/> which provides
+        /// access to the current <see cref="HttpContext"/>, if one is available.
         /// </summary>
-        /// <param name="httpContextAccessor"></param>
+        /// <param name="httpContextAccessor">
+        /// The <see cref="IHttpContextAccessor"/> instance used to access the current <see cref="HttpContext"/>.
+        /// </param>
         public HttpContextCorrelationIdProvider(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
         }
 
         /// <summary>
-        /// 
+        /// Attempts to extract the correlation Id from the current <see cref="HttpContext"/>.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// The Correlation Id (GUID), defaults to Empty if no correlation Id is provisioned.
+        /// </returns>
         public Guid GetCorrelationId()
         {
             Guid correlationId = Guid.Empty;

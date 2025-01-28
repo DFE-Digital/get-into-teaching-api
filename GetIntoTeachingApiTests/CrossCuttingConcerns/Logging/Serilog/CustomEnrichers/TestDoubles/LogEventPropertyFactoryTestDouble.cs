@@ -13,7 +13,7 @@ namespace GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.CustomEnr
             Mock<ILogEventPropertyFactory> logEventPropertyFactory = Mock();
 
             logEventPropertyFactory.Setup(factory =>
-                factory.CreateProperty(It.IsAny<string>(), It.IsAny<object?>(), It.IsAny<bool>()))
+                factory.CreateProperty(It.IsAny<string>(), It.IsAny<object>(), It.IsAny<bool>()))
                     .Returns((string propertyKey, object propertyValue, bool destructorObjects) =>
                         new LogEventProperty(propertyKey, new ScalarValue(propertyValue)));
 
