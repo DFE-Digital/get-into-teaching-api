@@ -1,8 +1,8 @@
-﻿using System;
-using FluentValidation;
-using GetIntoTeachingApi.Attributes;
+﻿using GetIntoTeachingApi.Attributes;
+using GetIntoTeachingApi.Models.Crm.DomainServices;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
+using System;
 
 namespace GetIntoTeachingApi.Models.Crm
 {
@@ -39,14 +39,20 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityField("createdon")]
         public DateTime? CreatedAt { get; set; }
 
+        private readonly IDegreeStatusDomainService _degreeStatusDomainService;
+
         public CandidateQualification()
             : base()
         {
         }
 
-        public CandidateQualification(Entity entity, ICrmService crm, IServiceProvider serviceProvider)
-            : base(entity, crm, serviceProvider)
+        public CandidateQualification(
+            Entity entity,
+            ICrmService crm,
+            IServiceProvider serviceProvider,
+            IDegreeStatusDomainService degreeStatusDomainService) : base(entity, crm, serviceProvider)
         {
+            _degreeStatusDomainService = degreeStatusDomainService;
         }
     }
 }

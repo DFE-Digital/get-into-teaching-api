@@ -7,6 +7,7 @@ using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Middleware;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm.DomainServices;
 using GetIntoTeachingApi.OperationFilters;
 using GetIntoTeachingApi.RateLimiting;
 using GetIntoTeachingApi.Redis;
@@ -56,6 +57,7 @@ namespace GetIntoTeachingApi.AppStart
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             services.AddSingleton(env);
             services.AddSingleton<IRequestResponseLoggingConfiguration, RequestResponseLoggingConfiguration>();
+            services.AddScoped<IDegreeStatusDomainService, DegreeStatusDomainService>();
         }
 
         public static void AddDatabase(this IServiceCollection services, IEnv env)
