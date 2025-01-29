@@ -9,7 +9,13 @@ namespace GetIntoTeachingApi.Jobs.FilterAttributes
     /// dependency into the associated job (coupled by naming
     /// convention, i.e. 'CorrelationIdFilter').
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Enum | AttributeTargets.Interface | AttributeTargets.Delegate)]
+    [AttributeUsage(
+        AttributeTargets.Class |
+        AttributeTargets.Enum |
+        AttributeTargets.Interface |
+        AttributeTargets.Delegate |
+        AttributeTargets.Method |
+        AttributeTargets.Property)]
     public sealed class CorrelationIdFilterAttribute : JobFilterAttribute{
     }
 }
