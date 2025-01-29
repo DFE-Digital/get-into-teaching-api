@@ -1,7 +1,7 @@
-﻿using GetIntoTeachingApi.Models.Crm.DomainServices;
+﻿using GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference;
 using Xunit;
 
-namespace GetIntoTeachingApiTests.Models.Crm.DomainServices
+namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInference
 {
     public sealed class DegreeStatusDomainServiceTests
     {
