@@ -1,5 +1,4 @@
 ﻿using GetIntoTeachingApi.Models.Crm.DomainServices;
-using System;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Models.Crm.DomainServices
@@ -9,10 +8,14 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices
         [Fact]
         public void GetInferredDegreeStatusFromGraduationYear_ThrowsNotImplementedException()
         {
+            // arrange
             DegreeStatusDomainService service = new();
-            GraduationYear graduationYear = new();
+            GraduationYear graduationYear = new(2021);
 
-            Assert.Throws<ArgumentNullException>(() => service.GetInferredDegreeStatusFromGraduationYear(graduationYear));
+            // act
+            int? degreeStatusId = service.GetInferredDegreeStatusFromGraduationYear(graduationYear);
+
+            Assert.NotNull(degreeStatusId);
         }
     }
 }
