@@ -1,4 +1,4 @@
-﻿namespace GetIntoTeachingApi.Models.Crm.DomainServices
+﻿namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
 {
     /// <summary>
     /// 

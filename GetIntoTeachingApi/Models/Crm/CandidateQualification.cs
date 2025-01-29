@@ -1,5 +1,5 @@
 ﻿using GetIntoTeachingApi.Attributes;
-using GetIntoTeachingApi.Models.Crm.DomainServices;
+using GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
 using System;

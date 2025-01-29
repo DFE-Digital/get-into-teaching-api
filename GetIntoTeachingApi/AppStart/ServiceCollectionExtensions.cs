@@ -7,7 +7,7 @@ using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Middleware;
 using GetIntoTeachingApi.Models;
-using GetIntoTeachingApi.Models.Crm.DomainServices;
+using GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference;
 using GetIntoTeachingApi.OperationFilters;
 using GetIntoTeachingApi.RateLimiting;
 using GetIntoTeachingApi.Redis;
