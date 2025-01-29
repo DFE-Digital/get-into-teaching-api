@@ -26,7 +26,7 @@ namespace GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.Middlewar
             Assert.NotEqual(ExtractCorrelationIdFromContext(httpContext), Guid.Empty);
         }
 
-        private Guid ExtractCorrelationIdFromContext(HttpContext httpContext)
+        private static Guid ExtractCorrelationIdFromContext(HttpContext httpContext)
         {
             IHttpActivityFeature httpActivityFeature =
                     httpContext.Features.GetRequiredFeature<IHttpActivityFeature>();

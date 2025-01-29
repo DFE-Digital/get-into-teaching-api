@@ -43,7 +43,7 @@ namespace GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog
             Assert.Equal(contextCorrelationId, Guid.Empty);
         }
 
-        private void AddDefaultCorrelationId(HttpContext httpContext, Guid correlationId)
+        private static void AddDefaultCorrelationId(HttpContext httpContext, Guid correlationId)
         {
             IHttpActivityFeature activityFeature =
                 httpContext.Features.GetRequiredFeature<IHttpActivityFeature>();

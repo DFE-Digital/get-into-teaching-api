@@ -70,7 +70,7 @@ namespace GetIntoTeachingApi.Jobs
         /// <returns>
         /// The correlation Id (GUID) from the given context.
         /// </returns>
-        protected Guid GetCorrelationId(PerformContext context) =>
+        protected static Guid GetCorrelationId(PerformContext context) =>
             (context != null) ? context.GetJobParameter<Guid>(CorrelationIdFilter.CorrelationIdKey) : Guid.Empty;
     }
 }

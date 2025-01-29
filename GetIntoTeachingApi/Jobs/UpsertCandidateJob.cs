@@ -57,7 +57,6 @@ namespace GetIntoTeachingApi.Jobs
                     $"UpsertCandidateJob - Aborting (CRM integration paused).");
             }
 
-            _logger.LogInformation("UpsertCandidateJob - Started ({CorrelationId})", correlationId);
             _logger.LogInformation("UpsertCandidateJob - Started ({Attempt}) {CorrelationId}", AttemptInfo(context, _contextAdapter), correlationId);
             _logger.LogInformation("UpsertCandidateJob - Payload {Payload} {CorrelationId}", Redactor.RedactJson(json), correlationId);
 

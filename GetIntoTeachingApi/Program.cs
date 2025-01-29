@@ -22,10 +22,6 @@ namespace GetIntoTeachingApi
 
             GetIntoTeachingDbContext.ConfigureNpgsql();
 
-            Log.Logger = new LoggerConfiguration()
-              .WriteTo.Sentry(o => o.Dsn = "https://77e5a366d39a433cbea90a992edab82c@o225781.ingest.us.sentry.io/5276954")
-              .CreateLogger();
-
             var webHost = CreateHostBuilder(args).Build();
 
             await webHost.RunAsync();
@@ -47,12 +43,6 @@ namespace GetIntoTeachingApi
                 })
                 .UseSerilog((ctx, serviceProvider, config) =>
                     config.ReadFrom.Configuration(ctx.Configuration)
-                        .Enrich.With(serviceProvider.GetRequiredService<CorrelationIdLogEnricher>())
-                        .WriteTo.Sentry(s =>
-                        {
-                            s.Dsn = "https://77e5a366d39a433cbea90a992edab82c@o225781.ingest.us.sentry.io/5276954";  // new Dsn(ConfigurationManager.AppSettings["SentryDsn"]);
-                            s.MinimumBreadcrumbLevel = LogEventLevel.Debug;
-                            s.MinimumEventLevel = LogEventLevel.Error;
-                        }));
+                        .Enrich.With(serviceProvider.GetRequiredService<CorrelationIdLogEnricher>()));
     }
 }
