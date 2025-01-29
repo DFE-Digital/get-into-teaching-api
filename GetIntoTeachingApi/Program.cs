@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Serilog.Events;
 using System;
 using System.Threading.Tasks;
 
@@ -32,8 +31,8 @@ namespace GetIntoTeachingApi
                 .UseDefaultServiceProvider((_, options) => options.ValidateScopes = false)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    //webBuilder.UseSentry();
-                    //webBuilder.UseKestrel(opts => opts.AddServerHeader = false);
+                    webBuilder.UseSentry();
+                    webBuilder.UseKestrel(opts => opts.AddServerHeader = false);
                     webBuilder.UseStartup<Startup>();
                     webBuilder.ConfigureServices(services =>
                     {
