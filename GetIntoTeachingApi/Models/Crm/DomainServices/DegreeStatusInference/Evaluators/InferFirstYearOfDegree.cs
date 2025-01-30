@@ -6,7 +6,7 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Eva
     /// <summary>
     /// 
     /// </summary>
-    public sealed class InferFirstYearOfDegree : IEvaluator<GraduationYear, DegreeStatus>
+    public sealed class InferFirstYearOfDegree : IEvaluator<DegreeStatusInferenceRequest, DegreeStatus>
     {
         /// <summary>
         /// 
@@ -19,8 +19,9 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Eva
         /// <param name="evaluationRequest"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public bool CanEvaluate(GraduationYear evaluationRequest) =>
-            evaluationRequest.Equals(DateTime.Today.AddYears(RemainingDegreeDuration).Year);
+        public bool CanEvaluate(DegreeStatusInferenceRequest evaluationRequest) =>
+            evaluationRequest.Equals(evaluationRequest.
+                CurrentCalendarYearProvider.DateTimeToday.AddYears(RemainingDegreeDuration).Year);
 
         /// <summary>
         /// 
@@ -28,8 +29,11 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Eva
         /// <param name="evaluationRequest"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public DegreeStatus Evaluate(GraduationYear evaluationRequest) =>
-             (evaluationRequest.Equals(DateTime.Today.AddYears(RemainingDegreeDuration).Year)) ? DegreeStatus.FirstYear : // or greater than 3 years... TODO add this
-                throw new ArgumentOutOfRangeException(nameof(evaluationRequest), "Year must be the current year.");
+        public DegreeStatus Evaluate(DegreeStatusInferenceRequest evaluationRequest) =>
+             (evaluationRequest.Equals(evaluationRequest.
+                 CurrentCalendarYearProvider.DateTimeToday.AddYears(RemainingDegreeDuration).Year)) ||
+                (evaluationRequest.YearOfGraduation.GetNumberOfYearsAwayFromGraduating(
+                    evaluationRequest.CurrentCalendarYearProvider.ToYearInt()) > RemainingDegreeDuration) ? DegreeStatus.FirstYear :
+                        throw new ArgumentOutOfRangeException(nameof(evaluationRequest), "Year must be the current year.");
     }
 }

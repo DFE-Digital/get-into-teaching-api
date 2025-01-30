@@ -39,11 +39,9 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityField("createdon")]
         public DateTime? CreatedAt { get; set; }
 
-        private readonly IDegreeStatusDomainService _degreeStatusDomainService;
+        //private readonly IDegreeStatusDomainService _degreeStatusDomainService;
 
-        public CandidateQualification()
-            : base()
-        {
+        public CandidateQualification() : base(){
         }
 
         public CandidateQualification(
@@ -52,7 +50,7 @@ namespace GetIntoTeachingApi.Models.Crm
             IServiceProvider serviceProvider,
             IDegreeStatusDomainService degreeStatusDomainService) : base(entity, crm, serviceProvider)
         {
-            _degreeStatusDomainService = degreeStatusDomainService;
+            
         }
     }
 }

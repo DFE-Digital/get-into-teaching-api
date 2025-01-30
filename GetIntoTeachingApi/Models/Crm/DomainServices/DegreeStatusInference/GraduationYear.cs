@@ -11,7 +11,7 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
         /// <summary>
         /// 
         /// </summary>
-        private readonly int _value;
+        private readonly int _proposedGraduationYear;
 
         /// <summary>
         /// 
@@ -26,22 +26,17 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
             int minDate = DateTime.Now.Year;
             int maxDate = DateTime.Now.AddYears(yearsAhead).Year;
 
-            _value = (year >= minDate || year <= maxDate) ? year :
-                throw new ArgumentOutOfRangeException(nameof(year), $"Year must be between {Convert(minDate)} and {Convert(maxDate)}");
+            _proposedGraduationYear =
+                (year >= minDate || year <= maxDate) ? year :
+                 throw new ArgumentOutOfRangeException(
+                     nameof(year), $"Year must be between {Convert(minDate)} and {Convert(maxDate)}");
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(DateTime other) => _value == other.Year;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override int GetHashCode() => _value.GetHashCode();
+        public override int GetHashCode() => _proposedGraduationYear.GetHashCode();
 
         /// <summary>
         /// 
@@ -62,15 +57,34 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
         /// <summary>
         /// 
         /// </summary>
-        public readonly int GetYear() => _value;
+        public readonly int GetYear() => _proposedGraduationYear;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="currentYear"></param>
+        /// <returns></returns>
+        public int GetNumberOfYearsAwayFromGraduating(int currentYear) => _proposedGraduationYear - currentYear;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="year"></param>
         /// <returns></returns>
-        public readonly DateTime Convert(int year) =>
-            DateTime.ParseExact(year.ToString(CultureInfo.InvariantCulture), "yyyyMMdd", CultureInfo.InvariantCulture);
+        public readonly DateTime Convert(int year)
+        {
+            const string YearFormat = "yyyyMMdd";
+
+            return DateTime.ParseExact(
+                year.ToString(CultureInfo.InvariantCulture), YearFormat, CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool Equals(DateTime other) => _proposedGraduationYear == other.Year;
 
         /// <summary>
         /// 
@@ -83,7 +97,6 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
             {
                 return false;
             }
-
             if (obj is GraduationYear graduationYear) return Equals(graduationYear);
             if (obj is int graduationYearInt) return Equals(graduationYearInt);
             if (obj is DateTime graduationYearDateTime) return Equals(graduationYearDateTime);

@@ -6,8 +6,9 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Eva
     /// <summary>
     /// 
     /// </summary>
-    public class InferFinalYearOfDegree : IEvaluator<GraduationYear, DegreeStatus>
-    {/// <summary>
+    public class InferFinalYearOfDegree : IEvaluator<DegreeStatusInferenceRequest, DegreeStatus>
+    {
+        /// <summary>
      /// 
      /// </summary>
         private const int RemainingDegreeDuration = 1;
@@ -18,8 +19,9 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Eva
         /// <param name="evaluationRequest"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public bool CanEvaluate(GraduationYear evaluationRequest) =>
-            evaluationRequest.Equals(DateTime.Today.AddYears(RemainingDegreeDuration).Year);
+        public bool CanEvaluate(DegreeStatusInferenceRequest evaluationRequest) =>
+            evaluationRequest.Equals(evaluationRequest.
+                CurrentCalendarYearProvider.DateTimeToday.AddYears(RemainingDegreeDuration).Year);
 
         /// <summary>
         /// 
@@ -27,9 +29,10 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Eva
         /// <param name="evaluationRequest"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public DegreeStatus Evaluate(GraduationYear evaluationRequest) =>
-             (evaluationRequest.Equals(DateTime.Today.AddYears(RemainingDegreeDuration).Year)) ? DegreeStatus.FinalYear :
-                throw new ArgumentOutOfRangeException(nameof(evaluationRequest),
-                    $"Year must be {RemainingDegreeDuration} years from {DateTime.Today.Year}.");
+        public DegreeStatus Evaluate(DegreeStatusInferenceRequest evaluationRequest) =>
+             (evaluationRequest.CurrentCalendarYearProvider.ToYearInt().Equals(evaluationRequest
+                 .CurrentCalendarYearProvider.DateTimeToday.AddYears(RemainingDegreeDuration).Year)) ? DegreeStatus.FinalYear :
+                    throw new ArgumentOutOfRangeException(nameof(evaluationRequest),
+                        $"Year must be {RemainingDegreeDuration} years from {DateTime.Today.Year}.");
     }
 }

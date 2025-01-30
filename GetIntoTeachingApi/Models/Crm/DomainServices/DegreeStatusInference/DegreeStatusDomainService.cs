@@ -12,6 +12,8 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
     /// </summary>
     public sealed class DegreeStatusDomainService : IDegreeStatusDomainService
     {
+        private readonly ICurrentYearProvider _currentYearProvider;
+
         private readonly IList<IChainEvaluationHandler<
             GraduationYear, DegreeStatus>> _degreeStatusInferenceHandlers;
 
@@ -21,8 +23,11 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
         /// <param name="degreeStatusInferenceHandlers"></param>
         /// <exception cref="ArgumentNullException"></exception>
         public DegreeStatusDomainService(
+            ICurrentYearProvider currentYearProvider,
             IEnumerable<IChainEvaluationHandler<GraduationYear, DegreeStatus>> degreeStatusInferenceHandlers)
         {
+            _currentYearProvider = currentYearProvider;
+
             _degreeStatusInferenceHandlers = degreeStatusInferenceHandlers?.ToList() ??
                 throw new ArgumentNullException(nameof(degreeStatusInferenceHandlers));
 

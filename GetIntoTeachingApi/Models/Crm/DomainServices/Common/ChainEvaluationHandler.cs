@@ -53,7 +53,7 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.Common
         /// <summary>
         /// 
         /// </summary>
-        internal class RootEvaluationHandler : IChainEvaluationHandler<TEvaluationRequest, TEvaluationResponse>
+        internal sealed class RootEvaluationHandler : IChainEvaluationHandler<TEvaluationRequest, TEvaluationResponse>
         {
             /// <summary>
             /// 
@@ -76,13 +76,5 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.Common
             /// <returns></returns>
             public static RootEvaluationHandler CreateRoot() => new();
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="evaluator"></param>
-        /// <returns></returns>
-        public static ChainEvaluationHandler<TEvaluationRequest, TEvaluationResponse>
-            Create(IEvaluator<TEvaluationRequest, TEvaluationResponse> evaluator) => new(evaluator);
     }
 }
