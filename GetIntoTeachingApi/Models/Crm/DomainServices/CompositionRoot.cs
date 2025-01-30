@@ -9,7 +9,7 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices
     /// <summary>
     /// 
     /// </summary>
-    public class CompositionRoot
+    public static class CompositionRoot
     {
         /// <summary>
         /// 
@@ -33,6 +33,8 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices
             services.AddScopedEvaluationHandler<InferSecondYearOfDegree>();
             services.AddScopedEvaluationHandler<InferFinalYearOfDegree>();
             services.AddScopedEvaluationHandler<InferAlreadyHasDegree>();
+
+            services.AddTransient<ICurrentYearProvider, CurrentYearProvider>();
         }
     }
 
@@ -48,8 +50,8 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices
         /// <param name="services"></param>
         public static void AddScopedEvaluationHandler<TEvaluationHandler>(
             this IServiceCollection services)
-                where TEvaluationHandler : IEvaluator<GraduationYear, DegreeStatus> =>
-                    services.AddScoped<IChainEvaluationHandler<GraduationYear, DegreeStatus>>(provider =>
+                where TEvaluationHandler : IEvaluator<DegreeStatusInferenceRequest, DegreeStatus> =>
+                    services.AddScoped<IChainEvaluationHandler<DegreeStatusInferenceRequest, DegreeStatus>>(provider =>
                         provider.AddEvaluationHandler<TEvaluationHandler>());
         /// <summary>
         /// 
@@ -57,11 +59,10 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices
         /// <typeparam name="TEvaluationHandler"></typeparam>
         /// <param name="serviceProvider"></param>
         /// <returns></returns>
-        public static ChainEvaluationHandler<GraduationYear, DegreeStatus> AddEvaluationHandler<
+        public static ChainEvaluationHandler<DegreeStatusInferenceRequest, DegreeStatus> AddEvaluationHandler<
             TEvaluationHandler>(this IServiceProvider serviceProvider)
-                where TEvaluationHandler : IEvaluator<GraduationYear, DegreeStatus> =>
-                    ChainEvaluationHandler<GraduationYear, DegreeStatus>.Create(
-                        serviceProvider.CreateScope()
-                            .ServiceProvider.GetRequiredService<TEvaluationHandler>());
+                where TEvaluationHandler : IEvaluator<DegreeStatusInferenceRequest, DegreeStatus> =>
+                    new (serviceProvider.CreateScope()
+                        .ServiceProvider.GetRequiredService<TEvaluationHandler>());
     }
 }

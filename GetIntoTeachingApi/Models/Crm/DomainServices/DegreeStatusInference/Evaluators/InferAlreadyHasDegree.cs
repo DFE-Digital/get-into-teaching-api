@@ -6,7 +6,7 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Eva
     /// <summary>
     /// 
     /// </summary>
-    public sealed class InferAlreadyHasDegree : IEvaluator<GraduationYear, DegreeStatus>
+    public sealed class InferAlreadyHasDegree : IEvaluator<DegreeStatusInferenceRequest, DegreeStatus>
     {
         /// <summary>
         /// 
@@ -14,7 +14,7 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Eva
         /// <param name="evaluationRequest"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public bool CanEvaluate(GraduationYear evaluationRequest) => evaluationRequest.Equals(DateTime.Today.Year);
+        public bool CanEvaluate(DegreeStatusInferenceRequest evaluationRequest) => evaluationRequest.Equals(DateTime.Today.Year);
 
         /// <summary>
         /// 
@@ -22,8 +22,10 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Eva
         /// <param name="evaluationRequest"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public DegreeStatus Evaluate(GraduationYear evaluationRequest) =>
-             (evaluationRequest.Equals(DateTime.Today.Year)) ? DegreeStatus.HasDegree :
-                throw new ArgumentOutOfRangeException(nameof(evaluationRequest), "Year must be the current year.");
+        public DegreeStatus Evaluate(DegreeStatusInferenceRequest evaluationRequest) =>
+             (evaluationRequest.YearOfGraduation.Equals(evaluationRequest
+                 .CurrentCalendarYearProvider.ToYearInt()) ? DegreeStatus.HasDegree :
+                    throw new ArgumentOutOfRangeException(
+                        nameof(evaluationRequest), "Year must be the current year."));
     }
 }
