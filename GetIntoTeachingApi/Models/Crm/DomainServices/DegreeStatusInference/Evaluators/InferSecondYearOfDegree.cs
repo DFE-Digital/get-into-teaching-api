@@ -31,7 +31,7 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Eva
         /// <exception cref="System.NotImplementedException"></exception>
         public DegreeStatus Evaluate(DegreeStatusInferenceRequest evaluationRequest) =>
              (evaluationRequest.YearOfGraduation.Equals(evaluationRequest
-                 .CurrentCalendarYearProvider.DateTimeToday.AddYears(RemainingDegreeDuration).Year)) ? DegreeStatus.SecondYear :
+                 .CurrentCalendarYearProvider.ToYearsAheadInt(RemainingDegreeDuration))) ? DegreeStatus.SecondYear :
                     throw new ArgumentOutOfRangeException(nameof(evaluationRequest),
                         $"Year must be {RemainingDegreeDuration} years from {DateTime.Today.Year}.");
     }
