@@ -17,5 +17,12 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
         /// </summary>
         /// <returns></returns>
         int ToYearInt();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="numberOfYearsAhead"></param>
+        /// <returns></returns>
+        int ToYearsAheadInt(int numberOfYearsAhead);
     }
 }
