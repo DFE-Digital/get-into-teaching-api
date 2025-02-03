@@ -1,4 +1,9 @@
-﻿using GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference;
+﻿using GetIntoTeachingApi.Models.Crm.DomainServices.Common;
+using GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference;
+using GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Evaluators;
+using GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInference.TestDoubles;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInference
@@ -6,16 +11,95 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
     public sealed class DegreeStatusDomainServiceTests
     {
         [Fact]
-        public void GetInferredDegreeStatusFromGraduationYear_ThrowsNotImplementedException()
+        public void GetInferredDegreeStatusFromGraduationYear_OneYearTillGraduation_InfersFinalYearStatus()
         {
             // arrange
-            //DegreeStatusDomainService service = new();
-            //GraduationYear graduationYear = new(2021);
+            IEnumerable<IChainEvaluationHandler<
+                DegreeStatusInferenceRequest, DegreeStatus>> degreeStatusInferenceHandlers
+                    = ChainEvaluationHandlerStub.ChainEvaluationHandlersStub<DegreeStatusInferenceRequest, DegreeStatus>();
 
-            //// act
-            //int? degreeStatusId = service.GetInferredDegreeStatusFromGraduationYear(graduationYear);
+            ICurrentYearProvider currentYearProvider =
+                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 01));
 
-            //Assert.NotNull(degreeStatusId);
+            GraduationYear graduationYear = new(year: 2026, currentYearProvider);
+            DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);
+            DegreeStatusDomainService service = new(degreeStatusInferenceHandlers);
+
+            // act
+            int? degreeStatusId =
+                service.GetInferredDegreeStatusFromGraduationYear(degreeStatusInferenceRequest);
+
+            Assert.NotNull(degreeStatusId);
+            Assert.Equal(222750001, degreeStatusId);
+        }
+
+        [Fact]
+        public void GetInferredDegreeStatusFromGraduationYear_TwoYearsTillGraduation_InfersSecondYearStatus()
+        {
+            // arrange
+            IEnumerable<IChainEvaluationHandler<
+                DegreeStatusInferenceRequest, DegreeStatus>> degreeStatusInferenceHandlers
+                    = ChainEvaluationHandlerStub.ChainEvaluationHandlersStub<DegreeStatusInferenceRequest, DegreeStatus>();
+
+            ICurrentYearProvider currentYearProvider =
+                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 01));
+
+            GraduationYear graduationYear = new(year: 2027, currentYearProvider);
+            DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);
+            DegreeStatusDomainService service = new(degreeStatusInferenceHandlers);
+
+            // act
+            int? degreeStatusId =
+                service.GetInferredDegreeStatusFromGraduationYear(degreeStatusInferenceRequest);
+
+            Assert.NotNull(degreeStatusId);
+            Assert.Equal(222750002, degreeStatusId);
+        }
+
+        [Fact]
+        public void GetInferredDegreeStatusFromGraduationYear_ThreeYearsTillGraduation_InfersSecondYearStatus()
+        {
+            // arrange
+            IEnumerable<IChainEvaluationHandler<
+                DegreeStatusInferenceRequest, DegreeStatus>> degreeStatusInferenceHandlers
+                    = ChainEvaluationHandlerStub.ChainEvaluationHandlersStub<DegreeStatusInferenceRequest, DegreeStatus>();
+
+            ICurrentYearProvider currentYearProvider =
+                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 01));
+
+            GraduationYear graduationYear = new(year: 2028, currentYearProvider);
+            DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);
+            DegreeStatusDomainService service = new(degreeStatusInferenceHandlers);
+
+            // act
+            int? degreeStatusId =
+                service.GetInferredDegreeStatusFromGraduationYear(degreeStatusInferenceRequest);
+
+            Assert.NotNull(degreeStatusId);
+            Assert.Equal(222750003, degreeStatusId);
+        }
+
+        [Fact]
+        public void GetInferredDegreeStatusFromGraduationYear_GreatherThanThreeYearsTillGraduation_InfersSecondYearStatus()
+        {
+            // arrange
+            IEnumerable<IChainEvaluationHandler<
+                DegreeStatusInferenceRequest, DegreeStatus>> degreeStatusInferenceHandlers
+                    = ChainEvaluationHandlerStub.ChainEvaluationHandlersStub<DegreeStatusInferenceRequest, DegreeStatus>();
+
+            ICurrentYearProvider currentYearProvider =
+                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 01));
+
+            GraduationYear graduationYear = new(year: 2038, currentYearProvider);
+            DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);
+            DegreeStatusDomainService service = new(degreeStatusInferenceHandlers);
+
+            // act
+            int? degreeStatusId =
+                service.GetInferredDegreeStatusFromGraduationYear(degreeStatusInferenceRequest);
+
+            Assert.NotNull(degreeStatusId);
+            Assert.Equal(222750003, degreeStatusId);
         }
     }
 }

@@ -6,7 +6,7 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Eva
     /// <summary>
     /// 
     /// </summary>
-    public class InferFinalYearOfDegree : IEvaluator<DegreeStatusInferenceRequest, DegreeStatus>
+    public sealed class InferFinalYearOfDegree : IEvaluator<DegreeStatusInferenceRequest, DegreeStatus>
     {
         /// <summary>
      /// 
@@ -20,8 +20,8 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Eva
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
         public bool CanEvaluate(DegreeStatusInferenceRequest evaluationRequest) =>
-            evaluationRequest.Equals(evaluationRequest.
-                CurrentCalendarYearProvider.DateTimeToday.AddYears(RemainingDegreeDuration).Year);
+            evaluationRequest.YearOfGraduation.GetYear()
+                .Equals(evaluationRequest.CurrentCalendarYearProvider.ToYearsAheadInt(RemainingDegreeDuration));
 
         /// <summary>
         /// 
@@ -30,9 +30,9 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Eva
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
         public DegreeStatus Evaluate(DegreeStatusInferenceRequest evaluationRequest) =>
-             (evaluationRequest.CurrentCalendarYearProvider.ToYearInt().Equals(evaluationRequest
-                 .CurrentCalendarYearProvider.ToYearsAheadInt(RemainingDegreeDuration))) ? DegreeStatus.FinalYear :
-                    throw new ArgumentOutOfRangeException(nameof(evaluationRequest),
-                        $"Year must be {RemainingDegreeDuration} years from {DateTime.Today.Year}.");
+            CanEvaluate(evaluationRequest) ? DegreeStatus.FinalYear :
+                throw new ArgumentOutOfRangeException(
+                    nameof(evaluationRequest),
+                    $"Year must be {RemainingDegreeDuration} years from {DateTime.Today.Year}.");
     }
 }

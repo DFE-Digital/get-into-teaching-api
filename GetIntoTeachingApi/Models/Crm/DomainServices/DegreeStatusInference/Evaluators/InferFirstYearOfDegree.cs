@@ -17,25 +17,31 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Eva
         /// 
         /// </summary>
         /// <param name="evaluationRequest"></param>
-        /// <returns></returns>
-        /// <exception cref="System.NotImplementedException"></exception>
+        /// <returns>
+        /// 
+        /// </returns>
+        /// <exception cref="System.NotImplementedException">
+        /// 
+        /// </exception>
         public bool CanEvaluate(DegreeStatusInferenceRequest evaluationRequest) =>
-            evaluationRequest.Equals(evaluationRequest.
-                CurrentCalendarYearProvider.DateTimeToday.AddYears(RemainingDegreeDuration).Year);
+            (evaluationRequest.YearOfGraduation.GetYear() -
+                evaluationRequest.CurrentCalendarYearProvider.ToYearInt()) >= RemainingDegreeDuration;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="evaluationRequest"></param>
-        /// <returns></returns>
+        /// <param name="evaluationRequest">
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        /// </returns>
         /// <exception cref="System.NotImplementedException">
         /// 
         /// </exception>
         public DegreeStatus Evaluate(DegreeStatusInferenceRequest evaluationRequest) =>
-             (evaluationRequest.Equals(evaluationRequest.
-                 CurrentCalendarYearProvider.ToYearsAheadInt(RemainingDegreeDuration))) ||
-                (evaluationRequest.YearOfGraduation.GetNumberOfYearsAwayFromGraduating(
-                    evaluationRequest.CurrentCalendarYearProvider.ToYearInt()) > RemainingDegreeDuration) ? DegreeStatus.FirstYear :
-                        throw new ArgumentOutOfRangeException(nameof(evaluationRequest), "Year must be the current year.");
+             CanEvaluate(evaluationRequest) ? DegreeStatus.FirstYear :
+                throw new ArgumentOutOfRangeException(
+                    nameof(evaluationRequest), "Year must be the current year.");
     }
 }
