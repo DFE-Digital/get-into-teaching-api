@@ -28,7 +28,9 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Eva
         /// </summary>
         /// <param name="evaluationRequest"></param>
         /// <returns></returns>
-        /// <exception cref="System.NotImplementedException"></exception>
+        /// <exception cref="System.NotImplementedException">
+        /// 
+        /// </exception>
         public DegreeStatus Evaluate(DegreeStatusInferenceRequest evaluationRequest) =>
              (evaluationRequest.Equals(evaluationRequest.
                  CurrentCalendarYearProvider.ToYearsAheadInt(RemainingDegreeDuration))) ||
