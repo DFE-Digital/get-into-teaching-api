@@ -48,9 +48,10 @@ namespace GetIntoTeachingApi.Models.Crm
             Entity entity,
             ICrmService crm,
             IServiceProvider serviceProvider,
+            ICurrentYearProvider currentYearProvider,
             IDegreeStatusDomainService degreeStatusDomainService) : base(entity, crm, serviceProvider)
         {
-            
+            degreeStatusDomainService.GetInferredDegreeStatusFromGraduationYear(new GraduationYear(year: 2026, currentYearProvider));
         }
     }
 }

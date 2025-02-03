@@ -20,11 +20,12 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
         /// <exception cref="ArgumentOutOfRangeException">
         ///     When <see cref="year"/> is not within the range from <value>1</value> to <value>9999</value>.
         /// </exception>
-        public GraduationYear(int year)
+        public GraduationYear(int year, ICurrentYearProvider currentYearProvider)
         {
             const int yearsAhead = 40;
-            int minDate = DateTime.Now.Year;
-            int maxDate = DateTime.Now.AddYears(yearsAhead).Year;
+
+            int minDate = currentYearProvider.ToYearInt();
+            int maxDate = currentYearProvider.ToYearsAheadInt(yearsAhead);
 
             _proposedGraduationYear =
                 (year >= minDate || year <= maxDate) ? year :
