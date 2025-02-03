@@ -16,15 +16,22 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
         /// <summary>
         /// 
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// 
+        /// </returns>
         public int ToYearInt() => Convert.ToInt32(DateTimeToday.Year, CultureInfo.CurrentCulture);
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="numberOfYearsAhead"></param>
-        /// <returns></returns>
+        /// <param name="numberOfYearsAhead">
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        /// </returns>
         public int ToYearsAheadInt(int numberOfYearsAhead) =>
-            Convert.ToInt32(DateTimeToday.AddYears(numberOfYearsAhead).Year, CultureInfo.CurrentCulture);
+            Convert.ToInt32(DateTimeToday.AddYears(
+                numberOfYearsAhead).Year, CultureInfo.CurrentCulture);
     }
 }

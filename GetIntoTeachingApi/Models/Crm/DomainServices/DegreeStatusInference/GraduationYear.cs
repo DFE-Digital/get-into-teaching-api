@@ -93,14 +93,18 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
         /// <param name="obj"></param>
         /// <returns></returns>
         public override bool Equals(object obj)
-        {
+         {
             if (obj is null)
             {
                 return false;
             }
-            if (obj is GraduationYear graduationYear) return Equals(graduationYear);
-            if (obj is int graduationYearInt) return Equals(graduationYearInt);
-            if (obj is DateTime graduationYearDateTime) return Equals(graduationYearDateTime);
+
+            if (obj is GraduationYear graduationYear)
+                return Equals(graduationYear.GetYear() == _proposedGraduationYear);
+            if (obj is int graduationYearInt)
+                return Equals(graduationYearInt == _proposedGraduationYear);
+            if (obj is DateTime graduationYearDateTime)
+                return Equals(graduationYearDateTime.Year == _proposedGraduationYear);
 
             return false;
         }

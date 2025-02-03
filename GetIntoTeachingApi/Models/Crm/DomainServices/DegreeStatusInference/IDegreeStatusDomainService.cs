@@ -1,4 +1,6 @@
-﻿namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
+﻿using GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Evaluators;
+
+namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
 {
     /// <summary>
     /// 
@@ -8,8 +10,12 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="graduationYear"></param>
-        /// <returns></returns>
-        int? GetInferredDegreeStatusFromGraduationYear(GraduationYear graduationYear);
+        /// <param name="degreeStatusInferenceRequest">
+        /// 
+        /// </param>
+        /// <returns>
+        /// 
+        /// </returns>
+        int? GetInferredDegreeStatusFromGraduationYear(DegreeStatusInferenceRequest degreeStatusInferenceRequest);
     }
 }

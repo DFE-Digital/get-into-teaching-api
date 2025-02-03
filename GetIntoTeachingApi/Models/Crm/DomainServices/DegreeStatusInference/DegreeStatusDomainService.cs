@@ -1,4 +1,5 @@
 ﻿using GetIntoTeachingApi.Models.Crm.DomainServices.Common;
+using GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Evaluators;
 using GetIntoTeachingApi.Models.Crm.DomainServices.Extensions;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
     public sealed class DegreeStatusDomainService : IDegreeStatusDomainService
     {
         private readonly IList<IChainEvaluationHandler<
-            GraduationYear, DegreeStatus>> _degreeStatusInferenceHandlers;
+            DegreeStatusInferenceRequest, DegreeStatus>> _degreeStatusInferenceHandlers;
 
         /// <summary>
         /// 
@@ -21,7 +22,7 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
         /// <param name="degreeStatusInferenceHandlers"></param>
         /// <exception cref="ArgumentNullException"></exception>
         public DegreeStatusDomainService(
-            IEnumerable<IChainEvaluationHandler<GraduationYear, DegreeStatus>> degreeStatusInferenceHandlers)
+            IEnumerable<IChainEvaluationHandler<DegreeStatusInferenceRequest, DegreeStatus>> degreeStatusInferenceHandlers)
         {
             _degreeStatusInferenceHandlers = degreeStatusInferenceHandlers?.ToList() ??
                 throw new ArgumentNullException(nameof(degreeStatusInferenceHandlers));
@@ -32,12 +33,12 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="graduationYear"></param>
+        /// <param name="degreeStatusInferenceRequest"></param>
         /// <returns></returns>
-        public int? GetInferredDegreeStatusFromGraduationYear(GraduationYear graduationYear)
+        public int? GetInferredDegreeStatusFromGraduationYear(DegreeStatusInferenceRequest degreeStatusInferenceRequest)
         {
             DegreeStatus degreeStatusResult =
-                _degreeStatusInferenceHandlers[0].Evaluate(graduationYear);
+                _degreeStatusInferenceHandlers[0].Evaluate(degreeStatusInferenceRequest);
 
             return Convert.ToInt32(degreeStatusResult, CultureInfo.CurrentCulture);
         }
