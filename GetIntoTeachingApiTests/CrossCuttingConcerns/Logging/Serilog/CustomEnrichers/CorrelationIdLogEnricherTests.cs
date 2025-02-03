@@ -1,7 +1,9 @@
 ﻿using FluentAssertions;
 using GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers;
+using GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers.Extensions;
 using GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers.TestDoubles;
 using GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.Shared.TestDoubles;
+using GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers.Extensions;
 using Serilog.Events;
 using System;
 using Xunit;
@@ -29,7 +31,7 @@ namespace GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.CustomEnr
             Assert.NotNull(logEvent.Properties);
             Assert.True(logEvent.Properties.Count > 1);
             Assert.True(logEvent.Properties.ContainsKey("CorrelationId"));
-            Assert.Equal(correlationId, Guid.Parse(logEvent.Properties["CorrelationId"].ToString()));
+            Assert.Equivalent($"CID-{correlationId}", logEvent.GetScalarValue<string>("CorrelationId"));
         }
 
         [Fact]
@@ -58,8 +60,8 @@ namespace GetIntoTeachingApiTests.CrossCuttingConcerns.Logging.Serilog.CustomEnr
             Assert.True(logEventSecond.Properties.Count > 1);
             Assert.True(logEventSecond.Properties.ContainsKey("CorrelationId"));
 
-            Assert.Equal(correlationId, Guid.Parse(logEventFirst.Properties["CorrelationId"].ToString()));
-            Assert.Equal(correlationId, Guid.Parse(logEventSecond.Properties["CorrelationId"].ToString()));
+            Assert.Equivalent($"CID-{correlationId}", logEventFirst.GetScalarValue<string>("CorrelationId"));
+            Assert.Equivalent($"CID-{correlationId}",logEventSecond.GetScalarValue<string>("CorrelationId"));
         }
 
         [Fact]

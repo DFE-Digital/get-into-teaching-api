@@ -43,7 +43,7 @@ namespace GetIntoTeachingApi.Jobs
         public void Run(string json, PerformContext context)
         {
             var candidate = json.DeserializeChangeTracked<Candidate>();
-            Guid correlationId = GetCorrelationId(context);
+            string correlationId = GetCorrelationId(context);
 
             if (Deduplicate(Signature(candidate), context, _contextAdapter))
             {

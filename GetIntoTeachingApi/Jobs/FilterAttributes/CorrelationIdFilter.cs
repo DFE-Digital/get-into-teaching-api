@@ -43,7 +43,7 @@ namespace GetIntoTeachingApi.Jobs.FilterAttributes
 
             if (correlationId != Guid.Empty)
             {
-                context.SetJobParameter(CorrelationIdKey, correlationId);
+                context.SetJobParameter(CorrelationIdKey, $"CID-{correlationId}");
             }
         }
 

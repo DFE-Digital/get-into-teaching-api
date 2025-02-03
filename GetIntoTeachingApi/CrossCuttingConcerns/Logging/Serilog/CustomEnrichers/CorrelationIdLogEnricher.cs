@@ -69,7 +69,7 @@ namespace GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnricher
                 if (correlationId != Guid.Empty)
                 {
                     logEvent.LogProperty(propertyFactory,
-                        LogPropertyKeys.CorrelationIdNameKey, correlationId);
+                        LogPropertyKeys.CorrelationIdNameKey, $"CID-{correlationId}");
                 }
             }
         }
