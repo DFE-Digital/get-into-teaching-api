@@ -8,7 +8,7 @@ namespace GetIntoTeachingApi.Adapters
 {
     public class NotificationClientAdapter : INotificationClientAdapter
     {
-        private readonly IDictionary<string, NotificationClient> _clients;
+        private readonly Dictionary<string, NotificationClient> _clients;
 
         public NotificationClientAdapter()
         {

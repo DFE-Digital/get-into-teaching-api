@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using FluentValidation;
-using Flurl.Util;
+﻿using FluentValidation;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
@@ -12,7 +7,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
-using NuGet.Protocol;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 
 namespace GetIntoTeachingApi.Services
 {
@@ -26,7 +24,6 @@ namespace GetIntoTeachingApi.Services
         private readonly IDateTimeProvider _dateTime;
         private readonly IAppSettings _appSettings;
         private readonly ILogger<ICrmService> _logger;
-        private readonly IEnv _env;
         private readonly TimeSpan _statusCheckInterval = TimeSpan.FromMinutes(1);
         private DateTime _previousStatusCheckAt = DateTime.UtcNow;
         private string _previousStatus;
@@ -36,15 +33,13 @@ namespace GetIntoTeachingApi.Services
             IServiceProvider serviceProvider,
             IAppSettings appSettings,
             IDateTimeProvider dateTime,
-            ILogger<ICrmService> logger,
-            IEnv env)
+            ILogger<ICrmService> logger)
         {
             _appSettings = appSettings;
             _service = service;
             _serviceProvider = serviceProvider;
             _dateTime = dateTime;
             _logger = logger;
-            _env = env;
         }
 
         public string CheckStatus()
@@ -273,7 +268,7 @@ namespace GetIntoTeachingApi.Services
         {
             var relatedEntityKeys = entity.Attributes.Keys.Where(k => k.StartsWith($"{relationshipName}.", true, CultureInfo.CurrentCulture)).ToList();
 
-            if (!relatedEntityKeys.Any())
+            if (relatedEntityKeys.Count == 0)
             {
                 // If we used LINQ and AddProperty the related entities are already in the context
                 // and can be queried with the relationship.

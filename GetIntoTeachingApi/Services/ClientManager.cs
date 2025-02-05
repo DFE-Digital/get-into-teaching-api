@@ -26,7 +26,7 @@ namespace GetIntoTeachingApi.Services
             return Clients.FirstOrDefault(c => c.ApiKey == apiKey);
         }
 
-        private IEnumerable<Client> LoadClients()
+        private List<Client> LoadClients()
         {
             var deserializer = new DeserializerBuilder()
                 .WithNamingConvention(UnderscoredNamingConvention.Instance)

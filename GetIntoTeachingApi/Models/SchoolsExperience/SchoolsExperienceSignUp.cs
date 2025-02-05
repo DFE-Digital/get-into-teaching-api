@@ -153,7 +153,7 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
         
         private void AddQualification(Candidate candidate)
         {
-            if (ContainsQualification() && !candidate.Qualifications.Any())
+            if (ContainsQualification() && candidate.Qualifications.Count == 0)
             {
                 candidate.Qualifications.Add(new CandidateQualification()
                 {

@@ -32,7 +32,7 @@ namespace GetIntoTeachingApiTests.Auth
             mockLoggerFactory.Setup(x => x.CreateLogger(It.IsAny<string>())).Returns(_mockLogger.Object);
 
             _handler = new ApiClientHandler(_mockClientManager.Object, mockOptionsMonitor.Object,
-                mockLoggerFactory.Object, new Mock<UrlEncoder>().Object, new Mock<ISystemClock>().Object);
+                mockLoggerFactory.Object, new Mock<UrlEncoder>().Object);
         }
 
         [Theory]
