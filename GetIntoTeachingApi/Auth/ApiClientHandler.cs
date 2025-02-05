@@ -36,7 +36,7 @@ namespace GetIntoTeachingApi.Auth
                 return Task.FromResult(AuthenticateResult.NoResult());
             }
 
-            if (string.IsNullOrWhiteSpace(apiKey) || !claims.Any())
+            if (string.IsNullOrWhiteSpace(apiKey) || claims.Length != 0)
             {
                 return Task.FromResult(AuthenticateResult.Fail("API key is not valid"));
             }
