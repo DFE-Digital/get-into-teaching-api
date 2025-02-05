@@ -1,10 +1,13 @@
-﻿using System;
-using AspNetCoreRateLimit;
+﻿using AspNetCoreRateLimit;
 using AspNetCoreRateLimit.Redis;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Auth;
+using GetIntoTeachingApi.CrossCuttingConcerns.Logging;
+using GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers;
+using GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.Middleware;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
+using GetIntoTeachingApi.Jobs.FilterAttributes;
 using GetIntoTeachingApi.Middleware;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.OperationFilters;
@@ -22,6 +25,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Microsoft.Xrm.Sdk;
 using StackExchange.Redis;
+using System;
 
 namespace GetIntoTeachingApi.AppStart
 {
@@ -56,6 +60,9 @@ namespace GetIntoTeachingApi.AppStart
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             services.AddSingleton(env);
             services.AddSingleton<IRequestResponseLoggingConfiguration, RequestResponseLoggingConfiguration>();
+            services.AddScoped<IHttpContextCorrelationIdProvider, HttpContextCorrelationIdProvider>();
+            services.AddScoped<SerilogCorrelationIdMiddleware>();
+            services.AddSingleton<CorrelationIdLogEnricher>();
         }
 
         public static void AddDatabase(this IServiceCollection services, IEnv env)
@@ -81,12 +88,12 @@ namespace GetIntoTeachingApi.AppStart
                         Title = "Get into Teaching API - V1",
                         Version = "v1",
                         Description = @"
-Provides a RESTful API for integrating with the Get into Teaching CRM.
-The Get into Teaching (GIT) API sits in front of the GIT CRM, which uses the [Microsoft Dynamics365](https://docs.microsoft.com/en-us/dynamics365/) platform (the [Customer Engagement](https://docs.microsoft.com/en-us/dynamics365/customerengagement/on-premises/developer/overview) module is used for storing Candidate information and the [Marketing](https://docs.microsoft.com/en-us/dynamics365/marketing/developer/using-events-api) module for managing Events).
-The GIT API aims to provide:
-* Simple, task-based RESTful APIs.
-* Message queueing (while the GIT CRM is offline for updates).
-* Validation to ensure consistency across services writing to the GIT CRM.
+                            Provides a RESTful API for integrating with the Get into Teaching CRM.
+                            The Get into Teaching (GIT) API sits in front of the GIT CRM, which uses the [Microsoft Dynamics365](https://docs.microsoft.com/en-us/dynamics365/) platform (the [Customer Engagement](https://docs.microsoft.com/en-us/dynamics365/customerengagement/on-premises/developer/overview) module is used for storing Candidate information and the [Marketing](https://docs.microsoft.com/en-us/dynamics365/marketing/developer/using-events-api) module for managing Events).
+                            The GIT API aims to provide:
+                            * Simple, task-based RESTful APIs.
+                            * Message queueing (while the GIT CRM is offline for updates).
+                            * Validation to ensure consistency across services writing to the GIT CRM.
                         ",
                         License = new OpenApiLicense
                         {
@@ -111,7 +118,7 @@ The GIT API aims to provide:
 
         public static void AddHangfire(this IServiceCollection services, IEnv env, bool useMemoryStorage)
         {
-            services.AddHangfire((_, config) =>
+            services.AddHangfire((serviceProvider, config) =>
             {
                 var automaticRetry = new AutomaticRetryAttribute
                 {
@@ -123,8 +130,10 @@ The GIT API aims to provide:
                 config
                     .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                     .UseSimpleAssemblyNameTypeSerializer()
-                    .UseRecommendedSerializerSettings()
-                    .UseFilter(automaticRetry);
+                .UseRecommendedSerializerSettings()
+                    .UseFilter(automaticRetry)
+                    .UseFilter(new CorrelationIdFilter(
+                        serviceProvider.GetService<IHttpContextCorrelationIdProvider>()));
 
                 if (useMemoryStorage)
                 {

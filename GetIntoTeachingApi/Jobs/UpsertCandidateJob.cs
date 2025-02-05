@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GetIntoTeachingApi.Adapters;
+using GetIntoTeachingApi.Jobs.FilterAttributes;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
@@ -38,23 +39,26 @@ namespace GetIntoTeachingApi.Jobs
             _appSettings = appSettings;
         }
 
+        [CorrelationIdFilter]
         public void Run(string json, PerformContext context)
         {
             var candidate = json.DeserializeChangeTracked<Candidate>();
-            
+            string correlationId = GetCorrelationId(context);
+
             if (Deduplicate(Signature(candidate), context, _contextAdapter))
             {
-                _logger.LogInformation("UpsertCandidateJob - Deduplicating");
+                _logger.LogInformation("UpsertCandidateJob - Deduplicating ({CorrelationId})", correlationId);
                 return;
             }
 
             if (_appSettings.IsCrmIntegrationPaused)
             {
-                throw new InvalidOperationException("UpsertCandidateJob - Aborting (CRM integration paused).");
+                throw new InvalidOperationException(
+                    $"UpsertCandidateJob - Aborting (CRM integration paused).");
             }
 
-            _logger.LogInformation("UpsertCandidateJob - Started ({Attempt})", AttemptInfo(context, _contextAdapter));
-            _logger.LogInformation("UpsertCandidateJob - Payload {Payload}", Redactor.RedactJson(json));
+            _logger.LogInformation("UpsertCandidateJob - Started ({Attempt}) {CorrelationId}", AttemptInfo(context, _contextAdapter), correlationId);
+            _logger.LogInformation("UpsertCandidateJob - Payload {Payload} {CorrelationId}", Redactor.RedactJson(json), correlationId);
 
             if (IsLastAttempt(context, _contextAdapter))
             {
@@ -65,13 +69,13 @@ namespace GetIntoTeachingApi.Jobs
                     candidate.Email,
                     NotifyService.CandidateRegistrationFailedEmailTemplateId,
                     personalisation);
-                _logger.LogInformation("UpsertCandidateJob - Deleted");
+                _logger.LogInformation("UpsertCandidateJob - Deleted ({CorrelationId})", correlationId);
             }
             else
             {
                 _upserter.Upsert(candidate);
 
-                _logger.LogInformation("UpsertCandidateJob - Succeeded - {Id}", candidate.Id);
+                _logger.LogInformation("UpsertCandidateJob - Succeeded - {Id} {CorrelationId}", candidate.Id, correlationId);
             }
 
             var duration = (DateTime.UtcNow - _contextAdapter.GetJobCreatedAt(context)).TotalSeconds;
