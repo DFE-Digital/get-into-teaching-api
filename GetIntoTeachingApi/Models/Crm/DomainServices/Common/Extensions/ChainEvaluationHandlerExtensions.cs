@@ -24,14 +24,14 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.Extensions
                 throw new ArgumentNullException(nameof(evaluationHandlers));
             }
 
-            for (int jsonParsingHandlerTally = 0;
-                jsonParsingHandlerTally < evaluationHandlers.Count;
-                jsonParsingHandlerTally++)
+            for (int evaluationHandlerTally = 0;
+                evaluationHandlerTally < evaluationHandlers.Count;
+                evaluationHandlerTally++)
             {
-                if (jsonParsingHandlerTally + 1 < evaluationHandlers.Count)
+                if (evaluationHandlerTally + 1 < evaluationHandlers.Count)
                 {
-                    evaluationHandlers[jsonParsingHandlerTally]
-                        .ChainNextHandler(evaluationHandlers[jsonParsingHandlerTally + 1]);
+                    evaluationHandlers[evaluationHandlerTally]
+                        .ChainNextHandler(evaluationHandlers[evaluationHandlerTally + 1]);
                 }
             }
         }
