@@ -57,7 +57,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
         }
 
         [Fact]
-        public void GetInferredDegreeStatusFromGraduationYear_ThreeYearsTillGraduation_InfersSecondYearStatus()
+        public void GetInferredDegreeStatusFromGraduationYear_ThreeYearsTillGraduation_InfersFirstYearStatus()
         {
             // arrange
             IEnumerable<IChainEvaluationHandler<
@@ -80,7 +80,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
         }
 
         [Fact]
-        public void GetInferredDegreeStatusFromGraduationYear_GreatherThanThreeYearsTillGraduation_InfersSecondYearStatus()
+        public void GetInferredDegreeStatusFromGraduationYear_GreatherThanThreeYearsTillGraduation_InfersFirstYearStatus()
         {
             // arrange
             IEnumerable<IChainEvaluationHandler<
