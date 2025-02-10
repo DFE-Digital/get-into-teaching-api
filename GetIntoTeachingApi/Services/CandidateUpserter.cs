@@ -93,7 +93,7 @@ namespace GetIntoTeachingApi.Services
             return schoolExperiences;
         }
         
-        private static IEnumerable<ContactChannelCreation> ClearContactChannelCreations(Candidate candidate)
+        private static List<ContactChannelCreation> ClearContactChannelCreations(Candidate candidate)
         {
             List<ContactChannelCreation> contactChannelCreations =
                 new(candidate.ContactChannelCreations);
