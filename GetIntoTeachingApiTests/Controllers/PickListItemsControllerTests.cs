@@ -313,6 +313,45 @@ namespace GetIntoTeachingApiTests.Controllers
             var ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().BeEquivalentTo(mockItems);
         }
+        
+        [Fact]
+        public async Task GetContactCreationChannelSources_ReturnsAllSources()
+        {
+            var mockItems = MockPickListItems();
+            _mockStore.Setup(mock => mock.GetPickListItems("dfe_contactchannelcreation", "dfe_creationchannelsource"))
+                .Returns(mockItems.AsAsyncQueryable());
+
+            var response = await _controller.GetContactCreationChannelSources();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockItems);
+        }
+        
+        [Fact]
+        public async Task GetContactCreationChannelServices_ReturnsAllServices()
+        {
+            var mockItems = MockPickListItems();
+            _mockStore.Setup(mock => mock.GetPickListItems("dfe_contactchannelcreation", "dfe_creationchannelservice"))
+                .Returns(mockItems.AsAsyncQueryable());
+
+            var response = await _controller.GetContactCreationChannelServices();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockItems);
+        }
+        
+        [Fact]
+        public async Task GetContactCreationChannelActivities_ReturnsAllActivities()
+        {
+            var mockItems = MockPickListItems();
+            _mockStore.Setup(mock => mock.GetPickListItems("dfe_contactchannelcreation", "dfe_creationchannelactivities"))
+                .Returns(mockItems.AsAsyncQueryable());
+
+            var response = await _controller.GetContactCreationChannelActivities();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockItems);
+        }
 
         private static PickListItem[] MockPickListItems()
         {

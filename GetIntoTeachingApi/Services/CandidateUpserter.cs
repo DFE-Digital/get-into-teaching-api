@@ -28,6 +28,7 @@ namespace GetIntoTeachingApi.Services
             var pastTeachingPositions = ClearPastTeachingPositions(candidate);
             var applicationForms = ClearApplicationForms(candidate);
             var schoolExperiences = ClearSchoolExperiences(candidate);
+            var contactChannelCreations = ClearContactChannelCreations(candidate);
 
             PreventCandidateEmailFromBeingOverwritten(candidate);
             UpdateEventSubscriptionType(candidate);
@@ -41,6 +42,7 @@ namespace GetIntoTeachingApi.Services
             SavePrivacyPolicy(privacyPolicy, candidate);
             SavePhoneCall(phoneCall, candidate);
             SaveSchoolExperiences(schoolExperiences, candidate);
+            SaveContactChannelCreation(contactChannelCreations, candidate);
 
             IncrementCallbackBookingQuotaNumberOfBookings(phoneCall);
             
@@ -89,6 +91,15 @@ namespace GetIntoTeachingApi.Services
             var schoolExperiences = new List<CandidateSchoolExperience>(candidate.SchoolExperiences);
             candidate.SchoolExperiences.Clear();
             return schoolExperiences;
+        }
+        
+        private static IEnumerable<ContactChannelCreation> ClearContactChannelCreations(Candidate candidate)
+        {
+            List<ContactChannelCreation> contactChannelCreations =
+                new(candidate.ContactChannelCreations);
+            candidate.ContactChannelCreations.Clear();
+
+            return contactChannelCreations;
         }
 
         private static PhoneCall ClearPhoneCall(Candidate candidate)
@@ -250,6 +261,16 @@ namespace GetIntoTeachingApi.Services
             privacyPolicy.CandidateId = (Guid)candidate.Id;
             string json = privacyPolicy.SerializeChangeTracked();
             _jobClient.Enqueue<UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>>((x) => x.Run(json, null));
+        }
+        
+        private void SaveContactChannelCreation(IEnumerable<ContactChannelCreation> contactChannelCreations, Candidate candidate)
+        {
+            foreach (var contactChannelCreation in contactChannelCreations)
+            {
+                contactChannelCreation.CandidateId = (Guid)candidate.Id;
+                string json = contactChannelCreation.SerializeChangeTracked();
+                _jobClient.Enqueue<UpsertModelWithCandidateIdJob<ContactChannelCreation>>((x) => x.Run(json, null));
+            }
         }
     }
 }
