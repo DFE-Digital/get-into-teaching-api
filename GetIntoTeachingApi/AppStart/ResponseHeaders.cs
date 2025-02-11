@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 
 namespace GetIntoTeachingApi.AppStart
 {
@@ -8,10 +9,10 @@ namespace GetIntoTeachingApi.AppStart
         {
             app.Use(async (context, next) =>
             {
-                context.Response.Headers.Add("X-Frame-Options", "deny");
-                context.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
-                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-                context.Response.Headers.Add("Content-Security-Policy", "default-src 'self'");
+                context.Response.Headers.Append("X-Frame-Options", "deny");
+                context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");
+                context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+                context.Response.Headers.Append("Content-Security-Policy", "default-src 'self'");
                 await next();
             });
         }

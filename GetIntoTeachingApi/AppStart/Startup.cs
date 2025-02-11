@@ -20,7 +20,7 @@ namespace GetIntoTeachingApi.AppStart
     public class Startup
     {
         private readonly IConfiguration _configuration;
-        private readonly IEnv _env;
+        private readonly Env _env;
 
         public Startup(IConfiguration configuration)
         {
