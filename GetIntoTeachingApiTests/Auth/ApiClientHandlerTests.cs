@@ -50,7 +50,7 @@ namespace GetIntoTeachingApiTests.Auth
             var client = new Client() { Name = "Admin", Description = "Admin account", Role = "Service", ApiKey = "api_key", ApiKeyPrefix = "ADMIN" };
             _mockClientManager.Setup(m => m.GetClient(client.ApiKey)).Returns(client);
             var context = new DefaultHttpContext();
-            context.Request.Headers.Add("Authorization", authHeaderValue);
+            context.Request.Headers.Append("Authorization", authHeaderValue);
             var scheme = new AuthenticationScheme("ApiClientHandler", null, typeof(ApiClientHandler));
             await _handler.InitializeAsync(scheme, context);
 
@@ -85,7 +85,7 @@ namespace GetIntoTeachingApiTests.Auth
             _mockClientManager.Setup(m => m.GetClient(client.ApiKey)).Returns(client);
 
             var context = new DefaultHttpContext();
-            context.Request.Headers.Add("Authorization", authHeaderValue);
+            context.Request.Headers.Append("Authorization", authHeaderValue);
             var scheme = new AuthenticationScheme("ApiClientHandler", null, typeof(ApiClientHandler));
             await _handler.InitializeAsync(scheme, context);
 
