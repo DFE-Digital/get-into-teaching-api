@@ -85,7 +85,7 @@ namespace GetIntoTeachingApiTests.Auth
             _mockClientManager.Setup(m => m.GetClient(client.ApiKey)).Returns(client);
 
             var context = new DefaultHttpContext();
-            context.Request.Headers.Append("Authorization", authHeaderValue);
+            context.Request.Headers["Authorization"] = authHeaderValue;
             var scheme = new AuthenticationScheme("ApiClientHandler", null, typeof(ApiClientHandler));
             await _handler.InitializeAsync(scheme, context);
 
