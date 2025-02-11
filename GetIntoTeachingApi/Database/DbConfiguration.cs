@@ -11,6 +11,8 @@ namespace GetIntoTeachingApi.Database
 {
     public class DbConfiguration
     {
+        private static JsonSerializerOptions _jsonSerializerOptions = new(){ PropertyNameCaseInsensitive = true };
+
         public const int Wgs84Srid = 4326;
         public const int UkSrid = 27700;
         private readonly GetIntoTeachingDbContext _dbContext;
@@ -42,8 +44,8 @@ namespace GetIntoTeachingApi.Database
               return env.PgConnectionString;
             }
 
-            var options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
-            var vcap = JsonSerializer.Deserialize<VcapServices>(env.VcapServices, options);
+            
+            var vcap = JsonSerializer.Deserialize<VcapServices>(env.VcapServices, _jsonSerializerOptions);
             var postgres = vcap.Postgres.First(p => p.InstanceName == instanceName);
 
             var builder = new NpgsqlConnectionStringBuilder

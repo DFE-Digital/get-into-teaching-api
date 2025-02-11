@@ -344,7 +344,7 @@ namespace GetIntoTeachingApi.Models.Crm
                 {
                     ChannelId = null;
                     AddContactChannelCreation(
-                        channelCreation: !ContactChannelCreations.Any(),
+                        channelCreation: ContactChannelCreations.Count == 0,
                         contactChannelCreator: contactChannelCreator);
                 }
                 else

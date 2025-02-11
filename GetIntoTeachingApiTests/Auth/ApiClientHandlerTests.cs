@@ -32,7 +32,7 @@ namespace GetIntoTeachingApiTests.Auth
             mockLoggerFactory.Setup(x => x.CreateLogger(It.IsAny<string>())).Returns(_mockLogger.Object);
 
             _handler = new ApiClientHandler(_mockClientManager.Object, mockOptionsMonitor.Object,
-                mockLoggerFactory.Object, new Mock<UrlEncoder>().Object, new Mock<ISystemClock>().Object);
+                mockLoggerFactory.Object, new Mock<UrlEncoder>().Object);
         }
 
         [Theory]
@@ -50,7 +50,7 @@ namespace GetIntoTeachingApiTests.Auth
             var client = new Client() { Name = "Admin", Description = "Admin account", Role = "Service", ApiKey = "api_key", ApiKeyPrefix = "ADMIN" };
             _mockClientManager.Setup(m => m.GetClient(client.ApiKey)).Returns(client);
             var context = new DefaultHttpContext();
-            context.Request.Headers.Add("Authorization", authHeaderValue);
+            context.Request.Headers.Append("Authorization", authHeaderValue);
             var scheme = new AuthenticationScheme("ApiClientHandler", null, typeof(ApiClientHandler));
             await _handler.InitializeAsync(scheme, context);
 
@@ -85,7 +85,7 @@ namespace GetIntoTeachingApiTests.Auth
             _mockClientManager.Setup(m => m.GetClient(client.ApiKey)).Returns(client);
 
             var context = new DefaultHttpContext();
-            context.Request.Headers.Add("Authorization", authHeaderValue);
+            context.Request.Headers["Authorization"] = authHeaderValue;
             var scheme = new AuthenticationScheme("ApiClientHandler", null, typeof(ApiClientHandler));
             await _handler.InitializeAsync(scheme, context);
 

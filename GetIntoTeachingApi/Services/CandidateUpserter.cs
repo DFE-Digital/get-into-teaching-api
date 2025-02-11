@@ -50,7 +50,7 @@ namespace GetIntoTeachingApi.Services
             AddQualifications(qualifications, candidate);
         }
 
-        private static IEnumerable<TeachingEventRegistration> ClearTeachingEventRegistrations(Candidate candidate)
+        private static List<TeachingEventRegistration> ClearTeachingEventRegistrations(Candidate candidate)
         {
             // Due to reasons unknown the event registrations relationship can't be deep-inserted
             // in the same way we do for other relationships - we need to explicitly save them against
@@ -60,21 +60,21 @@ namespace GetIntoTeachingApi.Services
             return teachingEventRegistrations;
         }
 
-        private static IEnumerable<CandidatePastTeachingPosition> ClearPastTeachingPositions(Candidate candidate)
+        private static List<CandidatePastTeachingPosition> ClearPastTeachingPositions(Candidate candidate)
         {
             var pastTeachingPositions = new List<CandidatePastTeachingPosition>(candidate.PastTeachingPositions);
             candidate.PastTeachingPositions.Clear();
             return pastTeachingPositions;
         }
 
-        private static IEnumerable<ApplicationForm> ClearApplicationForms(Candidate candidate)
+        private static List<ApplicationForm> ClearApplicationForms(Candidate candidate)
         {
             var applicationForms = new List<ApplicationForm>(candidate.ApplicationForms);
             candidate.ApplicationForms.Clear();
             return applicationForms;
         }
 
-        private static IEnumerable<CandidateQualification> ClearQualifications(Candidate candidate)
+        private static List<CandidateQualification> ClearQualifications(Candidate candidate)
         {
             var qualifications = new List<CandidateQualification>(candidate.Qualifications);
             candidate.Qualifications.Clear();
@@ -86,14 +86,14 @@ namespace GetIntoTeachingApi.Services
             candidate.Qualifications.AddRange(candidateQualifications);
         }
 
-        private static IEnumerable<CandidateSchoolExperience> ClearSchoolExperiences(Candidate candidate)
+        private static List<CandidateSchoolExperience> ClearSchoolExperiences(Candidate candidate)
         {
             var schoolExperiences = new List<CandidateSchoolExperience>(candidate.SchoolExperiences);
             candidate.SchoolExperiences.Clear();
             return schoolExperiences;
         }
         
-        private static IEnumerable<ContactChannelCreation> ClearContactChannelCreations(Candidate candidate)
+        private static List<ContactChannelCreation> ClearContactChannelCreations(Candidate candidate)
         {
             List<ContactChannelCreation> contactChannelCreations =
                 new(candidate.ContactChannelCreations);
