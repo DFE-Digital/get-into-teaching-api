@@ -45,9 +45,6 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
                 AddressPostcode = "KY11 9YU",
                 IsWalkIn = true,
                 IsVerified = false,
-                CreationChannelSourceId = 222750003,
-                CreationChannelServiceId = 222750002,
-                CreationChannelActivityId = 222750001,
             };
 
             var result = _validator.TestValidate(request);
