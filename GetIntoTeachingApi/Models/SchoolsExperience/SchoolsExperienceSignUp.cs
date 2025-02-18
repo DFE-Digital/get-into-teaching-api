@@ -91,7 +91,6 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
             DbsCertificateIssuedAt = candidate.DbsCertificateIssuedAt;
             
             var latestQualification = candidate.Qualifications.OrderByDescending(q => q.CreatedAt).FirstOrDefault();
-
             if (latestQualification != null)
             {
                 QualificationId = latestQualification.Id;
@@ -99,6 +98,14 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
                 UkDegreeGradeId = latestQualification.UkDegreeGradeId;
                 DegreeStatusId = latestQualification.DegreeStatusId;
                 DegreeTypeId = latestQualification.TypeId;
+            }
+            
+            var latestContactChannelCreation = candidate.ContactChannelCreations.OrderByDescending(c => c.CreatedAt).FirstOrDefault();
+            if (latestContactChannelCreation != null)
+            {
+                CreationChannelSourceId = latestContactChannelCreation.CreationChannelSourceId;
+                CreationChannelServiceId = latestContactChannelCreation.CreationChannelServiceId;
+                CreationChannelActivityId = latestContactChannelCreation.CreationChannelActivityId;
             }
         }
 
@@ -131,7 +138,13 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
             {
                 candidate.SecondaryPreferredTeachingSubjectId = SecondaryPreferredTeachingSubjectId;
             }
-            candidate.ConfigureChannel(contactChannelCreator: this, candidateId: CandidateId);
+
+            // Ensures we don't create duplicate ContactCreationChannel records
+            if (ShouldCreateSchoolExperienceCreationChannel(candidate))
+            {
+                candidate.ConfigureChannel(contactChannelCreator: this, candidateId: CandidateId);
+            }
+
             AcceptPrivacyPolicy(candidate);
             AddQualification(candidate);
 
@@ -168,6 +181,21 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
         private bool ContainsQualification()
         {
             return UkDegreeGradeId != null || DegreeStatusId != null || DegreeSubject != null || DegreeTypeId != null;
+        }
+
+        private bool ShouldCreateSchoolExperienceCreationChannel(Candidate candidate)
+        {
+            if (CreationChannelSourceId != null)
+            {
+                var latestContactChannelCreation = candidate.ContactChannelCreations.OrderByDescending(c => c.CreatedAt).FirstOrDefault();
+
+                if (latestContactChannelCreation != null &&
+                    latestContactChannelCreation.CreationChannelSourceId == CreationChannelSourceId)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }
