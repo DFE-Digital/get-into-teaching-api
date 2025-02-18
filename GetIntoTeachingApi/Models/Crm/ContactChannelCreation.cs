@@ -93,6 +93,8 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityField("dfe_creationchannelactivities", typeof(OptionSetValue))]
         public int? CreationChannelActivityId { get; set; }
         
+        public DateTime? CreatedAt { get; set; }
+        
         public ContactChannelCreation() : base(){
         }
         
