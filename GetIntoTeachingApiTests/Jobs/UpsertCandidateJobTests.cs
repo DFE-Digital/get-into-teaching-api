@@ -135,7 +135,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
         private static string Signature(Candidate candidate)
         {
-            var changedProperties = "MergedIsNewRegistrantTeachingEventRegistrationsQualificationsPastTeachingPositionsApplicationFormsSchoolExperiencesContactChannelCreationsIdEmail";
+            var changedProperties = "MergedIsNewRegistrantTeachingEventRegistrationsQualificationsPastTeachingPositionsApplicationFormsSchoolExperiencesIdEmail";
             return $"{candidate.Id}-{candidate.Email}-{changedProperties}";
         }
     }

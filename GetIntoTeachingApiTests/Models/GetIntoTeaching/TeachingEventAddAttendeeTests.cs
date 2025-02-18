@@ -11,7 +11,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
     public class TeachingEventAddAttendeeTests
     {
         [Fact]
-        public void Constructor_WithExistingCandidate_MapsCorrectly()
+        public void Constructor_WithCandidate_MapsCorrectly()
         {
             var latestQualification = new CandidateQualification()
             {
@@ -64,7 +64,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         }
 
         [Fact]
-        public void ExistingCandidate_MapsCorrectly()
+        public void Candidate_MapsCorrectly()
         {
             var request = new TeachingEventAddAttendee()
             {
@@ -82,9 +82,6 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
                 AddressPostcode = "KY11 9YU",
                 SubscribeToMailingList = true,
                 IsWalkIn = false,
-                CreationChannelSourceId = 222750003,
-                CreationChannelServiceId = 222750002,
-                CreationChannelActivityId = 222750001,
             };
 
             var candidate = request.Candidate;
@@ -124,32 +121,6 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
             candidate.Qualifications.First().DegreeStatusId.Should().Be(request.DegreeStatusId);
             candidate.Qualifications.First().TypeId.Should().Be((int)CandidateQualification.DegreeType.Degree);
             candidate.Qualifications.First().Id.Should().Be(request.QualificationId);
-            
-            var contactChannelCreation = candidate.ContactChannelCreations.First();
-            contactChannelCreation.CreationChannel.Should().Be(false);
-            contactChannelCreation.CreationChannelSourceId.Should().Be(request.CreationChannelSourceId);
-            contactChannelCreation.CreationChannelServiceId.Should().Be(request.CreationChannelServiceId);
-            contactChannelCreation.CreationChannelActivityId.Should().Be(request.CreationChannelActivityId);
-            candidate.ChannelId.Should().Be(null);
-        }
-        
-        [Fact]
-        public void NewCandidate_MapsCorrectly()
-        {
-            var request = new TeachingEventAddAttendee()
-            {
-                CandidateId = null,
-                CreationChannelSourceId = 222750003,
-                CreationChannelServiceId = 222750002,
-                CreationChannelActivityId = 222750001,
-            };
-            
-            var contactChannelCreation = request.Candidate.ContactChannelCreations.First();
-            contactChannelCreation.CreationChannel.Should().Be(true);
-            contactChannelCreation.CreationChannelSourceId.Should().Be(request.CreationChannelSourceId);
-            contactChannelCreation.CreationChannelServiceId.Should().Be(request.CreationChannelServiceId);
-            contactChannelCreation.CreationChannelActivityId.Should().Be(request.CreationChannelActivityId);
-            request.Candidate.ChannelId.Should().Be(null);
         }
 
         [Fact]

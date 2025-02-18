@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using FluentAssertions;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models.Apply;
-using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
@@ -14,9 +12,6 @@ using Hangfire.States;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
-using ApplicationChoice = GetIntoTeachingApi.Models.Apply.ApplicationChoice;
-using ApplicationForm = GetIntoTeachingApi.Models.Apply.ApplicationForm;
-using Candidate = GetIntoTeachingApi.Models.Apply.Candidate;
 
 namespace GetIntoTeachingApiTests.Jobs
 {
@@ -143,7 +138,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockJobClient.Verify(x => x.Create(
                 It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-                                  IsMatchWithNewContactChannelCreation(candidate, (string)job.Args[0])),
+                IsMatch(candidate, (string)job.Args[0])),
                 It.IsAny<EnqueuedState>()));
 
             _mockLogger.VerifyInformationWasCalled($"ApplyCandidateSyncJob - Started - {_candidate.Id}");
@@ -203,7 +198,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockJobClient.Verify(x => x.Create(
                 It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-                                  IsMatchWithNewContactChannelCreation(candidate, (string)job.Args[0])),
+                IsMatch(candidate, (string)job.Args[0])),
                 It.IsAny<EnqueuedState>()));
         }
 
@@ -230,7 +225,7 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _mockJobClient.Verify(x => x.Create(
                 It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-                                  IsMatchWithNewContactChannelCreation(candidate, (string)job.Args[0])),
+                IsMatch(candidate, (string)job.Args[0])),
                 It.IsAny<EnqueuedState>()));
 
             _mockCrm.VerifyAll();
@@ -247,26 +242,9 @@ namespace GetIntoTeachingApiTests.Jobs
                 .WithMessage("ApplyCandidateSyncJob - Aborting (CRM integration paused).");
         }
 
-        private static bool IsMatchWithNewContactChannelCreation(GetIntoTeachingApi.Models.Crm.Candidate candidateA, string candidateBJson)
+        private static bool IsMatch(GetIntoTeachingApi.Models.Crm.Candidate candidateA, string candidateBJson)
         {
             var candidateB = candidateBJson.DeserializeChangeTracked<GetIntoTeachingApi.Models.Crm.Candidate>();
-            
-            // CandidateB will have an additional automatically created ContactChannelCreation record added via the job
-            var applyContactChannelCreationRecord = candidateB.ContactChannelCreations.Last();
-
-            applyContactChannelCreationRecord.CreationChannelSourceId.Should()
-                .Be((int?)ContactChannelCreation.CreationChannelSource.Apply);
-            
-            // We need to add the record to CandidateA to compare
-            candidateA.ContactChannelCreations.Add(applyContactChannelCreationRecord);
-            
-            // CandidateB will have a null ChannelId; we need to remove this from CandidateA if it is not null to compare
-            if (candidateA.ChannelId != null)
-            {
-                candidateB.ChannelId.Should().BeNull();
-                candidateA.ChannelId = null;    
-            }
-            
             candidateA.Should().BeEquivalentTo(candidateB);
             return true;
         }
