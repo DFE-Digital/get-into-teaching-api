@@ -7,8 +7,14 @@ inputs:
   sha:
     description: Commit sha to be deployed
     required: true
-  azure-credentials:
-    description: Credentials for azure
+  azure-client-id:
+    description: Managed identity client ID
+    required: true
+  azure-subscription-id:
+    description: Azure subscription ID
+    required: true
+  azure-tenant-id:
+    description: Azure tenant ID
     required: true
 outputs:
   deploy-url:
@@ -41,7 +47,9 @@ runs:
 
     - uses: DFE-Digital/github-actions/set-kubelogin-environment@master
       with:
-        azure-credentials: ${{ inputs.azure-credentials }}
+        azure-client-id: ${{ inputs.azure-client-id }}
+        azure-tenant-id: ${{ inputs.azure-tenant-id }}
+        azure-subscription-id: ${{ inputs.azure-subscription-id }}
 
     - name: Terraform init, plan & apply
       shell: bash
