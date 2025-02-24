@@ -1,10 +1,14 @@
-using System;
-using System.Threading.Tasks;
 using GetIntoTeachingApi.AppStart;
+using GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers;
 using GetIntoTeachingApi.Database;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using System;
+using System.Threading.Tasks;
 
 namespace GetIntoTeachingApi
 {
@@ -30,7 +34,14 @@ namespace GetIntoTeachingApi
                     //webBuilder.UseSentry();
                     //webBuilder.UseKestrel(opts => opts.AddServerHeader = false);
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.ConfigureServices(services =>
+                    {
+                        services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+                        services.AddSingleton<CorrelationIdLogEnricher>();
+                    });
                 })
-            .UseSerilog((ctx, config) => config.ReadFrom.Configuration(ctx.Configuration));
+                .UseSerilog((ctx, serviceProvider, config) =>
+                    config.ReadFrom.Configuration(ctx.Configuration)
+                        .Enrich.With(serviceProvider.GetRequiredService<CorrelationIdLogEnricher>()));
     }
 }

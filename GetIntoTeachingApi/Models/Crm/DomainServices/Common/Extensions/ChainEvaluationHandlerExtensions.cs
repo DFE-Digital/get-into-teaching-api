@@ -19,10 +19,7 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.Extensions
         public static void ChainEvaluationHandlers<TRequest, TResponse>(
             this IList<IChainEvaluationHandler<TRequest, TResponse>> evaluationHandlers)
         {
-            if (evaluationHandlers == null)
-            {
-                throw new ArgumentNullException(nameof(evaluationHandlers));
-            }
+            ArgumentNullException.ThrowIfNull(evaluationHandlers);
 
             for (int evaluationHandlerTally = 0;
                 evaluationHandlerTally < evaluationHandlers.Count;

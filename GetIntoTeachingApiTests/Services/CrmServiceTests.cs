@@ -44,7 +44,7 @@ namespace GetIntoTeachingApiTests.Services
             _mockDateTime = new Mock<IDateTimeProvider>();
             _context = new OrganizationServiceContext(new Mock<IOrganizationService>().Object);
             _mockService.Setup(mock => mock.Context()).Returns(_context);
-            _crm = new CrmService(_mockService.Object, mockServiceProvider.Object, _mockAppSettings.Object, _mockDateTime.Object, _mockLogger.Object, mockEnv.Object);
+            _crm = new CrmService(_mockService.Object, mockServiceProvider.Object, _mockAppSettings.Object, _mockDateTime.Object, _mockLogger.Object);
 
             // Freeze time.
             _mockDateTime.Setup(m => m.UtcNow).Returns(DateTime.UtcNow);

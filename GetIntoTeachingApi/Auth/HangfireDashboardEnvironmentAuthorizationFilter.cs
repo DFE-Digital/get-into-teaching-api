@@ -7,6 +7,7 @@ namespace GetIntoTeachingApi.Auth
     public class HangfireDashboardEnvironmentAuthorizationFilter : IDashboardAuthorizationFilter
     {
         private readonly IEnv _env;
+        private static readonly string[] sourceArray = [ "Development", "Staging" ];
 
         public HangfireDashboardEnvironmentAuthorizationFilter(IEnv env)
         {
@@ -15,7 +16,7 @@ namespace GetIntoTeachingApi.Auth
 
         public bool Authorize(DashboardContext context)
         {
-            return new[] { "Development", "Staging" }.Contains(_env.EnvironmentName);
+            return sourceArray.Contains(_env.EnvironmentName);
         }
     }
 }

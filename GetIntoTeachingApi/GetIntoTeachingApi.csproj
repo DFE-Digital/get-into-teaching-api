@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisMode>Recommended</AnalysisMode>
 		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
@@ -19,6 +19,7 @@
 		<PackageReference Include="Hangfire.MemoryStorage" Version="1.8.0" />
 		<PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="6.0.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.11.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="4.11.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.20" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.20">
 		  <PrivateAssets>all</PrivateAssets>
@@ -37,7 +38,11 @@
 		<PackageReference Include="ProjNET4GeoAPI" Version="1.4.1" />
 		<PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
 		<PackageReference Include="Sentry.AspNetCore" Version="4.11.0" />
+		<PackageReference Include="Sentry.Serilog" Version="5.0.1" />
 		<PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
+		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+		<PackageReference Include="Serilog.Enrichers.Process" Version="3.0.0" />
+		<PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
 		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.2" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />

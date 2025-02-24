@@ -13,7 +13,7 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
     /// </summary>
     public sealed class DegreeStatusDomainService : IDegreeStatusDomainService
     {
-        private readonly IList<IChainEvaluationHandler<
+        private readonly List<IChainEvaluationHandler<
             DegreeStatusInferenceRequest, DegreeStatus>> _degreeStatusInferenceHandlers;
 
         /// <summary>

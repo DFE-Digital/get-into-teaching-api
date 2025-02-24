@@ -62,7 +62,7 @@ namespace GetIntoTeachingApi.Jobs
             }
         }
 
-        private static Location CreateLocation(IReaderRow csv)
+        private static Location CreateLocation(CsvReader csv)
         {
             csv.TryGetField<double?>(2, out double? latitude);
             csv.TryGetField<double?>(3, out double? longitude);
@@ -124,7 +124,7 @@ namespace GetIntoTeachingApi.Jobs
             _logger.LogInformation("LocationSyncJob - Processed {LocationCount} Locations ({BatchCount} Batches)", locationCount, batchCount);
         }
 
-        private async Task ProcessBatch(ICollection<Location> batch, bool force = false)
+        private async Task ProcessBatch(List<Location> batch, bool force = false)
         {
             if (!force && batch.Count != BatchInterval)
             {

@@ -40,7 +40,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '7.0'
+          dotnet-version: '8.0'
 
       - name: Install dotnet-sonarscanner
         run:  dotnet tool install --global dotnet-sonarscanner --version 5.15.0

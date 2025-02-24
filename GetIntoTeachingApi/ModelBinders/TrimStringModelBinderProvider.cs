@@ -7,10 +7,7 @@ namespace GetIntoTeachingApi.ModelBinders
     {
         public IModelBinder GetBinder(ModelBinderProviderContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            ArgumentNullException.ThrowIfNull(context);
 
             if (context.Metadata.ModelType == typeof(string))
             {

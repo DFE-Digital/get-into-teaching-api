@@ -137,7 +137,7 @@ namespace GetIntoTeachingApi.Models.Crm
             return (IList)Activator.CreateInstance(listType);
         }
 
-        private static IEnumerable<PropertyInfo> GetProperties(object model)
+        private static PropertyInfo[] GetProperties(object model)
         {
             return model.GetType().GetProperties();
         }
@@ -284,7 +284,7 @@ namespace GetIntoTeachingApi.Models.Crm
                 var relatedEntityAttribute = (EntityAttribute)Attribute.GetCustomAttribute(attribute.Type, typeof(EntityAttribute));
                 var relatedEntities = crm.RelatedEntities(entity, attribute.Name, relatedEntityAttribute.LogicalName).ToList();
 
-                if (!relatedEntities.Any())
+                if (relatedEntities.Count == 0)
                 {
                     continue;
                 }

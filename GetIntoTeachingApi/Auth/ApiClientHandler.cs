@@ -19,9 +19,8 @@ namespace GetIntoTeachingApi.Auth
             IClientManager clientManager,
             IOptionsMonitor<ApiClientSchemaOptions> options,
             ILoggerFactory loggerFactory,
-            UrlEncoder encoder,
-            ISystemClock clock)
-            : base(options, loggerFactory, encoder, clock)
+            UrlEncoder encoder)
+            : base(options, loggerFactory, encoder)
         {
             _clientManager = clientManager;
         }
@@ -36,7 +35,7 @@ namespace GetIntoTeachingApi.Auth
                 return Task.FromResult(AuthenticateResult.NoResult());
             }
 
-            if (string.IsNullOrWhiteSpace(apiKey) || !claims.Any())
+            if (string.IsNullOrWhiteSpace(apiKey) || claims.Length == 0)
             {
                 return Task.FromResult(AuthenticateResult.Fail("API key is not valid"));
             }
@@ -52,7 +51,7 @@ namespace GetIntoTeachingApi.Auth
             return Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
         }
 
-        private IEnumerable<Claim> AuthenticateApiClient(string token)
+        private Claim[] AuthenticateApiClient(string token)
         {
             var client = _clientManager.GetClient(token);
 
@@ -61,12 +60,11 @@ namespace GetIntoTeachingApi.Auth
                 return Array.Empty<Claim>();
             }
 
-            return new[]
-            {
+            return [
                 new Claim("token", token),
                 new Claim(ClaimTypes.Role, client.Role),
                 new Claim(ClaimTypes.Name, client.Name),
-            };
+            ];
         }
     }
 }

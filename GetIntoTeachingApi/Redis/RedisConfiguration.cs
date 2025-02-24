@@ -7,12 +7,13 @@ using StackExchange.Redis;
 
 namespace GetIntoTeachingApi.Redis
 {
-    public class RedisConfiguration
+    public static class RedisConfiguration
     {
+        private static JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
+
         public static ConfigurationOptions ConfigurationOptions(IEnv env)
         {
-            var options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
-            var vcap = JsonSerializer.Deserialize<VcapServices>(env.VcapServices, options);
+            var vcap = JsonSerializer.Deserialize<VcapServices>(env.VcapServices, _jsonSerializerOptions);
             var redis = vcap.Redis.First();
             var credentials = redis.Credentials;
 

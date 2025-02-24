@@ -42,7 +42,7 @@ namespace GetIntoTeachingApiTests.Models.Crm
             _mockLogger = new Mock<ILogger<ICrmService>>();
             _context = _mockService.Object.Context();
             _crm = new CrmService(_mockService.Object, _mockServiceProvider.Object,
-                mockAppSettings.Object, new DateTimeProvider(), _mockLogger.Object, mockEnv.Object);
+                mockAppSettings.Object, new DateTimeProvider(), _mockLogger.Object);
         }
 
         [Fact]

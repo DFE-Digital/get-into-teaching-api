@@ -1,5 +1,6 @@
 ﻿using System;
 using GetIntoTeachingApi.Adapters;
+using GetIntoTeachingApi.Jobs.FilterAttributes;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire.Server;
@@ -58,5 +59,18 @@ namespace GetIntoTeachingApi.Jobs
                 return false;
             }
         }
+
+        /// <summary>
+        /// Gets the correlation Id (content) from the given context (if available).
+        /// </summary>
+        /// <param name="context">
+        /// The <see cref="PerformContext"/> instance provides
+        /// the job parameters on which to extract (if available), the correlation Id.
+        /// </param>
+        /// <returns>
+        /// The correlation Id (GUID) from the given context.
+        /// </returns>
+        protected static string GetCorrelationId(PerformContext context) =>
+            (context != null) ? context.GetJobParameter<string>(CorrelationIdFilter.CorrelationIdKey) : string.Empty;
     }
 }

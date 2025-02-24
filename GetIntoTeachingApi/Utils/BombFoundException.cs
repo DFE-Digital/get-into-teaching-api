@@ -19,10 +19,5 @@ namespace GetIntoTeachingApi.Utils
             : base(message, inner)
         {
         }
-
-        protected BombFoundException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
     }
 }
