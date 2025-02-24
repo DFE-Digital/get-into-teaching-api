@@ -4,12 +4,12 @@ using System;
 namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Evaluators
 {
     /// <summary>
-    /// 
+    /// ss
     /// </summary>
     public sealed class InferAlreadyHasDegree : IEvaluator<DegreeStatusInferenceRequest, DegreeStatus>
     {
         /// <summary>
-        /// 
+        /// sss
         /// </summary>
         /// <param name="evaluationRequest">
         /// 
@@ -26,7 +26,7 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Eva
                     evaluationRequest.YearOfGraduation.GetYear() < evaluationRequest.CurrentCalendarYearProvider.ToYearInt();
 
         /// <summary>
-        /// 
+        /// sss
         /// </summary>
         /// <param name="evaluationRequest">
         /// 

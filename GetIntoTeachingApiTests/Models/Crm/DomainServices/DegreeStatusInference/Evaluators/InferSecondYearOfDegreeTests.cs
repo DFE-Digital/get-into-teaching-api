@@ -2,7 +2,7 @@
 
 namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInference.Evaluators
 {
-    public sealed class InferFinalYearOfDegreeCandidateTests
+    public sealed class InferSecondYearOfDegreeTests
     {
         [Fact]
         public void xxxx()
