@@ -130,7 +130,7 @@ jobs:
         id: deploy
         with:
           environment: development
-          sha: ${{needs.build.outputs.image_tag_sha}}
+          sha: sha-9fd7cd9
           azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
           azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
