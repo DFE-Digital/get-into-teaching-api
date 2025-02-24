@@ -150,7 +150,7 @@ jobs:
         with:
           tag_name: ${{ steps.tag_version.outputs.pr_number }}
           release_name: Release ${{ steps.tag_version.outputs.pr_number }}
-          commitish: ${{github.sha}}
+          commitish: sha-9fd7cd9
           prerelease: false
           draft:      false
 
