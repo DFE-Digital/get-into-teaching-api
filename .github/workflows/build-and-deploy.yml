@@ -163,14 +163,14 @@ jobs:
           RELEASE_ID: ${{ steps.release.outputs.id }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Slack Notification
-      #   if: failure() && github.ref == 'refs/heads/master'
-      #   uses: rtCamp/action-slack-notify@master
-      #   env:
-      #     SLACK_COLOR: ${{env.SLACK_FAILURE}}
-      #     SLACK_MESSAGE: 'Deployment to the development environment has failed'
-      #     SLACK_TITLE: 'Deployment to the development environment has failed'
-      #     SLACK_WEBHOOK: '${{ steps.fetch-secrets.outputs.SLACK-WEBHOOK }}'
+      - name: Slack Notification
+        if: failure() && github.ref == 'refs/heads/master'
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_COLOR: ${{env.SLACK_FAILURE}}
+          SLACK_MESSAGE: 'Deployment to the development environment has failed'
+          SLACK_TITLE: 'Deployment to the development environment has failed'
+          SLACK_WEBHOOK: '${{ steps.fetch-secrets.outputs.SLACK-WEBHOOK }}'
 
   test:
     name: Test Deployment
