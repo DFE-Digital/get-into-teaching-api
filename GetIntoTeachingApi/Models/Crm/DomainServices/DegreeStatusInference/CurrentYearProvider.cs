@@ -11,7 +11,7 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
         /// <summary>
         /// 
         /// </summary>
-        public DateTime DateTimeToday => DateTime.Today;
+        public DateTimeOffset DateTimeToday => DateTimeOffset.UtcNow;
 
         /// <summary>
         /// 
