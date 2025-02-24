@@ -49,7 +49,7 @@ namespace GetIntoTeachingApi.Services
             return weekendDaysOfWeek.Contains(date.DayOfWeek);
         }
 
-        private static IEnumerable<CallbackBookingQuota> GenerateFallbackQuotasOnDay(DateTime day)
+        private static List<CallbackBookingQuota> GenerateFallbackQuotasOnDay(DateTime day)
         {
             var quotas = new List<CallbackBookingQuota>();
             var startAt = day.Date + FallbackBookingQuotaFirstTimeSpan;

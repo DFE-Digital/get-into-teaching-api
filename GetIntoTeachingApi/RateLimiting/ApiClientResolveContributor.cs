@@ -8,7 +8,7 @@ namespace GetIntoTeachingApi.RateLimiting
 {
     public class ApiClientResolveContributor : IClientResolveContributor
     {
-        private readonly IClientManager _clientManager;
+        private readonly ClientManager _clientManager;
         private readonly string _clientIdHeader;
 
         public ApiClientResolveContributor(string clientIdHeader)

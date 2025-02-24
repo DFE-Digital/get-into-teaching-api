@@ -1,9 +1,8 @@
-﻿using System.IO;
-using System.Text.Json.Serialization;
-using AspNetCoreRateLimit;
+﻿using AspNetCoreRateLimit;
 using dotenv.net;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.Middleware;
 using GetIntoTeachingApi.JsonConverters;
 using GetIntoTeachingApi.ModelBinders;
 using GetIntoTeachingApi.Utils;
@@ -13,13 +12,15 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Prometheus;
+using System.IO;
+using System.Text.Json.Serialization;
 
 namespace GetIntoTeachingApi.AppStart
 {
     public class Startup
     {
         private readonly IConfiguration _configuration;
-        private readonly IEnv _env;
+        private readonly Env _env;
 
         public Startup(IConfiguration configuration)
         {
@@ -42,7 +43,7 @@ namespace GetIntoTeachingApi.AppStart
             }
 
             services.RegisterServices(_configuration, _env);
-
+            
             services.AddDatabase(_env);
 
             services.AddApiClientAuthentication();
@@ -98,7 +99,7 @@ namespace GetIntoTeachingApi.AppStart
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseMiddleware<SerilogCorrelationIdMiddleware>();
             app.UseAuthentication();
 
             app.UseHttpsRedirection();
