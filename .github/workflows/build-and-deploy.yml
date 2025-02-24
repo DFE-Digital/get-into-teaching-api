@@ -148,7 +148,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.tag_version.outputs.pr_number }}
+          tag_name: 1501
           release_name: Release ${{ steps.tag_version.outputs.pr_number }}
           commitish: sha-9fd7cd9
           prerelease: false
