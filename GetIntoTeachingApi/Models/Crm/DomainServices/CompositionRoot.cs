@@ -65,6 +65,7 @@ namespace GetIntoTeachingApi.Models.Crm.DomainServices
                 where TEvaluationHandler : IEvaluator<DegreeStatusInferenceRequest, DegreeStatus> =>
                     services.AddScoped<IChainEvaluationHandler<DegreeStatusInferenceRequest, DegreeStatus>>(provider =>
                         provider.AddEvaluationHandler<TEvaluationHandler>());
+
         /// <summary>
         /// Utility method which allows us to derive an <see cref="ChainEvaluationHandler{TEvaluationRequest, TEvaluationResponse}"/> instance.
         /// </summary>
