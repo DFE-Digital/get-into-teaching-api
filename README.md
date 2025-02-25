@@ -139,7 +139,7 @@ The API is deployed to [AKS](https://github.com/DFE-Digital/teacher-services-clo
 
 ### Process
 
-When you merge a branch to `master` it will automatically be deployed to the [development](#environments) and [test](#environments) environments via GitHub Actions and a tagged release will be created (the tag will use the PR number). You can then test the changes using the corresponding dev/test environments of the other GiT services. Once you're happy and want to ship to [production](#environments) you need to note the tag of your release and go to the `Manual Release` GitHub Action; from there you can select `Run workflow`, choose the `production_aks` environment and enter your release number.
+When you merge a branch to `master` it will automatically be deployed to the [development](#environments) and [test](#environments) environments via GitHub Actions and a tagged release will be created (the tag will use the PR number). You can then test the changes using the corresponding dev/test environments of the other GiT services. Once you're happy and want to ship to [production](#environments) you need to note the tag of your release and go to the `Manual Release` GitHub Action; from there you can select `Run workflow`, choose the `production` environment and enter your release number.
 
 ### Rollbacks
 

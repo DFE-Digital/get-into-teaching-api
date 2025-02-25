@@ -6,22 +6,27 @@ on:
         description: Environment to deploy to
         required: true
         type: choice
-        default: development_aks
+        default: development
         options:
-        - development_aks
-        - test_aks
-        - production_aks
+        - development
+        - test
+        - production
   pull_request:
     types: [assigned, opened, synchronize, reopened, ready_for_review]
   push:
     branches:
       - master
+      
+permissions:
+  contents: write
+  packages: write
+  id-token: write
 
 jobs:
   build:
     name: Build and push to Github Container Registry
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
+    environment: development
     outputs:
       image: ${{steps.docker_image.outputs.IMAGE}}
       image_tag_sha: "sha-${{ steps.vars.outputs.sha_short }}"
@@ -34,7 +39,9 @@ jobs:
 
       - uses: Azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Fetch secrets from key vault
         uses: azure/CLI@v2
@@ -95,7 +102,7 @@ jobs:
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     environment:
-      name: development_aks
+      name: development
       url: ${{ steps.deploy.outputs.deploy-url }}
     steps:
       - name: Check out the repo
@@ -106,7 +113,9 @@ jobs:
 
       - uses: Azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Fetch secrets from key vault
         uses: azure/CLI@v2
@@ -121,9 +130,11 @@ jobs:
         uses: ./.github/workflows/actions/deploy_v2
         id: deploy
         with:
-          environment: development_aks
+          environment: development
           sha: ${{needs.build.outputs.image_tag_sha}}
-          azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Generate Tag from PR Number
         id:   tag_version
@@ -167,7 +178,7 @@ jobs:
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     environment:
-      name: test_aks
+      name: test
       url: ${{ steps.deploy.outputs.deploy-url }}
     steps:
       - name: Check out the repo
@@ -178,7 +189,9 @@ jobs:
 
       - uses: Azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Fetch secrets from key vault
         uses: azure/CLI@v2
@@ -193,9 +206,11 @@ jobs:
         uses: ./.github/workflows/actions/deploy_v2
         id: deploy
         with:
-          environment: test_aks
+          environment: test
           sha: ${{needs.build.outputs.image_tag_sha}}
-          azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Slack Notification
         if: failure() && github.ref == 'refs/heads/master'
