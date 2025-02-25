@@ -3,9 +3,8 @@
 namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
 {
     /// <summary>
-    /// Defines the contract for making requests for inferred degree status.
-    /// The <see cref=""/> instance encapsulate the propose graduation year
-    /// on which the underlying inference logic is applied.
+    /// Defines the contract for making requests for inferred degree status. The <see cref="IDegreeStatusDomainService"/>
+    /// instance encapsulate the proposed graduation year on which the underlying inference logic is applied.
     /// </summary>
     public interface IDegreeStatusDomainService
     {

@@ -4,38 +4,35 @@ using System;
 namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Evaluators
 {
     /// <summary>
-    /// ss
+    /// Provides logic for inferring whether a candidate already has a degree based on the graduation year provisioned.
     /// </summary>
     public sealed class InferAlreadyHasDegree : IEvaluator<DegreeStatusInferenceRequest, DegreeStatus>
     {
         /// <summary>
-        /// sss
+        /// Check to assess whether the evaluation can be performed based on the year of graduation parameters provided.
         /// </summary>
         /// <param name="evaluationRequest">
-        /// 
+        /// Request used to interact with degree status evaluators which encapsulates the year of graduation and the current year provider.
         /// </param>
         /// <returns>
-        /// 
+        /// A boolean value indicating whether the evaluation can be performed.
         /// </returns>
-        /// <exception cref="System.NotImplementedException">
-        /// 
-        /// </exception>
         public bool CanEvaluate(DegreeStatusInferenceRequest evaluationRequest) =>
             evaluationRequest.YearOfGraduation.GetYear()
                 .Equals(evaluationRequest.CurrentCalendarYearProvider.ToYearInt()) ||
                     evaluationRequest.YearOfGraduation.GetYear() < evaluationRequest.CurrentCalendarYearProvider.ToYearInt();
 
         /// <summary>
-        /// sss
+        /// Performs the 'has degree' evaluation based on the year of graduation parameters provided.
         /// </summary>
         /// <param name="evaluationRequest">
-        /// 
+        /// Request used to interact with degree status evaluators which encapsulates the year of graduation and the current year provider.
         /// </param>
         /// <returns>
-        /// 
+        /// The <see cref="DegreeStatus"/> associated with the evaluation, i.e. HasDegree = 222750000.
         /// </returns>
         /// <exception cref="System.NotImplementedException">
-        /// 
+        /// Exception thrown when the evaluation cannot be performed.
         /// </exception>
         public DegreeStatus Evaluate(DegreeStatusInferenceRequest evaluationRequest) =>
              CanEvaluate(evaluationRequest) ? DegreeStatus.HasDegree :
