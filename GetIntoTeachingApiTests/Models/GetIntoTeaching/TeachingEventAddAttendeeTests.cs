@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.GetIntoTeaching;
+using GetIntoTeachingApiTests.Models.GetIntoTeaching.TestDoubles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +43,11 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
                 HasTeacherTrainingAdviserSubscription = true,
             };
 
-            var response = new TeachingEventAddAttendee(candidate);
+            var response =
+                new TeachingEventAddAttendee(
+                    candidate,
+                    DegreeStatusDomainServiceTestDouble.MockFor(),
+                    CurrentYearProviderTestDouble.MockFor());
 
             response.CandidateId.Should().Be(candidate.Id);
             response.PreferredTeachingSubjectId.Should().Be(candidate.PreferredTeachingSubjectId);
@@ -66,7 +71,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         [Fact]
         public void ExistingCandidate_MapsCorrectly()
         {
-            var request = new TeachingEventAddAttendee()
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor())
             {
                 EventId = Guid.NewGuid(),
                 CandidateId = Guid.NewGuid(),
@@ -136,7 +143,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         [Fact]
         public void NewCandidate_MapsCorrectly()
         {
-            var request = new TeachingEventAddAttendee()
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor())
             {
                 CandidateId = null,
                 CreationChannelSourceId = 222750003,
@@ -155,7 +164,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         [Fact]
         public void Candidate_OptionalAttributesWhenNull_DoesNotSet()
         {
-            var request = new TeachingEventAddAttendee()
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor())
             {
                 ConsiderationJourneyStageId = null,
                 PreferredTeachingSubjectId = null,
@@ -172,7 +183,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         [Fact]
         public void Candidate_SubscribeToMailingListIsFalse_ConsentIsCorrect()
         {
-            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, AddressPostcode = null };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { SubscribeToMailingList = false, AddressPostcode = null };
 
             request.Candidate.DoNotSendMm.Should().BeTrue();
         }
@@ -180,7 +193,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         [Fact]
         public void Candidate_ChannelIdWhenCandidateIdIsNull_IsMailingList()
         {
-            var request = new TeachingEventAddAttendee() { CandidateId = null };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { CandidateId = null };
 
             request.Candidate.ChannelId.Should().Be((int)Candidate.Channel.Event);
         }
@@ -188,7 +203,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         [Fact]
         public void Candidate_WithNonNullChannelIdWhenCandidateIdIsNull_IsMailingList()
         {
-            var request = new TeachingEventAddAttendee() { CandidateId = null, ChannelId = 456 };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { CandidateId = null, ChannelId = 456 };
 
             request.Candidate.ChannelId.Should().Be(456);
         }
@@ -196,7 +213,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         [Fact]
         public void Candidate_ChannelIdWhenCandidateIdIsNotNull_IsNotChanged()
         {
-            var request = new TeachingEventAddAttendee() { CandidateId = Guid.NewGuid() };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { CandidateId = Guid.NewGuid() };
 
             request.Candidate.ChannelId.Should().BeNull();
             request.Candidate.ChangedPropertyNames.Should().NotContain("ChannelId");
@@ -205,7 +224,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         [Fact]
         public void Candidate_DegreeStatusIdIsNull_DoesNotCreateQualification()
         {
-            var request = new TeachingEventAddAttendee() { DegreeStatusId = null };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { DegreeStatusId = null };
 
             request.Candidate.Qualifications.Should().BeEmpty();
         }
@@ -213,7 +234,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         [Fact]
         public void Candidate_SubscribeToMailingListIsFalse_DoesNotCreateSubscription()
         {
-            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { SubscribeToMailingList = false };
 
             request.Candidate.HasMailingListSubscription.Should().BeNull();
         }
@@ -221,7 +244,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         [Fact]
         public void Candidate_DoesNotProvidePostcode_StillCreatesEventsSubscription()
         {
-            var request = new TeachingEventAddAttendee() { AddressPostcode = null };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { AddressPostcode = null };
 
             request.Candidate.HasEventsSubscription.Should().BeTrue();
         }
@@ -229,7 +254,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         [Fact]
         public void Candidate_AddressPostcode_IsFormatted()
         {
-            var request = new TeachingEventAddAttendee() { AddressPostcode = "ky119yu" };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { AddressPostcode = "ky119yu" };
 
             request.Candidate.AddressPostcode.Should().Be("KY11 9YU");
         }
@@ -237,7 +264,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         [Fact]
         public void Candidate_WhenWalkIn_HasCorrectChannel()
         {
-            var request = new TeachingEventAddAttendee() { IsWalkIn = true, EventId = Guid.NewGuid() };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { IsWalkIn = true, EventId = Guid.NewGuid() };
 
             request.Candidate.TeachingEventRegistrations.First().ChannelId.Should().Be((int)TeachingEventRegistration.Channel.EventWalkIn);
         }
@@ -245,7 +274,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         [Fact]
         public void Candidate_WhenUnverifiedWalkIn_HasCorrectChannel()
         {
-            var request = new TeachingEventAddAttendee() { IsWalkIn = true, IsVerified = false, EventId = Guid.NewGuid() };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { IsWalkIn = true, IsVerified = false, EventId = Guid.NewGuid() };
 
             request.Candidate.TeachingEventRegistrations.First().ChannelId.Should().Be((int)TeachingEventRegistration.Channel.EventWalkInUnverified);
         }
@@ -253,7 +284,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         [Fact]
         public void ClearAttributesForUnverifiedAccess_ClearsPersonalAttributesExcludingMatchbackFields()
         {
-            var request = new TeachingEventAddAttendee() { AddressTelephone = "1234567", AddressPostcode = "TE51NG" };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { AddressTelephone = "1234567", AddressPostcode = "TE51NG" };
 
             request.ClearAttributesForUnverifiedAccess();
 

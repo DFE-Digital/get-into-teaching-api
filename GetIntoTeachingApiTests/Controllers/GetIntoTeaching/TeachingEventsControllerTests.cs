@@ -22,6 +22,7 @@ using Microsoft.Extensions.Options;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.GetIntoTeaching;
 using GetIntoTeachingApi.Controllers.GetIntoTeaching;
+using GetIntoTeachingApiTests.Models.GetIntoTeaching.TestDoubles;
 
 namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
 {
@@ -47,8 +48,10 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
             _mockLogger = new Mock<ILogger<TeachingEventsController>>();
             _mockDateTime = new Mock<IDateTimeProvider>();
             _metrics = new MetricService();
-            _controller = new TeachingEventsController(_mockStore.Object, _mockJobClient.Object,
-                _mockTokenService.Object, _mockCrm.Object, _mockLogger.Object, _metrics, _mockDateTime.Object);
+            _controller = new TeachingEventsController(
+                _mockStore.Object, _mockJobClient.Object,
+                _mockTokenService.Object, _mockCrm.Object, _mockLogger.Object, _metrics, _mockDateTime.Object,
+                DegreeStatusDomainServiceTestDouble.MockFor(), CurrentYearProviderTestDouble.MockFor());
             _controller.MockUser("GIT");
 
             // Freeze time.
@@ -73,7 +76,10 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
         [Fact]
         public void AddAttendee_InvalidRequest_RespondsWithValidationErrors()
         {
-            var request = new TeachingEventAddAttendee() { EventId = Guid.NewGuid(), FirstName = null };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { EventId = Guid.NewGuid(), FirstName = null };
+
             _controller.ModelState.AddModelError("FirstName", "First name must be specified.");
 
             var response = _controller.AddAttendee(request);
@@ -87,7 +93,10 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
         public void AddAttendee_ValidRequest_EnqueuesJobRespondsWithNoContent()
         {
             var teachingEvent = new TeachingEvent() { Id = Guid.NewGuid() };
-            var request = new TeachingEventAddAttendee() { EventId = (Guid)teachingEvent.Id, Email = "test@test.com", FirstName = "John", LastName = "Doe" };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { EventId =
+                    (Guid)teachingEvent.Id, Email = "test@test.com", FirstName = "John", LastName = "Doe" };
 
             var response = _controller.AddAttendee(request);
 

@@ -1,5 +1,4 @@
 ﻿using GetIntoTeachingApi.Attributes;
-using GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
 using System;
@@ -10,16 +9,6 @@ namespace GetIntoTeachingApi.Models.Crm
     [Entity("dfe_candidatequalification")]
     public class CandidateQualification : BaseModel, IHasCandidateId
     {
-        public enum DegreeStatus
-        {
-            HasDegree = 222750000,
-            FinalYear = 222750001,
-            SecondYear = 222750002,
-            FirstYear = 222750003,
-            NoDegree = 222750004,
-            Other = 222750005,
-        }
-
         public enum DegreeType
         {
             Degree = 222750000,
@@ -39,19 +28,14 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityField("createdon")]
         public DateTime? CreatedAt { get; set; }
 
-        //private readonly IDegreeStatusDomainService _degreeStatusDomainService;
-
-        public CandidateQualification() : base(){
+        public CandidateQualification()
+            : base()
+        {
         }
 
-        //public CandidateQualification(
-        //    Entity entity,
-        //    ICrmService crm,
-        //    IServiceProvider serviceProvider,
-        //    ICurrentYearProvider currentYearProvider,
-        //    IDegreeStatusDomainService degreeStatusDomainService) : base(entity, crm, serviceProvider)
-        //{
-        //    degreeStatusDomainService.GetInferredDegreeStatusFromGraduationYear(new GraduationYear(year: 2026, currentYearProvider));
-        //}
+        public CandidateQualification(Entity entity, ICrmService crm, IServiceProvider serviceProvider)
+            : base(entity, crm, serviceProvider)
+        {
+        }
     }
 }

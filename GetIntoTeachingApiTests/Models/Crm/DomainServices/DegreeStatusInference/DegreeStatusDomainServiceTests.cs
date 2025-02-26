@@ -1,4 +1,5 @@
-﻿using GetIntoTeachingApi.Models.Crm.DomainServices.Common;
+﻿using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Models.Crm.DomainServices.Common;
 using GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference;
 using GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Evaluators;
 using GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInference.TestDoubles;

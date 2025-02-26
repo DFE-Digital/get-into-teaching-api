@@ -4,6 +4,7 @@ using GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInference.Te
 using System;
 using Xunit;
 using FluentAssertions;
+using GetIntoTeachingApi.Models.Crm;
 
 namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInference.Evaluators
 {

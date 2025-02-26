@@ -5,6 +5,7 @@ using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.GetIntoTeaching;
 using GetIntoTeachingApi.Models.GetIntoTeaching.Validators;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApiTests.Models.GetIntoTeaching.TestDoubles;
 using Moq;
 using System;
 using System.Linq;
@@ -30,7 +31,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
             var mockSubject = new TeachingSubject { Id = Guid.NewGuid() };
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
 
-            var request = new TeachingEventAddAttendee()
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor())
             {
                 CandidateId = null,
                 EventId = Guid.NewGuid(),
@@ -61,7 +64,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         [Fact]
         public void Validate_IsNotVerifiedAndIsNotWalkIn_HasError()
         {
-            var request = new TeachingEventAddAttendee() { IsWalkIn = false, IsVerified = false };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { IsWalkIn = false, IsVerified = false };
 
             var result = _validator.TestValidate(request);
 
@@ -77,7 +82,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         [Fact]
         public void Validate_CandidateIsInvalid_HasError()
         {
-            var request = new TeachingEventAddAttendee
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor())
             {
                 Email = "invalid@"
             };
@@ -91,7 +98,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         [Fact]
         public void Validate_RequiredFieldsWhenNull_HasError()
         {
-            var attendee = new TeachingEventAddAttendee()
+            var attendee = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor())
             {
                 FirstName = null,
                 LastName = null,
@@ -111,7 +120,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         [Fact]
         public void Validate_ConsiderationJourneyStageIdIsNullWhenSigningUpToMailingList_HasError()
         {
-            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = true, ConsiderationJourneyStageId = null };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { SubscribeToMailingList = true, ConsiderationJourneyStageId = null };
 
             var result = _validator.TestValidate(request);
 
@@ -121,7 +132,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         [Fact]
         public void Validate_ConsiderationJourneyStageIdIsNullWhenNotSigningUpToMailingList_HasNoError()
         {
-            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, ConsiderationJourneyStageId = null };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { SubscribeToMailingList = false, ConsiderationJourneyStageId = null };
 
             var result = _validator.TestValidate(request);
 
@@ -131,7 +144,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         [Fact]
         public void Validate_DegreeStatusIdIsNullWhenSigningUpToMailingList_HasError()
         {
-            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = true, DegreeStatusId = null };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { SubscribeToMailingList = true, DegreeStatusId = null };
 
             var result = _validator.TestValidate(request);
 
@@ -141,7 +156,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         [Fact]
         public void Validate_DegreeStatusIdIsNullWhenNotSigningUpToMailingList_HasNoError()
         {
-            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, DegreeStatusId = null };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { SubscribeToMailingList = false, DegreeStatusId = null };
 
             var result = _validator.TestValidate(request);
 
@@ -151,7 +168,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         [Fact]
         public void Validate_PreferredTeachingSubjectIdIsNullWhenSigningUpToMailingList_HasError()
         {
-            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = true, PreferredTeachingSubjectId = null };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { SubscribeToMailingList = true, PreferredTeachingSubjectId = null };
 
             var result = _validator.TestValidate(request);
 
@@ -161,7 +180,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         [Fact]
         public void Validate_PreferredTeachingSubjectIdIsNullWhenNotSigningUpToMailingList_HasNoError()
         {
-            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, PreferredTeachingSubjectId = null };
+            var request = new TeachingEventAddAttendee(
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor()) { SubscribeToMailingList = false, PreferredTeachingSubjectId = null };
 
             var result = _validator.TestValidate(request);
 
