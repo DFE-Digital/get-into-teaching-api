@@ -1,4 +1,4 @@
-﻿namespace GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference
+﻿namespace GetIntoTeachingApi.Models.Crm
 {
     /// <summary>
     /// Enumeration which defines the possible candidate degree stages (status) available.

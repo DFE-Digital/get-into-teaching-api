@@ -1,4 +1,6 @@
 ﻿using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference;
+using GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference.Evaluators;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
@@ -31,7 +33,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public Guid? PreferredTeachingSubjectId { get; set; }
 
         public int? ConsiderationJourneyStageId { get; set; }
-        public int? DegreeStatusId { get; set; }
+        public int? DegreeStatusId { get; set; }  // TODO: make this private
 
         public string Email { get; set; }
         public string FirstName { get; set; }
@@ -50,6 +52,8 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         [SwaggerSchema(ReadOnly = true)]
         public bool AlreadySubscribedToTeacherTrainingAdviser { get; set; }
 
+        public int GraduationYear { get; set; }
+
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
         [JsonIgnore]
@@ -58,10 +62,19 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public int? DefaultContactCreationChannel =>
             ChannelId ?? (int?)Candidate.Channel.Event; // Use the assigned channel ID if available, else assign default.
 
-        public TeachingEventAddAttendee(){
+        private readonly IDegreeStatusDomainService _degreeStatusDomainService;
+        private readonly ICurrentYearProvider _currentYearProvider;
+
+        public TeachingEventAddAttendee(IDegreeStatusDomainService degreeStatusDomainService, ICurrentYearProvider currentYearProvider)
+        {
+            _degreeStatusDomainService = degreeStatusDomainService;
+            _currentYearProvider = currentYearProvider;
         }
 
-        public TeachingEventAddAttendee(Candidate candidate)
+        public TeachingEventAddAttendee(
+            Candidate candidate,
+            IDegreeStatusDomainService degreeStatusDomainService,
+            ICurrentYearProvider currentYearProvider) : this(degreeStatusDomainService, currentYearProvider)
         {
             PopulateWithCandidate(candidate);
         }
@@ -148,10 +161,16 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         {
             if (DegreeStatusId != null)
             {
+                DegreeStatusInferenceRequest degreeStatusInferenceRequest =
+                    DegreeStatusInferenceRequest.Create(
+                        new GraduationYear(GraduationYear, _currentYearProvider), _currentYearProvider);
+
                 candidate.Qualifications.Add(new CandidateQualification()
                 {
                     Id = QualificationId,
-                    DegreeStatusId = DegreeStatusId,
+                    DegreeStatusId =
+                        _degreeStatusDomainService
+                            .GetInferredDegreeStatusFromGraduationYear(degreeStatusInferenceRequest),
                     TypeId = (int)CandidateQualification.DegreeType.Degree,
                 });
             }

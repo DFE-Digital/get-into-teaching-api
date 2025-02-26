@@ -8,6 +8,7 @@ using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Models.Crm.DomainServices.DegreeStatusInference;
 using GetIntoTeachingApi.Models.GetIntoTeaching;
 using GetIntoTeachingApi.Models.GetIntoTeaching.Validators;
 using GetIntoTeachingApi.Services;
@@ -34,6 +35,8 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
         private readonly IBackgroundJobClient _jobClient;
         private readonly ILogger<TeachingEventsController> _logger;
         private readonly IDateTimeProvider _dateTime;
+        private readonly IDegreeStatusDomainService _degreeStatusDomainService;
+        private readonly ICurrentYearProvider _currentYearProvider;
 
         public TeachingEventsController(
             IStore store,
@@ -42,7 +45,9 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
             ICrmService crm,
             ILogger<TeachingEventsController> logger,
             IMetricService metrics,
-            IDateTimeProvider dateTime)
+            IDateTimeProvider dateTime,
+            IDegreeStatusDomainService degreeStatusDomainService,
+            ICurrentYearProvider currentYearProvider)
         {
             _store = store;
             _jobClient = jobClient;
@@ -51,6 +56,8 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
             _tokenService = tokenService;
             _logger = logger;
             _dateTime = dateTime;
+            _degreeStatusDomainService = degreeStatusDomainService;
+            _currentYearProvider = currentYearProvider;
         }
 
         [HttpGet]
@@ -166,7 +173,7 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
                 return NotFound();
             }
 
-            var attendee = new TeachingEventAddAttendee(candidate)
+            var attendee = new TeachingEventAddAttendee(candidate, _degreeStatusDomainService, _currentYearProvider)
             {
                 IsVerified = false,
             };
@@ -201,7 +208,7 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
                 return Unauthorized();
             }
 
-            return Ok(new TeachingEventAddAttendee(candidate));
+            return Ok(new TeachingEventAddAttendee(candidate, _degreeStatusDomainService, _currentYearProvider));
         }
 
         [HttpPost]
