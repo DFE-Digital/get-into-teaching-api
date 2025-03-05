@@ -22,14 +22,12 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices
         public GraduationYear(int year, ICurrentYearProvider currentYearProvider)
         {
             const int yearsAhead = 40;
-
-            int minDate = currentYearProvider.ToYearInt();
             int maxDate = currentYearProvider.ToYearsAheadInt(yearsAhead);
 
             _proposedGraduationYear =
-                year >= minDate || year <= maxDate ? year :
-                 throw new ArgumentOutOfRangeException(
-                     nameof(year), $"Year must be between {Convert(minDate)} and {Convert(maxDate)}");
+                year <= maxDate ? year :
+                    throw new ArgumentOutOfRangeException(
+                        nameof(year), $"Year must be less than {maxDate}");
         }
 
         /// <summary>
@@ -75,34 +73,6 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices
         public readonly int GetYear() => _proposedGraduationYear;
 
         /// <summary>
-        /// Gets the number of years away from graduating based on the difference between current year and the proposed graduation year.
-        /// </summary>
-        /// <param name="currentYear">
-        /// An integer value representing the current year.
-        /// </param>
-        /// <returns>
-        /// An integer value representing the number of years away from graduating.
-        /// </returns>
-        public int GetNumberOfYearsAwayFromGraduating(int currentYear) => _proposedGraduationYear - currentYear;
-
-        /// <summary>
-        /// Allows the conversion of the year to a <see cref="DateTime"/> instance.
-        /// </summary>
-        /// <param name="year">
-        /// An integer value representing a specified year.
-        /// </param>
-        /// <returns>
-        /// A <see cref="DateTime"/> object representing the year provided.
-        /// </returns>
-        public readonly DateTime Convert(int year)
-        {
-            const string YearFormat = "yyyyMMdd";
-
-            return DateTime.ParseExact(
-                year.ToString(CultureInfo.InvariantCulture), YearFormat, CultureInfo.InvariantCulture);
-        }
-
-        /// <summary>
         /// Equality check between the proposed graduation year <see cref="DateTime"/> instance and another <see cref="DateTime"/> instance.
         /// </summary>
         /// <param name="other">
@@ -130,11 +100,11 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices
             }
 
             if (obj is GraduationYear graduationYear)
-                return Equals(graduationYear.GetYear() == _proposedGraduationYear);
+                return graduationYear.GetYear() == _proposedGraduationYear;
             if (obj is int graduationYearInt)
-                return Equals(graduationYearInt == _proposedGraduationYear);
+                return graduationYearInt == _proposedGraduationYear;
             if (obj is DateTime graduationYearDateTime)
-                return Equals(graduationYearDateTime.Year == _proposedGraduationYear);
+                return graduationYearDateTime.Year == _proposedGraduationYear;
 
             return false;
         }
