@@ -10,7 +10,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
         public void DateTimeToday_EnsureAConfiguredDateTimeOffsetIsReturned()
         {
             // arrange
-            ICurrentYearProvider currentYearProvider = new CurrentYearProvider();
+            CurrentYearProvider currentYearProvider = new();
 
             // act
             DateTimeOffset dateTimeToday =
@@ -24,7 +24,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
         public void ToYearInt_EnsureAConfiguredIntYearIsReturned()
         {
             // arrange
-            ICurrentYearProvider currentYearProvider = new CurrentYearProvider();
+            CurrentYearProvider currentYearProvider = new();
 
             // act
             int year =
@@ -39,7 +39,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
         public void ToYearsAheadInt_EnsureAConfiguredIntYearAheadIsReturned()
         {
             // arrange
-            ICurrentYearProvider currentYearProvider = new CurrentYearProvider();
+            CurrentYearProvider currentYearProvider = new();
 
             // act
             int year =
