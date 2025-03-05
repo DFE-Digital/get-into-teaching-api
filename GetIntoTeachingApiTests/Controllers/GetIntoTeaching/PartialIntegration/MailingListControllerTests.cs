@@ -207,7 +207,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching.PartialIntegration
                     It.IsAny<EnqueuedState>()));
         }
 
-        private IDegreeStatusDomainService SetupDegreeStatusDomainServiceFixture()
+        private static DegreeStatusDomainService SetupDegreeStatusDomainServiceFixture()
         {
             IEnumerable<IChainEvaluationHandler<
                 DegreeStatusInferenceRequest, DegreeStatus>> degreeStatusInferenceHandlers

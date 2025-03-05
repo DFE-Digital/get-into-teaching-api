@@ -23,6 +23,7 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Com
     /// </typeparam>
     public sealed class ChainEvaluationHandler<TEvaluationRequest, TEvaluationResponse> :
         IChainEvaluationHandler<TEvaluationRequest, TEvaluationResponse>
+        where TEvaluationRequest : class
     {
         private IChainEvaluationHandler<TEvaluationRequest, TEvaluationResponse> _nextEvaluationHandler;
         private readonly IEvaluator<TEvaluationRequest, TEvaluationResponse> _evaluator;
@@ -58,10 +59,7 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Com
         /// </exception>
         public TEvaluationResponse Evaluate(TEvaluationRequest evaluationRequest)
         {
-            if (evaluationRequest == null)
-            {
-                throw new ArgumentNullException(nameof(evaluationRequest));
-            }
+            ArgumentNullException.ThrowIfNull(evaluationRequest);
 
             return _evaluator.CanEvaluate(evaluationRequest) ?
                 _evaluator.Evaluate(evaluationRequest) :
