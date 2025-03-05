@@ -44,8 +44,8 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
                 _mockCrm.Object,
                 _mockJobClient.Object,
                 _mockDateTime.Object,
-                DegreeStatusDomainServiceTestDouble.MockFor(),
-                CurrentYearProviderTestDouble.MockFor());
+                DegreeStatusDomainServiceTestDouble.DefaultMockObject(),
+                CurrentYearProviderTestDouble.DefaultMockObject());
             _controller.MockUser("GIT");
 
             // Freeze time.
