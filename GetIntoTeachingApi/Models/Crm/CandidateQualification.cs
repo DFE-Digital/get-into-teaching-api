@@ -1,8 +1,7 @@
-﻿using System;
-using FluentValidation;
-using GetIntoTeachingApi.Attributes;
+﻿using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
+using System;
 
 namespace GetIntoTeachingApi.Models.Crm
 {
@@ -10,16 +9,6 @@ namespace GetIntoTeachingApi.Models.Crm
     [Entity("dfe_candidatequalification")]
     public class CandidateQualification : BaseModel, IHasCandidateId
     {
-        public enum DegreeStatus
-        {
-            HasDegree = 222750000,
-            FinalYear = 222750001,
-            SecondYear = 222750002,
-            FirstYear = 222750003,
-            NoDegree = 222750004,
-            Other = 222750005,
-        }
-
         public enum DegreeType
         {
             Degree = 222750000,
@@ -38,6 +27,8 @@ namespace GetIntoTeachingApi.Models.Crm
         public string DegreeSubject { get; set; }
         [EntityField("createdon")]
         public DateTime? CreatedAt { get; set; }
+        [EntityField("dfe_graduationyear")]
+        public DateOnly? GraduationYear { get; set; }
 
         public CandidateQualification()
             : base()

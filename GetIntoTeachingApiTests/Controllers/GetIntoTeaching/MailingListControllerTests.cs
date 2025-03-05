@@ -1,20 +1,22 @@
-﻿using System;
-using Xunit;
-using GetIntoTeachingApi.Models;
-using Microsoft.AspNetCore.Mvc;
-using FluentAssertions;
+﻿using FluentAssertions;
+using GetIntoTeachingApi.Controllers.GetIntoTeaching;
 using GetIntoTeachingApi.Jobs;
+using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Models.GetIntoTeaching;
+using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
+using GetIntoTeachingApiTests.Helpers;
+using GetIntoTeachingApiTests.Models.GetIntoTeaching.TestDoubles;
 using Hangfire;
 using Hangfire.Common;
 using Hangfire.States;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
-using GetIntoTeachingApi.Services;
-using GetIntoTeachingApi.Utils;
-using GetIntoTeachingApi.Controllers.GetIntoTeaching;
-using GetIntoTeachingApi.Models.Crm;
-using GetIntoTeachingApi.Models.GetIntoTeaching;
-using GetIntoTeachingApiTests.Helpers;
+using System;
+using Xunit;
+using CurrentYearProviderTestDouble = GetIntoTeachingApiTests.Models.GetIntoTeaching.TestDoubles.CurrentYearProviderTestDouble;
 
 namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
 {
@@ -41,7 +43,9 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
                 _mockMagicLinkTokenService.Object,
                 _mockCrm.Object,
                 _mockJobClient.Object,
-                _mockDateTime.Object);
+                _mockDateTime.Object,
+                DegreeStatusDomainServiceTestDouble.MockFor(),
+                CurrentYearProviderTestDouble.MockFor());
             _controller.MockUser("GIT");
 
             // Freeze time.
