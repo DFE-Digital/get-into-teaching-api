@@ -7,15 +7,6 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.TestDoubles
     {
         public static ICurrentYearProvider DefaultMock() => Mock.Of<ICurrentYearProvider>();
 
-        public static ICurrentYearProvider MockFor()//Response<SearchResults<Establishment>> searchResult, string keyword, string collection)
-        {
-            var currentYearProviderMock = new Mock<ICurrentYearProvider>();
-
-            //searchServiceMock.Setup(SearchRequest(keyword, collection))
-            //    .Returns(Task.FromResult(searchResult))
-            //    .Verifiable();
-
-            return currentYearProviderMock.Object;
-        }
+        public static ICurrentYearProvider DefaultMockObject() => new Mock<ICurrentYearProvider>().Object;
     }
 }
