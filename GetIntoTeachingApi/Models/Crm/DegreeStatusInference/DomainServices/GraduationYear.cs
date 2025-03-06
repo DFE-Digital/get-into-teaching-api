@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 
 namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices
 {
@@ -21,8 +20,8 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices
         /// </exception>
         public GraduationYear(int year, ICurrentYearProvider currentYearProvider)
         {
-            const int yearsAhead = 40;
-            int maxDate = currentYearProvider.ToYearsAheadInt(yearsAhead);
+            const int MaximumYearsAhead = 40;
+            int maxDate = currentYearProvider.ToYearsAheadInt(MaximumYearsAhead);
 
             _proposedGraduationYear =
                 year <= maxDate ? year :
