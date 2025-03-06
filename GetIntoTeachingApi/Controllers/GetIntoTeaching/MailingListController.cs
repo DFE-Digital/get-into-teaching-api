@@ -66,7 +66,7 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
 
             // This is a short-medium term solution to infer the degree status from the
             // graduation year provided to support current behaviour until degree status
-            // is fully retied. The intention being to remove this functionality once we
+            // is fully retired. The intention being to remove this functionality once we
             // fully migrate to the new approach. 
             request.InferDegreeStatus(_degreeStatusDomainService, _currentYearProvider);
 

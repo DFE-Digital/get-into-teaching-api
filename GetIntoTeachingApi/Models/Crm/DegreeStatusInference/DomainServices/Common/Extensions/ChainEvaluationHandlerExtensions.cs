@@ -30,14 +30,11 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Com
             ArgumentNullException.ThrowIfNull(evaluationHandlers);
 
             for (int evaluationHandlerTally = 0;
-                evaluationHandlerTally < evaluationHandlers.Count;
+                evaluationHandlerTally < evaluationHandlers.Count - 1;
                 evaluationHandlerTally++)
             {
-                if (evaluationHandlerTally + 1 < evaluationHandlers.Count)
-                {
-                    evaluationHandlers[evaluationHandlerTally]
-                        .ChainNextHandler(evaluationHandlers[evaluationHandlerTally + 1]);
-                }
+                evaluationHandlers[evaluationHandlerTally]
+                    .ChainNextHandler(evaluationHandlers[evaluationHandlerTally + 1]);
             }
         }
     }
