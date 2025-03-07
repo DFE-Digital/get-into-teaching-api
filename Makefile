@@ -22,16 +22,16 @@ install-fetch-config:
 bin/yaq:
 	mkdir -p bin | curl -sL https://github.com/uk-devops/yaq/releases/download/v0.0.3/yaq_linux_amd64_v0.0.3.zip -o yaq.zip && unzip -o yaq.zip -d ./bin/ && rm yaq.zip
 
-development_aks: test-cluster
-	$(eval include global_config/development_aks.sh)
+development: test-cluster
+	$(eval include global_config/development.sh)
 
-test_aks: test-cluster
-	$(eval include global_config/test_aks.sh)
+test: test-cluster
+	$(eval include global_config/test.sh)
 
-production_aks: production-cluster
-	$(eval include global_config/production_aks.sh)
+production: production-cluster
+	$(eval include global_config/production.sh)
 
-local_aks:
+local:
 	$(eval export KEY_VAULT=s189t01-gitapi-dv-loc-kv)
 	$(eval export AZ_SUBSCRIPTION=s189-teacher-services-cloud-test)
 
@@ -54,10 +54,10 @@ print-app-secrets: bin/yaq set-azure-account set-key-vault-names
 print-infra-secrets: bin/yaq set-azure-account set-key-vault-names
 	yaq -i keyvault-secrets:${KEY_VAULT_INFRASTRUCTURE_NAME} -d yaml
 
-setup-local-env: local_aks install-fetch-config set-azure-account set-key-vault-names
+setup-local-env: local install-fetch-config set-azure-account set-key-vault-names
 	./fetch_config.rb -s azure-key-vault-secret:${KEY_VAULT}/API-KEYS -f shell-env-var > GetIntoTeachingApi/env.local
 
-edit-local-app-secrets: local_aks install-fetch-config set-azure-account
+edit-local-app-secrets: local install-fetch-config set-azure-account
 	./fetch_config.rb -s azure-key-vault-secret:${KEY_VAULT}/API-KEYS -e -d azure-key-vault-secret:${KEY_VAULT}/API-KEYS -f yaml -c
 
 .PHONY: vendor-modules
@@ -69,7 +69,7 @@ terraform-init: vendor-modules set-azure-account
 	terraform -chdir=terraform/aks init -upgrade -reconfigure \
 		-backend-config=resource_group_name=${AZURE_RESOURCE_PREFIX}-${SERVICE_SHORT}-${CONFIG_SHORT}-rg \
 		-backend-config=storage_account_name=${AZURE_RESOURCE_PREFIX}${SERVICE_SHORT}tfstate${CONFIG_SHORT}sa \
-		-backend-config=key=${CONFIG}.tfstate
+		-backend-config=key=${CONFIG}_aks.tfstate
 
 	$(if $(IMAGE_TAG), , $(error The IMAGE_TAG variable must be provided))
 	$(eval export TF_VAR_app_docker_image=ghcr.io/dfe-digital/get-into-teaching-api:$(IMAGE_TAG))
@@ -113,4 +113,4 @@ production-cluster:
 
 get-cluster-credentials: set-azure-account
 	az aks get-credentials --overwrite-existing -g ${CLUSTER_RESOURCE_GROUP_NAME} -n ${CLUSTER_NAME}
-	kubelogin convert-kubeconfig -l $(if ${GITHUB_ACTIONS},spn,azurecli)
+	kubelogin convert-kubeconfig -l $(if ${AAD_LOGIN_METHOD},${AAD_LOGIN_METHOD},azurecli)
