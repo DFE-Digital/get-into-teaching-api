@@ -3,17 +3,25 @@ on:
   pull_request:
     types: [assigned, opened, synchronize, reopened]
 
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
 jobs:
 
   test_dot_net:
     runs-on: ubuntu-latest
+    environment: development
     steps:
 
     - uses: actions/checkout@v4
 
     - uses: Azure/login@v2
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: Fetch secrets from key vault
       uses: azure/CLI@v2
