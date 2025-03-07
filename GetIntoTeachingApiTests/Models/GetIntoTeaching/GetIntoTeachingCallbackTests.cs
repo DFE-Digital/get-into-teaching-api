@@ -2,7 +2,6 @@
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.GetIntoTeaching;
 using System;
-using System.Linq;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
@@ -10,7 +9,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
     public class GetIntoTeachingCallbackTests
     {
         [Fact]
-        public void Constructor_WithExistingCandidate_MapsCorrectly()
+        public void Constructor_WithCandidate_MapsCorrectly()
         {
             var candidate = new Candidate()
             {
@@ -31,7 +30,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         }
 
         [Fact]
-        public void ExistingCandidate_MapsCorrectly()
+        public void Candidate_MapsCorrectly()
         {
             var request = new GetIntoTeachingCallback()
             {
@@ -43,9 +42,6 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
                 AddressTelephone = "123456789",
                 PhoneCallScheduledAt = DateTime.UtcNow,
                 TalkingPoints = "Talking points",
-                CreationChannelSourceId = 222750003,
-                CreationChannelServiceId = 222750002,
-                CreationChannelActivityId = 222750001,
             };
 
             var candidate = request.Candidate;
@@ -65,32 +61,6 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
             candidate.PrivacyPolicy.AcceptedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(30));
-            
-            var contactChannelCreation = candidate.ContactChannelCreations.First();
-            contactChannelCreation.CreationChannel.Should().Be(false);
-            contactChannelCreation.CreationChannelSourceId.Should().Be(request.CreationChannelSourceId);
-            contactChannelCreation.CreationChannelServiceId.Should().Be(request.CreationChannelServiceId);
-            contactChannelCreation.CreationChannelActivityId.Should().Be(request.CreationChannelActivityId);
-            candidate.ChannelId.Should().Be(null);
-        }
-        
-          [Fact]
-        public void NewCandidate_MapsCorrectly()
-        {
-            var request = new GetIntoTeachingCallback()
-            {
-                CandidateId = null,
-                CreationChannelSourceId = 222750003,
-                CreationChannelServiceId = 222750002,
-                CreationChannelActivityId = 222750001,
-            };
-            
-            var contactChannelCreation = request.Candidate.ContactChannelCreations.First();
-            contactChannelCreation.CreationChannel.Should().Be(true);
-            contactChannelCreation.CreationChannelSourceId.Should().Be(request.CreationChannelSourceId);
-            contactChannelCreation.CreationChannelServiceId.Should().Be(request.CreationChannelServiceId);
-            contactChannelCreation.CreationChannelActivityId.Should().Be(request.CreationChannelActivityId);
-            request.Candidate.ChannelId.Should().Be(null);
         }
 
         [Fact]
