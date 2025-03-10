@@ -1,10 +1,9 @@
 ﻿using System;
-using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Models.Apply;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Microsoft.Extensions.Logging;
-using ApplyCandidate = GetIntoTeachingApi.Models.Apply.Candidate;
 
 namespace GetIntoTeachingApi.Jobs
 {
@@ -30,7 +29,7 @@ namespace GetIntoTeachingApi.Jobs
             _appSettings = appSettings;
         }
 
-        public void Run(ApplyCandidate applyCandidate)
+        public void Run(Candidate applyCandidate)
         {
             if (_appSettings.IsCrmIntegrationPaused)
             {
@@ -42,25 +41,23 @@ namespace GetIntoTeachingApi.Jobs
             _logger.LogInformation("ApplyCandidateSyncJob - Succeeded - {Id}", applyCandidate.Id);
         }
 
-        public void SyncCandidate(ApplyCandidate applyCandidate)
+        public void SyncCandidate(Candidate applyCandidate)
         {
-            ContactChannelCandidateWrapper wrappedCandidate = new(applyCandidate.ToCrmModel())
-            {
-                CreationChannelSourceId = (int?) ContactChannelCreation.CreationChannelSource.Apply
-            };
-            
-            var match = _crm.MatchCandidate(wrappedCandidate.ScopedCandidate.Email, applyCandidate.Id);
+            var candidate = applyCandidate.ToCrmModel();
+            var match = _crm.MatchCandidate(candidate.Email, applyCandidate.Id);
 
             _logger.LogInformation("ApplyCandidateSyncJob - {Status} - {Id}", match == null ? "Miss" : "Hit", applyCandidate.Id);
 
             if (match != null)
             {
-                UpdateCandidateWithMatch(wrappedCandidate.ScopedCandidate, match);
+                UpdateCandidateWithMatch(candidate, match);
             }
-            
-            wrappedCandidate.ScopedCandidate.ConfigureChannel(wrappedCandidate, wrappedCandidate.ScopedCandidate.Id);
-            
-            string json = wrappedCandidate.ScopedCandidate.SerializeChangeTracked();
+            else
+            {
+                candidate.ChannelId = (int)Models.Crm.Candidate.Channel.ApplyForTeacherTraining;
+            }
+
+            string json = candidate.SerializeChangeTracked();
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
         }
 

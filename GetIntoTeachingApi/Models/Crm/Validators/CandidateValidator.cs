@@ -60,7 +60,6 @@ namespace GetIntoTeachingApi.Models.Crm.Validators
             RuleFor(candidate => candidate.ChannelId)
                 .NotNull()
                 .When(candidate => candidate.Id == null)
-                .When(candidate => candidate.ContactChannelCreations.Count == 0)
                 .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_channelcreation", store));
             RuleFor(candidate => candidate.HasGcseEnglishId)
                 .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_websitehasgcseenglish", store))
