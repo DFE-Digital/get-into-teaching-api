@@ -22,6 +22,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
             RuleFor(request => request.AcceptedPolicyId).NotNull();
             RuleFor(request => request.CountryId).NotNull();
             RuleFor(request => request.TypeId).NotNull();
+
             RuleFor(request => request.AddressTelephone).NotNull()
                 .When(request => request.PhoneCallScheduledAt != null)
                 .WithMessage("Must be set to schedule a callback.");
@@ -43,17 +44,17 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
                 RuleFor(request => request.PreferredTeachingSubjectId).NotNull()
                     .When(request => request.Candidate.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Secondary)
                     .WithMessage("For candidates returning to teacher training, must be set when preferred education phase is secondary.");
-                
+
                 RuleFor(request => request.PreferredTeachingSubjectId).NotNull()
                     .When(request => request.Candidate.PreferredEducationPhaseId == null)
                     .WithMessage("For candidates returning to teacher training, must be set when preferred education phase defaults to secondary.");
-                
+
                 RuleFor(request => request.SubjectTaughtId).NotNull()
                     .When(request => request.StageTaughtId == null)
                     .WithMessage("For candidates returning to teacher training, must be set when stage taught defaults to secondary.");
-                
+
                 RuleFor(request => request.SubjectTaughtId).NotNull()
-                    .When(request => request.StageTaughtId == (int) CandidatePastTeachingPosition.EducationPhase.Secondary)
+                    .When(request => request.StageTaughtId == (int)CandidatePastTeachingPosition.EducationPhase.Secondary)
                     .WithMessage("For candidates returning to teacher training, must be set when stage taught is secondary.");
             });
 
@@ -62,7 +63,8 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
                 RuleFor(request => request.PreferredEducationPhaseId).NotNull()
                     .When(request => request.DegreeStatusId == (int)DegreeStatus.HasDegree)
                     .WithMessage("Must be set for candidates interested in teacher training that have a degree.");
-                
+                RuleFor(request => request.DegreeStatusId).NotNull()
+                    .WithMessage("Must be set for candidates interested in teacher training.");
                 RuleFor(request => request.DegreeTypeId).NotNull()
                     .WithMessage("Must be set for candidates interested in teacher training.");
 
@@ -101,15 +103,15 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
 
                 When(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.Degree &&
                     request.DegreeStatusId == (int)DegreeStatus.HasDegree, () =>
-                {
-                    RuleFor(request => request)
-                        .Must(request => HasOrIsPlanningOnRetakingEnglishAndMaths(request))
-                        .When(request => request.PreferredEducationPhaseId != null)
-                        .WithMessage("Must have or be retaking Maths and English GCSEs.");
+                    {
+                        RuleFor(request => request)
+                            .Must(request => HasOrIsPlanningOnRetakingEnglishAndMaths(request))
+                            .When(request => request.PreferredEducationPhaseId != null)
+                            .WithMessage("Must have or be retaking Maths and English GCSEs.");
 
-                    RuleFor(request => request.UkDegreeGradeId).NotNull()
-                        .WithMessage("Must be set when candidate has a degree.");
-                });
+                        RuleFor(request => request.UkDegreeGradeId).NotNull()
+                            .WithMessage("Must be set when candidate has a degree.");
+                    });
             });
 
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store, dateTime));
