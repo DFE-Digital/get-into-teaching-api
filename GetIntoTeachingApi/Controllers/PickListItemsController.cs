@@ -335,5 +335,15 @@ namespace GetIntoTeachingApi.Controllers
         {
             return Ok(await _store.GetPickListItems("dfe_contactchannelcreation", "dfe_creationchannelactivities").ToListAsync());
         }
+
+        [HttpGet]
+        [Route("contact_creation_channel/situation")] // TODO: need to check this!!!!
+        [SwaggerOperation(
+            Summary = "Retrieves the list of situations.",
+            OperationId = "GetCandidateSituations",
+            Tags = new[] { "Pick List Items" })]
+        [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCandidateAssignmentStatus() =>
+            Ok(await _store.GetPickListItems("situation", "dfe_assignmentstatus").ToListAsync());
     }
 }
