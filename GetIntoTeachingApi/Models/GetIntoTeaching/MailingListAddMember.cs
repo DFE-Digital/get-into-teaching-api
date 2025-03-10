@@ -11,7 +11,7 @@ using System.Text.Json.Serialization;
 
 namespace GetIntoTeachingApi.Models.GetIntoTeaching
 {
-    public class MailingListAddMember : ICreateContactChannel, IInferDegreeStatus
+    public class MailingListAddMember : IInferDegreeStatus
     {
         public Guid? CandidateId { get; set; }
         public Guid? QualificationId { get; set; }
