@@ -97,7 +97,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching.PartialIntegration
                 backgroundJobClient.Create(
                     It.Is<Job>(
                         job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-                        IsMatch((string)job.Args[0], new DateOnly(2028, 8, 31), DegreeStatus.FirstYear)
+                        IsMatch((string)job.Args[0], new DateTime(2028, 8, 31), DegreeStatus.FirstYear)
                     ),
                     It.IsAny<EnqueuedState>()));
         }
@@ -118,7 +118,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching.PartialIntegration
                 backgroundJobClient.Create(
                     It.Is<Job>(
                         job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-                        IsMatch((string)job.Args[0], new DateOnly(2039, 8, 31), DegreeStatus.FirstYear)
+                        IsMatch((string)job.Args[0], new DateTime(2039, 8, 31), DegreeStatus.FirstYear)
                     ),
                     It.IsAny<EnqueuedState>()));
         }
@@ -139,7 +139,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching.PartialIntegration
                 backgroundJobClient.Create(
                     It.Is<Job>(
                         job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-                        IsMatch((string)job.Args[0], new DateOnly(2027, 8, 31), DegreeStatus.SecondYear)
+                        IsMatch((string)job.Args[0], new DateTime(2027, 8, 31), DegreeStatus.SecondYear)
                     ),
                     It.IsAny<EnqueuedState>()));
         }
@@ -160,7 +160,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching.PartialIntegration
                 backgroundJobClient.Create(
                     It.Is<Job>(
                         job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-                        IsMatch((string)job.Args[0], new DateOnly(2026, 8, 31), DegreeStatus.FinalYear)
+                        IsMatch((string)job.Args[0], new DateTime(2026, 8, 31), DegreeStatus.FinalYear)
                     ),
                     It.IsAny<EnqueuedState>()));
         }
@@ -181,7 +181,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching.PartialIntegration
                 backgroundJobClient.Create(
                     It.Is<Job>(
                         job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-                        IsMatch((string)job.Args[0], new DateOnly(2025, 8, 31), DegreeStatus.HasDegree)
+                        IsMatch((string)job.Args[0], new DateTime(2025, 8, 31), DegreeStatus.HasDegree)
                     ),
                     It.IsAny<EnqueuedState>()));
         }
@@ -202,7 +202,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching.PartialIntegration
                 backgroundJobClient.Create(
                     It.Is<Job>(
                         job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-                        IsMatch((string)job.Args[0], new DateOnly(2000, 8, 31), DegreeStatus.HasDegree)
+                        IsMatch((string)job.Args[0], new DateTime(2000, 8, 31), DegreeStatus.HasDegree)
                     ),
                     It.IsAny<EnqueuedState>()));
         }
@@ -216,7 +216,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching.PartialIntegration
             return new DegreeStatusDomainService(degreeStatusInferenceHandlers);
         }
 
-        private static bool IsMatch(string candidateJson, DateOnly? graduationYear, DegreeStatus degreeStatus)
+        private static bool IsMatch(string candidateJson, DateTime? graduationYear, DegreeStatus degreeStatus)
         {
             var candidate = candidateJson.DeserializeChangeTracked<Candidate>();
 

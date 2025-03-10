@@ -44,7 +44,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public bool AlreadySubscribedToTeacherTrainingAdviser { get; set; }
 
         public int? GraduationYear { get; set; } = null!;
-        public DateOnly? InferredGraduationDate { get; set; } = null!;
+        public DateTime? InferredGraduationDate { get; set; } = null!;
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
@@ -180,7 +180,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                         .GetInferredDegreeStatusFromGraduationYear(degreeStatusInferenceRequest);
 
                 InferredGraduationDate =
-                    new DateOnly(GraduationYear.Value, GraduationMonth, GraduationDay);
+                    new DateTime(GraduationYear.Value, GraduationMonth, GraduationDay);
             }
         }
     }
