@@ -16,7 +16,7 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference
         /// <summary>
         /// The inferred graduation date based on the graduation year provisioned.
         /// </summary>
-        DateOnly? InferredGraduationDate { get; set; }
+        DateTime? InferredGraduationDate { get; set; }
 
         /// <summary>
         /// Provides logic to conditionally infer the degree status based on

@@ -28,7 +28,7 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityField("createdon")]
         public DateTime? CreatedAt { get; set; }
         [EntityField("dfe_graduationyear")]
-        public DateOnly? GraduationYear { get; set; }
+        public DateTime? GraduationYear { get; set; }
 
         public CandidateQualification()
             : base()
