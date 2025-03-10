@@ -120,38 +120,5 @@
     "RelatedEntities": [],
     "RowVersion": null,
     "KeyAttributes": []
-  },
-  {
-    "LogicalName" : "dfe_contactchannelcreation",
-    "Id" : "00000000-0000-0000-0000-000000000000",
-    "Attributes" : [ {
-      "Key" : "dfe_contactid",
-      "Value" : {
-        "Id" : "00000000-0000-0000-0000-000000000000",
-        "LogicalName" : "contact",
-        "Name" : null,
-        "KeyAttributes" : [ ],
-        "RowVersion" : null
-      }
-    }, {
-      "Key" : "dfe_creationchannel",
-      "Value" : true
-    }, {
-      "Key" : "dfe_creationchannelactivities",
-      "Value" : null
-    }, {
-      "Key" : "dfe_creationchannelservice",
-      "Value" : null
-    }, {
-      "Key" : "dfe_creationchannelsource",
-      "Value" : {
-        "Value" : 222750000
-      }
-    } ],
-    "EntityState" : 1,
-    "FormattedValues" : [ ],
-    "RelatedEntities" : [ ],
-    "RowVersion" : null,
-    "KeyAttributes" : [ ]
   }
 ]
