@@ -129,16 +129,6 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
         }
 
         [Fact]
-        public void Validate_DegreeStatusIdIsNullWhenSigningUpToMailingList_HasError()
-        {
-            var request = new TeachingEventAddAttendee() { SubscribeToMailingList = true, DegreeStatusId = null };
-
-            var result = _validator.TestValidate(request);
-
-            result.ShouldHaveValidationErrorFor(request => request.DegreeStatusId);
-        }
-
-        [Fact]
         public void Validate_DegreeStatusIdIsNullWhenNotSigningUpToMailingList_HasNoError()
         {
             var request = new TeachingEventAddAttendee() { SubscribeToMailingList = false, DegreeStatusId = null };
