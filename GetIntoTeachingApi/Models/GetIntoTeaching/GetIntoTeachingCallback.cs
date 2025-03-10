@@ -1,13 +1,13 @@
-﻿using GetIntoTeachingApi.Models.Crm;
+﻿using System;
+using System.Text.Json.Serialization;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
-using System.Text.Json.Serialization;
 
 namespace GetIntoTeachingApi.Models.GetIntoTeaching
 {
-    public class GetIntoTeachingCallback : ICreateContactChannel
+    public class GetIntoTeachingCallback
     {
         public Guid? CandidateId { get; set; }
         [SwaggerSchema(WriteOnly = true)]
@@ -20,22 +20,14 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         [SwaggerSchema(WriteOnly = true)]
         public DateTime? PhoneCallScheduledAt { get; set; }
         public string TalkingPoints { get; set; }
-        
-        [SwaggerSchema(WriteOnly = true)]
-        public int? CreationChannelSourceId { get; set; }
-        [SwaggerSchema(WriteOnly = true)]
-        public int? CreationChannelServiceId { get; set; }
-        [SwaggerSchema(WriteOnly = true)]
-        public int? CreationChannelActivityId { get; set; }
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
         [JsonIgnore]
         public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
 
-        public int? DefaultContactCreationChannel => (int?)Candidate.Channel.GetIntoTeachingCallback;
-
-        public GetIntoTeachingCallback(){
+        public GetIntoTeachingCallback()
+        {
         }
 
         public GetIntoTeachingCallback(Candidate candidate)
@@ -63,7 +55,8 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                 LastName = LastName,
                 AddressTelephone = AddressTelephone,
             };
-            candidate.ConfigureChannel(contactChannelCreator: this, candidateId: CandidateId);
+
+            ConfigureChannel(candidate);
             SchedulePhoneCall(candidate);
             AcceptPrivacyPolicy(candidate);
 
@@ -83,6 +76,14 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                     Subject = $"Scheduled phone call requested by {candidate.FullName}",
                     TalkingPoints = TalkingPoints,
                 };
+            }
+        }
+
+        private void ConfigureChannel(Candidate candidate)
+        {
+            if (CandidateId == null)
+            {
+                candidate.ChannelId = (int?)Candidate.Channel.GetIntoTeachingCallback;
             }
         }
 

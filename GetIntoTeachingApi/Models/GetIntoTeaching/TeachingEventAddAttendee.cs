@@ -1,14 +1,14 @@
-﻿using GetIntoTeachingApi.Models.Crm;
+﻿using System;
+using System.Linq;
+using System.Text.Json.Serialization;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
-using System.Linq;
-using System.Text.Json.Serialization;
 
 namespace GetIntoTeachingApi.Models.GetIntoTeaching
 {
-    public class TeachingEventAddAttendee : ICreateContactChannel
+    public class TeachingEventAddAttendee
     {
         public Guid? CandidateId { get; set; }
         public Guid? QualificationId { get; set; }
@@ -18,13 +18,6 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
 
         [SwaggerSchema(WriteOnly = true)]
         public int? ChannelId { get; set; }
-        
-        [SwaggerSchema(WriteOnly = true)]
-        public int? CreationChannelSourceId { get; set; }
-        [SwaggerSchema(WriteOnly = true)]
-        public int? CreationChannelServiceId { get; set; }
-        [SwaggerSchema(WriteOnly = true)]
-        public int? CreationChannelActivityId { get; set; }
 
         [SwaggerSchema(WriteOnly = true)]
         public Guid? AcceptedPolicyId { get; set; }
@@ -55,10 +48,8 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         [JsonIgnore]
         public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
 
-        public int? DefaultContactCreationChannel =>
-            ChannelId ?? (int?)Candidate.Channel.Event; // Use the assigned channel ID if available, else assign default.
-
-        public TeachingEventAddAttendee(){
+        public TeachingEventAddAttendee()
+        {
         }
 
         public TeachingEventAddAttendee(Candidate candidate)
@@ -135,13 +126,22 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
             {
                 candidate.PreferredTeachingSubjectId = PreferredTeachingSubjectId;
             }
-            candidate.ConfigureChannel(contactChannelCreator: this, candidateId: CandidateId);
+
+            ConfigureChannel(candidate);
             AddTeachingEventRegistration(candidate);
             AddQualification(candidate);
             AcceptPrivacyPolicy(candidate);
             ConfigureSubscriptions(candidate);
 
             return candidate;
+        }
+
+        private void ConfigureChannel(Candidate candidate)
+        {
+            if (CandidateId == null)
+            {
+                candidate.ChannelId = ChannelId ?? (int?)Candidate.Channel.Event;
+            }
         }
 
         private void AddQualification(Candidate candidate)
