@@ -323,7 +323,7 @@ namespace GetIntoTeachingApi.Controllers
         {
             return Ok(await _store.GetPickListItems("dfe_contactchannelcreation", "dfe_creationchannelservice").ToListAsync());
         }
-        
+
         [HttpGet]
         [Route("contact_creation_channel/activities")]
         [SwaggerOperation(
@@ -337,13 +337,13 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [Route("contact_creation_channel/situation")] // TODO: need to check this!!!!
+        [Route("contact_creation_channel/situation")]
         [SwaggerOperation(
             Summary = "Retrieves the list of situations.",
             OperationId = "GetCandidateSituations",
-            Tags = new[] { "Pick List Items" })]
+            Tags = ["Pick List Items"])]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetCandidateAssignmentStatus() =>
-            Ok(await _store.GetPickListItems("situation", "dfe_assignmentstatus").ToListAsync());
+        public async Task<IActionResult> GetCandidateSituations() =>
+            Ok(await _store.GetPickListItems("situation", "dfe_situation").ToListAsync());
     }
 }
