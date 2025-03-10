@@ -23,14 +23,6 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public int? DegreeStatusId { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public int? ChannelId { get; set; }
-
-        [SwaggerSchema(WriteOnly = true)]
-        public int? CreationChannelSourceId { get; set; }
-        [SwaggerSchema(WriteOnly = true)]
-        public int? CreationChannelServiceId { get; set; }
-        [SwaggerSchema(WriteOnly = true)]
-        public int? CreationChannelActivityId { get; set; }
-
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -50,9 +42,6 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public Candidate Candidate => CreateCandidate();
         [JsonIgnore]
         public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
-
-        public int? DefaultContactCreationChannel =>
-            ChannelId ?? (int?)Candidate.Channel.MailingList; // Use the assigned channel ID if available, else assign default.
 
         public MailingListAddMember()
         {
@@ -107,12 +96,21 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                 GdprConsentId = (int)Candidate.GdprConsent.Consent,
                 OptOutOfGdpr = false,
             };
-            candidate.ConfigureChannel(contactChannelCreator: this, candidateId: CandidateId);
+
+            ConfigureChannel(candidate);
             ConfigureSubscriptions(candidate);
             AddQualification(candidate);
             AcceptPrivacyPolicy(candidate);
 
             return candidate;
+        }
+
+        private void ConfigureChannel(Candidate candidate)
+        {
+            if (CandidateId == null)
+            {
+                candidate.ChannelId = ChannelId ?? (int?)Candidate.Channel.MailingList;
+            }
         }
 
         private void AddQualification(Candidate candidate)
