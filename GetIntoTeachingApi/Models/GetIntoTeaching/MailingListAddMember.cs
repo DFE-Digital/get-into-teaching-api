@@ -1,14 +1,17 @@
-﻿using System;
-using System.Linq;
-using System.Text.Json.Serialization;
-using GetIntoTeachingApi.Models.Crm;
+﻿using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Evaluators;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace GetIntoTeachingApi.Models.GetIntoTeaching
 {
-    public class MailingListAddMember
+    public class MailingListAddMember : IInferDegreeStatus
     {
         public Guid? CandidateId { get; set; }
         public Guid? QualificationId { get; set; }
@@ -20,7 +23,6 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public int? DegreeStatusId { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public int? ChannelId { get; set; }
-
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -32,6 +34,9 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public bool AlreadySubscribedToMailingList { get; set; }
         [SwaggerSchema(ReadOnly = true)]
         public bool AlreadySubscribedToTeacherTrainingAdviser { get; set; }
+
+        public int? GraduationYear { get; set; } = null!;
+        public DateTime? InferredGraduationDate { get; set; } = null!;
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
@@ -115,6 +120,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                 Id = QualificationId,
                 DegreeStatusId = DegreeStatusId,
                 TypeId = (int)CandidateQualification.DegreeType.Degree,
+                GraduationYear = InferredGraduationDate
             });
         }
 
@@ -139,6 +145,40 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                     AcceptedPolicyId = (Guid)AcceptedPolicyId,
                     AcceptedAt = DateTimeProvider.UtcNow,
                 };
+            }
+        }
+
+        /// <summary>
+        /// Provides logic to conditionally infer the degree status based on
+        /// the graduation year, if the graduation year is provisioned.
+        /// </summary>
+        /// <param name="degreeStatusDomainService">
+        /// Implementation of <see cref="IDegreeStatusDomainService"/> which
+        /// provides the functionality for inferring degree status based on the proposed graduation year.
+        /// </param>
+        /// <param name="currentYearProvider">
+        /// Implementation of <see cref="ICurrentYearProvider"/> which provides the current date/time
+        /// as well as helper methods to convert the current year to an integer representation.
+        /// </param>
+        public void InferDegreeStatus(
+            IDegreeStatusDomainService degreeStatusDomainService,
+            ICurrentYearProvider currentYearProvider)
+        {
+            if (GraduationYear != null)
+            {
+                const int GraduationDay = 31;
+                const int GraduationMonth = 8;
+
+                DegreeStatusInferenceRequest degreeStatusInferenceRequest =
+                    DegreeStatusInferenceRequest.Create(
+                        new GraduationYear(GraduationYear.Value, currentYearProvider), currentYearProvider);
+
+                DegreeStatusId =
+                    degreeStatusDomainService
+                        .GetInferredDegreeStatusFromGraduationYear(degreeStatusInferenceRequest);
+
+                InferredGraduationDate =
+                    new DateTime(GraduationYear.Value, GraduationMonth, GraduationDay);
             }
         }
     }

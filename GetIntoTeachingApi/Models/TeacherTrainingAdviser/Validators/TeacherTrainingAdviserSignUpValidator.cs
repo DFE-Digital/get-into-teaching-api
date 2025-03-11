@@ -44,24 +44,24 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
                 RuleFor(request => request.PreferredTeachingSubjectId).NotNull()
                     .When(request => request.Candidate.PreferredEducationPhaseId == (int)Candidate.PreferredEducationPhase.Secondary)
                     .WithMessage("For candidates returning to teacher training, must be set when preferred education phase is secondary.");
-                
+
                 RuleFor(request => request.PreferredTeachingSubjectId).NotNull()
                     .When(request => request.Candidate.PreferredEducationPhaseId == null)
                     .WithMessage("For candidates returning to teacher training, must be set when preferred education phase defaults to secondary.");
-                
+
                 RuleFor(request => request.SubjectTaughtId).NotNull()
                     .When(request => request.StageTaughtId == null)
                     .WithMessage("For candidates returning to teacher training, must be set when stage taught defaults to secondary.");
-                
+
                 RuleFor(request => request.SubjectTaughtId).NotNull()
-                    .When(request => request.StageTaughtId == (int) CandidatePastTeachingPosition.EducationPhase.Secondary)
+                    .When(request => request.StageTaughtId == (int)CandidatePastTeachingPosition.EducationPhase.Secondary)
                     .WithMessage("For candidates returning to teacher training, must be set when stage taught is secondary.");
             });
 
             When(request => request.Candidate.IsInterestedInTeaching(), () =>
             {
                 RuleFor(request => request.PreferredEducationPhaseId).NotNull()
-                    .When(request => request.DegreeStatusId == (int)CandidateQualification.DegreeStatus.HasDegree)
+                    .When(request => request.DegreeStatusId == (int)DegreeStatus.HasDegree)
                     .WithMessage("Must be set for candidates interested in teacher training that have a degree.");
                 RuleFor(request => request.DegreeStatusId).NotNull()
                     .WithMessage("Must be set for candidates interested in teacher training.");
@@ -69,7 +69,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
                     .WithMessage("Must be set for candidates interested in teacher training.");
 
                 RuleFor(request => request.DegreeStatusId)
-                    .Must(status => status != (int)CandidateQualification.DegreeStatus.NoDegree)
+                    .Must(status => status != (int)DegreeStatus.NoDegree)
                     .WithMessage("Can not be no degree (ineligible for service).");
 
                 RuleFor(request => request.PreferredTeachingSubjectId).NotNull()
@@ -77,7 +77,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
                     .WithMessage("Must be set when preferred education phase is secondary.");
 
                 RuleFor(request => request.InitialTeacherTrainingYearId).NotNull()
-                    .When(request => request.DegreeStatusId == (int)CandidateQualification.DegreeStatus.HasDegree)
+                    .When(request => request.DegreeStatusId == (int)DegreeStatus.HasDegree)
                     .WithMessage("Must be set for candidates interested in teacher training that have a degree.");
 
                 RuleFor(request => request.DegreeTypeId)
@@ -87,7 +87,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
                             (int)CandidateQualification.DegreeType.Degree,
                             (int)CandidateQualification.DegreeType.DegreeEquivalent,
                         }.Contains(type))
-                    .When(request => request.DegreeStatusId == (int)CandidateQualification.DegreeStatus.HasDegree)
+                    .When(request => request.DegreeStatusId == (int)DegreeStatus.HasDegree)
                     .WithMessage("Must be set to degree or degree equivalent when the degree status is has a degree.");
 
                 RuleFor(request => request.DegreeTypeId)
@@ -102,16 +102,16 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
                 });
 
                 When(request => request.DegreeTypeId == (int)CandidateQualification.DegreeType.Degree &&
-                    request.DegreeStatusId == (int)CandidateQualification.DegreeStatus.HasDegree, () =>
-                {
-                    RuleFor(request => request)
-                        .Must(request => HasOrIsPlanningOnRetakingEnglishAndMaths(request))
-                        .When(request => request.PreferredEducationPhaseId != null)
-                        .WithMessage("Must have or be retaking Maths and English GCSEs.");
+                    request.DegreeStatusId == (int)DegreeStatus.HasDegree, () =>
+                    {
+                        RuleFor(request => request)
+                            .Must(request => HasOrIsPlanningOnRetakingEnglishAndMaths(request))
+                            .When(request => request.PreferredEducationPhaseId != null)
+                            .WithMessage("Must have or be retaking Maths and English GCSEs.");
 
-                    RuleFor(request => request.UkDegreeGradeId).NotNull()
-                        .WithMessage("Must be set when candidate has a degree.");
-                });
+                        RuleFor(request => request.UkDegreeGradeId).NotNull()
+                            .WithMessage("Must be set when candidate has a degree.");
+                    });
             });
 
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store, dateTime));
@@ -131,10 +131,10 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
         {
             return new List<int?>
             {
-                (int)CandidateQualification.DegreeStatus.FinalYear,
-                (int)CandidateQualification.DegreeStatus.SecondYear,
-                (int)CandidateQualification.DegreeStatus.FirstYear,
-                (int)CandidateQualification.DegreeStatus.Other,
+                (int)DegreeStatus.FinalYear,
+                (int)DegreeStatus.SecondYear,
+                (int)DegreeStatus.FirstYear,
+                (int)DegreeStatus.Other,
             };
         }
 
