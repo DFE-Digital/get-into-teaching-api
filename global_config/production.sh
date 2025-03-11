@@ -1,4 +1,4 @@
-CONFIG=production_aks
+CONFIG=production
 ENVIRONMENT=production
 CONFIG_SHORT=pd
 AZ_SUBSCRIPTION=s189-teacher-services-cloud-production
