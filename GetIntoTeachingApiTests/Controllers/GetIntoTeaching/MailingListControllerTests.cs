@@ -166,6 +166,20 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
                 It.IsAny<EnqueuedState>()));
         }
 
+        [Fact]
+        public void AddMember_ValidRequestWithCandidateSituation_EnqueuesJobRespondsWithNoContent()
+        {
+            var request = new MailingListAddMember() { Email = "test@test.com", FirstName = "John", LastName = "Doe", Situation = 123456 };
+
+            var response = _controller.AddMember(request);
+
+            response.Should().BeOfType<NoContentResult>();
+            _mockJobClient.Verify(x => x.Create(
+                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
+                IsMatch(request.Candidate, (string)job.Args[0])),
+                It.IsAny<EnqueuedState>()));
+        }
+
         private static bool IsMatch(Candidate candidateA, string candidateBJson)
         {
             var candidateB = candidateBJson.DeserializeChangeTracked<Candidate>();

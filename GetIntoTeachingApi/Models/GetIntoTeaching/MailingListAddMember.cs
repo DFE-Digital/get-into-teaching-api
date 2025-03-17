@@ -43,6 +43,8 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         [JsonIgnore]
         public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
 
+        public int? Situation { get; set; }
+
         public MailingListAddMember()
         {
         }
@@ -72,6 +74,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
             LastName = candidate.LastName;
             AddressPostcode = candidate.AddressPostcode;
             WelcomeGuideVariant = candidate.WelcomeGuideVariant;
+            Situation = candidate.Situation ?? default;
 
             AlreadySubscribedToMailingList = candidate.HasMailingListSubscription == true;
             AlreadySubscribedToEvents = candidate.HasEventsSubscription == true;
@@ -95,6 +98,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                 PreferredContactMethodId = (int)Candidate.ContactMethod.Any,
                 GdprConsentId = (int)Candidate.GdprConsent.Consent,
                 OptOutOfGdpr = false,
+                Situation = this.Situation ?? default
             };
 
             ConfigureChannel(candidate);
