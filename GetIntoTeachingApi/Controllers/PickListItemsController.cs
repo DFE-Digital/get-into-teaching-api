@@ -337,7 +337,7 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
-        [Route("contact_creation_channel/situation")]
+        [Route("candidate/situations")]
         [SwaggerOperation(
             Summary = "Retrieves the list of situations.",
             OperationId = "GetCandidateSituations",
