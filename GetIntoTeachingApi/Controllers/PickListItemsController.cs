@@ -308,6 +308,6 @@ namespace GetIntoTeachingApi.Controllers
             Tags = ["Pick List Items"])]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCandidateSituations() =>
-            Ok(await _store.GetPickListItems("situation", "dfe_situation").ToListAsync());
+            Ok(await _store.GetPickListItems("contact", "dfe_situation").ToListAsync());
     }
 }
