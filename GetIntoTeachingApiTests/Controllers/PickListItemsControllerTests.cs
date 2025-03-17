@@ -318,7 +318,7 @@ namespace GetIntoTeachingApiTests.Controllers
         public async Task GetCandidateSituations_ReturnsAllSituations()
         {
             var mockItems = MockPickListItems();
-            _mockStore.Setup(mock => mock.GetPickListItems("situation", "dfe_situation"))
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_situation"))
                 .Returns(mockItems.AsAsyncQueryable());
 
             var response = await _controller.GetCandidateSituations();
