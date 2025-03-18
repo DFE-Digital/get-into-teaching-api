@@ -314,19 +314,6 @@ namespace GetIntoTeachingApiTests.Controllers
             ok.Value.Should().BeEquivalentTo(mockItems);
         }
 
-        [Fact]
-        public async Task GetCandidateSituations_ReturnsAllSituations()
-        {
-            var mockItems = MockPickListItems();
-            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_situation"))
-                .Returns(mockItems.AsAsyncQueryable());
-
-            var response = await _controller.GetCandidateSituations();
-
-            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
-            ok.Value.Should().BeEquivalentTo(mockItems);
-        }
-
         private static PickListItem[] MockPickListItems()
         {
             return new[]
