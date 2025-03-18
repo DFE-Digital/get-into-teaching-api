@@ -75,7 +75,6 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
                 Email = "email@address.com",
                 FirstName = "John",
                 LastName = "Doe",
-                Situation = 123456,
                 AddressPostcode = "KY11 9YU",
                 WelcomeGuideVariant = "variant1"
             };
@@ -89,7 +88,6 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
             candidate.Email.Should().Be(request.Email);
             candidate.FirstName.Should().Be(request.FirstName);
             candidate.LastName.Should().Be(request.LastName);
-            candidate.Situation.Should().Be(request.Situation);
             candidate.AddressPostcode.Should().Be(request.AddressPostcode);
             candidate.ChannelId.Should().BeNull();
             candidate.OptOutOfSms.Should().BeFalse();
