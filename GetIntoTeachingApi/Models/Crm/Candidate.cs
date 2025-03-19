@@ -280,6 +280,8 @@ namespace GetIntoTeachingApi.Models.Crm
         public bool? EventsSubscriptionDoNotPostalMail { get; set; }
         [EntityField("dfe_gitiseventsservicedonotsendmm")]
         public bool? EventsSubscriptionDoNotSendMm { get; set; }
+        [EntityField("dfe_situation", typeof(OptionSetValue))]
+        public int? Situation { get; set; }
 
         [EntityRelationship("msevtmgt_contact_msevtmgt_eventregistration_Contact", typeof(TeachingEventRegistration))]
         public List<TeachingEventRegistration> TeachingEventRegistrations { get; set; } = new List<TeachingEventRegistration>();
