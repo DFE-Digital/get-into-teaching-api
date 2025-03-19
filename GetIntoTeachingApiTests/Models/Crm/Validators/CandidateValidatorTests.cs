@@ -83,6 +83,9 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 .Setup(mock => mock.GetPickListItems("contact", "dfe_candidateapplyphase"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
             _mockStore
+                .Setup(mock => mock.GetPickListItems("contact", "dfe_situation"))
+                .Returns(new[] { mockPickListItem }.AsQueryable());
+            _mockStore
                 .Setup(mock => mock.GetPrivacyPolicies())
                 .Returns(new[] { mockPrivacyPolicy }.AsQueryable());
 
@@ -123,6 +126,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 TeacherTrainingAdviserSubscriptionChannelId = mockPickListItem.Id,
                 ApplyPhaseId = mockPickListItem.Id,
                 ApplyStatusId = mockPickListItem.Id,
+                Situation = mockPickListItem.Id,
                 PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id }
             };
 
