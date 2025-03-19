@@ -299,5 +299,15 @@ namespace GetIntoTeachingApi.Controllers
         {
             return Ok(await _store.GetPickListItems("dfe_servicesubscription", "dfe_servicesubscriptiontype").ToListAsync());
         }
+
+        [HttpGet]
+        [Route("candidate/situations")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of situations.",
+            OperationId = "GetCandidateSituations",
+            Tags = ["Pick List Items"])]
+        [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCandidateSituations() =>
+            Ok(await _store.GetPickListItems("contact", "dfe_situation").ToListAsync());
     }
 }
