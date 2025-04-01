@@ -1,63 +1,25 @@
-﻿using GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInference.TestDoubles;
+﻿using FluentAssertions;
+using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Evaluators;
+using GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInference.TestDoubles;
 using System;
 using Xunit;
-using FluentAssertions;
-using GetIntoTeachingApi.Models.Crm;
-using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Evaluators;
-using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices;
 
 namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInference.Evaluators
 {
     public sealed class InferFinalYearOfDegreeTests
     {
         [Fact]
-        public void CanEvaluate_WithGraduationYearOneYearAheadOfCurrentYear_ReturnsTrue()
+        public void CanEvaluate_WithGraduationYearProvidedWithinCurrentAcademicYear_ReturnsTrue()
         {
             // arrange
             InferFinalYearOfDegree inferFinalYearOfDegree = new();
 
             ICurrentYearProvider currentYearProvider =
-                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 01));
+                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 03, 27));
 
-            GraduationYear graduationYear = new(year: 2026, currentYearProvider);
-            DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);
-
-            // act
-            bool canEvaluate = inferFinalYearOfDegree.CanEvaluate(degreeStatusInferenceRequest);
-
-            // assert
-            Assert.True(canEvaluate);
-        }
-
-        [Fact]
-        public void CanEvaluate_WithGraduationYearNotOneYearAheadOfCurrentYear_ReturnsFalse()
-        {
-            // arrange
-            InferFinalYearOfDegree inferFinalYearOfDegree = new();
-
-            ICurrentYearProvider currentYearProvider =
-                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 01));
-
-            GraduationYear graduationYear = new(year: 2027, currentYearProvider);
-            DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);
-
-            // act
-            bool canEvaluate = inferFinalYearOfDegree.CanEvaluate(degreeStatusInferenceRequest);
-
-            // assert
-            Assert.False(canEvaluate);
-        }
-
-        [Fact]
-        public void Evaluate_WithGraduationYearOneYearAheadOfCurrentYear_ReturnsFinalYearStatus()
-        {
-            // arrange
-            InferFinalYearOfDegree inferFinalYearOfDegree = new();
-
-            ICurrentYearProvider currentYearProvider =
-                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 01));
-
-            GraduationYear graduationYear = new(year: 2026, currentYearProvider);
+            GraduationYear graduationYear = new(year: 2025, currentYearProvider);
             DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);
 
             // act
@@ -68,7 +30,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
         }
 
         [Fact]
-        public void Evaluate_WithGraduationYearNotOneYearAheadOfCurrentYear_ThrowsArgumentOutOfRangeException()
+        public void CanEvaluate_WithGraduationYearProvidedNotWithinCurrentAcademicYear_ReturnsFalse()
         {
             // arrange
             InferFinalYearOfDegree inferFinalYearOfDegree = new();
@@ -76,7 +38,45 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
             ICurrentYearProvider currentYearProvider =
                 CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 01));
 
-            GraduationYear graduationYear = new(year: 2027, currentYearProvider);
+            GraduationYear graduationYear = new(year: 2026, currentYearProvider);
+            DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);
+
+            // act
+            bool canEvaluate = inferFinalYearOfDegree.CanEvaluate(degreeStatusInferenceRequest);
+
+            // assert
+            Assert.False(canEvaluate);
+        }
+
+        [Fact]
+        public void Evaluate_WithGraduationYearProvidedWithinCurrentAcademicYear_ReturnsFinalYearStatus()
+        {
+            // arrange
+            InferFinalYearOfDegree inferFinalYearOfDegree = new();
+
+            ICurrentYearProvider currentYearProvider =
+                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 03, 27));
+
+            GraduationYear graduationYear = new(year: 2025, currentYearProvider);
+            DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);
+
+            // act
+            DegreeStatus degreeStatus = inferFinalYearOfDegree.Evaluate(degreeStatusInferenceRequest);
+
+            // assert
+            Assert.Equal(DegreeStatus.FinalYear, degreeStatus);
+        }
+
+        [Fact]
+        public void Evaluate_WithGraduationYearProvidedNotWithinCurrentAcademicYear_ThrowsArgumentOutOfRangeException()
+        {
+            // arrange
+            InferFinalYearOfDegree inferFinalYearOfDegree = new();
+
+            ICurrentYearProvider currentYearProvider =
+                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 01));
+
+            GraduationYear graduationYear = new(year: 2026, currentYearProvider);
             DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);
 
             // act, assert
@@ -85,7 +85,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
 
             ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(failedAction);
 
-            exception.Message.Should().Be("Year must be 1 years from 2025. (Parameter 'evaluationRequest')");
+            exception.Message.Should().Be("Graduation year provided must fall within the current academic year. (Parameter 'evaluationRequest')");
         }
     }
 }
