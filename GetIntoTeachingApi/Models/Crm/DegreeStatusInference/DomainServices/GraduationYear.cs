@@ -3,14 +3,16 @@
 namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices
 {
     /// <summary>
-    /// Defines an immutable class for defining graduation year, as well as providing methods to convert and compare it.
+    /// Defines an immutable class for defining graduation year boundaries (start and end window).
     /// </summary>
-    public readonly struct GraduationYear : IEquatable<DateTime>
+    public readonly struct GraduationYear
     {
-        private readonly int _proposedGraduationYear;
+        private readonly DateTimeOffset _proposedGraduationYearEndDate;
+        private readonly DateTimeOffset _proposedGraduationYearStartDate;
 
         /// <summary>
-        /// Creates an immutable instance of <see cref="GraduationYear"/> with the specified year.
+        /// Creates an immutable instance of <see cref="GraduationYear"/>
+        /// with the specified graduation window start and end dates.
         /// </summary>
         /// <param name="year">
         /// The graduation year specified as an integer.
@@ -21,91 +23,32 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices
         public GraduationYear(int year, ICurrentYearProvider currentYearProvider)
         {
             const int MaximumYearsAhead = 40;
-            int maxDate = currentYearProvider.ToYearsAheadInt(MaximumYearsAhead);
+            TimeSpan offset = new(1, 0, 0);
 
-            _proposedGraduationYear =
-                year <= maxDate ? year :
+            DateTimeOffset maximumFutureDate = currentYearProvider.ToYearsAhead(MaximumYearsAhead);
+
+            // Set the graduation end window to 31st August for the year provided.
+            DateTimeOffset proposedGraduationYearEndDate =
+                new(year, month: 08, day: 31, hour: 23, minute: 59, second: 59, offset);
+
+            _proposedGraduationYearEndDate =
+                proposedGraduationYearEndDate <= maximumFutureDate ? proposedGraduationYearEndDate :
                     throw new ArgumentOutOfRangeException(
-                        nameof(year), $"Year must be less than {maxDate}");
+                        nameof(year), $"Year must be less than {maximumFutureDate}");
+
+            // Set the graduation start window to 1st September for the previous year provided.
+            _proposedGraduationYearStartDate =
+                new DateTimeOffset(year - 1, month: 09, day: 01, hour: 00, minute: 00, second: 00, offset);
         }
 
         /// <summary>
-        /// Gets the hash-code for the current instance, allowing a comparison to
-        /// be made between this object and another object of the same type.
+        /// Gets the proposed graduation year end date encapsulated in the current instance.
         /// </summary>
-        /// <returns>
-        /// The hash-code for the current instance.
-        /// </returns>
-        public override int GetHashCode() => _proposedGraduationYear.GetHashCode();
+        public readonly DateTimeOffset GetProposedGraduationEndDate() => _proposedGraduationYearEndDate;
 
         /// <summary>
-        /// Operator overload to facilitate the equality check of two <see cref="GraduationYear"/> instances.
+        /// Gets the proposed graduation year start date encapsulated in the current instance.
         /// </summary>
-        /// <param name="left">
-        /// Left hand side of the comparison.
-        /// </param>
-        /// <param name="right">
-        /// Right hand side of the comparison.
-        /// </param>
-        /// <returns>
-        /// A boolean value indicating whether the two instances are equal.
-        /// </returns>
-        public static bool operator ==(GraduationYear left, GraduationYear right) => left.Equals(right);
-
-        /// <summary>
-        /// Operator overload to facilitate the non-equality check of two <see cref="GraduationYear"/> instances.
-        /// </summary>
-        /// <param name="left">
-        /// Left hand side of the comparison.
-        /// </param>
-        /// <param name="right">
-        /// Right hand side of the comparison.
-        /// </param>
-        /// <returns>
-        /// A boolean value indicating whether the two instances are equal.
-        /// </returns>
-        public static bool operator !=(GraduationYear left, GraduationYear right) => !left.Equals(right);
-
-        /// <summary>
-        /// Gets the year encapsulated in the current instance.
-        /// </summary>
-        public readonly int GetYear() => _proposedGraduationYear;
-
-        /// <summary>
-        /// Equality check between the proposed graduation year <see cref="DateTime"/> instance and another <see cref="DateTime"/> instance.
-        /// </summary>
-        /// <param name="other">
-        /// The <see cref="DateTime"/> instance to compare against.
-        /// </param>
-        /// <returns>
-        /// A boolean value indicating whether the two instances are equal.
-        /// </returns>
-        public bool Equals(DateTime other) => _proposedGraduationYear == other.Year;
-
-        /// <summary>
-        /// Provides equality check between the current instance and another object.
-        /// </summary>
-        /// <param name="obj">
-        /// A boxed instance on which to compare the proposed graduation year.
-        /// </param>
-        /// <returns>
-        /// A boolean value indicating whether the two instances are equal.
-        /// </returns>
-        public override bool Equals(object obj)
-        {
-            if (obj is null)
-            {
-                return false;
-            }
-
-            if (obj is GraduationYear graduationYear)
-                return graduationYear.GetYear() == _proposedGraduationYear;
-            if (obj is int graduationYearInt)
-                return graduationYearInt == _proposedGraduationYear;
-            if (obj is DateTime graduationYearDateTime)
-                return graduationYearDateTime.Year == _proposedGraduationYear;
-
-            return false;
-        }
+        public readonly DateTimeOffset GetProposedGraduationStartDate() => _proposedGraduationYearStartDate;
     }
 }

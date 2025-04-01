@@ -11,7 +11,7 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Eva
         /// <summary>
         /// Defines the number of years remaining for the candidate to be considered to be in their second year.
         /// </summary>
-        private const int RemainingDegreeDuration = 2;
+        private const int RemainingDegreeDuration = 1;
 
         /// <summary>
         /// Check to assess whether the evaluation can be performed based on the year of graduation parameters provided.
@@ -22,9 +22,15 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Eva
         /// <returns>
         /// A boolean value indicating whether the evaluation can be performed.
         /// </returns>
-        public bool CanEvaluate(DegreeStatusInferenceRequest evaluationRequest) =>
-            evaluationRequest.YearOfGraduation.GetYear()
-                .Equals(evaluationRequest.CurrentCalendarYearProvider.ToYearsAheadInt(RemainingDegreeDuration));
+        public bool CanEvaluate(DegreeStatusInferenceRequest evaluationRequest)
+        {
+            DateTimeOffset currentDate =
+                evaluationRequest.CurrentCalendarYearProvider.DateTimeToday.AddYears(RemainingDegreeDuration);
+
+            return
+                currentDate <= evaluationRequest.YearOfGraduation.GetProposedGraduationEndDate() &&
+                currentDate >= evaluationRequest.YearOfGraduation.GetProposedGraduationStartDate();
+        }
 
         /// <summary>
         /// Performs the 'second year' evaluation based on the year of graduation parameters provided.
@@ -41,6 +47,6 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Eva
         public DegreeStatus Evaluate(DegreeStatusInferenceRequest evaluationRequest) =>
             CanEvaluate(evaluationRequest) ? DegreeStatus.SecondYear :
                 throw new ArgumentOutOfRangeException(nameof(evaluationRequest),
-                    $"Year must be {RemainingDegreeDuration} years from {DateTime.Today.Year}.");
+                    "Graduation year provided must be 1 year from the current academic year.");
     }
 }

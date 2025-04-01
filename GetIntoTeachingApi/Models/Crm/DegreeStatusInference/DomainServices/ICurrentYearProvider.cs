@@ -16,21 +16,12 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices
 
         /// <summary>
         /// Attempts to convert the year value from the <see cref="DateTimeOffset"/>
-        /// instance provisioned, to it's integer representation.
-        /// </summary>
-        /// <returns>
-        /// An integer representation of the <see cref="DateTimeOffset"/> year provided.
-        /// </returns>
-        int ToYearInt();
-
-        /// <summary>
-        /// Attempts to convert the year value from the <see cref="DateTimeOffset"/>
         /// instance provisioned, to it's integer representation, but moved ahead by the specified number of years.
         /// </summary>
         /// <param name="numberOfYearsAhead"></param>
         /// <returns>
         /// An integer representation of the <see cref="DateTimeOffset"/> year provided.
         /// </returns>
-        int ToYearsAheadInt(int numberOfYearsAhead);
+        DateTimeOffset ToYearsAhead(int numberOfYearsAhead);
     }
 }

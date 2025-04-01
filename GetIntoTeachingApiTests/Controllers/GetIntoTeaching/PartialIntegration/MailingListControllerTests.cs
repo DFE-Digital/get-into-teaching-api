@@ -127,27 +127,6 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching.PartialIntegration
         public void AddMember_ValidRequestWithCurrentYear2025AndGraduationYear2027_VerifySecondYearOfDegreeWithCorrectGraduationDate()
         {
             // arrange
-            _request.GraduationYear = 2027;
-
-            // act
-            IActionResult response = _controller.AddMember(_request);
-
-            // assert
-            response.Should().BeOfType<NoContentResult>();
-
-            _mockJobClient.Verify(backgroundJobClient =>
-                backgroundJobClient.Create(
-                    It.Is<Job>(
-                        job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-                        IsMatch((string)job.Args[0], new DateTime(2027, 8, 31), DegreeStatus.SecondYear)
-                    ),
-                    It.IsAny<EnqueuedState>()));
-        }
-
-        [Fact]
-        public void AddMember_ValidRequestWithCurrentYear2025AndGraduationYear2026_VerifyFinalYearOfDegreeWithCorrectGraduationDate()
-        {
-            // arrange
             _request.GraduationYear = 2026;
 
             // act
@@ -160,13 +139,13 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching.PartialIntegration
                 backgroundJobClient.Create(
                     It.Is<Job>(
                         job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-                        IsMatch((string)job.Args[0], new DateTime(2026, 8, 31), DegreeStatus.FinalYear)
+                        IsMatch((string)job.Args[0], new DateTime(2026, 8, 31), DegreeStatus.SecondYear)
                     ),
                     It.IsAny<EnqueuedState>()));
         }
 
         [Fact]
-        public void AddMember_ValidRequestWithCurrentYear2025AndGraduationYear2025_VerifyHasADegreeWithCorrectGraduationDate()
+        public void AddMember_ValidRequestWithCurrentYear2025AndGraduationYear2026_VerifyFinalYearOfDegreeWithCorrectGraduationDate()
         {
             // arrange
             _request.GraduationYear = 2025;
@@ -181,7 +160,28 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching.PartialIntegration
                 backgroundJobClient.Create(
                     It.Is<Job>(
                         job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
-                        IsMatch((string)job.Args[0], new DateTime(2025, 8, 31), DegreeStatus.HasDegree)
+                        IsMatch((string)job.Args[0], new DateTime(2025, 8, 31), DegreeStatus.FinalYear)
+                    ),
+                    It.IsAny<EnqueuedState>()));
+        }
+
+        [Fact]
+        public void AddMember_ValidRequestWithCurrentYear2025AndGraduationYear2025_VerifyHasADegreeWithCorrectGraduationDate()
+        {
+            // arrange
+            _request.GraduationYear = 2024;
+
+            // act
+            IActionResult response = _controller.AddMember(_request);
+
+            // assert
+            response.Should().BeOfType<NoContentResult>();
+
+            _mockJobClient.Verify(backgroundJobClient =>
+                backgroundJobClient.Create(
+                    It.Is<Job>(
+                        job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
+                        IsMatch((string)job.Args[0], new DateTime(2024, 8, 31), DegreeStatus.HasDegree)
                     ),
                     It.IsAny<EnqueuedState>()));
         }

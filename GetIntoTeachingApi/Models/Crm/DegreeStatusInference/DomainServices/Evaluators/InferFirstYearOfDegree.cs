@@ -11,7 +11,7 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Eva
         /// <summary>
         /// Defines the number of years remaining for the candidate to be considered to be in their first year.
         /// </summary>
-        private const int RemainingDegreeDuration = 3;
+        private const int RemainingDegreeDuration = 2;
 
         /// <summary>
         /// Check to assess whether the evaluation can be performed based on the year of graduation parameters provided.
@@ -22,9 +22,18 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Eva
         /// <returns>
         /// A boolean value indicating whether the evaluation can be performed.
         /// </returns>
-        public bool CanEvaluate(DegreeStatusInferenceRequest evaluationRequest) =>
-            evaluationRequest.YearOfGraduation.GetYear() >=
-                evaluationRequest.CurrentCalendarYearProvider.ToYearsAheadInt(RemainingDegreeDuration);
+        public bool CanEvaluate(DegreeStatusInferenceRequest evaluationRequest)
+        {
+            DateTimeOffset graduationYearStartDate =
+                evaluationRequest.YearOfGraduation.GetProposedGraduationStartDate();
+            DateTimeOffset currentDate =
+                evaluationRequest.CurrentCalendarYearProvider.DateTimeToday.AddYears(RemainingDegreeDuration);
+
+            return
+                (currentDate <= evaluationRequest.YearOfGraduation.GetProposedGraduationEndDate() &&
+                currentDate >= graduationYearStartDate) ||
+                currentDate < graduationYearStartDate;
+        }
 
         /// <summary>
         /// Performs the 'first year' evaluation based on the year of graduation parameters provided.
@@ -40,7 +49,7 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Eva
         /// </exception>
         public DegreeStatus Evaluate(DegreeStatusInferenceRequest evaluationRequest) =>
              CanEvaluate(evaluationRequest) ? DegreeStatus.FirstYear :
-                throw new ArgumentOutOfRangeException(
-                    nameof(evaluationRequest), "Year must be the current year.");
+                throw new ArgumentOutOfRangeException(nameof(evaluationRequest),
+                    "Graduation year provided must be 2 or more years from the current academic year.");
     }
 }

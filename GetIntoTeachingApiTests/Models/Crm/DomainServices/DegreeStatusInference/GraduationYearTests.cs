@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices;
+﻿using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices;
 using GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInference.TestDoubles;
 using System;
 using Xunit;
@@ -22,97 +21,27 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
         }
 
         [Fact]
-        public void Ctor_withYearParamAboveMaxAllowedValue_throwsExpectedException()
+        public void GetProposedGraduationEndDate_ValidYearProvided_ReturnsConfiguredProposedGraduationEndDate()
         {
             // act
-            Action action = () =>
-                new GraduationYear(year: 2062, currentYearProvider: _currentYearProvider);
+            DateTimeOffset result = _graduationYear.GetProposedGraduationEndDate();
 
-            // result
-            action.Should().Throw<ArgumentOutOfRangeException>()
-                .WithMessage("Year must be less than 2061 (Parameter 'year')");
+            // assert
+            Assert.Equal(2021, result.Year);    // 2021
+            Assert.Equal(08, result.Month);     // August
+            Assert.Equal(31, result.Day);       // 31st
         }
 
         [Fact]
-        public void GetHashcode_EnsureYearValueReturnsExpectedHashcodeForEquality()
-        {
-            // arrange
-
-            // act
-            int hashcode = _graduationYear.GetHashCode();
-
-            // assert
-            Assert.Equal(2021.GetHashCode(), hashcode);
-        }
-
-        [Fact]
-        public void Equals_NullEqualityObjectPassed_ReturnsFalse()
+        public void GetProposedGraduationStartDate_ValidYearProvided_ReturnsConfiguredProposedGraduationStartDate()
         {
             // act
-            bool result = _graduationYear.Equals(null!);
+            DateTimeOffset result = _graduationYear.GetProposedGraduationStartDate();
 
             // assert
-            Assert.False(result);
-        }
-
-        [Fact]
-        public void Equals_WithGraduationYearEqualityObjectPassed_ReturnsTrue()
-        {
-            // act
-            bool result = _graduationYear.Equals(new GraduationYear(2021, _currentYearProvider));
-
-            // assert
-            Assert.True(result);
-        }
-
-        [Fact]
-        public void Equals_WithGraduationYearNonEqualityObjectPassed_ReturnsFalse()
-        {
-            // act
-            bool result = _graduationYear.Equals(new GraduationYear(2022, _currentYearProvider));
-
-            // assert
-            Assert.False(result);
-        }
-
-        [Fact]
-        public void Equals_WithGraduationYearAsIntEqualityObjectPassed_ReturnsTrue()
-        {
-            // act
-            bool result = _graduationYear.Equals(2021);
-
-            // assert
-            Assert.True(result);
-        }
-
-        [Fact]
-        public void Equals_WithGraduationYearAsIntNonEqualityObjectPassed_ReturnsFalse()
-        {
-            // act
-            bool result = _graduationYear.Equals(2022);
-
-            // assert
-            Assert.False(result);
-        }
-
-        [Fact]
-        public void Equals_WithGraduationYearAsDateTimeEqualityObjectPassed_ReturnsTrue()
-        {
-            // act
-            bool result = _graduationYear.Equals(new DateTime(2021, 01, 01));
-
-            // assert
-            Assert.True(result);
-        }
-
-        [Fact]
-        public void Equals_WithGraduationYearAsDateTimeNonEqualityObjectPassed_ReturnsFalse()
-        {
-            // act
-            bool result = _graduationYear.Equals(new DateTime(2022, 01, 01));
-
-            // assert
-            Assert.False(result);
+            Assert.Equal(2020, result.Year);    // 2020
+            Assert.Equal(09, result.Month);     // September
+            Assert.Equal(01, result.Day);       // 1st
         }
     }
 }
