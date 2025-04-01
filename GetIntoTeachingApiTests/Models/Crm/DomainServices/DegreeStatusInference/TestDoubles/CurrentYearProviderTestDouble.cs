@@ -1,6 +1,5 @@
 ﻿using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices;
 using System;
-using System.Globalization;
 
 namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInference.TestDoubles
 {
@@ -11,17 +10,15 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
 
         internal class CurrentYearProviderStub : ICurrentYearProvider
         {
-            public CurrentYearProviderStub(DateTimeOffset today) {
+            public CurrentYearProviderStub(DateTimeOffset today)
+            {
                 DateTimeToday = today;
             }
 
             public DateTimeOffset DateTimeToday { get; }
 
-            public int ToYearInt() => Convert.ToInt32(DateTimeToday.Year, CultureInfo.CurrentCulture);
-
-            public int ToYearsAheadInt(int numberOfYearsAhead) =>
-                Convert.ToInt32(DateTimeToday.AddYears(
-                    numberOfYearsAhead).Year, CultureInfo.CurrentCulture);
+            public DateTimeOffset ToYearsAhead(int numberOfYearsAhead) =>
+                DateTimeToday.AddYears(numberOfYearsAhead);
         }
     }
 }

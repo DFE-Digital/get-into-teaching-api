@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 
 namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices
 {
@@ -15,14 +14,6 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices
         public DateTimeOffset DateTimeToday => DateTimeOffset.UtcNow;
 
         /// <summary>
-        /// Gets the current year as an integer.
-        /// </summary>
-        /// <returns>
-        /// An integer representation of the current year.
-        /// </returns>
-        public int ToYearInt() => Convert.ToInt32(DateTimeToday.Year, CultureInfo.CurrentCulture);
-
-        /// <summary>
         /// Gets the current year as an integer, but moved ahead by the specified number of years.
         /// </summary>
         /// <param name="numberOfYearsAhead">
@@ -31,8 +22,6 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices
         /// <returns>
         /// An integer representation of the current year moved ahead by the specified number of years.
         /// </returns>
-        public int ToYearsAheadInt(int numberOfYearsAhead) =>
-            Convert.ToInt32(DateTimeToday.AddYears(
-                numberOfYearsAhead).Year, CultureInfo.CurrentCulture);
+        public DateTimeOffset ToYearsAhead(int numberOfYearsAhead) => DateTimeToday.AddYears(numberOfYearsAhead);
     }
 }

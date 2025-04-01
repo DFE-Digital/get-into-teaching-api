@@ -27,12 +27,14 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
             CurrentYearProvider currentYearProvider = new();
 
             // act
-            int year =
-                currentYearProvider.ToYearInt();
+            DateTimeOffset academicYear =
+                currentYearProvider.DateTimeToday;
 
             // assert
-            Assert.IsType<int>(year);
-            Assert.Equal(DateTimeOffset.UtcNow.Year, year);
+            Assert.IsType<DateTimeOffset>(academicYear);
+            Assert.Equal(DateTimeOffset.UtcNow.Year, academicYear.Year);
+            Assert.Equal(DateTimeOffset.UtcNow.Month, academicYear.Month);
+            Assert.Equal(DateTimeOffset.UtcNow.Day, academicYear.Day);
         }
 
         [Fact]
@@ -42,12 +44,14 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
             CurrentYearProvider currentYearProvider = new();
 
             // act
-            int year =
-                currentYearProvider.ToYearsAheadInt(3);
+            DateTimeOffset academicYear =
+                currentYearProvider.ToYearsAhead(3);
 
             // assert
-            Assert.IsType<int>(year);
-            Assert.Equal(DateTimeOffset.UtcNow.Year + 3, year);
+            Assert.IsType<DateTimeOffset>(academicYear);
+            Assert.Equal(DateTimeOffset.UtcNow.AddYears(3).Year, academicYear.Year);
+            Assert.Equal(DateTimeOffset.UtcNow.AddYears(3).Month, academicYear.Month);
+            Assert.Equal(DateTimeOffset.UtcNow.AddYears(3).Day, academicYear.Day);
         }
     }
 }

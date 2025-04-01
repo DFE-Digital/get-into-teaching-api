@@ -18,9 +18,8 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Eva
         /// A boolean value indicating whether the evaluation can be performed.
         /// </returns>
         public bool CanEvaluate(DegreeStatusInferenceRequest evaluationRequest) =>
-            evaluationRequest.YearOfGraduation.GetYear()
-                .Equals(evaluationRequest.CurrentCalendarYearProvider.ToYearInt()) ||
-                    evaluationRequest.YearOfGraduation.GetYear() < evaluationRequest.CurrentCalendarYearProvider.ToYearInt();
+            evaluationRequest.CurrentCalendarYearProvider.DateTimeToday >
+            evaluationRequest.YearOfGraduation.GetProposedGraduationEndDate();
 
         /// <summary>
         /// Performs the 'has degree' evaluation based on the year of graduation parameters provided.
@@ -36,7 +35,7 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Eva
         /// </exception>
         public DegreeStatus Evaluate(DegreeStatusInferenceRequest evaluationRequest) =>
              CanEvaluate(evaluationRequest) ? DegreeStatus.HasDegree :
-                throw new ArgumentOutOfRangeException(
-                    nameof(evaluationRequest), "Year must be the current year.");
+                throw new ArgumentOutOfRangeException(nameof(evaluationRequest),
+                    "Graduation year must be ahead of the current academic year.");
     }
 }

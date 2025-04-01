@@ -20,9 +20,9 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
                     = ChainEvaluationHandlerStub.ChainEvaluationHandlersStub<DegreeStatusInferenceRequest, DegreeStatus>();
 
             ICurrentYearProvider currentYearProvider =
-                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 01));
+                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 27));
 
-            GraduationYear graduationYear = new(year: 2026, currentYearProvider);
+            GraduationYear graduationYear = new(year: 2025, currentYearProvider);
             DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);
             DegreeStatusDomainService service = new(degreeStatusInferenceHandlers);
 
@@ -43,9 +43,9 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
                     = ChainEvaluationHandlerStub.ChainEvaluationHandlersStub<DegreeStatusInferenceRequest, DegreeStatus>();
 
             ICurrentYearProvider currentYearProvider =
-                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 01));
+                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 03, 27));
 
-            GraduationYear graduationYear = new(year: 2027, currentYearProvider);
+            GraduationYear graduationYear = new(year: 2026, currentYearProvider);
             DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);
             DegreeStatusDomainService service = new(degreeStatusInferenceHandlers);
 
@@ -66,9 +66,9 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
                     = ChainEvaluationHandlerStub.ChainEvaluationHandlersStub<DegreeStatusInferenceRequest, DegreeStatus>();
 
             ICurrentYearProvider currentYearProvider =
-                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 01));
+                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 03, 27));
 
-            GraduationYear graduationYear = new(year: 2028, currentYearProvider);
+            GraduationYear graduationYear = new(year: 2027, currentYearProvider);
             DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);
             DegreeStatusDomainService service = new(degreeStatusInferenceHandlers);
 
@@ -89,7 +89,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
                     = ChainEvaluationHandlerStub.ChainEvaluationHandlersStub<DegreeStatusInferenceRequest, DegreeStatus>();
 
             ICurrentYearProvider currentYearProvider =
-                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 01));
+                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 03, 27));
 
             GraduationYear graduationYear = new(year: 2038, currentYearProvider);
             DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);

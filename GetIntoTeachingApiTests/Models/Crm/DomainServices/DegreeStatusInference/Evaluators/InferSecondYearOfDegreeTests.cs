@@ -11,15 +11,15 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
     public sealed class InferSecondYearOfDegreeTests
     {
         [Fact]
-        public void CanEvaluate_WithGraduationYearTwoYearsAheadOfCurrentYear_ReturnsTrue()
+        public void CanEvaluate_WithGraduationYearProvidedWithinOneYearOfCurrentAcademicYear_ReturnsTrue()
         {
             // arrange
             InferSecondYearOfDegree inferSecondYearOfDegree = new();
 
             ICurrentYearProvider currentYearProvider =
-                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 01));
+                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 03, 27));
 
-            GraduationYear graduationYear = new(year: 2027, currentYearProvider);
+            GraduationYear graduationYear = new(year: 2026, currentYearProvider);
             DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);
 
             // act
@@ -30,15 +30,15 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
         }
 
         [Fact]
-        public void CanEvaluate_WithGraduationYearNotTwoYearsAheadOfCurrentYear_ReturnsFalse()
+        public void CanEvaluate_WithGraduationYearProvidedNotWithinOneYearOfCurrentAcademicYear_ReturnsFalse()
         {
             // arrange
             InferSecondYearOfDegree inferSecondYearOfDegree = new();
 
             ICurrentYearProvider currentYearProvider =
-                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 01));
+                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 03, 27));
 
-            GraduationYear graduationYear = new(year: 2029, currentYearProvider);
+            GraduationYear graduationYear = new(year: 2027, currentYearProvider);
             DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);
 
             // act
@@ -55,9 +55,9 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
             InferSecondYearOfDegree inferSecondYearOfDegree = new();
 
             ICurrentYearProvider currentYearProvider =
-                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 01));
+                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 03, 27));
 
-            GraduationYear graduationYear = new(year: 2027, currentYearProvider);
+            GraduationYear graduationYear = new(year: 2026, currentYearProvider);
             DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);
 
             // act
@@ -74,9 +74,9 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
             InferSecondYearOfDegree inferSecondYearOfDegree = new();
 
             ICurrentYearProvider currentYearProvider =
-                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 01));
+                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 03, 27));
 
-            GraduationYear graduationYear = new(year: 2029, currentYearProvider);
+            GraduationYear graduationYear = new(year: 2027, currentYearProvider);
             DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);
 
             // act, assert
@@ -85,7 +85,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
 
             ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(failedAction);
 
-            exception.Message.Should().Be("Year must be 2 years from 2025. (Parameter 'evaluationRequest')");
+            exception.Message.Should().Be("Graduation year provided must be 1 year from the current academic year. (Parameter 'evaluationRequest')");
         }
     }
 }
