@@ -68,7 +68,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
         }
 
         [Fact]
-        public void Evaluate_WithGraduationYearProvidedNotWithinCurrentAcademicYear_ThrowsArgumentOutOfRangeException()
+        public void Evaluate_WithGraduationYearProvidedBehindWithinCurrentAcademicYear_ThrowsArgumentOutOfRangeException()
         {
             // arrange
             InferFinalYearOfDegree inferFinalYearOfDegree = new();
@@ -76,7 +76,28 @@ namespace GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInferenc
             ICurrentYearProvider currentYearProvider =
                 CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 01));
 
-            GraduationYear graduationYear = new(year: 2026, currentYearProvider);
+            GraduationYear graduationYear = new(year: 2024, currentYearProvider);
+            DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);
+
+            // act, assert
+            Action failedAction =
+                () => inferFinalYearOfDegree.Evaluate(degreeStatusInferenceRequest);
+
+            ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(failedAction);
+
+            exception.Message.Should().Be("Graduation year provided must fall within the current academic year. (Parameter 'evaluationRequest')");
+        }
+
+        [Fact]
+        public void Evaluate_WithGraduationYearProvidedAheadOfCurrentAcademicYear_ThrowsArgumentOutOfRangeException()
+        {
+            // arrange
+            InferFinalYearOfDegree inferFinalYearOfDegree = new();
+
+            ICurrentYearProvider currentYearProvider =
+                CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 09, 01));
+
+            GraduationYear graduationYear = new(year: 2025, currentYearProvider);
             DegreeStatusInferenceRequest degreeStatusInferenceRequest = new(graduationYear, currentYearProvider);
 
             // act, assert
