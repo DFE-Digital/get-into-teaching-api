@@ -158,7 +158,7 @@ We send emails using the [GOV.UK Notify](https://www.notifications.service.gov.u
 
 ### Background Processing (API to CRM)
 
-Hangfire is an open-source framework designed for background job processing in .NET and .NET Core applications.  It allows the API run tasks asynchronously without needing a separate Windows Service or scheduler. Hangfire supports various types of jobs, but the API principally leverages 'Fire-and-forget jobs' – Executed once, almost immediately after creation.
+Hangfire is an open-source framework designed for background job processing in .NET and .NET Core applications.  It allows the API run tasks asynchronously without needing a separate Windows Service or scheduler. Hangfire supports various types of jobs, but the API principally leverages 'Fire-and-forget jobs', executed once, almost immediately after creation.
 
 This allows the API to backup processing jobs to persistent storage, i.e. PostgreSql allowing jobs to be automatically retried, making it a robust solution for handling the background tasks for processing messages to the CRM. 
 
