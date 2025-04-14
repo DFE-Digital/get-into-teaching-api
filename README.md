@@ -199,10 +199,10 @@ Hangfire enables **background job processing** in .NET applications, allowing ta
 4. **Job Execution & State Management**  
    - During execution, Hangfire updates the job status in the **`State` table**.
    - Possible states:
-     - **Scheduled** – Waiting for execution.
-     - **Processing** – Currently running.
-     - **Succeeded** – Successfully completed.
-     - **Failed** – Encountered errors.
+     - **Scheduled**: Waiting for execution.
+     - **Processing**: Currently running.
+     - **Succeeded**: Successfully completed.
+     - **Failed**: Encountered errors.
 
 5. **Automatic Retries for Failed Jobs**  
    - If a job fails, Hangfire can **automatically retry** based on our configuration policy.
