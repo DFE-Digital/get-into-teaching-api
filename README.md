@@ -250,13 +250,64 @@ If you need to apply/rollback a migration manually in production, the process is
 
 ### Rate Limiting
 
+We use a rate-limiting configuration for the API, where requests to certain endpoints are regulated based on defined rules. This allows us to set rate limits for different API endpoints, controlling how many requests can be made in specific time periods to prevent overuse or abuse.
+
+Key points:
+- **General rate-limiting rules**: Each endpoint has a defined request limit per minute or per day.
+- **Client-specific rate limits**: Different clients (`GIT`, `TTA`, `APPLY`, `SE`) have customized rate limits for specific endpoints.
+- **Whitelisted endpoints**: Some endpoints (`*/api/operations/*`) are allowed without restrictions.
+- **HTTP status code for rate-limiting enforcement**: When a client exceeds the limit, they receive a `429 Too Many Requests` response.
+
+The following table shows the specific details of the applied rate limit configuration:
+
+### General Rate-Limiting Rules
+
+| Endpoint | Period | Limit |
+|----------|--------|-------|
+| POST:/api/candidates/access_tokens | 1m | 60 |
+| POST:/api/teacher_training_adviser/candidates | 1m | 60 |
+| POST:/api/mailing_list/members | 1m | 60 |
+| POST:/api/teaching_events/attendees | 1m | 60 |
+| POST:/api/schools_experience/candidates | 1m | 60 |
+| POST:/api/get_into_teaching/callbacks | 1m | 60 |
+| POST:/api/teaching_events | 1d | 60 |
+| POST:/api/candidates/matchback | 1m | 60 |
+
+### Client-Specific Rate Limits
+
+#### Client: GIT
+| Endpoint | Period | Limit |
+|----------|--------|-------|
+| POST:/api/candidates/access_tokens | 1m | 500 |
+| POST:/api/mailing_list/members | 1m | 250 |
+| POST:/api/teaching_events/attendees | 1m | 250 |
+| POST:/api/teaching_events | 1d | 100 |
+| POST:/api/get_into_teaching/callbacks | 1m | 250 |
+| POST:/api/teacher_training_adviser/candidates | 1m | 250 |
+
+#### Client: TTA
+| Endpoint | Period | Limit |
+|----------|--------|-------|
+| POST:/api/candidates/access_tokens | 1m | 500 |
+| POST:/api/teacher_training_adviser/candidates | 1m | 250 |
+
+#### Client: APPLY
+| Endpoint | Period | Limit |
+|----------|--------|-------|
+| POST:/api/candidates/matchback | 1m | 500 |
+| POST:/api/teacher_training_adviser/candidates | 1m | 250 |
+
+#### Client: SE
+| Endpoint | Period | Limit |
+|----------|--------|-------|
+| POST:/api/candidates/access_tokens | 1m | 500 |
+| POST:/api/schools_experience/candidates | 1m | 250 |
+
 We use [AspNetCoreRateLimit](https://github.com/stefanprodan/AspNetCoreRateLimit) to rate limit clients based on their access token (the value passed in the `Authorization` header). Currently both our clients share the same access token, but we envisage splitting that up in the future.
 
 It is the responsibility of the API client to rate limit on a per-user basis to ensure the global rate limiting of their access token is not exceeded.
 
-We apply the same rate limits irrespective of client at the moment, but going forward we could offer per-client rate limiting using the library.
-
-The rate limit counters are currently stored in memory, but we will change this going forward to use Redis so that they are shared between instances.
+We apply the same rate limits irrespective of client at the moment, but going forward we could offer per-client rate limiting using the library, with rate limit counters currently stored in memory.
 
 ### HTTP Caching
 
