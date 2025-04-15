@@ -123,11 +123,22 @@ We also call registered validators for subclasses of `BaseModel` when mapping CR
 
 Property names in request models should be consistent with any hidden `BaseModel` models they encapsulate and map to. When consistent, we can intercept validation results in order to surface these back to the original request model. For example, the `MailingListAddMember.UkDegreeGradeId` is consistent with `MailingListAddMember.Candidate.Qualifications[0].UkDegreeGradeId`. Any errors that appear on the `MailingListAddMember.Candidate.Qualifications[0].UkDegreeGradeId` property will be intercepted in the `MailingListAddMemberValidator` mapped back to `MailingListAddMember.UkDegreeGradeId`.
 
+
 ### Testing
 
-[XUnit](https://xunit.net/) is used for testing; all tests can be found in the `GetIntoTeachingTests` project. We also use [Moq](https://github.com/Moq/moq4/wiki/Quickstart) for mocking any dependencies and [FluentAssertions](https://fluentassertions.com) for assertions.
+[XUnit](https://xunit.net/) is used for all testing, and all test cases can be found in the `GetIntoTeachingTests` project directory.
 
-The unit tests take the convention:
+#### Unit Testing
+
+We employ extensive unit testing to ensure our individual components or functions are tested in isolation to ensure they work correctly, this has helped to ensure code quality since it has allowed our developers catch bugs much earlier in the development lifecycle.
+
+Key Aspects of Unit Testing:
+- **Tests Small Units of Code:** typically focuses on functions, methods, or classes.
+- **Automated & Repeatable:** tests can be run frequently to verify changes.
+- **Fast & Efficient:** since tests are isolated, they execute quickly.
+- **Supports Test-Driven Development (TDD):** encourages writing tests before implementing functionality.
+
+Our unit tests typically conform to the folowing convention:
 
 ```
 public void UnitOfWork_StateUnderTest_ExpectedBehavior()
@@ -140,17 +151,30 @@ public void UnitOfWork_StateUnderTest_ExpectedBehavior()
 }
 ```
 
+We use [Moq](https://github.com/Moq/moq4/wiki/Quickstart) which is a popular mocking framework for .NET, designed to help developers create and manage mock objects for unit testing. It allows us to simulate dependencies in our code, ensuring that our tests focus on the logic of the unit under test rather than external dependencies. We also use [FluentAssertions](https://fluentassertions.com) which is a popular assertion library for .NET that provides a more readable and expressive way to write our unit tests. It allows our developers to write assertions in a natural, fluent style, with the aim of making our test code easier to understand and maintain.
+
+#### Integration Testing
+
+We use integration testing across all of our services (API Clients -> API -> CRM). Integration testing is a type of software testing that verifies how different modules or components of an application work together. It ensures that our individual units of behaviour, which have already been tested separately via unit testing, function correctly when combined.
+
+Key Aspects of Integration Testing:
+- **Detects Interface Issues:** ensures smooth communication between modules.
+- **Validates Data Flow:** confirms that data is correctly passed between components.
+- **Identifies Bugs Early:** helps catch defects that arise when modules interact.
+- **Supports Incremental Development:** allows testing in stages rather than waiting for full system completion.
+
 #### Contract Testing
 
-We use a variation of 'contract testing' to achieve end-to-end integration tests across all services (API Clients -> API -> CRM).
+We use 'contract testing' to perform end-to-end tests across all our API endpoints. API contract testing is a technique used to ensure that our API endpoints communicate correctly by verifying that their interactions conform to their predefined contract(s). 
 
-The API consumes the output of API client service contract tests, which are snapshots of the calls made to the API during test scenarios. Off the back of these requests the API makes calls to the CRM, which are saved as output snapshots of the API contract tests (later consumed by the CRM contract tests).
+Key Aspects of Contract Testing:
+- **Contract Definition**: specifies the expected request and response structure between an API provider and consumer;
+- **Consumer-Driven Testing**: ensures that the API provider meets the expectations of its consumers;
+- **Provider Verification**: confirms that the API provider adheres to the contract.
 
-If a change to the API codebase results in a different call/payload sent to the CRM, then the snapshots will not match and the test will fail. If the change is expected the snapshot should be replaced with the updated version and committed.
+In our case, we use a custom setup whereby we specify input (json files) used to represent the request payload(s), and output (json files) to represent the response(s) expected. Such an approach allows use to define and test snapshots of the typical calls made to the API. Off the back of these requests the API makes calls to the CRM, which are saved as output snapshots of the API contract tests (later consumed by the CRM contract tests).
 
-A difficulty with these tests is ensuring that the services all have a consistent, global view of the service data state prior to executing the contract tests. We currently maintain the service data in `Contracts/Data` (to be centralised in a GitHub repository, but currently duplicated in each service).
-
-Eventually, the `Contracts/Output` will be 'published' to a separate GitHub repository, which will enable other services to pull in their test fixtures from the upstream service. This will enable us to develop features in each service independently and publish only when the change is ready to be reflected in another service.
+If a change to the API codebase results in a different call/payload sent to the CRM, then the snapshots will not match and the test will fail. If the change is expected the snapshot should be replaced with the updated version and committed. In effect, the input and output json files provide a fixed representation of an endpoints contract at a particular point in time. If the endpoint contract changes, this will necessitate a change to the respenctive json test (input/output) files.
 
 ### Emails
 
