@@ -14,8 +14,9 @@ The GIT API aims to provide:
 * [Technical Details](#technical-details)
 * [Monitoring](#monitoring)
 * [Integrating with other Services](#integrating-with-other-services)
-* [Useful Links](#useful-links)
 * [CRM Integration](#crm-integration)
+* [Service Recovery](#service-recovery)
+* [Useful Links](#useful-links)
 
 ## Getting Started
 
@@ -122,7 +123,6 @@ The majority of the validation should be performed against the core models linke
 We also call registered validators for subclasses of `BaseModel` when mapping CRM entities into our API models. If the CRM returns an invalid value according to our validation logic it will be nullified. An example of where this can happen is with postcodes; if the CRM returns an invalid postcode we will nullify it (otherwise the client may re-post the invalid postcode back to the API without checking it and receive a 400 bad request response unexpectedly).
 
 Property names in request models should be consistent with any hidden `BaseModel` models they encapsulate and map to. When consistent, we can intercept validation results in order to surface these back to the original request model. For example, the `MailingListAddMember.UkDegreeGradeId` is consistent with `MailingListAddMember.Candidate.Qualifications[0].UkDegreeGradeId`. Any errors that appear on the `MailingListAddMember.Candidate.Qualifications[0].UkDegreeGradeId` property will be intercepted in the `MailingListAddMemberValidator` mapped back to `MailingListAddMember.UkDegreeGradeId`.
-
 
 ### Testing
 
@@ -466,11 +466,6 @@ More information on rate limiting can be found [below](#rate-limiting).
 When the client is configured to point to the API, we need to ensure it uses the `https` version and does not rely on the insecure redirect of `http` traffic. We are looking into ways to disable `http` traffic entirely in the API, however it doesn't appear to be trivial to do and whilst we only have internal API clients that we have full control over we should instead be enforcing the policy of directly accessing the `https` version of the API.
 
 
-## Useful Links
-
-As the API is service-facing it has no user interface, but in non-production environments you can access a [dashboard for Hangfire](https://getintoteachingapi-development.test.teacherservices.cloud/hangfire/) and the [Swagger UI](https://getintoteachingapi-development.test.teacherservices.cloud/swagger/index.html). You will need the basic auth credentials to access these dashboards.
-
-
 ## CRM Integration
 
 The application is designed to make supporting new attribtues and entities in the CRM as easy as possible. All of the 'heavy lifting' is done in the `BaseModel` class using reflection to inspect model attributes and relevant `Entity*` annotations.
@@ -582,5 +577,25 @@ protected override void FinaliseEntity(Entity source, ICrmService crm, Organizat
     DeleteLink(source, crm, context, someModel, nameof(someModel));
 }
 ```
+
+## Service Recovery
+
+We have a disaster recovery plan to help us prepare for unexpected disruptions and ensuring they can quickly recover from unforeseen problems which result in loss of service. Adoption of such planning helps,
+
+- **Minimizes Downtime:** helps to ensure our service is restored quickly after an outage.
+- **Protects Data:** ensures backups are available to prevent permanent data loss.
+- **Enhances Security:** provides strategies to counter cyber threats and minimise vulnerabilities.
+- **Improves Business Continuity:** ensures our end users can rely on a consistent service even in crises.
+
+In order to provide this resilience we rely on a number of planning resources to help steer us through the recovery process:
+
+- **Teacher Services Disaster Recovery Plan**: the most critical scenarios that should be used in case of an incident can be found [here](https://github.com/DFE-Digital/teacher-services-cloud/blob/main/documentation/disaster-recovery.md);
+- **Teacher Services Disaster Recovery Test Plan**: the disaster recovery testing procedure for applications hosted on the Teacher Services AKS clusters can be found [here](https://github.com/DFE-Digital/teacher-services-cloud/blob/main/documentation/disaster-recovery-testing.md#prerequisites);
+- **Most Recent Get-Into-Teaching (GIT) DT Test**: the most up-to-date DR test for GIT can be found [here](https://hedgedoc.teacherservices.cloud/YcMIA9ezQbqYR4q5eHDkGw?view). 
+
+
+## Useful Links
+
+As the API is service-facing it has no user interface, but in non-production environments you can access a [dashboard for Hangfire](https://getintoteachingapi-development.test.teacherservices.cloud/hangfire/) and the [Swagger UI](https://getintoteachingapi-development.test.teacherservices.cloud/swagger/index.html). You will need the basic auth credentials to access these dashboards.
 
  
