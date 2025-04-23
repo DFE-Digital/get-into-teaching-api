@@ -164,7 +164,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         /// Implementation of <see cref="ICurrentYearProvider"/> which provides the current date/time
         /// as well as helper methods to convert the current year to an integer representation.
         /// </param>
-        public void InferDegreeStatus(
+        public int? InferDegreeStatus(
             IDegreeStatusDomainService degreeStatusDomainService,
             ICurrentYearProvider currentYearProvider)
         {
@@ -184,6 +184,8 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                 InferredGraduationDate =
                     new DateTime(GraduationYear.Value, GraduationMonth, GraduationDay);
             }
+
+            return DegreeStatusId;
         }
     }
 }
