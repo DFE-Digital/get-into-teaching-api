@@ -68,7 +68,9 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
             // graduation year provided to support current behaviour until degree status
             // is fully retired. The intention being to remove this functionality once we
             // fully migrate to the new approach. 
-            request.InferDegreeStatus(_degreeStatusDomainService, _currentYearProvider);
+            int? degreeStatusId =
+                request.InferDegreeStatus(
+                    _degreeStatusDomainService, _currentYearProvider);
 
             // This is the only way we can mock/freeze the current date/time
             // in contract tests (there's no other way to inject it into this class).
@@ -77,7 +79,7 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
             _jobClient.Enqueue<UpsertCandidateJob>(
                 (upsertCandidateJob) => upsertCandidateJob.Run(json, null));
 
-            return NoContent();
+            return Ok(new { DegreeStatusId = degreeStatusId });
         }
 
         [HttpPost]

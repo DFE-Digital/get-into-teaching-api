@@ -70,7 +70,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching.PartialIntegration
             IActionResult response = _controller.AddMember(_request);
 
             // assert
-            response.Should().BeOfType<NoContentResult>();
+            response.Should().BeOfType<OkObjectResult>();
 
             _mockJobClient.Verify(backgroundJobClient =>
                 backgroundJobClient.Create(
@@ -91,7 +91,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching.PartialIntegration
             IActionResult response = _controller.AddMember(_request);
 
             // assert
-            response.Should().BeOfType<NoContentResult>();
+            response.Should().BeOfType<OkObjectResult>();
 
             _mockJobClient.Verify(backgroundJobClient =>
                 backgroundJobClient.Create(
@@ -112,7 +112,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching.PartialIntegration
             IActionResult response = _controller.AddMember(_request);
 
             // assert
-            response.Should().BeOfType<NoContentResult>();
+            response.Should().BeOfType<OkObjectResult>();
 
             _mockJobClient.Verify(backgroundJobClient =>
                 backgroundJobClient.Create(
@@ -133,7 +133,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching.PartialIntegration
             IActionResult response = _controller.AddMember(_request);
 
             // assert
-            response.Should().BeOfType<NoContentResult>();
+            response.Should().BeOfType<OkObjectResult>();
 
             _mockJobClient.Verify(backgroundJobClient =>
                 backgroundJobClient.Create(
@@ -154,7 +154,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching.PartialIntegration
             IActionResult response = _controller.AddMember(_request);
 
             // assert
-            response.Should().BeOfType<NoContentResult>();
+            response.Should().BeOfType<OkObjectResult>();
 
             _mockJobClient.Verify(backgroundJobClient =>
                 backgroundJobClient.Create(
@@ -175,7 +175,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching.PartialIntegration
             IActionResult response = _controller.AddMember(_request);
 
             // assert
-            response.Should().BeOfType<NoContentResult>();
+            response.Should().BeOfType<OkObjectResult>();
 
             _mockJobClient.Verify(backgroundJobClient =>
                 backgroundJobClient.Create(
@@ -196,7 +196,7 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching.PartialIntegration
             IActionResult response = _controller.AddMember(_request);
 
             // assert
-            response.Should().BeOfType<NoContentResult>();
+            response.Should().BeOfType<OkObjectResult>();
 
             _mockJobClient.Verify(backgroundJobClient =>
                 backgroundJobClient.Create(
