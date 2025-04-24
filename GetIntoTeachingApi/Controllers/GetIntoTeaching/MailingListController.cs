@@ -1,5 +1,6 @@
 ﻿using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference;
 using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices;
 using GetIntoTeachingApi.Models.GetIntoTeaching;
 using GetIntoTeachingApi.Services;
@@ -48,13 +49,13 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
         [HttpPost]
         [Route("members")]
         [SwaggerOperation(
-            Summary = "Adds a new member to the mailing list.",
-            Description = @"
-                If the `CandidateId` is specified then the existing candidate will be 
-                added to the mailing list, otherwise a new candidate will be created.",
-            OperationId = "AddMailingListMember",
-            Tags = new[] { "Mailing List" })]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+    Summary = "Adds a new member to the mailing list.",
+    Description = @"
+        If the `CandidateId` is specified then the existing candidate will be 
+        added to the mailing list, otherwise a new candidate will be created.",
+    OperationId = "AddMailingListMember",
+    Tags = new[] { "Mailing List" })]
+        [ProducesResponseType(typeof(DegreeStatusResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
         public IActionResult AddMember(
             [FromBody, SwaggerRequestBody("Member to add to the mailing list.", Required = true)] MailingListAddMember request)
@@ -79,7 +80,8 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
             _jobClient.Enqueue<UpsertCandidateJob>(
                 (upsertCandidateJob) => upsertCandidateJob.Run(json, null));
 
-            return Ok(new { DegreeStatusId = degreeStatusId });
+
+            return Ok(new DegreeStatusResponse { DegreeStatusId = degreeStatusId });
         }
 
         [HttpPost]
