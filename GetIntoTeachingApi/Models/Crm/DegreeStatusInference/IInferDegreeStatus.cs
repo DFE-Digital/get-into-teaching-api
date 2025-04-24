@@ -30,7 +30,10 @@ namespace GetIntoTeachingApi.Models.Crm.DegreeStatusInference
         /// Implementation of <see cref="ICurrentYearProvider"/> which provides the current date/time
         /// as well as helper methods to convert the current year to an integer representation.
         /// </param>
-        void InferDegreeStatus(
+        /// <returns>
+        /// The nullable integer representation of the inferred degree status.
+        /// </returns>
+        int? InferDegreeStatus(
             IDegreeStatusDomainService degreeStatusDomainService,
             ICurrentYearProvider currentYearProvider);
     }
