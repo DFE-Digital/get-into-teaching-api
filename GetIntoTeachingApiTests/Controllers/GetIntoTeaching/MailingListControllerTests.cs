@@ -3,10 +3,14 @@ using GetIntoTeachingApi.Controllers.GetIntoTeaching;
 using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Common;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Evaluators;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices;
 using GetIntoTeachingApi.Models.GetIntoTeaching;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
+using GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInference.TestDoubles;
 using GetIntoTeachingApiTests.Models.GetIntoTeaching.TestDoubles;
 using Hangfire;
 using Hangfire.Common;
@@ -15,6 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
+using System.Collections.Generic;
 using Xunit;
 using CurrentYearProviderTestDouble = GetIntoTeachingApiTests.Models.GetIntoTeaching.TestDoubles.CurrentYearProviderTestDouble;
 
@@ -153,13 +158,13 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
         }
 
         [Fact]
-        public void AddMember_ValidRequest_EnqueuesJobRespondsWithNoContent()
+        public void AddMember_ValidRequest_EnqueuesJobRespondsWithExpectedResponse()
         {
             var request = new MailingListAddMember() { Email = "test@test.com", FirstName = "John", LastName = "Doe" };
 
             var response = _controller.AddMember(request);
 
-            response.Should().BeOfType<NoContentResult>();
+            response.Should().BeOfType<OkObjectResult>();
             _mockJobClient.Verify(x => x.Create(
                 It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
                 IsMatch(request.Candidate, (string)job.Args[0])),
@@ -167,13 +172,60 @@ namespace GetIntoTeachingApiTests.Controllers.GetIntoTeaching
         }
 
         [Fact]
-        public void AddMember_ValidRequestWithCandidateSituation_EnqueuesJobRespondsWithNoContent()
+        public void AddMember_ValidRequestWithCandidateSituation_EnqueuesJobRespondsWithExpectedResponse()
         {
             var request = new MailingListAddMember() { Email = "test@test.com", FirstName = "John", LastName = "Doe", Situation = 123456 };
 
             var response = _controller.AddMember(request);
 
-            response.Should().BeOfType<NoContentResult>();
+            response.Should().BeOfType<OkObjectResult>();
+            _mockJobClient.Verify(x => x.Create(
+                It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
+                IsMatch(request.Candidate, (string)job.Args[0])),
+                It.IsAny<EnqueuedState>()));
+        }
+
+        [Fact]
+        public void AddMember_ValidRequestWithGraduationYearSpecified_EnqueuesJobRespondsWithExpectedResponse()
+        {
+            // arrange
+            var request = new MailingListAddMember()
+            {
+                GraduationYear = 2024,
+                Email = "test@test.com", FirstName = "John", LastName = "Doe"
+            };
+
+            // arrange
+            IEnumerable<IChainEvaluationHandler<
+                DegreeStatusInferenceRequest, DegreeStatus>> degreeStatusInferenceHandlers
+                    = ChainEvaluationHandlerStub.ChainEvaluationHandlersStub<
+                        DegreeStatusInferenceRequest, DegreeStatus>();
+
+            ICurrentYearProvider currentYearProvider =
+                Models.Crm.DomainServices.DegreeStatusInference.TestDoubles
+                    .CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 27));
+
+            DegreeStatusDomainService degreeStatusDomainService = new(degreeStatusInferenceHandlers);
+
+            var controller = new MailingListController(
+                _mockAccessTokenService.Object,
+                _mockMagicLinkTokenService.Object,
+                _mockCrm.Object,
+                _mockJobClient.Object,
+                _mockDateTime.Object,
+                degreeStatusDomainService,
+                currentYearProvider);
+
+            controller.MockUser("GIT");
+
+            // act
+            IActionResult response = controller.AddMember(request);
+            dynamic responseObject = ((OkObjectResult)response).Value;
+
+            // assert
+            Assert.IsType<OkObjectResult>(response);
+            Assert.Equal(222750000, responseObject.GetType().GetProperty("DegreeStatusId").GetValue(responseObject, null));
+
             _mockJobClient.Verify(x => x.Create(
                 It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
                 IsMatch(request.Candidate, (string)job.Args[0])),
