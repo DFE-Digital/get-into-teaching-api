@@ -68,7 +68,7 @@
 		<PackageReference Include="Hangfire.PostgreSql" Version="1.20.9" />
 		<PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.1.32" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
-		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.6" />
+		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.2" />
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="8.0.7" />
 	</ItemGroup>
 
