@@ -30,7 +30,7 @@ On the first run it will perform a long sync of UK postcode information into the
 
 Quick start steps:
 
-- Requires [Azure Login](https://portal.azure.com/#@platform.education.gov.uk/resource/subscriptions/1ca1a2df-f842-48ce-9403-6d9bc4021692/resourceGroups/s123d01-rg-aisearch-prototype/overview)(`az login`) to access key vault;  
+- Requires [Azure Login](https://portal.azure.com/#@platform.education.gov.uk/resource/subscriptions/1ca1a2df-f842-48ce-9403-6d9bc4021692/resourceGroups/s123d01-rg-aisearch-prototype/overview)(`az login`) to access key vault;
 - Run makefile cmd `make setup-local-env` to establish local configuration from keyvault;
 - Set properties of the created env.local to "Always copy"
 - `docker compose up`
@@ -55,19 +55,30 @@ Be aware that any change to the API will affect multiple applications and **all 
 
 ### Environments
 
-The API is deployed to [AKS](https://github.com/DFE-Digital/teacher-services-cloud/). We currently have three hosted environments; `development`, `test` and `production`. This can get confusing because our ASP.NET Core environments are `development`, `staging`, `test` and `production`. The following table should help to clarify these combinations:
+The API is deployed to [AKS](https://github.com/DFE-Digital/teacher-services-cloud/). We currently have four hosted environments; `review`, `development`, `test` and `production`. This can get confusing because our ASP.NET Core environments are `review`, `development`, `staging`, `test` and `production`. The following table should help to clarify these combinations:
 
-| Environment             | ASP.NET Core Environment | URL                                                               |
-| ----------------------- | ------------------------ | ----------------------------------------------------------------- |
-| development (AKS)       | Staging                  | https://getintoteachingapi-development.test.teacherservices.cloud/|
-| test (AKS)              | Staging                  | https://getintoteachingapi-test.test.teacherservices.cloud/       |
-| production (AKS)        | Production               | https://getintoteachingapi-production.teacherservices.cloud/      |
-| development (local)     | Development              | localhost                                                         |
-| test (local)            | Test                     | n/a                                                               |
+| Environment             | ASP.NET Core Environment | URL                                                                      |
+| ----------------------- | ------------------------ | -------------------------------------------------------------------------|
+| review (AKS)            | Review                   | https://getintoteachingapi-review-<PR_NUMBER>.test.teacherservices.cloud/|
+| development (AKS)       | Staging                  | https://getintoteachingapi-development.test.teacherservices.cloud/       |
+| test (AKS)              | Staging                  | https://getintoteachingapi-test.test.teacherservices.cloud/              |
+| production (AKS)        | Production               | https://getintoteachingapi-production.teacherservices.cloud/             |
+| development (local)     | Development              | localhost                                                                |
+| test (local)            | Test                     | n/a                                                                      |
 
 ### Process
 
 When a feature branch is merged to `master` it will be automatically deployed to the [development](#environments) and [test](#environments) environments via GitHub Actions and a tagged release will be created (the tag will use the PR number). You can then test the changes using the corresponding dev/test environments of the other GiT services. Once you're happy and want to ship to [production](#environments) you need to note the tag of your release and go to the `Manual Release` GitHub Action; from there you can select `Run workflow`, choose the `production` environment and enter your release number.
+
+### Review Environments
+
+You can deploy a temporary review environment for a feature branch by adding the `deploy` label to your pull request. This will trigger a GitHub Action that will deploy the API to a new review environment based on the PR number (e.g., `getintoteachingapi-review-123.test.teacherservices.cloud`). Review environments are useful for testing changes before merging them to the main branch.
+
+Review environments have the following characteristics:
+- Unique URL with the PR number in it
+- Uses the same test CRM as development
+- Dedicated Postgres and Redis instances
+- Automatically destroyed when the PR is closed via the delete-review-app workflow
 
 ### Rollbacks
 
@@ -165,7 +176,7 @@ Key Aspects of Integration Testing:
 
 #### Contract Testing
 
-We use 'contract testing' to perform end-to-end tests across all our API endpoints. API contract testing is a technique used to ensure that our API endpoints communicate correctly by verifying that their interactions conform to their predefined contract(s). 
+We use 'contract testing' to perform end-to-end tests across all our API endpoints. API contract testing is a technique used to ensure that our API endpoints communicate correctly by verifying that their interactions conform to their predefined contract(s).
 
 Key Aspects of Contract Testing:
 - **Contract Definition**: specifies the expected request and response structure between an API provider and consumer;
@@ -184,7 +195,7 @@ We send emails using the [GOV.UK Notify](https://www.notifications.service.gov.u
 
 Hangfire is an open-source framework designed for background job processing in .NET and .NET Core applications.  It allows the API run tasks asynchronously without needing a separate Windows Service or scheduler. Hangfire supports various types of jobs, but the API principally leverages 'Fire-and-forget jobs', executed once, almost immediately after creation.
 
-This allows the API to backup processing jobs to persistent storage, i.e. PostgreSql allowing jobs to be automatically retried, making it a robust solution for handling the background tasks for processing messages to the CRM. 
+This allows the API to backup processing jobs to persistent storage, i.e. PostgreSql allowing jobs to be automatically retried, making it a robust solution for handling the background tasks for processing messages to the CRM.
 
 Hangfire's database tables are used to store and manage background job processing in our .NET API. The following table describes the typical Hangfire PostgreSql database schema:
 
@@ -207,20 +218,20 @@ Hangfire's database tables are used to store and manage background job processin
 Hangfire enables **background job processing** in .NET applications, allowing tasks to run asynchronously without blocking the main application. It operates using a combination of **job queues, worker processes, persistent storage**, and automatic retries.
 
 #### **Step-by-Step Job Execution in Hangfire**
-1. **Job Creation**  
+1. **Job Creation**
    - A job is created in the application via **Hangfire API**, we use the '**fire and     forget**' approach, `BackgroundJob.Enqueue()`. The job details (type, method, parameters, execution time) are **stored in the Hangfire database**.
 
-2. **Job Persistence in PostgreSQL Database**  
+2. **Job Persistence in PostgreSQL Database**
    - Jobs are stored in PostgreSQL (by default) in the **`Job` table**.
    - Each job receives a unique identifier and relevant metadata.
    - Other tables, like **`JobQueue`**, keep track of jobs waiting for execution.
 
-3. **Hangfire Server Picks Up Jobs**  
+3. **Hangfire Server Picks Up Jobs**
    - Hangfire Server runs in the background and **monitors job queues**.
    - When a job is available, the server picks it up and begins execution.
    - The server executes jobs using **worker threads** (multiple jobs can run simultaneously).
 
-4. **Job Execution & State Management**  
+4. **Job Execution & State Management**
    - During execution, Hangfire updates the job status in the **`State` table**.
    - Possible states:
      - **Scheduled**: Waiting for execution.
@@ -228,11 +239,11 @@ Hangfire enables **background job processing** in .NET applications, allowing ta
      - **Succeeded**: Successfully completed.
      - **Failed**: Encountered errors.
 
-5. **Automatic Retries for Failed Jobs**  
+5. **Automatic Retries for Failed Jobs**
    - If a job fails, Hangfire can **automatically retry** based on our configuration policy.
    - Jobs with errors are logged in the database for debugging.
 
-6. **Job Cleanup & Monitoring**  
+6. **Job Cleanup & Monitoring**
    - Old job records are periodically cleaned up.
    - Hangfire Dashboard provides a **web-based UI** for monitoring jobs, failures, and server status.
 
@@ -257,7 +268,7 @@ We run Entity Framework Core in order to persist models/data to a PostgreSQL dat
 | TeachingEvents           | Stores information used to describe teaching events inc. event name, description, start/end time etc.             |
 | TeachingSubjects               | Stores a list of teaching subjects.                     |
 | spacial_ref_system             | Stores information relating to the geodetic coordinate system, and used for geo-location purposes.
-                   
+
 
 Migrations are applied from code when the application starts (see `DbConfiguration.cs`). You can add a migration by modifying the models and running `Add-Migration MyNewMigration` from the package manager console.
 
@@ -591,11 +602,9 @@ In order to provide this resilience we rely on a number of planning resources to
 
 - **Teacher Services Disaster Recovery Plan**: the most critical scenarios that should be used in case of an incident can be found [here](https://github.com/DFE-Digital/teacher-services-cloud/blob/main/documentation/disaster-recovery.md);
 - **Teacher Services Disaster Recovery Test Plan**: the disaster recovery testing procedure for applications hosted on the Teacher Services AKS clusters can be found [here](https://github.com/DFE-Digital/teacher-services-cloud/blob/main/documentation/disaster-recovery-testing.md#prerequisites);
-- **Most Recent Get-Into-Teaching (GIT) DT Test**: the most up-to-date DR test for GIT can be found [here](https://hedgedoc.teacherservices.cloud/YcMIA9ezQbqYR4q5eHDkGw?view). 
+- **Most Recent Get-Into-Teaching (GIT) DT Test**: the most up-to-date DR test for GIT can be found [here](https://hedgedoc.teacherservices.cloud/YcMIA9ezQbqYR4q5eHDkGw?view).
 
 
 ## Useful Links
 
 As the API is service-facing it has no user interface, but in non-production environments you can access a [dashboard for Hangfire](https://getintoteachingapi-development.test.teacherservices.cloud/hangfire/) and the [Swagger UI](https://getintoteachingapi-development.test.teacherservices.cloud/swagger/index.html). You will need the basic auth credentials to access these dashboards.
-
- 
