@@ -18,6 +18,7 @@ inputs:
     required: true
 outputs:
   deploy-url:
+    description: "URL of the deployed application"
     value: https://${{ steps.set_env_var.outputs.deploy_url }}
 runs:
   using: composite
@@ -27,23 +28,22 @@ runs:
       shell: bash
       run: |
         tf_vars_file=terraform/aks/config/${{ inputs.environment }}.tfvars.json
-        terraform_version=$(awk '/{/{f=/^terraform/;next}f' terraform/aks/provider.tf | grep -o [0-9\.]*)
+        terraform_version=$(awk '/{/{f=/^terraform/;next}f' terraform/aks/terraform.tf | grep -o [0-9\.]*)
         cluster=$(jq -r '.cluster' ${tf_vars_file})
         aks_app_environment=$(jq -r '.environment' ${tf_vars_file})
         echo "TERRAFORM_VERSION=$terraform_version" >> $GITHUB_ENV
 
         if [[ $cluster == 'production' ]]; then
-          app_hostname=getintoteachingapi-${aks_app_environment}.teacherservices.cloud
+          deploy_url=getintoteachingapi-${aks_app_environment}.teacherservices.cloud
         else
-          app_hostname=getintoteachingapi-${aks_app_environment}.${cluster}.teacherservices.cloud
+          deploy_url=getintoteachingapi-${aks_app_environment}.${cluster}.teacherservices.cloud
         fi
-        echo "app_hostname=${app_hostname}" >> $GITHUB_OUTPUT
+        echo "deploy_url=${deploy_url}" >> $GITHUB_OUTPUT
 
     - name: Use Terraform ${{ env.TERRAFORM_VERSION }}
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: ${{ env.TERRAFORM_VERSION }}
-
 
     - uses: DFE-Digital/github-actions/set-kubelogin-environment@master
       with:
@@ -55,12 +55,12 @@ runs:
       shell: bash
       run: make ci ${{ inputs.environment }} terraform-apply
       env:
-        IMAGE_TAG: ${{ inputs.sha }}
+        IMAGE_TAG: ${{ inputs.sha || inputs.SHA }}
 
     - name: Smoke tests
       shell: bash
       run: |
         tests/confidence/healthcheck.sh "${APP_HOSTNAME}" "${IMAGE_TAG#sha-}"
       env:
-        APP_HOSTNAME: ${{ steps.set_env_var.outputs.app_hostname }}
-        IMAGE_TAG: ${{ inputs.sha }}
+        APP_HOSTNAME: ${{ steps.set_env_var.outputs.deploy_url }}
+        IMAGE_TAG: ${{ inputs.sha || inputs.SHA }}

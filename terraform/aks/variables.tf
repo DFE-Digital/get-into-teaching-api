@@ -6,6 +6,16 @@ variable "postgres_version" { default = 14 }
 
 variable "app_docker_image" {}
 
+variable "rg_name" {
+  description = "Resource group name"
+}
+
+variable "deploy_azure_backing_services" {
+  description = "Enable deployment of Azure backing services"
+  type        = bool
+  default     = true
+}
+
 # Key Vault variables
 
 variable "app_key_vault_name" {}

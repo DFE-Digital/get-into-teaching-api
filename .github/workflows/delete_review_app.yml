@@ -1,0 +1,43 @@
+name: Destroy Review App
+concurrency: destroy_${{ github.ref_name }}
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      pr-number:
+        description: PR number for the review app to destroy
+        required: true
+
+permissions:
+  id-token: write
+  pull-requests: write
+  contents: write
+
+jobs:
+  delete-review-app:
+    name: Delete Review App ${{ github.event.pull_request.number }}
+    runs-on: ubuntu-latest
+    concurrency: delete-review-app-${{ github.event.pull_request.number || github.event.inputs.pr_number }}
+    if: >
+      github.event.action == 'closed' && contains(github.event.pull_request.labels.*.name, 'deploy') ||
+      (github.event.action == 'unlabeled' && github.event.label.name == 'deploy') || (github.event_name ==
+      'workflow_dispatch')
+
+    permissions:
+      pull-requests: write
+      id-token: write
+
+    steps:
+      - name: Delete review app
+        uses: DFE-Digital/github-actions/delete-review-app@master
+        with:
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          pr-number: ${{ github.event.pull_request.number || github.event.inputs.pr_number }}
+          resource-group-name: "s189t01-gitapi-rv-rg"
+          storage-account-name: "s189t01gitapitfstatervsa"
+          tf-state-file: "${{ github.event.pull_request.number || github.event.inputs.pr_number }}.tfstate"
+          terraform-base: "terraform/aks"
