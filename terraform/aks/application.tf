@@ -1,10 +1,14 @@
+locals {
+  environment = var.environment == "review" ? "${var.environment}${var.pr_number}" : var.environment
+}
+
 module "api_application" {
   source = "./vendor/modules/aks//aks/application"
 
   is_web = true
 
   namespace    = var.namespace
-  environment  = var.environment
+  environment  = local.environment
   service_name = var.service_name
 
   cluster_configuration_map = module.cluster_data.configuration_map
@@ -26,7 +30,7 @@ module "application_configuration" {
   source = "./vendor/modules/aks//aks/application_configuration"
 
   namespace              = var.namespace
-  environment            = var.environment
+  environment            = local.environment
   azure_resource_prefix  = var.azure_resource_prefix
   service_short          = var.service_short
   config_short           = var.config_short

@@ -1,8 +1,9 @@
 module "redis-cache" {
   source = "./vendor/modules/aks//aks/redis"
+  count  = var.REDIS_ENABLED ? 1 : 0
 
   namespace             = var.namespace
-  environment           = var.environment
+  environment           = local.environment
   azure_resource_prefix = var.azure_resource_prefix
   service_short         = var.service_short
   config_short          = var.config_short
@@ -22,9 +23,10 @@ module "redis-cache" {
 
 module "postgres" {
   source = "./vendor/modules/aks//aks/postgres"
+  count  = var.POSTGRES_ENABLED ? 1 : 0
 
   namespace             = var.namespace
-  environment           = var.environment
+  environment           = local.environment
   azure_resource_prefix = var.azure_resource_prefix
   service_short         = var.service_short
   config_short          = var.config_short
@@ -41,4 +43,10 @@ module "postgres" {
   azure_enable_high_availability = var.postgres_enable_high_availability
   azure_maintenance_window       = var.azure_maintenance_window
   azure_enable_backup_storage    = var.azure_enable_backup_storage
+}
+
+# Update local.app_secrets to handle the conditional modules
+locals {
+  redis_connection_string   = var.REDIS_ENABLED ? module.redis-cache[0].connection_string : ""
+  postgres_connection_string = var.POSTGRES_ENABLED ? module.postgres[0].dotnet_connection_string : ""
 }
