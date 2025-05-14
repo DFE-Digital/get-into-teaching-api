@@ -209,7 +209,7 @@
       },
       {
         "Key": "dfe_qtsstatus",
-        "Value": false
+        "Value": true
       },
       {
         "Key": "msdyn_gdproptout",
