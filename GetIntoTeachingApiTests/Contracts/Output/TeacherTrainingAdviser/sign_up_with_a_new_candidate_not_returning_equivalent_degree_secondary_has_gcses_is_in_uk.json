@@ -201,7 +201,9 @@
       },
       {
         "Key": "dfe_qtsstatus",
-        "Value": 222750000
+        "Value": {
+          "Value": 222750000
+        }
       },
       {
         "Key": "msdyn_gdproptout",
