@@ -5,6 +5,7 @@ using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
+using static GetIntoTeachingApi.Models.Crm.Candidate;
 
 namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
 {
@@ -324,7 +325,9 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
 
         private void AddPastTeachingPosition(Candidate candidate)
         {
-            candidate.HasQualifiedTeacherStatus = candidate.IsReturningToTeaching();
+            candidate.HasQualifiedTeacherStatus =
+                candidate.IsReturningToTeaching() ?
+                    (int)QualifiedTeacherStatus.Yes : (int)QualifiedTeacherStatus.No;
 
             // NB:  StageTaughtId is a new parameter and might not be set by older clients.
             // NB:  If the StageTaughtId==primary, SubjectTaughtId will be null

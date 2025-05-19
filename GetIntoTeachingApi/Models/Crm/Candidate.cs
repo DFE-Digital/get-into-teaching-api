@@ -102,6 +102,12 @@ namespace GetIntoTeachingApi.Models.Crm
             ReRegistered = 222750000,
         }
 
+        public enum QualifiedTeacherStatus
+        {
+            Yes = 222750002,
+            No = 222750000,
+        }
+
         public string FullName => $"{FirstName} {LastName}".NullIfEmptyOrWhitespace();
         [EntityField("dfe_preferredteachingsubject01", typeof(EntityReference), "dfe_teachingsubjectlist")]
         public Guid? PreferredTeachingSubjectId { get; set; }
@@ -282,9 +288,8 @@ namespace GetIntoTeachingApi.Models.Crm
         public bool? EventsSubscriptionDoNotSendMm { get; set; }
         [EntityField("dfe_situation", typeof(OptionSetValue))]
         public int? Situation { get; set; }
-        [EntityField("dfe_qtsstatus")]
-        public bool? HasQualifiedTeacherStatus { get; set; }
-
+        [EntityField("dfe_qtsstatus", typeof(OptionSetValue))]
+        public int? HasQualifiedTeacherStatus { get; set; }
 
         [EntityRelationship("msevtmgt_contact_msevtmgt_eventregistration_Contact", typeof(TeachingEventRegistration))]
         public List<TeachingEventRegistration> TeachingEventRegistrations { get; set; } = new List<TeachingEventRegistration>();
