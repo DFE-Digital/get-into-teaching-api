@@ -206,10 +206,6 @@
         "Value": false
       },
       {
-        "Key": "dfe_qtsstatus",
-        "Value": false
-      },
-      {
         "Key": "msdyn_gdproptout",
         "Value": false
       },
