@@ -324,8 +324,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
 
         private void AddPastTeachingPosition(Candidate candidate)
         {
-            candidate.HasQualifiedTeacherStatus = candidate.IsReturningToTeaching();
-
             // NB:  StageTaughtId is a new parameter and might not be set by older clients.
             // NB:  If the StageTaughtId==primary, SubjectTaughtId will be null
             if (candidate.IsReturningToTeaching())
