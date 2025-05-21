@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -243,7 +243,6 @@
     <Folder Include="Contracts\Data\" />
     <Folder Include="Contracts\Input\" />
     <Folder Include="Contracts\Output\" />
-	<Folder Include="Contracts\TestUtilities\" />
     <Folder Include="Contracts\Data\lookup_items\" />
     <Folder Include="Contracts\Data\pick_list_items\" />
     <Folder Include="Contracts\Data\pick_list_items\qualification\" />

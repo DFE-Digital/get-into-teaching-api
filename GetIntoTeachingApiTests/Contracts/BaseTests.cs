@@ -1,28 +1,26 @@
-﻿using FluentAssertions;
-using GetIntoTeachingApi.AppStart;
-using GetIntoTeachingApi.Models;
-using GetIntoTeachingApi.Models.Crm;
-using GetIntoTeachingApiTests.Contracts.TestUtilities;
-using GetIntoTeachingApiTests.Helpers;
-using Hangfire;
-using MoreLinq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using static GetIntoTeachingApiTests.Contracts.TestUtilities.JsonComparer;
+using FluentAssertions;
+using GetIntoTeachingApi.AppStart;
+using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApiTests.Helpers;
+using Hangfire;
+using MoreLinq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace GetIntoTeachingApiTests.Contracts
 {
-    public class BaseTests : DatabaseTests
+	public class BaseTests : DatabaseTests
 	{
-        private const int maxWaitDurationInSeconds = 60;
-        private const int waitInterval = 200;
-        private const int verifyChallenges = 3;
+        private static readonly int maxWaitDurationInSeconds = 60;
+        private static readonly int waitInterval = 200;
+        private static readonly int verifyChallenges = 3;
         protected readonly HttpClient HttpClient;
         protected readonly ContractTestGitWebApplicationFactory<Startup> _factory;
         public IBackgroundJobClient JobClient
@@ -60,16 +58,17 @@ namespace GetIntoTeachingApiTests.Contracts
 
         protected async Task AssertRequestMatchesSnapshot(string scenario)
         {
-            string outputFile = OutputFile(scenario);
             await WaitForAllJobsToComplete();
-            JArray request = SortEntities(JArray.Parse(RequestJson()));
-            await WriteInitialOutputFile(outputFile, request);
-            JArray snapshot = SortEntities(JArray.Parse(File.ReadAllText(outputFile)));
 
-            // Assert that the request matches the snapshot.
-            ComparisonResult comparisonResult =
-                JsonComparer.CompareJsonArrays(request, snapshot);
-            comparisonResult.AreEqual.Should().BeTrue(comparisonResult.Message);
+            var request = SortEntities(JArray.Parse(RequestJson()));
+            var outputFile = OutputFile(scenario);
+
+            await WriteInitialOutputFile(outputFile, request);
+
+            var snapshot = SortEntities(JArray.Parse(File.ReadAllText(outputFile)));
+
+            request.Should().HaveCount(snapshot.Count);
+            request.Should().BeEquivalentTo(snapshot);
         }
 
         protected string ReadInput(string scenario)
@@ -243,3 +242,4 @@ namespace GetIntoTeachingApiTests.Contracts
         }
     }
 }
+
