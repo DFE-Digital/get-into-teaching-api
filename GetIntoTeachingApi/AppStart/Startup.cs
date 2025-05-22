@@ -40,7 +40,8 @@ namespace GetIntoTeachingApi.AppStart
                   envName = _env.AksEnvName;
                 }
                 var envFile = Path.Combine(root, $"env.{envName}");
-                DotEnv.Load(options: new DotEnvOptions(ignoreExceptions: false, envFilePaths: new[] { envFile }));
+                // MW TEMPORARILY COMMENT OUT TO SEE IF IT BOOTS
+                // DotEnv.Load(options: new DotEnvOptions(ignoreExceptions: false, envFilePaths: new[] { envFile }));
             }
 
             services.RegisterServices(_configuration, _env);
