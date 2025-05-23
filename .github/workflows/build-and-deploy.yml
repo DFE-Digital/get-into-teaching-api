@@ -8,9 +8,14 @@ on:
         type: choice
         default: development
         options:
+        - review
         - development
         - test
         - production
+      pr-number:
+        description: PR number for review deployment (required for review environment)
+        type: string
+        required: false
   pull_request:
     types: [assigned, opened, synchronize, reopened, ready_for_review]
   push:
@@ -63,7 +68,7 @@ jobs:
       - name: Build
         uses: docker/build-push-action@v6
         with:
-          push: ${{ github.ref == 'refs/heads/master' }}
+          push: ${{ github.ref == 'refs/heads/master' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy')) }}
           builder: ${{ steps.buildx.outputs.name }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
@@ -79,6 +84,104 @@ jobs:
           SLACK_MESSAGE: 'The pipeline has failed to build the API image'
           SLACK_TITLE: 'Failure to Build API '
           SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
+
+
+  deploy_review_app:
+    name: Deploy to review environment
+    needs: build
+    if: ${{ (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy')) || (github.event_name == 'workflow_dispatch' && inputs.environment == 'review' && inputs.pr-number != '') }}
+    runs-on: ubuntu-latest
+    concurrency: deploy_review_${{ github.event.pull_request.number || inputs.pr-number }}
+    permissions:
+      pull-requests: write
+      id-token: write
+    environment:
+      name: review
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: set-up-environment
+        uses: DFE-Digital/github-actions/set-up-environment@master
+
+      - uses: Azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Set PR Number
+        id: pr
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "number=${{ inputs.pr-number }}" >> $GITHUB_OUTPUT
+          else
+            echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Rename Review Config File
+        run: |
+          if [ -f "GetIntoTeachingApi/env.review" ]; then
+            cp "GetIntoTeachingApi/env.review" "GetIntoTeachingApi/env.review-${{ steps.pr.outputs.number }}"
+            echo "Created review-${{ steps.pr.outputs.number }} environment file from template"
+          else
+            echo "Warning: Review environment template file not found"
+          fi
+
+      - uses: DFE-Digital/github-actions/set-kubelogin-environment@master
+        with:
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy to Review Environment
+        uses: ./.github/workflows/actions/deploy_v2
+        id: deploy
+        with:
+          environment: review
+          sha: ${{needs.build.outputs.image_tag_sha}}
+          pr-number: ${{ steps.pr.outputs.number }}
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get Review App URL
+        id: review_app
+        run: |
+          REVIEW_APP_URL=$(terraform -chdir=terraform/aks output -raw app_url)
+          echo "app_hostname=${REVIEW_APP_URL}" >> $GITHUB_OUTPUT
+
+      - name: Update PR with Review App URL
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: review-app
+          number: ${{ steps.pr.outputs.number }}
+          message: |
+            ### Deployments
+
+            | App | URL |
+            | --- | --- |
+            | Get Into Teaching API | [${{ steps.review_app.outputs.app_hostname }}](${{ steps.review_app.outputs.app_hostname }}) |
+
+            ### Testing Instructions
+
+            **For GIT Website testing:**
+            Use the GIT website with this API URL by setting the following environment variable:
+            ```
+            GET_INTO_TEACHING_API_URL=${{ steps.review_app.outputs.app_hostname }}
+            ```
+
+            **For School Experience testing:**
+            Use School Experience with this API URL by setting the following environment variable:
+            ```
+            GET_INTO_TEACHING_API_URL=${{ steps.review_app.outputs.app_hostname }}
+            ```
+
+            ### Environment Details
+            - Has dedicated Postgres and Redis instances
+            - Points to the same test CRM as development
+            - Review app will be destroyed when this PR is closed or by running the "Destroy Review App" workflow
 
   development:
     name: Development Deployment

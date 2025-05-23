@@ -6,6 +6,16 @@ variable "postgres_version" { default = 14 }
 
 variable "app_docker_image" {}
 
+variable "rg_name" {
+  description = "Resource group name"
+}
+
+variable "deploy_azure_backing_services" {
+  description = "Enable deployment of Azure backing services"
+  type        = bool
+  default     = true
+}
+
 # Key Vault variables
 
 variable "app_key_vault_name" {}
@@ -63,10 +73,7 @@ variable "enable_prometheus_monitoring" {
   default = false
 }
 
-locals {
-  app_resource_group_name = "${var.azure_resource_prefix}-${var.service_short}-${var.config_short}-rg"
-  app_secrets = {
-    PG_CONN_STR    = module.postgres.dotnet_connection_string
-    REDIS_CONN_STR = module.redis-cache.connection_string
-  }
+variable "pr_number" {
+  description = "PR number for review app"
+  default     = ""
 }

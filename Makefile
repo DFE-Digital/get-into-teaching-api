@@ -35,6 +35,14 @@ local:
 	$(eval export KEY_VAULT=s189t01-gitapi-dv-loc-kv)
 	$(eval export AZ_SUBSCRIPTION=s189-teacher-services-cloud-test)
 
+.PHONY: review
+review: test-cluster
+	$(if $(PR_NUMBER), , $(error Missing environment variable "PR_NUMBER", Please specify a pr number for your review app))
+	$(eval include global_config/review.sh)
+	$(eval export DEPLOY_ENV=review)
+	$(eval export TF_VAR_pr_number=$(PR_NUMBER))
+	$(eval export TF_VAR_environment=review-pr-$(PR_NUMBER))
+
 .PHONY: set-key-vault-names
 set-key-vault-names:
 	$(eval KEY_VAULT_APPLICATION_NAME=$(AZURE_RESOURCE_PREFIX)-$(SERVICE_SHORT)-$(CONFIG_SHORT)-app-kv)
