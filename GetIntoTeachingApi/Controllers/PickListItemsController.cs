@@ -311,13 +311,13 @@ namespace GetIntoTeachingApi.Controllers
             Ok(await _store.GetPickListItems("contact", "dfe_situation").ToListAsync());
 
         [HttpGet]
-        [Route("teaching_event/accessibility")]
+        [Route("teaching_event/accessibility_items")]
         [SwaggerOperation(
             Summary = "Retrieves the list of teaching event accessibility statuses.",
             OperationId = "GetTeachingEventAccessibilty",
             Tags = new[] { "Pick List Items" })]
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetTeachingEventAccessibility() =>
+        public async Task<IActionResult> GetTeachingEventAccessibilityItems() =>
              Ok(await _store.GetPickListItems("msevtmgt_event", "dfe_accessibility").ToListAsync());
     }
 }
