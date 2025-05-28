@@ -285,7 +285,6 @@ namespace GetIntoTeachingApi.Services
             await SyncPickListItem("dfe_contactchannelcreation", "dfe_creationchannelservice");
             await SyncPickListItem("dfe_contactchannelcreation", "dfe_creationchannelactivities");
 
-            await SyncPickListItem("dfe_applyreference", "dfe_referencefeedbackstatus");
             await SyncPickListItem("contact", "dfe_situation");
         }
 
