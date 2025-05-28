@@ -267,7 +267,7 @@ namespace GetIntoTeachingApi.Services
             await SyncPickListItem("msevtmgt_event", "dfe_event_type");
             await SyncPickListItem("msevtmgt_event", "dfe_eventstatus");
             await SyncPickListItem("msevtmgt_event", "dfe_eventregion");
-            await SyncPickListItem("msevtmgt_event", "XXX-XXX-XXX-XXX");    // placeholder for accessibility items.
+            await SyncPickListItem("msevtmgt_event", "dfe_accessibility");
 
             await SyncPickListItem("msevtmgt_eventregistration", "dfe_channelcreation");
 
