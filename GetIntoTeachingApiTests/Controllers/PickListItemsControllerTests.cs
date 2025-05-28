@@ -335,7 +335,7 @@ namespace GetIntoTeachingApiTests.Controllers
                 mock.GetPickListItems("msevtmgt_event", "dfe_accessibility"))
                     .Returns(mockItems.AsAsyncQueryable()).Verifiable();
 
-            IActionResult response = await _controller.GetTeachingEventAccessibility();
+            IActionResult response = await _controller.GetTeachingEventAccessibilityItems();
 
             OkObjectResult ok = response.Should().BeOfType<OkObjectResult>().Subject;
             ok.Value.Should().BeEquivalentTo(mockItems);
