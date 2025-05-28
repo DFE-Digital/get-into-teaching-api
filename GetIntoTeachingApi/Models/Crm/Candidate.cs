@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using GetIntoTeachingApi.Attributes;
+﻿using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Microsoft.Xrm.Sdk;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GetIntoTeachingApi.Models.Crm
 {
@@ -297,15 +297,14 @@ namespace GetIntoTeachingApi.Models.Crm
         public CandidatePrivacyPolicy PrivacyPolicy { get; set; }
         [EntityRelationship("dfe_contact_dfe_candidateschoolexperience_ContactId", typeof(CandidateSchoolExperience))]
         public List<CandidateSchoolExperience> SchoolExperiences { get; set; } = new List<CandidateSchoolExperience>();
+        [EntityRelationship("dfe_contact_dfe_contactchannelcreation_ContactId", typeof(ContactChannelCreation))]
+        public List<ContactChannelCreation> ContactChannelCreations { get; set; } = new List<ContactChannelCreation>();
 
-        public Candidate()
-            : base()
-        {
+        public Candidate() : base(){
         }
 
         public Candidate(Entity entity, ICrmService crm, IServiceProvider serviceProvider)
-            : base(entity, crm, serviceProvider)
-        {
+            : base(entity, crm, serviceProvider){
         }
 
         public bool HasTeacherTrainingAdviser()
@@ -331,6 +330,60 @@ namespace GetIntoTeachingApi.Models.Crm
         public bool IsPlanningToRetakeGcseMathsAndEnglish()
         {
             return new[] { PlanningToRetakeGcseMathsId, PlanningToRetakeGcseEnglishId }.All(g => g == (int)GcseStatus.HasOrIsPlanningOnRetaking);
+        }
+
+        /// <summary>
+        /// Allows the configuration of a contact channel for a
+        /// candidate based on the provided contactChannelCreator.
+        /// </summary>
+        public void ConfigureChannel(ICreateContactChannel contactChannelCreator, Guid? candidateId)
+        {
+            if (candidateId == null)
+            {
+                if (contactChannelCreator.CreationChannelSourceId.HasValue)
+                {
+                    ChannelId = null;
+                    AddContactChannelCreation(
+                        channelCreation: ContactChannelCreations.Count == 0,
+                        contactChannelCreator: contactChannelCreator);
+                }
+                else
+                {
+                    ChannelId = contactChannelCreator.DefaultContactCreationChannel;
+                }
+            }
+            else // Candidate record already exists 
+            {
+                // NB: we do not update a candidate's ChannelId for an existing record
+                // NB: CreationChannel should always be false for existing candidates
+                if (contactChannelCreator.CreationChannelSourceId.HasValue)
+                {
+                    AddContactChannelCreation(
+                        channelCreation: false,
+                        contactChannelCreator: contactChannelCreator);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Allows automatic creation of an <see cref="ContactChannelCreation"/>
+        /// and assigns to the underlying collection of contact channel creations.
+        /// </summary>
+        /// <param name="channelCreation">
+        /// Predicates the context of the contact channel creation based on the candidate status.
+        /// </param>
+        /// <param name="contactChannelCreator">
+        /// The source of the contact channel creation request, a type
+        /// which implements the <see cref="ICreateContactChannel"/> interface.
+        /// </param>
+        private void AddContactChannelCreation(bool channelCreation, ICreateContactChannel contactChannelCreator)
+        {
+            ContactChannelCreations.Add(
+                ContactChannelCreation.Create(
+                    creationChannel: channelCreation,
+                    sourceId: contactChannelCreator.CreationChannelSourceId,
+                    serviceId: contactChannelCreator.CreationChannelServiceId,
+                    activityId: contactChannelCreator.CreationChannelActivityId));
         }
 
         public bool MagicLinkTokenExpired() => MagicLinkTokenExpiresAt == null || MagicLinkTokenExpiresAt < DateTime.UtcNow;
