@@ -250,7 +250,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
                 _request.CountryId = Guid.NewGuid();
                 _request.PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Primary;
                 _request.InitialTeacherTrainingYearId = 0;
-                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree;
+                _request.DegreeStatusId = (int)DegreeStatus.HasDegree;
                 _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
                 _request.PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking;
                 _request.HasGcseScienceId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking;
@@ -286,7 +286,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
             [Fact]
             public void Validate_WhenDegreeStatusIdIsNoDegree_HasError()
             {
-                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.NoDegree;
+                _request.DegreeStatusId = (int)DegreeStatus.NoDegree;
 
                 var result = _validator.TestValidate(_request);
 
@@ -298,7 +298,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
             public void Validate_WhenPreferredEducationPhaseIdIsNull_AndHasADegree_HasError()
             {
                 _request.PreferredEducationPhaseId = null;
-                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.FirstYear;
+                _request.DegreeStatusId = (int)DegreeStatus.FirstYear;
 
                 var result = _validator.TestValidate(_request);
 
@@ -306,7 +306,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
 
                 result.ShouldNotHaveValidationErrorFor(request => request.PreferredEducationPhaseId);
 
-                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree;
+                _request.DegreeStatusId = (int)DegreeStatus.HasDegree;
 
                 result = _validator.TestValidate(_request);
 
@@ -329,7 +329,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
             [Fact]
             public void Validate_WhenDegreeTypeIdIsNotDegreeOrDegreeEquivalent_AndDegreeStatusIdIsHasDegree_HasError()
             {
-                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree;
+                _request.DegreeStatusId = (int)DegreeStatus.HasDegree;
                 _request.DegreeTypeId = 123;
 
                 var result = _validator.TestValidate(_request);
@@ -353,7 +353,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
             [Fact]
             public void Validate_WhenDegreeTypeIdIsNotDegree_AndDegreeStatusIdIsStudyingForADegree_HasError()
             {
-                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.SecondYear;
+                _request.DegreeStatusId = (int)DegreeStatus.SecondYear;
                 _request.DegreeTypeId = 123;
 
                 var result = _validator.TestValidate(_request);
@@ -375,7 +375,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
                 _request.PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
                 _request.PreferredEducationPhaseId = (int)Candidate.PreferredEducationPhase.Primary;
                 _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
-                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree;
+                _request.DegreeStatusId = (int)DegreeStatus.HasDegree;
 
                 var result = _validator.TestValidate(_request);
 
@@ -403,7 +403,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
 
                 result.ShouldNotHaveValidationErrorFor(request => request);
 
-                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.FinalYear;
+                _request.DegreeStatusId = (int)DegreeStatus.FinalYear;
                 _request.HasGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
                 _request.PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.NotAnswered;
 
@@ -442,20 +442,20 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
             {
                 _request.UkDegreeGradeId = null;
                 _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
-                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree;
+                _request.DegreeStatusId = (int)DegreeStatus.HasDegree;
 
                 var result = _validator.TestValidate(_request);
 
                 result.ShouldHaveValidationErrorFor(request => request.UkDegreeGradeId)
                     .WithErrorMessage("Must be set when candidate has a degree.");
 
-                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.FirstYear;
+                _request.DegreeStatusId = (int)DegreeStatus.FirstYear;
 
                 result = _validator.TestValidate(_request);
 
                 result.ShouldNotHaveValidationErrorFor(request => request.UkDegreeGradeId);
 
-                _request.DegreeStatusId = (int)CandidateQualification.DegreeStatus.HasDegree;
+                _request.DegreeStatusId = (int)DegreeStatus.HasDegree;
                 _request.UkDegreeGradeId = 0;
 
                 result = _validator.TestValidate(_request);

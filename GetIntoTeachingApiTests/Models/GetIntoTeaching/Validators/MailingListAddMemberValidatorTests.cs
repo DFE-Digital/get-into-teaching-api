@@ -87,7 +87,6 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
             result.ShouldHaveValidationErrorFor(m => m.Email);
             result.ShouldHaveValidationErrorFor(m => m.AcceptedPolicyId);
             result.ShouldHaveValidationErrorFor(m => m.ConsiderationJourneyStageId);
-            result.ShouldHaveValidationErrorFor(m => m.DegreeStatusId);
             result.ShouldHaveValidationErrorFor(m => m.PreferredTeachingSubjectId);
         }
     }

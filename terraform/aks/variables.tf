@@ -7,7 +7,6 @@ variable "postgres_version" { default = 14 }
 variable "app_docker_image" {}
 
 # Key Vault variables
-variable "azure_credentials" { default = null }
 
 variable "app_key_vault_name" {}
 
@@ -65,7 +64,6 @@ variable "enable_prometheus_monitoring" {
 }
 
 locals {
-  azure_credentials       = try(jsondecode(var.azure_credentials), null)
   app_resource_group_name = "${var.azure_resource_prefix}-${var.service_short}-${var.config_short}-rg"
   app_secrets = {
     PG_CONN_STR    = module.postgres.dotnet_connection_string

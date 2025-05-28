@@ -1,14 +1,17 @@
-﻿using System;
-using System.Linq;
-using System.Text.Json.Serialization;
-using GetIntoTeachingApi.Models.Crm;
+﻿using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Evaluators;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace GetIntoTeachingApi.Models.GetIntoTeaching
 {
-    public class MailingListAddMember : ICreateContactChannel
+    public class MailingListAddMember : ICreateContactChannel, IInferDegreeStatus
     {
         public Guid? CandidateId { get; set; }
         public Guid? QualificationId { get; set; }
@@ -40,15 +43,21 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         [SwaggerSchema(ReadOnly = true)]
         public bool AlreadySubscribedToTeacherTrainingAdviser { get; set; }
 
+        public int? GraduationYear { get; set; } = null!;
+        public DateTime? InferredGraduationDate { get; set; } = null!;
+
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
         [JsonIgnore]
         public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
-
+    
         public int? DefaultContactCreationChannel =>
             ChannelId ?? (int?)Candidate.Channel.MailingList; // Use the assigned channel ID if available, else assign default.
 
-        public MailingListAddMember(){
+        public int? Situation { get; set; }
+    
+        public MailingListAddMember()
+        {
         }
 
         public MailingListAddMember(Candidate candidate)
@@ -76,6 +85,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
             LastName = candidate.LastName;
             AddressPostcode = candidate.AddressPostcode;
             WelcomeGuideVariant = candidate.WelcomeGuideVariant;
+            Situation = candidate.Situation;
 
             AlreadySubscribedToMailingList = candidate.HasMailingListSubscription == true;
             AlreadySubscribedToEvents = candidate.HasEventsSubscription == true;
@@ -99,6 +109,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                 PreferredContactMethodId = (int)Candidate.ContactMethod.Any,
                 GdprConsentId = (int)Candidate.GdprConsent.Consent,
                 OptOutOfGdpr = false,
+                Situation = Situation
             };
             candidate.ConfigureChannel(contactChannelCreator: this, candidateId: CandidateId);
             ConfigureSubscriptions(candidate);
@@ -115,6 +126,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                 Id = QualificationId,
                 DegreeStatusId = DegreeStatusId,
                 TypeId = (int)CandidateQualification.DegreeType.Degree,
+                GraduationYear = InferredGraduationDate
             });
         }
 
@@ -140,6 +152,42 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                     AcceptedAt = DateTimeProvider.UtcNow,
                 };
             }
+        }
+
+        /// <summary>
+        /// Provides logic to conditionally infer the degree status based on
+        /// the graduation year, if the graduation year is provisioned.
+        /// </summary>
+        /// <param name="degreeStatusDomainService">
+        /// Implementation of <see cref="IDegreeStatusDomainService"/> which
+        /// provides the functionality for inferring degree status based on the proposed graduation year.
+        /// </param>
+        /// <param name="currentYearProvider">
+        /// Implementation of <see cref="ICurrentYearProvider"/> which provides the current date/time
+        /// as well as helper methods to convert the current year to an integer representation.
+        /// </param>
+        public int? InferDegreeStatus(
+            IDegreeStatusDomainService degreeStatusDomainService,
+            ICurrentYearProvider currentYearProvider)
+        {
+            if (GraduationYear != null)
+            {
+                const int GraduationDay = 31;
+                const int GraduationMonth = 8;
+
+                DegreeStatusInferenceRequest degreeStatusInferenceRequest =
+                    DegreeStatusInferenceRequest.Create(
+                        new GraduationYear(GraduationYear.Value, currentYearProvider), currentYearProvider);
+
+                DegreeStatusId =
+                    degreeStatusDomainService
+                        .GetInferredDegreeStatusFromGraduationYear(degreeStatusInferenceRequest);
+
+                InferredGraduationDate =
+                    new DateTime(GraduationYear.Value, GraduationMonth, GraduationDay);
+            }
+
+            return DegreeStatusId;
         }
     }
 }
