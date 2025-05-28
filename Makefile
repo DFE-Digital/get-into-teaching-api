@@ -77,7 +77,7 @@ terraform-init: vendor-modules set-azure-account
 	terraform -chdir=terraform/aks init -upgrade -reconfigure \
 		-backend-config=resource_group_name=${AZURE_RESOURCE_PREFIX}-${SERVICE_SHORT}-${CONFIG_SHORT}-rg \
 		-backend-config=storage_account_name=${AZURE_RESOURCE_PREFIX}${SERVICE_SHORT}tfstate${CONFIG_SHORT}sa \
-		-backend-config=key=${CONFIG}_aks.tfstate
+		-backend-config=key=$(if $(filter review,$(CONFIG)),review-pr-$(PR_NUMBER),$(CONFIG))_aks.tfstate
 
 	$(if $(IMAGE_TAG), , $(error The IMAGE_TAG variable must be provided))
 	$(eval export TF_VAR_app_docker_image=ghcr.io/dfe-digital/get-into-teaching-api:$(IMAGE_TAG))
