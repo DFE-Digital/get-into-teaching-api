@@ -5,6 +5,10 @@ on:
   push:
     branches: [ master ]
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   sonarcloud:
     runs-on: ubuntu-latest
@@ -20,22 +24,6 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-
-      - uses: Azure/login@v2
-        with:
-           creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Fetch secrets from key vault
-        uses: azure/CLI@v2
-        id: fetch-secrets
-        with:
-          inlineScript: |
-            SECRET_VALUE=$(az keyvault secret show --name "SLACK-WEBHOOK" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
-            echo "::add-mask::$SECRET_VALUE"
-            echo "SLACK-WEBHOOK=$SECRET_VALUE" >> $GITHUB_OUTPUT
-            SECRET_VALUE=$(az keyvault secret show --name "SONAR-TOKEN" --vault-name "${{ secrets.INFRA_KEY_VAULT}}" --query "value" -o tsv)
-            echo "::add-mask::$SECRET_VALUE"
-            echo "SONAR-TOKEN=$SECRET_VALUE" >> $GITHUB_OUTPUT
 
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v4
@@ -59,7 +47,7 @@ jobs:
             /k:"DFE-Digital_get-into-teaching-api" \
             /o:"dfe-digital" \
             /n:"get-into-teaching-api" \
-            /d:sonar.login="${{ steps.fetch-secrets.outputs.SONAR-TOKEN }}" \
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.cpd.exclusions="GetIntoTeachingApi/Migrations/*.cs" \
             /d:sonar.cs.opencover.reportsPaths="GetIntoTeachingApiTests/coverage.opencover.xml" \
@@ -77,7 +65,7 @@ jobs:
             /d:sonar.log.level="DEBUG"
           dotnet build
           dotnet test --no-build --logger:trx -e:CollectCoverage=true -e:CoverletOutputFormat=opencover
-          dotnet sonarscanner end /d:sonar.login="${{ steps.fetch-secrets.outputs.SONAR-TOKEN }}"
+          dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
       - name: Slack Notification
         if: failure() && github.ref == 'refs/heads/master'
@@ -86,4 +74,4 @@ jobs:
            SLACK_COLOR:   ${{env.SLACK_FAILURE }}
            SLACK_MESSAGE: Pipeline Failure carrying out job ${{github.job}}
            SLACK_TITLE:   'Failure: ${{ github.workflow }}'
-           SLACK_WEBHOOK: ${{ steps.fetch-secrets.outputs.SLACK-WEBHOOK  }}
+           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK  }}

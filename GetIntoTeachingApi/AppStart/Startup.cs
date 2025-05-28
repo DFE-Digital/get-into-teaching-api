@@ -5,6 +5,7 @@ using FluentValidation.AspNetCore;
 using GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.Middleware;
 using GetIntoTeachingApi.JsonConverters;
 using GetIntoTeachingApi.ModelBinders;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices;
 using GetIntoTeachingApi.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -73,6 +74,12 @@ namespace GetIntoTeachingApi.AppStart
             services.AddSwagger();
 
             services.AddHangfire(_env, useMemoryStorage: _env.IsTest);
+
+            // This registration provides the composition root for the degree-status inference services.
+            // This is a temporary change to facilitate the way we capture DegreeStatus and graduation year
+            // so we can better segment different year groups. This inference logic allows us to temporarily
+            // maintain the DegreeStatusId field until we fully transition to graduation year only. 
+            services.RegisterDegreeStatusInferenceServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

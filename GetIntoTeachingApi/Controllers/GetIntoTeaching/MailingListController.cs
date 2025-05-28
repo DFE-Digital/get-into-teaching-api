@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using GetIntoTeachingApi.Jobs;
+﻿using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices;
 using GetIntoTeachingApi.Models.GetIntoTeaching;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Collections.Generic;
 
 namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
 {
@@ -23,31 +25,37 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
         private readonly ICrmService _crm;
         private readonly IBackgroundJobClient _jobClient;
         private readonly IDateTimeProvider _dateTime;
+        private readonly IDegreeStatusDomainService _degreeStatusDomainService;
+        private readonly ICurrentYearProvider _currentYearProvider;
 
         public MailingListController(
             ICandidateAccessTokenService accessTokenService,
             ICandidateMagicLinkTokenService magicLinkTokenService,
             ICrmService crm,
             IBackgroundJobClient jobClient,
-            IDateTimeProvider dateTime)
+            IDateTimeProvider dateTime,
+            IDegreeStatusDomainService degreeStatusDomainService,
+            ICurrentYearProvider currentYearProvider)
         {
             _crm = crm;
             _accessTokenService = accessTokenService;
             _magicLinkTokenService = magicLinkTokenService;
             _jobClient = jobClient;
             _dateTime = dateTime;
+            _degreeStatusDomainService = degreeStatusDomainService;
+            _currentYearProvider = currentYearProvider;
         }
 
         [HttpPost]
         [Route("members")]
         [SwaggerOperation(
-            Summary = "Adds a new member to the mailing list.",
-            Description = @"
-                If the `CandidateId` is specified then the existing candidate will be 
-                added to the mailing list, otherwise a new candidate will be created.",
-            OperationId = "AddMailingListMember",
-            Tags = new[] { "Mailing List" })]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+    Summary = "Adds a new member to the mailing list.",
+    Description = @"
+        If the `CandidateId` is specified then the existing candidate will be 
+        added to the mailing list, otherwise a new candidate will be created.",
+    OperationId = "AddMailingListMember",
+    Tags = new[] { "Mailing List" })]
+        [ProducesResponseType(typeof(DegreeStatusResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
         public IActionResult AddMember(
             [FromBody, SwaggerRequestBody("Member to add to the mailing list.", Required = true)] MailingListAddMember request)
@@ -57,13 +65,23 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
                 return BadRequest(ModelState);
             }
 
+            // This is a short-medium term solution to infer the degree status from the
+            // graduation year provided to support current behaviour until degree status
+            // is fully retired. The intention being to remove this functionality once we
+            // fully migrate to the new approach. 
+            int? degreeStatusId =
+                request.InferDegreeStatus(
+                    _degreeStatusDomainService, _currentYearProvider);
+
             // This is the only way we can mock/freeze the current date/time
             // in contract tests (there's no other way to inject it into this class).
             request.DateTimeProvider = _dateTime;
             string json = request.Candidate.SerializeChangeTracked();
-            _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
+            _jobClient.Enqueue<UpsertCandidateJob>(
+                (upsertCandidateJob) => upsertCandidateJob.Run(json, null));
 
-            return NoContent();
+
+            return Ok(new DegreeStatusResponse { DegreeStatusId = degreeStatusId });
         }
 
         [HttpPost]

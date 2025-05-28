@@ -26,6 +26,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.Xrm.Sdk;
 using StackExchange.Redis;
 using System;
+using System.Configuration;
 
 namespace GetIntoTeachingApi.AppStart
 {
@@ -68,7 +69,7 @@ namespace GetIntoTeachingApi.AppStart
         public static void AddDatabase(this IServiceCollection services, IEnv env)
         {
             var connectionString = DbConfiguration.DatabaseConnectionString(env);
-            services.AddDbContext<GetIntoTeachingDbContext>(b => DbConfiguration.ConfigPostgres(connectionString, b));
+            services.AddDbContext<GetIntoTeachingDbContext>(b => DbConfiguration.ConfigPostgres(connectionString, b), ServiceLifetime.Transient);
         }
 
         public static void AddApiClientAuthentication(this IServiceCollection services)
@@ -152,22 +153,25 @@ namespace GetIntoTeachingApi.AppStart
             {
                 if (!env.IsDevelopment)
                 {
-                    options.WorkerCount = 20;
+                    options.WorkerCount = 1; // Set to a single thread to avoid DbContext contention issue.
                 }
             });
         }
 
         public static void ConfigureRedis(this IServiceCollection services, IEnv env)
         {
-            if (string.IsNullOrEmpty(env.RedisConnectionString)) {
-              var redisOptions = RedisConfiguration.ConfigurationOptions(env);
-              var connection = ConnectionMultiplexer.Connect(redisOptions);
-              services.AddSingleton<IConnectionMultiplexer>(_ => connection);
-              services.AddDataProtection().PersistKeysToStackExchangeRedis(connection, "DataProtection-Keys");
-            } else {
-              var connection = ConnectionMultiplexer.Connect(env.RedisConnectionString);
-              services.AddSingleton<IConnectionMultiplexer>(_ => connection);
-              services.AddDataProtection().PersistKeysToStackExchangeRedis(connection, "DataProtection-Keys");
+            if (string.IsNullOrEmpty(env.RedisConnectionString))
+            {
+                var redisOptions = RedisConfiguration.ConfigurationOptions(env);
+                var connection = ConnectionMultiplexer.Connect(redisOptions);
+                services.AddSingleton<IConnectionMultiplexer>(_ => connection);
+                services.AddDataProtection().PersistKeysToStackExchangeRedis(connection, "DataProtection-Keys");
+            }
+            else
+            {
+                var connection = ConnectionMultiplexer.Connect(env.RedisConnectionString);
+                services.AddSingleton<IConnectionMultiplexer>(_ => connection);
+                services.AddDataProtection().PersistKeysToStackExchangeRedis(connection, "DataProtection-Keys");
             }
         }
 
