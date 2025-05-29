@@ -44,3 +44,4 @@ jobs:
           storage-account-name: "s189t01gitapitfstatervsa"
           tf-state-file: "${{ github.event.pull_request.number || github.event.inputs.pr_number }}.tfstate"
           terraform-base: "terraform/aks"
+          tf-file: "provider.tf"
