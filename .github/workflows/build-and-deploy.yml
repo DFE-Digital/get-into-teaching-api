@@ -120,15 +120,6 @@ jobs:
             echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
           fi
 
-      - name: Rename Review Config File
-        run: |
-          if [ -f "GetIntoTeachingApi/env.review" ]; then
-            cp "GetIntoTeachingApi/env.review" "GetIntoTeachingApi/env.review-${{ steps.pr.outputs.number }}"
-            echo "Created review-${{ steps.pr.outputs.number }} environment file from template"
-          else
-            echo "Warning: Review environment template file not found"
-          fi
-
       - uses: DFE-Digital/github-actions/set-kubelogin-environment@master
         with:
           azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}

@@ -2,7 +2,7 @@ locals {
   review_hostname = var.pr_number != "" ? ["getintoteachingapi-review-${var.pr_number}.${var.cluster}.teacherservices.cloud"] : []
   app_hostnames = var.environment == "review" ? local.review_hostname : var.gov_uk_host_names
   deployment_environment = var.environment == "review" && var.pr_number != "" ? "review-${var.pr_number}" : var.environment
-  aks_env_name = var.environment == "review" && var.pr_number != "" ? "review-${var.pr_number}" : var.file_environment
+  aks_env_name = var.file_environment
 }
 
 module "api_application" {
