@@ -7,6 +7,9 @@ inputs:
   sha:
     description: Commit sha to be deployed
     required: true
+  pr-number:
+    description: PR number for review app
+    required: false
   azure-client-id:
     description: Managed identity client ID
     required: true
@@ -18,6 +21,7 @@ inputs:
     required: true
 outputs:
   deploy-url:
+    description: "URL of the deployed application"
     value: https://${{ steps.set_env_var.outputs.deploy_url }}
 runs:
   using: composite
@@ -32,7 +36,9 @@ runs:
         aks_app_environment=$(jq -r '.environment' ${tf_vars_file})
         echo "TERRAFORM_VERSION=$terraform_version" >> $GITHUB_ENV
 
-        if [[ $cluster == 'production' ]]; then
+        if [[ "${{ inputs.environment }}" == "review" && -n "${{ inputs.pr-number }}" ]]; then
+          app_hostname=getintoteachingapi-review-${{ inputs.pr-number }}.${cluster}.teacherservices.cloud
+        elif [[ $cluster == 'production' ]]; then
           app_hostname=getintoteachingapi-${aks_app_environment}.teacherservices.cloud
         else
           app_hostname=getintoteachingapi-${aks_app_environment}.${cluster}.teacherservices.cloud
@@ -43,7 +49,6 @@ runs:
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: ${{ env.TERRAFORM_VERSION }}
-
 
     - uses: DFE-Digital/github-actions/set-kubelogin-environment@master
       with:
@@ -56,6 +61,7 @@ runs:
       run: make ci ${{ inputs.environment }} terraform-apply
       env:
         IMAGE_TAG: ${{ inputs.sha }}
+        PR_NUMBER: ${{ inputs.pr-number }}
 
     - name: Smoke tests
       shell: bash
