@@ -72,12 +72,6 @@ When a feature branch is merged to `master` it will be automatically deployed to
 
 ### Review Environments
 
-Note: You will need to rename env.review to env.review-{PR-NUMBER} when deploying manually via the make target e.g
-
-`make ci review terraform-apply IMAGE_TAG=sha-1f48d47 PR_NUMBER=1234`
-
-This is automatically handled via the deploy workflow but for manual testing the `PR_NUMBER` and suffix for `env.review-{PR_NUMBER}` must align
-
 You can deploy a temporary review environment for a feature branch by adding the `deploy` label to your pull request. This will trigger a GitHub Action that will deploy the API to a new review environment based on the PR number (e.g., `getintoteachingapi-review-123.test.teacherservices.cloud`). Review environments are useful for testing changes before merging them to the main branch.
 
 Review environments have the following characteristics:
