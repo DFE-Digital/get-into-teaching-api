@@ -207,5 +207,10 @@ namespace GetIntoTeachingApiTests.Helpers
         {
             _crmService.Save(model);
         }
+
+        public IEnumerable<Entity> GetMultiplePickListItems(string entityName, string attributeName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
