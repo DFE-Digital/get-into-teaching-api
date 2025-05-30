@@ -37,10 +37,14 @@ jobs:
         uses: DFE-Digital/github-actions/delete-review-app@master
         with:
           azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          container-name: "gitapi-tfstate"
           pr-number: ${{ github.event.pull_request.number || github.event.inputs.pr_number }}
           resource-group-name: "s189t01-gitapi-rv-rg"
           storage-account-name: "s189t01gitapitfstatervsa"
-          tf-state-file: "${{ github.event.pull_request.number || github.event.inputs.pr_number }}.tfstate"
           terraform-base: "terraform/aks"
+          tf-file: "provider.tf"
+          tf-state-file: "review-pr-${{ github.event.pull_request.number || github.event.inputs.pr_number }}_aks.tfstate"
+        env:
+          IMAGE_TAG: ignored
