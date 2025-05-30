@@ -11,7 +11,7 @@ using System.Text.Json.Serialization;
 
 namespace GetIntoTeachingApi.Models.GetIntoTeaching
 {
-    public class MailingListAddMember : IInferDegreeStatus
+    public class MailingListAddMember : ICreateContactChannel, IInferDegreeStatus
     {
         public Guid? CandidateId { get; set; }
         public Guid? QualificationId { get; set; }
@@ -23,6 +23,14 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public int? DegreeStatusId { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public int? ChannelId { get; set; }
+        
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelSourceId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelServiceId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelActivityId { get; set; }
+
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -42,9 +50,12 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public Candidate Candidate => CreateCandidate();
         [JsonIgnore]
         public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
+    
+        public int? DefaultContactCreationChannel =>
+            ChannelId ?? (int?)Candidate.Channel.MailingList; // Use the assigned channel ID if available, else assign default.
 
         public int? Situation { get; set; }
-
+    
         public MailingListAddMember()
         {
         }
@@ -100,21 +111,12 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                 OptOutOfGdpr = false,
                 Situation = Situation
             };
-
-            ConfigureChannel(candidate);
+            candidate.ConfigureChannel(contactChannelCreator: this, candidateId: CandidateId);
             ConfigureSubscriptions(candidate);
             AddQualification(candidate);
             AcceptPrivacyPolicy(candidate);
 
             return candidate;
-        }
-
-        private void ConfigureChannel(Candidate candidate)
-        {
-            if (CandidateId == null)
-            {
-                candidate.ChannelId = ChannelId ?? (int?)Candidate.Channel.MailingList;
-            }
         }
 
         private void AddQualification(Candidate candidate)
