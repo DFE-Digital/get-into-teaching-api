@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Flurl.Util;
-using GetIntoTeachingApi.Adapters;
+﻿using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
@@ -13,7 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Xrm.Sdk;
 using MoreLinq;
 using NetTopologySuite.Geometries;
-using NetTopologySuite.Index.HPRtree;
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading.Tasks;
 using Location = GetIntoTeachingApi.Models.Location;
 
 namespace GetIntoTeachingApi.Services
@@ -344,43 +343,68 @@ namespace GetIntoTeachingApi.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        private async Task SyncMultiItemPickListEntity(string entityName, string attributeName)
+        /// <summary>
+        /// Asynchronously synchronizes multi-select pick-list values for a given entity and attribute in CRM.
+        /// </summary>
+        /// <param name="entityName">
+        /// The logical name of the entity that contains the multi-select pick-list attribute.
+        /// </param>
+        /// <param name="attributeName">
+        /// The logical name of the attribute that contains the multi-select pick-list attribute.
+        /// </param>
+        /// <exception cref="ArgumentException">
+        /// Exception thrown when no entities are found for the specified entity name and attribute name.
+        /// </exception>
+        private Task SyncMultiItemPickListEntity(string entityName, string attributeName)
         {
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(entityName);
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(attributeName);
+
+            // Retrieve the first matching entity that contains the specified pick-list attribute.
+            // If no such entity is found, throw an exception.
             Entity entity =
                 _crm.GetMultiplePickListItems(entityName, attributeName)?.FirstOrDefault() ??
                 throw new ArgumentException(
                     $"No entities found for {entityName} with attribute {attributeName}.");
 
+            // Extract the formatted pick-list values (display labels) as a string array.
+            // These are typically separated by semicolons in CRM.
             string[] picklistValues =
                 entity.FormattedValues
                     .FirstOrDefault(pair => pair.Key == attributeName).Value.Split(';');
 
+            // Retrieve the raw OptionSetValue collection from the entity's attributes.
+            // If not found, throw an exception.
             IEnumerable<OptionSetValue> optionSetValues =
                 (IEnumerable<OptionSetValue>)entity.Attributes.Values.FirstOrDefault() ??
                 throw new ArgumentException(
                     $"No option set values found for {entityName} with attribute {attributeName}.");
 
-            List<int> pickListIds =
+            // Extract the integer IDs from the OptionSetValue collection.
+            ImmutableList<int> pickListIds =
                 optionSetValues
-                    .Select(pickListValue =>
-                        pickListValue.Value).ToList();
+                    .Select(pickListValue => pickListValue.Value).ToImmutableList();
 
-            List<PickListItem> pickListItems = [];
+            // Initialize an empty immutable list to hold the final PickListItem objects.
+            ImmutableList<PickListItem> pickListItems = [];
 
+            // Loop through each pick-list value and its corresponding ID to create PickListItem objects.
             for (int attributeIndex = 0; attributeIndex < picklistValues.Length; attributeIndex++)
             {
-                PickListItem item =
-                    new() {
-                        Id = pickListIds[attributeIndex],
-                        EntityName = entityName,
-                        AttributeName = attributeName,
-                        Value = picklistValues[attributeIndex]
-                    };
+                PickListItem item = new()
+                {
+                    Id = pickListIds[attributeIndex],
+                    EntityName = entityName,
+                    AttributeName = attributeName,
+                    Value = picklistValues[attributeIndex]
+                };
 
-                pickListItems.Add(item);
+                // Add the constructed item to the list.
+                _ = pickListItems.Add(item);
             }
 
-            await SyncPickListItems(pickListItems, entityName, attributeName);
+            // Call a method to synchronize the constructed pick-list items with the system.
+            return SyncPickListItems(pickListItems, entityName, attributeName);
         }
 
         private async Task PopulateTeachingEventCoordinates(IEnumerable<TeachingEventBuilding> buildings)

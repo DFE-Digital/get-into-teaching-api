@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Bogus;
 using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Database;
@@ -12,11 +9,20 @@ using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.PowerPlatform.Dataverse.Client.Extensions;
+using Microsoft.Xrm.Sdk;
 using Moq;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using Xunit;
 using Location = GetIntoTeachingApi.Models.Location;
+using PickListItem = GetIntoTeachingApi.Models.PickListItem;
 
 namespace GetIntoTeachingApiTests.Services
 {
@@ -341,6 +347,22 @@ namespace GetIntoTeachingApiTests.Services
             var remainingCountries = DbContext.PickListItems
                 .Where(p => p.EntityName == "contact" && p.AttributeName == "dfe_ittyear").ToArray();
             remainingCountries.Should().BeEquivalentTo(years.GetRange(0, 2));
+        }
+
+        [Fact]
+        public async Task SyncMultiItemPickListEntity_ShouldSyncCorrectItems()
+        {
+            // arrange
+            _mockCrm.Setup(crmService =>
+                crmService.GetPickListItems("msevtmgt_event", "dfe_accessibility"))
+                    .Returns([]).Verifiable();
+
+            // act
+            await _store.SyncAsync();
+
+            // verify
+            _mockCrm.Verify(crmService =>
+                crmService.GetPickListItems("msevtmgt_event", "dfe_accessibility"), Times.Once);
         }
 
         [Fact]
@@ -723,6 +745,162 @@ namespace GetIntoTeachingApiTests.Services
 
             DbContext.TeachingEvents.FirstOrDefault(e => e.Id == teachingEvent1.Id).Should().NotBeNull();
             DbContext.TeachingEvents.FirstOrDefault(e => e.Id == teachingEvent2.Id).Should().NotBeNull();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData(" ")]
+        public async Task SyncMultiItemPickListEntity_WithNullOrEmptyEntityNameKey_ThrowsArgumentNullException(string entityNameKey)
+        {
+            // Arrange
+            const string methodName = "SyncMultiItemPickListEntity";
+            const string attributeNameKey = "dfe_accessibility";
+
+            MethodInfo methodInfo = typeof(Store).GetMethod(
+                methodName,
+                BindingFlags.NonPublic | BindingFlags.Instance);
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<TargetInvocationException>(async () =>
+            {
+                var task = (Task)methodInfo.Invoke(_store, [entityNameKey, attributeNameKey]);
+                await task;
+            });
+
+            // Unwrap inner exception
+            exception.InnerException.Should().BeAssignableTo<ArgumentException>();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData(" ")]
+        public async Task SyncMultiItemPickListEntity_WithNullOrEmptyAttributeNameKey_ThrowsArgumentNullException(string attributeNameKey)
+        {
+            // Arrange
+            const string methodName = "SyncMultiItemPickListEntity";
+            const string EntityNameKey = "msevtmgt_event";
+
+            MethodInfo methodInfo = typeof(Store).GetMethod(
+                methodName,
+                BindingFlags.NonPublic | BindingFlags.Instance);
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<TargetInvocationException>(async () =>
+            {
+                var task = (Task)methodInfo.Invoke(_store, [EntityNameKey, attributeNameKey]);
+                await task;
+            });
+
+            // assert
+            exception.InnerException.Should().BeAssignableTo<ArgumentException>();
+        }
+
+        [Fact]
+        public async Task SyncMultiItemPickListEntity_WithNoAvailablePicklistItems_ThrowsArgumentNullException()
+        {
+            // arrange
+            const string MethodNameKey = "SyncMultiItemPickListEntity";
+            const string EntityNameKey = "msevtmgt_event";
+            const string AttributeNameKey = "dfe_accessibility";
+
+            MethodInfo methodInfo =
+                typeof(Store).GetMethod(
+                    MethodNameKey,
+                    BindingFlags.NonPublic | BindingFlags.Instance);
+
+            // act
+            var exception = await Assert.ThrowsAsync<TargetInvocationException>(async () =>
+            {
+                var task = (Task)methodInfo.Invoke(_store, [EntityNameKey, AttributeNameKey]);
+                await task;
+            });
+
+            // assert
+            exception.InnerException.Should().BeAssignableTo<ArgumentException>();
+        }
+
+        [Fact]
+        public async Task SyncMultiItemPickListEntity_WithNullEntityAttributes_ThrowsArgumentNullException()
+        {
+            // arrange
+            const int DefaultOptionSetValue = 123456;
+            const string MethodNameKey = "SyncMultiItemPickListEntity";
+            const string EntityNameKey = "msevtmgt_event";
+            const string AttributeNameKey = "dfe_accessibility";
+            const string DefaultTestEntityName = "TestEntity";
+            const string DefaultTestAttributeNameValue = "TestAttribute";
+
+            MethodInfo methodInfo =
+                typeof(Store).GetMethod(
+                    MethodNameKey,
+                    BindingFlags.NonPublic | BindingFlags.Instance);
+
+            _mockCrm.Setup(crmService =>
+                crmService.GetMultiplePickListItems(EntityNameKey, AttributeNameKey))
+                    .Returns([
+                        new(DefaultTestEntityName){
+                            FormattedValues = {
+                                    [AttributeNameKey] = DefaultTestAttributeNameValue
+                            },
+                            Attributes = {
+                                [AttributeNameKey] = default
+                            }
+                        },
+                    ]);
+
+            // act
+            var exception = await Assert.ThrowsAsync<TargetInvocationException>(async () =>
+            {
+                var task = (Task)methodInfo.Invoke(_store, [EntityNameKey, AttributeNameKey]);
+                await task;
+            });
+
+            // assert
+            exception.InnerException.Should().BeAssignableTo<ArgumentException>();
+        }
+
+        [Fact]
+        public void SyncMultiItemPickListEntity_WithValidParameters_ReturnsTaskCompletedSucessfully()
+        {
+            // arrange
+            const int DefaultOptionSetValue = 123456;
+            const string MethodNameKey = "SyncMultiItemPickListEntity";
+            const string EntityNameKey = "msevtmgt_event";
+            const string AttributeNameKey = "dfe_accessibility";
+            const string DefaultTestEntityName = "TestEntity";
+            const string DefaultTestAttributeNameValue = "TestAttribute";
+
+            MethodInfo methodInfo =
+                typeof(Store).GetMethod(
+                    MethodNameKey,
+                    BindingFlags.NonPublic | BindingFlags.Instance);
+
+            _mockCrm.Setup(crmService =>
+                crmService.GetMultiplePickListItems(EntityNameKey, AttributeNameKey))
+                    .Returns([
+                        new(DefaultTestEntityName){
+                            FormattedValues = {
+                                    [AttributeNameKey] = DefaultTestAttributeNameValue
+                            },
+                            Attributes = {
+                                [AttributeNameKey] =
+                                    new List<OptionSetValue>(){new(DefaultOptionSetValue) }
+                            }
+                        },
+                    ])
+                    .Verifiable();
+
+            // act
+            Task task =
+                (Task)methodInfo.Invoke(
+                    _store, [EntityNameKey, AttributeNameKey]);
+
+            // assert
+            Assert.True(task.IsCompletedSuccessfully, "Method did not complete successfully.");
+
+            // verify
+            _mockCrm.Verify(crmService =>
+                crmService.GetMultiplePickListItems(EntityNameKey, AttributeNameKey), Times.Once);
         }
 
         private static bool CheckGetTeachingEventsAfterDate(DateTime date)
