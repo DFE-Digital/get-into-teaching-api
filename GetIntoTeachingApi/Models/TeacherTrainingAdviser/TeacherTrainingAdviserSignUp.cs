@@ -98,9 +98,29 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
         [JsonIgnore]
         private bool IsOverseas => CountryId != Country.UnitedKingdomCountryId;
-
+        
+        /// <summary>
+        /// Provides the default read-only contact creation channel integer value. NB: this field will be deprecated.
+        /// </summary>
         public int? DefaultContactCreationChannel =>
             ChannelId ?? (int?)Candidate.Channel.TeacherTrainingAdviser; // Use the assigned channel ID if available, else assign default.
+
+        /// <summary>
+        /// Provides the default read-only creation channel source identifier.
+        /// </summary>
+        public int? DefaultCreationChannelSourceId =>
+            (int?)ContactChannelCreation.CreationChannelSource.GITWebsite;
+
+        /// <summary>
+        /// Provides the default read-only creation channel service identifier.
+        /// </summary>
+        public int? DefaultCreationChannelServiceId =>
+            (int?)ContactChannelCreation.CreationChannelService.TeacherTrainingAdviserService;
+
+        /// <summary>
+        /// Provides the default read-only creation channel activity identifier.
+        /// </summary>
+        public int? DefaultCreationChannelActivityId => null;
 
         public TeacherTrainingAdviserSignUp(){
         }

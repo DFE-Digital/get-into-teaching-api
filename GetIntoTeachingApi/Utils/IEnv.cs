@@ -14,6 +14,7 @@
         string RedisConnectionString { get; }
         string AksEnvName { get; }
         bool EnableMetrics { get; }
+        bool DisableDefaultCreationChannels { get; }
         string HangfireInstanceName { get; }
         string HangfireUsername { get; }
         string HangfirePassword { get; }

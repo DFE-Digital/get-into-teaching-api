@@ -51,8 +51,29 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
         public Candidate Candidate => CreateCandidate();
         [JsonIgnore]
         public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
+        
+        /// <summary>
+        /// Provides the default read-only contact creation channel integer value. NB: this field will be deprecated.
+        /// </summary>
+        public int? DefaultContactCreationChannel =>
+            (int?)Candidate.Channel.SchoolsExperience;
 
-        public int? DefaultContactCreationChannel => (int?)Candidate.Channel.SchoolsExperience;
+        /// <summary>
+        /// Provides the default read-only creation channel source identifier.
+        /// </summary>
+        public int? DefaultCreationChannelSourceId =>
+            (int?)ContactChannelCreation.CreationChannelSource.SchoolExperience;
+
+        /// <summary>
+        /// Provides the default read-only creation channel service identifier.
+        /// </summary>
+        public int? DefaultCreationChannelServiceId =>
+            (int?)ContactChannelCreation.CreationChannelService.CreatedOnSchoolExperience;
+
+        /// <summary>
+        /// Provides the default read-only creation channel activity identifier.
+        /// </summary>
+        public int? DefaultCreationChannelActivityId => null;
 
         public SchoolsExperienceSignUp(){
         }

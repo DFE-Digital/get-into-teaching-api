@@ -7,9 +7,27 @@
     public interface ICreateContactChannel
     {
         /// <summary>
-        /// Provides the default read-only contact creation channel integer value.
+        /// Provides the default read-only contact creation channel integer value. NB: this field will be deprecated.
         /// </summary>
         int? DefaultContactCreationChannel { get; }
+        
+        /// <summary>
+        /// Provides the default read-only creation channel source identifier.
+        /// </summary>
+        int? DefaultCreationChannelSourceId { get; }
+        
+        /// <summary>
+        /// Provides the default read-only creation channel service identifier.
+        /// </summary>
+        int? DefaultCreationChannelServiceId { get; }
+        
+        /// <summary>
+        /// Provides the default read-only creation channel activity identifier.
+        /// </summary>
+        int? DefaultCreationChannelActivityId { get; }
+        
+        
+        ////////---
 
         /// <summary>
         /// Provides the ability to assign and retrieve the channel source creation identifier.

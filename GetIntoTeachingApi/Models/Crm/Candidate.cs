@@ -310,6 +310,8 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityRelationship("dfe_contact_dfe_contactchannelcreation_ContactId", typeof(ContactChannelCreation))]
         public List<ContactChannelCreation> ContactChannelCreations { get; set; } = new List<ContactChannelCreation>();
 
+        public IEnv Env { get; set; } = new Env();
+
         public Candidate() : base(){
         }
 
@@ -348,29 +350,30 @@ namespace GetIntoTeachingApi.Models.Crm
         /// </summary>
         public void ConfigureChannel(ICreateContactChannel contactChannelCreator, Guid? candidateId)
         {
-            if (candidateId == null)
+            if (Env.DisableDefaultCreationChannels && !contactChannelCreator.CreationChannelSourceId.HasValue)
             {
-                if (contactChannelCreator.CreationChannelSourceId.HasValue)
+                // do not create a ContactChannelCreation if the defaults are disabled and no CreationChannelSourceId has been provided
+
+                if (candidateId == null) // New candidate record
                 {
-                    ChannelId = null;
-                    AddContactChannelCreation(
-                        channelCreation: ContactChannelCreations.Count == 0,
-                        contactChannelCreator: contactChannelCreator);
-                }
-                else
-                {
-                    ChannelId = contactChannelCreator.DefaultContactCreationChannel;
+                    // NB: we do not update a candidate's ChannelId for an existing record
+                    // NB: this field will be deprecated
+                    ChannelId ??= contactChannelCreator.DefaultContactCreationChannel;
                 }
             }
-            else // Candidate record already exists 
+            else
             {
-                // NB: we do not update a candidate's ChannelId for an existing record
-                // NB: CreationChannel should always be false for existing candidates
-                if (contactChannelCreator.CreationChannelSourceId.HasValue)
+                // NB: creationChannel should always be false for existing candidates
+
+                AddContactChannelCreation(
+                    creationChannel: (candidateId == null) && ContactChannelCreations.Count == 0,
+                    contactChannelCreator: contactChannelCreator);
+
+                if (candidateId == null) // New candidate record
                 {
-                    AddContactChannelCreation(
-                        channelCreation: false,
-                        contactChannelCreator: contactChannelCreator);
+                    // NB: we do not update a candidate's ChannelId for an existing record
+                    // NB: this field will be deprecated
+                    ChannelId = null;
                 }
             }
         }
@@ -379,21 +382,21 @@ namespace GetIntoTeachingApi.Models.Crm
         /// Allows automatic creation of an <see cref="ContactChannelCreation"/>
         /// and assigns to the underlying collection of contact channel creations.
         /// </summary>
-        /// <param name="channelCreation">
+        /// <param name="creationChannel">
         /// Predicates the context of the contact channel creation based on the candidate status.
         /// </param>
         /// <param name="contactChannelCreator">
         /// The source of the contact channel creation request, a type
         /// which implements the <see cref="ICreateContactChannel"/> interface.
         /// </param>
-        private void AddContactChannelCreation(bool channelCreation, ICreateContactChannel contactChannelCreator)
+        private void AddContactChannelCreation(bool creationChannel, ICreateContactChannel contactChannelCreator)
         {
             ContactChannelCreations.Add(
                 ContactChannelCreation.Create(
-                    creationChannel: channelCreation,
-                    sourceId: contactChannelCreator.CreationChannelSourceId,
-                    serviceId: contactChannelCreator.CreationChannelServiceId,
-                    activityId: contactChannelCreator.CreationChannelActivityId));
+                    creationChannel: creationChannel,
+                    sourceId: contactChannelCreator.CreationChannelSourceId ?? contactChannelCreator.DefaultCreationChannelSourceId,
+                    serviceId: contactChannelCreator.CreationChannelServiceId ?? contactChannelCreator.DefaultCreationChannelServiceId,
+                    activityId: contactChannelCreator.CreationChannelActivityId ?? contactChannelCreator.DefaultCreationChannelActivityId));
         }
 
         public bool MagicLinkTokenExpired() => MagicLinkTokenExpiresAt == null || MagicLinkTokenExpiresAt < DateTime.UtcNow;
