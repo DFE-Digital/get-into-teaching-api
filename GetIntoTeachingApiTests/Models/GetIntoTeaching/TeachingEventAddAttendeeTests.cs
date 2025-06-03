@@ -178,19 +178,65 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         }
 
         [Fact]
-        public void Candidate_ChannelIdWhenCandidateIdIsNull_IsMailingList()
+        public void Candidate_ChannelIdWhenCandidateIdIsNull_IsMailingList_WithoutDefaultCreationChannels()
         {
+            var previous = Environment.GetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS");
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", "1");
+            
             var request = new TeachingEventAddAttendee() { CandidateId = null };
 
             request.Candidate.ChannelId.Should().Be((int)Candidate.Channel.Event);
+            
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", previous);
+        }
+        
+        [Fact]
+        public void Candidate_ChannelIdWhenCandidateIdIsNull_IsMailingList_WithDefaultCreationChannels()
+        {
+            var previous = Environment.GetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS");
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", "0");
+            
+            var request = new TeachingEventAddAttendee() { CandidateId = null };
+            request.Candidate.ChannelId.Should().Be(null);
+            
+            var ccc = request.Candidate.ContactChannelCreations.First();
+            ccc.CreationChannel.Should().Be(true);
+            ccc.CreationChannelSourceId.Should().Be((int?)ContactChannelCreation.CreationChannelSource.GITWebsite);
+            ccc.CreationChannelServiceId.Should().Be((int?)ContactChannelCreation.CreationChannelService.Events);
+            ccc.CreationChannelActivityId.Should().Be(null);
+            
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", previous);
         }
 
         [Fact]
-        public void Candidate_WithNonNullChannelIdWhenCandidateIdIsNull_IsMailingList()
+        public void Candidate_WithNonNullChannelIdWhenCandidateIdIsNull_IsMailingList_WithoutDefaultCreationChannels()
         {
+            var previous = Environment.GetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS");
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", "1");
+            
             var request = new TeachingEventAddAttendee() { CandidateId = null, ChannelId = 456 };
 
             request.Candidate.ChannelId.Should().Be(456);
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", previous);
+        }
+        
+        [Fact]
+        public void Candidate_WithNonNullChannelIdWhenCandidateIdIsNull_IsMailingList_WithDefaultCreationChannels()
+        {
+            var previous = Environment.GetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS");
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", "0");
+            
+            var request = new TeachingEventAddAttendee() { CandidateId = null, ChannelId = 456 };
+
+            request.Candidate.ChannelId.Should().Be(null);
+            
+            var ccc = request.Candidate.ContactChannelCreations.First();
+            ccc.CreationChannel.Should().Be(true);
+            ccc.CreationChannelSourceId.Should().Be((int?)ContactChannelCreation.CreationChannelSource.GITWebsite);
+            ccc.CreationChannelServiceId.Should().Be((int?)ContactChannelCreation.CreationChannelService.Events);
+            ccc.CreationChannelActivityId.Should().Be(null);
+            
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", previous);
         }
 
         [Fact]

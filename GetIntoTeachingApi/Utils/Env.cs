@@ -34,6 +34,8 @@ namespace GetIntoTeachingApi.Utils
         public string AppName => AppServices.ApplicationName;
         public string Organization => AppServices.OrganizationName;
         public string Space => AppServices.SpaceName;
+        public bool DisableDefaultCreationChannels => Environment.GetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS") == "1";
+
 
         // The master instance boots first on deploy.
         public bool IsMasterInstance

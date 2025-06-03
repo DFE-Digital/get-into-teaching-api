@@ -5,10 +5,28 @@ namespace GetIntoTeachingApi.Jobs
     public class ContactChannelCandidateWrapper : ICreateContactChannel
     {
         /// <summary>
-        /// Provides the default read-only contact creation channel integer value.
+        /// Provides the default read-only contact creation channel integer value. NB: this field will be deprecated.
         /// </summary>
         public int? DefaultContactCreationChannel =>
             (int?)Candidate.Channel.ApplyForTeacherTraining;
+
+        /// <summary>
+        /// Provides the default read-only creation channel source identifier.
+        /// </summary>
+        public int? DefaultCreationChannelSourceId =>
+            (int?)ContactChannelCreation.CreationChannelSource.Apply;
+
+        /// <summary>
+        /// Provides the default read-only creation channel service identifier.
+        /// </summary>
+        public int? DefaultCreationChannelServiceId =>
+            (int?)ContactChannelCreation.CreationChannelService.CreatedOnApply;
+
+        /// <summary>
+        /// Provides the default read-only creation channel activity identifier.
+        /// </summary>
+        public int? DefaultCreationChannelActivityId => null;
+
 
         /// <summary>
         /// Provides the ability to assign and retrieve the channel source creation identifier.

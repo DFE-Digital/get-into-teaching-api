@@ -149,11 +149,35 @@ namespace GetIntoTeachingApiTests.Models.SchoolsExperience
         }
 
         [Fact]
-        public void Candidate_ChannelIdWhenCandidateIdIsNull_IsSchoolsExperience()
+        public void Candidate_ChannelIdWhenCandidateIdIsNull_IsSchoolsExperience_WithoutDefaultCreationChannels()
         {
+            var previous = Environment.GetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS");
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", "1");
+            
             var request = new SchoolsExperienceSignUp() { CandidateId = null };
 
             request.Candidate.ChannelId.Should().Be((int)Candidate.Channel.SchoolsExperience);
+            
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", previous);
+        }
+        
+        [Fact]
+        public void Candidate_ChannelIdWhenCandidateIdIsNull_IsSchoolsExperience_WithDefaultCreationChannels()
+        {
+            var previous = Environment.GetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS");
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", "0");
+            
+            var request = new SchoolsExperienceSignUp() { CandidateId = null };
+            
+            request.Candidate.ChannelId.Should().Be(null);
+            
+            var ccc = request.Candidate.ContactChannelCreations.First();
+            ccc.CreationChannel.Should().Be(true);
+            ccc.CreationChannelSourceId.Should().Be((int?)ContactChannelCreation.CreationChannelSource.SchoolExperience);
+            ccc.CreationChannelServiceId.Should().Be((int?)ContactChannelCreation.CreationChannelService.CreatedOnSchoolExperience);
+            ccc.CreationChannelActivityId.Should().Be(null);
+            
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", previous);
         }
 
         [Fact]
