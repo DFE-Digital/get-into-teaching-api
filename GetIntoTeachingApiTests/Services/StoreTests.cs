@@ -823,7 +823,6 @@ namespace GetIntoTeachingApiTests.Services
         public async Task SyncMultiItemPickListEntity_WithNullEntityAttributes_ThrowsArgumentNullException()
         {
             // arrange
-            const int DefaultOptionSetValue = 123456;
             const string MethodNameKey = "SyncMultiItemPickListEntity";
             const string EntityNameKey = "msevtmgt_event";
             const string AttributeNameKey = "dfe_accessibility";
