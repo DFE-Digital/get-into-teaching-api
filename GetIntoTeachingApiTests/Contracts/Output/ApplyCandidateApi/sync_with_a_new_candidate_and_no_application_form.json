@@ -64,7 +64,9 @@
       "Value" : null
     }, {
       "Key" : "dfe_creationchannelservice",
-      "Value" : null
+      "Value" : {
+        "Value": 222750000
+      }
     }, {
       "Key" : "dfe_creationchannelsource",
       "Value" : {
