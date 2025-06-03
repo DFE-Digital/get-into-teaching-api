@@ -310,7 +310,7 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityRelationship("dfe_contact_dfe_contactchannelcreation_ContactId", typeof(ContactChannelCreation))]
         public List<ContactChannelCreation> ContactChannelCreations { get; set; } = new List<ContactChannelCreation>();
 
-        public IEnv Env { get; set; } = new Env();
+        // public IEnv env { get; set; } = new Env();
 
         public Candidate() : base(){
         }
@@ -349,11 +349,11 @@ namespace GetIntoTeachingApi.Models.Crm
         /// candidate based on the provided contactChannelCreator.
         /// </summary>
         public void ConfigureChannel(ICreateContactChannel contactChannelCreator, Guid? candidateId)
-        {
-            if (Env.DisableDefaultCreationChannels && !contactChannelCreator.CreationChannelSourceId.HasValue)
+        { 
+            if (Environment.GetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS") == "1" && !contactChannelCreator.CreationChannelSourceId.HasValue)
             {
-                // do not create a ContactChannelCreation if the defaults are disabled and no CreationChannelSourceId has been provided
-
+                // Do not create a ContactChannelCreation if the defaults are disabled and no CreationChannelSourceId has been provided
+                // NB: this behaviour should be deprecated once Creation Channels are live
                 if (candidateId == null) // New candidate record
                 {
                     // NB: we do not update a candidate's ChannelId for an existing record
@@ -364,7 +364,6 @@ namespace GetIntoTeachingApi.Models.Crm
             else
             {
                 // NB: creationChannel should always be false for existing candidates
-
                 AddContactChannelCreation(
                     creationChannel: (candidateId == null) && ContactChannelCreations.Count == 0,
                     contactChannelCreator: contactChannelCreator);
