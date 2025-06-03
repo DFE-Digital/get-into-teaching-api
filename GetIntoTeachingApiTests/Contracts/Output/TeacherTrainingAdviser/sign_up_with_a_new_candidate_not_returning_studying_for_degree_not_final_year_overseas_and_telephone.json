@@ -23,9 +23,7 @@
       },
       {
         "Key": "dfe_channelcreation",
-        "Value": {
-          "Value": 222750027
-        }
+        "Value": null
       },
       {
         "Key": "dfe_country",
