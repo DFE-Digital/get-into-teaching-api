@@ -378,6 +378,8 @@ namespace GetIntoTeachingApi.Services
                 optionSetValues?
                     .Select(pickListValue => pickListValue.Value).ToList();
 
+            if (pickListIds is null || pickListIds.Count == 0) return;
+
             // Initialize an empty immutable list to hold the final PickListItem objects.
             List<PickListItem> pickListItems = [];
 
