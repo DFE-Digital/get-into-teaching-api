@@ -80,7 +80,6 @@ namespace GetIntoTeachingApi.Controllers.GetIntoTeaching
             _jobClient.Enqueue<UpsertCandidateJob>(
                 (upsertCandidateJob) => upsertCandidateJob.Run(json, null));
 
-
             return Ok(new DegreeStatusResponse { DegreeStatusId = degreeStatusId });
         }
 
