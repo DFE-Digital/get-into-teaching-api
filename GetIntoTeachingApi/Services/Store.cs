@@ -374,9 +374,9 @@ namespace GetIntoTeachingApi.Services
                 (IEnumerable<OptionSetValue>)entity.Attributes.Values.FirstOrDefault();
 
             // Extract the integer IDs from the OptionSetValue collection.
-            ImmutableList<int> pickListIds =
+            List<int> pickListIds =
                 optionSetValues?
-                    .Select(pickListValue => pickListValue.Value).ToImmutableList();
+                    .Select(pickListValue => pickListValue.Value).ToList();
 
             // Initialize an empty immutable list to hold the final PickListItem objects.
             List<PickListItem> pickListItems = [];
