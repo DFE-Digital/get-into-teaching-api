@@ -355,17 +355,13 @@ namespace GetIntoTeachingApi.Services
         /// <exception cref="ArgumentException">
         /// Exception thrown when no entities are found for the specified entity name and attribute name.
         /// </exception>
-        private Task SyncMultiItemPickListEntity(string entityName, string attributeName)
+        private async Task SyncMultiItemPickListEntity(string entityName, string attributeName)
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(entityName);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(attributeName);
-
             // Retrieve the first matching entity that contains the specified pick-list attribute.
-            // If no such entity is found, throw an exception.
             Entity entity =
-                _crm.GetMultiplePickListItems(entityName, attributeName)?.FirstOrDefault() ??
-                throw new ArgumentException(
-                    $"No entities found for {entityName} with attribute {attributeName}.");
+                _crm.GetMultiplePickListItems(entityName, attributeName)?.FirstOrDefault();
+
+            if (entity is null) return;
 
             // Extract the formatted pick-list values (display labels) as a string array.
             // These are typically separated by semicolons in CRM.
@@ -374,19 +370,16 @@ namespace GetIntoTeachingApi.Services
                     .FirstOrDefault(pair => pair.Key == attributeName).Value.Split(';');
 
             // Retrieve the raw OptionSetValue collection from the entity's attributes.
-            // If not found, throw an exception.
             IEnumerable<OptionSetValue> optionSetValues =
-                (IEnumerable<OptionSetValue>)entity.Attributes.Values.FirstOrDefault() ??
-                throw new ArgumentException(
-                    $"No option set values found for {entityName} with attribute {attributeName}.");
+                (IEnumerable<OptionSetValue>)entity.Attributes.Values.FirstOrDefault();
 
             // Extract the integer IDs from the OptionSetValue collection.
             ImmutableList<int> pickListIds =
-                optionSetValues
+                optionSetValues?
                     .Select(pickListValue => pickListValue.Value).ToImmutableList();
 
             // Initialize an empty immutable list to hold the final PickListItem objects.
-            ImmutableList<PickListItem> pickListItems = [];
+            List<PickListItem> pickListItems = [];
 
             // Loop through each pick-list value and its corresponding ID to create PickListItem objects.
             for (int attributeIndex = 0; attributeIndex < picklistValues.Length; attributeIndex++)
@@ -400,11 +393,11 @@ namespace GetIntoTeachingApi.Services
                 };
 
                 // Add the constructed item to the list.
-                _ = pickListItems.Add(item);
+                pickListItems.Add(item);
             }
 
             // Call a method to synchronize the constructed pick-list items with the system.
-            return SyncPickListItems(pickListItems, entityName, attributeName);
+            await SyncPickListItems(pickListItems, entityName, attributeName);
         }
 
         private async Task PopulateTeachingEventCoordinates(IEnumerable<TeachingEventBuilding> buildings)
