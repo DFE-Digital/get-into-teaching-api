@@ -58,7 +58,10 @@ namespace GetIntoTeachingApi.Jobs
                 UpdateCandidateWithMatch(wrappedCandidate.ScopedCandidate, match);
             }
             
-            wrappedCandidate.ScopedCandidate.ConfigureChannel(wrappedCandidate, wrappedCandidate.ScopedCandidate.Id);
+            wrappedCandidate.ScopedCandidate.ConfigureChannel(
+                candidateId: wrappedCandidate.ScopedCandidate.Id,
+                primaryContactChannel: wrappedCandidate
+                );
             
             string json = wrappedCandidate.ScopedCandidate.SerializeChangeTracked();
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));

@@ -163,7 +163,9 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
             // Ensures we don't create duplicate ContactCreationChannel records
             if (ShouldCreateSchoolExperienceCreationChannel(candidate))
             {
-                candidate.ConfigureChannel(contactChannelCreator: this, candidateId: CandidateId);
+                candidate.ConfigureChannel(
+                    candidateId: CandidateId,
+                    primaryContactChannel: this);
             }
 
             AcceptPrivacyPolicy(candidate);

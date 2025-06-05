@@ -248,7 +248,9 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                 OptOutOfGdpr = false,
             };
 
-            candidate.ConfigureChannel(contactChannelCreator: this, candidateId: CandidateId);
+            candidate.ConfigureChannel(
+                candidateId: CandidateId,
+                primaryContactChannel: this);
             ConfigureGcseStatus(candidate);
             AcceptPrivacyPolicy(candidate);
             SchedulePhoneCall(candidate);

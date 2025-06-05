@@ -84,7 +84,9 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                 LastName = LastName,
                 AddressTelephone = AddressTelephone,
             };
-            candidate.ConfigureChannel(contactChannelCreator: this, candidateId: CandidateId);
+            candidate.ConfigureChannel(
+                candidateId: CandidateId,
+                primaryContactChannel: this);
             SchedulePhoneCall(candidate);
             AcceptPrivacyPolicy(candidate);
 
