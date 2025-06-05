@@ -264,6 +264,28 @@ namespace GetIntoTeachingApiTests.Services
                It.Is<Job>(job => job.Type == typeof(UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>)),
                It.IsAny<EnqueuedState>()), Times.Never);
         }
+        
+        [Fact]
+        public void Upsert_WithContactChannelCreation_SavesContactChannelCreations()
+        {
+            var candidateId = Guid.NewGuid();
+            var contactChannelCreation = new ContactChannelCreation {
+                CreationChannelActivityId = 222750000,
+                CreationChannelServiceId = 222750001,
+                CreationChannelSourceId = 222750002,
+            };
+            
+            _candidate.ContactChannelCreations.Add(contactChannelCreation);
+
+            _upserter.Upsert(_candidate);
+
+            contactChannelCreation.CandidateId = candidateId;
+
+            _mockJobClient.Verify(backgroundJobClient =>
+                backgroundJobClient.Create(
+                    It.Is<Job>(job => job.Type == typeof(UpsertModelWithCandidateIdJob<ContactChannelCreation>)),
+                    It.IsAny<EnqueuedState>()), Times.Once);
+        }
 
         private static bool IsMatch(object objectA, object objectB)
         {

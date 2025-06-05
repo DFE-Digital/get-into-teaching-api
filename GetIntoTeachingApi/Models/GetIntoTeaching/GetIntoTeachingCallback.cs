@@ -1,13 +1,13 @@
-﻿using System;
-using System.Text.Json.Serialization;
-using GetIntoTeachingApi.Models.Crm;
+﻿using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Text.Json.Serialization;
 
 namespace GetIntoTeachingApi.Models.GetIntoTeaching
 {
-    public class GetIntoTeachingCallback
+    public class GetIntoTeachingCallback : ICreateContactChannel
     {
         public Guid? CandidateId { get; set; }
         [SwaggerSchema(WriteOnly = true)]
@@ -20,14 +20,43 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         [SwaggerSchema(WriteOnly = true)]
         public DateTime? PhoneCallScheduledAt { get; set; }
         public string TalkingPoints { get; set; }
+        
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelSourceId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelServiceId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelActivityId { get; set; }
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
         [JsonIgnore]
         public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
+        
+        /// <summary>
+        /// Provides the default read-only contact creation channel integer value. NB: this field will be deprecated.
+        /// </summary>
+        public int? DefaultContactCreationChannel =>
+            (int?)Candidate.Channel.GetIntoTeachingCallback;
 
-        public GetIntoTeachingCallback()
-        {
+        /// <summary>
+        /// Provides the default read-only creation channel source identifier.
+        /// </summary>
+        public int? DefaultCreationChannelSourceId =>
+            (int?)ContactChannelCreation.CreationChannelSource.GITWebsite;
+
+        /// <summary>
+        /// Provides the default read-only creation channel service identifier.
+        /// </summary>
+        public int? DefaultCreationChannelServiceId =>
+            (int?)ContactChannelCreation.CreationChannelService.MailingList;
+
+        /// <summary>
+        /// Provides the default read-only creation channel activity identifier.
+        /// </summary>
+        public int? DefaultCreationChannelActivityId => null;
+
+        public GetIntoTeachingCallback(){
         }
 
         public GetIntoTeachingCallback(Candidate candidate)
@@ -55,8 +84,9 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                 LastName = LastName,
                 AddressTelephone = AddressTelephone,
             };
-
-            ConfigureChannel(candidate);
+            candidate.ConfigureChannel(
+                candidateId: CandidateId,
+                primaryContactChannel: this);
             SchedulePhoneCall(candidate);
             AcceptPrivacyPolicy(candidate);
 
@@ -76,14 +106,6 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                     Subject = $"Scheduled phone call requested by {candidate.FullName}",
                     TalkingPoints = TalkingPoints,
                 };
-            }
-        }
-
-        private void ConfigureChannel(Candidate candidate)
-        {
-            if (CandidateId == null)
-            {
-                candidate.ChannelId = (int?)Candidate.Channel.GetIntoTeachingCallback;
             }
         }
 
