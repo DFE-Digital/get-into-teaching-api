@@ -26,21 +26,6 @@
         /// </summary>
         int? DefaultCreationChannelActivityId { get; }
         
-        // /// <summary>
-        // /// Provides the default read-only additional creation channel source identifier.
-        // /// </summary>
-        // int? DefaultAdditionalCreationChannelSourceId { get; }
-        //
-        // /// <summary>
-        // /// Provides the default read-only additional creation channel service identifier.
-        // /// </summary>
-        // int? DefaultAdditionalCreationChannelServiceId{ get; }
-        //
-        // /// <summary>
-        // /// Provides the default read-only additional creation channel activity identifier.
-        // /// </summary>
-        // int? DefaultAdditionalCreationChannelActivityId { get; }
-
         /// <summary>
         /// Provides the ability to assign and retrieve the channel source creation identifier.
         /// </summary>

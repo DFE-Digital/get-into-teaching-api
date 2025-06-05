@@ -310,8 +310,6 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityRelationship("dfe_contact_dfe_contactchannelcreation_ContactId", typeof(ContactChannelCreation))]
         public List<ContactChannelCreation> ContactChannelCreations { get; set; } = new List<ContactChannelCreation>();
 
-        // public IEnv env { get; set; } = new Env();
-
         public Candidate() : base(){
         }
 
