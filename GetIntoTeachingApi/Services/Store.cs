@@ -23,7 +23,6 @@ namespace GetIntoTeachingApi.Services
         private readonly IGeocodeClientAdapter _geocodeClient;
         private readonly ICrmService _crm;
         private readonly IDateTimeProvider _dateTime;
-        private readonly IEnv _env;
 
         public Store(
             GetIntoTeachingDbContext dbContext,
@@ -36,7 +35,6 @@ namespace GetIntoTeachingApi.Services
             _geocodeClient = geocodeClient;
             _crm = crm;
             _dateTime = dateTime;
-            _env = env;
         }
 
         public static void ClearFailedPostcodeLookupCache()

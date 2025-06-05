@@ -74,23 +74,6 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         /// </summary>
         public int? DefaultCreationChannelActivityId => null;
         
-        /// <summary>
-        /// Provides the default read-only additional creation channel source identifier.
-        /// </summary>
-        public int? DefaultAdditionalCreationChannelSourceId => 
-            (int?)ContactChannelCreation.CreationChannelSource.GITWebsite;
-        
-        /// <summary>
-        /// Provides the default read-only additional creation channel service identifier.
-        /// </summary>
-        public int? DefaultAdditionalCreationChannelServiceId => 
-            (int?)ContactChannelCreation.CreationChannelService.Events;
-        
-        /// <summary>
-        /// Provides the default read-only additional creation channel activity identifier.
-        /// </summary>
-        public int? DefaultAdditionalCreationChannelActivityId => null;
-        
         public int? Situation { get; set; }
     
         public MailingListAddMember()
