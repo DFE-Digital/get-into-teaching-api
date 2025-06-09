@@ -13,6 +13,7 @@ namespace GetIntoTeachingApi.Services
         IEnumerable<Country> GetCountries();
         IEnumerable<TeachingSubject> GetTeachingSubjects();
         IEnumerable<PickListItem> GetPickListItems(string entityName, string attributeName);
+        IEnumerable<Entity> GetMultiplePickListItems(string entityName, string attributeName);
         IEnumerable<PrivacyPolicy> GetPrivacyPolicies();
         Candidate MatchCandidate(ExistingCandidateRequest request);
         Candidate MatchCandidate(string email, string applyId = null);
