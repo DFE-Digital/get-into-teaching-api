@@ -1,21 +1,21 @@
 ﻿using FluentAssertions;
+using FluentValidation;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
+using GetIntoTeachingApiTests.Helpers;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
+using Microsoft.Xrm.Sdk.Query;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
-using Xunit;
 using System.Linq.Dynamic.Core;
-using FluentValidation;
-using GetIntoTeachingApi.Models.Crm;
-using Microsoft.Extensions.Logging;
-using GetIntoTeachingApiTests.Helpers;
-using GetIntoTeachingApi.Utils;
+using Xunit;
 
 namespace GetIntoTeachingApiTests.Services
 {
@@ -141,6 +141,61 @@ namespace GetIntoTeachingApiTests.Services
             result.Select(year => year.AttributeName).Should().OnlyContain(name => name == "dfe_ittyear");
         }
 
+
+        [Fact]
+        public void GetMultiplePickListItems_ReturnsMatchingOrderedByIdAscending()
+        {
+            // arrange
+            const string EntityNameKey = "msevtmgt_event";
+            const string AttributeNameKey = "dfe_accessibility";
+            const string AttributeNameValueKey = "test-attribute";
+            const int OptionSetValueKey = 123456;
+
+            IEnumerable<Entity> accessibilityItems =
+                MockEntities(EntityNameKey, AttributeNameKey, AttributeNameValueKey, OptionSetValueKey);
+
+            Mock<IOrganizationServiceAdapter> serviceAdapterMock = new();
+
+            serviceAdapterMock.Setup(service =>
+                service.RetrieveMultiple(It.IsAny<QueryBase>()))
+                    .Returns(accessibilityItems).Verifiable();
+
+            var mockServiceProvider = new Mock<IServiceProvider>();
+            mockServiceProvider.Setup(provider =>
+                provider.GetService(It.IsAny<Type>()))
+                    .Returns<IValidator>(null);
+
+            CrmService crmService =
+                new(serviceAdapterMock.Object,
+                    mockServiceProvider.Object,
+                    _mockAppSettings.Object,
+                    _mockDateTime.Object,
+                    _mockLogger.Object);
+
+            // act
+            List<Entity> results =
+                crmService.GetMultiplePickListItems(EntityNameKey, AttributeNameKey).ToList();
+
+            // assert/verify
+            results.FirstOrDefault().Should().NotBeNull();
+            results.FirstOrDefault().Should().BeAssignableTo<Entity>();
+            serviceAdapterMock.Verify(serviceAdapter =>
+                serviceAdapter.RetrieveMultiple(It.IsAny<QueryBase>()), Times.Once);
+        }
+
+        private IEnumerable<Entity> MockEntities(
+            string entityName, string attributeNameKey, string attributeNameValue, int optionSetValue) => [
+            new Entity(entityName)
+            {
+                FormattedValues = {
+                        [attributeNameKey] = attributeNameValue
+                },
+                Attributes = {
+                    [attributeNameKey] =
+                        new List<OptionSetValue>(){new(optionSetValue) }
+                }
+            }];
+        
         [Fact]
         public void GetTeachingEvents_ReturnsAllNonDraftFutureDatedTeachingEventsOfTheCorrectType()
         {
