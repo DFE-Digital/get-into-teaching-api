@@ -409,7 +409,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
 
         private bool ContainsQualification()
         {
-            return UkDegreeGradeId != null || DegreeSubject != null || DegreeTypeId != null;
+            return UkDegreeGradeId != null || DegreeStatusId != null || DegreeSubject != null || DegreeTypeId != null;
         }
     }
 }
