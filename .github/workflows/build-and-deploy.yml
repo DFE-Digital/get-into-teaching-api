@@ -143,6 +143,33 @@ jobs:
           REVIEW_APP_URL=$(terraform -chdir=terraform/aks output -raw app_url)
           echo "app_hostname=${REVIEW_APP_URL}" >> $GITHUB_OUTPUT
 
+      - name: Get KV Secrets
+        id: fetch-secrets
+        uses: DFE-Digital/github-actions/GetKVSecrets@master
+        with:
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          key-vault-name: ${{ env.KEY_VAULT_NAME }}
+          secrets: |
+            SLACK-RELEASE-NOTE-WEBHOOK
+
+      - name: Get Tag ID
+        id: tag_id
+        uses: DFE-Digital/github-actions/GetTagID@master
+        with:
+          SHA: ${{github.sha}}
+
+      - name: Slack Release Notification
+        if: steps.tag_id.outputs.release_id
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_COLOR:    ${{env.SLACK_SUCCESS}}
+          SLACK_TITLE:    "Release Published to review: ${{steps.tag_id.outputs.release_name}}"
+          SLACK_MESSAGE:  ${{ fromJson( steps.tag_id.outputs.release_body) }}
+          SLACK_WEBHOOK:  ${{steps.fetch-secrets.outputs.SLACK-RELEASE-NOTE-WEBHOOK}}
+          MSG_MINIMAL:    true
+
       - name: Update PR with Review App URL
         uses: marocchino/sticky-pull-request-comment@v2
         with:
@@ -279,6 +306,33 @@ jobs:
           azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
           azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get KV Secrets
+        id: fetch-secrets
+        uses: DFE-Digital/github-actions/GetKVSecrets@master
+        with:
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          key-vault-name: ${{ env.KEY_VAULT_NAME }}
+          secrets: |
+            SLACK-RELEASE-NOTE-WEBHOOK
+
+      - name: Get Tag ID
+        id: tag_id
+        uses: DFE-Digital/github-actions/GetTagID@master
+        with:
+          SHA: ${{github.sha}}
+
+      - name: Slack Release Notification
+        if: steps.tag_id.outputs.release_id
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_COLOR:    ${{env.SLACK_SUCCESS}}
+          SLACK_TITLE:    "Release Published to production: ${{steps.tag_id.outputs.release_name}}"
+          SLACK_MESSAGE:  ${{ fromJson( steps.tag_id.outputs.release_body) }}
+          SLACK_WEBHOOK:  ${{steps.fetch-secrets.outputs.SLACK-RELEASE-NOTE-WEBHOOK}}
+          MSG_MINIMAL:    true
 
       - name: Slack Notification
         if: failure() && github.ref == 'refs/heads/master'
