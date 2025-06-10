@@ -143,33 +143,6 @@ jobs:
           REVIEW_APP_URL=$(terraform -chdir=terraform/aks output -raw app_url)
           echo "app_hostname=${REVIEW_APP_URL}" >> $GITHUB_OUTPUT
 
-      - name: Get KV Secrets
-        id: fetch-secrets
-        uses: DFE-Digital/github-actions/GetKVSecrets@master
-        with:
-          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          key-vault-name: ${{ env.KEY_VAULT_NAME }}
-          secrets: |
-            SLACK-RELEASE-NOTE-WEBHOOK
-
-      - name: Get Tag ID
-        id: tag_id
-        uses: DFE-Digital/github-actions/GetTagID@master
-        with:
-          SHA: ${{github.sha}}
-
-      - name: Slack Release Notification
-        if: steps.tag_id.outputs.release_id
-        uses: rtCamp/action-slack-notify@master
-        env:
-          SLACK_COLOR:    ${{env.SLACK_SUCCESS}}
-          SLACK_TITLE:    "Release Published to review: ${{steps.tag_id.outputs.release_name}}"
-          SLACK_MESSAGE:  ${{ fromJson( steps.tag_id.outputs.release_body) }}
-          SLACK_WEBHOOK:  ${{steps.fetch-secrets.outputs.SLACK-RELEASE-NOTE-WEBHOOK}}
-          MSG_MINIMAL:    true
-
       - name: Update PR with Review App URL
         uses: marocchino/sticky-pull-request-comment@v2
         with:
@@ -307,38 +280,34 @@ jobs:
           azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Get KV Secrets
-        id: fetch-secrets
-        uses: DFE-Digital/github-actions/GetKVSecrets@master
-        with:
-          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          key-vault-name: ${{ env.KEY_VAULT_NAME }}
-          secrets: |
-            SLACK-RELEASE-NOTE-WEBHOOK
-
-      - name: Get Tag ID
+      - name: Get Release Id from Tag
         id: tag_id
-        uses: DFE-Digital/github-actions/GetTagID@master
+        uses: DFE-Digital/github-actions/DraftReleaseByTag@master
         with:
-          SHA: ${{github.sha}}
+          TAG: ${{ github.event.inputs.tag || (github.event_name == 'pull_request' && format('v{0}', github.event.pull_request.number)) || (github.ref == 'refs/heads/master' && format('v{0}', github.sha)) }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check if found
+        if: steps.tag_id.outputs.release_id == ''
+        run: |
+          echo "::error ::Tag ${{ github.event.inputs.tag || (github.event_name == 'pull_request' && format('v{0}', github.event.pull_request.number)) || (github.ref == 'refs/heads/master' && format('v{0}', github.sha)) }} cannot be found in releases"
+          exit 1
 
       - name: Slack Release Notification
         if: steps.tag_id.outputs.release_id
         uses: rtCamp/action-slack-notify@master
         env:
-          SLACK_COLOR:    ${{env.SLACK_SUCCESS}}
-          SLACK_TITLE:    "Release Published to production: ${{steps.tag_id.outputs.release_name}}"
-          SLACK_MESSAGE:  ${{ fromJson( steps.tag_id.outputs.release_body) }}
-          SLACK_WEBHOOK:  ${{steps.fetch-secrets.outputs.SLACK-RELEASE-NOTE-WEBHOOK}}
-          MSG_MINIMAL:    true
+          SLACK_COLOR: ${{env.SLACK_SUCCESS}}
+          SLACK_TITLE: "Release Published to production: ${{steps.tag_id.outputs.release_name}}"
+          SLACK_MESSAGE: ${{ fromJson( steps.tag_id.outputs.release_body) }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_RELEASE_NOTE_WEBHOOK }}
+          MSG_MINIMAL: true
 
       - name: Slack Notification
-        if: failure() && github.ref == 'refs/heads/master'
+        if: failure()
         uses: rtCamp/action-slack-notify@master
         env:
           SLACK_COLOR: ${{env.SLACK_FAILURE}}
-          SLACK_MESSAGE: "Deployment to the production environment has failed"
-          SLACK_TITLE: "Deployment to the production environment has failed"
-          SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
+          SLACK_TITLE: "Manual Release Failed: ${{steps.tag_id.outputs.release_name}}"
+          SLACK_MESSAGE: Failure deploying production release
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
