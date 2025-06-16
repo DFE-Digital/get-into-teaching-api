@@ -280,21 +280,26 @@ jobs:
           azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Generate Tag from PR Number
+        id: tag_version
+        uses: DFE-Digital/github-actions/GenerateReleaseFromSHA@master
+        with:
+          SHA: ${{github.sha}}
+
       - name: Get Release Id from Tag
         id: tag_id
         uses: DFE-Digital/github-actions/DraftReleaseByTag@master
         with:
-          TAG: ${{ github.event.inputs.tag || (github.event_name == 'pull_request' && format('v{0}', github.event.pull_request.number)) || (github.ref == 'refs/heads/master' && format('v{0}', github.sha)) }}
+          TAG: ${{ steps.tag_version.outputs.pr_number }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check if found
         if: steps.tag_id.outputs.release_id == ''
         run: |
-          echo "::error ::Tag ${{ github.event.inputs.tag || (github.event_name == 'pull_request' && format('v{0}', github.event.pull_request.number)) || (github.ref == 'refs/heads/master' && format('v{0}', github.sha)) }} cannot be found in releases"
+          echo "::error ::Tag ${{ steps.tag_version.outputs.pr_number }} cannot be found in releases"
           exit 1
 
       - name: Slack Release Notification
-        if: steps.tag_id.outputs.release_id
         uses: rtCamp/action-slack-notify@master
         env:
           SLACK_COLOR: ${{env.SLACK_SUCCESS}}
