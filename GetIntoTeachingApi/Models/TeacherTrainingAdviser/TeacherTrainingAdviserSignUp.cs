@@ -11,7 +11,7 @@ using static GetIntoTeachingApi.Models.Crm.Candidate;
 
 namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
 {
-    public class TeacherTrainingAdviserSignUp : DegreeStatusInference, IInferDegreeStatus
+    public class TeacherTrainingAdviserSignUp : DegreeStatusInference, ICreateContactChannel, IInferDegreeStatus
     {
         public enum ResubscribableAdviserStatus
         {
@@ -67,6 +67,14 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         public int? AdviserStatusId { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public int? ChannelId { get; set; }
+        
+        
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelSourceId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelServiceId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelActivityId { get; set; }
 
         public string Email { get; set; }
         public string FirstName { get; set; }
@@ -91,8 +99,30 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
         [JsonIgnore]
         private bool IsOverseas => CountryId != Country.UnitedKingdomCountryId;
+        
+        /// <summary>
+        /// Provides the default read-only contact creation channel integer value. NB: this field will be deprecated.
+        /// </summary>
+        public int? DefaultContactCreationChannel =>
+            ChannelId ?? (int?)Candidate.Channel.TeacherTrainingAdviser; // Use the assigned channel ID if available, else assign default.
 
         /// <summary>
+        /// Provides the default read-only creation channel source identifier.
+        /// </summary>
+        public int? DefaultCreationChannelSourceId =>
+            (int?)ContactChannelCreation.CreationChannelSource.GITWebsite;
+
+        /// <summary>
+        /// Provides the default read-only creation channel service identifier.
+        /// </summary>
+        public int? DefaultCreationChannelServiceId =>
+            (int?)ContactChannelCreation.CreationChannelService.TeacherTrainingAdviserService;
+
+        /// <summary>
+        /// Provides the default read-only creation channel activity identifier.
+        /// </summary>
+        public int? DefaultCreationChannelActivityId => null;
+
         /// Overrides the GraduationYear property to implement custom logic.
         /// </summary>
         public override int? GraduationYear { get; set; }
@@ -246,7 +276,9 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                 OptOutOfGdpr = false,
             };
 
-            ConfigureChannel(candidate);
+            candidate.ConfigureChannel(
+                candidateId: CandidateId,
+                primaryContactChannel: this);
             ConfigureGcseStatus(candidate);
             AcceptPrivacyPolicy(candidate);
             SchedulePhoneCall(candidate);
@@ -273,14 +305,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
             candidate.AssignmentStatusId = (int)Candidate.AssignmentStatus.WaitingToBeAssigned;
             candidate.RegistrationStatusId = (int)Candidate.RegistrationStatus.ReRegistered;
             candidate.StatusIsWaitingToBeAssignedAt = DateTimeProvider.UtcNow;
-        }
-
-        private void ConfigureChannel(Candidate candidate)
-        {
-            if (CandidateId == null)
-            {
-                candidate.ChannelId = ChannelId ?? (int?)Candidate.Channel.TeacherTrainingAdviser;
-            }
         }
 
         private void ConfigureGcseStatus(Candidate candidate)
