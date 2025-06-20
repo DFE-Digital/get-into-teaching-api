@@ -1,4 +1,5 @@
 name: Build and Deploy
+concurrency: build_and_deploy_${{ github.ref_name }}
 on:
   workflow_dispatch:
     inputs:
@@ -8,10 +9,10 @@ on:
         type: choice
         default: development
         options:
-        - review
-        - development
-        - test
-        - production
+          - review
+          - development
+          - test
+          - production
       pr-number:
         description: PR number for review deployment (required for review environment)
         type: string
@@ -81,10 +82,9 @@ jobs:
         uses: rtCamp/action-slack-notify@master
         env:
           SLACK_COLOR: ${{env.SLACK_FAILURE}}
-          SLACK_MESSAGE: 'The pipeline has failed to build the API image'
-          SLACK_TITLE: 'Failure to Build API '
+          SLACK_MESSAGE: "The pipeline has failed to build the API image"
+          SLACK_TITLE: "Failure to Build API "
           SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
-
 
   deploy_review_app:
     name: Deploy to review environment
@@ -174,13 +174,18 @@ jobs:
             - Points to the same test CRM as development
             - Review app will be destroyed when this PR is closed or by running the "Destroy Review App" workflow
 
-  development:
-    name: Development Deployment
-    needs: build
-    if: github.ref == 'refs/heads/master'
+  deploy:
+    name: Deploy to ${{ matrix.environment }} environment
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    concurrency: deploy_${{ matrix.environment }}
+    needs: [build]
+    strategy:
+      max-parallel: 1
+      matrix:
+        environment: [development, test]
     environment:
-      name: development
+      name: ${{ matrix.environment }}
       url: ${{ steps.deploy.outputs.deploy-url }}
     steps:
       - name: Check out the repo
@@ -195,25 +200,27 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Trigger Development Deployment
+      - name: Trigger ${{ matrix.environment }} Deployment
         uses: ./.github/workflows/actions/deploy_v2
         id: deploy
         with:
-          environment: development
+          environment: ${{ matrix.environment }}
           sha: ${{needs.build.outputs.image_tag_sha}}
           azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
           azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      # Keep release creation logic only for development environment
       - name: Generate Tag from PR Number
-        id:   tag_version
+        if: matrix.environment == 'development'
+        id: tag_version
         uses: DFE-Digital/github-actions/GenerateReleaseFromSHA@master
         with:
-          sha: ${{github.sha}}
+          SHA: ${{github.sha}}
 
       - name: Create a GitHub Release
         id: release
-        if:   steps.tag_version.outputs.pr_found == 1
+        if: matrix.environment == 'development' && steps.tag_version.outputs.pr_found == 1
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -222,13 +229,13 @@ jobs:
           release_name: Release ${{ steps.tag_version.outputs.pr_number }}
           commitish: ${{github.sha}}
           prerelease: false
-          draft:      false
+          draft: false
 
       - name: Copy PR Info to Release
-        if: steps.release.outputs.id
+        if: matrix.environment == 'development' && steps.release.outputs.id
         uses: DFE-Digital/github-actions/CopyPRtoRelease@master
         with:
-          PR_NUMBER:  ${{ steps.tag_version.outputs.pr_number }}
+          PR_NUMBER: ${{ steps.tag_version.outputs.pr_number }}
           RELEASE_ID: ${{ steps.release.outputs.id }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -237,17 +244,18 @@ jobs:
         uses: rtCamp/action-slack-notify@master
         env:
           SLACK_COLOR: ${{env.SLACK_FAILURE}}
-          SLACK_MESSAGE: 'Deployment to the development environment has failed'
-          SLACK_TITLE: 'Deployment to the development environment has failed'
-          SLACK_WEBHOOK: '${{ secrets.SLACK_WEBHOOK }}'
+          SLACK_MESSAGE: "Deployment to the ${{ matrix.environment }} environment has failed"
+          SLACK_TITLE: "Deployment to the ${{ matrix.environment }} environment has failed"
+          SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
 
-  test:
-    name: Test Deployment
-    needs: build
-    if: github.ref == 'refs/heads/master'
+  deploy_production:
+    name: Deploy to production environment
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    concurrency: deploy_production
+    needs: [build, deploy]
     environment:
-      name: test
+      name: production
       url: ${{ steps.deploy.outputs.deploy-url }}
     steps:
       - name: Check out the repo
@@ -262,21 +270,49 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Trigger Test Deployment
+      - name: Trigger Production Deployment
         uses: ./.github/workflows/actions/deploy_v2
         id: deploy
         with:
-          environment: test
+          environment: production
           sha: ${{needs.build.outputs.image_tag_sha}}
           azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
           azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Generate Tag from PR Number
+        id: tag_version
+        uses: DFE-Digital/github-actions/GenerateReleaseFromSHA@master
+        with:
+          SHA: ${{github.sha}}
+
+      - name: Get Release Id from Tag
+        id: tag_id
+        uses: DFE-Digital/github-actions/DraftReleaseByTag@master
+        with:
+          TAG: ${{ steps.tag_version.outputs.pr_number }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check if found
+        if: steps.tag_id.outputs.release_id == ''
+        run: |
+          echo "::error ::Tag ${{ steps.tag_version.outputs.pr_number }} cannot be found in releases"
+          exit 1
+
+      - name: Slack Release Notification
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_COLOR: ${{env.SLACK_SUCCESS}}
+          SLACK_TITLE: "Release Published to production: ${{steps.tag_id.outputs.release_name}}"
+          SLACK_MESSAGE: ${{ fromJson( steps.tag_id.outputs.release_body) }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_RELEASE_NOTE_WEBHOOK }}
+          MSG_MINIMAL: true
+
       - name: Slack Notification
-        if: failure() && github.ref == 'refs/heads/master'
+        if: failure()
         uses: rtCamp/action-slack-notify@master
         env:
           SLACK_COLOR: ${{env.SLACK_FAILURE}}
-          SLACK_MESSAGE: 'Deployment to the test environment has failed'
-          SLACK_TITLE: 'Deployment to the test environment has failed'
-          SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
+          SLACK_TITLE: "Manual Release Failed: ${{steps.tag_id.outputs.release_name}}"
+          SLACK_MESSAGE: Failure deploying production release
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}

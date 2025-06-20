@@ -76,6 +76,21 @@ namespace GetIntoTeachingApi.Services
                 .Select((pickListItem) => new PickListItem(pickListItem, entityName, attributeName));
         }
 
+        public IEnumerable<Entity> GetMultiplePickListItems(string entityName, string attributeName)
+        {
+            return _service.RetrieveMultiple(new QueryExpression(entityName)
+            {
+                ColumnSet = new ColumnSet(attributeName),
+                Criteria = new FilterExpression
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression(attributeName, ConditionOperator.NotNull)
+                    }
+                }
+            });
+        }
+
         public IEnumerable<CallbackBookingQuota> GetCallbackBookingQuotas()
         {
             return _service.CreateQuery("dfe_callbackbookingquota", Context())

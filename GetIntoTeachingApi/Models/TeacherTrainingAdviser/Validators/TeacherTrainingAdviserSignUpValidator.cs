@@ -63,8 +63,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
                 RuleFor(request => request.PreferredEducationPhaseId).NotNull()
                     .When(request => request.DegreeStatusId == (int)DegreeStatus.HasDegree)
                     .WithMessage("Must be set for candidates interested in teacher training that have a degree.");
-                RuleFor(request => request.DegreeStatusId).NotNull()
-                    .WithMessage("Must be set for candidates interested in teacher training.");
+
                 RuleFor(request => request.DegreeTypeId).NotNull()
                     .WithMessage("Must be set for candidates interested in teacher training.");
 

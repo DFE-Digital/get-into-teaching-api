@@ -1,15 +1,17 @@
-﻿using GetIntoTeachingApi.Models.Crm;
+﻿using System;
+using System.Linq;
+using System.Text.Json.Serialization;
+using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
-using System.Linq;
-using System.Text.Json.Serialization;
 using static GetIntoTeachingApi.Models.Crm.Candidate;
 
 namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
 {
-    public class TeacherTrainingAdviserSignUp : ICreateContactChannel
+    public class TeacherTrainingAdviserSignUp : DegreeStatusInference, ICreateContactChannel, IInferDegreeStatus
     {
         public enum ResubscribableAdviserStatus
         {
@@ -54,7 +56,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         public Guid? AcceptedPolicyId { get; set; }
         public int? TypeId { get; set; }
         public int? UkDegreeGradeId { get; set; }
-        public int? DegreeStatusId { get; set; }
         public int? DegreeTypeId { get; set; }
         public int? InitialTeacherTrainingYearId { get; set; }
         public int? StageTaughtId { get; set; }
@@ -122,13 +123,40 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         /// </summary>
         public int? DefaultCreationChannelActivityId => null;
 
-        public TeacherTrainingAdviserSignUp(){
+        /// Overrides the GraduationYear property to implement custom logic.
+        /// </summary>
+        public override int? GraduationYear { get; set; }
+
+        /// <summary>
+        /// Overrides the inferred graduation date to adjust its calculation.
+        /// </summary>
+        public override DateTime? InferredGraduationDate { get; set; }
+
+        public TeacherTrainingAdviserSignUp()
+        {
         }
 
         public TeacherTrainingAdviserSignUp(Candidate candidate)
         {
             PopulateWithCandidate(candidate);
         }
+
+        /// <summary>
+        /// Provides logic to conditionally infer the degree status based on
+        /// the graduation year, if the graduation year is provisioned.
+        /// </summary>
+        /// <param name="degreeStatusDomainService">
+        /// Implementation of <see cref="IDegreeStatusDomainService"/> which
+        /// provides the functionality for inferring degree status based on the proposed graduation year.
+        /// </param>
+        /// <param name="currentYearProvider">
+        /// Implementation of <see cref="ICurrentYearProvider"/> which provides the current date/time
+        /// as well as helper methods to convert the current year to an integer representation.
+        /// </param>
+        public int? InferDegreeStatus(
+            IDegreeStatusDomainService degreeStatusDomainService,
+            ICurrentYearProvider currentYearProvider) =>
+                GetInferredDegreeStatus(degreeStatusDomainService, currentYearProvider);
 
         private static bool CanSubscribe(Candidate candidate)
         {

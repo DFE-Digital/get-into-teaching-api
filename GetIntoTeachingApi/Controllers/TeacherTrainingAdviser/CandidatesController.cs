@@ -1,6 +1,8 @@
 ﻿using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices;
 using GetIntoTeachingApi.Models.TeacherTrainingAdviser;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
@@ -26,6 +28,8 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
         private readonly IDateTimeProvider _dateTime;
         private readonly IAppSettings _appSettings;
         private readonly ILogger<CandidatesController> _logger;
+        private readonly IDegreeStatusDomainService _degreeStatusDomainService;
+        private readonly ICurrentYearProvider _currentYearProvider;
 
         public CandidatesController(
             ICandidateAccessTokenService tokenService,
@@ -33,7 +37,9 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
             IBackgroundJobClient jobClient,
             IDateTimeProvider dateTime,
             IAppSettings appSettings,
-            ILogger<CandidatesController> logger)
+            ILogger<CandidatesController> logger,
+            IDegreeStatusDomainService degreeStatusDomainService,
+            ICurrentYearProvider currentYearProvider)
         {
             _crm = crm;
             _tokenService = tokenService;
@@ -41,6 +47,8 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
             _dateTime = dateTime;
             _appSettings = appSettings;
             _logger = logger;
+            _degreeStatusDomainService = degreeStatusDomainService;
+            _currentYearProvider = currentYearProvider;
         }
 
         [HttpPost]
@@ -59,6 +67,14 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
                 return BadRequest(this.ModelState);
             }
 
+            // This is a short-medium term solution to infer the degree status from the
+            // graduation year provided to support current behaviour until degree status
+            // is fully retired. The intention being to remove this functionality once we
+            // fully migrate to the new approach. 
+            int? degreeStatusId =
+                request.InferDegreeStatus(
+                    _degreeStatusDomainService, _currentYearProvider);
+
             // This is the only way we can mock/freeze the current date/time
             // in contract tests (there's no other way to inject it into this class).
             request.DateTimeProvider = _dateTime;
@@ -67,7 +83,7 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
 
             _logger.LogInformation("TeacherTrainingAdviser - CandidatesController - Sign Up - {Client}", User.Identity.Name);
 
-            return NoContent();
+            return Ok(new DegreeStatusResponse { DegreeStatusId = degreeStatusId });
         }
 
         [HttpPost]

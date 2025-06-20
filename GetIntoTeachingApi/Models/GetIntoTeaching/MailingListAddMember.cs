@@ -1,7 +1,6 @@
 ﻿using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.Crm.DegreeStatusInference;
 using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices;
-using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Evaluators;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
@@ -11,7 +10,7 @@ using System.Text.Json.Serialization;
 
 namespace GetIntoTeachingApi.Models.GetIntoTeaching
 {
-    public class MailingListAddMember : ICreateContactChannel, IInferDegreeStatus
+    public class MailingListAddMember : DegreeStatusInference, ICreateContactChannel, IInferDegreeStatus
     {
         public Guid? CandidateId { get; set; }
         public Guid? QualificationId { get; set; }
@@ -20,7 +19,6 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public Guid? AcceptedPolicyId { get; set; }
 
         public int? ConsiderationJourneyStageId { get; set; }
-        public int? DegreeStatusId { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public int? ChannelId { get; set; }
         
@@ -42,9 +40,6 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public bool AlreadySubscribedToMailingList { get; set; }
         [SwaggerSchema(ReadOnly = true)]
         public bool AlreadySubscribedToTeacherTrainingAdviser { get; set; }
-
-        public int? GraduationYear { get; set; } = null!;
-        public DateTime? InferredGraduationDate { get; set; } = null!;
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
@@ -75,6 +70,16 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public int? DefaultCreationChannelActivityId => null;
         
         public int? Situation { get; set; }
+
+        /// <summary>
+        /// Overrides the GraduationYear property to implement custom logic.
+        /// </summary>
+        public override int? GraduationYear{ get; set; }
+
+        /// <summary>
+        /// Overrides the inferred graduation date to adjust its calculation.
+        /// </summary>
+        public override DateTime? InferredGraduationDate { get; set; }
     
         public MailingListAddMember()
         {
@@ -193,26 +198,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         /// </param>
         public int? InferDegreeStatus(
             IDegreeStatusDomainService degreeStatusDomainService,
-            ICurrentYearProvider currentYearProvider)
-        {
-            if (GraduationYear != null)
-            {
-                const int GraduationDay = 31;
-                const int GraduationMonth = 8;
-
-                DegreeStatusInferenceRequest degreeStatusInferenceRequest =
-                    DegreeStatusInferenceRequest.Create(
-                        new GraduationYear(GraduationYear.Value, currentYearProvider), currentYearProvider);
-
-                DegreeStatusId =
-                    degreeStatusDomainService
-                        .GetInferredDegreeStatusFromGraduationYear(degreeStatusInferenceRequest);
-
-                InferredGraduationDate =
-                    new DateTime(GraduationYear.Value, GraduationMonth, GraduationDay);
-            }
-
-            return DegreeStatusId;
-        }
+            ICurrentYearProvider currentYearProvider) =>
+                GetInferredDegreeStatus(degreeStatusDomainService, currentYearProvider);
     }
 }

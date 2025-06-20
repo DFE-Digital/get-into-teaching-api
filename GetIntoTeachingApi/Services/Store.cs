@@ -1,16 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GetIntoTeachingApi.Adapters;
+﻿using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.GetIntoTeaching;
 using GetIntoTeachingApi.Utils;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Xrm.Sdk;
 using MoreLinq;
 using NetTopologySuite.Geometries;
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading.Tasks;
 using Location = GetIntoTeachingApi.Models.Location;
 
 namespace GetIntoTeachingApi.Services
@@ -265,6 +267,7 @@ namespace GetIntoTeachingApi.Services
             await SyncPickListItem("msevtmgt_event", "dfe_event_type");
             await SyncPickListItem("msevtmgt_event", "dfe_eventstatus");
             await SyncPickListItem("msevtmgt_event", "dfe_eventregion");
+            await SyncMultiItemPickListEntity("msevtmgt_event", "dfe_accessibility");
 
             await SyncPickListItem("msevtmgt_eventregistration", "dfe_channelcreation");
 
@@ -324,17 +327,83 @@ namespace GetIntoTeachingApi.Services
 
         private async Task SyncPickListItem(string entityName, string attributeName)
         {
-            var items = _crm.GetPickListItems(entityName, attributeName);
-            var ids = items.Select(t => t.Id);
+            IEnumerable<PickListItem> pickListItems =
+                _crm.GetPickListItems(entityName, attributeName);
+            
+            await SyncPickListItems(pickListItems, entityName, attributeName);
+        }
+
+        private async Task SyncPickListItems(IEnumerable<PickListItem> pickListItems, string entityName, string attributeName)
+        {
+            var ids = pickListItems.Select(t => t.Id);
             var existingIds = _dbContext.PickListItems
                 .Where(t => t.EntityName == entityName && t.AttributeName == attributeName)
                 .Select(t => t.Id);
 
             _dbContext.RemoveRange(_dbContext.PickListItems.Where(t => t.EntityName == entityName &&
                 t.AttributeName == attributeName && !ids.Contains(t.Id)));
-            _dbContext.UpdateRange(items.Where(t => existingIds.Contains(t.Id)));
-            await _dbContext.AddRangeAsync(items.Where(t => !existingIds.Contains(t.Id)));
+            _dbContext.UpdateRange(pickListItems.Where(t => existingIds.Contains(t.Id)));
+            await _dbContext.AddRangeAsync(pickListItems.Where(t => !existingIds.Contains(t.Id)));
             await _dbContext.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Asynchronously synchronizes multi-select pick-list values for a given entity and attribute in CRM.
+        /// </summary>
+        /// <param name="entityName">
+        /// The logical name of the entity that contains the multi-select pick-list attribute.
+        /// </param>
+        /// <param name="attributeName">
+        /// The logical name of the attribute that contains the multi-select pick-list attribute.
+        /// </param>
+        /// <exception cref="ArgumentException">
+        /// Exception thrown when no entities are found for the specified entity name and attribute name.
+        /// </exception>
+        private async Task SyncMultiItemPickListEntity(string entityName, string attributeName)
+        {
+            // Retrieve the first matching entity that contains the specified pick-list attribute.
+            Entity entity =
+                _crm.GetMultiplePickListItems(entityName, attributeName)?.FirstOrDefault();
+
+            if (entity is null) return;
+
+            // Extract the formatted pick-list values (display labels) as a string array.
+            // These are typically separated by semicolons in CRM.
+            string[] picklistValues =
+                entity.FormattedValues
+                    .FirstOrDefault(pair => pair.Key == attributeName).Value.Split(';');
+
+            // Retrieve the raw OptionSetValue collection from the entity's attributes.
+            IEnumerable<OptionSetValue> optionSetValues =
+                (IEnumerable<OptionSetValue>)entity.Attributes.Values.FirstOrDefault();
+
+            // Extract the integer IDs from the OptionSetValue collection.
+            List<int> pickListIds =
+                optionSetValues?
+                    .Select(pickListValue => pickListValue.Value).ToList();
+
+            if (pickListIds is null || pickListIds.Count == 0) return;
+
+            // Initialize an empty immutable list to hold the final PickListItem objects.
+            List<PickListItem> pickListItems = [];
+
+            // Loop through each pick-list value and its corresponding ID to create PickListItem objects.
+            for (int attributeIndex = 0; attributeIndex < picklistValues.Length; attributeIndex++)
+            {
+                PickListItem item = new()
+                {
+                    Id = pickListIds[attributeIndex],
+                    EntityName = entityName,
+                    AttributeName = attributeName,
+                    Value = picklistValues[attributeIndex]
+                };
+
+                // Add the constructed item to the list.
+                pickListItems.Add(item);
+            }
+
+            // Call a method to synchronize the constructed pick-list items with the system.
+            await SyncPickListItems(pickListItems, entityName, attributeName);
         }
 
         private async Task PopulateTeachingEventCoordinates(IEnumerable<TeachingEventBuilding> buildings)
