@@ -1,23 +1,30 @@
-﻿using System;
-using Xunit;
-using Moq;
-using GetIntoTeachingApi.Services;
+﻿using FluentAssertions;
+using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Controllers.TeacherTrainingAdviser;
-using FluentAssertions;
+using GetIntoTeachingApi.CrossCuttingConcerns.Logging;
 using GetIntoTeachingApi.Jobs;
-using Microsoft.AspNetCore.Mvc;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Common;
+using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices.Evaluators;
+using GetIntoTeachingApi.Models.TeacherTrainingAdviser;
+using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
+using GetIntoTeachingApiTests.Helpers;
+using GetIntoTeachingApiTests.Models.Crm.DomainServices.DegreeStatusInference.TestDoubles;
+using GetIntoTeachingApiTests.Models.GetIntoTeaching.TestDoubles;
 using Hangfire;
 using Hangfire.Common;
 using Hangfire.States;
 using Microsoft.AspNetCore.Authorization;
-using GetIntoTeachingApi.Utils;
-using GetIntoTeachingApi.Models.Crm;
-using GetIntoTeachingApi.Models.TeacherTrainingAdviser;
-using GetIntoTeachingApiTests.Helpers;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using GetIntoTeachingApi.Adapters;
-using GetIntoTeachingApi.CrossCuttingConcerns.Logging;
+using Moq;
+using System;
+using System.Collections.Generic;
+using Xunit;
+using CurrentYearProviderTestDouble = GetIntoTeachingApiTests.Models.GetIntoTeaching.TestDoubles.CurrentYearProviderTestDouble;
 
 namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
 {
@@ -45,8 +52,16 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
             _mockHttpContextCorrelationIdProvider = new Mock<IHttpContextCorrelationIdProvider>();
             _mockAppSettings = new Mock<IAppSettings>();
             _request = new ExistingCandidateRequest { Email = "email@address.com", FirstName = "John", LastName = "Doe" };
-            _controller = new CandidatesController( _mockTokenService.Object, _mockCrm.Object,
-                _mockJobClient.Object, _mockDateTime.Object, _mockAppSettings.Object,  _mockLogger.Object);
+            _controller =
+                new CandidatesController(
+                    _mockTokenService.Object,
+                    _mockCrm.Object,
+                    _mockJobClient.Object,
+                    _mockDateTime.Object,
+                    _mockAppSettings.Object,
+                    _mockLogger.Object,
+                    DegreeStatusDomainServiceTestDouble.DefaultMockObject(),
+                    CurrentYearProviderTestDouble.DefaultMockObject());
             _controller.MockUser("TTA");
 
             // Freeze time.
@@ -118,13 +133,65 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
 
             var response = _controller.SignUp(request);
 
-            response.Should().BeOfType<NoContentResult>();
+            response.Should().BeOfType<OkObjectResult>();
             _mockJobClient.Verify(x => x.Create(
                 It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
                 IsMatch(request.Candidate, (string)job.Args[0])),
                 It.IsAny<EnqueuedState>()));
 
             _mockLogger.VerifyInformationWasCalled("TeacherTrainingAdviser - CandidatesController - Sign Up - TTA");
+        }
+
+        [Fact]
+        public void AddMember_ValidRequestWithGraduationYearSpecified_EnqueuesJobRespondsWithExpectedResponse()
+        {
+            TeacherTrainingAdviserSignUp request = new()
+            {
+                GraduationYear = 2024,
+                Email = "test@test.com",
+                FirstName = "John",
+                LastName = "Doe"
+            };
+
+            // arrange
+            IEnumerable<IChainEvaluationHandler<
+                DegreeStatusInferenceRequest, DegreeStatus>> degreeStatusInferenceHandlers
+                    = ChainEvaluationHandlerStub.ChainEvaluationHandlersStub<
+                        DegreeStatusInferenceRequest, DegreeStatus>();
+
+            ICurrentYearProvider currentYearProvider =
+                Models.Crm.DomainServices.DegreeStatusInference.TestDoubles
+                    .CurrentYearProviderTestDouble.StubFor(new DateTime(2025, 01, 27));
+
+            DegreeStatusDomainService degreeStatusDomainService = new(degreeStatusInferenceHandlers);
+
+            var controller = new CandidatesController(
+                _mockTokenService.Object,
+                _mockCrm.Object,
+                _mockJobClient.Object,
+                _mockDateTime.Object,
+                _mockAppSettings.Object,
+                _mockLogger.Object,
+                degreeStatusDomainService,
+                currentYearProvider);
+
+            controller.MockUser("GIT");
+
+            // act
+            IActionResult response = controller.SignUp(request);
+            dynamic responseObject = ((OkObjectResult)response).Value;
+
+            // assert
+            Assert.IsType<OkObjectResult>(response);
+            Assert.Equal(222750000, responseObject.GetType().GetProperty("DegreeStatusId").GetValue(responseObject, null));
+
+            _mockJobClient.Verify(job =>
+                job.Create(
+                    It.Is<Job>(job => job.Type == typeof(UpsertCandidateJob) && job.Method.Name == "Run" &&
+                    IsMatch(request.Candidate, (string)job.Args[0])),
+                    It.IsAny<EnqueuedState>()
+                )
+            );
         }
 
         [Fact]

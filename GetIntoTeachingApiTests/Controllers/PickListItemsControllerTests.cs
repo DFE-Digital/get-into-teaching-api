@@ -366,14 +366,31 @@ namespace GetIntoTeachingApiTests.Controllers
             ok.Value.Should().BeEquivalentTo(mockItems);
         }
 
+        [Fact]
+        public async Task GetTeachingEventAccessibility_ReturnsAllAccessibilityItems()
+        {
+            var mockItems = MockPickListItems();
+            _mockStore.Setup(mock =>
+                mock.GetPickListItems("msevtmgt_event", "dfe_accessibility"))
+                    .Returns(mockItems.AsAsyncQueryable()).Verifiable();
+
+            IActionResult response = await _controller.GetTeachingEventAccessibilityItems();
+
+            OkObjectResult ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockItems);
+
+            _mockStore.Verify(mock =>
+                mock.GetPickListItems("msevtmgt_event", "dfe_accessibility"), Times.Once);
+        }
+
         private static PickListItem[] MockPickListItems()
         {
-            return new[]
-            {
+            return
+            [
                 new PickListItem {Id = 1, Value = "Type 2"},
                 new PickListItem {Id = 2, Value = "Type 3"},
                 new PickListItem {Id = 3, Value = "Type 1"},
-            };
+            ];
         }
     }
 }

@@ -276,9 +276,6 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
 
                 var result = _validator.TestValidate(_request);
 
-                result.ShouldHaveValidationErrorFor(request => request.DegreeStatusId)
-                    .WithErrorMessage("Must be set for candidates interested in teacher training.");
-
                 result.ShouldHaveValidationErrorFor(request => request.DegreeTypeId)
                     .WithErrorMessage("Must be set for candidates interested in teacher training.");
             }
