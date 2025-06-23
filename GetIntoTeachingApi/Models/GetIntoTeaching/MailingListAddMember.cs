@@ -137,11 +137,11 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         {
             var utcNow = DateTimeProvider.UtcNow;
 
-            SubscriptionManager.SubscribeToMailingList(candidate, utcNow, ChannelId);
+            SubscriptionManager.SubscribeToMailingList(candidate, utcNow);
 
             if (!string.IsNullOrWhiteSpace(AddressPostcode))
             {
-                SubscriptionManager.SubscribeToEvents(candidate, utcNow, ChannelId);
+                SubscriptionManager.SubscribeToEvents(candidate, utcNow);
             }
         }
 

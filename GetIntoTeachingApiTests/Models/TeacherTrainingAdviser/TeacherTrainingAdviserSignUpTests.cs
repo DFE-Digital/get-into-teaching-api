@@ -287,7 +287,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             var request = new TeacherTrainingAdviserSignUp() { ChannelId = 123 };
 
             request.Candidate.ChannelId.Should().Be(123);
-            request.Candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be(123);
+            request.Candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Subscribed);
         }
 
         [Fact]
