@@ -257,7 +257,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
             DefaultPreferredTeachingSubjectId(candidate);
             UpdateClosedAdviserStatus(candidate);
 
-            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate, DateTimeProvider.UtcNow, ChannelId);
+            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate, DateTimeProvider.UtcNow);
 
             return candidate;
         }
