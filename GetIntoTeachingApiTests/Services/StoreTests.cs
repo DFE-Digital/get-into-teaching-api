@@ -437,13 +437,66 @@ namespace GetIntoTeachingApiTests.Services
                 TypeIds = new int[] { (int)TeachingEvent.EventType.ApplicationWorkshop },
                 StartAfter = DateTime.UtcNow,
                 StartBefore = DateTime.UtcNow.AddDays(3),
-                Online = true,
+                Online = true
             };
 
             var result = await _store.SearchTeachingEventsAsync(request);
 
             result.Select(e => e.Name).Should().BeEquivalentTo(
                 new string[] { "Event 2" },
+                options => options.WithStrictOrdering());
+        }
+
+        [Fact]
+        public async Task SearchTeachingEvents_WithSingleAccessibilityOptionsFilter_ReturnsMatching()
+        {
+            SeedMockLocations();
+            await SeedMockTeachingEventsAndBuildingsAsync();
+            var request = new TeachingEventSearchRequest()
+            {
+                AccessibilityOptions = [222750005]
+            };
+
+            var result = await _store.SearchTeachingEventsAsync(request);
+
+            result.Select(e => e.Name).Should().BeEquivalentTo(
+                ["Event 6"],
+                options => options.WithStrictOrdering());
+        }
+
+        [Fact]
+        public async Task SearchTeachingEvents_WithSingleAccessibilityOptionsFilter_ReturnsMultipleMatching()
+        {
+            SeedMockLocations();
+            await SeedMockTeachingEventsAndBuildingsAsync();
+            var request = new TeachingEventSearchRequest()
+            {
+                AccessibilityOptions = [222750001]
+            };
+
+            var results = await _store.SearchTeachingEventsAsync(request);
+
+            results.ToList().Count.Should().Be(2);
+            results.Select(e => e.Name).Should().BeEquivalentTo(
+                ["Event 4", "Event 1"],
+                options => options.WithStrictOrdering());
+        }
+
+        [Fact]
+        public async Task SearchTeachingEvents_WithMultipleAccessibilityOptionsFilter_ReturnsMultipleMatching()
+        {
+            SeedMockLocations();
+            await SeedMockTeachingEventsAndBuildingsAsync();
+            var request = new TeachingEventSearchRequest()
+            {
+                AccessibilityOptions = [222750001,222750005,222750006]
+            };
+
+            var results = await _store.SearchTeachingEventsAsync(request);
+
+            results.ToList().Count.Should().Be(4);
+            results.Select(e => e.Name).Should().BeEquivalentTo(
+                ["Event 2", "Event 4", "Event 1", "Event 6"],
                 options => options.WithStrictOrdering());
         }
 
@@ -778,6 +831,82 @@ namespace GetIntoTeachingApiTests.Services
 
         }
 
+        // Accessibility options filter expression builder tests.
+        //
+        [Fact]
+        public void BuildAccessibilityFilter_MatchesSingleId()
+        {
+            // Arrange
+            var events = new List<TeachingEvent>
+            {
+                new TeachingEvent { AccessibilityOptionId = "111,222750001,333" },
+                new TeachingEvent { AccessibilityOptionId = "444,555" },
+            }
+            .AsQueryable();
+
+            var ids = new[] { "222750001" };
+
+            // Act
+            var filter = TeachingEventFilterBuilder.BuildAccessibilityFilter(ids);
+            var result = events.Where(filter).ToList();
+
+            // Assert
+            Assert.Single(result);
+            Assert.Contains("222750001", result[0].AccessibilityOptionId);
+        }
+
+        [Fact]
+        public void BuildAccessibilityFilter_MatchesMultipleIds()
+        {
+            var events = new List<TeachingEvent>
+            {
+                new TeachingEvent { AccessibilityOptionId = "222750006" },
+                new TeachingEvent { AccessibilityOptionId = "222750001,555" },
+                new TeachingEvent { AccessibilityOptionId = "100,101" }
+            }
+            .AsQueryable();
+
+            var ids = new[] { "222750001", "222750006" };
+            var filter = TeachingEventFilterBuilder.BuildAccessibilityFilter(ids);
+            var result = events.Where(filter).ToList();
+
+            Assert.Equal(2, result.Count);
+        }
+
+        [Fact]
+        public void BuildAccessibilityFilter_ExcludesNonMatches()
+        {
+            var events = new List<TeachingEvent>
+            {
+                new TeachingEvent { AccessibilityOptionId = "1,2,3" },
+                new TeachingEvent { AccessibilityOptionId = "4,5" }
+            }
+            .AsQueryable();
+
+            var ids = new[] { "999" };
+            var filter = TeachingEventFilterBuilder.BuildAccessibilityFilter(ids);
+            var result = events.Where(filter).ToList();
+
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public void BuildAccessibilityFilter_IgnoresNulls()
+        {
+            var events = new List<TeachingEvent>
+            {
+                new TeachingEvent { AccessibilityOptionId = null },
+                new TeachingEvent { AccessibilityOptionId = "222750005" }
+            }
+            .AsQueryable();
+
+            var ids = new[] { "222750005" };
+            var filter = TeachingEventFilterBuilder.BuildAccessibilityFilter(ids);
+            var result = events.Where(filter).ToList();
+
+            Assert.Single(result);
+        }
+
         private static bool CheckGetTeachingEventsAfterDate(DateTime date)
         {
             var afterDate = DateTime.UtcNow.Subtract(Store.TeachingEventArchiveSize);
@@ -801,7 +930,8 @@ namespace GetIntoTeachingApiTests.Services
                 TypeId = (int)TeachingEvent.EventType.TrainToTeachEvent,
                 IsOnline = true,
                 StartAt = DateTime.UtcNow.AddDays(5),
-                BuildingId = sharedBuildingId
+                BuildingId = sharedBuildingId,
+                AccessibilityOptionId = "222750001"
             };
 
             var event2 = new TeachingEvent()
@@ -813,7 +943,8 @@ namespace GetIntoTeachingApiTests.Services
                 Name = "Event 2",
                 StartAt = DateTime.UtcNow.AddDays(1),
                 TypeId = (int)TeachingEvent.EventType.ApplicationWorkshop,
-                BuildingId = buildings[1].Id
+                BuildingId = buildings[1].Id,
+                AccessibilityOptionId = "222750006"
             };
 
             var event3 = new TeachingEvent()
@@ -837,7 +968,8 @@ namespace GetIntoTeachingApiTests.Services
                 Name = "Event 4",
                 StartAt = DateTime.UtcNow.AddDays(3),
                 TypeId = (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
-                BuildingId = buildings[3].Id
+                BuildingId = buildings[3].Id,
+                AccessibilityOptionId = "222750001,222750002"
             };
 
             var event5 = new TeachingEvent()
@@ -860,7 +992,8 @@ namespace GetIntoTeachingApiTests.Services
                 IsOnline = false,
                 StartAt = DateTime.UtcNow.AddDays(60),
                 TypeId = (int)TeachingEvent.EventType.SchoolOrUniversityEvent,
-                BuildingId = sharedBuildingId
+                BuildingId = sharedBuildingId,
+                AccessibilityOptionId = "222750005"
             };
 
             var event7 = new TeachingEvent()
@@ -1009,7 +1142,7 @@ namespace GetIntoTeachingApiTests.Services
             var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: DbConfiguration.Wgs84Srid);
             var locations = new Location[]
             {
-                new Location() {Postcode = "ky119yu", Coordinate = geometryFactory.CreatePoint(new Coordinate(-3.35870, 56.02748))},
+                new GetIntoTeachingApi.Models.Location() {Postcode = "ky119yu", Coordinate = geometryFactory.CreatePoint(new Coordinate(-3.35870, 56.02748))},
                 new Location() {Postcode = "ca48le", Coordinate = geometryFactory.CreatePoint(new Coordinate(-2.84000, 54.89014))},
                 new Location() {Postcode = "ky62nj", Coordinate = geometryFactory.CreatePoint(new Coordinate(-3.178240, 56.182790))},
                 new Location() {Postcode = "kw14yl", Coordinate = geometryFactory.CreatePoint(new Coordinate(-3.10075, 58.64102))},

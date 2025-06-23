@@ -20,6 +20,8 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public DateTime? StartBefore { get; set; }
         [SwaggerSchema("Set to filter results by event status.")]
         public int[] StatusIds { get; set; } = new int[] { (int)TeachingEvent.Status.Open, (int)TeachingEvent.Status.Closed };
+        [SwaggerSchema("Set to filter results by accessibility options.")]
+        public int[] AccessibilityOptions { get; set; }
 
         public double? RadiusInKm() => Radius * 1.60934;
 

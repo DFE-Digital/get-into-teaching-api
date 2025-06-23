@@ -11,7 +11,10 @@ using NetTopologySuite.Geometries;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Tasks;
 using Location = GetIntoTeachingApi.Models.Location;
 
@@ -127,6 +130,24 @@ namespace GetIntoTeachingApi.Services
             {
                 teachingEvents = teachingEvents.Where(te =>
                     request.StatusIds.Contains(te.StatusId));
+            }
+
+            // Filter for accessibility options if provided.
+            if (request.AccessibilityOptions?.Length > 0)
+            {
+                // Convert integer options to strings using invariant culture.
+                string[] accessibilityOptionFilters =
+                    request.AccessibilityOptions
+                        .Select(option => option.ToString(CultureInfo.InvariantCulture))
+                        .ToArray();
+
+                // Dynamically build an EF-compatible predicate that checks for matches.
+                Expression<Func<TeachingEvent, bool>> filter =
+                    TeachingEventFilterBuilder
+                        .BuildAccessibilityFilter(accessibilityOptionFilters);
+
+                // Apply to IQueryable - safe for EF Core translation.
+                teachingEvents = teachingEvents.Where(filter);
             }
 
             if (request.Online != null)
@@ -459,6 +480,70 @@ namespace GetIntoTeachingApi.Services
         {
             return await _dbContext.Locations.Where(l => l.Postcode == sanitizedPostcode)
                             .Select(l => l.Coordinate).FirstOrDefaultAsync();
+        }
+    }
+
+    /// <summary>
+    /// Provides utility methods for dynamically constructing filter expressions
+    /// for <c>TeachingEvent</c> objects based on comma-delimited string values.
+    /// Made public for accessibility to allow for easy testability and potential reuse in other parts of the application.
+    /// </summary>
+    public static class TeachingEventFilterBuilder
+    {
+        /// <summary>
+        /// Builds an expression tree that filters <c>TeachingEvent</c> records by matching any of the provided
+        /// IDs within a comma-separated <c>AccessibilityOptionId</c> string.
+        /// </summary>
+        /// <param name="targetIds">An array of string IDs to search for.</param>
+        /// <returns>
+        /// A LINQ-compatible expression to be used with <c>IQueryable&lt;TeachingEvent&gt;.Where(...)</c>.
+        /// </returns>
+        public static Expression<Func<TeachingEvent, bool>> BuildAccessibilityFilter(string[] targetIds)
+        {
+            const string LambdaParameterName = "te";
+            const string CommaDelimiter = ",";
+            // Represents: te =>
+            ParameterExpression parameter = Expression.Parameter(typeof(TeachingEvent), LambdaParameterName);
+
+            // Represents: te.AccessibilityOptionId.
+            MemberExpression property = Expression.Property(parameter, nameof(TeachingEvent.AccessibilityOptionId));
+
+            // Represents: te.AccessibilityOptionId != null.
+            BinaryExpression notNull = Expression.NotEqual(property, Expression.Constant(null, typeof(string)));
+
+            // Get the specific overload of string.Concat(string, string, string).
+            MethodInfo concatMethod = typeof(string).GetMethod(nameof(string.Concat), [
+                typeof(string), typeof(string), typeof(string)]);
+
+            // Represents: "," + te.AccessibilityOptionId + ",".
+            MethodCallExpression paddedProperty = Expression.Call(
+                concatMethod!,
+                Expression.Constant(CommaDelimiter, typeof(string)),
+                property,
+                Expression.Constant(CommaDelimiter, typeof(string))
+            );
+
+            // Build the OR chain of paddedProperty.Contains(",value,") for each ID in targetIds.
+            Expression containsChain = null;
+            foreach (var id in targetIds)
+            {
+                string paddedId = $"{CommaDelimiter}{id}{CommaDelimiter}";
+                MethodCallExpression containsExpr = Expression.Call(
+                    paddedProperty,
+                    typeof(string).GetMethod(nameof(string.Contains), [typeof(string)])!,
+                    Expression.Constant(paddedId)
+                );
+
+                containsChain = containsChain == null
+                    ? containsExpr
+                    : Expression.OrElse(containsChain, containsExpr);
+            }
+
+            // Combine the null check with the OR chain, for example: te.AccessibilityOptionId != null && (contains || contains || ...).
+            BinaryExpression finalBody = Expression.AndAlso(notNull, containsChain!);
+
+            // Build the complete lambda: te => te.AccessibilityOptionId != null && ( ... ).
+            return Expression.Lambda<Func<TeachingEvent, bool>>(finalBody, parameter);
         }
     }
 }
