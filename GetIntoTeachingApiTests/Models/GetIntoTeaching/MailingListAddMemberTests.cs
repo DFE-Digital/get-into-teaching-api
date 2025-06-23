@@ -150,8 +150,8 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
             var request = new MailingListAddMember() { ChannelId = 123, AddressPostcode = "TE7 8KE" };
 
             request.Candidate.ChannelId.Should().Be(123);
-            request.Candidate.MailingListSubscriptionChannelId.Should().Be(123);
-            request.Candidate.EventsSubscriptionChannelId.Should().Be(123);
+            request.Candidate.MailingListSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Subscribed);
+            request.Candidate.EventsSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Subscribed);
         }
 
         [Fact]
