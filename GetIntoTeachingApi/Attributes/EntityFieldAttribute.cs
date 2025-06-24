@@ -1,7 +1,7 @@
-﻿using System;
+﻿using GetIntoTeachingApi.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using GetIntoTeachingApi.Utils;
 
 namespace GetIntoTeachingApi.Attributes
 {
@@ -13,11 +13,13 @@ namespace GetIntoTeachingApi.Attributes
         public string Reference { get; }
         public string[] Features { get; }
 
+        private readonly bool _ignored;
+
         public bool Ignored
         {
             get
             {
-                if (Features == null)
+                if (_ignored || Features == null)
                 {
                     return false;
                 }
@@ -26,12 +28,13 @@ namespace GetIntoTeachingApi.Attributes
             }
         }
 
-        public EntityFieldAttribute(string name, Type type = null, string reference = null, string[] features = null)
+        public EntityFieldAttribute(string name, Type type = null, string reference = null, string[] features = null, bool ignore = false)
         {
             Name = name;
             Type = type;
             Reference = reference;
             Features = features;
+            _ignored = ignore;
         }
 
         public IDictionary<string, string> ToDictionary()

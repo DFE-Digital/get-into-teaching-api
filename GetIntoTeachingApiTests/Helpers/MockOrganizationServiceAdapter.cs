@@ -32,6 +32,11 @@ namespace GetIntoTeachingApiTests.Helpers
             throw new NotImplementedException();
         }
 
+        public virtual IEnumerable<PickListItem> GetMultiSelectPickListItems(string entityName, string attributeName)
+        {
+            throw new NotImplementedException();
+        }
+        
         public virtual IEnumerable<PickListItem> GetPickListItemsForAttribute(string entityName, string attributeName)
         {
             throw new NotImplementedException();

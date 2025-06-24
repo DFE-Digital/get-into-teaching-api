@@ -76,6 +76,23 @@ namespace GetIntoTeachingApi.Services
                 .Select((pickListItem) => new PickListItem(pickListItem, entityName, attributeName));
         }
 
+        /// <summary>
+        /// Retrieves multi-select picklist items for a specified Dataverse entity and attribute,
+        /// transforming them into a consistent PickListItem format.
+        /// </summary>
+        /// <param name="entityName">The logical name of the entity (e.g., "contact")</param>
+        /// <param name="attributeName">The logical name of the multi-select attribute</param>
+        /// <returns>An IEnumerable of PickListItem objects representing each selectable option</returns>
+        public IEnumerable<PickListItem> GetMultiSelectPickListItems(
+            string entityName, string attributeName) =>
+
+            // Call the underlying service to get raw picklist items for the specified entity/field
+            _service.GetMultiSelectPickListItems(entityName, attributeName)
+
+                // Project (transform) each item into a new PickListItem with additional context
+                .Select(pickListItem => new PickListItem(pickListItem, entityName, attributeName));
+
+
         public IEnumerable<Entity> GetMultiplePickListItems(string entityName, string attributeName)
         {
             return _service.RetrieveMultiple(new QueryExpression(entityName)
