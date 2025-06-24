@@ -801,17 +801,15 @@ namespace GetIntoTeachingApiTests.Services
                     BindingFlags.NonPublic | BindingFlags.Instance);
 
             _mockCrm.Setup(crmService =>
-                crmService.GetMultiplePickListItems(EntityNameKey, AttributeNameKey))
+                crmService.GetMultiSelectPickListItems(EntityNameKey, AttributeNameKey))
                     .Returns([
-                        new(DefaultTestEntityName){
-                            FormattedValues = {
-                                    [AttributeNameKey] = DefaultTestAttributeNameValue
-                            },
-                            Attributes = {
-                                [AttributeNameKey] =
-                                    new List<OptionSetValue>(){new(DefaultOptionSetValue) }
-                            }
-                        },
+                        new PickListItem()
+                        {
+                            Id = DefaultOptionSetValue,
+                            Value = "Test Option",
+                            EntityName = DefaultTestEntityName,
+                            AttributeName = DefaultTestAttributeNameValue
+                        }
                     ])
                     .Verifiable();
 
@@ -827,7 +825,7 @@ namespace GetIntoTeachingApiTests.Services
 
             // verify
             _mockCrm.Verify(crmService =>
-                crmService.GetMultiplePickListItems(EntityNameKey, AttributeNameKey), Times.Once);
+                crmService.GetMultiSelectPickListItems(EntityNameKey, AttributeNameKey), Times.Once);
 
         }
 
