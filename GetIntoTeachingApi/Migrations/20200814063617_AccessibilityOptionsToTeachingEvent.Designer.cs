@@ -4,44 +4,39 @@ using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Models.Crm;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-#nullable disable
-
 namespace GetIntoTeachingApi.Migrations
 {
     [DbContext(typeof(GetIntoTeachingDbContext))]
-    partial class GetIntoTeachingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200814063617_AccessibilityOptionIdToTeachingEvent")]
+    partial class AddAccessibilityOptionIdToTeachingEvent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.3")
+                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+                .HasAnnotation("ProductVersion", "3.1.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("GetIntoTeachingApi.Models.Country", b =>
+            modelBuilder.Entity("GetIntoTeachingApi.Models.Location", b =>
                 {
-                    b.Property<Guid?>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("IsoCode")
+                    b.Property<string>("Postcode")
                         .HasColumnType("text");
 
-                    b.Property<string>("Value")
-                        .HasColumnType("text");
+                    b.Property<Point>("Coordinate")
+                        .HasColumnType("geography");
 
-                    b.HasKey("Id");
+                    b.HasKey("Postcode");
 
-                    b.ToTable("Countries");
+                    b.ToTable("Locations");
                 });
 
-            modelBuilder.Entity("GetIntoTeachingApi.Models.Crm.PrivacyPolicy", b =>
+            modelBuilder.Entity("GetIntoTeachingApi.Models.PrivacyPolicy", b =>
                 {
                     b.Property<Guid?>("Id")
                         .HasColumnType("uuid");
@@ -57,7 +52,7 @@ namespace GetIntoTeachingApi.Migrations
                     b.ToTable("PrivacyPolicies");
                 });
 
-            modelBuilder.Entity("GetIntoTeachingApi.Models.Crm.TeachingEvent", b =>
+            modelBuilder.Entity("GetIntoTeachingApi.Models.TeachingEvent", b =>
                 {
                     b.Property<Guid?>("Id")
                         .HasColumnType("uuid");
@@ -70,6 +65,9 @@ namespace GetIntoTeachingApi.Migrations
 
                     b.Property<DateTime>("EndAt")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ExternalName")
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsOnline")
                         .HasColumnType("boolean");
@@ -92,16 +90,7 @@ namespace GetIntoTeachingApi.Migrations
                     b.Property<string>("ProviderWebsiteUrl")
                         .HasColumnType("text");
 
-                    b.Property<string>("ProvidersList")
-                        .HasColumnType("text");
-
                     b.Property<string>("ReadableId")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("RegionId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ScribbleId")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("StartAt")
@@ -132,7 +121,7 @@ namespace GetIntoTeachingApi.Migrations
                     b.ToTable("TeachingEvents");
                 });
 
-            modelBuilder.Entity("GetIntoTeachingApi.Models.Crm.TeachingEventBuilding", b =>
+            modelBuilder.Entity("GetIntoTeachingApi.Models.TeachingEventBuilding", b =>
                 {
                     b.Property<Guid?>("Id")
                         .HasColumnType("uuid");
@@ -155,9 +144,6 @@ namespace GetIntoTeachingApi.Migrations
                     b.Property<Point>("Coordinate")
                         .HasColumnType("geography");
 
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("text");
-
                     b.Property<string>("Venue")
                         .HasColumnType("text");
 
@@ -166,26 +152,10 @@ namespace GetIntoTeachingApi.Migrations
                     b.ToTable("TeachingEventBuildings");
                 });
 
-            modelBuilder.Entity("GetIntoTeachingApi.Models.Location", b =>
+            modelBuilder.Entity("GetIntoTeachingApi.Models.TypeEntity", b =>
                 {
-                    b.Property<string>("Postcode")
+                    b.Property<string>("Id")
                         .HasColumnType("text");
-
-                    b.Property<Point>("Coordinate")
-                        .HasColumnType("geography");
-
-                    b.Property<int>("Source")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Postcode");
-
-                    b.ToTable("Locations");
-                });
-
-            modelBuilder.Entity("GetIntoTeachingApi.Models.PickListItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("integer");
 
                     b.Property<string>("EntityName")
                         .HasColumnType("text");
@@ -198,35 +168,15 @@ namespace GetIntoTeachingApi.Migrations
 
                     b.HasKey("Id", "EntityName", "AttributeName");
 
-                    b.ToTable("PickListItems");
+                    b.ToTable("TypeEntities");
                 });
 
-            modelBuilder.Entity("GetIntoTeachingApi.Models.TeachingSubject", b =>
+            modelBuilder.Entity("GetIntoTeachingApi.Models.TeachingEvent", b =>
                 {
-                    b.Property<Guid?>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TeachingSubjects");
-                });
-
-            modelBuilder.Entity("GetIntoTeachingApi.Models.Crm.TeachingEvent", b =>
-                {
-                    b.HasOne("GetIntoTeachingApi.Models.Crm.TeachingEventBuilding", "Building")
+                    b.HasOne("GetIntoTeachingApi.Models.TeachingEventBuilding", "Building")
                         .WithMany("TeachingEvents")
                         .HasForeignKey("BuildingId")
                         .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Building");
-                });
-
-            modelBuilder.Entity("GetIntoTeachingApi.Models.Crm.TeachingEventBuilding", b =>
-                {
-                    b.Navigation("TeachingEvents");
                 });
 #pragma warning restore 612, 618
         }
