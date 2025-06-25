@@ -138,6 +138,9 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
                 DegreeSubject = "Maths",
                 AddressPostcode = "KY11 9YU",
                 PhoneCallScheduledAt = DateTime.UtcNow,
+                CreationChannelSourceId = 222750003,
+                CreationChannelServiceId = 222750002,
+                CreationChannelActivityId = 222750001,
             };
 
             var candidate = request.Candidate;
@@ -199,6 +202,10 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             candidate.Qualifications.First().DegreeStatusId.Should().Be(request.DegreeStatusId);
             candidate.Qualifications.First().DegreeSubject.Should().Be(request.DegreeSubject);
             candidate.Qualifications.First().TypeId.Should().Be(request.DegreeTypeId);
+
+            candidate.ContactChannelCreations.First().CreationChannelSourceId.Should().Be(request.CreationChannelSourceId);
+            candidate.ContactChannelCreations.First().CreationChannelServiceId.Should().Be(request.CreationChannelServiceId);
+            candidate.ContactChannelCreations.First().CreationChannelActivityId.Should().Be(request.CreationChannelActivityId);
 
             candidate.HasTeacherTrainingAdviserSubscription.Should().BeTrue();
         }
@@ -265,12 +272,37 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
         }
 
         [Fact]
-        public void Candidate_ChannelIdWhenCandidateIdIsNull_IsTeacherTrainingAdviser()
+        public void Candidate_ChannelIdWhenCandidateIdIsNull_IsTeacherTrainingAdviser_WithoutDefaultCreationChannels()
         {
+            var previous = Environment.GetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS");
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", "1");
+            
             var request = new TeacherTrainingAdviserSignUp() { CandidateId = null };
 
             request.Candidate.ChannelId.Should().Be((int)Candidate.Channel.TeacherTrainingAdviser);
+            
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", previous);
         }
+        
+        [Fact]
+        public void Candidate_ChannelIdWhenCandidateIdIsNull_IsTeacherTrainingAdviser_WithDefaultCreationChannels()
+        {
+            var previous = Environment.GetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS");
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", "0");
+            
+            var request = new TeacherTrainingAdviserSignUp() { CandidateId = null };
+            
+            request.Candidate.ChannelId.Should().Be(null);
+            
+            var ccc = request.Candidate.ContactChannelCreations.First();
+            ccc.CreationChannel.Should().Be(true);
+            ccc.CreationChannelSourceId.Should().Be((int?)ContactChannelCreation.CreationChannelSource.GITWebsite);
+            ccc.CreationChannelServiceId.Should().Be((int?)ContactChannelCreation.CreationChannelService.TeacherTrainingAdviserService);
+            ccc.CreationChannelActivityId.Should().Be(null);
+            
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", previous);
+        }
+
 
         [Fact]
         public void Candidate_ChannelIdWhenCandidateIdIsNotNull_IsNotChanged()
@@ -280,14 +312,77 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             request.Candidate.ChannelId.Should().BeNull();
             request.Candidate.ChangedPropertyNames.Should().NotContain("ChannelId");
         }
+        
+        [Fact]
+        public void Candidate_ContactChannelCreationWhenCandidateIdIsNull()
+        {
+            var request = new TeacherTrainingAdviserSignUp()
+            {
+                CandidateId = null, 
+                CreationChannelSourceId = 222750000,
+                CreationChannelServiceId = 222750001,
+                CreationChannelActivityId = 222750002,
+            };
+
+            request.Candidate.ChannelId.Should().BeNull();
+            request.Candidate.ChangedPropertyNames.Should().Contain("ContactChannelCreations");
+            request.Candidate.ContactChannelCreations.First().CreationChannelSourceId.Should().Be(222750000);
+            request.Candidate.ContactChannelCreations.First().CreationChannelServiceId.Should().Be(222750001);
+            request.Candidate.ContactChannelCreations.First().CreationChannelActivityId.Should().Be(222750002);
+        }
+        
+        [Fact]
+        public void Candidate_ContactChannelCreationWhenCandidateIdIsNotNull()
+        {
+            var request = new TeacherTrainingAdviserSignUp()
+            {
+                CandidateId = Guid.NewGuid(), 
+                CreationChannelSourceId = 222750000,
+                CreationChannelServiceId = 222750001,
+                CreationChannelActivityId = 222750002,
+            };
+
+            request.Candidate.ChannelId.Should().BeNull();
+            request.Candidate.ChangedPropertyNames.Should().NotContain("ChannelId");
+            request.Candidate.ChangedPropertyNames.Should().Contain("ContactChannelCreations");
+            request.Candidate.ContactChannelCreations.First().CreationChannelSourceId.Should().Be(222750000);
+            request.Candidate.ContactChannelCreations.First().CreationChannelServiceId.Should().Be(222750001);
+            request.Candidate.ContactChannelCreations.First().CreationChannelActivityId.Should().Be(222750002);
+        }
 
         [Fact]
-        public void Candidate_WhenChannelIsProvided_SetsOnAllModels()
+        public void Candidate_WhenChannelIsProvided_SetsOnAllModels_WithoutDefaultCreationChannels()
         {
+            var previous = Environment.GetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS");
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", "1");
+            
             var request = new TeacherTrainingAdviserSignUp() { ChannelId = 123 };
 
             request.Candidate.ChannelId.Should().Be(123);
             request.Candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Subscribed);
+            
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", previous);
+        }
+        
+        [Fact]
+        public void Candidate_WhenChannelIsProvided_SetsOnAllModels_WithDefaultCreationChannels()
+        {
+            var previous = Environment.GetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS");
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", "0");
+            
+            var request = new TeacherTrainingAdviserSignUp() { ChannelId = 123 };
+            
+            request.Candidate.ChannelId.Should().Be(null);
+            
+            var ccc = request.Candidate.ContactChannelCreations.First();
+            ccc.CreationChannel.Should().Be(true);
+            ccc.CreationChannelSourceId.Should().Be((int?)ContactChannelCreation.CreationChannelSource.GITWebsite);
+            ccc.CreationChannelServiceId.Should().Be((int?)ContactChannelCreation.CreationChannelService.TeacherTrainingAdviserService);
+            ccc.CreationChannelActivityId.Should().Be(null);
+            
+            request.Candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Subscribed);
+            
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", previous);
         }
 
         [Fact]

@@ -28,7 +28,6 @@ namespace GetIntoTeachingApi.Services
         private readonly IGeocodeClientAdapter _geocodeClient;
         private readonly ICrmService _crm;
         private readonly IDateTimeProvider _dateTime;
-        private readonly IEnv _env;
 
         public Store(
             GetIntoTeachingDbContext dbContext,
@@ -41,7 +40,6 @@ namespace GetIntoTeachingApi.Services
             _geocodeClient = geocodeClient;
             _crm = crm;
             _dateTime = dateTime;
-            _env = env;
         }
 
         public static void ClearFailedPostcodeLookupCache()
@@ -302,7 +300,13 @@ namespace GetIntoTeachingApi.Services
             await SyncPickListItem("dfe_applyapplicationform", "dfe_applystatus");
             await SyncPickListItem("dfe_applyapplicationform", "dfe_recruitmentyear");
             await SyncPickListItem("dfe_applyapplicationchoice", "dfe_applicationchoicestatus");
+
             await SyncPickListItem("dfe_applyreference", "dfe_referencefeedbackstatus");
+
+            await SyncPickListItem("dfe_contactchannelcreation", "dfe_creationchannelsource");
+            await SyncPickListItem("dfe_contactchannelcreation", "dfe_creationchannelservice");
+            await SyncPickListItem("dfe_contactchannelcreation", "dfe_creationchannelactivities");
+
             await SyncPickListItem("contact", "dfe_situation");
         }
 
@@ -346,7 +350,7 @@ namespace GetIntoTeachingApi.Services
         {
             IEnumerable<PickListItem> pickListItems =
                 _crm.GetPickListItems(entityName, attributeName);
-            
+
             await SyncPickListItems(pickListItems, entityName, attributeName);
         }
 

@@ -11,7 +11,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
     public class TeachingEventAddAttendeeTests
     {
         [Fact]
-        public void Constructor_WithCandidate_MapsCorrectly()
+        public void Constructor_WithExistingCandidate_MapsCorrectly()
         {
             var latestQualification = new CandidateQualification()
             {
@@ -64,7 +64,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         }
 
         [Fact]
-        public void Candidate_MapsCorrectly()
+        public void ExistingCandidate_MapsCorrectly()
         {
             var request = new TeachingEventAddAttendee()
             {
@@ -82,6 +82,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
                 AddressPostcode = "KY11 9YU",
                 SubscribeToMailingList = true,
                 IsWalkIn = false,
+                CreationChannelSourceId = 222750003,
+                CreationChannelServiceId = 222750002,
+                CreationChannelActivityId = 222750001,
             };
 
             var candidate = request.Candidate;
@@ -121,6 +124,32 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
             candidate.Qualifications.First().DegreeStatusId.Should().Be(request.DegreeStatusId);
             candidate.Qualifications.First().TypeId.Should().Be((int)CandidateQualification.DegreeType.Degree);
             candidate.Qualifications.First().Id.Should().Be(request.QualificationId);
+            
+            var contactChannelCreation = candidate.ContactChannelCreations.First();
+            contactChannelCreation.CreationChannel.Should().Be(false);
+            contactChannelCreation.CreationChannelSourceId.Should().Be(request.CreationChannelSourceId);
+            contactChannelCreation.CreationChannelServiceId.Should().Be(request.CreationChannelServiceId);
+            contactChannelCreation.CreationChannelActivityId.Should().Be(request.CreationChannelActivityId);
+            candidate.ChannelId.Should().Be(null);
+        }
+        
+        [Fact]
+        public void NewCandidate_MapsCorrectly()
+        {
+            var request = new TeachingEventAddAttendee()
+            {
+                CandidateId = null,
+                CreationChannelSourceId = 222750003,
+                CreationChannelServiceId = 222750002,
+                CreationChannelActivityId = 222750001,
+            };
+            
+            var contactChannelCreation = request.Candidate.ContactChannelCreations.First();
+            contactChannelCreation.CreationChannel.Should().Be(true);
+            contactChannelCreation.CreationChannelSourceId.Should().Be(request.CreationChannelSourceId);
+            contactChannelCreation.CreationChannelServiceId.Should().Be(request.CreationChannelServiceId);
+            contactChannelCreation.CreationChannelActivityId.Should().Be(request.CreationChannelActivityId);
+            request.Candidate.ChannelId.Should().Be(null);
         }
 
         [Fact]
@@ -149,19 +178,65 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
         }
 
         [Fact]
-        public void Candidate_ChannelIdWhenCandidateIdIsNull_IsMailingList()
+        public void Candidate_ChannelIdWhenCandidateIdIsNull_IsMailingList_WithoutDefaultCreationChannels()
         {
+            var previous = Environment.GetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS");
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", "1");
+            
             var request = new TeachingEventAddAttendee() { CandidateId = null };
 
             request.Candidate.ChannelId.Should().Be((int)Candidate.Channel.Event);
+            
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", previous);
+        }
+        
+        [Fact]
+        public void Candidate_ChannelIdWhenCandidateIdIsNull_IsMailingList_WithDefaultCreationChannels()
+        {
+            var previous = Environment.GetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS");
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", "0");
+            
+            var request = new TeachingEventAddAttendee() { CandidateId = null };
+            request.Candidate.ChannelId.Should().Be(null);
+            
+            var ccc = request.Candidate.ContactChannelCreations.First();
+            ccc.CreationChannel.Should().Be(true);
+            ccc.CreationChannelSourceId.Should().Be((int?)ContactChannelCreation.CreationChannelSource.GITWebsite);
+            ccc.CreationChannelServiceId.Should().Be((int?)ContactChannelCreation.CreationChannelService.Events);
+            ccc.CreationChannelActivityId.Should().Be(null);
+            
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", previous);
         }
 
         [Fact]
-        public void Candidate_WithNonNullChannelIdWhenCandidateIdIsNull_IsMailingList()
+        public void Candidate_WithNonNullChannelIdWhenCandidateIdIsNull_IsMailingList_WithoutDefaultCreationChannels()
         {
+            var previous = Environment.GetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS");
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", "1");
+            
             var request = new TeachingEventAddAttendee() { CandidateId = null, ChannelId = 456 };
 
             request.Candidate.ChannelId.Should().Be(456);
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", previous);
+        }
+        
+        [Fact]
+        public void Candidate_WithNonNullChannelIdWhenCandidateIdIsNull_IsMailingList_WithDefaultCreationChannels()
+        {
+            var previous = Environment.GetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS");
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", "0");
+            
+            var request = new TeachingEventAddAttendee() { CandidateId = null, ChannelId = 456 };
+
+            request.Candidate.ChannelId.Should().Be(null);
+            
+            var ccc = request.Candidate.ContactChannelCreations.First();
+            ccc.CreationChannel.Should().Be(true);
+            ccc.CreationChannelSourceId.Should().Be((int?)ContactChannelCreation.CreationChannelSource.GITWebsite);
+            ccc.CreationChannelServiceId.Should().Be((int?)ContactChannelCreation.CreationChannelService.Events);
+            ccc.CreationChannelActivityId.Should().Be(null);
+            
+            Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", previous);
         }
 
         [Fact]
