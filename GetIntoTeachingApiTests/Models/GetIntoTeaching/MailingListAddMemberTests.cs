@@ -206,8 +206,8 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
             var request = new MailingListAddMember() { ChannelId = 123, AddressPostcode = "TE7 8KE" };
 
             request.Candidate.ChannelId.Should().Be(123);
-            request.Candidate.MailingListSubscriptionChannelId.Should().Be(123);
-            request.Candidate.EventsSubscriptionChannelId.Should().Be(123);
+            request.Candidate.MailingListSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Subscribed);
+            request.Candidate.EventsSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Subscribed);
             
             Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", previous);
         }
@@ -228,8 +228,8 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
             ccc.CreationChannelServiceId.Should().Be((int?)ContactChannelCreation.CreationChannelService.MailingList);
             ccc.CreationChannelActivityId.Should().Be(null);
             
-            request.Candidate.MailingListSubscriptionChannelId.Should().Be(123);
-            request.Candidate.EventsSubscriptionChannelId.Should().Be(123);
+            request.Candidate.MailingListSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Subscribed);
+            request.Candidate.EventsSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Subscribed);
             
             Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", previous);
         }

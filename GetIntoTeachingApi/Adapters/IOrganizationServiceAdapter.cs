@@ -15,6 +15,17 @@ namespace GetIntoTeachingApi.Adapters
         IEnumerable<Entity> RetrieveMultiple(QueryBase query);
         void LoadProperty(Entity entity, Relationship relationship, OrganizationServiceContext context);
         IEnumerable<PickListItem> GetPickListItemsForAttribute(string entityName, string attributeName);
+
+        /// <summary>
+        /// Retrieves the defined values for a multi-select picklist field (multi-option set)
+        /// from a Dataverse entity's metadata. Returns a list of PickListItem objects 
+        /// containing the value ID and user-visible label.
+        /// </summary>
+        /// <param name="entityName">The logical name of the entity (e.g., "contact")</param>
+        /// <param name="attributeName">The logical name of the multi-select field</param>
+        /// <returns>List of PickListItem representing each option in the multi-select picklist</returns>
+        IEnumerable<PickListItem> GetMultiSelectPickListItems(string entityName, string attributeName);
+
         IEnumerable<Entity> RelatedEntities(Entity entity, string attributeName);
         OrganizationServiceContext Context();
         Entity BlankExistingEntity(string entityName, Guid id, OrganizationServiceContext context);

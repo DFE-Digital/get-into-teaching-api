@@ -359,7 +359,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             var request = new TeacherTrainingAdviserSignUp() { ChannelId = 123 };
 
             request.Candidate.ChannelId.Should().Be(123);
-            request.Candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be(123);
+            request.Candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Subscribed);
             
             Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", previous);
         }
@@ -380,7 +380,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             ccc.CreationChannelServiceId.Should().Be((int?)ContactChannelCreation.CreationChannelService.TeacherTrainingAdviserService);
             ccc.CreationChannelActivityId.Should().Be(null);
             
-            request.Candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be(123);
+            request.Candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Subscribed);
             
             Environment.SetEnvironmentVariable("DISABLE_DEFAULT_CREATION_CHANNELS", previous);
         }
