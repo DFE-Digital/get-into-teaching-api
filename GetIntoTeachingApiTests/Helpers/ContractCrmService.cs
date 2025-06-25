@@ -158,6 +158,11 @@ namespace GetIntoTeachingApiTests.Helpers
             return _crmService.GetPickListItems(entityName, attributeName);
         }
 
+        public IEnumerable<PickListItem> GetMultiSelectPickListItems(string entityName, string attributeName)
+        {
+            return _crmService.GetMultiSelectPickListItems(entityName, attributeName);
+        }
+
         public IEnumerable<PrivacyPolicy> GetPrivacyPolicies()
         {
             return _crmService.GetPrivacyPolicies();

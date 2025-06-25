@@ -30,9 +30,9 @@ namespace GetIntoTeachingApiTests.Services
         {
             var candidate = new Candidate();
 
-            SubscriptionManager.SubscribeToMailingList(candidate, DateTime.UtcNow, 123);
+            SubscriptionManager.SubscribeToMailingList(candidate, DateTime.UtcNow);
 
-            candidate.MailingListSubscriptionChannelId.Should().Be(123);
+            candidate.MailingListSubscriptionChannelId.Should().Be((int) Candidate.SubscriptionChannel.Subscribed);
         }
 
         [Fact]
@@ -84,9 +84,9 @@ namespace GetIntoTeachingApiTests.Services
         {
             var candidate = new Candidate();
 
-            SubscriptionManager.SubscribeToEvents(candidate, DateTime.UtcNow, 123);
+            SubscriptionManager.SubscribeToEvents(candidate, DateTime.UtcNow);
 
-            candidate.EventsSubscriptionChannelId.Should().Be(123);
+            candidate.EventsSubscriptionChannelId.Should().Be((int)Candidate.SubscriptionChannel.Subscribed);
             candidate.EventsSubscriptionTypeId.Should().Be((int)Candidate.SubscriptionType.SingleEvent);
         }
 
@@ -122,9 +122,9 @@ namespace GetIntoTeachingApiTests.Services
         {
             var candidate = new Candidate();
 
-            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate, DateTime.UtcNow, 123);
+            SubscriptionManager.SubscribeToTeacherTrainingAdviser(candidate, DateTime.UtcNow);
 
-            candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be(123);
+            candidate.TeacherTrainingAdviserSubscriptionChannelId.Should().Be((int) Candidate.SubscriptionChannel.Subscribed);
         }
 
         [Fact]

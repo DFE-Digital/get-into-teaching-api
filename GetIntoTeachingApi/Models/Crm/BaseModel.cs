@@ -1,4 +1,10 @@
-﻿using System;
+﻿using FluentValidation;
+using GetIntoTeachingApi.Attributes;
+using GetIntoTeachingApi.Services;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
+using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,14 +13,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using FluentValidation;
-using GetIntoTeachingApi.Attributes;
-using GetIntoTeachingApi.Services;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Client;
-using Newtonsoft.Json;
-using YamlDotNet.Core;
 
 namespace GetIntoTeachingApi.Models.Crm
 {
@@ -54,9 +52,11 @@ namespace GetIntoTeachingApi.Models.Crm
 
         public static string[] EntityFieldAttributeNames(Type type)
         {
-            var entityAttribute = (EntityAttribute)Attribute.GetCustomAttribute(type, typeof(EntityAttribute));
-            var attributes = type.GetProperties().Select(EntityFieldAttribute).Where(a => a != null);
-            var fieldNames = attributes.Select(a => a.Name);
+            EntityAttribute entityAttribute = (EntityAttribute)Attribute.GetCustomAttribute(type, typeof(EntityAttribute));
+            IEnumerable<EntityFieldAttribute> attributes = type.GetProperties().Select(EntityFieldAttribute).Where(a => a != null);
+            IEnumerable<string> fieldNames =
+                attributes.Where(attribute =>
+                    !attribute.Ignored).Select(attribute => attribute.Name);
 
             return fieldNames.Concat(new[] { $"{entityAttribute.LogicalName}id" }).ToArray();
         }
@@ -262,6 +262,10 @@ namespace GetIntoTeachingApi.Models.Crm
                 else if (attribute.Type == typeof(OptionSetValue) && value != null)
                 {
                     entity[attribute.Name] = new OptionSetValue((int)value);
+                }
+                else if (attribute.Type == typeof(OptionSetValueCollection) && value != null)
+                {
+                    entity[attribute.Name] = value as OptionSetValueCollection;
                 }
                 else
                 {

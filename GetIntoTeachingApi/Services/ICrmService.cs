@@ -13,6 +13,17 @@ namespace GetIntoTeachingApi.Services
         IEnumerable<Country> GetCountries();
         IEnumerable<TeachingSubject> GetTeachingSubjects();
         IEnumerable<PickListItem> GetPickListItems(string entityName, string attributeName);
+
+        /// <summary>
+        /// Retrieves multi-select picklist items for a specified Dataverse entity and attribute,
+        /// transforming them into a consistent PickListItem format.
+        /// </summary>
+        /// <param name="entityName">The logical name of the entity (e.g., "contact")</param>
+        /// <param name="attributeName">The logical name of the multi-select attribute</param>
+        /// <returns>An IEnumerable of PickListItem objects representing each selectable option</returns>
+        IEnumerable<PickListItem> GetMultiSelectPickListItems(
+            string entityName, string attributeName);
+
         IEnumerable<Entity> GetMultiplePickListItems(string entityName, string attributeName);
         IEnumerable<PrivacyPolicy> GetPrivacyPolicies();
         Candidate MatchCandidate(ExistingCandidateRequest request);
