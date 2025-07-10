@@ -42,7 +42,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
 
         /// <summary>
-        /// The situation of the candidate, which can be used to determine their current status or context.
+        /// The situation (life stage) of the candidate, which can be used to determine their current status or context.
         /// </summary>
         public int? Situation { get; set; }
 
