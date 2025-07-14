@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using FluentAssertions;
 using FluentValidation.TestHelper;
 using GetIntoTeachingApi.Models.GetIntoTeaching;
 using GetIntoTeachingApi.Models.GetIntoTeaching.Validators;
@@ -19,6 +21,34 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators
             _mockStore = new Mock<IStore>();
             _validator = new GetIntoTeachingCallbackValidator(_mockStore.Object, new DateTimeProvider());
             _callback = new GetIntoTeachingCallback();
+        }
+        
+        [Fact]
+        public void Validate_WhenValid_HasNoErrors()
+        {
+            // var mockPickListItem = new PickListItem { Id = 123 };
+            // var mockSubject = new TeachingSubject { Id = Guid.NewGuid() };
+            // var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
+
+            var request = new GetIntoTeachingCallback()
+            {
+                FirstName = "John",
+                LastName = "Doe",
+                Email = "email@address.com",
+                AcceptedPolicyId = Guid.NewGuid(),
+                AddressTelephone = "123456789",
+                PhoneCallScheduledAt = DateTime.UtcNow.AddDays(1),
+                TalkingPoints = "Talking points",
+                CreationChannelSourceId = 222750003,
+                CreationChannelServiceId = 222750002,
+                CreationChannelActivityId = 222750001,
+            };
+
+            var result = _validator.TestValidate(request);
+            // Ensure no validation errors on root object (we expect errors on the Candidate
+            // properties as we can't mock them).
+            var propertiesWithErrors = result.Errors.Select(e => e.PropertyName);
+            propertiesWithErrors.All(p => p.StartsWith("Candidate.")).Should().BeTrue();
         }
 
         [Fact]

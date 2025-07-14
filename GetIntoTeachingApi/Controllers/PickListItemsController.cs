@@ -299,6 +299,42 @@ namespace GetIntoTeachingApi.Controllers
         {
             return Ok(await _store.GetPickListItems("dfe_servicesubscription", "dfe_servicesubscriptiontype").ToListAsync());
         }
+        
+        [HttpGet]
+        [Route("contact_creation_channel/sources")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of contact creation channel sources.",
+            OperationId = "GetContactCreationChannelSources",
+            Tags = new[] { "Pick List Items" })]
+        [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetContactCreationChannelSources()
+        {
+            return Ok(await _store.GetPickListItems("dfe_contactchannelcreation", "dfe_creationchannelsource").ToListAsync());
+        }
+        
+        [HttpGet]
+        [Route("contact_creation_channel/services")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of contact creation channel services.",
+            OperationId = "GetContactCreationChannelServices",
+            Tags = new[] { "Pick List Items" })]
+        [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetContactCreationChannelServices()
+        {
+            return Ok(await _store.GetPickListItems("dfe_contactchannelcreation", "dfe_creationchannelservice").ToListAsync());
+        }
+        
+        [HttpGet]
+        [Route("contact_creation_channel/activities")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of contact creation channel activities.",
+            OperationId = "GetContactCreationChannelActivities",
+            Tags = new[] { "Pick List Items" })]
+        [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetContactCreationChannelActivities()
+        {
+            return Ok(await _store.GetPickListItems("dfe_contactchannelcreation", "dfe_creationchannelactivities").ToListAsync());
+        }
 
         [HttpGet]
         [Route("candidate/situations")]
