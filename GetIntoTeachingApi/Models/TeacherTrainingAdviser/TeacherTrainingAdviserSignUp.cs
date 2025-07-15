@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Text.Json.Serialization;
+using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.Crm.DegreeStatusInference;
 using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
+using Microsoft.Xrm.Sdk;
 using Swashbuckle.AspNetCore.Annotations;
 using static GetIntoTeachingApi.Models.Crm.Candidate;
 
@@ -84,6 +86,9 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         public string TeacherId { get; set; }
         public string DegreeSubject { get; set; }
         public string AddressTelephone { get; set; }
+        public int? Citizenship { get; set; }
+        public int? VisaStatus { get; set; }
+        public int? Location { get; set; }
 
         public string AddressPostcode { get; set; }
         [SwaggerSchema(WriteOnly = true)]
@@ -220,6 +225,9 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
             TypeId = candidate.TypeId;
             AdviserStatusId = candidate.AdviserStatusId;
             AssignmentStatusId = candidate.AssignmentStatusId;
+            Citizenship = candidate.Citizenship;
+            VisaStatus = candidate.VisaStatus;
+            Location = candidate.Location;
 
             CanSubscribeToTeacherTrainingAdviser = CanSubscribe(candidate);
 
@@ -258,6 +266,9 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                 AddressTelephone = AddressTelephone.AsFormattedTelephone(IsOverseas),
                 TeacherId = TeacherId,
                 TypeId = TypeId,
+                Citizenship = Citizenship,
+                VisaStatus = VisaStatus,
+                Location = Location,
                 InitialTeacherTrainingYearId = InitialTeacherTrainingYearId,
                 PreferredEducationPhaseId = PreferredEducationPhaseId,
                 HasGcseEnglishId = HasGcseMathsAndEnglishId,
