@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
@@ -58,11 +59,19 @@ namespace GetIntoTeachingApi.Jobs
                 UpdateCandidateWithMatch(wrappedCandidate.ScopedCandidate, match);
             }
             
-            wrappedCandidate.ScopedCandidate.ConfigureChannel(
-                candidateId: wrappedCandidate.ScopedCandidate.Id,
-                primaryContactChannel: wrappedCandidate
+            // NB: to prevent multiple Contact Creation Channel (CCC) records from being created hourly on the Apply sync,
+            // we should only create a CCC if there isn't already an existing record with:
+            //   source == Apply AND service == CreatedOnApply
+            if (!wrappedCandidate.ScopedCandidate.ContactChannelCreations.Any(c =>
+                    c.CreationChannelSourceId == (int)ContactChannelCreation.CreationChannelSource.Apply &&
+                    c.CreationChannelServiceId == (int)ContactChannelCreation.CreationChannelService.CreatedOnApply))
+            {
+                wrappedCandidate.ScopedCandidate.ConfigureChannel(
+                    candidateId: wrappedCandidate.ScopedCandidate.Id,
+                    primaryContactChannel: wrappedCandidate
                 );
-            
+            }
+
             string json = wrappedCandidate.ScopedCandidate.SerializeChangeTracked();
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
         }
