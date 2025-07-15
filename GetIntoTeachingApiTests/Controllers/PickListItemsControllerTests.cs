@@ -328,6 +328,54 @@ namespace GetIntoTeachingApiTests.Controllers
         }
 
         [Fact]
+        public async Task GetCandidateCitizenship_ReturnsAllCitizenshipItems()
+        {
+            var mockItems = MockPickListItems();
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_citizenship"))
+                .Returns(mockItems.AsAsyncQueryable());
+
+            var response = await _controller.GetCandidateCitizenship();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockItems);
+
+            _mockStore.Verify(mock =>
+                mock.GetPickListItems("contact", "dfe_citizenship"), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetCandidateVisaStatus_ReturnsAllVisaStatusItems()
+        {
+            var mockItems = MockPickListItems();
+            _mockStore.Setup(mock => mock.GetPickListItems("contact", "dfe_visastatus"))
+                .Returns(mockItems.AsAsyncQueryable());
+
+            var response = await _controller.GetCandidateVisaStatus();
+
+            var ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockItems);
+
+            _mockStore.Verify(mock =>
+                mock.GetPickListItems("contact", "dfe_visastatus"), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetCandidateLocations_ReturnsAllLocationItems()
+        {
+            var mockItems = MockPickListItems();
+            _mockStore.Setup(mock =>
+                mock.GetPickListItems("contact", "dfe_location"))
+                    .Returns(mockItems.AsAsyncQueryable()).Verifiable();
+
+            IActionResult response = await _controller.GetCandidateLocation();
+
+            OkObjectResult ok = response.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value.Should().BeEquivalentTo(mockItems);
+
+            _mockStore.Verify(mock =>
+                mock.GetPickListItems("contact", "dfe_location"), Times.Once);
+        }
+
         public async Task GetTeachingEventAccessibility_ReturnsAllAccessibilityItems()
         {
             var mockItems = MockPickListItems();
