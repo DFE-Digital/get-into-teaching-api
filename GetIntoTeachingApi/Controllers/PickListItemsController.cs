@@ -363,7 +363,7 @@ namespace GetIntoTeachingApi.Controllers
             OperationId = "GetCandidateVisaStatus",
             Tags = ["Pick List Items"])]
                 [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
-                public async Task<IActionResult> GetVisaStatus() =>
+                public async Task<IActionResult> GetCandidateVisaStatus() =>
             Ok(await _store.GetPickListItems("contact", "dfe_visastatus").ToListAsync());
 
         [HttpGet]
