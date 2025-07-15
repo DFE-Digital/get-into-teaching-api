@@ -308,6 +308,9 @@ namespace GetIntoTeachingApi.Services
             await SyncPickListItem("dfe_contactchannelcreation", "dfe_creationchannelactivities");
 
             await SyncPickListItem("contact", "dfe_situation");
+            await SyncPickListItem("contact", "dfe_citizenship");
+            await SyncPickListItem("contact", "dfe_visastatus");
+            await SyncPickListItem("contact", "dfe_location");
         }
 
         private async Task SyncModels<T>(IEnumerable<T> models, IQueryable<T> dbSet)
