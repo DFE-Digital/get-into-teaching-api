@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
@@ -14,6 +15,7 @@ namespace GetIntoTeachingApi.Jobs
         private readonly IBackgroundJobClient _jobClient;
         private readonly ICrmService _crm;
         private readonly Models.IAppSettings _appSettings;
+        private readonly ICandidateChannelConfigurationHandler _candidateChannelConfigurationHandler;
 
         public ApplyCandidateSyncJob(
             IEnv env,
@@ -21,13 +23,15 @@ namespace GetIntoTeachingApi.Jobs
             ILogger<ApplyCandidateSyncJob> logger,
             ICrmService crm,
             IBackgroundJobClient jobClient,
-            Models.IAppSettings appSettings)
+            Models.IAppSettings appSettings,
+            ICandidateChannelConfigurationHandler candidateChannelConfigurationHandler)
             : base(env, redis)
         {
             _logger = logger;
             _crm = crm;
             _jobClient = jobClient;
             _appSettings = appSettings;
+            _candidateChannelConfigurationHandler = candidateChannelConfigurationHandler;
         }
 
         public void Run(ApplyCandidate applyCandidate)
@@ -58,11 +62,14 @@ namespace GetIntoTeachingApi.Jobs
                 UpdateCandidateWithMatch(wrappedCandidate.ScopedCandidate, match);
             }
             
-            wrappedCandidate.ScopedCandidate.ConfigureChannel(
-                candidateId: wrappedCandidate.ScopedCandidate.Id,
-                primaryContactChannel: wrappedCandidate
-                );
-            
+            // NB: to prevent multiple Contact Creation Channel (CCC) records from being created hourly on the Apply sync,
+            // we should only create a CCC if there isn't already an existing record with:
+            //   source == Apply AND service == CreatedOnApply
+            if (_candidateChannelConfigurationHandler.DoesNotHaveAContactChannelCreationRecord(wrappedCandidate.ScopedCandidate))
+            {
+                _candidateChannelConfigurationHandler.InvokeConfigureChannel(wrappedCandidate);
+            }
+
             string json = wrappedCandidate.ScopedCandidate.SerializeChangeTracked();
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
         }
@@ -70,6 +77,8 @@ namespace GetIntoTeachingApi.Jobs
         private static void UpdateCandidateWithMatch(Models.Crm.Candidate candidate, Models.Crm.Candidate match)
         {
             candidate.Id = match.Id;
+            
+            candidate.ContactChannelCreations = match.ContactChannelCreations;
 
             if (candidate.Email == match.Email || match.SecondaryEmail != null)
             {
