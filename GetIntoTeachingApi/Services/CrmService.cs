@@ -173,11 +173,8 @@ namespace GetIntoTeachingApi.Services
             {
                 return null;
             }
-
-            var context = Context();
-            context.Attach(entity);
-
-            LoadCandidateRelationships(entity, context);
+            
+            LoadCandidateRelationships(entity);
 
             return new Candidate(entity, this, _serviceProvider);
         }
@@ -197,6 +194,8 @@ namespace GetIntoTeachingApi.Services
             {
                 return null;
             }
+            
+            LoadCandidateRelationships(entity);
 
             return new Candidate(entity, this, _serviceProvider);
         }
@@ -431,11 +430,19 @@ namespace GetIntoTeachingApi.Services
             return query;
         }
 
+        private void LoadCandidateRelationships(Entity entity)
+        {
+            var context = Context();
+            context.Attach(entity);
+            
+            LoadCandidateRelationships(entity, context);
+        }
         private void LoadCandidateRelationships(Entity entity, OrganizationServiceContext context)
         {
             _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), context);
             _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), context);
             _service.LoadProperty(entity, new Relationship("msevtmgt_contact_msevtmgt_eventregistration_Contact"), context);
+            _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_contactchannelcreation_ContactId"), context);
         }
 
         private OrganizationServiceContext Context()
