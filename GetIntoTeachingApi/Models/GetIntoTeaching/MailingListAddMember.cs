@@ -49,7 +49,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         /// <summary>
         /// The citizenship status of the candidate, represented as an integer code.
         /// </summary>
-        public int Citizenship { get; set; }
+        public int? Citizenship { get; set; }
 
         /// <summary>
         /// The visa status of the candidate, represented as an integer code.
