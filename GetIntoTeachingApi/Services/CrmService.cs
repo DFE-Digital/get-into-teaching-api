@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.ServiceModel;
 
 namespace GetIntoTeachingApi.Services
 {
@@ -442,7 +443,18 @@ namespace GetIntoTeachingApi.Services
             _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatequalification_ContactId"), context);
             _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), context);
             _service.LoadProperty(entity, new Relationship("msevtmgt_contact_msevtmgt_eventregistration_Contact"), context);
-            _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_contactchannelcreation_ContactId"), context);
+            
+            try
+            {
+                _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_contactchannelcreation_ContactId"),
+                    context);
+            }
+            catch (FaultException ex)
+            {
+                // NB: the behaviour of the CRM is unreliable and sometimes it will fail to return associated
+                // ContactChannelCreation records.
+                _logger.LogWarning(ex, "CRM did not return ContactChannelCreation relationships");
+            }
         }
 
         private OrganizationServiceContext Context()
