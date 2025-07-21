@@ -39,7 +39,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockAppSettings = new Mock<GetIntoTeachingApi.Models.IAppSettings>();
             _mockCrm = new Mock<ICrmService>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
-            
+
             _job = new ApplyCandidateSyncJob(
                 _mockEnv.Object,
                 new Mock<IRedisService>().Object,
@@ -107,7 +107,7 @@ namespace GetIntoTeachingApiTests.Jobs
                 _mockJobClient.Object,
                 _mockAppSettings.Object
             );
-            
+
             job.Run(_candidate);
 
             var form1 = new GetIntoTeachingApi.Models.Crm.ApplicationForm()
@@ -176,7 +176,7 @@ namespace GetIntoTeachingApiTests.Jobs
                 _mockJobClient.Object,
                 _mockAppSettings.Object
             );
-            
+
             job.Run(_candidate);
 
             var form1 = new GetIntoTeachingApi.Models.Crm.ApplicationForm()
@@ -243,7 +243,7 @@ namespace GetIntoTeachingApiTests.Jobs
                 _mockJobClient.Object,
                 _mockAppSettings.Object
             );
-            
+
             job.Run(_candidate);
 
             var candidate = new GetIntoTeachingApi.Models.Crm.Candidate()
@@ -276,67 +276,27 @@ namespace GetIntoTeachingApiTests.Jobs
                 .WithMessage("ApplyCandidateSyncJob - Aborting (CRM integration paused).");
         }
 
-        [Fact]
-        public void SyncCandidate_WithoutExistingContactChannelCreationRecords_CallsConfigureChannelOnce()
-        {
-            throw new NotImplementedException();
-            // // Arrange
-            // _mockCandidateChannelConfigurationHandler.Setup(x=> x.DoesNotHaveAContactChannelCreationRecord(It.IsAny<GetIntoTeachingApi.Models.Crm.Candidate>())).Returns(true).Verifiable();
-            // _mockCandidateChannelConfigurationHandler.Setup(x => x.InvokeConfigureChannel(It.IsAny<GetIntoTeachingApi.Jobs.ContactChannelCandidateWrapper>())).Verifiable();
-            //
-            // // Act
-            // _job.SyncCandidate(_candidate);
-            //
-            // // Assert
-            // _mockCandidateChannelConfigurationHandler.Verify(x => x.DoesNotHaveAContactChannelCreationRecord(It.IsAny<GetIntoTeachingApi.Models.Crm.Candidate>()), Times.Once);
-            // _mockCandidateChannelConfigurationHandler.Verify(x => x.InvokeConfigureChannel(It.IsAny<GetIntoTeachingApi.Jobs.ContactChannelCandidateWrapper>()), Times.Once);
-        }
-        
-        [Fact]
-        public void SyncCandidate_WithExistingContactChannelCreationRecords_CallsConfigureChannelOnce()
-        {
-            throw new NotImplementedException();
-            // // Arrange
-            // _mockCandidateChannelConfigurationHandler.Setup(x=> x.DoesNotHaveAContactChannelCreationRecord(It.IsAny<GetIntoTeachingApi.Models.Crm.Candidate>())).Returns(false).Verifiable();
-            // _mockCandidateChannelConfigurationHandler.Setup(x => x.InvokeConfigureChannel(It.IsAny<GetIntoTeachingApi.Jobs.ContactChannelCandidateWrapper>())).Verifiable();
-            //
-            // // Act
-            // _job.SyncCandidate(_candidate);
-            //
-            // // Assert
-            // _mockCandidateChannelConfigurationHandler.Verify(x => x.DoesNotHaveAContactChannelCreationRecord(It.IsAny<GetIntoTeachingApi.Models.Crm.Candidate>()), Times.Once);
-            // _mockCandidateChannelConfigurationHandler.Verify(x => x.InvokeConfigureChannel(It.IsAny<GetIntoTeachingApi.Jobs.ContactChannelCandidateWrapper>()), Times.Never);
-        }
-
         private static bool IsMatchWithNewContactChannelCreation(GetIntoTeachingApi.Models.Crm.Candidate candidateA, string candidateBJson)
         {
             var candidateB = candidateBJson.DeserializeChangeTracked<GetIntoTeachingApi.Models.Crm.Candidate>();
-            
+
             // CandidateB will have an additional automatically created ContactChannelCreation record added via the job
             var applyContactChannelCreationRecord = candidateB.ContactChannelCreations.Last();
 
             applyContactChannelCreationRecord.CreationChannelSourceId.Should()
                 .Be((int?)ContactChannelCreation.CreationChannelSource.Apply);
-            
+
             // We need to add the record to CandidateA to compare
             candidateA.ContactChannelCreations.Add(applyContactChannelCreationRecord);
-            
+
             // CandidateB will have a null ChannelId; we need to remove this from CandidateA if it is not null to compare
             if (candidateA.ChannelId != null)
             {
                 candidateB.ChannelId.Should().BeNull();
-                candidateA.ChannelId = null;    
+                candidateA.ChannelId = null;
             }
-            
-            candidateA.Should().BeEquivalentTo(candidateB);
-            return true;
-        }
 
-        private static bool HasOnlyOneContactChannelCreation(GetIntoTeachingApi.Models.Crm.Candidate candidate)
-        {
-            candidate.ContactChannelCreations.Count(c=> 
-                c.CreationChannelSourceId == (int?)ContactChannelCreation.CreationChannelSource.Apply &&
-                c.CreationChannelServiceId == (int?)ContactChannelCreation.CreationChannelService.CreatedOnApply).Should().Be(1);
+            candidateA.Should().BeEquivalentTo(candidateB);
             return true;
         }
     }
