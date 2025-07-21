@@ -13,12 +13,11 @@ public class CandidateSanitisationDeduplicateApplyChannelRule : ICandidateSaniti
     public CandidateSanitisationDeduplicateApplyChannelRule(ICrmService crm)
     {
         _crm = crm;
-        
     }
     
     public Candidate SanitiseCandidate(Candidate updateCandidate)
     {
-        // This rule will check to see if the updateCandidate object to be upserted has a local CreatedOnApply Candidate Creation Channel record.
+        // This rule will check to see if the updateCandidate object to be upserted has aCreatedOnApply contact channel creation record
         if (HasCreatedOnApplyContactChannelCreationRecord(updateCandidate) && updateCandidate.Id.HasValue)
         {
             Candidate crmCandidate = _crm.GetCandidate(updateCandidate.Id.Value);
@@ -40,20 +39,19 @@ public class CandidateSanitisationDeduplicateApplyChannelRule : ICandidateSaniti
     
     
     /// <summary>
-    /// Determines whether the specified candidate lacks a contact channel creation record
-    /// from Apply via CreatedOnApply service.
+    /// Determines whether the specified candidate has a CreatedOnApply contact channel creation record
     /// </summary>
     /// <param name="candidate">The candidate to evaluate.</param>
     /// <returns>
-    /// <c>true</c> if the candidate has no matching contact channel creation record;
+    /// <c>true</c> if the candidate has a CreatedOnApply contact channel creation record;
     /// otherwise, <c>false</c>.
     /// </returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="candidate"/> is null.</exception>
-    private static bool HasCreatedOnApplyContactChannelCreationRecord(Candidate updateCandidate)
+    private static bool HasCreatedOnApplyContactChannelCreationRecord(Candidate candidate)
     {
-        ArgumentNullException.ThrowIfNull(updateCandidate);
+        ArgumentNullException.ThrowIfNull(candidate);
 
-        return updateCandidate.ContactChannelCreations.Any(contactChannelCreation =>
+        return candidate.ContactChannelCreations.Any(contactChannelCreation =>
             contactChannelCreation.CreationChannelSourceId == (int)ContactChannelCreation.CreationChannelSource.Apply &&
             contactChannelCreation.CreationChannelServiceId == (int)ContactChannelCreation.CreationChannelService.CreatedOnApply);
     }
