@@ -13,10 +13,10 @@ namespace GetIntoTeachingApi.Services
     {
         private readonly ICrmService _crm;
         private readonly IBackgroundJobClient _jobClient;
-        private readonly ICandidateSanitisationRulesHandler _sanitisationRulesHandler;
+        private readonly ICrmModelSanitisationRulesHandler _sanitisationRulesHandler;
 
         public CandidateUpserter(ICrmService crm, IBackgroundJobClient jobClient,
-            ICandidateSanitisationRulesHandler sanitisationRulesHandler)
+            ICrmModelSanitisationRulesHandler sanitisationRulesHandler)
         {
             _crm = crm;
             _jobClient = jobClient;
@@ -276,6 +276,9 @@ namespace GetIntoTeachingApi.Services
             {
                 contactChannelCreation.CandidateId = (Guid)candidate.Id;
                 string json = contactChannelCreation.SerializeChangeTracked();
+                
+                
+                // FIXME: this should be applied immediately
                 _jobClient.Enqueue<UpsertModelWithCandidateIdJob<ContactChannelCreation>>((x) => x.Run(json, null));
             }
         }
