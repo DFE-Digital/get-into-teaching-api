@@ -85,7 +85,7 @@ namespace GetIntoTeachingApi.AppStart
             // maintain the DegreeStatusId field until we fully transition to graduation year only. 
             services.RegisterDegreeStatusInferenceServices();
             
-            services.AddScoped<ICandidateSanitisationRulesHandler, CandidateSanitisationRulesHandler>();
+            services.AddScoped<ICrmModelSanitisationRulesHandler, CrmModelSanitisationRulesHandler>();
             services.AddScoped<ICandidateSanitisationRule, CandidateSanitisationDeduplicateApplyChannelRule>();
         }
 

@@ -9,7 +9,7 @@ namespace GetIntoTeachingApi.Jobs.CandidateSanitisation;
 /// Sanitisation rule that removes duplicate "CreatedOnApply" contact channel creation records
 /// when the candidate already exists with such a record in CRM.
 /// </summary>
-public class CandidateSanitisationDeduplicateApplyChannelRule : ICandidateSanitisationRule
+public class CandidateSanitisationDeduplicateApplyChannelRule : ICrmModelSanitisationRule<Candidate>
 {
     private readonly ICrmService _crmService;
 
@@ -29,19 +29,19 @@ public class CandidateSanitisationDeduplicateApplyChannelRule : ICandidateSaniti
     /// <returns>
     /// The sanitised candidate with redundant "CreatedOnApply" records removed if necessary.
     /// </returns>
-    public Candidate SanitiseCandidate(Candidate updateCandidate)
+    public Candidate SanitiseCrmModel(Candidate model)
     {
-        if (ShouldSkipApplyChannelSanitisation(updateCandidate))
-            return updateCandidate;
+        if (ShouldSkipApplyChannelSanitisation(model))
+            return model;
 
-        Candidate existingCandidate = _crmService.GetCandidate(updateCandidate.Id.Value);
+        Candidate existingCandidate = _crmService.GetCandidate(model.Id.Value);
 
         if (ShouldSkipExistingCandidateSanitisation(existingCandidate))
-            return updateCandidate;
+            return model;
 
-        RemoveApplyChannelCreations(updateCandidate);
+        RemoveApplyChannelCreations(model);
 
-        return updateCandidate;
+        return model;
     }
 
     /// <summary>
