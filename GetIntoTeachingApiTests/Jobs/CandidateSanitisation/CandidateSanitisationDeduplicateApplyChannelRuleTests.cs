@@ -1,117 +1,107 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Moq;
+using FluentAssertions;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApiTests.Jobs.CandidateSanitisation.TestDoubles;
+using Moq;
+using System;
 using Xunit;
-using FluentAssertions;
 
 namespace GetIntoTeachingApi.Jobs.CandidateSanitisation;
 
-
 public class CandidateSanitisationDeduplicateApplyChannelRuleTests
 {
+    /// <summary>
+    /// The preserve count.
+    /// </summary>
     private const int PreserveCount = 2;
+    /// <summary>
+    /// The filter count.
+    /// </summary>
     private const int FilterCount = 1;
-    
+
     [Fact]
     public void SanitiseCandidate_CandidateWithoutCreatedOnApplyChannel_PreservesCreatedOnApplyCreationChannel()
     {
-        //arrange
-        Mock<ICrmService> mockCrmService = new();
-        ICandidateSanitisationRule rule = new CandidateSanitisationDeduplicateApplyChannelRule(mockCrmService.Object);
-        Candidate updateCandidate = new Candidate();
+        // arrange
+        Mock<ICrmService> mockCrmService = CrmServiceTestDouble.DefaultMock();
+        CandidateSanitisationDeduplicateApplyChannelRule rule = new(mockCrmService.Object);
+        Candidate updateCandidate = new();
 
-        //act
+        // act
         Candidate returnedCandidate = rule.SanitiseCandidate(updateCandidate);
-        
-        //assert
-        returnedCandidate.ContactChannelCreations.Count().Should().Be(0);
+
+        // assert
+        returnedCandidate.ContactChannelCreations.Count.Should().Be(0);
     }
 
     [Fact]
     public void SanitiseCandidate_CandidateWithCreatedOnApplyChannelAndDoesNotExistOnCrm_PreservesCreatedOnApplyCreationChannel()
     {
         // arrange
-        Mock<ICrmService> mockCrmService = new();
-        ICandidateSanitisationRule rule = new CandidateSanitisationDeduplicateApplyChannelRule(mockCrmService.Object);
-        Candidate updateCandidate = new Candidate()
-        {
-            Id = Guid.NewGuid(),
-            ContactChannelCreations = BuildContactChannelCreations()
-        };
-        
-        mockCrmService.Setup(crmService => crmService.GetCandidate(It.IsAny<Guid>())).Returns<Candidate>(null!);
+        Candidate updateCandidate =
+            new CandidateBuilder()
+                .WithId(Guid.NewGuid())
+                .WithContactChannels(ContactChannelCreationTestDouble.BuildDefaultContactCreationChannelsStub())
+                .Build();
 
-        //act
+        Mock<ICrmService> mockCrmService =
+            CrmServiceTestDouble.MockFor(null!);
+
+        CandidateSanitisationDeduplicateApplyChannelRule rule = new(mockCrmService.Object);
+
+        // act
         Candidate returnedCandidate = rule.SanitiseCandidate(updateCandidate);
-        
-        //assert
-        returnedCandidate.ContactChannelCreations.Count().Should().Be(PreserveCount);
+
+        // assert
+        returnedCandidate.ContactChannelCreations.Count.Should().Be(PreserveCount);
     }
-    
+
     [Fact]
     public void SanitiseCandidate_CandidateWithCreatedOnApplyChannelAndExistsOnCrmWithoutCreatedOnApply_PreservesCreatedOnApplyCreationChannel()
     {
         // arrange
-        Mock<ICrmService> mockCrmService = new();
-        ICandidateSanitisationRule rule = new CandidateSanitisationDeduplicateApplyChannelRule(mockCrmService.Object);
-        Candidate updateCandidate = new Candidate()
-        {
-            Id = Guid.NewGuid(),
-            ContactChannelCreations = BuildContactChannelCreations()
-        };
-        Candidate crmCandidate = new Candidate()
-        {
-            Id = updateCandidate.Id,
-            ContactChannelCreations = []
-        };
-        
-        mockCrmService.Setup(crmService => crmService.GetCandidate(It.IsAny<Guid>())).Returns(crmCandidate);
+        Candidate updateCandidate =
+            new CandidateBuilder()
+                .WithId(Guid.NewGuid())
+                .WithContactChannels(ContactChannelCreationTestDouble.BuildDefaultContactCreationChannelsStub())
+                .Build();
+
+        Candidate crmCandidate =
+            new CandidateBuilder()
+                .WithId(updateCandidate.Id.Value)
+                .Build();
+
+        Mock<ICrmService> mockCrmService =
+            CrmServiceTestDouble.MockFor(crmCandidate);
+
+        CandidateSanitisationDeduplicateApplyChannelRule rule = new(mockCrmService.Object);
 
         //act
         Candidate returnedCandidate = rule.SanitiseCandidate(updateCandidate);
-        
+
         //assert
-        returnedCandidate.ContactChannelCreations.Count().Should().Be(PreserveCount);
+        returnedCandidate.ContactChannelCreations.Count.Should().Be(PreserveCount);
     }
-    
+
     [Fact]
     public void SanitiseCandidate_CandidateWithCreatedOnApplyChannelAndExistsOnCrmWithCreatedOnApply_RemovesCreatedOnApplyCreationChannel()
     {
         //arrange
-        Mock<ICrmService> mockCrmService = new();
-        ICandidateSanitisationRule rule = new CandidateSanitisationDeduplicateApplyChannelRule(mockCrmService.Object);
-        Candidate updateCandidate = new Candidate()
-        {
-            Id = Guid.NewGuid(),
-            ContactChannelCreations = BuildContactChannelCreations()
-        };
-        mockCrmService.Setup(crmService => crmService.GetCandidate(It.IsAny<Guid>())).Returns(updateCandidate);
+        Candidate updateCandidate =
+            new CandidateBuilder()
+                .WithId(Guid.NewGuid())
+                .WithContactChannels(ContactChannelCreationTestDouble.BuildDefaultContactCreationChannelsStub())
+                .Build();
+
+        Mock<ICrmService> mockCrmService =
+            CrmServiceTestDouble.MockFor(updateCandidate);
+
+        CandidateSanitisationDeduplicateApplyChannelRule rule = new(mockCrmService.Object);
 
         //act
         Candidate returnedCandidate = rule.SanitiseCandidate(updateCandidate);
-        
+
         //assert
-        returnedCandidate.ContactChannelCreations.Count().Should().Be(FilterCount);
+        returnedCandidate.ContactChannelCreations.Count.Should().Be(FilterCount);
     }
-
-    private List<ContactChannelCreation> BuildContactChannelCreations()
-    {
-        return new List<ContactChannelCreation>
-        {
-            new ContactChannelCreation()
-            {
-                CreationChannelSourceId = (int)ContactChannelCreation.CreationChannelSource.Apply,
-                CreationChannelServiceId = (int)ContactChannelCreation.CreationChannelService.CreatedOnApply,
-            },
-            new ContactChannelCreation()
-            {
-                CreationChannelSourceId = (int)ContactChannelCreation.CreationChannelSource.SchoolExperience,
-                CreationChannelServiceId = (int)ContactChannelCreation.CreationChannelService.CreatedOnSchoolExperience,
-            }
-        };
-    }
-
 }
