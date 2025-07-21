@@ -18,14 +18,12 @@ public class CandidateSanitisationRulesHandler : ICandidateSanitisationRulesHand
 
     public Candidate SanitiseCandidateWithRules(Candidate candidate)
     {
-        
+        ArgumentNullException.ThrowIfNull(candidate);
         
         foreach (ICandidateSanitisationRule candidateSanitisationRule in _sanitisationRules.ToList())
         {
-            //candidateSanitisationRule.invoke()
-            
+            candidate = candidateSanitisationRule.SanitiseCandidate(candidate);
         }
-        
         return candidate;
     }
 }

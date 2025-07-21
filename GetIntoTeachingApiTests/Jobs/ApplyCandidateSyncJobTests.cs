@@ -27,7 +27,6 @@ namespace GetIntoTeachingApiTests.Jobs
         private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<IEnv> _mockEnv;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
-        private readonly Mock<ICandidateChannelConfigurationHandler> _mockCandidateChannelConfigurationHandler;
         private readonly ApplyCandidateSyncJob _job;
         private readonly Candidate _candidate;
         private readonly CandidateAttributes _attributes;
@@ -40,7 +39,6 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockAppSettings = new Mock<GetIntoTeachingApi.Models.IAppSettings>();
             _mockCrm = new Mock<ICrmService>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
-            _mockCandidateChannelConfigurationHandler = new Mock<ICandidateChannelConfigurationHandler>();
             
             _job = new ApplyCandidateSyncJob(
                 _mockEnv.Object,
@@ -48,8 +46,7 @@ namespace GetIntoTeachingApiTests.Jobs
                 _mockLogger.Object,
                 _mockCrm.Object,
                 _mockJobClient.Object,
-                _mockAppSettings.Object,
-                _mockCandidateChannelConfigurationHandler.Object
+                _mockAppSettings.Object
                 );
             _forms = new List<ApplicationForm>()
             {
@@ -108,8 +105,7 @@ namespace GetIntoTeachingApiTests.Jobs
                 _mockLogger.Object,
                 _mockCrm.Object,
                 _mockJobClient.Object,
-                _mockAppSettings.Object,
-                new CandidateChannelConfigurationHandler()
+                _mockAppSettings.Object
             );
             
             job.Run(_candidate);
@@ -178,8 +174,7 @@ namespace GetIntoTeachingApiTests.Jobs
                 _mockLogger.Object,
                 _mockCrm.Object,
                 _mockJobClient.Object,
-                _mockAppSettings.Object,
-                new CandidateChannelConfigurationHandler()
+                _mockAppSettings.Object
             );
             
             job.Run(_candidate);
@@ -246,8 +241,7 @@ namespace GetIntoTeachingApiTests.Jobs
                 _mockLogger.Object,
                 _mockCrm.Object,
                 _mockJobClient.Object,
-                _mockAppSettings.Object,
-                new CandidateChannelConfigurationHandler()
+                _mockAppSettings.Object
             );
             
             job.Run(_candidate);
@@ -285,31 +279,33 @@ namespace GetIntoTeachingApiTests.Jobs
         [Fact]
         public void SyncCandidate_WithoutExistingContactChannelCreationRecords_CallsConfigureChannelOnce()
         {
-            // Arrange
-            _mockCandidateChannelConfigurationHandler.Setup(x=> x.DoesNotHaveAContactChannelCreationRecord(It.IsAny<GetIntoTeachingApi.Models.Crm.Candidate>())).Returns(true).Verifiable();
-            _mockCandidateChannelConfigurationHandler.Setup(x => x.InvokeConfigureChannel(It.IsAny<GetIntoTeachingApi.Jobs.ContactChannelCandidateWrapper>())).Verifiable();
-            
-            // Act
-            _job.SyncCandidate(_candidate);
-            
-            // Assert
-            _mockCandidateChannelConfigurationHandler.Verify(x => x.DoesNotHaveAContactChannelCreationRecord(It.IsAny<GetIntoTeachingApi.Models.Crm.Candidate>()), Times.Once);
-            _mockCandidateChannelConfigurationHandler.Verify(x => x.InvokeConfigureChannel(It.IsAny<GetIntoTeachingApi.Jobs.ContactChannelCandidateWrapper>()), Times.Once);
+            throw new NotImplementedException();
+            // // Arrange
+            // _mockCandidateChannelConfigurationHandler.Setup(x=> x.DoesNotHaveAContactChannelCreationRecord(It.IsAny<GetIntoTeachingApi.Models.Crm.Candidate>())).Returns(true).Verifiable();
+            // _mockCandidateChannelConfigurationHandler.Setup(x => x.InvokeConfigureChannel(It.IsAny<GetIntoTeachingApi.Jobs.ContactChannelCandidateWrapper>())).Verifiable();
+            //
+            // // Act
+            // _job.SyncCandidate(_candidate);
+            //
+            // // Assert
+            // _mockCandidateChannelConfigurationHandler.Verify(x => x.DoesNotHaveAContactChannelCreationRecord(It.IsAny<GetIntoTeachingApi.Models.Crm.Candidate>()), Times.Once);
+            // _mockCandidateChannelConfigurationHandler.Verify(x => x.InvokeConfigureChannel(It.IsAny<GetIntoTeachingApi.Jobs.ContactChannelCandidateWrapper>()), Times.Once);
         }
         
         [Fact]
         public void SyncCandidate_WithExistingContactChannelCreationRecords_CallsConfigureChannelOnce()
         {
-            // Arrange
-            _mockCandidateChannelConfigurationHandler.Setup(x=> x.DoesNotHaveAContactChannelCreationRecord(It.IsAny<GetIntoTeachingApi.Models.Crm.Candidate>())).Returns(false).Verifiable();
-            _mockCandidateChannelConfigurationHandler.Setup(x => x.InvokeConfigureChannel(It.IsAny<GetIntoTeachingApi.Jobs.ContactChannelCandidateWrapper>())).Verifiable();
-            
-            // Act
-            _job.SyncCandidate(_candidate);
-            
-            // Assert
-            _mockCandidateChannelConfigurationHandler.Verify(x => x.DoesNotHaveAContactChannelCreationRecord(It.IsAny<GetIntoTeachingApi.Models.Crm.Candidate>()), Times.Once);
-            _mockCandidateChannelConfigurationHandler.Verify(x => x.InvokeConfigureChannel(It.IsAny<GetIntoTeachingApi.Jobs.ContactChannelCandidateWrapper>()), Times.Never);
+            throw new NotImplementedException();
+            // // Arrange
+            // _mockCandidateChannelConfigurationHandler.Setup(x=> x.DoesNotHaveAContactChannelCreationRecord(It.IsAny<GetIntoTeachingApi.Models.Crm.Candidate>())).Returns(false).Verifiable();
+            // _mockCandidateChannelConfigurationHandler.Setup(x => x.InvokeConfigureChannel(It.IsAny<GetIntoTeachingApi.Jobs.ContactChannelCandidateWrapper>())).Verifiable();
+            //
+            // // Act
+            // _job.SyncCandidate(_candidate);
+            //
+            // // Assert
+            // _mockCandidateChannelConfigurationHandler.Verify(x => x.DoesNotHaveAContactChannelCreationRecord(It.IsAny<GetIntoTeachingApi.Models.Crm.Candidate>()), Times.Once);
+            // _mockCandidateChannelConfigurationHandler.Verify(x => x.InvokeConfigureChannel(It.IsAny<GetIntoTeachingApi.Jobs.ContactChannelCandidateWrapper>()), Times.Never);
         }
 
         private static bool IsMatchWithNewContactChannelCreation(GetIntoTeachingApi.Models.Crm.Candidate candidateA, string candidateBJson)
