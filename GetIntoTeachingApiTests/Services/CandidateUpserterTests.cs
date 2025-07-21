@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using GetIntoTeachingApi.Jobs;
+using GetIntoTeachingApi.Jobs.CandidateSanitisation;
 using GetIntoTeachingApi.Services;
 using Hangfire;
 using Hangfire.Common;
@@ -24,7 +25,10 @@ namespace GetIntoTeachingApiTests.Services
         {
             _mockCrm = new Mock<ICrmService>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
-            _upserter = new CandidateUpserter(_mockCrm.Object, _mockJobClient.Object);
+            Mock<ICandidateSanitisationRulesHandler> mockSanitisationHandler = new Mock<ICandidateSanitisationRulesHandler>();
+            
+            
+            _upserter = new CandidateUpserter(_mockCrm.Object, _mockJobClient.Object, mockSanitisationHandler.Object);
             _candidate = new Candidate() { Id = Guid.NewGuid(), Email = "test@test.com" };
             _existingCandidate = new Candidate() { Id = _candidate.Id, Email = "existing@email.com" };
 
