@@ -27,6 +27,8 @@ using Microsoft.Xrm.Sdk;
 using StackExchange.Redis;
 using System;
 using System.Configuration;
+using GetIntoTeachingApi.Jobs.CandidateSanitisation;
+using GetIntoTeachingApi.Jobs.CandidateSanitisation.ContactChannelCreationModelSanitisation;
 
 namespace GetIntoTeachingApi.AppStart
 {
@@ -39,6 +41,10 @@ namespace GetIntoTeachingApi.AppStart
             services.AddSingleton<IAppSettings, AppSettings>();
             services.AddSingleton<CdsServiceClientWrapper, CdsServiceClientWrapper>();
 
+            services.AddScoped<ICrmModelSanitisationRulesHandler<ContactChannelCreationSanitisationRequestWrapper>, GetIntoTeachingApi.Jobs.CandidateSanitisation.ContactChannelCreationModelSanitisation.ContactChannelCreationSanitisationRulesHandler>();
+            services.AddScoped<ICrmModelSanitisationRule<ContactChannelCreationSanitisationRequestWrapper>, ContactChannelCreationDuplicateSanitisationRule>();
+
+            
             services.AddTransient<IOrganizationService>(sp => sp.GetService<CdsServiceClientWrapper>().CdsServiceClient?.Clone());
             services.AddTransient<IOrganizationServiceAdapter, OrganizationServiceAdapter>();
             services.AddTransient<ICrmService, CrmService>();

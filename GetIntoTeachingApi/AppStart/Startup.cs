@@ -18,6 +18,7 @@ using Prometheus;
 using System.IO;
 using System.Text.Json.Serialization;
 
+
 namespace GetIntoTeachingApi.AppStart
 {
     public class Startup
@@ -85,8 +86,6 @@ namespace GetIntoTeachingApi.AppStart
             // maintain the DegreeStatusId field until we fully transition to graduation year only. 
             services.RegisterDegreeStatusInferenceServices();
             
-            services.AddScoped<ICrmModelSanitisationRulesHandler<Candidate>, CrmModelSanitisationRulesHandler>();
-            services.AddScoped<ICrmModelSanitisationRule<Candidate>, CandidateSanitisationDeduplicateApplyChannelRule>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -8,6 +8,8 @@ using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
+using GetIntoTeachingApi.Jobs.CandidateSanitisation;
+using GetIntoTeachingApi.Jobs.CandidateSanitisation.ContactChannelCreationModelSanitisation;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -24,6 +26,7 @@ namespace GetIntoTeachingApiTests.Jobs
         private readonly IMetricService _metrics;
         private readonly UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy> _job;
         private readonly Mock<ILogger<UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>>> _mockLogger;
+        private readonly Mock<ICrmModelSanitisationRulesHandler<ContactChannelCreationSanitisationRequestWrapper>> _mockRulesHandler;
 
         public UpsertModelWithCandidateIdJobTests()
         {
@@ -36,13 +39,15 @@ namespace GetIntoTeachingApiTests.Jobs
             _policy = new CandidatePrivacyPolicy() { Id = Guid.NewGuid(), AcceptedAt = DateTime.UtcNow, CandidateId = Guid.NewGuid() };
             _job = new UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>(
                 new Env(), new Mock<IRedisService>().Object, _mockContext.Object, _mockCrm.Object,
-                _metrics, _mockLogger.Object, _mockAppSettings.Object, _mockNotifyService.Object);
+                _metrics, _mockLogger.Object, _mockAppSettings.Object, _mockNotifyService.Object, _mockRulesHandler.Object);
 
             _metrics.HangfireJobQueueDuration.RemoveLabelled("UpsertModelJob<CandidatePrivacyPolicy>");
             _mockContext.Setup(m => m.GetJobCreatedAt(null)).Returns(DateTime.UtcNow.AddDays(-1));
 
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
         }
+        
+        // TODO: add tests which mock RulesHandler
 
         [Fact]
         public void Run_OnSuccess_UpsertsModel()

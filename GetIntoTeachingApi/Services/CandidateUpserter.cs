@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using GetIntoTeachingApi.Jobs;
-using GetIntoTeachingApi.Jobs.CandidateSanitisation;
+
+// using GetIntoTeachingApi.Jobs.CandidateSanitisation;
+
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
@@ -13,22 +15,18 @@ namespace GetIntoTeachingApi.Services
     {
         private readonly ICrmService _crm;
         private readonly IBackgroundJobClient _jobClient;
-        private readonly ICrmModelSanitisationRulesHandler<Candidate> _sanitisationRulesHandler;
+        
 
         public CandidateUpserter(
             ICrmService crm,
-            IBackgroundJobClient jobClient,
-            ICrmModelSanitisationRulesHandler<Candidate> sanitisationRulesHandler)
+            IBackgroundJobClient jobClient)
         {
             _crm = crm;
             _jobClient = jobClient;
-            _sanitisationRulesHandler = sanitisationRulesHandler;
         }
 
         public void Upsert(Candidate candidate)
         {
-            candidate = _sanitisationRulesHandler.SanitiseCrmModelWithRules(candidate);
-            
             // TODO: this code should be refactored in line with Spencer's recommendations
             var registrations = ClearTeachingEventRegistrations(candidate);
             var phoneCall = ClearPhoneCall(candidate);
