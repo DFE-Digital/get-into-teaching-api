@@ -3,8 +3,10 @@ using dotenv.net;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.Middleware;
+using GetIntoTeachingApi.Jobs.CandidateSanitisation;
 using GetIntoTeachingApi.JsonConverters;
 using GetIntoTeachingApi.ModelBinders;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices;
 using GetIntoTeachingApi.Utils;
 using Microsoft.AspNetCore.Builder;
@@ -15,8 +17,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Prometheus;
 using System.IO;
 using System.Text.Json.Serialization;
-using GetIntoTeachingApi.Jobs;
-using GetIntoTeachingApi.Jobs.CandidateSanitisation;
 
 namespace GetIntoTeachingApi.AppStart
 {
@@ -85,8 +85,8 @@ namespace GetIntoTeachingApi.AppStart
             // maintain the DegreeStatusId field until we fully transition to graduation year only. 
             services.RegisterDegreeStatusInferenceServices();
             
-            services.AddScoped<ICrmModelSanitisationRulesHandler, CrmModelSanitisationRulesHandler>();
-            services.AddScoped<ICandidateSanitisationRule, CandidateSanitisationDeduplicateApplyChannelRule>();
+            services.AddScoped<ICrmModelSanitisationRulesHandler<Candidate>, CrmModelSanitisationRulesHandler>();
+            services.AddScoped<ICrmModelSanitisationRule<Candidate>, CandidateSanitisationDeduplicateApplyChannelRule>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
