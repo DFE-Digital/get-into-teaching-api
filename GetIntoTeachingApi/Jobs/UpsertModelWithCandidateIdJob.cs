@@ -7,6 +7,8 @@ using Hangfire.Server;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using GetIntoTeachingApi.Jobs.CandidateSanitisation;
+using GetIntoTeachingApi.Jobs.CandidateSanitisation.ContactChannelCreationModelSanitisation;
 
 namespace GetIntoTeachingApi.Jobs
 {
@@ -19,6 +21,7 @@ namespace GetIntoTeachingApi.Jobs
         private readonly INotifyService _notifyService;
         private readonly ICrmService _crm;
         private readonly ILogger<UpsertModelWithCandidateIdJob<T>> _logger;
+        private readonly ICrmModelSanitisationRulesHandler<ContactChannelCreationSanitisationRequestWrapper> _rulesHandler;
 
         public UpsertModelWithCandidateIdJob(
             IEnv env,
@@ -28,7 +31,8 @@ namespace GetIntoTeachingApi.Jobs
             IMetricService metrics,
             ILogger<UpsertModelWithCandidateIdJob<T>> logger,
             IAppSettings appSettings,
-            INotifyService notifyService)
+            INotifyService notifyService,
+            ICrmModelSanitisationRulesHandler<ContactChannelCreationSanitisationRequestWrapper> rulesHandler)
             : base(env, redis)
         {
             _contextAdapter = contextAdapter;
@@ -37,6 +41,7 @@ namespace GetIntoTeachingApi.Jobs
             _appSettings = appSettings;
             _crm = crm;
             _notifyService = notifyService;
+            _rulesHandler = rulesHandler;
         }
 
         public void Run(string json, PerformContext context)
@@ -52,11 +57,12 @@ namespace GetIntoTeachingApi.Jobs
             _logger.LogInformation("UpsertModelJob<{TypeName}> - Payload {Payload}", typeName, Redactor.RedactJson(json));
 
             var model = json.DeserializeChangeTracked<T>();
+            
+            //we need to ensure we retrieve the creation channels, we should not accept a timeout error
+            Candidate candidate = _crm.GetCandidate(model.CandidateId);
 
             if (IsLastAttempt(context, _contextAdapter))
             {
-                var candidate = _crm.GetCandidate(model.CandidateId);
-
                 if (candidate != null)
                 {
                     var personalisation = new Dictionary<string, dynamic>();
@@ -73,9 +79,28 @@ namespace GetIntoTeachingApi.Jobs
             else
             {
                 // TODO: Sanitise this model before saving
-                _crm.Save(model);
+                // Candidate candidate = _crm.GetCandidate(model.CandidateId);
+                // candidate.ContactChannelCreations
+                // Call Handler 
+                // if wrapper.preserve == true then save
 
-                _logger.LogInformation("UpsertModelJob<{TypeName}> - Succeeded - {Id}", typeName, model.Id);
+                if (typeof(T) == typeof(ContactChannelCreation))
+                {
+                    ContactChannelCreation creationChannel = model as ContactChannelCreation;
+                    ContactChannelCreationSanitisationRequestWrapper wrapper = ContactChannelCreationSanitisationRequestWrapper.Create(creationChannel, candidate.ContactChannelCreations.AsReadOnly());
+                    wrapper = _rulesHandler.SanitiseCrmModelWithRules(wrapper);
+
+                    if (wrapper.Preserve)
+                    {
+                        _crm.Save(model);
+                        _logger.LogInformation("UpsertModelJob<{TypeName}> - Succeeded - {Id}", typeName, model.Id);
+                    }
+                }
+                else
+                {
+                    _crm.Save(model);
+                    _logger.LogInformation("UpsertModelJob<{TypeName}> - Succeeded - {Id}", typeName, model.Id);
+                }
             }
 
             var duration = (DateTime.UtcNow - _contextAdapter.GetJobCreatedAt(context)).TotalSeconds;

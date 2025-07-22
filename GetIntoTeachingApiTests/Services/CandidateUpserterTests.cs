@@ -25,10 +25,8 @@ namespace GetIntoTeachingApiTests.Services
         {
             _mockCrm = new Mock<ICrmService>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
-            Mock<ICrmModelSanitisationRulesHandler<Candidate>> mockSanitisationHandler = new();
             
-            
-            _upserter = new CandidateUpserter(_mockCrm.Object, _mockJobClient.Object, mockSanitisationHandler.Object);
+            _upserter = new CandidateUpserter(_mockCrm.Object, _mockJobClient.Object);
             _candidate = new Candidate() { Id = Guid.NewGuid(), Email = "test@test.com" };
             _existingCandidate = new Candidate() { Id = _candidate.Id, Email = "existing@email.com" };
 
