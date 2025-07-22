@@ -13,10 +13,12 @@ namespace GetIntoTeachingApi.Services
     {
         private readonly ICrmService _crm;
         private readonly IBackgroundJobClient _jobClient;
-        private readonly ICrmModelSanitisationRulesHandler _sanitisationRulesHandler;
+        private readonly ICrmModelSanitisationRulesHandler<Candidate> _sanitisationRulesHandler;
 
-        public CandidateUpserter(ICrmService crm, IBackgroundJobClient jobClient,
-            ICrmModelSanitisationRulesHandler sanitisationRulesHandler)
+        public CandidateUpserter(
+            ICrmService crm,
+            IBackgroundJobClient jobClient,
+            ICrmModelSanitisationRulesHandler<Candidate> sanitisationRulesHandler)
         {
             _crm = crm;
             _jobClient = jobClient;
@@ -25,7 +27,7 @@ namespace GetIntoTeachingApi.Services
 
         public void Upsert(Candidate candidate)
         {
-            candidate = _sanitisationRulesHandler.SanitiseCandidateWithRules(candidate);
+            candidate = _sanitisationRulesHandler.SanitiseCrmModelWithRules(candidate);
             
             // TODO: this code should be refactored in line with Spencer's recommendations
             var registrations = ClearTeachingEventRegistrations(candidate);
