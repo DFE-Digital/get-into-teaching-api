@@ -25,7 +25,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             _mockCrm = new Mock<ICrmService>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
-            Mock<ICrmModelSanitisationRulesHandler> mockSanitisationHandler = new Mock<ICrmModelSanitisationRulesHandler>();
+            Mock<ICrmModelSanitisationRulesHandler<Candidate>> mockSanitisationHandler = new();
             
             
             _upserter = new CandidateUpserter(_mockCrm.Object, _mockJobClient.Object, mockSanitisationHandler.Object);

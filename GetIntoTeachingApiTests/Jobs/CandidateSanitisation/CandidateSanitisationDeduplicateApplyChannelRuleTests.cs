@@ -28,7 +28,7 @@ public class CandidateSanitisationDeduplicateApplyChannelRuleTests
         Candidate updateCandidate = new();
 
         // act
-        Candidate returnedCandidate = rule.SanitiseCandidate(updateCandidate);
+        Candidate returnedCandidate = rule.SanitiseCrmModel(updateCandidate);
 
         // assert
         returnedCandidate.ContactChannelCreations.Count.Should().Be(0);
@@ -50,7 +50,7 @@ public class CandidateSanitisationDeduplicateApplyChannelRuleTests
         CandidateSanitisationDeduplicateApplyChannelRule rule = new(mockCrmService.Object);
 
         // act
-        Candidate returnedCandidate = rule.SanitiseCandidate(updateCandidate);
+        Candidate returnedCandidate = rule.SanitiseCrmModel(updateCandidate);
 
         // assert
         returnedCandidate.ContactChannelCreations.Count.Should().Be(PreserveCount);
@@ -77,7 +77,7 @@ public class CandidateSanitisationDeduplicateApplyChannelRuleTests
         CandidateSanitisationDeduplicateApplyChannelRule rule = new(mockCrmService.Object);
 
         //act
-        Candidate returnedCandidate = rule.SanitiseCandidate(updateCandidate);
+        Candidate returnedCandidate = rule.SanitiseCrmModel(updateCandidate);
 
         //assert
         returnedCandidate.ContactChannelCreations.Count.Should().Be(PreserveCount);
@@ -99,7 +99,7 @@ public class CandidateSanitisationDeduplicateApplyChannelRuleTests
         CandidateSanitisationDeduplicateApplyChannelRule rule = new(mockCrmService.Object);
 
         //act
-        Candidate returnedCandidate = rule.SanitiseCandidate(updateCandidate);
+        Candidate returnedCandidate = rule.SanitiseCrmModel(updateCandidate);
 
         //assert
         returnedCandidate.ContactChannelCreations.Count.Should().Be(FilterCount);
