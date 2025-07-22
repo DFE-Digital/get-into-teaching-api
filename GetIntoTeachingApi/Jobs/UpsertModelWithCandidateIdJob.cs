@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using GetIntoTeachingApi.Adapters;
-using GetIntoTeachingApi.Jobs.CandidateSanitisation;
+﻿using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire.Server;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 
 namespace GetIntoTeachingApi.Jobs
 {
@@ -20,7 +19,6 @@ namespace GetIntoTeachingApi.Jobs
         private readonly INotifyService _notifyService;
         private readonly ICrmService _crm;
         private readonly ILogger<UpsertModelWithCandidateIdJob<T>> _logger;
-        private readonly ICrmModelSanitisationRulesHandler _rulesHandler;
 
         public UpsertModelWithCandidateIdJob(
             IEnv env,
@@ -30,8 +28,7 @@ namespace GetIntoTeachingApi.Jobs
             IMetricService metrics,
             ILogger<UpsertModelWithCandidateIdJob<T>> logger,
             IAppSettings appSettings,
-            INotifyService notifyService,
-            ICrmModelSanitisationRulesHandler rulesHandler)
+            INotifyService notifyService)
             : base(env, redis)
         {
             _contextAdapter = contextAdapter;
@@ -40,7 +37,6 @@ namespace GetIntoTeachingApi.Jobs
             _appSettings = appSettings;
             _crm = crm;
             _notifyService = notifyService;
-            _rulesHandler = rulesHandler;
         }
 
         public void Run(string json, PerformContext context)
