@@ -43,7 +43,7 @@ namespace GetIntoTeachingApi.AppStart
             services.AddSingleton<IAppSettings, AppSettings>();
             services.AddSingleton<CdsServiceClientWrapper, CdsServiceClientWrapper>();
 
-            services.AddScoped<ICrmModelSanitisationRulesHandler<ContactChannelCreationSanitisationRequestWrapper>, GetIntoTeachingApi.Jobs.CandidateSanitisation.ContactChannelCreationModelSanitisation.ContactChannelCreationSanitisationRulesHandler>();
+            services.AddScoped<ICrmModelSanitisationRulesHandler<ContactChannelCreationSanitisationRequestWrapper>, ContactChannelCreationSanitisationRulesHandler>();
             services.AddScoped<ICrmModelSanitisationRule<ContactChannelCreationSanitisationRequestWrapper>, ContactChannelCreationDuplicateSanitisationRule>();
             services.AddScoped<ICrmlUpsertStrategy<ContactChannelCreation>, ContactChannelCreationSanitisationUpsertStrategy>();
             services.AddSingleton<ICandidateContactChannelCreationsRepository, CandidateContactChannelCreationsSqlRepository>();

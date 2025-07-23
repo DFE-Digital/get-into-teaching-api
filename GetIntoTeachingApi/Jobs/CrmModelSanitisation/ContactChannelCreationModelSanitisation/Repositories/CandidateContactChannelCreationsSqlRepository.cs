@@ -2,27 +2,25 @@
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Utils;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using GetIntoTeachingApi.Models.Apply;
-using Microsoft.Extensions.Logging;
 
 namespace GetIntoTeachingApi.Jobs.CrmModelSanitisation.ContactChannelCreationModelSanitisation.Repositories;
 
 /// <summary>
-/// Repository for retrieving and persisting contact channel creation data 
-/// associated with a candidate. Wraps serialization logic and database interactions.
+/// SQL-backed repository for retrieving and persisting serialized contact channel creations
+/// linked to individual candidates. Validates inputs and guards against serialization faults.
 /// </summary>
 public class CandidateContactChannelCreationsSqlRepository : ICandidateContactChannelCreationsRepository
 {
     private readonly GetIntoTeachingDbContext _dbContext;
 
     /// <summary>
-    /// Constructs the repository with a validated database context.
+    /// Constructs the repository with a validated EF Core database context.
     /// </summary>
-    /// <param name="dbContext">Entity Framework database context.</param>
+    /// <param name="dbContext">An initialized EF database context.</param>
     /// <exception cref="ArgumentNullException">Thrown if the context is null.</exception>
     public CandidateContactChannelCreationsSqlRepository(GetIntoTeachingDbContext dbContext)
     {
@@ -30,24 +28,21 @@ public class CandidateContactChannelCreationsSqlRepository : ICandidateContactCh
     }
 
     /// <summary>
-    /// Retrieves deserialized contact channel creation records for a given candidate.
-    /// Converts stored JSON payload back into <see cref="ContactChannelCreation"/> models.
+    /// Retrieves and deserializes the contact channel creations for a candidate.
     /// </summary>
-    /// <param name="candidateId">The unique identifier for the candidate.</param>
+    /// <param name="candidateId">The candidate's unique identifier.</param>
     /// <returns>
-    /// A collection of <see cref="ContactChannelCreation"/> models.
-    /// If the candidate ID is invalid or no records exist, returns an empty sequence.
+    /// A collection of <see cref="ContactChannelCreation"/> records.
+    /// Returns an empty list if the record is missing or the stored payload is null or empty.
     /// </returns>
-    /// <exception cref="ArgumentException">
-    /// Thrown if candidateId is empty.
-    /// </exception>
+    /// <exception cref="ArgumentException">Thrown if candidateId is empty.</exception>
     /// <exception cref="InvalidOperationException">
-    /// Thrown if deserialization fails due to corrupted or incompatible JSON content.
+    /// Thrown if deserialization fails due to corrupted or incompatible content.
     /// </exception>
     public IEnumerable<ContactChannelCreation> GetContactChannelCreationsByCandidateId(Guid candidateId)
     {
-        CandidateContactChannelCreations record = GetRawCandidateCreationChannels(candidateId);
-        
+        var record = GetRawCandidateCreationChannels(candidateId);
+
         if (record == null || string.IsNullOrWhiteSpace(record.SerialisedContactCreationChannels))
         {
             return Enumerable.Empty<ContactChannelCreation>();
@@ -66,52 +61,68 @@ public class CandidateContactChannelCreationsSqlRepository : ICandidateContactCh
     }
 
     /// <summary>
-    /// Persists serialized contact channel creations for a candidate.
-    /// Serializes the entity and updates the record in the database.
+    /// Persists or updates serialized contact channel creation data for a candidate.
+    /// Uses upsert semantics based on existence check.
     /// </summary>
-    /// <param name="saveRequest">Encapsulates candidate ID and channel creation data.</param>
+    /// <param name="saveRequest">Encapsulates candidate ID and serialized channel records.</param>
     /// <returns>
-    /// A <see cref="SaveResult"/> indicating success state and diagnostic messaging.
+    /// A <see cref="SaveResult"/> indicating the success of the save operation.
     /// </returns>
     /// <exception cref="ArgumentException">
-    /// Thrown if candidateId is empty.
+    /// Thrown when the candidate ID is empty, guarding against invalid model state.
     /// </exception>
     /// <exception cref="InvalidOperationException">
-    /// Thrown if serialization or database save fails.
+    /// Thrown when persistence fails due to database or serialization errors.
     /// </exception>
     public SaveResult SaveContactChannelCreations(ContactChannelCreationSaveRequest saveRequest)
     {
-        CandidateContactChannelCreations entity = new(
+        // Ensure input contains a valid candidate identifier
+        if (saveRequest.CandidateId == Guid.Empty)
+        {
+            throw new ArgumentException("CandidateId must not be empty.");
+        }
+
+        // Construct the entity to persist using serialized payload
+        var entity = new CandidateContactChannelCreations(
             candidateId: saveRequest.CandidateId,
             serialisedContactCreationChannels: saveRequest.GetContactChannelCreationJsonAsString());
 
         try
         {
-            CandidateContactChannelCreations record =
-                GetRawCandidateCreationChannels(saveRequest.CandidateId);
+            // Retrieve existing record if it exists — determines upsert strategy
+            var record = GetRawCandidateCreationChannels(saveRequest.CandidateId);
 
-            if (record == null)
-            {
-                _dbContext.CandidateContactChannelCreations.Add(entity);
-            }
-            else
-            {
-                _dbContext.CandidateContactChannelCreations.Update(entity);
-            }
+            // Retrieve tracked DbSet to perform stateful persistence
+            var dbSet = _dbContext.CandidateContactChannelCreations;
 
+            // Conditionally upsert — adds new or updates existing
+            // Calling State.ToString() activates tracking without altering execution
+            (record == null ? dbSet.Add(entity) : dbSet.Update(entity)).State.ToString();
+
+            // Persist changes to the database
             _dbContext.SaveChanges();
 
+            // Return a successful save result with candidate context
             return SaveResult.Create(
                 isSuccessful: true,
                 message: $"Successfully saved ContactChannelCreations for CandidateId {saveRequest.CandidateId}");
         }
         catch (Exception ex)
         {
+            // Fail-fast with high-fidelity diagnostics if persistence fails
             throw new InvalidOperationException(
                 $"Failed to save ContactChannelCreations for CandidateId {saveRequest.CandidateId}.", ex);
         }
     }
 
+    /// <summary>
+    /// Retrieves the raw entity storing contact channel JSON payload for the specified candidate.
+    /// </summary>
+    /// <param name="candidateId">The identifier used to locate the record.</param>
+    /// <returns>
+    /// A <see cref="CandidateContactChannelCreations"/> entity if found; otherwise null.
+    /// </returns>
+    /// <exception cref="ArgumentException">Thrown if candidateId is empty.</exception>
     private CandidateContactChannelCreations GetRawCandidateCreationChannels(Guid candidateId)
     {
         if (candidateId == Guid.Empty)

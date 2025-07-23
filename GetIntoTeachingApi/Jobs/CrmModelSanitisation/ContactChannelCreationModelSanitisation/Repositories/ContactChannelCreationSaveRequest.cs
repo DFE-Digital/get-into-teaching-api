@@ -7,28 +7,31 @@ using System.Collections.ObjectModel;
 namespace GetIntoTeachingApi.Jobs.CrmModelSanitisation.ContactChannelCreationModelSanitisation.Repositories;
 
 /// <summary>
-/// Represents a save payload for contact channel creation records associated with a candidate.
-/// Ensures identifier validity and serialization reliability.
+/// Encapsulates a candidate's contact channel creation payload for persistence.
+/// Combines identifier validation, serialization utility, and record consolidation.
 /// </summary>
 public class ContactChannelCreationSaveRequest
 {
     /// <summary>
-    /// The unique identifier representing the candidate for whom channels are being saved.
+    /// Uniquely identifies the candidate associated with this save request.
+    /// Immutable once constructed.
     /// </summary>
     public Guid CandidateId { get; }
 
     /// <summary>
-    /// Internal collection of contact channel creations to persist.
-    /// Initialized with a null-safe fallback to avoid access violations.
+    /// Read-only collection of contact channel creation models to persist.
+    /// Formed via safe merging and null-guarded initialization.
     /// </summary>
     private readonly ReadOnlyCollection<ContactChannelCreation> _candidateContactChannelCreations;
 
     /// <summary>
-    /// Constructs a save request payload with strict validation against null and empty inputs.
+    /// Constructs a save request with candidate ID and merged channel creations.
+    /// Ensures ID validity and guards against null collections.
     /// </summary>
     /// <param name="candidateId">The candidate's unique identifier.</param>
-    /// <param name="candidateContactChannelCreations">List of contact channel records to persist.</param>
-    /// <exception cref="ArgumentException">Thrown if <paramref name="candidateId"/> is empty.</exception>
+    /// <param name="candidateContactChannelCreation">A newly created channel record to include.</param>
+    /// <param name="candidateContactChannelCreations">Existing records to merge into payload.</param>
+    /// <exception cref="ArgumentException">Thrown if candidateId is Guid.Empty.</exception>
     public ContactChannelCreationSaveRequest(
         Guid candidateId,
         ContactChannelCreation candidateContactChannelCreation,
@@ -41,18 +44,18 @@ public class ContactChannelCreationSaveRequest
 
         CandidateId = candidateId;
 
+        // Merge one-off creation with existing records
         _candidateContactChannelCreations =
-            MergeContactChannelCreations(
-                candidateContactChannelCreation, candidateContactChannelCreations);
+            MergeContactChannelCreations(candidateContactChannelCreation, candidateContactChannelCreations);
     }
 
     /// <summary>
-    /// Serializes the contact channel creation records to a JSON string.
-    /// Throws if serialization fails, enforcing data integrity.
+    /// Serializes the merged collection of channel creations to a JSON string.
+    /// Enforces fail-fast behavior on serialization errors.
     /// </summary>
     /// <returns>JSON representation of the contact channel creations.</returns>
     /// <exception cref="InvalidOperationException">
-    /// Thrown if serialization fails due to unexpected content or null references.
+    /// Thrown if serialization fails due to nulls or incompatible models.
     /// </exception>
     public string GetContactChannelCreationJsonAsString()
     {
@@ -68,18 +71,22 @@ public class ContactChannelCreationSaveRequest
     }
 
     /// <summary>
-    /// Factory method to create a validated <see cref="ContactChannelCreationSaveRequest"/>.
-    /// Centralizes construction logic for consistency.
+    /// Factory method for consistent instantiation.
+    /// Enforces validation and encapsulates construction logic.
     /// </summary>
-    /// <param name="candidateId">The candidate's identifier.</param>
-    /// <param name="candidateContactChannelCreations">Channel records to save.</param>
-    /// <returns>A validated and constructed instance of the save request.</returns>
     public static ContactChannelCreationSaveRequest Create(
         Guid candidateId,
         ContactChannelCreation candidateContactChannelCreation,
         ReadOnlyCollection<ContactChannelCreation> candidateContactChannelCreations) =>
             new(candidateId, candidateContactChannelCreation, candidateContactChannelCreations);
 
+    /// <summary>
+    /// Safely merges one new creation record into an existing read-only collection.
+    /// Avoids mutability or null access violations.
+    /// </summary>
+    /// <param name="candidateContactChannelCreation">New channel creation to include.</param>
+    /// <param name="contactChannelCreations">Existing collection to merge with.</param>
+    /// <returns>A combined and immutable collection of channel records.</returns>
     private static ReadOnlyCollection<ContactChannelCreation> MergeContactChannelCreations(
         ContactChannelCreation candidateContactChannelCreation,
         ReadOnlyCollection<ContactChannelCreation> contactChannelCreations)
