@@ -15,16 +15,16 @@ namespace GetIntoTeachingApi.Jobs.CrmModelSanitisation.ContactChannelCreationMod
 /// </summary>
 public class CandidateContactChannelCreationsSqlRepository : ICandidateContactChannelCreationsRepository
 {
-    private readonly GetIntoTeachingDbContext _dbContext;
+    private readonly IDbContextFactory<GetIntoTeachingDbContext> _dbContextFactory;
 
     /// <summary>
-    /// Constructs the repository with a validated EF Core database context.
+    /// Constructs the repository with a validated EF Core database context factory.
     /// </summary>
-    /// <param name="dbContext">An initialized EF database context.</param>
-    /// <exception cref="ArgumentNullException">Thrown if the context is null.</exception>
-    public CandidateContactChannelCreationsSqlRepository(GetIntoTeachingDbContext dbContext)
+    /// <param name="dbContextFactory">An initialized EF database context factory.</param>
+    /// <exception cref="ArgumentNullException">Thrown if the context factory is null.</exception>
+    public CandidateContactChannelCreationsSqlRepository(IDbContextFactory<GetIntoTeachingDbContext> dbContextFactory)
     {
-        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        _dbContextFactory = dbContextFactory;
     }
 
     /// <summary>
@@ -41,7 +41,13 @@ public class CandidateContactChannelCreationsSqlRepository : ICandidateContactCh
     /// </exception>
     public IEnumerable<ContactChannelCreation> GetContactChannelCreationsByCandidateId(Guid candidateId)
     {
-        var record = GetRawCandidateCreationChannels(candidateId);
+        // Creates a new, thread-safe instance of GetIntoTeachingDbContext 
+        // using the injected factory (_dbContextFactory). The context is scoped to this code block
+        // and will be automatically disposed at the end via the 'using var' syntax.
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        // Retrieve existing record if it exists — determines upsert strategy
+        var record = GetRawCandidateCreationChannels(candidateId, dbContext);
 
         if (record == null || string.IsNullOrWhiteSpace(record.SerialisedContactCreationChannels))
         {
@@ -89,18 +95,23 @@ public class CandidateContactChannelCreationsSqlRepository : ICandidateContactCh
 
         try
         {
+            // Creates a new, thread-safe instance of GetIntoTeachingDbContext 
+            // using the injected factory (_dbContextFactory). The context is scoped to this code block
+            // and will be automatically disposed at the end via the 'using var' syntax.
+            using var dbContext = _dbContextFactory.CreateDbContext();
+
             // Retrieve existing record if it exists — determines upsert strategy
-            var record = GetRawCandidateCreationChannels(saveRequest.CandidateId);
+            var record = GetRawCandidateCreationChannels(saveRequest.CandidateId, dbContext);
 
             // Retrieve tracked DbSet to perform stateful persistence
-            var dbSet = _dbContext.CandidateContactChannelCreations;
+            var dbSet = dbContext.CandidateContactChannelCreations;
 
             // Conditionally upsert — adds new or updates existing
             // Calling State.ToString() activates tracking without altering execution
             (record == null ? dbSet.Add(entity) : dbSet.Update(entity)).State.ToString();
 
             // Persist changes to the database
-            _dbContext.SaveChanges();
+            dbContext.SaveChanges();
 
             // Return a successful save result with candidate context
             return SaveResult.Create(
@@ -123,14 +134,14 @@ public class CandidateContactChannelCreationsSqlRepository : ICandidateContactCh
     /// A <see cref="CandidateContactChannelCreations"/> entity if found; otherwise null.
     /// </returns>
     /// <exception cref="ArgumentException">Thrown if candidateId is empty.</exception>
-    private CandidateContactChannelCreations GetRawCandidateCreationChannels(Guid candidateId)
+    private CandidateContactChannelCreations GetRawCandidateCreationChannels(Guid candidateId, GetIntoTeachingDbContext dbContext)
     {
         if (candidateId == Guid.Empty)
         {
             throw new ArgumentException("CandidateId must not be empty.", nameof(candidateId));
         }
 
-        return _dbContext.CandidateContactChannelCreations
+        return dbContext.CandidateContactChannelCreations
             .AsNoTracking()
             .SingleOrDefault(c => c.CandidateId == candidateId);
     }
