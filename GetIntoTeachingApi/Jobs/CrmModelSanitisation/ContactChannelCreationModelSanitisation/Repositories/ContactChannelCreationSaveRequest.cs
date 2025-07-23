@@ -1,6 +1,7 @@
 ﻿using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Utils;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace GetIntoTeachingApi.Jobs.CrmModelSanitisation.ContactChannelCreationModelSanitisation.Repositories;
@@ -30,6 +31,7 @@ public class ContactChannelCreationSaveRequest
     /// <exception cref="ArgumentException">Thrown if <paramref name="candidateId"/> is empty.</exception>
     public ContactChannelCreationSaveRequest(
         Guid candidateId,
+        ContactChannelCreation candidateContactChannelCreations,
         ReadOnlyCollection<ContactChannelCreation> candidateContactChannelCreations)
     {
         if (candidateId == Guid.Empty)
@@ -73,8 +75,13 @@ public class ContactChannelCreationSaveRequest
     /// <returns>A validated and constructed instance of the save request.</returns>
     public static ContactChannelCreationSaveRequest Create(
         Guid candidateId,
+        ContactChannelCreation candidateContactChannelCreation,
         ReadOnlyCollection<ContactChannelCreation> candidateContactChannelCreations)
     {
         return new ContactChannelCreationSaveRequest(candidateId, candidateContactChannelCreations);
     }
+    
+    private ReadOnlyCollection<ContactChannelCreation> MergeContactChannelCreations(
+        ReadOnlyCollection<ContactChannelCreation> contactChannelCreations)
+    {}
 }
