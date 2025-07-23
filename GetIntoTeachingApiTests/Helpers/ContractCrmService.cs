@@ -132,6 +132,11 @@ namespace GetIntoTeachingApiTests.Helpers
             return Candidates.FirstOrDefault(c => c.Id == id);
         }
 
+        public Candidate GetCandidateWithRelationships(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
         public IEnumerable<Candidate> GetCandidates(IEnumerable<Guid> ids)
         {
             return Candidates.Where(c => ids.Contains((Guid)c.Id));
