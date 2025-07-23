@@ -12,7 +12,7 @@ namespace GetIntoTeachingApi.Jobs.UpsertStrategies
     /// Implements upsert logic for ContactChannelCreation entities.
     /// Combines candidate context with sanitisation rules to ensure safe persistence.
     /// </summary>
-    public class ContactChannelCreationUpsertStrategy : ICrmlUpsertStrategy<ContactChannelCreation>
+    public class ContactChannelCreationSanitisationUpsertStrategy : ICrmlUpsertStrategy<ContactChannelCreation>
     {
         private readonly ICrmService _crmService;
         private readonly ICrmModelSanitisationRulesHandler<ContactChannelCreationSanitisationRequestWrapper> _rulesHandler;
@@ -21,7 +21,7 @@ namespace GetIntoTeachingApi.Jobs.UpsertStrategies
         /// <summary>
         /// Constructs the upsert strategy with domain service dependencies.
         /// </summary>
-        public ContactChannelCreationUpsertStrategy(
+        public ContactChannelCreationSanitisationUpsertStrategy(
             ICrmService crmService,
             ICrmModelSanitisationRulesHandler<ContactChannelCreationSanitisationRequestWrapper> rulesHandler,
             ICandidateContactChannelCreationsRepository candidateContactChannelCreationsRepository)
