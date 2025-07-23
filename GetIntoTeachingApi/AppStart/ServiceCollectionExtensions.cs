@@ -78,7 +78,7 @@ namespace GetIntoTeachingApi.AppStart
         public static void AddDatabase(this IServiceCollection services, IEnv env)
         {
             var connectionString = DbConfiguration.DatabaseConnectionString(env);
-            services.AddDbContext<GetIntoTeachingDbContext>(b => DbConfiguration.ConfigPostgres(connectionString, b), ServiceLifetime.Transient);
+            services.AddDbContext<GetIntoTeachingDbContext>(b => DbConfiguration.ConfigPostgres(connectionString, b), ServiceLifetime.Scoped);
         }
 
         public static void AddApiClientAuthentication(this IServiceCollection services)
