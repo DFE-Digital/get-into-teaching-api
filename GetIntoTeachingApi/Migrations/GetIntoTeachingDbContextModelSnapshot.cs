@@ -219,7 +219,7 @@ namespace GetIntoTeachingApi.Migrations
                 b.Property<Guid?>("CandidateId")
                     .HasColumnType("uuid");
 
-                b.Property<string>("CandidateContactChannelCreations")
+                b.Property<string>("SerialisedContactCreationChannels")
                     .HasColumnType("text");
 
                 b.HasKey("CandidateId");

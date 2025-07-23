@@ -19,16 +19,16 @@ public class CandidateContactChannelCreations
     /// Serialized JSON string representing the contact channel creation payload.
     /// Expected to originate from <see cref="ContactChannelCreationSaveRequest"/> serialization.
     /// </summary>
-    public string SerialisedContactCreationChannel { get; set; }
+    public string SerialisedContactCreationChannels { get; set; }
 
     /// <summary>
     /// Constructs the candidate channel creation record with identifier and serialized payload.
     /// </summary>
     /// <param name="candidateId">Candidate identifier to associate with the record.</param>
-    /// <param name="serialisedContactCreationChannel">Serialized JSON string of contact channel records.</param>
-    public CandidateContactChannelCreations(Guid candidateId, string serialisedContactCreationChannel)
+    /// <param name="serialisedContactCreationChannels">Serialized JSON string of contact channel records.</param>
+    public CandidateContactChannelCreations(Guid candidateId, string serialisedContactCreationChannels)
     {
         CandidateId = candidateId;
-        SerialisedContactCreationChannel = serialisedContactCreationChannel;
+        SerialisedContactCreationChannels = serialisedContactCreationChannels;
     }
 }

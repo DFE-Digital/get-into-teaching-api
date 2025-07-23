@@ -52,14 +52,14 @@ public class CandidateContactChannelCreationsSqlRepository : ICandidateContactCh
             _dbContext.CandidateContactChannelCreations
                 .SingleOrDefault(c => c.CandidateId == candidateId);
 
-        if (record == null || string.IsNullOrWhiteSpace(record.SerialisedContactCreationChannel))
+        if (record == null || string.IsNullOrWhiteSpace(record.SerialisedContactCreationChannels))
         {
             return Enumerable.Empty<ContactChannelCreation>();
         }
 
         try
         {
-            return record.SerialisedContactCreationChannel
+            return record.SerialisedContactCreationChannels
                 .DeserializeChangeTracked<IEnumerable<ContactChannelCreation>>();
         }
         catch (Exception ex)
@@ -94,7 +94,7 @@ public class CandidateContactChannelCreationsSqlRepository : ICandidateContactCh
 
         CandidateContactChannelCreations entity = new(
             candidateId: saveRequest.CandidateId,
-            serialisedContactCreationChannel: serializedJson);
+            serialisedContactCreationChannels: serializedJson);
 
         try
         {

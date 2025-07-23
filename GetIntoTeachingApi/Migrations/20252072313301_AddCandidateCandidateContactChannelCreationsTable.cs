@@ -19,12 +19,12 @@ namespace GetIntoTeachingApi.Migrations
                 name: "CandidateContactChannelCreations",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Value = table.Column<string>(type: "text", nullable: false)
+                    CandidateId = table.Column<Guid>(type: "uuid", nullable: false),
+                    SerialisedContactCreationChannels = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CandidateContactChannelCreations", x => x.Id);
+                    table.PrimaryKey("PK_CandidateContactChannelCreations", x => x.CandidateId);
                 });
         }
 
