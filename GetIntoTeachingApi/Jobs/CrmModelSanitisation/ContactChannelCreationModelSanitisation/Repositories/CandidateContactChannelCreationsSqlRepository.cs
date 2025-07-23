@@ -5,6 +5,7 @@ using GetIntoTeachingApi.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace GetIntoTeachingApi.Jobs.CrmModelSanitisation.ContactChannelCreationModelSanitisation.Repositories;
 
@@ -48,8 +49,13 @@ public class CandidateContactChannelCreationsSqlRepository : ICandidateContactCh
             throw new ArgumentException("CandidateId must not be empty.", nameof(candidateId));
         }
 
+        GetIntoTeachingDbContext dbContext = new GetIntoTeachingDbContext();
+        
+        
+
         CandidateContactChannelCreations record =
             _dbContext.CandidateContactChannelCreations
+                .AsNoTracking()
                 .SingleOrDefault(c => c.CandidateId == candidateId);
 
         if (record == null || string.IsNullOrWhiteSpace(record.SerialisedContactCreationChannels))
@@ -98,7 +104,7 @@ public class CandidateContactChannelCreationsSqlRepository : ICandidateContactCh
 
         try
         {
-            _dbContext.CandidateContactChannelCreations.Update(entity);
+            _dbContext.CandidateContactChannelCreations.Add(entity);
             _dbContext.SaveChanges();
 
             return SaveResult.Create(

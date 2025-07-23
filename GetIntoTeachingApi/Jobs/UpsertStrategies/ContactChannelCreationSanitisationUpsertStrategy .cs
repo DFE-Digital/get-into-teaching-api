@@ -44,12 +44,6 @@ namespace GetIntoTeachingApi.Jobs.UpsertStrategies
             IEnumerable<ContactChannelCreation> contactChannelCreations =
                 _candidateContactChannelCreationsRepository.GetContactChannelCreationsByCandidateId(model.CandidateId);
 
-            if (contactChannelCreations == null)
-            {
-                logMessage = "Candidate or ContactChannelCreations is null.";
-                return false;
-            }
-
             // Package incoming and historical data into a sanitisation wrapper.
             ContactChannelCreationSanitisationRequestWrapper wrapper =
                 ContactChannelCreationSanitisationRequestWrapper.Create(
