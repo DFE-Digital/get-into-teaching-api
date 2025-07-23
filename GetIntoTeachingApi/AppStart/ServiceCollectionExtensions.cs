@@ -7,9 +7,14 @@ using GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers;
 using GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.Middleware;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
+using GetIntoTeachingApi.Jobs.CandidateSanitisation;
+using GetIntoTeachingApi.Jobs.CandidateSanitisation.ContactChannelCreationModelSanitisation;
+using GetIntoTeachingApi.Jobs.CrmModelSanitisation.ContactChannelCreationModelSanitisation.Repositories;
 using GetIntoTeachingApi.Jobs.FilterAttributes;
+using GetIntoTeachingApi.Jobs.UpsertStrategies;
 using GetIntoTeachingApi.Middleware;
 using GetIntoTeachingApi.Models;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.OperationFilters;
 using GetIntoTeachingApi.RateLimiting;
 using GetIntoTeachingApi.Redis;
@@ -26,9 +31,6 @@ using Microsoft.OpenApi.Models;
 using Microsoft.Xrm.Sdk;
 using StackExchange.Redis;
 using System;
-using System.Configuration;
-using GetIntoTeachingApi.Jobs.CandidateSanitisation;
-using GetIntoTeachingApi.Jobs.CandidateSanitisation.ContactChannelCreationModelSanitisation;
 
 namespace GetIntoTeachingApi.AppStart
 {
@@ -43,8 +45,9 @@ namespace GetIntoTeachingApi.AppStart
 
             services.AddScoped<ICrmModelSanitisationRulesHandler<ContactChannelCreationSanitisationRequestWrapper>, GetIntoTeachingApi.Jobs.CandidateSanitisation.ContactChannelCreationModelSanitisation.ContactChannelCreationSanitisationRulesHandler>();
             services.AddScoped<ICrmModelSanitisationRule<ContactChannelCreationSanitisationRequestWrapper>, ContactChannelCreationDuplicateSanitisationRule>();
+            services.AddScoped<ICrmlUpsertStrategy<ContactChannelCreation>, ContactChannelCreationSanitisationUpsertStrategy>();
+            services.AddSingleton<ICandidateContactChannelCreationsRepository, CandidateContactChannelCreationsSqlRepository>();
 
-            
             services.AddTransient<IOrganizationService>(sp => sp.GetService<CdsServiceClientWrapper>().CdsServiceClient?.Clone());
             services.AddTransient<IOrganizationServiceAdapter, OrganizationServiceAdapter>();
             services.AddTransient<ICrmService, CrmService>();
