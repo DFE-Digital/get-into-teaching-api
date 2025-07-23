@@ -112,7 +112,7 @@ namespace GetIntoTeachingApi.Jobs
 
                     _logger.LogInformation("Scheduling ApplyBackfillJob - Syncing CandidateID: C{Id}", candidateId);
                     
-                    _jobClient.Schedule<ApplyCandidateSyncJob>(x => x.Run(candidateResponse.Data), TimeSpan.FromSeconds(60));
+                    _jobClient.Schedule<ApplyCandidateSyncJob>(x => x.Run(candidateResponse.Data), TimeSpan.FromSeconds(10));
                 }
                 catch (FlurlHttpException ex)
                 {

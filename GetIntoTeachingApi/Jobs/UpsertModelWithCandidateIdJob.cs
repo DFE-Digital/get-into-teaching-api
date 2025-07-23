@@ -59,10 +59,12 @@ namespace GetIntoTeachingApi.Jobs
             var model = json.DeserializeChangeTracked<T>();
             
             //we need to ensure we retrieve the creation channels, we should not accept a timeout error
-            Candidate candidate = _crm.GetCandidate(model.CandidateId);
 
             if (IsLastAttempt(context, _contextAdapter))
             {
+                // NB: _crm.GetCandidate() does not return related records in e.g. ContactChannelCreation 
+                Candidate candidate = _crm.GetCandidate(model.CandidateId);
+                
                 if (candidate != null)
                 {
                     var personalisation = new Dictionary<string, dynamic>();
@@ -84,6 +86,8 @@ namespace GetIntoTeachingApi.Jobs
                 // Call Handler 
                 // if wrapper.preserve == true then save
 
+                Candidate candidate = _crm.GetCandidateWithRelationships(model.CandidateId);
+                
                 if (typeof(T) == typeof(ContactChannelCreation))
                 {
                     ContactChannelCreation creationChannel = model as ContactChannelCreation;

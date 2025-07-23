@@ -230,6 +230,21 @@ namespace GetIntoTeachingApi.Services
             return GetCandidates(new Guid[] { id }).FirstOrDefault();
         }
 
+        public Candidate GetCandidateWithRelationships(Guid id)
+        {
+            var query = new QueryExpression("contact");
+            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
+
+            query.Criteria.AddCondition(new ConditionExpression("contactid", ConditionOperator.Equal, id));
+
+            var entity = _service.RetrieveMultiple(query).FirstOrDefault();
+            
+            LoadCandidateRelationships(entity);
+            
+            return new Candidate(entity, this, _serviceProvider);
+            // return entities.Select((entity) => new Candidate(entity, this, _serviceProvider)).FirstOrDefault();
+        }
+
         public IEnumerable<Candidate> GetCandidates(IEnumerable<Guid> ids)
         {
             if (!ids.Any())
