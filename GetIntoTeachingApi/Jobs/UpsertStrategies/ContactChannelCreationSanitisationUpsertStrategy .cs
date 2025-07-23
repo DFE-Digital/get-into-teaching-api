@@ -64,13 +64,15 @@ namespace GetIntoTeachingApi.Jobs.UpsertStrategies
                 _crmService.Save(model);
                 logMessage = $"Saved model: {model.Id}";
 
-                _candidateContactChannelCreationsRepository
-                    .SaveContactChannelCreations(
-                        ContactChannelCreationSaveRequest.Create(
-                        model.CandidateId,
-                        wrapper.CandidateContactChannelCreations.ToList().AsReadOnly()));
+                SaveResult saveResult =
+                    _candidateContactChannelCreationsRepository
+                        .SaveContactChannelCreations(
+                            ContactChannelCreationSaveRequest.Create(
+                            model.CandidateId,
+                            wrapper.CandidateContactChannelCreations.ToList().AsReadOnly()));
 
-                return true;
+                logMessage = saveResult.Message;
+                return saveResult.IsSuccessful;
             }
 
             logMessage = $"Model not preserved: {model.Id}";

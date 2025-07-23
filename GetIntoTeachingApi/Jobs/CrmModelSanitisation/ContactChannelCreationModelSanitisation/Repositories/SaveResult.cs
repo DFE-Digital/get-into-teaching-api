@@ -3,39 +3,71 @@
 namespace GetIntoTeachingApi.Jobs.CrmModelSanitisation.ContactChannelCreationModelSanitisation.Repositories;
 
 /// <summary>
-/// Represents the outcome of a save operation, including status flags and error details.
-/// Suitable for write-side commands in domain or application layers.
+/// Represents the outcome of a domain save operation.
+/// Encapsulates success state, diagnostic messaging, and any encountered validation or persistence errors.
 /// </summary>
 public class SaveResult
 {
     /// <summary>
-    /// Indicates whether the save operation succeeded.
+    /// Constructs a result object from the save operation.
+    /// Applies null-safety defaults to error collection.
     /// </summary>
-    public bool IsSuccessful { get; set; }
+    /// <param name="isSuccessful">Indicates whether the save succeeded.</param>
+    /// <param name="message">Contextual description of the outcome.</param>
+    /// <param name="Errors">Optional list of errors; defaults to empty if omitted.</param>
+    public SaveResult(bool isSuccessful, string message, List<SaveError> Errors = null!)
+    {
+        IsSuccessful = isSuccessful;
+        Message = message;
+        this.Errors = Errors ?? [];
+    }
 
     /// <summary>
-    /// Optional message providing context about the result (e.g., validation summary or audit trace).
+    /// Indicates whether the save operation was successful.
+    /// Drives control flow in calling services.
     /// </summary>
-    public string Message { get; set; }
+    public bool IsSuccessful { get; }
 
     /// <summary>
-    /// Collection of failed items and associated reasons, useful for partial success handling.
+    /// Optional message providing context about the operation result.
+    /// Useful for logs, audit traces, or surface diagnostics.
     /// </summary>
-    public List<SaveError> Errors { get; set; } = [];
+    public string Message { get; }
+
+    /// <summary>
+    /// Collection of errors that occurred during validation or persistence.
+    /// Enables partial success handling or structured failure reporting.
+    /// </summary>
+    public List<SaveError> Errors { get; }
+
+    /// <summary>
+    /// Static factory method to construct a SaveResult.
+    /// Encapsulates object creation and enforces error collection defaults.
+    /// </summary>
+    public static SaveResult Create(
+        bool isSuccessful,
+        string message,
+        List<SaveError> Errors = null!)
+    {
+        return new SaveResult(isSuccessful, message, Errors);
+    }
 }
 
 /// <summary>
-/// Represents a discrete save error tied to a specific input or rule violation.
+/// Represents a granular save error tied to a specific target entity or input field.
+/// Designed for structured reporting and end-user feedback.
 /// </summary>
 public class SaveError
 {
     /// <summary>
-    /// Optional identifier pointing to the item that failed (e.g., channel ID or candidate ID).
+    /// Optional identifier representing the item or field that failed.
+    /// E.g., CandidateId, ContactChannelId, or property name.
     /// </summary>
     public string Target { get; set; }
 
     /// <summary>
-    /// Descriptive message explaining the reason for failure (e.g., invalid format, missing data).
+    /// Descriptive reason for the failure.
+    /// Often used for logging, telemetry, or frontend display.
     /// </summary>
     public string Reason { get; set; }
 }
