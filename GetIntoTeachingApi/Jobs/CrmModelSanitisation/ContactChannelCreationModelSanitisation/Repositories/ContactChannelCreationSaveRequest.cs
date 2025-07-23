@@ -31,7 +31,7 @@ public class ContactChannelCreationSaveRequest
     /// <exception cref="ArgumentException">Thrown if <paramref name="candidateId"/> is empty.</exception>
     public ContactChannelCreationSaveRequest(
         Guid candidateId,
-        ContactChannelCreation candidateContactChannelCreations,
+        ContactChannelCreation candidateContactChannelCreation,
         ReadOnlyCollection<ContactChannelCreation> candidateContactChannelCreations)
     {
         if (candidateId == Guid.Empty)
@@ -41,8 +41,9 @@ public class ContactChannelCreationSaveRequest
 
         CandidateId = candidateId;
 
-        _candidateContactChannelCreations = candidateContactChannelCreations ??
-            new ReadOnlyCollection<ContactChannelCreation>(Array.Empty<ContactChannelCreation>());
+        _candidateContactChannelCreations =
+            MergeContactChannelCreations(
+                candidateContactChannelCreation, candidateContactChannelCreations);
     }
 
     /// <summary>
@@ -76,12 +77,17 @@ public class ContactChannelCreationSaveRequest
     public static ContactChannelCreationSaveRequest Create(
         Guid candidateId,
         ContactChannelCreation candidateContactChannelCreation,
-        ReadOnlyCollection<ContactChannelCreation> candidateContactChannelCreations)
-    {
-        return new ContactChannelCreationSaveRequest(candidateId, candidateContactChannelCreations);
-    }
-    
-    private ReadOnlyCollection<ContactChannelCreation> MergeContactChannelCreations(
+        ReadOnlyCollection<ContactChannelCreation> candidateContactChannelCreations) =>
+            new(candidateId, candidateContactChannelCreation, candidateContactChannelCreations);
+
+    private static ReadOnlyCollection<ContactChannelCreation> MergeContactChannelCreations(
+        ContactChannelCreation candidateContactChannelCreation,
         ReadOnlyCollection<ContactChannelCreation> contactChannelCreations)
-    {}
+    {
+        List<ContactChannelCreation> mergedContactChannelCreations = [];
+        mergedContactChannelCreations.AddRange(contactChannelCreations);
+        mergedContactChannelCreations.Add(candidateContactChannelCreation);
+
+        return mergedContactChannelCreations.AsReadOnly();
+    }
 }

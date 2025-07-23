@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using GetIntoTeachingApi.Models.Apply;
+using Microsoft.Extensions.Logging;
 
 namespace GetIntoTeachingApi.Jobs.CrmModelSanitisation.ContactChannelCreationModelSanitisation.Repositories;
 
@@ -45,7 +47,7 @@ public class CandidateContactChannelCreationsSqlRepository : ICandidateContactCh
     public IEnumerable<ContactChannelCreation> GetContactChannelCreationsByCandidateId(Guid candidateId)
     {
         CandidateContactChannelCreations record = GetRawCandidateCreationChannels(candidateId);
-            
+        
         if (record == null || string.IsNullOrWhiteSpace(record.SerialisedContactCreationChannels))
         {
             return Enumerable.Empty<ContactChannelCreation>();
@@ -79,41 +81,24 @@ public class CandidateContactChannelCreationsSqlRepository : ICandidateContactCh
     /// </exception>
     public SaveResult SaveContactChannelCreations(ContactChannelCreationSaveRequest saveRequest)
     {
-        string serializedJson = saveRequest.GetContactChannelCreationJsonAsString();
-        
         CandidateContactChannelCreations entity = new(
             candidateId: saveRequest.CandidateId,
-            serialisedContactCreationChannels: serializedJson);
+            serialisedContactCreationChannels: saveRequest.GetContactChannelCreationJsonAsString());
 
         try
         {
-            CandidateContactChannelCreations record = GetRawCandidateCreationChannels(saveRequest.CandidateId);
+            CandidateContactChannelCreations record =
+                GetRawCandidateCreationChannels(saveRequest.CandidateId);
 
-           
-            var existingCandidate = _dbContext.Candidates
-                .FirstOrDefault(c => c.Id == candidate.Id);
-
-            if (existingCandidate == null)
+            if (record == null)
             {
-                // Insert
-                dbContext.Candidates.Add(candidate);
+                _dbContext.CandidateContactChannelCreations.Add(entity);
             }
             else
             {
-                // Update: map new values to existing entity
-                existingCandidate.Name = candidate.Name;
-                existingCandidate.Email = candidate.Email;
-                // Update other fields as needed
+                _dbContext.CandidateContactChannelCreations.Update(entity);
             }
 
-            dbContext.SaveChanges();
-        
-
-            
-            
-            
-            
-            _dbContext.CandidateContactChannelCreations.  .Add(entity);
             _dbContext.SaveChanges();
 
             return SaveResult.Create(
