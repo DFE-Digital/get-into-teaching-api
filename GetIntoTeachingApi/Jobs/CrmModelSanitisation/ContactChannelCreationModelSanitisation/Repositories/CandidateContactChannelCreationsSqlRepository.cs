@@ -44,20 +44,8 @@ public class CandidateContactChannelCreationsSqlRepository : ICandidateContactCh
     /// </exception>
     public IEnumerable<ContactChannelCreation> GetContactChannelCreationsByCandidateId(Guid candidateId)
     {
-        if (candidateId == Guid.Empty)
-        {
-            throw new ArgumentException("CandidateId must not be empty.", nameof(candidateId));
-        }
-
-        GetIntoTeachingDbContext dbContext = new GetIntoTeachingDbContext();
-        
-        
-
-        CandidateContactChannelCreations record =
-            _dbContext.CandidateContactChannelCreations
-                .AsNoTracking()
-                .SingleOrDefault(c => c.CandidateId == candidateId);
-
+        CandidateContactChannelCreations record = GetRawCandidateCreationChannels(candidateId);
+            
         if (record == null || string.IsNullOrWhiteSpace(record.SerialisedContactCreationChannels))
         {
             return Enumerable.Empty<ContactChannelCreation>();
@@ -91,20 +79,41 @@ public class CandidateContactChannelCreationsSqlRepository : ICandidateContactCh
     /// </exception>
     public SaveResult SaveContactChannelCreations(ContactChannelCreationSaveRequest saveRequest)
     {
-        if (saveRequest.CandidateId == Guid.Empty)
-        {
-            throw new ArgumentException("CandidateId must not be empty.");
-        }
-
         string serializedJson = saveRequest.GetContactChannelCreationJsonAsString();
-
+        
         CandidateContactChannelCreations entity = new(
             candidateId: saveRequest.CandidateId,
             serialisedContactCreationChannels: serializedJson);
 
         try
         {
-            _dbContext.CandidateContactChannelCreations.Add(entity);
+            CandidateContactChannelCreations record = GetRawCandidateCreationChannels(saveRequest.CandidateId);
+
+           
+            var existingCandidate = _dbContext.Candidates
+                .FirstOrDefault(c => c.Id == candidate.Id);
+
+            if (existingCandidate == null)
+            {
+                // Insert
+                dbContext.Candidates.Add(candidate);
+            }
+            else
+            {
+                // Update: map new values to existing entity
+                existingCandidate.Name = candidate.Name;
+                existingCandidate.Email = candidate.Email;
+                // Update other fields as needed
+            }
+
+            dbContext.SaveChanges();
+        
+
+            
+            
+            
+            
+            _dbContext.CandidateContactChannelCreations.  .Add(entity);
             _dbContext.SaveChanges();
 
             return SaveResult.Create(
@@ -116,5 +125,17 @@ public class CandidateContactChannelCreationsSqlRepository : ICandidateContactCh
             throw new InvalidOperationException(
                 $"Failed to save ContactChannelCreations for CandidateId {saveRequest.CandidateId}.", ex);
         }
+    }
+
+    private CandidateContactChannelCreations GetRawCandidateCreationChannels(Guid candidateId)
+    {
+        if (candidateId == Guid.Empty)
+        {
+            throw new ArgumentException("CandidateId must not be empty.", nameof(candidateId));
+        }
+
+        return _dbContext.CandidateContactChannelCreations
+            .AsNoTracking()
+            .SingleOrDefault(c => c.CandidateId == candidateId);
     }
 }
