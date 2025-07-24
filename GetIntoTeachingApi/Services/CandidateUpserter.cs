@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GetIntoTeachingApi.Jobs;
 
 // using GetIntoTeachingApi.Jobs.CandidateSanitisation;
@@ -49,7 +50,7 @@ namespace GetIntoTeachingApi.Services
             SavePrivacyPolicy(privacyPolicy, candidate);
             SavePhoneCall(phoneCall, candidate);
             SaveSchoolExperiences(schoolExperiences, candidate);
-            SaveContactChannelCreation(contactChannelCreations, candidate);
+            SaveContactChannelCreations(contactChannelCreations, (Guid)candidate.Id);
 
             IncrementCallbackBookingQuotaNumberOfBookings(phoneCall);
             
@@ -270,16 +271,17 @@ namespace GetIntoTeachingApi.Services
             _jobClient.Enqueue<UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>>((x) => x.Run(json, null));
         }
         
-        private void SaveContactChannelCreation(IEnumerable<ContactChannelCreation> contactChannelCreations, Candidate candidate)
+        private void SaveContactChannelCreations(IEnumerable<ContactChannelCreation> contactChannelCreations, Guid candidateId)
         {
-            foreach (var contactChannelCreation in contactChannelCreations)
+            if (contactChannelCreations != null && contactChannelCreations.Any())
             {
-                contactChannelCreation.CandidateId = (Guid)candidate.Id;
-                string json = contactChannelCreation.SerializeChangeTracked();
+                foreach (ContactChannelCreation contactChannelCreation in contactChannelCreations)
+                {
+                    contactChannelCreation.CandidateId = candidateId;
+                }
                 
-                
-                // FIXME: this should be applied immediately
-                _jobClient.Enqueue<UpsertModelWithCandidateIdJob<ContactChannelCreation>>((x) => x.Run(json, null));
+                string json = contactChannelCreations.SerializeChangeTracked();
+                _jobClient.Enqueue<UpsertContactCreationChannelsJob>((x) => x.Run(candidateId, json, null));
             }
         }
     }
