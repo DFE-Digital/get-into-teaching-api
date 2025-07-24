@@ -134,7 +134,7 @@ public class CandidateContactChannelCreationsSqlRepository : ICandidateContactCh
     /// A <see cref="CandidateContactChannelCreations"/> entity if found; otherwise null.
     /// </returns>
     /// <exception cref="ArgumentException">Thrown if candidateId is empty.</exception>
-    private CandidateContactChannelCreations GetRawCandidateCreationChannels(Guid candidateId, GetIntoTeachingDbContext dbContext)
+    private static CandidateContactChannelCreations GetRawCandidateCreationChannels(Guid candidateId, GetIntoTeachingDbContext dbContext)
     {
         if (candidateId == Guid.Empty)
         {
