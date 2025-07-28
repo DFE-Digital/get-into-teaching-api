@@ -179,6 +179,31 @@ namespace GetIntoTeachingApi.Services
 
             return new Candidate(entity, this, _serviceProvider);
         }
+        
+        public IEnumerable<ContactChannelCreation> GetCandidateContactCreations(Guid candidateId)
+        {
+
+            // var test = GetAllCandidatesContactChannelCreations();
+            
+            
+            
+            
+            
+            
+            var query = new QueryExpression("dfe_contactchannelcreation");
+            
+            // Adds columns defined by model metadata, ensuring minimal retrieval footprint.
+            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(ContactChannelCreation)));
+            
+            // Filter by CandidateID
+            query.Criteria.AddCondition(new ConditionExpression("dfe_contactid", ConditionOperator.Equal, candidateId));
+            
+            IEnumerable<Entity> entities = _service.RetrieveMultiple(query);
+            // Maps retrieved entities into strongly typed domain models,
+            // injecting this repository context and shared service provider.
+            return entities.Select((entity) =>
+                new ContactChannelCreation(entity, this, _serviceProvider));
+        }
 
         public Candidate MatchCandidate(string email, string applyId = null)
         {
@@ -472,17 +497,7 @@ namespace GetIntoTeachingApi.Services
             _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), context);
             _service.LoadProperty(entity, new Relationship("msevtmgt_contact_msevtmgt_eventregistration_Contact"), context);
             
-            try
-            {
-                _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_contactchannelcreation_ContactId"),
-                    context);
-            }
-            catch (FaultException ex)
-            {
-                // NB: the behaviour of the CRM is unreliable and sometimes it will fail to return associated
-                // ContactChannelCreation records.
-                _logger.LogWarning(ex, "CRM did not return ContactChannelCreation relationships");
-            }
+            // TODO: Spencer to confirm no need to call GetContactChanelCreations(candidateId)
         }
 
         private OrganizationServiceContext Context()

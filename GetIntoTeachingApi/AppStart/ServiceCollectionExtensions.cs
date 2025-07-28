@@ -48,7 +48,7 @@ namespace GetIntoTeachingApi.AppStart
             services.AddScoped<ICrmModelSanitisationRulesHandler<ContactChannelCreationSanitisationRequestWrapper>, ContactChannelCreationSanitisationRulesHandler>();
             services.AddScoped<ICrmModelSanitisationRule<ContactChannelCreationSanitisationRequestWrapper>, ContactChannelCreationDuplicateSanitisationRule>();
             services.AddScoped<ICrmlUpsertStrategy<ContactChannelCreation>, ContactChannelCreationSanitisationUpsertStrategy>();
-            services.AddScoped<ICandidateContactChannelCreationsRepository, CandidateContactChannelCreationsSqlRepository>();
+            services.AddScoped<ICandidateContactChannelCreationsRepository, CandidateContactChannelCreationsCrmRepository>();
 
             services.AddTransient<IOrganizationService>(sp => sp.GetService<CdsServiceClientWrapper>().CdsServiceClient?.Clone());
             services.AddTransient<IOrganizationServiceAdapter, OrganizationServiceAdapter>();
