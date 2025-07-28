@@ -179,29 +179,39 @@ namespace GetIntoTeachingApi.Services
 
             return new Candidate(entity, this, _serviceProvider);
         }
-        
+
+        /// <summary>
+        /// Retrieves all <see cref="ContactChannelCreation"/> records linked to a specific candidate.
+        /// </summary>
+        /// <param name="candidateId">Unique identifier of the candidate.</param>
+        /// <returns>
+        /// A collection of <see cref="ContactChannelCreation"/> domain models,
+        /// constructed from the underlying CRM entities.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// Thrown when <paramref name="candidateId"/> is an empty GUID.
+        /// </exception>
         public IEnumerable<ContactChannelCreation> GetCandidateContactCreations(Guid candidateId)
         {
+            if (candidateId == Guid.Empty)
+            {
+                throw new ArgumentException("CandidateId must not be empty.");
+            }
 
-            // var test = GetAllCandidatesContactChannelCreations();
-            
-            
-            
-            
-            
-            
-            var query = new QueryExpression("dfe_contactchannelcreation");
-            
-            // Adds columns defined by model metadata, ensuring minimal retrieval footprint.
+            // Instantiate a CRM query targeting the contact channel creation entity.
+            QueryExpression query = new QueryExpression("dfe_contactchannelcreation");
+
+            // Specify the fields to retrieve based on metadata annotations.
             query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(ContactChannelCreation)));
-            
-            // Filter by CandidateID
+
+            // Apply filtering criteria to restrict results to the specified candidate.
             query.Criteria.AddCondition(new ConditionExpression("dfe_contactid", ConditionOperator.Equal, candidateId));
-            
+
+            // Execute the query to fetch matching entities from the CRM service.
             IEnumerable<Entity> entities = _service.RetrieveMultiple(query);
-            // Maps retrieved entities into strongly typed domain models,
-            // injecting this repository context and shared service provider.
-            return entities.Select((entity) =>
+
+            // Transform raw entities into rich domain models with contextual dependencies.
+            return entities.Select(entity =>
                 new ContactChannelCreation(entity, this, _serviceProvider));
         }
 

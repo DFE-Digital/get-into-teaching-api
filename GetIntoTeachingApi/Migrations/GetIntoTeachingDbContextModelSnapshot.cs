@@ -214,19 +214,6 @@ namespace GetIntoTeachingApi.Migrations
                     b.ToTable("TeachingSubjects");
                 });
 
-            modelBuilder.Entity("GetIntoTeachingApi.Models.CandidateContactChannelCreations", b =>
-            {
-                b.Property<Guid?>("CandidateId")
-                    .HasColumnType("uuid");
-
-                b.Property<string>("SerialisedContactCreationChannels")
-                    .HasColumnType("text");
-
-                b.HasKey("CandidateId");
-
-                b.ToTable("CandidateContactChannelCreations");
-            });
-
             modelBuilder.Entity("GetIntoTeachingApi.Models.Crm.TeachingEvent", b =>
                 {
                     b.HasOne("GetIntoTeachingApi.Models.Crm.TeachingEventBuilding", "Building")
