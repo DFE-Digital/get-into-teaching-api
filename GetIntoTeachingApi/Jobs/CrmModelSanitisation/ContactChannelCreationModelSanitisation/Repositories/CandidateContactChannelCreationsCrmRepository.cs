@@ -71,5 +71,6 @@ public class CandidateContactChannelCreationsCrmRepository : ICandidateContactCh
     /// </summary>
     /// <param name="candidateId">Unique identifier for the candidate.</param>
     /// <returns>List of contact channel creations.</returns>
-    public IEnumerable<ContactChannelCreation> GetRawCandidateCreationChannels(Guid candidateId) => GetContactChannelCreationsByCandidateId(candidateId);
+    private IEnumerable<ContactChannelCreation> GetRawCandidateCreationChannels(Guid candidateId) =>
+        _crmService.GetCandidateContactCreations(candidateId);
 }

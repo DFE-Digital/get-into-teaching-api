@@ -100,6 +100,11 @@ namespace GetIntoTeachingApiTests.Helpers
             _crmService.DeleteLink(source, relationship, target, context);
         }
 
+        public IEnumerable<ContactChannelCreation> GetCandidateContactCreations(Guid candidateId)
+        {
+            throw new NotImplementedException();
+        }
+
         public IEnumerable<T> GetApplyModels<T>(IEnumerable<string> applyIds) where T : BaseModel, IHasApplyId
         {
             switch (typeof(T).ToString())
