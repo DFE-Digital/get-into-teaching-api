@@ -33,6 +33,11 @@ public class CandidateContactChannelCreationsCrmRepository : ICandidateContactCh
     /// <returns>List of candidate's contact channel creations, or an empty list if none exist.</returns>
     public IEnumerable<ContactChannelCreation> GetContactChannelCreationsByCandidateId(Guid candidateId)
     {
+        if (candidateId == Guid.Empty)
+        {
+            throw new ArgumentException("CandidateId must not be empty.");
+        }
+
         IEnumerable<ContactChannelCreation> contactChannelCreations = GetRawCandidateCreationChannels(candidateId);
         return (contactChannelCreations?.Any() != true) ? [] : contactChannelCreations;
     }
