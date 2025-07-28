@@ -1,29 +1,57 @@
+using System;
 using GetIntoTeachingApi.Jobs.CandidateSanitisation.ContactChannelCreationModelSanitisation;
 using GetIntoTeachingApi.Models.Crm;
+using System.Collections.Generic;
+using FluentAssertions;
 using GetIntoTeachingApiTests.Jobs.CandidateSanitisation.TestDoubles;
 using Xunit;
+namespace GetIntoTeachingApiTests.Jobs.CrmModelSanitisation.ContactChannelCreationModelSanitisation;
 
 public class ContactChannelCreationDuplicateSanitisationRuleTests
 {
-    // Tests to do:
-    // null guards
-    // has a match: calls Remove
-    // does not have a match: calls Preserve
+    [Fact]
+    public void SanitiseCrmModel_WithNullWrapper_ThrowsArgumentNullException()
+    {
+        // arrange
+        ContactChannelCreationDuplicateSanitisationRule rule = new();
+        
+        // act
+        
+        // assert
+        Assert.Throws<ArgumentNullException>(() => rule.SanitiseCrmModel(null));
+    }
 
     [Fact]
-    public void SanitiseCrmModel_XXXX()
+    public void SanitiseCrmModel_WithMatchingCreationChannel_RemovesCreationChannel()
     {
-        // arrange.
-        //ContactChannelCreationDuplicateSanitisationRule contactChannelCreationDuplicateSanitisationRule = new();
-        //ContactChannelCreationSanitisationRequestWrapper.Create(
-        //    creationChannel: ContactChannelCreationTestDouble.Build(
-        //        (ContactChannelCreation.CreationChannelSource.Apply,
-        //            ContactChannelCreation.CreationChannelService.CreatedOnApply)),
-        //    candidateContactChannelCreations: ContactChannelCreationTestDouble.BuildDefaultContactCreationChannelsStub().AsReadOnly());
+        // arrange
+        ContactChannelCreation creationChannel = ContactChannelCreationTestDouble.BuildSingleContactChannel(ContactChannelCreation.CreationChannelSource.SchoolExperience, ContactChannelCreation.CreationChannelService.CreatedOnSchoolExperience);
+        List<ContactChannelCreation> candidateContactChannelCreations = ContactChannelCreationTestDouble.BuildDefaultContactCreationChannelsStub();
+        ContactChannelCreationSanitisationRequestWrapper wrapper = new(creationChannel, candidateContactChannelCreations.AsReadOnly());
+        ContactChannelCreationDuplicateSanitisationRule rule = new();
+        
+        // act
+        rule.SanitiseCrmModel(wrapper);
 
-        // act.
+        // assert
+        wrapper.Preserve.Should().BeFalse();
+        wrapper.CreationChannel.Should().Be(null);
+    }
+    
+    [Fact]
+    public void SanitiseCrmModel_MismatchedCreationChannel_PreservesCreationChannel()
+    {
+        // arrange
+        ContactChannelCreation creationChannel = ContactChannelCreationTestDouble.BuildSingleContactChannel(ContactChannelCreation.CreationChannelSource.CheckinApp, ContactChannelCreation.CreationChannelService.PaidSearch);
+        List<ContactChannelCreation> candidateContactChannelCreations = ContactChannelCreationTestDouble.BuildDefaultContactCreationChannelsStub();
+        ContactChannelCreationSanitisationRequestWrapper wrapper = new(creationChannel, candidateContactChannelCreations.AsReadOnly());
+        ContactChannelCreationDuplicateSanitisationRule rule = new();
+        
+        // act
+        rule.SanitiseCrmModel(wrapper);
 
-
-        // assert.
+        // assert
+        wrapper.Preserve.Should().BeTrue();
+        wrapper.CreationChannel.Should().Be(creationChannel);
     }
 }
