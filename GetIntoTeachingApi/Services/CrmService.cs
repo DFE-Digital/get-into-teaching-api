@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.ServiceModel;
+using static Dapper.SqlMapper;
 
 namespace GetIntoTeachingApi.Services
 {
@@ -92,7 +93,6 @@ namespace GetIntoTeachingApi.Services
 
                 // Project (transform) each item into a new PickListItem with additional context
                 .Select(pickListItem => new PickListItem(pickListItem, entityName, attributeName));
-
 
         public IEnumerable<Entity> GetMultiplePickListItems(string entityName, string attributeName)
         {
@@ -242,24 +242,37 @@ namespace GetIntoTeachingApi.Services
             LoadCandidateRelationships(entity);
             
             return new Candidate(entity, this, _serviceProvider);
-            // return entities.Select((entity) => new Candidate(entity, this, _serviceProvider)).FirstOrDefault();
         }
 
         public IEnumerable<Candidate> GetCandidates(IEnumerable<Guid> ids)
         {
-            if (!ids.Any())
-            {
-                return Array.Empty<Candidate>();
-            }
-
-            var query = new QueryExpression("contact");
+            QueryExpression query = new("contact");
             query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
 
-            query.Criteria.AddCondition(new ConditionExpression("contactid", ConditionOperator.In, ids.ToArray()));
-
-            var entities = _service.RetrieveMultiple(query);
+            IEnumerable<Entity> entities = _service.RetrieveMultiple(query);
 
             return entities.Select((entity) => new Candidate(entity, this, _serviceProvider));
+        }
+
+        /// <summary>
+        /// Retrieves CRM-backed contact channel creation records and maps them to domain models.
+        /// Uses a QueryExpression for flexible querying, including relationship-aware mapping.
+        /// </summary>
+        /// <returns>
+        /// A collection of <see cref="ContactChannelCreation"/> instances enriched via CRM entity hydration.
+        /// </returns>
+        public IEnumerable<ContactChannelCreation> GetAllCandidatesContactChannelCreations()
+        {
+            // Constructs a CRM query targeting the 'dfe_contactchannelcreation' entity.
+            QueryExpression query = new("dfe_contactchannelcreation");
+            // Adds columns defined by model metadata, ensuring minimal retrieval footprint.
+            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(ContactChannelCreation)));
+            // Executes the query against CRM using the injected service abstraction.
+            IEnumerable<Entity> entities = _service.RetrieveMultiple(query);
+            // Maps retrieved entities into strongly typed domain models,
+            // injecting this repository context and shared service provider.
+            return entities.Select((entity) =>
+                new ContactChannelCreation(entity, this, _serviceProvider));
         }
 
         public IEnumerable<Candidate> GetCandidatesPendingMagicLinkTokenGeneration(int limit = 10)

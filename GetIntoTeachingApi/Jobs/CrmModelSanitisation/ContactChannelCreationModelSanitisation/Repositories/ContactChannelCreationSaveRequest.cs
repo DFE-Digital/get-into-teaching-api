@@ -19,6 +19,14 @@ public class ContactChannelCreationSaveRequest
     public Guid CandidateId { get; }
 
     /// <summary>
+    /// Exposes a single instance of the ContactChannelCreation domain model,
+    /// allowing external consumers to read it but restricting mutation to within this class.
+    /// This aligns with encapsulation principles and supports controlled lifecycle management.
+    /// </summary>
+    public ContactChannelCreation ContactChannelCreation { get; private set; }
+
+
+    /// <summary>
     /// Read-only collection of contact channel creation models to persist.
     /// Formed via safe merging and null-guarded initialization.
     /// </summary>
@@ -43,6 +51,7 @@ public class ContactChannelCreationSaveRequest
         }
 
         CandidateId = candidateId;
+        ContactChannelCreation = candidateContactChannelCreation ?? throw new ArgumentNullException(nameof(candidateContactChannelCreation));
 
         // Merge one-off creation with existing records
         _candidateContactChannelCreations =

@@ -222,5 +222,10 @@ namespace GetIntoTeachingApiTests.Helpers
         {
             throw new NotImplementedException();
         }
+
+        public IEnumerable<ContactChannelCreation> GetAllCandidatesContactChannelCreations()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
