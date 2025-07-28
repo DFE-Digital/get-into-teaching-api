@@ -179,6 +179,46 @@ namespace GetIntoTeachingApi.Controllers
         {
             return Ok(await _store.GetPickListItems("contact", "dfe_candidatestatus").ToListAsync());
         }
+        
+        [HttpGet]
+        [Route("candidate/situations")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of situations.",
+            OperationId = "GetCandidateSituations",
+            Tags = ["Pick List Items"])]
+        [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCandidateSituations() =>
+            Ok(await _store.GetPickListItems("contact", "dfe_situation").ToListAsync());
+
+        [HttpGet]
+        [Route("candidate/citizenships")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of citizenship options.",
+            OperationId = "GetCandidateCitizenship",
+            Tags = ["Pick List Items"])]
+        [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCandidateCitizenship() =>
+            Ok(await _store.GetPickListItems("contact", "dfe_citizenship").ToListAsync());
+
+        [HttpGet]
+        [Route("candidate/visa_statuses")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of visa status options.",
+            OperationId = "GetCandidateVisaStatus",
+            Tags = ["Pick List Items"])]
+        [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCandidateVisaStatus() =>
+            Ok(await _store.GetPickListItems("contact", "dfe_visastatus").ToListAsync());
+
+        [HttpGet]
+        [Route("candidate/locations")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of location options.",
+            OperationId = "GetCandidateLocation",
+            Tags = ["Pick List Items"])]
+        [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCandidateLocation() =>
+            Ok(await _store.GetPickListItems("contact", "dfe_location").ToListAsync());
 
         [HttpGet]
         [Route("qualification/degree_status")]
@@ -299,46 +339,6 @@ namespace GetIntoTeachingApi.Controllers
         {
             return Ok(await _store.GetPickListItems("dfe_servicesubscription", "dfe_servicesubscriptiontype").ToListAsync());
         }
-
-        [HttpGet]
-        [Route("candidate/situations")]
-        [SwaggerOperation(
-            Summary = "Retrieves the list of situations.",
-            OperationId = "GetCandidateSituations",
-            Tags = ["Pick List Items"])]
-        [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetCandidateSituations() =>
-            Ok(await _store.GetPickListItems("contact", "dfe_situation").ToListAsync());
-
-        [HttpGet]
-        [Route("candidate/dfe_citizenship")]
-        [SwaggerOperation(
-            Summary = "Retrieves the list of citizenship options.",
-            OperationId = "GetCandidateCitizenship",
-            Tags = ["Pick List Items"])]
-        [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetCandidateCitizenship() =>
-            Ok(await _store.GetPickListItems("contact", "dfe_citizenship").ToListAsync());
-
-        [HttpGet]
-        [Route("candidate/dfe_visastatus")]
-        [SwaggerOperation(
-            Summary = "Retrieves the list of visa status options.",
-            OperationId = "GetCandidateVisaStatus",
-            Tags = ["Pick List Items"])]
-        [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetCandidateVisaStatus() =>
-            Ok(await _store.GetPickListItems("contact", "dfe_visastatus").ToListAsync());
-
-        [HttpGet]
-        [Route("candidate/dfe_location")]
-        [SwaggerOperation(
-            Summary = "Retrieves the list of location options.",
-            OperationId = "GetCandidateLocation",
-            Tags = ["Pick List Items"])]
-        [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetCandidateLocation() =>
-            Ok(await _store.GetPickListItems("contact", "dfe_location").ToListAsync());
 
         [HttpGet]
         [Route("teaching_event/accessibility_items")]
