@@ -49,6 +49,8 @@ namespace GetIntoTeachingApiTests.Jobs.CrmModelSanitisation.ContactChannelCreati
             // assert
             mockRule1.Verify(mock => mock.SanitiseCrmModel(wrapper), Times.Once);
             mockRule2.Verify(mock => mock.SanitiseCrmModel(wrapper), Times.Once);
+            
+            // TODO: need help from Spencer to fix this test
         }
     }
 }
