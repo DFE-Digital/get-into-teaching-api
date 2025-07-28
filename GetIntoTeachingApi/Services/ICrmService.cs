@@ -32,6 +32,7 @@ namespace GetIntoTeachingApi.Services
         Candidate GetCandidate(Guid id);
         Candidate GetCandidateWithRelationships(Guid id);
         IEnumerable<Candidate> GetCandidates(IEnumerable<Guid> ids);
+        IEnumerable<ContactChannelCreation> GetAllCandidatesContactChannelCreations();
         IEnumerable<Candidate> GetCandidatesPendingMagicLinkTokenGeneration(int limit = 10);
         IEnumerable<TeachingEvent> GetTeachingEvents(DateTime? startAfter = null);
         TeachingEvent GetTeachingEvent(string readableId);
