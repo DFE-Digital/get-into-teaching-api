@@ -415,6 +415,7 @@ namespace GetIntoTeachingApiTests.Controllers
                 mock.GetPickListItems("contact", "dfe_location"), Times.Once);
         }
 
+        [Fact]
         public async Task GetTeachingEventAccessibility_ReturnsAllAccessibilityItems()
         {
             var mockItems = MockPickListItems();
