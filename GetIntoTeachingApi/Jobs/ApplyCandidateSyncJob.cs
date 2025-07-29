@@ -1,9 +1,11 @@
 ﻿using System;
-using GetIntoTeachingApi.Models.Apply;
+using System.Linq;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Microsoft.Extensions.Logging;
+using ApplyCandidate = GetIntoTeachingApi.Models.Apply.Candidate;
 
 namespace GetIntoTeachingApi.Jobs
 {
@@ -13,6 +15,7 @@ namespace GetIntoTeachingApi.Jobs
         private readonly IBackgroundJobClient _jobClient;
         private readonly ICrmService _crm;
         private readonly Models.IAppSettings _appSettings;
+        private readonly ICandidateChannelConfigurationHandler _candidateChannelConfigurationHandler;
 
         public ApplyCandidateSyncJob(
             IEnv env,
@@ -20,16 +23,18 @@ namespace GetIntoTeachingApi.Jobs
             ILogger<ApplyCandidateSyncJob> logger,
             ICrmService crm,
             IBackgroundJobClient jobClient,
-            Models.IAppSettings appSettings)
+            Models.IAppSettings appSettings,
+            ICandidateChannelConfigurationHandler candidateChannelConfigurationHandler)
             : base(env, redis)
         {
             _logger = logger;
             _crm = crm;
             _jobClient = jobClient;
             _appSettings = appSettings;
+            _candidateChannelConfigurationHandler = candidateChannelConfigurationHandler;
         }
 
-        public void Run(Candidate applyCandidate)
+        public void Run(ApplyCandidate applyCandidate)
         {
             if (_appSettings.IsCrmIntegrationPaused)
             {
@@ -41,29 +46,39 @@ namespace GetIntoTeachingApi.Jobs
             _logger.LogInformation("ApplyCandidateSyncJob - Succeeded - {Id}", applyCandidate.Id);
         }
 
-        public void SyncCandidate(Candidate applyCandidate)
+        public void SyncCandidate(ApplyCandidate applyCandidate)
         {
-            var candidate = applyCandidate.ToCrmModel();
-            var match = _crm.MatchCandidate(candidate.Email, applyCandidate.Id);
+            ContactChannelCandidateWrapper wrappedCandidate = new(applyCandidate.ToCrmModel())
+            {
+                CreationChannelSourceId = (int?) ContactChannelCreation.CreationChannelSource.Apply
+            };
+            
+            var match = _crm.MatchCandidate(wrappedCandidate.ScopedCandidate.Email, applyCandidate.Id);
 
             _logger.LogInformation("ApplyCandidateSyncJob - {Status} - {Id}", match == null ? "Miss" : "Hit", applyCandidate.Id);
 
             if (match != null)
             {
-                UpdateCandidateWithMatch(candidate, match);
+                UpdateCandidateWithMatch(wrappedCandidate.ScopedCandidate, match);
             }
-            else
+            
+            // NB: to prevent multiple Contact Creation Channel (CCC) records from being created hourly on the Apply sync,
+            // we should only create a CCC if there isn't already an existing record with:
+            //   source == Apply AND service == CreatedOnApply
+            if (_candidateChannelConfigurationHandler.DoesNotHaveAContactChannelCreationRecord(wrappedCandidate.ScopedCandidate))
             {
-                candidate.ChannelId = (int)Models.Crm.Candidate.Channel.ApplyForTeacherTraining;
+                _candidateChannelConfigurationHandler.InvokeConfigureChannel(wrappedCandidate);
             }
 
-            string json = candidate.SerializeChangeTracked();
+            string json = wrappedCandidate.ScopedCandidate.SerializeChangeTracked();
             _jobClient.Enqueue<UpsertCandidateJob>((x) => x.Run(json, null));
         }
 
         private static void UpdateCandidateWithMatch(Models.Crm.Candidate candidate, Models.Crm.Candidate match)
         {
             candidate.Id = match.Id;
+            
+            candidate.ContactChannelCreations = match.ContactChannelCreations;
 
             if (candidate.Email == match.Email || match.SecondaryEmail != null)
             {
