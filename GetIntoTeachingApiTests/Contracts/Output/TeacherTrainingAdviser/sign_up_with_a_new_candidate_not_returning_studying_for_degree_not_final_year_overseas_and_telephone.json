@@ -23,9 +23,7 @@
       },
       {
         "Key": "dfe_channelcreation",
-        "Value": {
-          "Value": 222750027
-        }
+        "Value": null
       },
       {
         "Key": "dfe_country",
@@ -318,6 +316,47 @@
       {
         "Key": "dfe_ukdegreegrade",
         "Value": null
+      }
+    ],
+    "EntityState": 1,
+    "FormattedValues": [],
+    "RelatedEntities": [],
+    "RowVersion": null,
+    "KeyAttributes": []
+  },
+  {
+    "LogicalName": "dfe_contactchannelcreation",
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Attributes": [
+      {
+        "Key": "dfe_contactid",
+        "Value": {
+          "Id": "371aa675-e6bf-41c5-ad5f-4e1e8de5d7ad",
+          "LogicalName": "contact",
+          "Name": null,
+          "KeyAttributes": [],
+          "RowVersion": null
+        }
+      },
+      {
+        "Key": "dfe_creationchannel",
+        "Value": false
+      },
+      {
+        "Key": "dfe_creationchannelactivities",
+        "Value": null
+      },
+      {
+        "Key": "dfe_creationchannelservice",
+        "Value": {
+          "Value": 222750010
+        }
+      },
+      {
+        "Key": "dfe_creationchannelsource",
+        "Value": {
+          "Value": 222750003
+        }
       }
     ],
     "EntityState": 1,

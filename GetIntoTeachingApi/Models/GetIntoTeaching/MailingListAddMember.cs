@@ -12,7 +12,7 @@ using System.Text.Json.Serialization;
 
 namespace GetIntoTeachingApi.Models.GetIntoTeaching
 {
-    public class MailingListAddMember : DegreeStatusInference, IInferDegreeStatus
+    public class MailingListAddMember : DegreeStatusInference, ICreateContactChannel, IInferDegreeStatus
     {
         public Guid? CandidateId { get; set; }
         public Guid? QualificationId { get; set; }
@@ -23,6 +23,14 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public int? ConsiderationJourneyStageId { get; set; }
         [SwaggerSchema(WriteOnly = true)]
         public int? ChannelId { get; set; }
+        
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelSourceId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelServiceId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelActivityId { get; set; }
+
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -40,7 +48,29 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public Candidate Candidate => CreateCandidate();
         [JsonIgnore]
         public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
+        
+        /// <summary>
+        /// Provides the default read-only contact creation channel integer value. NB: this field will be deprecated.
+        /// </summary>
+        public int? DefaultContactCreationChannel =>
+            ChannelId ?? (int?)Candidate.Channel.MailingList; // Use the assigned channel ID if available, else assign default.
+        
+        /// Provides the default read-only creation channel source identifier.
+        /// </summary>
+        public int? DefaultCreationChannelSourceId =>
+            (int?)ContactChannelCreation.CreationChannelSource.GITWebsite;
 
+        /// <summary>
+        /// Provides the default read-only creation channel service identifier.
+        /// </summary>
+        public int? DefaultCreationChannelServiceId =>
+            (int?)ContactChannelCreation.CreationChannelService.MailingList;
+
+        /// <summary>
+        /// Provides the default read-only creation channel activity identifier.
+        /// </summary>
+        public int? DefaultCreationChannelActivityId => null;
+        
         /// <summary>
         /// The situation (life stage) of the candidate, which can be used to determine their current status or context.
         /// </summary>
@@ -70,7 +100,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         /// Overrides the inferred graduation date to adjust its calculation.
         /// </summary>
         public override DateTime? InferredGraduationDate { get; set; }
-
+    
         public MailingListAddMember()
         {
         }
@@ -129,21 +159,17 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                 VisaStatus = VisaStatus,
                 Location = Location
             };
-
-            ConfigureChannel(candidate);
+            candidate.ConfigureChannel(
+                candidateId: CandidateId, 
+                primaryContactChannel: this, 
+                additionalContactChannel: new AdditionalEventsContactChannel(),
+                createAdditionalChannel: !string.IsNullOrWhiteSpace(AddressPostcode));
+            
             ConfigureSubscriptions(candidate);
             AddQualification(candidate);
             AcceptPrivacyPolicy(candidate);
 
             return candidate;
-        }
-
-        private void ConfigureChannel(Candidate candidate)
-        {
-            if (CandidateId == null)
-            {
-                candidate.ChannelId = ChannelId ?? (int?)Candidate.Channel.MailingList;
-            }
         }
 
         private void AddQualification(Candidate candidate)

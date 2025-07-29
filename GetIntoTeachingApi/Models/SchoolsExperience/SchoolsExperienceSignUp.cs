@@ -8,7 +8,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace GetIntoTeachingApi.Models.SchoolsExperience
 {
-    public class SchoolsExperienceSignUp
+    public class SchoolsExperienceSignUp : ICreateContactChannel
     {
         public Guid? CandidateId { get; set; }
         public Guid? PreferredTeachingSubjectId { get; set; }
@@ -39,14 +39,43 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
         public int? DegreeTypeId { get; set; }
         public string DegreeSubject { get; set; }
         public int? UkDegreeGradeId { get; set; }
+        
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelSourceId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelServiceId { get; set; }
+        [SwaggerSchema(WriteOnly = true)]
+        public int? CreationChannelActivityId { get; set; }
 
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
         [JsonIgnore]
         public IDateTimeProvider DateTimeProvider { get; set; } = new DateTimeProvider();
+        
+        /// <summary>
+        /// Provides the default read-only contact creation channel integer value. NB: this field will be deprecated.
+        /// </summary>
+        public int? DefaultContactCreationChannel =>
+            (int?)Candidate.Channel.SchoolsExperience;
 
-        public SchoolsExperienceSignUp()
-        {
+        /// <summary>
+        /// Provides the default read-only creation channel source identifier.
+        /// </summary>
+        public int? DefaultCreationChannelSourceId =>
+            (int?)ContactChannelCreation.CreationChannelSource.SchoolExperience;
+
+        /// <summary>
+        /// Provides the default read-only creation channel service identifier.
+        /// </summary>
+        public int? DefaultCreationChannelServiceId =>
+            (int?)ContactChannelCreation.CreationChannelService.CreatedOnSchoolExperience;
+
+        /// <summary>
+        /// Provides the default read-only creation channel activity identifier.
+        /// </summary>
+        public int? DefaultCreationChannelActivityId => null;
+
+        public SchoolsExperienceSignUp(){
         }
 
         public SchoolsExperienceSignUp(Candidate candidate)
@@ -83,7 +112,6 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
             DbsCertificateIssuedAt = candidate.DbsCertificateIssuedAt;
             
             var latestQualification = candidate.Qualifications.OrderByDescending(q => q.CreatedAt).FirstOrDefault();
-
             if (latestQualification != null)
             {
                 QualificationId = latestQualification.Id;
@@ -91,6 +119,14 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
                 UkDegreeGradeId = latestQualification.UkDegreeGradeId;
                 DegreeStatusId = latestQualification.DegreeStatusId;
                 DegreeTypeId = latestQualification.TypeId;
+            }
+            
+            var latestContactChannelCreation = candidate.ContactChannelCreations.OrderByDescending(c => c.CreatedAt).FirstOrDefault();
+            if (latestContactChannelCreation != null)
+            {
+                CreationChannelSourceId = latestContactChannelCreation.CreationChannelSourceId;
+                CreationChannelServiceId = latestContactChannelCreation.CreationChannelServiceId;
+                CreationChannelActivityId = latestContactChannelCreation.CreationChannelActivityId;
             }
         }
 
@@ -124,19 +160,18 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
                 candidate.SecondaryPreferredTeachingSubjectId = SecondaryPreferredTeachingSubjectId;
             }
 
-            ConfigureChannel(candidate);
+            // Ensures we don't create duplicate ContactCreationChannel records
+            if (ShouldCreateSchoolExperienceCreationChannel(candidate))
+            {
+                candidate.ConfigureChannel(
+                    candidateId: CandidateId,
+                    primaryContactChannel: this);
+            }
+
             AcceptPrivacyPolicy(candidate);
             AddQualification(candidate);
 
             return candidate;
-        }
-
-        private void ConfigureChannel(Candidate candidate)
-        {
-            if (CandidateId == null)
-            {
-                candidate.ChannelId = (int?)Candidate.Channel.SchoolsExperience;
-            }
         }
 
         private void AcceptPrivacyPolicy(Candidate candidate)
@@ -169,6 +204,21 @@ namespace GetIntoTeachingApi.Models.SchoolsExperience
         private bool ContainsQualification()
         {
             return UkDegreeGradeId != null || DegreeStatusId != null || DegreeSubject != null || DegreeTypeId != null;
+        }
+
+        private bool ShouldCreateSchoolExperienceCreationChannel(Candidate candidate)
+        {
+            if (CreationChannelSourceId != null)
+            {
+                var latestContactChannelCreation = candidate.ContactChannelCreations.OrderByDescending(c => c.CreatedAt).FirstOrDefault();
+
+                if (latestContactChannelCreation != null &&
+                    latestContactChannelCreation.CreationChannelSourceId == CreationChannelSourceId)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }
