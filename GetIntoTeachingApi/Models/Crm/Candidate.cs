@@ -288,6 +288,12 @@ namespace GetIntoTeachingApi.Models.Crm
         public bool? EventsSubscriptionDoNotSendMm { get; set; }
         [EntityField("dfe_situation", typeof(OptionSetValue))]
         public int? Situation { get; set; }
+        [EntityField("dfe_citizenship", typeof(OptionSetValue))]
+        public int? Citizenship { get; set; }
+        [EntityField("dfe_visastatus", typeof(OptionSetValue))]
+        public int? VisaStatus { get; set; }
+        [EntityField("dfe_location", typeof(OptionSetValue))]
+        public int? Location { get; set; }
         [EntityField("dfe_qtsstatus", typeof(OptionSetValue))]
         public int? HasQualifiedTeacherStatus { get; set; }
 

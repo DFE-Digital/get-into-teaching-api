@@ -78,9 +78,12 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
                 Situation = 123456,
                 AddressPostcode = "KY11 9YU",
                 WelcomeGuideVariant = "variant1",
+                Citizenship = 997755,
+                VisaStatus = 119800,
+                Location = 234353,
                 CreationChannelSourceId = 222750003,
                 CreationChannelServiceId = 222750002,
-                CreationChannelActivityId = 222750001,
+                CreationChannelActivityId = 222750001
             };
 
             var candidate = request.Candidate;
@@ -107,6 +110,9 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
             candidate.GdprConsentId.Should().Be((int)Candidate.GdprConsent.Consent);
             candidate.OptOutOfGdpr.Should().BeFalse();
             candidate.WelcomeGuideVariant.Should().Be(request.WelcomeGuideVariant);
+            candidate.Citizenship.Should().Be(request.Citizenship);
+            candidate.VisaStatus.Should().Be(request.VisaStatus);
+            candidate.Location.Should().Be(request.Location);
 
             candidate.PrivacyPolicy.AcceptedPolicyId.Should().Be((Guid)request.AcceptedPolicyId);
             candidate.PrivacyPolicy.AcceptedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(30));
