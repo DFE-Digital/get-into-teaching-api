@@ -1,8 +1,10 @@
-﻿using GetIntoTeachingApi.Models.Crm;
+﻿using GetIntoTeachingApi.Attributes;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.Crm.DegreeStatusInference;
 using GetIntoTeachingApi.Models.Crm.DegreeStatusInference.DomainServices;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
+using Microsoft.Xrm.Sdk;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Linq;
@@ -34,6 +36,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         public string LastName { get; set; }
         public string AddressPostcode { get; set; }
         public string WelcomeGuideVariant { get; set; }
+
         [SwaggerSchema(ReadOnly = true)]
         public bool AlreadySubscribedToEvents { get; set; }
         [SwaggerSchema(ReadOnly = true)]
@@ -51,8 +54,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         /// </summary>
         public int? DefaultContactCreationChannel =>
             ChannelId ?? (int?)Candidate.Channel.MailingList; // Use the assigned channel ID if available, else assign default.
-
-        /// <summary>
+        
         /// Provides the default read-only creation channel source identifier.
         /// </summary>
         public int? DefaultCreationChannelSourceId =>
@@ -69,7 +71,25 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         /// </summary>
         public int? DefaultCreationChannelActivityId => null;
         
+        /// <summary>
+        /// The situation (life stage) of the candidate, which can be used to determine their current status or context.
+        /// </summary>
         public int? Situation { get; set; }
+
+        /// <summary>
+        /// The citizenship status of the candidate, represented as an integer code.
+        /// </summary>
+        public int? Citizenship { get; set; }
+
+        /// <summary>
+        /// The visa status of the candidate, represented as an integer code.
+        /// </summary>
+        public int? VisaStatus { get; set; }
+
+        /// <summary>
+        /// The location of the candidate, represented as an integer code.
+        /// </summary>
+        public int? Location { get; set; }
 
         /// <summary>
         /// Overrides the GraduationYear property to implement custom logic.
@@ -134,7 +154,10 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                 PreferredContactMethodId = (int)Candidate.ContactMethod.Any,
                 GdprConsentId = (int)Candidate.GdprConsent.Consent,
                 OptOutOfGdpr = false,
-                Situation = Situation
+                Situation = Situation,
+                Citizenship = Citizenship,
+                VisaStatus = VisaStatus,
+                Location = Location
             };
             candidate.ConfigureChannel(
                 candidateId: CandidateId, 
