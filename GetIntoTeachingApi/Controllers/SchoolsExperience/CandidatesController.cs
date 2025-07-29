@@ -18,7 +18,7 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
 {
     [Route("api/schools_experience/candidates")]
     [ApiController]
-    //[Authorize(Roles = "Admin,SchoolsExperience")]
+    [Authorize(Roles = "Admin,SchoolsExperience")]
     public class CandidatesController : ControllerBase
     {
         private readonly ICandidateAccessTokenService _tokenService;

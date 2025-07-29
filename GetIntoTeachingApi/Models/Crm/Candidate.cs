@@ -10,7 +10,7 @@ using System.Linq;
 namespace GetIntoTeachingApi.Models.Crm
 {
     [Entity("contact")]
-    //[GetIntoTeachingApi.Attributes.SwaggerIgnore]
+    [GetIntoTeachingApi.Attributes.SwaggerIgnore]
     public class Candidate : BaseModel
     {
         public static readonly Guid AdviserBusinessUnitId = new Guid("1A61F629-F502-E911-A972-000D3A23443B");

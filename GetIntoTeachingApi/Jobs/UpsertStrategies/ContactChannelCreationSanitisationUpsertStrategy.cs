@@ -3,6 +3,7 @@ using GetIntoTeachingApi.Jobs.CandidateSanitisation.ContactChannelCreationModelS
 using GetIntoTeachingApi.Jobs.CrmModelSanitisation.ContactChannelCreationModelSanitisation.Repositories;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -40,9 +41,12 @@ public class ContactChannelCreationSanitisationUpsertStrategy : ICrmlUpsertStrat
     /// <returns>True if the model is persisted; false if discarded due to duplication or invalid state.</returns>
     public bool TryUpsert(ContactChannelCreation model, out string logMessage)
     {
+        ArgumentNullException.ThrowIfNull(model);
+
         // Retrieve existing channel creations for the candidate.
         IEnumerable<ContactChannelCreation> contactChannelCreations =
-            _candidateContactChannelCreationsRepository.GetContactChannelCreationsByCandidateId(model.CandidateId);
+            _candidateContactChannelCreationsRepository
+                .GetContactChannelCreationsByCandidateId(model.CandidateId);
 
         // Package incoming and historical data into a sanitisation wrapper.
         ContactChannelCreationSanitisationRequestWrapper wrapper =
@@ -56,8 +60,6 @@ public class ContactChannelCreationSanitisationUpsertStrategy : ICrmlUpsertStrat
         if (wrapper.Preserve)
         {
             _crmService.Save(model);
-
-            logMessage = $"Saved model: {model.Id}";
 
             SaveResult saveResult =
                 _candidateContactChannelCreationsRepository

@@ -50,7 +50,7 @@ namespace GetIntoTeachingApi.Services
             SavePrivacyPolicy(privacyPolicy, candidate);
             SavePhoneCall(phoneCall, candidate);
             SaveSchoolExperiences(schoolExperiences, candidate);
-            SaveContactChannelCreations(contactChannelCreations, (Guid)candidate.Id);
+            SaveContactChannelCreations(contactChannelCreations, candidate.Id);
 
             IncrementCallbackBookingQuotaNumberOfBookings(phoneCall);
             
@@ -271,17 +271,17 @@ namespace GetIntoTeachingApi.Services
             _jobClient.Enqueue<UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>>((x) => x.Run(json, null));
         }
         
-        private void SaveContactChannelCreations(IEnumerable<ContactChannelCreation> contactChannelCreations, Guid candidateId)
+        private void SaveContactChannelCreations(IEnumerable<ContactChannelCreation> contactChannelCreations, Guid? candidateId)
         {
-            if (contactChannelCreations != null && contactChannelCreations.Any())
+            if (contactChannelCreations != null && contactChannelCreations.Any() && candidateId.HasValue)
             {
                 foreach (ContactChannelCreation contactChannelCreation in contactChannelCreations)
                 {
-                    contactChannelCreation.CandidateId = candidateId;
+                    contactChannelCreation.CandidateId = candidateId.Value;
                 }
                 
                 string json = contactChannelCreations.SerializeChangeTracked();
-                _jobClient.Enqueue<UpsertContactCreationChannelsJob>((x) => x.Run(candidateId, json, null));
+                _jobClient.Enqueue<UpsertContactCreationChannelsJob>((x) => x.Run(candidateId.Value, json, null));
             }
         }
     }

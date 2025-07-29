@@ -35,6 +35,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockCrm = new Mock<ICrmService>();
             _mockNotifyService = new Mock<INotifyService>();
             _metrics = new MetricService();
+            _mockUpsertStrategy = new Mock<ICrmlUpsertStrategy<ContactChannelCreation>>();
             _policy = new CandidatePrivacyPolicy() { Id = Guid.NewGuid(), AcceptedAt = DateTime.UtcNow, CandidateId = Guid.NewGuid() };
             _job = new UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>(
                 new Env(), new Mock<IRedisService>().Object, _mockContext.Object, _mockCrm.Object,
@@ -42,7 +43,6 @@ namespace GetIntoTeachingApiTests.Jobs
 
             _metrics.HangfireJobQueueDuration.RemoveLabelled("UpsertModelJob<CandidatePrivacyPolicy>");
             _mockContext.Setup(m => m.GetJobCreatedAt(null)).Returns(DateTime.UtcNow.AddDays(-1));
-
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
         }
         
