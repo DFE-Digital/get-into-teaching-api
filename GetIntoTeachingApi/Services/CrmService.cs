@@ -444,17 +444,17 @@ namespace GetIntoTeachingApi.Services
             _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), context);
             _service.LoadProperty(entity, new Relationship("msevtmgt_contact_msevtmgt_eventregistration_Contact"), context);
             
-            // try
-            // {
-            //     _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_contactchannelcreation_ContactId"),
-            //         context);
-            // }
-            // catch (FaultException ex)
-            // {
-            //     // NB: the behaviour of the CRM is unreliable and sometimes it will fail to return associated
-            //     // ContactChannelCreation records.
-            //     _logger.LogWarning(ex, "CRM did not return ContactChannelCreation relationships");
-            // }
+            try
+            {
+                _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_contactchannelcreation_ContactId"),
+                    context);
+            }
+            catch (FaultException ex)
+            {
+                // NB: the behaviour of the CRM is unreliable and sometimes it will fail to return associated
+                // ContactChannelCreation records.
+                _logger.LogWarning(ex, "CRM did not return ContactChannelCreation relationships");
+            }
         }
 
         private OrganizationServiceContext Context()
