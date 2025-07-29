@@ -324,6 +324,8 @@ namespace GetIntoTeachingApi.Services
 
         public bool CandidateAlreadyHasLocalEventSubscriptionType(Guid candidateId)
         {
+
+            var candidate = GetCandidate(candidateId);
             return GetCandidate(candidateId).EventsSubscriptionTypeId == (int)Candidate.SubscriptionType.LocalEvent;
         }
 

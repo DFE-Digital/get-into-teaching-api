@@ -32,7 +32,6 @@ using Microsoft.OpenApi.Models;
 using Microsoft.Xrm.Sdk;
 using StackExchange.Redis;
 using System;
-using System.Configuration;
 
 namespace GetIntoTeachingApi.AppStart
 {
@@ -44,19 +43,15 @@ namespace GetIntoTeachingApi.AppStart
 
             services.AddSingleton<IAppSettings, AppSettings>();
             services.AddSingleton<CdsServiceClientWrapper, CdsServiceClientWrapper>();
-
             services.AddScoped<ICrmModelSanitisationRulesHandler<ContactChannelCreationSanitisationRequestWrapper>, ContactChannelCreationSanitisationRulesHandler>();
             services.AddScoped<ICrmModelSanitisationRule<ContactChannelCreationSanitisationRequestWrapper>, ContactChannelCreationDuplicateSanitisationRule>();
             services.AddScoped<ICrmlUpsertStrategy<ContactChannelCreation>, ContactChannelCreationSanitisationUpsertStrategy>();
             services.AddScoped<ICandidateContactChannelCreationsRepository, CandidateContactChannelCreationsCrmRepository>();
-
             services.AddTransient<IOrganizationService>(sp => sp.GetService<CdsServiceClientWrapper>().CdsServiceClient?.Clone());
             services.AddTransient<IOrganizationServiceAdapter, OrganizationServiceAdapter>();
             services.AddTransient<ICrmService, CrmService>();
-
             services.AddScoped<IStore, Store>();
             services.AddScoped<DbConfiguration, DbConfiguration>();
-
             services.AddSingleton<IMetricService, MetricService>();
             services.AddSingleton<INotificationClientAdapter, NotificationClientAdapter>();
             services.AddSingleton<IGeocodeClientAdapter, GeocodeClientAdapter>();

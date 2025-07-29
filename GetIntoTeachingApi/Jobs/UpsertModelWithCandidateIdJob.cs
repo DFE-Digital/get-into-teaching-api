@@ -5,6 +5,7 @@ using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using Hangfire.Server;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -74,6 +75,7 @@ public class UpsertModelWithCandidateIdJob<T> : BaseJob
         {
             HandleFinalRetry(model);
             _logger.LogInformation("UpsertModelJob<{TypeName}> - Deleted", typeName);
+            UpdateMetricsServiceWithJobInfo(typeName, context);
             return;
         }
 
@@ -89,6 +91,8 @@ public class UpsertModelWithCandidateIdJob<T> : BaseJob
                 _logger.LogInformation("UpsertModelJob<{TypeName}> - Succeeded - {Id}", typeName, model.Id);
                 break;
         }
+
+        UpdateMetricsServiceWithJobInfo(typeName, context);
     }
 
     /// <summary>
@@ -118,9 +122,24 @@ public class UpsertModelWithCandidateIdJob<T> : BaseJob
 
         _logger.LogInformation("UpsertModelJob<{TypeName}> - {ModelId}: {LogMessage}",
             typeName, creationChannel.Id, logMessage);
+    }
 
+    /// <summary>
+    /// Records the duration a Hangfire job spent in the queue before execution begins.
+    /// Useful for performance monitoring and identifying scheduling delays.
+    /// </summary>
+    /// <param name="typeName">The name of the job's payload type, used to label the metric for traceability.</param>
+    /// <param name="context">Hangfire's PerformContext, providing access to job metadata.</param>
+    private void UpdateMetricsServiceWithJobInfo(string typeName, PerformContext context)
+    {
+        // Calculate the time in seconds the job spent in the queue before being picked up
+        // This is derived from the current UTC time minus the job's creation timestamp
+        double queueDurationSeconds = (DateTime.UtcNow - _contextAdapter.GetJobCreatedAt(context)).TotalSeconds;
+
+        // Record the observed queue duration in the metrics system under a labeled histogram
+        // The label format includes the job type name to distinguish different job categories
         _metrics.HangfireJobQueueDuration
             .WithLabels($"UpsertModelJob<{typeName}>")
-            .Observe((DateTime.UtcNow - _contextAdapter.GetJobCreatedAt(context)).TotalSeconds);
+            .Observe(queueDurationSeconds);
     }
 }

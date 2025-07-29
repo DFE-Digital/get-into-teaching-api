@@ -45,11 +45,6 @@ public class ContactChannelCreationSaveRequest
         ContactChannelCreation candidateContactChannelCreation,
         ReadOnlyCollection<ContactChannelCreation> candidateContactChannelCreations)
     {
-        if (candidateId == Guid.Empty)
-        {
-            throw new ArgumentException("CandidateId must not be empty.", nameof(candidateId));
-        }
-
         CandidateId = candidateId;
         ContactChannelCreation = candidateContactChannelCreation ?? throw new ArgumentNullException(nameof(candidateContactChannelCreation));
 
