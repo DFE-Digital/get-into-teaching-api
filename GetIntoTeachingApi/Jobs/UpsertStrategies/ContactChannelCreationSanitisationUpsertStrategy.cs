@@ -2,7 +2,6 @@
 using GetIntoTeachingApi.Jobs.CandidateSanitisation.ContactChannelCreationModelSanitisation;
 using GetIntoTeachingApi.Jobs.CrmModelSanitisation.ContactChannelCreationModelSanitisation.Repositories;
 using GetIntoTeachingApi.Models.Crm;
-using GetIntoTeachingApi.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
