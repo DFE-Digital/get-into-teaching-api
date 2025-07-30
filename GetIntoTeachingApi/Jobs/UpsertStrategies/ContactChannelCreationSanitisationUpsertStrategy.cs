@@ -59,7 +59,8 @@ public class ContactChannelCreationSanitisationUpsertStrategy : ICrmlUpsertStrat
         // Persist only if the wrapper signals preservation eligibility.
         if (wrapper.Preserve)
         {
-            _crmService.Save(model);
+            
+            // _crmService.Save(model); // FIXME: delete this line - is it saving twice?
 
             SaveResult saveResult =
                 _candidateContactChannelCreationsRepository

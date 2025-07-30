@@ -102,7 +102,15 @@ namespace GetIntoTeachingApiTests.Helpers
 
         public IEnumerable<ContactChannelCreation> GetCandidateContactCreations(Guid candidateId)
         {
-            throw new NotImplementedException();
+            var json = File.ReadAllText("./Contracts/Data/contact_creation_channels.json");
+            IEnumerable<ContactChannelCreation> entities = JsonConvert.DeserializeObject<IEnumerable<ContactChannelCreation>>(json);
+
+            foreach (var entity in entities)
+            {
+                entity.CandidateId = candidateId;
+            }
+
+            return entities;
         }
 
         public IEnumerable<T> GetApplyModels<T>(IEnumerable<string> applyIds) where T : BaseModel, IHasApplyId

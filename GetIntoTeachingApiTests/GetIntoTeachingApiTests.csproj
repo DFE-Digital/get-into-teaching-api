@@ -16,6 +16,9 @@
     <None Remove="Microsoft.CodeAnalysis.CSharp.Workspaces" />
     <None Remove="Contracts\Input\ApplyCandidateApi\" />
     <None Remove="Contracts\Output\ApplyCandidateApi\" />
+    <None Update="Contracts\Data\contact_creation_channels.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
