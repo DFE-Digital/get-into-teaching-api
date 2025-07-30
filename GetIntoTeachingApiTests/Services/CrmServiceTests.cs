@@ -861,6 +861,40 @@ namespace GetIntoTeachingApiTests.Services
                 new Relationship("msevtmgt_event_building"), _context), Times.Never);
         }
 
+        [Fact]
+        public void GetCandidateContactCreations_WithValidCandidateId_ReturnsContactChannelCreations()
+        {
+            // arrange
+            var candidateId = Guid.NewGuid();
+            var mockEntities = new List<Entity>
+            {
+                new("dfe_contactchannelcreation")
+                {
+                    Id = Guid.NewGuid(),
+                    ["dfe_contactid"] = new EntityReference("contact", candidateId)
+                }
+            }
+            .AsQueryable();
+
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.IsAny<QueryExpression>()))
+                .Returns(mockEntities);
+
+            // act
+            var result = _crm.GetCandidateContactCreations(candidateId);
+
+            // assert
+            result.Should().NotBeEmpty();
+            result.First().CandidateId.Should().Be(candidateId);
+        }
+
+        [Fact]
+        public void GetCandidateContactCreations_WithInvalidCandidateId_ThrowsExpectedException()
+        {
+            // act/assert
+            Assert.Throws<ArgumentException>(() =>
+                _crm.GetCandidateContactCreations(candidateId: Guid.Empty));
+        }
+
         private static bool VerifyMatchEventWithReadableIdQueryExpression(QueryExpression query, string readableId)
         {
             var hasEntityName = query.EntityName == "msevtmgt_event";

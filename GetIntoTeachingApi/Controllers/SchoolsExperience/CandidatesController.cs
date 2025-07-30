@@ -124,35 +124,6 @@ namespace GetIntoTeachingApi.Controllers.SchoolsExperience
             return Ok(signUps);
         }
 
-        /// <summary>
-        /// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-        [HttpGet]
-        [Route("with-relationships")]
-        [SwaggerOperation(
-           Summary = "Retrieves existing candidates with relationships",
-           OperationId = "GetMultipleWithRelationships",
-           Tags = new[] { "Candidate with multiple relationships" })]
-        [Produces("application/json")]
-        //[ProducesResponseType(typeof(IEnumerable<Candidate>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetMultipleWithRelationships()
-        {
-            var contactChannelCreations = _crm.GetAllCandidatesContactChannelCreations();
-            //var signUps = candidates.Select(c => new SchoolsExperienceSignUp(c));
-
-            return Ok(contactChannelCreations);
-        }
-
-
-        /// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// </summary>
-        /// <param name="accessToken"></param>
-        /// <param name="request"></param>
-        /// <returns></returns>
-
-
         [HttpPost]
         [Route("exchange_access_token/{accessToken}")]
         [SwaggerOperation(
