@@ -52,6 +52,11 @@ public class UpsertContactCreationChannelsJob : BaseJob
         {
             throw new InvalidOperationException($"UpsertContactCreationChannelsJob - Aborting (CRM integration paused).");
         }
+        
+        if (candidateId == Guid.Empty)
+        {
+            throw new ArgumentException("CandidateId must not be empty.");
+        }
 
         _logger.LogInformation("UpsertContactCreationChannelsJob - Started ({Attempt})", AttemptInfo(context, _contextAdapter));
         _logger.LogInformation("UpsertContactCreationChannelsJob - Payload {Payload}", Redactor.RedactJson(json));
