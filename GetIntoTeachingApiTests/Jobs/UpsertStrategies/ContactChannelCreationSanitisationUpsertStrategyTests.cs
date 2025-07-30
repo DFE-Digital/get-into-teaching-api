@@ -40,16 +40,12 @@ public class ContactChannelCreationSanitisationUpsertStrategyTests
         Mock<ICrmModelSanitisationRulesHandler<ContactChannelCreationSanitisationRequestWrapper>> mockRulesHandler =
             ContactChannelCreationDuplicateSanitisationRulesHandlerTestDouble.MockForPreserveChannel(wrapper);
 
-        Mock<ICrmService> mockCrmService =
-            CrmServiceTestDouble.MockFor(candidateContactChannelCreations);
-
         Mock<ICandidateContactChannelCreationsRepository> mockRepository =
             CandidateContactChannelCreationsCrmRepositoryTestDoubles.MockForGetAndSave(
                 candidateContactChannelCreations, saveResult);
 
         ContactChannelCreationSanitisationUpsertStrategy contactChannelCreationSanitisationUpsertStrategy =
             new(
-                mockCrmService.Object,
                 mockRulesHandler.Object,
                 mockRepository.Object
             );
@@ -95,16 +91,12 @@ public class ContactChannelCreationSanitisationUpsertStrategyTests
         Mock<ICrmModelSanitisationRulesHandler<ContactChannelCreationSanitisationRequestWrapper>> mockRulesHandler =
             ContactChannelCreationDuplicateSanitisationRulesHandlerTestDouble.MockForRemoveChannel(wrapper);
 
-        Mock<ICrmService> mockCrmService =
-            CrmServiceTestDouble.MockFor(candidateContactChannelCreations);
-
         Mock<ICandidateContactChannelCreationsRepository> mockRepository =
             CandidateContactChannelCreationsCrmRepositoryTestDoubles.MockForGetAndSave(
                 candidateContactChannelCreations, saveResult);
 
         ContactChannelCreationSanitisationUpsertStrategy contactChannelCreationSanitisationUpsertStrategy =
             new(
-                mockCrmService.Object,
                 mockRulesHandler.Object,
                 mockRepository.Object
             );
@@ -129,13 +121,11 @@ public class ContactChannelCreationSanitisationUpsertStrategyTests
         // arrange
         Mock<ICrmModelSanitisationRulesHandler<ContactChannelCreationSanitisationRequestWrapper>> mockRulesHandler =
             ContactChannelCreationDuplicateSanitisationRulesHandlerTestDouble.DefaultMock();
-        Mock<ICrmService> mockCrmService = CrmServiceTestDouble.DefaultMock();
         Mock<ICandidateContactChannelCreationsRepository> mockRepository =
             CandidateContactChannelCreationsCrmRepositoryTestDoubles.DefaultMock();
 
         ContactChannelCreationSanitisationUpsertStrategy contactChannelCreationSanitisationUpsertStrategy =
             new(
-                mockCrmService.Object,
                 mockRulesHandler.Object,
                 mockRepository.Object
             );
