@@ -15,7 +15,6 @@ namespace GetIntoTeachingApi.Jobs.UpsertStrategies;
 /// </summary>
 public class ContactChannelCreationSanitisationUpsertStrategy : ICrmlUpsertStrategy<ContactChannelCreation>
 {
-    private readonly ICrmService _crmService;
     private readonly ICrmModelSanitisationRulesHandler<ContactChannelCreationSanitisationRequestWrapper> _rulesHandler;
     private readonly ICandidateContactChannelCreationsRepository _candidateContactChannelCreationsRepository;
 
@@ -23,11 +22,9 @@ public class ContactChannelCreationSanitisationUpsertStrategy : ICrmlUpsertStrat
     /// Constructs the upsert strategy with domain service dependencies.
     /// </summary>
     public ContactChannelCreationSanitisationUpsertStrategy(
-        ICrmService crmService,
         ICrmModelSanitisationRulesHandler<ContactChannelCreationSanitisationRequestWrapper> rulesHandler,
         ICandidateContactChannelCreationsRepository candidateContactChannelCreationsRepository)
     {
-        _crmService = crmService;
         _rulesHandler = rulesHandler;
         _candidateContactChannelCreationsRepository = candidateContactChannelCreationsRepository;
     }
@@ -59,9 +56,6 @@ public class ContactChannelCreationSanitisationUpsertStrategy : ICrmlUpsertStrat
         // Persist only if the wrapper signals preservation eligibility.
         if (wrapper.Preserve)
         {
-            
-            // _crmService.Save(model); // FIXME: delete this line - is it saving twice?
-
             SaveResult saveResult =
                 _candidateContactChannelCreationsRepository
                     .SaveContactChannelCreations(
