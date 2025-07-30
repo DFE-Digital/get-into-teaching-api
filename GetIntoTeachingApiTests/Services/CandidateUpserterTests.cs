@@ -1,14 +1,14 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using GetIntoTeachingApi.Jobs;
+using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
+using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Hangfire.Common;
 using Hangfire.States;
 using Moq;
+using System;
 using Xunit;
-using GetIntoTeachingApi.Utils;
-using GetIntoTeachingApi.Models.Crm;
 
 namespace GetIntoTeachingApiTests.Services
 {
@@ -24,6 +24,7 @@ namespace GetIntoTeachingApiTests.Services
         {
             _mockCrm = new Mock<ICrmService>();
             _mockJobClient = new Mock<IBackgroundJobClient>();
+            
             _upserter = new CandidateUpserter(_mockCrm.Object, _mockJobClient.Object);
             _candidate = new Candidate() { Id = Guid.NewGuid(), Email = "test@test.com" };
             _existingCandidate = new Candidate() { Id = _candidate.Id, Email = "existing@email.com" };
@@ -274,7 +275,12 @@ namespace GetIntoTeachingApiTests.Services
                 CreationChannelServiceId = 222750001,
                 CreationChannelSourceId = 222750002,
             };
-            
+
+            _mockJobClient.Setup(backgroundJobClient =>
+                backgroundJobClient.Create(
+                    It.IsAny<Job>(),
+                    It.IsAny<EnqueuedState>()));
+
             _candidate.ContactChannelCreations.Add(contactChannelCreation);
 
             _upserter.Upsert(_candidate);
@@ -283,7 +289,7 @@ namespace GetIntoTeachingApiTests.Services
 
             _mockJobClient.Verify(backgroundJobClient =>
                 backgroundJobClient.Create(
-                    It.Is<Job>(job => job.Type == typeof(UpsertModelWithCandidateIdJob<ContactChannelCreation>)),
+                    It.Is<Job>(job => job.Type == typeof(UpsertContactCreationChannelsJob)),
                     It.IsAny<EnqueuedState>()), Times.Once);
         }
 

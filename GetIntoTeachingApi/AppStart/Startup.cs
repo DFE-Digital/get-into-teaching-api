@@ -15,7 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Prometheus;
 using System.IO;
 using System.Text.Json.Serialization;
-using GetIntoTeachingApi.Jobs;
+
 
 namespace GetIntoTeachingApi.AppStart
 {
@@ -84,10 +84,6 @@ namespace GetIntoTeachingApi.AppStart
             // maintain the DegreeStatusId field until we fully transition to graduation year only. 
             services.RegisterDegreeStatusInferenceServices();
             
-            // Registers the CandidateChannelConfigurationHandler class as the implementation for 
-            // the ICandidateChannelConfigurationHandler interface in the dependency injection container.
-            // The AddScoped method specifies that a new instance will be created for each HTTP request.
-            services.AddScoped<ICandidateChannelConfigurationHandler, CandidateChannelConfigurationHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
