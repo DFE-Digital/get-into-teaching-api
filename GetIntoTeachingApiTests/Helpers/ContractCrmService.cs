@@ -100,6 +100,19 @@ namespace GetIntoTeachingApiTests.Helpers
             _crmService.DeleteLink(source, relationship, target, context);
         }
 
+        public IEnumerable<ContactChannelCreation> GetCandidateContactCreations(Guid candidateId)
+        {
+            var json = File.ReadAllText("./Contracts/Data/contact_creation_channels.json");
+            IEnumerable<ContactChannelCreation> entities = JsonConvert.DeserializeObject<IEnumerable<ContactChannelCreation>>(json);
+
+            foreach (var entity in entities)
+            {
+                entity.CandidateId = candidateId;
+            }
+
+            return entities;
+        }
+
         public IEnumerable<T> GetApplyModels<T>(IEnumerable<string> applyIds) where T : BaseModel, IHasApplyId
         {
             switch (typeof(T).ToString())
@@ -130,6 +143,11 @@ namespace GetIntoTeachingApiTests.Helpers
         public Candidate GetCandidate(Guid id)
         {
             return Candidates.FirstOrDefault(c => c.Id == id);
+        }
+
+        public Candidate GetCandidateWithRelationships(Guid id)
+        {
+            throw new NotImplementedException();
         }
 
         public IEnumerable<Candidate> GetCandidates(IEnumerable<Guid> ids)
@@ -214,6 +232,11 @@ namespace GetIntoTeachingApiTests.Helpers
         }
 
         public IEnumerable<Entity> GetMultiplePickListItems(string entityName, string attributeName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<ContactChannelCreation> GetAllCandidatesContactChannelCreations()
         {
             throw new NotImplementedException();
         }
