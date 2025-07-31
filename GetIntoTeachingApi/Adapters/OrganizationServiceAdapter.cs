@@ -40,8 +40,6 @@ namespace GetIntoTeachingApi.Adapters
         {
             return context.CreateQuery(entityName);
         }
-        
-        // TODO: write an improved retrieve method
 
         public IEnumerable<Entity> RetrieveMultiple(QueryBase query)
         {
