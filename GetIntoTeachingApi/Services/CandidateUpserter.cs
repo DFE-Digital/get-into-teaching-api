@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using GetIntoTeachingApi.Jobs;
-
-// using GetIntoTeachingApi.Jobs.CandidateSanitisation;
-
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
@@ -16,11 +12,8 @@ namespace GetIntoTeachingApi.Services
     {
         private readonly ICrmService _crm;
         private readonly IBackgroundJobClient _jobClient;
-        
 
-        public CandidateUpserter(
-            ICrmService crm,
-            IBackgroundJobClient jobClient)
+        public CandidateUpserter(ICrmService crm, IBackgroundJobClient jobClient)
         {
             _crm = crm;
             _jobClient = jobClient;
@@ -28,7 +21,6 @@ namespace GetIntoTeachingApi.Services
 
         public void Upsert(Candidate candidate)
         {
-            // TODO: this code should be refactored in line with Spencer's recommendations
             var registrations = ClearTeachingEventRegistrations(candidate);
             var phoneCall = ClearPhoneCall(candidate);
             var privacyPolicy = ClearPrivacyPolicy(candidate);
@@ -50,7 +42,7 @@ namespace GetIntoTeachingApi.Services
             SavePrivacyPolicy(privacyPolicy, candidate);
             SavePhoneCall(phoneCall, candidate);
             SaveSchoolExperiences(schoolExperiences, candidate);
-            SaveContactChannelCreations(contactChannelCreations, candidate.Id);
+            SaveContactChannelCreation(contactChannelCreations, candidate);
 
             IncrementCallbackBookingQuotaNumberOfBookings(phoneCall);
             
@@ -271,17 +263,13 @@ namespace GetIntoTeachingApi.Services
             _jobClient.Enqueue<UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>>((x) => x.Run(json, null));
         }
         
-        private void SaveContactChannelCreations(IEnumerable<ContactChannelCreation> contactChannelCreations, Guid? candidateId)
+        private void SaveContactChannelCreation(IEnumerable<ContactChannelCreation> contactChannelCreations, Candidate candidate)
         {
-            if (contactChannelCreations != null && contactChannelCreations.Any() && candidateId.HasValue)
+            foreach (var contactChannelCreation in contactChannelCreations)
             {
-                foreach (ContactChannelCreation contactChannelCreation in contactChannelCreations)
-                {
-                    contactChannelCreation.CandidateId = candidateId.Value;
-                }
-                
-                string json = contactChannelCreations.SerializeChangeTracked();
-                _jobClient.Enqueue<UpsertContactCreationChannelsJob>((x) => x.Run(candidateId.Value, json, null));
+                contactChannelCreation.CandidateId = (Guid)candidate.Id;
+                string json = contactChannelCreation.SerializeChangeTracked();
+                _jobClient.Enqueue<UpsertModelWithCandidateIdJob<ContactChannelCreation>>((x) => x.Run(json, null));
             }
         }
     }

@@ -393,24 +393,6 @@ namespace GetIntoTeachingApi.Services
             await SyncPickListItems(multiSelectPickListItems, entityName, attributeName);
         }
 
-
-
-        //private async Task SyncCandidateContactCreationChannels()
-        //{
-        //    //// Retrieve the candidate contact channel creation records from CRM.
-        //    //IEnumerable<ContactChannelCreation> contactChannelCreations = _crm.GetAllCandidatesContactChannelCreations();
-            
-        //    //// Convert the retrieved records into a list of ContactChannelCreation objects.
-        //    //var contactChannelCreationModels = contactChannelCreations.Select(c => new ContactChannelCreation(c)).ToList();
-
-
-
-
-
-        //    // Save the contact channel creation models to the database.
-        //    //await SaveAsync(contactChannelCreationModels);
-        //}
-
         private async Task PopulateTeachingEventCoordinates(IEnumerable<TeachingEventBuilding> buildings)
         {
             foreach (var building in buildings.Where(building => building.AddressPostcode != null))

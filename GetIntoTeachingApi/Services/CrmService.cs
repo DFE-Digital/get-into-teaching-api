@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.ServiceModel;
-using static Dapper.SqlMapper;
 
 namespace GetIntoTeachingApi.Services
 {
@@ -93,6 +92,7 @@ namespace GetIntoTeachingApi.Services
 
                 // Project (transform) each item into a new PickListItem with additional context
                 .Select(pickListItem => new PickListItem(pickListItem, entityName, attributeName));
+
 
         public IEnumerable<Entity> GetMultiplePickListItems(string entityName, string attributeName)
         {
@@ -180,41 +180,6 @@ namespace GetIntoTeachingApi.Services
             return new Candidate(entity, this, _serviceProvider);
         }
 
-        /// <summary>
-        /// Retrieves all <see cref="ContactChannelCreation"/> records linked to a specific candidate.
-        /// </summary>
-        /// <param name="candidateId">Unique identifier of the candidate.</param>
-        /// <returns>
-        /// A collection of <see cref="ContactChannelCreation"/> domain models,
-        /// constructed from the underlying CRM entities.
-        /// </returns>
-        /// <exception cref="ArgumentException">
-        /// Thrown when <paramref name="candidateId"/> is an empty GUID.
-        /// </exception>
-        public IEnumerable<ContactChannelCreation> GetCandidateContactCreations(Guid candidateId)
-        {
-            if (candidateId == Guid.Empty)
-            {
-                throw new ArgumentException("CandidateId must not be empty.");
-            }
-
-            // Instantiate a CRM query targeting the contact channel creation entity.
-            QueryExpression query = new QueryExpression("dfe_contactchannelcreation");
-
-            // Specify the fields to retrieve based on metadata annotations.
-            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(ContactChannelCreation)));
-
-            // Apply filtering criteria to restrict results to the specified candidate.
-            query.Criteria.AddCondition(new ConditionExpression("dfe_contactid", ConditionOperator.Equal, candidateId));
-
-            // Execute the query to fetch matching entities from the CRM service.
-            IEnumerable<Entity> entities = _service.RetrieveMultiple(query);
-
-            // Transform raw entities into rich domain models with contextual dependencies.
-            return entities.Select(entity =>
-                new ContactChannelCreation(entity, this, _serviceProvider));
-        }
-
         public Candidate MatchCandidate(string email, string applyId = null)
         {
             var query = MatchBackQuery(email, applyId);
@@ -265,49 +230,21 @@ namespace GetIntoTeachingApi.Services
             return GetCandidates(new Guid[] { id }).FirstOrDefault();
         }
 
-        public Candidate GetCandidateWithRelationships(Guid id)
+        public IEnumerable<Candidate> GetCandidates(IEnumerable<Guid> ids)
         {
+            if (!ids.Any())
+            {
+                return Array.Empty<Candidate>();
+            }
+
             var query = new QueryExpression("contact");
             query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
 
-            query.Criteria.AddCondition(new ConditionExpression("contactid", ConditionOperator.Equal, id));
+            query.Criteria.AddCondition(new ConditionExpression("contactid", ConditionOperator.In, ids.ToArray()));
 
-            var entity = _service.RetrieveMultiple(query).FirstOrDefault();
-            
-            LoadCandidateRelationships(entity);
-            
-            return new Candidate(entity, this, _serviceProvider);
-        }
-
-        public IEnumerable<Candidate> GetCandidates(IEnumerable<Guid> ids)
-        {
-            QueryExpression query = new("contact");
-            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
-
-            IEnumerable<Entity> entities = _service.RetrieveMultiple(query);
+            var entities = _service.RetrieveMultiple(query);
 
             return entities.Select((entity) => new Candidate(entity, this, _serviceProvider));
-        }
-
-        /// <summary>
-        /// Retrieves CRM-backed contact channel creation records and maps them to domain models.
-        /// Uses a QueryExpression for flexible querying, including relationship-aware mapping.
-        /// </summary>
-        /// <returns>
-        /// A collection of <see cref="ContactChannelCreation"/> instances enriched via CRM entity hydration.
-        /// </returns>
-        public IEnumerable<ContactChannelCreation> GetAllCandidatesContactChannelCreations()
-        {
-            // Constructs a CRM query targeting the 'dfe_contactchannelcreation' entity.
-            QueryExpression query = new("dfe_contactchannelcreation");
-            // Adds columns defined by model metadata, ensuring minimal retrieval footprint.
-            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(ContactChannelCreation)));
-            // Executes the query against CRM using the injected service abstraction.
-            IEnumerable<Entity> entities = _service.RetrieveMultiple(query);
-            // Maps retrieved entities into strongly typed domain models,
-            // injecting this repository context and shared service provider.
-            return entities.Select((entity) =>
-                new ContactChannelCreation(entity, this, _serviceProvider));
         }
 
         public IEnumerable<Candidate> GetCandidatesPendingMagicLinkTokenGeneration(int limit = 10)
@@ -324,8 +261,6 @@ namespace GetIntoTeachingApi.Services
 
         public bool CandidateAlreadyHasLocalEventSubscriptionType(Guid candidateId)
         {
-
-            var candidate = GetCandidate(candidateId);
             return GetCandidate(candidateId).EventsSubscriptionTypeId == (int)Candidate.SubscriptionType.LocalEvent;
         }
 
@@ -509,7 +444,17 @@ namespace GetIntoTeachingApi.Services
             _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_candidatepastteachingposition_ContactId"), context);
             _service.LoadProperty(entity, new Relationship("msevtmgt_contact_msevtmgt_eventregistration_Contact"), context);
             
-            // TODO: Spencer to confirm no need to call GetContactChanelCreations(candidateId)
+            try
+            {
+                _service.LoadProperty(entity, new Relationship("dfe_contact_dfe_contactchannelcreation_ContactId"),
+                    context);
+            }
+            catch (FaultException ex)
+            {
+                // NB: the behaviour of the CRM is unreliable and sometimes it will fail to return associated
+                // ContactChannelCreation records.
+                _logger.LogWarning(ex, "CRM did not return ContactChannelCreation relationships");
+            }
         }
 
         private OrganizationServiceContext Context()

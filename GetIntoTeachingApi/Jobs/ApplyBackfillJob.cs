@@ -108,11 +108,11 @@ namespace GetIntoTeachingApi.Jobs
                         .AppendPathSegment(String.Format(CultureInfo.InvariantCulture, "C{0}", candidateId))
                         .WithOAuthBearerToken(Env.ApplyCandidateApiKey);
 
-                    GetIntoTeachingApi.Models.Apply.Response<GetIntoTeachingApi.Models.Apply.Candidate> candidateResponse = await request.GetJsonAsync<Response<GetIntoTeachingApi.Models.Apply.Candidate>>();
+                    var candidate = await request.GetJsonAsync<Response<GetIntoTeachingApi.Models.Apply.Candidate>>();
 
                     _logger.LogInformation("Scheduling ApplyBackfillJob - Syncing CandidateID: C{Id}", candidateId);
                     
-                    _jobClient.Schedule<ApplyCandidateSyncJob>(x => x.Run(candidateResponse.Data), TimeSpan.FromSeconds(10));
+                    _jobClient.Schedule<ApplyCandidateSyncJob>(x => x.Run(candidate.Data), TimeSpan.FromSeconds(60));
                 }
                 catch (FlurlHttpException ex)
                 {
