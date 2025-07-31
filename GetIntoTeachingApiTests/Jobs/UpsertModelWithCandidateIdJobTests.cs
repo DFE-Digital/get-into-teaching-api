@@ -1,7 +1,8 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Collections.Generic;
+using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Jobs;
-using GetIntoTeachingApi.Jobs.UpsertStrategies;
 using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Services;
@@ -9,8 +10,6 @@ using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Jobs
@@ -25,7 +24,6 @@ namespace GetIntoTeachingApiTests.Jobs
         private readonly IMetricService _metrics;
         private readonly UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy> _job;
         private readonly Mock<ILogger<UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>>> _mockLogger;
-        private readonly Mock<ICrmlUpsertStrategy<ContactChannelCreation>> _mockUpsertStrategy;
 
         public UpsertModelWithCandidateIdJobTests()
         {
@@ -35,18 +33,16 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockCrm = new Mock<ICrmService>();
             _mockNotifyService = new Mock<INotifyService>();
             _metrics = new MetricService();
-            _mockUpsertStrategy = new Mock<ICrmlUpsertStrategy<ContactChannelCreation>>();
             _policy = new CandidatePrivacyPolicy() { Id = Guid.NewGuid(), AcceptedAt = DateTime.UtcNow, CandidateId = Guid.NewGuid() };
             _job = new UpsertModelWithCandidateIdJob<CandidatePrivacyPolicy>(
                 new Env(), new Mock<IRedisService>().Object, _mockContext.Object, _mockCrm.Object,
-                _metrics, _mockLogger.Object, _mockAppSettings.Object, _mockNotifyService.Object, _mockUpsertStrategy.Object);
+                _metrics, _mockLogger.Object, _mockAppSettings.Object, _mockNotifyService.Object);
 
             _metrics.HangfireJobQueueDuration.RemoveLabelled("UpsertModelJob<CandidatePrivacyPolicy>");
             _mockContext.Setup(m => m.GetJobCreatedAt(null)).Returns(DateTime.UtcNow.AddDays(-1));
+
             _mockAppSettings.Setup(m => m.IsCrmIntegrationPaused).Returns(false);
         }
-        
-        // TODO: add tests which mock upsert strategy.
 
         [Fact]
         public void Run_OnSuccess_UpsertsModel()
