@@ -7,14 +7,9 @@ using GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.CustomEnrichers;
 using GetIntoTeachingApi.CrossCuttingConcerns.Logging.Serilog.Middleware;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Jobs;
-using GetIntoTeachingApi.Jobs.CandidateSanitisation;
-using GetIntoTeachingApi.Jobs.CandidateSanitisation.ContactChannelCreationModelSanitisation;
-using GetIntoTeachingApi.Jobs.CrmModelSanitisation.ContactChannelCreationModelSanitisation.Repositories;
 using GetIntoTeachingApi.Jobs.FilterAttributes;
-using GetIntoTeachingApi.Jobs.UpsertStrategies;
 using GetIntoTeachingApi.Middleware;
 using GetIntoTeachingApi.Models;
-using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.OperationFilters;
 using GetIntoTeachingApi.RateLimiting;
 using GetIntoTeachingApi.Redis;
@@ -25,13 +20,13 @@ using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Microsoft.Xrm.Sdk;
 using StackExchange.Redis;
 using System;
+using System.Configuration;
 
 namespace GetIntoTeachingApi.AppStart
 {
@@ -43,15 +38,14 @@ namespace GetIntoTeachingApi.AppStart
 
             services.AddSingleton<IAppSettings, AppSettings>();
             services.AddSingleton<CdsServiceClientWrapper, CdsServiceClientWrapper>();
-            services.AddScoped<ICrmModelSanitisationRulesHandler<ContactChannelCreationSanitisationRequestWrapper>, ContactChannelCreationSanitisationRulesHandler>();
-            services.AddScoped<ICrmModelSanitisationRule<ContactChannelCreationSanitisationRequestWrapper>, ContactChannelCreationDuplicateSanitisationRule>();
-            services.AddScoped<ICrmlUpsertStrategy<ContactChannelCreation>, ContactChannelCreationSanitisationUpsertStrategy>();
-            services.AddScoped<ICandidateContactChannelCreationsRepository, CandidateContactChannelCreationsCrmRepository>();
+
             services.AddTransient<IOrganizationService>(sp => sp.GetService<CdsServiceClientWrapper>().CdsServiceClient?.Clone());
             services.AddTransient<IOrganizationServiceAdapter, OrganizationServiceAdapter>();
             services.AddTransient<ICrmService, CrmService>();
+
             services.AddScoped<IStore, Store>();
             services.AddScoped<DbConfiguration, DbConfiguration>();
+
             services.AddSingleton<IMetricService, MetricService>();
             services.AddSingleton<INotificationClientAdapter, NotificationClientAdapter>();
             services.AddSingleton<IGeocodeClientAdapter, GeocodeClientAdapter>();
@@ -75,17 +69,7 @@ namespace GetIntoTeachingApi.AppStart
         public static void AddDatabase(this IServiceCollection services, IEnv env)
         {
             var connectionString = DbConfiguration.DatabaseConnectionString(env);
-            services.AddDbContext<GetIntoTeachingDbContext>(b => DbConfiguration.ConfigPostgres(connectionString, b), ServiceLifetime.Scoped);
-
-            // Registers a factory for creating new instances of GetIntoTeachingDbContext.
-            // Enables safe usage in multi-threaded scenarios like Hangfire jobs or async workflows.
-            services.AddDbContextFactory<GetIntoTeachingDbContext>(options =>
-            {
-                // Configure the provider and options as needed (e.g., Postgres with Npgsql)
-                options.UseNpgsql(connectionString);
-                // Optional: set up additional EF Core options
-                options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking); // Improves read performance
-            });
+            services.AddDbContext<GetIntoTeachingDbContext>(b => DbConfiguration.ConfigPostgres(connectionString, b), ServiceLifetime.Transient);
         }
 
         public static void AddApiClientAuthentication(this IServiceCollection services)

@@ -61,25 +61,17 @@ namespace GetIntoTeachingApiTests.Helpers
         {
             var newEntity = id.HasValue ? new Entity(entityName, id.Value) : new Entity(entityName);
             newEntity.EntityState = EntityState.Created;
-            context.AddObject(newEntity);
             return newEntity;
         }
 
         public virtual void SaveChanges(OrganizationServiceContext context)
         {
-            // If we are saving a new object, we should set an ID on it to mimic the behaviour of the CRM
-            foreach (var entity in context.GetAttachedEntities())
-            {
-                if (entity.Id == Guid.Empty)
-                {
-                    entity.Id = Guid.NewGuid();
-                }
-            }
+            // Not required.
         }
 
         public virtual void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context)
         {
-            context.AddLink(source, relationship, target);
+            // Not required.
         }
 
         void IOrganizationServiceAdapter.DeleteLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context)

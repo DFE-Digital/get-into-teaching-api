@@ -384,8 +384,8 @@ namespace GetIntoTeachingApiTests.Services
         {
             var ids = new Guid[] { JaneDoeGuid };
             var janeDoeEntity = MockCandidates().First(c => c.Id == JaneDoeGuid);
-            _mockService.Setup(mock => mock.RetrieveMultiple(It.IsAny<QueryExpression>()))
-                .Returns(new Entity[] { janeDoeEntity });
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyGetCandidatesQueryExpression(q, ids)))).Returns(new Entity[] { janeDoeEntity });
 
             var result = _crm.CandidateAlreadyHasLocalEventSubscriptionType(JaneDoeGuid);
 
@@ -397,8 +397,8 @@ namespace GetIntoTeachingApiTests.Services
         {
             var ids = new Guid[] { JohnDoeGuid };
             var johnDoeEntity = MockCandidates().First(c => c.Id == JohnDoeGuid);
-            _mockService.Setup(mock => mock.RetrieveMultiple(It.IsAny<QueryExpression>()))
-            .Returns(new Entity[] { johnDoeEntity });
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyGetCandidatesQueryExpression(q, ids)))).Returns(new Entity[] { johnDoeEntity });
 
             var result = _crm.CandidateAlreadyHasLocalEventSubscriptionType(JohnDoeGuid);
 
@@ -481,8 +481,8 @@ namespace GetIntoTeachingApiTests.Services
         public void GetCandidate_WithId_ReturnsCorrectly()
         {
             var ids = new Guid[] { JaneDoeGuid };
-            _mockService.Setup(mock => mock.RetrieveMultiple(It.IsAny<QueryExpression>()))
-                .Returns(MockCandidates());
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyGetCandidatesQueryExpression(q, ids)))).Returns(MockCandidates());
 
             var result = _crm.GetCandidate(JaneDoeGuid);
 
@@ -515,8 +515,8 @@ namespace GetIntoTeachingApiTests.Services
         public void GetCandidates_WithIds_ReturnsCorrectly()
         {
             var ids = new Guid[] { JaneDoeGuid, JohnDoeGuid };
-            _mockService.Setup(mock => mock.RetrieveMultiple(It.IsAny<QueryExpression>()))
-                .Returns(MockCandidates());
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
+                q => VerifyGetCandidatesQueryExpression(q, ids)))).Returns(MockCandidates());
 
             var result = _crm.GetCandidates(ids);
 
@@ -859,40 +859,6 @@ namespace GetIntoTeachingApiTests.Services
             result.Should().BeNull();
             _mockService.Verify(mock => mock.LoadProperty(It.IsAny<Entity>(),
                 new Relationship("msevtmgt_event_building"), _context), Times.Never);
-        }
-
-        [Fact]
-        public void GetCandidateContactCreations_WithValidCandidateId_ReturnsContactChannelCreations()
-        {
-            // arrange
-            var candidateId = Guid.NewGuid();
-            var mockEntities = new List<Entity>
-            {
-                new("dfe_contactchannelcreation")
-                {
-                    Id = Guid.NewGuid(),
-                    ["dfe_contactid"] = new EntityReference("contact", candidateId)
-                }
-            }
-            .AsQueryable();
-
-            _mockService.Setup(mock => mock.RetrieveMultiple(It.IsAny<QueryExpression>()))
-                .Returns(mockEntities);
-
-            // act
-            var result = _crm.GetCandidateContactCreations(candidateId);
-
-            // assert
-            result.Should().NotBeEmpty();
-            result.First().CandidateId.Should().Be(candidateId);
-        }
-
-        [Fact]
-        public void GetCandidateContactCreations_WithInvalidCandidateId_ThrowsExpectedException()
-        {
-            // act/assert
-            Assert.Throws<ArgumentException>(() =>
-                _crm.GetCandidateContactCreations(candidateId: Guid.Empty));
         }
 
         private static bool VerifyMatchEventWithReadableIdQueryExpression(QueryExpression query, string readableId)
