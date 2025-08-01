@@ -269,7 +269,6 @@ namespace GetIntoTeachingApi.Services
         {
             var query = new QueryExpression("contact");
             query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
-
             query.Criteria.AddCondition(new ConditionExpression("contactid", ConditionOperator.Equal, id));
 
             var entity = _service.RetrieveMultiple(query).FirstOrDefault();
@@ -283,6 +282,7 @@ namespace GetIntoTeachingApi.Services
         {
             QueryExpression query = new("contact");
             query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
+            query.Criteria.AddCondition(new ConditionExpression("contactid", ConditionOperator.In, ids.ToArray()));
 
             IEnumerable<Entity> entities = _service.RetrieveMultiple(query);
 
