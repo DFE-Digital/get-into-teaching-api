@@ -11,8 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.ServiceModel;
-using static Dapper.SqlMapper;
+using GetIntoTeachingApi.Services.Builders;
 
 namespace GetIntoTeachingApi.Services
 {
@@ -267,10 +266,8 @@ namespace GetIntoTeachingApi.Services
 
         public Candidate GetCandidateWithRelationships(Guid id)
         {
-            var query = new QueryExpression("contact");
-            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
-            query.Criteria.AddCondition(new ConditionExpression("contactid", ConditionOperator.Equal, id));
-
+            QueryExpression query = GetCandidateQueryExpression(id);
+            
             var entity = _service.RetrieveMultiple(query).FirstOrDefault();
             
             LoadCandidateRelationships(entity);
@@ -280,14 +277,27 @@ namespace GetIntoTeachingApi.Services
 
         public IEnumerable<Candidate> GetCandidates(IEnumerable<Guid> ids)
         {
-            QueryExpression query = new("contact");
-            query.ColumnSet.AddColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)));
-            query.Criteria.AddCondition(new ConditionExpression("contactid", ConditionOperator.In, ids.ToArray()));
-
+            QueryExpression query = GetCandidatesQueryExpression(ids);
+            
             IEnumerable<Entity> entities = _service.RetrieveMultiple(query);
 
             return entities.Select((entity) => new Candidate(entity, this, _serviceProvider));
         }
+
+        public QueryExpression GetCandidateQueryExpression(Guid id) =>
+                new QueryExpressionBuilder()
+                    .Create("contact")
+                    .WithColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)))
+                    .WithCondition(new ConditionExpression("contactid", ConditionOperator.Equal, id))
+                    .Build();
+
+        public QueryExpression GetCandidatesQueryExpression(IEnumerable<Guid> ids) =>
+            new QueryExpressionBuilder() 
+                .Create("contact")
+                .WithColumns(BaseModel.EntityFieldAttributeNames(typeof(Candidate)))
+                .WithCondition(new ConditionExpression("contactid", ConditionOperator.In, ids.ToArray()))
+                .Build();
+        
 
         /// <summary>
         /// Retrieves CRM-backed contact channel creation records and maps them to domain models.
