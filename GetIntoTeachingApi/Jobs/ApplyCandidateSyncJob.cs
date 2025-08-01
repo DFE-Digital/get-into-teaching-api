@@ -72,8 +72,6 @@ namespace GetIntoTeachingApi.Jobs
         private static void UpdateCandidateWithMatch(Models.Crm.Candidate candidate, Models.Crm.Candidate match)
         {
             candidate.Id = match.Id;
-            
-            candidate.ContactChannelCreations = match.ContactChannelCreations;
 
             if (candidate.Email == match.Email || match.SecondaryEmail != null)
             {
