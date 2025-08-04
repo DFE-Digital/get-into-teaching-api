@@ -30,12 +30,15 @@ namespace GetIntoTeachingApi.Services
         Candidate MatchCandidate(string email, string applyId = null);
         IEnumerable<Candidate> MatchCandidates(string magicLinkToken);
         Candidate GetCandidate(Guid id);
+        Candidate GetCandidateWithRelationships(Guid id);
         IEnumerable<Candidate> GetCandidates(IEnumerable<Guid> ids);
+        IEnumerable<ContactChannelCreation> GetAllCandidatesContactChannelCreations();
         IEnumerable<Candidate> GetCandidatesPendingMagicLinkTokenGeneration(int limit = 10);
         IEnumerable<TeachingEvent> GetTeachingEvents(DateTime? startAfter = null);
         TeachingEvent GetTeachingEvent(string readableId);
         IEnumerable<CallbackBookingQuota> GetCallbackBookingQuotas();
         CallbackBookingQuota GetCallbackBookingQuota(DateTime scheduledAt);
+        IEnumerable<ContactChannelCreation> GetCandidateContactCreations(Guid candidateId);
         public IEnumerable<T> GetApplyModels<T>(IEnumerable<string> applyIds) where T : BaseModel, IHasApplyId;
         bool CandidateAlreadyHasLocalEventSubscriptionType(Guid candidateId);
         bool CandidateYetToAcceptPrivacyPolicy(Guid candidateId, Guid privacyPolicyId);

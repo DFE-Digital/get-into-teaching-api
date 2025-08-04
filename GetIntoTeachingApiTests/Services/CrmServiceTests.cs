@@ -384,8 +384,8 @@ namespace GetIntoTeachingApiTests.Services
         {
             var ids = new Guid[] { JaneDoeGuid };
             var janeDoeEntity = MockCandidates().First(c => c.Id == JaneDoeGuid);
-            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
-                q => VerifyGetCandidatesQueryExpression(q, ids)))).Returns(new Entity[] { janeDoeEntity });
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.IsAny<QueryExpression>()))
+                .Returns(new Entity[] { janeDoeEntity });
 
             var result = _crm.CandidateAlreadyHasLocalEventSubscriptionType(JaneDoeGuid);
 
@@ -397,8 +397,8 @@ namespace GetIntoTeachingApiTests.Services
         {
             var ids = new Guid[] { JohnDoeGuid };
             var johnDoeEntity = MockCandidates().First(c => c.Id == JohnDoeGuid);
-            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
-                q => VerifyGetCandidatesQueryExpression(q, ids)))).Returns(new Entity[] { johnDoeEntity });
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.IsAny<QueryExpression>()))
+            .Returns(new Entity[] { johnDoeEntity });
 
             var result = _crm.CandidateAlreadyHasLocalEventSubscriptionType(JohnDoeGuid);
 
@@ -481,8 +481,8 @@ namespace GetIntoTeachingApiTests.Services
         public void GetCandidate_WithId_ReturnsCorrectly()
         {
             var ids = new Guid[] { JaneDoeGuid };
-            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
-                q => VerifyGetCandidatesQueryExpression(q, ids)))).Returns(MockCandidates());
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.IsAny<QueryExpression>()))
+                .Returns(MockCandidates());
 
             var result = _crm.GetCandidate(JaneDoeGuid);
 
@@ -515,8 +515,8 @@ namespace GetIntoTeachingApiTests.Services
         public void GetCandidates_WithIds_ReturnsCorrectly()
         {
             var ids = new Guid[] { JaneDoeGuid, JohnDoeGuid };
-            _mockService.Setup(mock => mock.RetrieveMultiple(It.Is<QueryExpression>(
-                q => VerifyGetCandidatesQueryExpression(q, ids)))).Returns(MockCandidates());
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.IsAny<QueryExpression>()))
+                .Returns(MockCandidates());
 
             var result = _crm.GetCandidates(ids);
 
@@ -861,6 +861,72 @@ namespace GetIntoTeachingApiTests.Services
                 new Relationship("msevtmgt_event_building"), _context), Times.Never);
         }
 
+        [Fact]
+        public void GetCandidateContactCreations_WithValidCandidateId_ReturnsContactChannelCreations()
+        {
+            // arrange
+            var candidateId = Guid.NewGuid();
+            var mockEntities = new List<Entity>
+            {
+                new("dfe_contactchannelcreation")
+                {
+                    Id = Guid.NewGuid(),
+                    ["dfe_contactid"] = new EntityReference("contact", candidateId)
+                }
+            }
+            .AsQueryable();
+
+            _mockService.Setup(mock => mock.RetrieveMultiple(It.IsAny<QueryExpression>()))
+                .Returns(mockEntities);
+
+            // act
+            var result = _crm.GetCandidateContactCreations(candidateId);
+
+            // assert
+            result.Should().NotBeEmpty();
+            result.First().CandidateId.Should().Be(candidateId);
+        }
+
+        [Fact]
+        public void GetCandidateContactCreations_WithInvalidCandidateId_ThrowsExpectedException()
+        {
+            // act/assert
+            Assert.Throws<ArgumentException>(() =>
+                _crm.GetCandidateContactCreations(candidateId: Guid.Empty));
+        }
+
+        [Fact]
+        public void GetCandidateQueryExpression_WithId_ReturnsCorrectExpression()
+        {
+            // arrange / act
+            QueryExpression query = ((CrmService)_crm).GetCandidateQueryExpression(JaneDoeGuid);
+
+            // assert
+            query.EntityName.Should().Be("contact");
+            query.ColumnSet.Columns.Should().HaveCount(93).And
+                .BeEquivalentTo(ExpectedGetCandidateQueryExpressionColumns);
+            query.Criteria.Conditions.Should().HaveCount(1);
+            query.Criteria.Conditions.First().AttributeName.Should().Be("contactid");
+            query.Criteria.Conditions.First().Operator.Should().Be(ConditionOperator.Equal);
+            query.Criteria.Conditions.First().Values.Should().BeEquivalentTo([JaneDoeGuid]);
+        }
+        
+        [Fact]
+        public void GetCandidatesQueryExpression_WithIds_ReturnsCorrectExpression()
+        {
+            // arrange / act
+            QueryExpression query = ((CrmService)_crm).GetCandidatesQueryExpression([JaneDoeGuid, JohnDoeGuid]);
+
+            // assert
+            query.EntityName.Should().Be("contact");
+            query.ColumnSet.Columns.Should().HaveCount(93).And
+                .BeEquivalentTo(ExpectedGetCandidateQueryExpressionColumns);
+            query.Criteria.Conditions.Should().HaveCount(1);
+            query.Criteria.Conditions.First().AttributeName.Should().Be("contactid");
+            query.Criteria.Conditions.First().Operator.Should().Be(ConditionOperator.In);
+            query.Criteria.Conditions.First().Values.Should().BeEquivalentTo([JaneDoeGuid, JohnDoeGuid]);
+        }
+
         private static bool VerifyMatchEventWithReadableIdQueryExpression(QueryExpression query, string readableId)
         {
             var hasEntityName = query.EntityName == "msevtmgt_event";
@@ -1127,5 +1193,102 @@ namespace GetIntoTeachingApiTests.Services
 
             return new List<Microsoft.PowerPlatform.Dataverse.Client.Extensions.PickListItem> { year1, year2, year3 };
         }
+
+        private static string[] ExpectedGetCandidateQueryExpressionColumns =>
+        [
+            "dfe_preferredteachingsubject01",
+            "dfe_preferredteachingsubject02",
+            "dfe_country",
+            "owningbusinessunit",
+            "masterid",
+            "dfe_preferrededucationphase01",
+            "dfe_ittyear",
+            "dfe_channelcreation",
+            "dfe_websitehasgcseenglish",
+            "dfe_websitehasgcsemaths",
+            "dfe_websitehasgcsescience",
+            "dfe_websiteplanningretakeenglishgcse",
+            "dfe_websiteplanningretakemathsgcse",
+            "dfe_websiteplanningretakesciencegcse",
+            "dfe_websitewhereinconsiderationjourney",
+            "dfe_typeofcandidate",
+            "dfe_candidatestatus",
+            "dfe_iscandidateeligibleforadviser",
+            "dfe_isadvisorrequiredos",
+            "dfe_preferredphonenumbertype",
+            "preferredcontactmethodcode",
+            "msgdpr_gdprconsent",
+            "dfe_websitemltokenstatus",
+            "dfe_candidateadviserstatusreason",
+            "dfe_candidatereregisterstatus",
+            "dfe_candidateapplystatus",
+            "dfe_candidateapplyphase",
+            "dfe_waitingtobeassigneddate",
+            "merged",
+            "dfe_applyid",
+            "dfe_applylastmodifiedon",
+            "dfe_applycreatedon",
+            "emailaddress1",
+            "emailaddress2",
+            "firstname",
+            "lastname",
+            "birthdate",
+            "mobilephone",
+            "address1_telephone1",
+            "address1_line1",
+            "address1_line2",
+            "address1_line3",
+            "address1_city",
+            "address1_stateorprovince",
+            "address1_postalcode",
+            "telephone1",
+            "telephone2",
+            "dfe_hasdbscertificate",
+            "dfe_dateofissueofdbscertificate",
+            "dfe_dfesnumber",
+            "dfe_eligibilityrulespassed",
+            "donotbulkemail",
+            "donotbulkpostalmail",
+            "donotemail",
+            "donotpostalmail",
+            "donotsendmm",
+            "dfe_optoutsms",
+            "msdyn_gdproptout",
+            "dfe_newregistrant",
+            "dfe_websitemltoken",
+            "dfe_websitemltokenexpirydate",
+            "dfe_welcomeguidestring",
+            "dfe_gitisttaserviceissubscriber",
+            "dfe_gitisttaservicesubscriptionchannel",
+            "dfe_gitisttaservicestartdate",
+            "dfe_gitisttaservicedonotbulkemail",
+            "dfe_gitisttaservicedonotbulkpostalmail",
+            "dfe_gitisttaservicedonotemail",
+            "dfe_gitisttaservicedonotpostalmail",
+            "dfe_gitisttaservicedonotsendmm",
+            "dfe_gitismailinglistserviceissubscriber",
+            "dfe_gitismlservicesubscriptionchannel",
+            "dfe_gitismailinglistservicestartdate",
+            "dfe_gitismailinglistservicedonotbulkemail",
+            "dfe_gitismlservicedonotbulkpostalmail",
+            "dfe_gitismailinglistservicedonotemail",
+            "dfe_gitismailinglistservicedonotpostalmail",
+            "dfe_gitismailinglistservicedonotsendmm",
+            "dfe_gitiseventsserviceissubscriber",
+            "dfe_gitiseventsservicesubscriptionchannel",
+            "dfe_gitiseventsservicesubscriptiontype",
+            "dfe_gitiseventsservicestartdate",
+            "dfe_gitiseventsservicedonotbulkemail",
+            "dfe_gitiseventsservicedonotbulkpostalmail",
+            "dfe_gitiseventsservicedonotemail",
+            "dfe_gitiseventsservicedonotpostalmail",
+            "dfe_gitiseventsservicedonotsendmm",
+            "dfe_situation",
+            "dfe_citizenship",
+            "dfe_visastatus",
+            "dfe_location",
+            "dfe_qtsstatus",
+            "contactid",
+        ];
     }
 }
