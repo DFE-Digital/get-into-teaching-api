@@ -131,6 +131,26 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         /// Overrides the inferred graduation date to adjust its calculation.
         /// </summary>
         public override DateTime? InferredGraduationDate { get; set; }
+        
+        /// <summary>
+        /// The situation (life stage) of the candidate, which can be used to determine their current status or context.
+        /// </summary>
+        public int? Situation { get; set; }
+
+        /// <summary>
+        /// The citizenship status of the candidate, represented as an integer code.
+        /// </summary>
+        public int? Citizenship { get; set; }
+
+        /// <summary>
+        /// The visa status of the candidate, represented as an integer code.
+        /// </summary>
+        public int? VisaStatus { get; set; }
+
+        /// <summary>
+        ///  The location of the candidate,represented as a string 
+        /// </summary>
+        public string Location { get; set; }
 
         public TeacherTrainingAdviserSignUp()
         {

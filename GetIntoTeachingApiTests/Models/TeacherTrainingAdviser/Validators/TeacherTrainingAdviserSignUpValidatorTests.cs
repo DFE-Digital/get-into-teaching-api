@@ -7,7 +7,9 @@ using GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators;
 using GetIntoTeachingApi.Services;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
@@ -116,16 +118,29 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
         {
             private readonly TeacherTrainingAdviserSignUpValidator _validator;
             private readonly TeacherTrainingAdviserSignUp _request;
+            private readonly Mock<IStore> _mockStore =  new Mock<IStore>();
 
             public ReturningToTeacherTraining()
             {
-                _validator = new TeacherTrainingAdviserSignUpValidator(new Mock<IStore>().Object, new DateTimeProvider());
+                _validator = new TeacherTrainingAdviserSignUpValidator(_mockStore.Object, new DateTimeProvider());
                 _request = new TeacherTrainingAdviserSignUp() { TypeId = (int)Candidate.Type.ReturningToTeacherTraining };
             }
 
             [Fact]
             public void Validate_WhenValid_HasNoErrors()
             {
+                List<PickListItem> fakePickList = FakePickListItem.Default.Generate(100);
+                _mockStore.Setup(p => p.GetPickListItems(It.IsAny<string>(), It.IsAny<string>()))
+                    .Returns(fakePickList.AsQueryable);
+                PickListItem fakeCitizenship = new PickListItem { Id = 222750001, EntityName = "contact", AttributeName = "dfe_citizenship" };
+                PickListItem fakeSituation = new PickListItem() { Id = 12909, EntityName = "contact", AttributeName = "dfe_situation" };
+                PickListItem fakeVisastatus = new PickListItem() { Id = 12345, EntityName = "contact", AttributeName = "dfe_visastatus" };
+
+
+                fakePickList.Add(fakeCitizenship);
+                fakePickList.Add(fakeSituation);
+                fakePickList.Add(fakeVisastatus);
+                
                 _request.CandidateId = Guid.NewGuid();
                 _request.PastTeachingPositionId = Guid.NewGuid();
                 _request.AcceptedPolicyId = Guid.NewGuid();
@@ -139,6 +154,9 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
                 _request.TeacherId = "abc123";
                 _request.AddressTelephone = "1234567";
                 _request.AddressPostcode = "KY11 9YU";
+                _request.Citizenship = fakeCitizenship.Id;
+                _request.Situation = fakeSituation.Id;
+                _request.VisaStatus = fakeVisastatus.Id;
 
                 var result = _validator.TestValidate(_request);
 
@@ -261,6 +279,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
                 _request.Email = "email@address.com";
                 _request.DateOfBirth = DateTime.UtcNow;
                 _request.AddressTelephone = "1234567";
+                _request.Location = "Location";
 
                 var result = _validator.TestValidate(_request);
 
