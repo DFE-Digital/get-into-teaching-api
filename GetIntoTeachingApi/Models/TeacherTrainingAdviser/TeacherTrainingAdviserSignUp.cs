@@ -148,9 +148,9 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         public int? VisaStatus { get; set; }
 
         /// <summary>
-        ///  The location of the candidate,represented as a string 
+        ///  The location of the candidate,represented as an integer code from a picklist 
         /// </summary>
-        public string Location { get; set; }
+        public int? Location { get; set; }
 
         public TeacherTrainingAdviserSignUp()
         {
