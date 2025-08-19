@@ -8,7 +8,6 @@ using GetIntoTeachingApi.Models;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.Crm.Validators;
 using GetIntoTeachingApi.Services;
-using GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators;
 using Moq;
 using Xunit;
 
@@ -18,57 +17,21 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
     {
         private readonly CandidateValidator _validator;
         private readonly Mock<IStore> _mockStore;
-
         public CandidateValidatorTests()
         {
             _mockStore = new Mock<IStore>();
             _validator = new CandidateValidator(_mockStore.Object, new DateTimeProvider());
         }
-
+        
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
             var mockSubject = new TeachingSubject { Id = Guid.NewGuid() };
             var mockCountry = new Country { Id = Guid.NewGuid() };
             var mockPrivacyPolicy = new PrivacyPolicy { Id = Guid.NewGuid() };
+            int fakeId = new Faker().Random.Int();
 
-            PickListItem fakePeferrededucationphase = new PickListItem() { Id = 222750004, EntityName = "contact", AttributeName = "dfe_preferrededucationphase01" };
-            PickListItem fakeCitizenship = new PickListItem { Id = 222750001, EntityName = "contact", AttributeName = "dfe_citizenship" };
-            PickListItem fakeIttyear = new PickListItem() { Id = 12909, EntityName = "contact", AttributeName = "dfe_ittyear" }; 
-            PickListItem fakeChannelcreation = new PickListItem() { Id = 12909, EntityName = "contact", AttributeName = "dfe_channelcreation" };
-            PickListItem fakeWebsitehasgcseenglish = new PickListItem() { Id = 12909, EntityName = "contact", AttributeName = "dfe_websitehasgcseenglish" };
-            PickListItem fakeWebsiteplanningretakeenglishgcse = new PickListItem() { Id = 12909, EntityName = "contact", AttributeName = "dfe_websiteplanningretakeenglishgcse" };
-            PickListItem fakeWebsitewhereinconsiderationjourney = new PickListItem() { Id = 12909, EntityName = "contact", AttributeName = "dfe_websitewhereinconsiderationjourney" };
-            PickListItem fakeTypeofcandidate = new PickListItem() { Id = 12909, EntityName = "contact", AttributeName = "dfe_typeofcandidate" };
-            PickListItem fakeCandidatestatus = new PickListItem() { Id = 12909, EntityName = "contact", AttributeName = "dfe_candidatestatus" };
-            PickListItem fakeIscandidateeligibleforadviser = new PickListItem() { Id = 12909, EntityName = "contact", AttributeName = "dfe_iscandidateeligibleforadviser" };
-            PickListItem fakeGitiseventsservicesubscriptionchannel = new PickListItem() { Id = 12909, EntityName = "contact", AttributeName = "dfe_gitiseventsservicesubscriptionchannel" };
-            PickListItem fakeGitismlservicesubscriptionchannel = new PickListItem() { Id = 12909, EntityName = "contact", AttributeName = "dfe_gitismlservicesubscriptionchannel" };
-            PickListItem fakeGitisttaservicesubscriptionchannel = new PickListItem() { Id = 12909, EntityName = "contact", AttributeName = "dfe_gitisttaservicesubscriptionchannel" };
-            PickListItem fakeCandidateapplystatus = new PickListItem() { Id = 12909, EntityName = "contact", AttributeName = "dfe_candidateapplystatus" };
-            PickListItem fakeCandidateapplyphase = new PickListItem() { Id = 12909, EntityName = "contact", AttributeName = "dfe_candidateapplyphase" };
-            PickListItem fakeSituation = new PickListItem() { Id = 12909, EntityName = "contact", AttributeName = "dfe_situation" };
-            PickListItem fakeVisastatus = new PickListItem() { Id  = 12909, EntityName = "contact", AttributeName = "dfe_visastatus" };
-            
-            List<PickListItem> fakePickList = FakePickListItem.Default.Generate(100);
-            
-            fakePickList.Add(fakePeferrededucationphase);
-            fakePickList.Add(fakeIttyear);
-            fakePickList.Add(fakeCitizenship);
-            fakePickList.Add(fakeChannelcreation);
-            fakePickList.Add(fakeWebsitehasgcseenglish);
-            fakePickList.Add(fakeWebsiteplanningretakeenglishgcse);
-            fakePickList.Add(fakeWebsitewhereinconsiderationjourney);
-            fakePickList.Add(fakeTypeofcandidate);
-            fakePickList.Add(fakeCandidatestatus);
-            fakePickList.Add(fakeIscandidateeligibleforadviser);
-            fakePickList.Add(fakeGitiseventsservicesubscriptionchannel);
-            fakePickList.Add(fakeGitismlservicesubscriptionchannel);
-            fakePickList.Add(fakeGitisttaservicesubscriptionchannel);
-            fakePickList.Add(fakeCandidateapplystatus);
-            fakePickList.Add(fakeCandidateapplyphase);
-            fakePickList.Add(fakeSituation);
-            
+            PickListItem fakePickListItem = new PickListItem() { Id = fakeId };
 
             _mockStore
                 .Setup(mock => mock.GetTeachingSubjects())
@@ -77,8 +40,8 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 .Setup(mock => mock.GetCountries())
                 .Returns(new[] { mockCountry }.AsQueryable());
             _mockStore
-                .Setup(mock => mock.GetPickListItems(It.IsAny<string>(), It.IsAny<String>()))
-                .Returns(fakePickList.AsQueryable);
+                .Setup(store => store.GetPickListItems(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(new [] {fakePickListItem}.AsQueryable);
             _mockStore
                 .Setup(mock => mock.GetPrivacyPolicies())
                 .Returns(new[] { mockPrivacyPolicy }.AsQueryable());
@@ -100,30 +63,30 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 SecondaryTelephone = "07584 734 576",
                 MobileTelephone = "07584 734 576",
                 HasDbsCertificate = true,
-                HasGcseMathsId = fakeWebsitehasgcseenglish.Id, //ToDo: Check this validation
-                HasGcseEnglishId = fakeWebsitehasgcseenglish.Id,
-                AdviserEligibilityId = fakeIscandidateeligibleforadviser.Id,
-                PlanningToRetakeGcseScienceId = fakeWebsiteplanningretakeenglishgcse.Id,
-                PlanningToRetakeGcseEnglishId = fakeWebsiteplanningretakeenglishgcse.Id,
-                TypeId = fakeTypeofcandidate.Id,
-                AssignmentStatusId = fakeTypeofcandidate.Id,
+                HasGcseMathsId = fakeId,
+                HasGcseEnglishId = fakeId,
+                AdviserEligibilityId = fakeId,
+                PlanningToRetakeGcseScienceId = fakeId,
+                PlanningToRetakeGcseEnglishId = fakeId,
+                TypeId = fakeId,
+                AssignmentStatusId = fakeId,
                 DoNotPostalMail = false,
                 EligibilityRulesPassed = "true",
-                ConsiderationJourneyStageId = fakeWebsitewhereinconsiderationjourney.Id,
+                ConsiderationJourneyStageId = fakeId,
                 CountryId = mockCountry.Id,
                 PreferredTeachingSubjectId = mockSubject.Id,
-                PreferredEducationPhaseId = fakePeferrededucationphase.Id,
-                InitialTeacherTrainingYearId = fakeIttyear.Id,
-                ChannelId = fakeChannelcreation.Id,
-                MailingListSubscriptionChannelId = fakeGitismlservicesubscriptionchannel.Id,
-                EventsSubscriptionChannelId = fakeGitiseventsservicesubscriptionchannel.Id,
-                TeacherTrainingAdviserSubscriptionChannelId = fakeGitisttaservicesubscriptionchannel.Id,
-                ApplyPhaseId = fakeCandidateapplyphase.Id,
-                ApplyStatusId = fakeCandidateapplystatus.Id,
-                Situation = fakeSituation.Id,
+                PreferredEducationPhaseId = fakeId,
+                InitialTeacherTrainingYearId = fakeId,
+                ChannelId = fakeId,
+                MailingListSubscriptionChannelId = fakeId,
+                EventsSubscriptionChannelId = fakeId,
+                TeacherTrainingAdviserSubscriptionChannelId = fakeId,
+                ApplyPhaseId = fakeId,
+                ApplyStatusId = fakeId,
+                Situation = fakeId,
                 PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id },
-                Citizenship = fakeCitizenship.Id,
-                VisaStatus = fakeVisastatus.Id
+                Citizenship = fakeId,
+                VisaStatus = fakeId
             };
 
             TestValidationResult<Candidate> result = _validator.TestValidate(candidate);
