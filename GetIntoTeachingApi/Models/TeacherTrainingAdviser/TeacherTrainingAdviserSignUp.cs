@@ -294,6 +294,10 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                 PreferredContactMethodId = (int)Candidate.ContactMethod.Any,
                 GdprConsentId = (int)Candidate.GdprConsent.Consent,
                 OptOutOfGdpr = false,
+                Situation = Situation,
+                Citizenship = Citizenship,
+                VisaStatus = VisaStatus,
+                Location = Location,
             };
 
             candidate.ConfigureChannel(

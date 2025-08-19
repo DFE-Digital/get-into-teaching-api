@@ -16,8 +16,16 @@
         "Value": "1974-03-16T00:00:00"
       },
       {
+        "Key": "dfe_candidatereregisterstatus",
+        "Value": {
+          "Value": 222750000
+        }
+      },
+      {
         "Key": "dfe_candidatestatus",
-        "Value": null
+         "Value": {
+           "Value": 222750001
+         }
       },
       {
         "Key": "dfe_channelcreation",
@@ -218,6 +226,26 @@
         "Value": {
           "Value": 1
         }
+      },
+      {
+        "Key": "dfe_situation",
+        "Value": null
+      },
+      {
+        "Key": "dfe_citizenship",
+        "Value": null
+      },
+      {
+        "Key": "dfe_visastatus",
+        "Value": null
+      },
+      {
+        "Key": "dfe_location",
+        "Value": null
+      },
+      {
+        "Key": "dfe_waitingtobeassigneddate",
+        "Value": "2021-03-24T10:00:00Z"
       }
     ],
     "EntityState": 1,

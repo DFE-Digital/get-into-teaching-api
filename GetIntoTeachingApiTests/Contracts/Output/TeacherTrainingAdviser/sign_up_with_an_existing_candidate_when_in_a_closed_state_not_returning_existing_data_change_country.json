@@ -230,6 +230,22 @@
         "Value": {
           "Value": 1
         }
+      },
+      {
+        "Key": "dfe_situation",
+        "Value": null
+      },
+      {
+        "Key": "dfe_citizenship",
+        "Value": null
+      },
+      {
+        "Key": "dfe_visastatus",
+        "Value": null
+      },
+      {
+        "Key": "dfe_location",
+        "Value": null
       }
     ],
     "EntityState": null,
