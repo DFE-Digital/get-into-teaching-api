@@ -126,7 +126,7 @@ namespace GetIntoTeachingApi.Models.Crm.Validators
                 .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_location", store))
                 .Unless(candidate => candidate.Location == null);
             RuleFor(candidate => candidate.Situation)
-                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_qtsstatus", store))
+                .SetValidator(new PickListItemIdValidator<Candidate>("contact", "dfe_situation", store))
                 .Unless(candidate => candidate.HasQualifiedTeacherStatus == null);
         }
     }
