@@ -286,7 +286,6 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
                 _request.Email = "email@address.com";
                 _request.DateOfBirth = DateTime.UtcNow;
                 _request.AddressTelephone = "1234567";
-                _request.Location = 98761;
 
                 var result = _validator.TestValidate(_request);
 
