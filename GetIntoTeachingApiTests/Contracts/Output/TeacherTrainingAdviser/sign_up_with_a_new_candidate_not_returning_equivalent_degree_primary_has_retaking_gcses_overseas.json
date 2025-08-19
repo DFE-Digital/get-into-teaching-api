@@ -14,18 +14,10 @@
       {
         "Key": "birthdate",
         "Value": "1974-03-16T00:00:00"
-      },
-      {
-        "Key": "dfe_candidatereregisterstatus",
-        "Value": {
-          "Value": 222750000
-        }
-      },
+      },    
       {
         "Key": "dfe_candidatestatus",
-         "Value": {
-           "Value": 222750001
-         }
+         "Value": null
       },
       {
         "Key": "dfe_channelcreation",
@@ -242,10 +234,6 @@
       {
         "Key": "dfe_location",
         "Value": null
-      },
-      {
-        "Key": "dfe_waitingtobeassigneddate",
-        "Value": "2021-03-24T10:00:00Z"
       }
     ],
     "EntityState": 1,
