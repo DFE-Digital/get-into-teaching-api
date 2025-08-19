@@ -46,6 +46,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 .Setup(mock => mock.GetPrivacyPolicies())
                 .Returns(new[] { mockPrivacyPolicy }.AsQueryable());
 
+
             var candidate = new Candidate()
             {
                 FirstName = "first",
@@ -83,14 +84,14 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 TeacherTrainingAdviserSubscriptionChannelId = fakeId,
                 ApplyPhaseId = fakeId,
                 ApplyStatusId = fakeId,
-                Situation = fakeId,
                 PrivacyPolicy = new CandidatePrivacyPolicy() { AcceptedPolicyId = (Guid)mockPrivacyPolicy.Id },
+                Situation = fakeId,
                 Citizenship = fakeId,
-                VisaStatus = fakeId
+                VisaStatus = fakeId,
+                Location = fakeId
             };
-
             TestValidationResult<Candidate> result = _validator.TestValidate(candidate);
-   
+
             result.IsValid.Should().BeTrue();
         }
 
