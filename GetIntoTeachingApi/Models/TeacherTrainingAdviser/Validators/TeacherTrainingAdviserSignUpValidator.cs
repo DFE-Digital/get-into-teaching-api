@@ -23,18 +23,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
             RuleFor(request => request.AcceptedPolicyId).NotNull();
             RuleFor(request => request.CountryId).NotNull();
             RuleFor(request => request.TypeId).NotNull();
-            
-            //ToDo: Check Rules are correct
-
-            RuleFor(request => request.Situation)
-                .SetValidator(new PickListItemIdValidator<TeacherTrainingAdviserSignUp>("contact", "dfe_situation", store))
-                .Unless(request => request.Situation == null);
-            RuleFor(request => request.Citizenship)
-                .SetValidator(new PickListItemIdValidator<TeacherTrainingAdviserSignUp>("contact", "dfe_citizenship", store))
-                .Unless(request => request.Citizenship == null);
-            RuleFor(request => request.VisaStatus)
-                .SetValidator(new PickListItemIdValidator<TeacherTrainingAdviserSignUp>("contact", "dfe_visastatus", store))
-                .Unless(request => request.VisaStatus == null);
 
             RuleFor(request => request.AddressTelephone).NotNull()
                 .When(request => request.PhoneCallScheduledAt != null)
@@ -128,7 +116,18 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
 
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store, dateTime));
             
-            
+            RuleFor(request => request.Situation)
+                .SetValidator(new PickListItemIdValidator<TeacherTrainingAdviserSignUp>("contact", "dfe_situation", store))
+                .Unless(request => request.Situation == null);
+            RuleFor(request => request.Citizenship)
+                .SetValidator(new PickListItemIdValidator<TeacherTrainingAdviserSignUp>("contact", "dfe_citizenship", store))
+                .Unless(request => request.Citizenship == null);
+            RuleFor(request => request.VisaStatus)
+                .SetValidator(new PickListItemIdValidator<TeacherTrainingAdviserSignUp>("contact", "dfe_visastatus", store))
+                .Unless(request => request.VisaStatus == null);
+            RuleFor(request => request.Location)
+                .SetValidator(new PickListItemIdValidator<TeacherTrainingAdviserSignUp>("contact", "dfe_location", store))
+                .Unless(request => request.Location == null);
         }
 
         public IValidationContext BeforeAspNetValidation(ActionContext actionContext, IValidationContext commonContext)
