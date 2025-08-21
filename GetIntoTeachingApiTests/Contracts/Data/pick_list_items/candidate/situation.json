@@ -1,0 +1,50 @@
+[
+  {
+    "id": 222750000,
+    "entityName": "contact",
+    "attributeName": "dfe_situation",
+    "Value": "16-18 years old and still in education"
+  },
+  {
+    "id": 222750001,
+    "entityName": "contact",
+    "attributeName": "dfe_situation",
+    "Value": "On a break before starting university"
+  },
+  {
+    "id": 222750002,
+    "entityName": "contact",
+    "attributeName": "dfe_situation",
+    "Value": "Exploring options for my first career"
+  },
+  {
+    "id": 222750003,
+    "entityName": "contact",
+    "attributeName": "dfe_situation",
+    "Value": "Graduated and exploring my career options"
+  },
+  {
+    "id": 222750004,
+    "entityName": "contact",
+    "attributeName": "dfe_situation",
+    "Value": "Considering changing my existing career"
+  },
+  {
+    "id": 222750005,
+    "entityName": "contact",
+    "attributeName": "dfe_situation",
+    "Value": "Teaching assistant or unqualified teacher in a school"
+  },
+  {
+    "id": 222750006,
+    "entityName": "contact",
+    "attributeName": "dfe_situation",
+    "Value": "Not currently working"
+  },
+  {
+    "id": 222750007,
+    "entityName": "contact",
+    "attributeName": "dfe_situation",
+    "Value": "Qualified teacher"
+  }
+]

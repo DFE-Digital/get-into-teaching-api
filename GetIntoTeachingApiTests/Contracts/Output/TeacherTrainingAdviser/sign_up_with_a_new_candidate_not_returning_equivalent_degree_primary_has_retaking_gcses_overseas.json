@@ -221,19 +221,27 @@
       },
       {
         "Key": "dfe_situation",
-        "Value": null
+        "Value": {
+          "Value": 222750002
+        }
       },
       {
         "Key": "dfe_citizenship",
-        "Value": null
+        "Value": {
+          "Value": 222750001
+        }
       },
       {
         "Key": "dfe_visastatus",
-        "Value": null
+        "Value": {
+          "Value": 222750001
+        }
       },
       {
         "Key": "dfe_location",
-        "Value": null
+        "Value": {
+          "Value": 222750001
+        }
       }
     ],
     "EntityState": 1,
