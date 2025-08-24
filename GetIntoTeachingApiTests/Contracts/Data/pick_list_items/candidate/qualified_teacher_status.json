@@ -1,0 +1,14 @@
+[
+    {
+    "id": 222750000,
+    "entityName": "contact",
+    "attributeName": "dfe_qtsstatus",
+    "Value": "No"
+  },
+  {
+    "id": 222750002,
+    "entityName": "contact",
+    "attributeName": "dfe_qtsstatus",
+    "Value": "Yes"
+  }
+]
