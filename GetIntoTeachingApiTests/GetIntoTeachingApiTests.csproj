@@ -31,6 +31,9 @@
     <None Update="Contracts\Data\pick_list_items\candidate\citizenship.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Contracts\Data\pick_list_items\candidate\qualified_teacher_status.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
@@ -261,7 +264,6 @@
     <Folder Include="Contracts\Data\lookup_items\" />
     <Folder Include="Contracts\Data\pick_list_items\" />
     <Folder Include="Contracts\Data\pick_list_items\qualification\" />
-    <Folder Include="Contracts\Data\pick_list_items\candidate\" />
     <Folder Include="Contracts\Data\pick_list_items\past_teaching_position\" />
     <Folder Include="Contracts\Data\pick_list_items\teaching_event\" />
     <Folder Include="Contracts\Data\pick_list_items\teaching_event_registration\" />
