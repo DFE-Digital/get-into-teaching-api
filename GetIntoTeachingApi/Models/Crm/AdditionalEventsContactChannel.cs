@@ -23,7 +23,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         /// Provides the default read-only additional creation channel service identifier.
         /// </summary>
         public int? DefaultCreationChannelServiceId => 
-            (int?)ContactChannelCreation.CreationChannelService.Events;
+            (int?)ContactChannelCreation.CreationChannelService.ProspectiveEvents;
         
         /// <summary>
         /// Provides the default read-only additional creation channel activity identifier.
