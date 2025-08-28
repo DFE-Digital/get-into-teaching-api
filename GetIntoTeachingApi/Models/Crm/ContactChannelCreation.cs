@@ -43,7 +43,7 @@ namespace GetIntoTeachingApi.Models.Crm
             PaidSearch = 222750008,
             ProspectiveEvents = 222750012,
             ReturnToTeachingAdviserService = 222750009,
-            TeacherTrainingAdviserService = 222750010,
+            TeacherTrainingAdviserService = 222750010
         }
         
         public enum CreationChannelActivity
