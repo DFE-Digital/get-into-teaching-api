@@ -113,8 +113,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
                             .WithMessage("Must be set when candidate has a degree.");
                     });
             });
-
-            RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store, dateTime));
             
             RuleFor(request => request.Situation)
                 .SetValidator(new PickListItemIdValidator<TeacherTrainingAdviserSignUp>("contact", "dfe_situation", store))
@@ -128,6 +126,8 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
             RuleFor(request => request.Location)
                 .SetValidator(new PickListItemIdValidator<TeacherTrainingAdviserSignUp>("contact", "dfe_location", store))
                 .Unless(request => request.Location == null);
+            
+            RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store, dateTime));
         }
 
         public IValidationContext BeforeAspNetValidation(ActionContext actionContext, IValidationContext commonContext)
