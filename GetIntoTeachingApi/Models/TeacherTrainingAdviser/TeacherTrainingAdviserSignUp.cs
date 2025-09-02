@@ -131,6 +131,26 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         /// Overrides the inferred graduation date to adjust its calculation.
         /// </summary>
         public override DateTime? InferredGraduationDate { get; set; }
+        
+        /// <summary>
+        /// The situation (life stage) of the candidate, which can be used to determine their current status or context.
+        /// </summary>
+        public int? Situation { get; set; }
+
+        /// <summary>
+        /// The citizenship status of the candidate, represented as an integer code.
+        /// </summary>
+        public int? Citizenship { get; set; }
+
+        /// <summary>
+        /// The visa status of the candidate, represented as an integer code.
+        /// </summary>
+        public int? VisaStatus { get; set; }
+
+        /// <summary>
+        ///  The location of the candidate,represented as an integer code from a picklist 
+        /// </summary>
+        public int? Location { get; set; }
 
         public TeacherTrainingAdviserSignUp()
         {
@@ -274,6 +294,10 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                 PreferredContactMethodId = (int)Candidate.ContactMethod.Any,
                 GdprConsentId = (int)Candidate.GdprConsent.Consent,
                 OptOutOfGdpr = false,
+                Situation = Situation,
+                Citizenship = Citizenship,
+                VisaStatus = VisaStatus,
+                Location = Location,
             };
 
             candidate.ConfigureChannel(

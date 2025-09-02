@@ -7,7 +7,9 @@ using GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators;
 using GetIntoTeachingApi.Services;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using GetIntoTeachingApiTests.Models.GetIntoTeaching.Validators;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
@@ -116,16 +118,35 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
         {
             private readonly TeacherTrainingAdviserSignUpValidator _validator;
             private readonly TeacherTrainingAdviserSignUp _request;
+            private readonly Mock<IStore> _mockStore =  new Mock<IStore>();
 
             public ReturningToTeacherTraining()
             {
-                _validator = new TeacherTrainingAdviserSignUpValidator(new Mock<IStore>().Object, new DateTimeProvider());
+                _validator = new TeacherTrainingAdviserSignUpValidator(_mockStore.Object, new DateTimeProvider());
                 _request = new TeacherTrainingAdviserSignUp() { TypeId = (int)Candidate.Type.ReturningToTeacherTraining };
             }
 
             [Fact]
             public void Validate_WhenValid_HasNoErrors()
             {
+                List<PickListItem> fakeCitizenship = new List<PickListItem>() { new() {Id = 222750001, EntityName = "contact", AttributeName = "dfe_citizenship" }};
+                List<PickListItem> fakeSituation = new List<PickListItem>() { new() {Id = 12909, EntityName = "contact", AttributeName = "dfe_situation" }};
+                List<PickListItem> fakeVisastatus = new List<PickListItem>() { new() {Id = 12345, EntityName = "contact", AttributeName = "dfe_visastatus" }};
+                List<PickListItem> fakeLocation = new List<PickListItem>() { new() {Id = 98765, EntityName = "contact", AttributeName = "dfe_location" }};
+                _mockStore
+                    .Setup(p => p.GetPickListItems("contact", "dfe_citizenship"))
+                    .Returns(fakeCitizenship.AsQueryable);
+                _mockStore
+                    .Setup(p => p.GetPickListItems("contact", "dfe_situation"))
+                    .Returns(fakeSituation.AsQueryable);
+                _mockStore
+                    .Setup(p => p.GetPickListItems("contact", "dfe_visastatus"))
+                    .Returns(fakeVisastatus.AsQueryable);
+                _mockStore
+                    .Setup(p => p.GetPickListItems("contact", "dfe_location"))
+                    .Returns(fakeLocation.AsQueryable);
+                
+                
                 _request.CandidateId = Guid.NewGuid();
                 _request.PastTeachingPositionId = Guid.NewGuid();
                 _request.AcceptedPolicyId = Guid.NewGuid();
@@ -139,6 +160,10 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
                 _request.TeacherId = "abc123";
                 _request.AddressTelephone = "1234567";
                 _request.AddressPostcode = "KY11 9YU";
+                _request.Citizenship = 222750001;
+                _request.Situation = 12909;
+                _request.VisaStatus = 12345;
+                _request.Location = 98765;
 
                 var result = _validator.TestValidate(_request);
 

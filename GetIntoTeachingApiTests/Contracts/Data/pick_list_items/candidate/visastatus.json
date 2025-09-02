@@ -1,0 +1,20 @@
+[
+  {
+    "id": 222750000,
+    "entityName": "contact",
+    "attributeName": "dfe_visastatus",
+    "Value": "Yes, I have a visa, pre-settled status or leave to remain"
+  },
+  {
+    "id": 222750001,
+    "entityName": "contact",
+    "attributeName": "dfe_visastatus",
+    "Value": "No, I will need to apply for a visa"
+  },
+  {
+    "id": 222750002,
+    "entityName": "contact",
+    "attributeName": "dfe_visastatus",
+    "Value": "Not sure"
+  }
+]

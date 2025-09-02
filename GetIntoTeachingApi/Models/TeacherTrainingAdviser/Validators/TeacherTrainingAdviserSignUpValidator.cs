@@ -7,6 +7,7 @@ using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Models.Crm.Validators;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
+using GetIntoTeachingApi.Validators;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
@@ -112,7 +113,20 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
                             .WithMessage("Must be set when candidate has a degree.");
                     });
             });
-
+            
+            RuleFor(request => request.Situation)
+                .SetValidator(new PickListItemIdValidator<TeacherTrainingAdviserSignUp>("contact", "dfe_situation", store))
+                .Unless(request => request.Situation == null);
+            RuleFor(request => request.Citizenship)
+                .SetValidator(new PickListItemIdValidator<TeacherTrainingAdviserSignUp>("contact", "dfe_citizenship", store))
+                .Unless(request => request.Citizenship == null);
+            RuleFor(request => request.VisaStatus)
+                .SetValidator(new PickListItemIdValidator<TeacherTrainingAdviserSignUp>("contact", "dfe_visastatus", store))
+                .Unless(request => request.VisaStatus == null);
+            RuleFor(request => request.Location)
+                .SetValidator(new PickListItemIdValidator<TeacherTrainingAdviserSignUp>("contact", "dfe_location", store))
+                .Unless(request => request.Location == null);
+            
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store, dateTime));
         }
 

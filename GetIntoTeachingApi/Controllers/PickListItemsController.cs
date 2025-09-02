@@ -219,6 +219,16 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCandidateLocation() =>
             Ok(await _store.GetPickListItems("contact", "dfe_location").ToListAsync());
+        
+        [HttpGet]
+        [Route("candidate/has_qualified_teacher_statuses")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of has qualified teacher statuses (QTS) options.",
+            OperationId = "GetCandidateHasQualifiedTeacherStatuses",
+            Tags = ["Pick List Items"])]
+        [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCandidateHasQualifiedTeacherStatuses() =>
+            Ok(await _store.GetPickListItems("contact", "dfe_qtsstatus").ToListAsync());
 
         [HttpGet]
         [Route("qualification/degree_status")]
