@@ -25,5 +25,9 @@
   "degreeSubject": null,
   "addressTelephone": null,
   "addressPostcode": null,
-  "phoneCallScheduledAt": null
+  "phoneCallScheduledAt": null,
+  "situation": 222750002,   
+  "citizenship": 222750001,
+  "visastatus": 222750001,
+  "location": 222750001
 }

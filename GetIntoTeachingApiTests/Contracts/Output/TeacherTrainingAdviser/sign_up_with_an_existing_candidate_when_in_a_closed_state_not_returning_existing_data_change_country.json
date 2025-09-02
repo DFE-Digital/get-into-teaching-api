@@ -230,6 +230,30 @@
         "Value": {
           "Value": 1
         }
+      },
+      {
+        "Key": "dfe_situation",
+        "Value": {
+          "Value": 222750002
+        }
+      },
+      {
+        "Key": "dfe_citizenship",
+        "Value": {
+          "Value": 222750001
+        }
+      },
+      {
+        "Key": "dfe_visastatus",
+        "Value": {
+          "Value": 222750001
+        }
+      },
+      {
+        "Key": "dfe_location",
+        "Value": {
+          "Value": 222750001
+        }
       }
     ],
     "EntityState": null,
