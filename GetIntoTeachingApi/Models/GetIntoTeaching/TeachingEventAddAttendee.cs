@@ -50,6 +50,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         [SwaggerSchema(ReadOnly = true)]
         public bool AlreadySubscribedToTeacherTrainingAdviser { get; set; }
 
+
         [JsonIgnore]
         public Candidate Candidate => CreateCandidate();
         [JsonIgnore]
@@ -77,6 +78,13 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
         /// Provides the default read-only creation channel activity identifier.
         /// </summary>
         public int? DefaultCreationChannelActivityId => null;
+        
+        /// <summary>
+        /// Allows user to notify of any Accessibility needs for an event
+        /// </summary>
+        #nullable enable
+        public string? AccessibilityNeedsForEvent { get; set; }
+
         
         public TeachingEventAddAttendee(){
         }
@@ -165,7 +173,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
             AddQualification(candidate);
             AcceptPrivacyPolicy(candidate);
             ConfigureSubscriptions(candidate);
-
+            
             return candidate;
         }
 
@@ -211,6 +219,7 @@ namespace GetIntoTeachingApi.Models.GetIntoTeaching
                     ChannelId = channelId,
                     IsCancelled = false,
                     RegistrationNotificationSeen = false,
+                    AccessibilityNeedsForEvent = AccessibilityNeedsForEvent
                 });
             }
         }
