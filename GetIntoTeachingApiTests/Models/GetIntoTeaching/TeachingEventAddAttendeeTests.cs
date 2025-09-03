@@ -4,6 +4,7 @@ using GetIntoTeachingApi.Models.GetIntoTeaching;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Bogus;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
@@ -85,6 +86,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
                 CreationChannelSourceId = 222750003,
                 CreationChannelServiceId = 222750002,
                 CreationChannelActivityId = 222750001,
+                AccessibilityNeedsForEvent = "test for AccessibilityNeedsForEvent"
             };
 
             var candidate = request.Candidate;
@@ -120,6 +122,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
             candidate.TeachingEventRegistrations.First().ChannelId.Should().Be((int)TeachingEventRegistration.Channel.Event);
             candidate.TeachingEventRegistrations.First().IsCancelled.Should().BeFalse();
             candidate.TeachingEventRegistrations.First().RegistrationNotificationSeen.Should().BeFalse();
+            candidate.TeachingEventRegistrations.First().AccessibilityNeedsForEvent.Should().Be(request.AccessibilityNeedsForEvent);
 
             candidate.Qualifications.First().DegreeStatusId.Should().Be(request.DegreeStatusId);
             candidate.Qualifications.First().TypeId.Should().Be((int)CandidateQualification.DegreeType.Degree);
