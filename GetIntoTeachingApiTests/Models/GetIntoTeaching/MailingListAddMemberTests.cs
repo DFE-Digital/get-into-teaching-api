@@ -129,6 +129,15 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
             contactChannelCreation.CreationChannelSourceId.Should().Be(request.CreationChannelSourceId);
             contactChannelCreation.CreationChannelServiceId.Should().Be(request.CreationChannelServiceId);
             contactChannelCreation.CreationChannelActivityId.Should().Be(request.CreationChannelActivityId);
+            
+            candidate.ContactChannelCreations.Count.Should().Be(2);
+            
+            var additionalContactChannelCreation = candidate.ContactChannelCreations.Last();
+            additionalContactChannelCreation.CreationChannel.Should().Be(false);
+            additionalContactChannelCreation.CreationChannelSourceId.Should().Be((int?)ContactChannelCreation.CreationChannelSource.GITWebsite);
+            additionalContactChannelCreation.CreationChannelServiceId.Should().Be((int?)ContactChannelCreation.CreationChannelService.ProspectiveEvents);
+            additionalContactChannelCreation.CreationChannelActivityId.Should().Be(null);
+            
             candidate.ChannelId.Should().Be(null);
         }
         
@@ -143,11 +152,42 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
                 CreationChannelActivityId = 222750001,
             };
             
+            request.Candidate.ContactChannelCreations.Count.Should().Be(1);
+            
             var contactChannelCreation = request.Candidate.ContactChannelCreations.First();
             contactChannelCreation.CreationChannel.Should().Be(true);
             contactChannelCreation.CreationChannelSourceId.Should().Be(request.CreationChannelSourceId);
             contactChannelCreation.CreationChannelServiceId.Should().Be(request.CreationChannelServiceId);
             contactChannelCreation.CreationChannelActivityId.Should().Be(request.CreationChannelActivityId);
+            request.Candidate.ChannelId.Should().Be(null);
+        }
+        
+        [Fact]
+        public void NewCandidate_WithPostcode_MapsCreationChannelCorrectly()
+        {
+            var request = new MailingListAddMember()
+            {
+                CandidateId = null,
+                CreationChannelSourceId = 222750003,
+                CreationChannelServiceId = 222750002,
+                CreationChannelActivityId = 222750001,
+                AddressPostcode = "KY11 9YU",
+            };
+            
+            request.Candidate.ContactChannelCreations.Count.Should().Be(2);
+            
+            var contactChannelCreation = request.Candidate.ContactChannelCreations.First();
+            contactChannelCreation.CreationChannel.Should().Be(true);
+            contactChannelCreation.CreationChannelSourceId.Should().Be(request.CreationChannelSourceId);
+            contactChannelCreation.CreationChannelServiceId.Should().Be(request.CreationChannelServiceId);
+            contactChannelCreation.CreationChannelActivityId.Should().Be(request.CreationChannelActivityId);
+            
+            var additionalContactChannelCreation = request.Candidate.ContactChannelCreations.Last();
+            additionalContactChannelCreation.CreationChannel.Should().Be(false);
+            additionalContactChannelCreation.CreationChannelSourceId.Should().Be((int?)ContactChannelCreation.CreationChannelSource.GITWebsite);
+            additionalContactChannelCreation.CreationChannelServiceId.Should().Be((int?)ContactChannelCreation.CreationChannelService.ProspectiveEvents);
+            additionalContactChannelCreation.CreationChannelActivityId.Should().Be(null);
+            
             request.Candidate.ChannelId.Should().Be(null);
         }
 
@@ -159,6 +199,7 @@ namespace GetIntoTeachingApiTests.Models.GetIntoTeaching
                 AddressPostcode = null,
             };
 
+            request.Candidate.ContactChannelCreations.Count.Should().Be(1);
             request.Candidate.HasEventsSubscription.Should().BeNull();
         }
 
