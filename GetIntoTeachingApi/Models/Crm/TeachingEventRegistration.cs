@@ -27,6 +27,10 @@ namespace GetIntoTeachingApi.Models.Crm
         public bool? IsCancelled { get; set; }
         [EntityField("msevtmgt_registrationnotificationseen")]
         public bool? RegistrationNotificationSeen { get; set; }
+        
+        [EntityField("dfe_accessibilityneedsforevent")]
+        #nullable enable
+        public string? AccessibilityNeedsForEvent { get; set; }
 
         public TeachingEventRegistration()
             : base()
