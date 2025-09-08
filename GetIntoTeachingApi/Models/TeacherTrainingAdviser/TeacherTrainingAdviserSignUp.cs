@@ -151,6 +151,14 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         ///  The location of the candidate,represented as an integer code from a picklist 
         /// </summary>
         public int? Location { get; set; }
+        
+        /// <summary>
+        /// The country the degree was obtained
+        /// Can be either;
+        /// United Kingdom  72f5c2e6-74f9-e811-a97a-000d3a2760f2
+        /// Another Country 6f9e7b81-e44d-f011-877a-00224886d23e
+        /// </summary>
+        public Guid? DegreeCountry { get; set; }
 
         public TeacherTrainingAdviserSignUp()
         {

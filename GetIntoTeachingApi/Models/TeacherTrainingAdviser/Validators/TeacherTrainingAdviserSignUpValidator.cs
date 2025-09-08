@@ -126,6 +126,9 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
             RuleFor(request => request.Location)
                 .SetValidator(new PickListItemIdValidator<TeacherTrainingAdviserSignUp>("contact", "dfe_location", store))
                 .Unless(request => request.Location == null);
+            RuleFor(request => request.DegreeCountry)
+                .Must(type => CountryConsts.ValidDegreeCountries.Contains(type))
+                .Unless(request => request.DegreeCountry == null);
             
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store, dateTime));
         }
