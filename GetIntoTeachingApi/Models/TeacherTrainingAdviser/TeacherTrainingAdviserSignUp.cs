@@ -68,6 +68,8 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         [SwaggerSchema(WriteOnly = true)]
         public int? ChannelId { get; set; }
         
+        public Guid? DegreeCountry { get; set; }
+        
         
         [SwaggerSchema(WriteOnly = true)]
         public int? CreationChannelSourceId { get; set; }
