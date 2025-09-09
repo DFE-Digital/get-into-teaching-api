@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
@@ -395,5 +396,20 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetTeachingEventAccessibilityItems() =>
              Ok(await _store.GetPickListItems("msevtmgt_event", "dfe_accessibility").ToListAsync());
+
+        [HttpGet]
+        [Route("candidate/degree_country")]
+        [SwaggerOperation()]
+        [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetDegreeCountry()
+        {
+            List<PickListItem> allLocations = await _store.GetPickListItems("contact", "dfe_location").ToListAsync();
+            if (allLocations is not null)
+            {
+                List<PickListItem> filteredLocations =  allLocations.FindAll(_ => _.AttributeName == "United Kingdom" || _.AttributeName == "Another Country");
+                return Ok(filteredLocations.ToList());
+            }
+            return Ok();
+        }
     }
 }
