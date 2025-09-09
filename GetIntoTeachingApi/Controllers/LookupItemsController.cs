@@ -38,6 +38,21 @@ namespace GetIntoTeachingApi.Controllers
 
             return Ok(countries.OrderBy(c => c.Value));
         }
+        
+        [HttpGet]
+        [Route("degree_countries")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of degree countries.",
+            OperationId = "GetDegreeCountries",
+            Tags = new[] { "Lookup Items" })]
+        [ProducesResponseType(typeof(IEnumerable<Country>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetDegreeCountries()
+        {
+            List<Country> allCountries = await _store.GetCountries().ToListAsync();
+            List<Country> filteredCountries = allCountries.FindAll(country => country.Id.HasValue && Country.DegreeCountriesList.Contains(country.Id.Value));
+
+            return Ok(filteredCountries.OrderBy(c => c.Value));
+        }
 
         [HttpGet]
         [Route("teaching_subjects")]
