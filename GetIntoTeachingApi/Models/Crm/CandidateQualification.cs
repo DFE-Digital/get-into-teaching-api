@@ -30,7 +30,7 @@ namespace GetIntoTeachingApi.Models.Crm
         [EntityField("dfe_graduationyear")]
         public DateTime? GraduationYear { get; set; }
         
-        [EntityField("dfe_country")]
+        [EntityField("dfe_country", typeof(EntityReference), "dfe_country")]
         public Guid? DegreeCountry { get; set; }
 
         public CandidateQualification()
