@@ -17,6 +17,7 @@ namespace GetIntoTeachingApi.Services
         Task SaveAsync<T>(T model)
             where T : BaseModel;
         IQueryable<Country> GetCountries();
+        IQueryable<Country> GetDegreeFilteredCountries();
         IQueryable<TeachingSubject> GetTeachingSubjects();
         IQueryable<PickListItem> GetPickListItems(string entityName, string attributeName);
         Task<PrivacyPolicy> GetLatestPrivacyPolicyAsync();

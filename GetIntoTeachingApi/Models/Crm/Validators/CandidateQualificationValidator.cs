@@ -17,6 +17,11 @@ namespace GetIntoTeachingApi.Models.Crm.Validators
             RuleFor(qualification => qualification.TypeId)
                 .SetValidator(new PickListItemIdValidator<CandidateQualification>("dfe_candidatequalification", "dfe_type", store))
                 .Unless(qualification => qualification.TypeId == null);
+            RuleFor(qualification => qualification.DegreeCountry)
+                .Must(degreeCountry => degreeCountry.HasValue && Country.DegreeCountriesList.Contains(degreeCountry))
+                .When(qualification => qualification.DegreeCountry.HasValue)
+                .Unless(qualification => qualification.DegreeCountry == null)
+                .WithMessage("The selected country is not in the list of valid degree countries.");
 
             RuleFor(qualification => qualification.DegreeSubject).MaximumLength(600);
         }

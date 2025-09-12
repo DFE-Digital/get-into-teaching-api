@@ -40,6 +40,19 @@ namespace GetIntoTeachingApi.Controllers
         }
 
         [HttpGet]
+        [Route("degree_countries")]
+        [SwaggerOperation(
+            Summary = "Retrieves the list of degree countries.",
+            OperationId = "GetDegreeCountries",
+            Tags = new[] { "Lookup Items" })]
+        [ProducesResponseType(typeof(IEnumerable<Country>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetDegreeCountries()
+        {
+            var countries = await _store.GetDegreeFilteredCountries().ToListAsync(); 
+            return Ok(countries.OrderBy(c => c.Value));
+        }
+
+        [HttpGet]
         [Route("teaching_subjects")]
         [SwaggerOperation(
             Summary = "Retrieves the list of teaching subjects.",
