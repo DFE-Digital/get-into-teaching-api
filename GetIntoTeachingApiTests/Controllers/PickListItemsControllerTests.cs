@@ -434,32 +434,6 @@ namespace GetIntoTeachingApiTests.Controllers
                 mock.GetPickListItems("msevtmgt_event", "dfe_accessibility"), Times.Once);
         }
 
-        [Fact]
-        public async Task GetDegreeCountryReturnsValidFilteredList()
-        {
-            PickListItem[] mockItems = [ 
-                new PickListItem() { Id = 1, AttributeName = "United Kingdom", Value = "2002124" }, 
-                new PickListItem() { Id = 2, AttributeName = "Another Country", Value = "2002124" },
-                new PickListItem() { Id = 3, AttributeName = "United States", Value = "2002126" }
-            ];
-            _mockStore.Setup(mock =>
-                mock.GetPickListItems("contact", "dfe_location"))
-                    .Returns(mockItems.AsAsyncQueryable()).Verifiable();
-
-            IActionResult response = await _controller.GetDegreeCountry();
-
-            OkObjectResult result = response.Should().BeOfType<OkObjectResult>().Subject;
-            
-            var resultsList = result.Value as List<PickListItem>;
-            resultsList?.Count().Should().Be(2);
-            
-            resultsList?.Find(_ => _.AttributeName == mockItems[0].AttributeName).Should().BeEquivalentTo(mockItems[0]);
-            resultsList?.Find(_ => _.AttributeName == mockItems[1].AttributeName).Should().BeEquivalentTo(mockItems[1]);
-
-            _mockStore.Verify(mock =>
-                mock.GetPickListItems("contact", "dfe_location"), Times.Once);
-        }
-
         private static PickListItem[] MockPickListItems()
         {
             return

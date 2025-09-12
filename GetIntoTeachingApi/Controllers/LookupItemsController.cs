@@ -38,7 +38,7 @@ namespace GetIntoTeachingApi.Controllers
 
             return Ok(countries.OrderBy(c => c.Value));
         }
-        
+
         [HttpGet]
         [Route("degree_countries")]
         [SwaggerOperation(
@@ -48,10 +48,8 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<Country>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetDegreeCountries()
         {
-            List<Country> allCountries = await _store.GetCountries().ToListAsync();
-            List<Country> filteredCountries = allCountries.FindAll(country => country.Id.HasValue && Country.DegreeCountriesList.Contains(country.Id.Value));
-
-            return Ok(filteredCountries.OrderBy(c => c.Value));
+            var countries = await _store.GetDegreeFilteredCountries().ToListAsync(); 
+            return Ok(countries.OrderBy(c => c.Value));
         }
 
         [HttpGet]
