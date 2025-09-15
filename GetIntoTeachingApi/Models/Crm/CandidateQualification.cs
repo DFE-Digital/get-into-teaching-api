@@ -14,6 +14,16 @@ namespace GetIntoTeachingApi.Models.Crm
             Degree = 222750000,
             DegreeEquivalent = 222750005,
         }
+        
+         public enum UkDegreeGrade
+        {
+            LowerSecond = 222750003,
+            NotApplicable =   222750000,
+            FirstClass = 222750001,
+            UpperSecond = 222750002,
+            ThirdClassOrBelow = 222750004,
+            PassUnknown = 222750005
+         }
 
         [EntityField("dfe_contactid", typeof(EntityReference), "contact")]
         public Guid CandidateId { get; set; }
