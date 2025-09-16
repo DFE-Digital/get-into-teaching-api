@@ -20,6 +20,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using GetIntoTeachingApiTests.Fakes;
 using Xunit;
 using Location = GetIntoTeachingApi.Models.Location;
 using PickListItem = GetIntoTeachingApi.Models.PickListItem;
@@ -357,6 +358,18 @@ namespace GetIntoTeachingApiTests.Services
             var result = _store.GetCountries();
 
             result.Select(t => t.Value).Should().BeEquivalentTo(new string[] { "Country 1", "Country 2", "Country 3" });
+        }
+
+        [Fact]
+        public async Task GetLookupItemsDegreeCountries_ReturnsMatchingOrderedByIdAscending()
+        {
+            List<Country> countries = FakeCountryGenerators.FakeCountriesWithDegreeCountries();
+            
+            await SeedMockCountriesAsync(countries);
+            IQueryable<Country> result = _store.GetDegreeFilteredCountries();
+            var filteredCountries = result.AsEnumerable<Country>();
+            filteredCountries.Count().Should().BeLessThan(countries.Count);
+            filteredCountries.Select(c => c.Id).Should().BeEquivalentTo(Country.DegreeCountriesList);
         }
 
         [Fact]
@@ -1106,9 +1119,10 @@ namespace GetIntoTeachingApiTests.Services
             return new Country[] { country2, country1, country3 };
         }
 
-        private async Task<IEnumerable<Country>> SeedMockCountriesAsync()
+        private async Task<IEnumerable<Country>> SeedMockCountriesAsync(IEnumerable<Country> countries = null)
         {
-            var countries = MockCountries();
+            if (countries is null)
+                countries = MockCountries();
             _mockCrm.Setup(m => m.GetCountries()).Returns(countries);
 
             await _store.SyncAsync();

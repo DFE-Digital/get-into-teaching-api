@@ -29,6 +29,9 @@ namespace GetIntoTeachingApi.Models.Crm
         public DateTime? CreatedAt { get; set; }
         [EntityField("dfe_graduationyear")]
         public DateTime? GraduationYear { get; set; }
+        
+        [EntityField("dfe_country", typeof(EntityReference), "dfe_country")]
+        public Guid? DegreeCountry { get; set; }
 
         public CandidateQualification()
             : base()
