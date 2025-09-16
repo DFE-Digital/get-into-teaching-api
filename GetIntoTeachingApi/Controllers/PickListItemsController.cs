@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GetIntoTeachingApi.Attributes;
 using GetIntoTeachingApi.Models;
@@ -395,5 +396,6 @@ namespace GetIntoTeachingApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<PickListItem>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetTeachingEventAccessibilityItems() =>
              Ok(await _store.GetPickListItems("msevtmgt_event", "dfe_accessibility").ToListAsync());
+        
     }
 }
