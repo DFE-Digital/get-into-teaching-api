@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -14,6 +15,8 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
 {
     public class TeacherTrainingAdviserSignUpValidator : AbstractValidator<TeacherTrainingAdviserSignUp>, IValidatorInterceptor
     {
+        private ImmutableList<CandidateQualification.UkDegreeGrade> ValidGrades { get; } = ImmutableList.Create( CandidateQualification.UkDegreeGrade.FirstClass, CandidateQualification.UkDegreeGrade.UpperSecond, CandidateQualification.UkDegreeGrade.LowerSecond);
+
         public TeacherTrainingAdviserSignUpValidator(IStore store, IDateTimeProvider dateTime)
         {
             RuleFor(request => request.FirstName).NotNull();
@@ -131,6 +134,13 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
                 .When(qualification => qualification.DegreeCountry.HasValue)
                 .Unless(qualification => qualification.DegreeCountry == null)
                 .WithMessage("The selected country is not in the list of valid degree countries.");
+            
+            RuleFor(qualification => qualification.UkDegreeGradeId)
+                .SetValidator(new PickListItemIdValidator<TeacherTrainingAdviserSignUp>("dfe_candidatequalification", "dfe_ukdegreegrade", store))
+                .Must(qualification => qualification.HasValue && ValidGrades.Contains((CandidateQualification.UkDegreeGrade)qualification.Value))
+                .Unless(qualification => qualification.UkDegreeGradeId == null)
+                .WithMessage($"The UK degree grade must be one of: {string.Join(", ", ValidGrades.Select(g => g.ToString()))}.");
+
 
             
             RuleFor(request => request.Candidate).SetValidator(new CandidateValidator(store, dateTime));

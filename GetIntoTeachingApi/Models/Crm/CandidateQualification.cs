@@ -2,6 +2,7 @@
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
 using System;
+using System.Collections.Immutable;
 
 namespace GetIntoTeachingApi.Models.Crm
 {
@@ -17,10 +18,10 @@ namespace GetIntoTeachingApi.Models.Crm
         
          public enum UkDegreeGrade
         {
-            LowerSecond = 222750003,
             NotApplicable =   222750000,
             FirstClass = 222750001,
             UpperSecond = 222750002,
+            LowerSecond = 222750003,
             ThirdClassOrBelow = 222750004,
             PassUnknown = 222750005
          }
