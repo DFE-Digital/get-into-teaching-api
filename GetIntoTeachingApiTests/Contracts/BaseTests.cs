@@ -56,6 +56,11 @@ namespace GetIntoTeachingApiTests.Contracts
             await SeedDatabase();
         }
 
+        protected async Task SetupPickLists()
+        {
+            await SeedPickListItems();
+        }
+
         protected async Task AssertRequestMatchesSnapshot(string scenario)
         {
             await WaitForAllJobsToComplete();
