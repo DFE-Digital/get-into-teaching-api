@@ -19,19 +19,19 @@
     <None Update="Contracts\Data\contact_creation_channels.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Contracts\Data\pick_list_items\candidate\visastatus.json">
+    <None Update="Contracts\Data\pick_list_items\candidate\visa_statuses.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Contracts\Data\pick_list_items\candidate\situation.json">
+    <None Update="Contracts\Data\pick_list_items\candidate\situations.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Contracts\Data\pick_list_items\candidate\location.json">
+    <None Update="Contracts\Data\pick_list_items\candidate\locations.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Contracts\Data\pick_list_items\candidate\citizenship.json">
+    <None Update="Contracts\Data\pick_list_items\candidate\citizenships.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Contracts\Data\pick_list_items\candidate\qualified_teacher_status.json">
+    <None Update="Contracts\Data\pick_list_items\candidate\has_qualified_teacher_statuses.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -168,7 +168,7 @@
     <None Update="Contracts\Data\pick_list_items\subscription\types.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Contracts\Data\pick_list_items\candidate\journey_stages.json">
+    <None Update="Contracts\Data\pick_list_items\candidate\consideration_journey_stages.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Contracts\Data\callback_booking_quotas.json">
@@ -269,7 +269,7 @@
     <Folder Include="Contracts\Data\pick_list_items\teaching_event\" />
     <Folder Include="Contracts\Data\pick_list_items\teaching_event_registration\" />
     <Folder Include="Contracts\Data\pick_list_items\phone_call\" />
-    <Folder Include="Contracts\Data\pick_list_items\subscription\" />
+    <Folder Include="Contracts\Data\pick_list_items\service_subscription\" />
     <Folder Include="Contracts\Input\TeacherTrainingAdviser\" />
     <Folder Include="Contracts\Output\TeacherTrainingAdviser\" />
     <Folder Include="Contracts\Input\ApplyCandidateApi\" />

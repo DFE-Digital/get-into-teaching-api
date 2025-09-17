@@ -16,22 +16,20 @@ public class PickListItemsControllerSpec : BaseTests
     private string _baseUrl = "/api/pick_list_items/";
 
 
-    public PickListItemsControllerSpec(DatabaseFixture databaseFixture): base(databaseFixture)
+    public PickListItemsControllerSpec(DatabaseFixture databaseFixture) : base(databaseFixture)
     {
     }
-    
+
     [Theory]
-    [InlineData("candidate", "initial_teacher_training_years")]
-    [InlineData("qualification", "types")]
-    public async Task GetCandidateInitialTeacherTrainingYears_ReturnsOk(string entityName, string attributeName)
+    [MemberData(nameof(GetPickListData))]
+    public async Task GetPickListItems_ReturnsOk(string entityName, string attributeName, IEnumerable<PickListItem> pickListExpected)
     {
-        await SetupPickLists();
+        await SeedPickListItems();
         HttpResponseMessage response = await HttpClient.GetAsync($"{_baseUrl}{entityName}/{attributeName}");
-        
+
         response.EnsureSuccessStatusCode();
         string content = await response.Content.ReadAsStringAsync();
-        var picklistResponse = JsonConvert.DeserializeObject<IEnumerable<PickListItem>>(content);
-        var pickListExpected = GetPickList(entityName, attributeName);
+        IEnumerable<PickListItem> picklistResponse = JsonConvert.DeserializeObject<IEnumerable<PickListItem>>(content);
         Assert.NotEmpty(picklistResponse);
         Assert.Equal(pickListExpected.Count(), picklistResponse.Count());
         Assert.Equivalent(pickListExpected, picklistResponse);
@@ -44,12 +42,30 @@ public class PickListItemsControllerSpec : BaseTests
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    private IEnumerable<PickListItem> GetPickList(string entityName, string attributeName)
+
+    public static IEnumerable<object[]> GetPickListData()
+    {
+        var basePath = Path.Combine(Directory.GetCurrentDirectory(), "Contracts/Data/pick_list_items");
+
+        if (!Directory.Exists(basePath))
+        {
+            return Enumerable.Empty<object[]>();
+        }
+
+        var entityDirectories = Directory.EnumerateDirectories(basePath);
+
+        return entityDirectories.SelectMany(entityDir =>
+        {
+            var entityName = new DirectoryInfo(entityDir).Name;
+            return Directory.EnumerateFiles(entityDir, "*.json")
+                .Select(file => new object[] { entityName, Path.GetFileNameWithoutExtension(file), GetPickList(entityName, Path.GetFileNameWithoutExtension(file)) });
+        });
+    }
+
+    private static IEnumerable<PickListItem> GetPickList(string entityName, string attributeName)
     {
         string path = $"./Contracts/Data/pick_list_items/{entityName}/{attributeName}.json";
         string content = File.ReadAllText(path);
         return JsonConvert.DeserializeObject<IEnumerable<PickListItem>>(content);
     }
 }
-
-
