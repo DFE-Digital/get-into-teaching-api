@@ -127,7 +127,7 @@ namespace GetIntoTeachingApiTests.Contracts
             await SeedPrivacyPolicy();
         }
 
-        private async Task SeedPickListItems()
+        public async Task SeedPickListItems()
         {
             var files = Directory.EnumerateFiles("./Contracts/Data/pick_list_items",
                 "*.json", SearchOption.AllDirectories);

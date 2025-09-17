@@ -1,4 +1,5 @@
-﻿using GetIntoTeachingApi.Database;
+﻿using System;
+using GetIntoTeachingApi.Database;
 using Microsoft.EntityFrameworkCore;
 
 namespace GetIntoTeachingApiTests.Helpers
@@ -11,7 +12,7 @@ namespace GetIntoTeachingApiTests.Helpers
 
         public DatabaseFixture()
         {
-            TemplateDatabaseName = $"gis_test";
+            TemplateDatabaseName = $"gis_test_{Guid.NewGuid().ToString().Replace("-", "")}";
             ConnectionString = $"Host=localhost;Database={TemplateDatabaseName};Username=docker;Password=docker;Port=4432";
 
             var builder = new DbContextOptionsBuilder<GetIntoTeachingDbContext>();
