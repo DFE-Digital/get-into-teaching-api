@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using FluentAssertions;
 using FluentValidation.TestHelper;
 using GetIntoTeachingApi.Models;
@@ -35,6 +36,9 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
             _mockStore
                 .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_type"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
+            _mockStore
+                .Setup(mock => mock.GetCountries())
+                .Returns(new[] { new Country { Id = Country.UnitedKingdomCountryId }, new Country(){ Id = Country.AnotherCountryId} }.AsQueryable);
 
             CandidateQualification qualification = new CandidateQualification()
             {
@@ -42,6 +46,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 DegreeSubject = "History",
                 DegreeStatusId = mockPickListItem.Id,
                 TypeId = mockPickListItem.Id,
+                DegreeCountry = Country.UnitedKingdomCountryId,
             };
 
             TestValidationResult<CandidateQualification> result = _validator.TestValidate(qualification);

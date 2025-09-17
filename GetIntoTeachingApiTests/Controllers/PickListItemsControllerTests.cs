@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using GetIntoTeachingApi.Controllers;
 using GetIntoTeachingApiTests.Helpers;
 using FluentAssertions;
