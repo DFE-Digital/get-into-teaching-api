@@ -260,16 +260,22 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
         {
             private readonly TeacherTrainingAdviserSignUpValidator _validator;
             private readonly TeacherTrainingAdviserSignUp _request;
+            private readonly Mock<IStore> _mockStore = new();
 
             public InterestedInTeacherTraining()
             {
-                _validator = new TeacherTrainingAdviserSignUpValidator(new Mock<IStore>().Object, new DateTimeProvider());
+                _validator = new TeacherTrainingAdviserSignUpValidator(_mockStore.Object, new DateTimeProvider());
                 _request = new TeacherTrainingAdviserSignUp() { TypeId = (int)Candidate.Type.InterestedInTeacherTraining };
             }
 
             [Fact]
             public void Validate_WhenValid_HasNoErrors()
             {
+                List<PickListItem> fakeGrades = new List<PickListItem>() { new() {Id = (int)CandidateQualification.UkDegreeGrade.FirstClass}};
+                _mockStore
+                    .Setup(p => p.GetPickListItems("dfe_candidatequalification", "dfe_ukdegreegrade"))
+                    .Returns(fakeGrades.AsQueryable);
+                
                 _request.CandidateId = Guid.NewGuid();
                 _request.AcceptedPolicyId = Guid.NewGuid();
                 _request.CountryId = Guid.NewGuid();
@@ -279,7 +285,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
                 _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
                 _request.PlanningToRetakeGcseMathsAndEnglishId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking;
                 _request.HasGcseScienceId = (int)Candidate.GcseStatus.HasOrIsPlanningOnRetaking;
-                _request.UkDegreeGradeId = 0;
+                _request.UkDegreeGradeId = (int)CandidateQualification.UkDegreeGrade.FirstClass;
                 _request.DegreeSubject = "Maths";
                 _request.FirstName = "John";
                 _request.LastName = "Doe";
@@ -460,8 +466,13 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
             }
 
             [Fact]
-            public void Validate_WhenUkDegreeGradeIsNull_AndDegreeTypeIsNotHasADegeree_HasError()
+            public void Validate_WhenUkDegreeGradeIsNull_AndDegreeTypeIsNotHasADegree_HasError()
             {
+                List<PickListItem> fakeGrades = new List<PickListItem>() { new() {Id = (int)CandidateQualification.UkDegreeGrade.FirstClass}};
+                _mockStore
+                    .Setup(p => p.GetPickListItems("dfe_candidatequalification", "dfe_ukdegreegrade"))
+                    .Returns(fakeGrades.AsQueryable);
+                
                 _request.UkDegreeGradeId = null;
                 _request.DegreeTypeId = (int)CandidateQualification.DegreeType.Degree;
                 _request.DegreeStatusId = (int)DegreeStatus.HasDegree;
@@ -478,7 +489,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser.Validators
                 result.ShouldNotHaveValidationErrorFor(request => request.UkDegreeGradeId);
 
                 _request.DegreeStatusId = (int)DegreeStatus.HasDegree;
-                _request.UkDegreeGradeId = 0;
+                _request.UkDegreeGradeId = (int)CandidateQualification.UkDegreeGrade.FirstClass;
 
                 result = _validator.TestValidate(_request);
 
