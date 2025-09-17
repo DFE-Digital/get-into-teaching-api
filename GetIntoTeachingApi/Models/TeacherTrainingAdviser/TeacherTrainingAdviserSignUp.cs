@@ -68,6 +68,8 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
         [SwaggerSchema(WriteOnly = true)]
         public int? ChannelId { get; set; }
         
+        public Guid? DegreeCountry { get; set; }
+        
         
         [SwaggerSchema(WriteOnly = true)]
         public int? CreationChannelSourceId { get; set; }
@@ -252,6 +254,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                 UkDegreeGradeId = latestQualification.UkDegreeGradeId;
                 DegreeStatusId = latestQualification.DegreeStatusId;
                 DegreeTypeId = latestQualification.TypeId;
+                DegreeCountry = latestQualification.DegreeCountry;
             }
 
             var latestPastTeachingPosition = candidate.PastTeachingPositions.OrderByDescending(q => q.CreatedAt).FirstOrDefault();
@@ -395,6 +398,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                     DegreeStatusId = DegreeStatusId,
                     DegreeSubject = DegreeSubject,
                     TypeId = DegreeTypeId,
+                    DegreeCountry = (Guid?)DegreeCountry
                 });
             }
         }

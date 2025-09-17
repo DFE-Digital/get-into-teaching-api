@@ -76,6 +76,14 @@ namespace GetIntoTeachingApi.Services
             return _dbContext.Countries.AsNoTracking().OrderBy(t => t.Id);
         }
 
+        public IQueryable<Country> GetDegreeFilteredCountries()
+        {
+            return _dbContext.Countries
+                 .AsNoTracking()
+                 .Where(country => Country.DegreeCountriesList.Contains(country.Id.Value))
+                 .OrderBy(c => c.Id);
+        }
+
         public IQueryable<TeachingSubject> GetTeachingSubjects()
         {
             return _dbContext.TeachingSubjects.AsNoTracking().OrderBy(t => t.Id);
