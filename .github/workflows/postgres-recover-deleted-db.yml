@@ -1,12 +1,15 @@
 name: Recover deleted postgres database server
 
 on:
+  push:
+    branches:
+      - 2447-add-recover-deleted-postgres-workflow
   workflow_dispatch:
     inputs:
       environment:
         description: Environment to restore
         required: true
-        default: test
+        default: development
         type: choice
         options:
           - development
@@ -23,10 +26,12 @@ on:
       restore-time:
         description: Restore point in time in UTC. e.g. 2024-07-24T06:00:00. This is required and should be at least 10 minutes after the server was deleted.
         type: string
+        default: '2026-09-17T06:00:00'
         required: true
       deleted-server:
         description: This should be the name of the deleted postgres server. ex. s189t01-gitapi-ts-psql
         required: true
+        default: psenior-test-ptr
         type: string
 
 env:
