@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "WebSearch"
+    ],
+    "additionalDirectories": [
+      "/Users/shaheislam/work/teaching-vacancies/"
+    ]
+  }
+}
