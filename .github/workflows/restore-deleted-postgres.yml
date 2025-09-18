@@ -9,10 +9,9 @@ on:
       environment:
         description: Environment to restore
         required: true
-        default: development
+        default: test
         type: choice
         options:
-        - development
         - test
         - production
       confirm-production:
