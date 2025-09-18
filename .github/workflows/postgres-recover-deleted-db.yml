@@ -1,9 +1,6 @@
 name: Recover deleted postgres database server
 
 on:
-  push:
-    branches:
-      - 2447-add-recover-deleted-postgres-workflow
   workflow_dispatch:
     inputs:
       environment:
