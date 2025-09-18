@@ -1,9 +1,6 @@
 name: Restore database from point in time to new database server
 
 on:
-  push:
-    branches:
-      - add-recover-db-workflow
   workflow_dispatch:
     inputs:
       environment:
