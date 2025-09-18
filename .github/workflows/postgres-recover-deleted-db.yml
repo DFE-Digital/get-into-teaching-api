@@ -12,6 +12,7 @@ on:
         default: test
         type: choice
         options:
+          - development
           - test
           - production
       confirm-production:
