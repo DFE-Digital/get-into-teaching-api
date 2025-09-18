@@ -28,6 +28,9 @@ on:
         description: Name of the new database server. Default is <original-server-name>-ptr.
         type: string
 
+permissions:
+  id-token: write
+
 env:
   SERVICE_SHORT: git
   TF_VARS_PATH: terraform/aks/config
