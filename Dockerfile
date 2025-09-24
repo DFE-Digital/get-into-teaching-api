@@ -17,8 +17,15 @@ RUN dotnet publish -c release -o /app
 # final stage/image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
 
+# Create a non-root user
+RUN addgroup -S appgroup -g 20001 && adduser -S appuser -G appgroup -u 10001
+
 WORKDIR /app
 COPY --from=build /app ./
+
+# Switch to non-root user
+USER 10001
+
 ENTRYPOINT ["dotnet", "GetIntoTeachingApi.dll"]
 ENV ASPNETCORE_URLS=http://+:8080
 ARG COMMIT_SHA
