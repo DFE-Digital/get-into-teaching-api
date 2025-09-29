@@ -77,3 +77,9 @@ variable "pr_number" {
   description = "PR number for review app"
   default     = ""
 }
+
+variable "run_as_non_root" {
+  type        = bool
+  default     = true
+  description = "Whether to enforce that containers must run as non-root user"
+}
