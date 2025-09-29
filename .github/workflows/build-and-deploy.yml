@@ -36,7 +36,7 @@ jobs:
       image_tag_sha: "sha-${{ steps.vars.outputs.sha_short }}"
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: set-up-environment
         uses: DFE-Digital/github-actions/set-up-environment@master
@@ -111,7 +111,7 @@ jobs:
 
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: set-up-environment
         uses: DFE-Digital/github-actions/set-up-environment@master
@@ -200,7 +200,7 @@ jobs:
       url: ${{ steps.deploy.outputs.deploy-url }}
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: set-up-environment
         uses: DFE-Digital/github-actions/set-up-environment@master
@@ -270,7 +270,7 @@ jobs:
       url: ${{ steps.deploy.outputs.deploy-url }}
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: set-up-environment
         uses: DFE-Digital/github-actions/set-up-environment@master
