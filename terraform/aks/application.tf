@@ -25,6 +25,7 @@ module "api_application" {
   web_external_hostnames = local.app_hostnames
   web_port               = 8080
   enable_logit           = var.enable_logit
+  run_as_non_root        = var.run_as_non_root
 
   enable_prometheus_monitoring = var.enable_prometheus_monitoring
 }
