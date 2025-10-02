@@ -37,7 +37,9 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
 
             When(request => request.CountryId == Country.UnitedKingdomCountryId, () =>
             {
-                RuleFor(request => request.AddressPostcode).NotNull().WithMessage("Must be set when the candidate is in the UK.");
+                RuleFor(request => request.AddressPostcode).NotNull()
+                    .WithMessage("Must be set when the candidate is in the UK.")
+                    .Unless(request => request.DegreeCountry == Country.AnotherCountryId);
             });
 
             When(request => request.Candidate.IsReturningToTeaching(), () =>
@@ -63,6 +65,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
             {
                 RuleFor(request => request.PreferredEducationPhaseId).NotNull()
                     .When(request => request.DegreeStatusId == (int)DegreeStatus.HasDegree)
+                    .Unless(request => request.DegreeCountry == Country.AnotherCountryId)
                     .WithMessage("Must be set for candidates interested in teacher training that have a degree.");
 
                 RuleFor(request => request.DegreeTypeId).NotNull()
@@ -78,6 +81,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
 
                 RuleFor(request => request.InitialTeacherTrainingYearId).NotNull()
                     .When(request => request.DegreeStatusId == (int)DegreeStatus.HasDegree)
+                    .Unless(request => request.DegreeCountry == Country.AnotherCountryId)
                     .WithMessage("Must be set for candidates interested in teacher training that have a degree.");
 
                 RuleFor(request => request.DegreeTypeId)
