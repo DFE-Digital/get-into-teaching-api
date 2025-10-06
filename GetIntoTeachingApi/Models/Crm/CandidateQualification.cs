@@ -2,6 +2,7 @@
 using GetIntoTeachingApi.Services;
 using Microsoft.Xrm.Sdk;
 using System;
+using System.Collections.Immutable;
 
 namespace GetIntoTeachingApi.Models.Crm
 {
@@ -14,6 +15,16 @@ namespace GetIntoTeachingApi.Models.Crm
             Degree = 222750000,
             DegreeEquivalent = 222750005,
         }
+        
+         public enum UkDegreeGrade
+        {
+            NotApplicable =   222750000,
+            FirstClass = 222750001,
+            UpperSecond = 222750002,
+            LowerSecond = 222750003,
+            ThirdClassOrBelow = 222750004,
+            PassUnknown = 222750005
+         }
 
         [EntityField("dfe_contactid", typeof(EntityReference), "contact")]
         public Guid CandidateId { get; set; }

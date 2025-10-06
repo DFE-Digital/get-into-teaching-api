@@ -25,11 +25,11 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         [Fact]
         public void Validate_WhenValid_HasNoErrors()
         {
-            var mockPickListItem = new PickListItem { Id = 123 };
+            PickListItem mockPickListItem = new PickListItem { Id = 123 };
 
             _mockStore
                 .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_ukdegreegrade"))
-                .Returns(new[] { mockPickListItem }.AsQueryable());
+                .Returns(new[] { new PickListItem() { Id = (int)CandidateQualification.UkDegreeGrade.FirstClass} }.AsQueryable());
             _mockStore
                 .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_degreestatus"))
                 .Returns(new[] { mockPickListItem }.AsQueryable());
@@ -40,16 +40,16 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
                 .Setup(mock => mock.GetCountries())
                 .Returns(new[] { new Country { Id = Country.UnitedKingdomCountryId }, new Country(){ Id = Country.AnotherCountryId} }.AsQueryable);
 
-            var qualification = new CandidateQualification()
+            CandidateQualification qualification = new CandidateQualification()
             {
-                UkDegreeGradeId = mockPickListItem.Id,
+                UkDegreeGradeId = (int)CandidateQualification.UkDegreeGrade.FirstClass,
                 DegreeSubject = "History",
                 DegreeStatusId = mockPickListItem.Id,
                 TypeId = mockPickListItem.Id,
                 DegreeCountry = Country.UnitedKingdomCountryId,
             };
 
-            var result = _validator.TestValidate(qualification);
+            TestValidationResult<CandidateQualification> result = _validator.TestValidate(qualification);
 
             result.IsValid.Should().BeTrue();
         }
@@ -57,13 +57,28 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         [Fact]
         public void Validate_IdFieldWithInvalidPickListItemId_HasError()
         {
-            var qualification = new CandidateQualification()
+            PickListItem mockPickListItem = new PickListItem { Id = 123 };
+
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_ukdegreegrade"))
+                .Returns(new[] { new PickListItem() { Id = (int)CandidateQualification.UkDegreeGrade.FirstClass} }.AsQueryable());
+            
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_degreestatus"))
+                .Returns(new[] { mockPickListItem }.AsQueryable());
+
+            _mockStore
+                .Setup(mock => mock.GetPickListItems("dfe_candidatequalification", "dfe_type"))
+                .Returns(new[] { mockPickListItem }.AsQueryable());
+
+
+            CandidateQualification qualification = new CandidateQualification()
             {
-                UkDegreeGradeId = 123,
-                DegreeStatusId = 123,
-                TypeId = 123,
+                UkDegreeGradeId = (int)CandidateQualification.UkDegreeGrade.PassUnknown,
+                DegreeStatusId = 321,
+                TypeId = 321,
             };
-            var result = _validator.TestValidate(qualification);
+            TestValidationResult<CandidateQualification> result = _validator.TestValidate(qualification);
 
             result.ShouldHaveValidationErrorFor(c => c.UkDegreeGradeId);
             result.ShouldHaveValidationErrorFor(c => c.DegreeStatusId);
@@ -73,7 +88,7 @@ namespace GetIntoTeachingApiTests.Models.Crm.Validators
         [Fact]
         public void Validate_SubjectTooLong_HasError()
         {
-            var result = _validator.TestValidate(new CandidateQualification() { DegreeSubject = new string('a', 601) });
+            TestValidationResult<CandidateQualification> result = _validator.TestValidate(new CandidateQualification() { DegreeSubject = new string('a', 601) });
 
             result.ShouldHaveValidationErrorFor(c => c.DegreeSubject);
         }
