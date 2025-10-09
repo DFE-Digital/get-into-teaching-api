@@ -42,4 +42,6 @@ module "postgres" {
   azure_enable_high_availability = var.postgres_enable_high_availability
   azure_maintenance_window       = var.azure_maintenance_window
   azure_enable_backup_storage    = var.azure_enable_backup_storage
+
+  server_postgis_version = "14-3.3"
 }
