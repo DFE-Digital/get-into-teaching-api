@@ -6,5 +6,5 @@ locals {
     REDIS_CONN_STR = module.redis-cache.connection_string
   }
 
-  postgres_extensions = ["POSTGIS"]
+  postgres_extensions = ["uuid-ossp", "POSTGIS"]  # default extensions to enable on the Postgres server
 }
