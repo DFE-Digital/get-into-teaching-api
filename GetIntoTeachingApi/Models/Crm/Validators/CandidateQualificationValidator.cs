@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿using System.Collections.Immutable;
+using System.Linq;
+using FluentValidation;
 using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Validators;
 
