@@ -1,5 +1,4 @@
-﻿using System;
-using GetIntoTeachingApi.Jobs;
+﻿using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models.Apply;
 using GetIntoTeachingApiTests.Helpers;
 using Hangfire;
@@ -10,6 +9,7 @@ using Xunit;
 namespace GetIntoTeachingApiTests.Contracts
 {
     [Collection("Database")]
+    [Trait("Category", "Integration")]
     public class ApplyCandidateApiTests : BaseTests
     {
         public ApplyCandidateApiTests(DatabaseFixture databaseFixture) : base(databaseFixture)
