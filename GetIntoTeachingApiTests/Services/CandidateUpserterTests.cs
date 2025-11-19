@@ -8,6 +8,7 @@ using Hangfire.Common;
 using Hangfire.States;
 using Moq;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Services
@@ -19,6 +20,7 @@ namespace GetIntoTeachingApiTests.Services
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
         private readonly Candidate _candidate;
         private readonly Candidate _existingCandidate;
+        private Candidate _capturedCandidate;
 
         public CandidateUpserterTests()
         {
@@ -30,6 +32,7 @@ namespace GetIntoTeachingApiTests.Services
             _existingCandidate = new Candidate() { Id = _candidate.Id, Email = "existing@email.com" };
 
             _mockCrm.Setup(m => m.GetCandidate((Guid)_candidate.Id)).Returns(_existingCandidate);
+            _mockCrm.Setup(_ => _.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => _capturedCandidate = (Candidate)c);
         }
 
 
@@ -47,6 +50,33 @@ namespace GetIntoTeachingApiTests.Services
             _upserter.Upsert(_candidate);
 
             _mockCrm.Verify(mock => mock.Save(It.Is<Candidate>(c => c.Email == _existingCandidate.Email)), Times.Once);
+        }
+        
+        public static IEnumerable<object[]> ProtectedFieldData =>
+            new List<object[]>
+            { 
+                new object[] { "VisaStatus", 1 },
+                new object[] { "Citizenship", 1 },
+                new object[] { "Location", 1 },
+                new object[] { "Situation", 1 }
+            };
+        
+        [Theory]
+        [MemberData((nameof(ProtectedFieldData)))]
+        public void Upsert_WhenExistingCandidateFound_RetainsExistingCandidateProtectedFields_WhenFieldIsNull(string fieldName, object existingValue)
+        {
+            var existingCandidate = _existingCandidate;
+            existingCandidate.GetType().GetProperty(fieldName).SetValue(existingCandidate, existingValue);
+            _candidate.GetType().GetProperty(fieldName).SetValue(_candidate, null);
+            
+            _upserter.Upsert(_candidate);
+            
+            _mockCrm.Verify(mock => mock.Save(It.IsAny<Candidate>()), Times.Once);
+            Assert.Equal(
+                existingCandidate.GetType().GetProperty(fieldName).GetValue(existingCandidate), 
+                _capturedCandidate.GetType().GetProperty(fieldName).GetValue(_capturedCandidate) 
+                );
+
         }
 
         [Fact]
