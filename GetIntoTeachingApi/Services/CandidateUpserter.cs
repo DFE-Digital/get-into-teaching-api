@@ -38,7 +38,7 @@ namespace GetIntoTeachingApi.Services
             var schoolExperiences = ClearSchoolExperiences(candidate);
             var contactChannelCreations = ClearContactChannelCreations(candidate);
 
-            PreventCandidateEmailFromBeingOverwritten(candidate);
+            PreventCandidateDataFromBeingOverwritten(candidate);
             UpdateEventSubscriptionType(candidate);
 
             SaveCandidate(candidate);
@@ -137,7 +137,7 @@ namespace GetIntoTeachingApi.Services
             return privacyPolicy;
         }
 
-        private void PreventCandidateEmailFromBeingOverwritten(Candidate candidate)
+        private void PreventCandidateDataFromBeingOverwritten(Candidate candidate)
         {
             if (candidate.Id == null)
             {
@@ -145,11 +145,25 @@ namespace GetIntoTeachingApi.Services
             }
 
             var existingCandidate = _crm.GetCandidate((Guid)candidate.Id);
-
-            if (existingCandidate != null)
+            if (existingCandidate is null)
             {
-                candidate.Email = existingCandidate.Email;
+                return;
             }
+            
+            candidate.Email = existingCandidate.Email;
+            
+            candidate.VisaStatus = existingCandidate.VisaStatus is not null && candidate.VisaStatus is null 
+                ? existingCandidate.VisaStatus 
+                : candidate.VisaStatus;
+            candidate.Citizenship = existingCandidate.Citizenship is not null && candidate.Citizenship is null 
+                ? existingCandidate.Citizenship 
+                : candidate.Citizenship;
+            candidate.Location = existingCandidate.Location is not null && candidate.Location is null 
+                ? existingCandidate.Location 
+                : candidate.Location;
+            candidate.Situation = existingCandidate.Situation is not null && candidate.Situation is null 
+                ? existingCandidate.Situation 
+                : candidate.Situation;
         }
 
         private void UpdateEventSubscriptionType(Candidate candidate)
