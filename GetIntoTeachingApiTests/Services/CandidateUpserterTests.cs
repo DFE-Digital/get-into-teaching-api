@@ -18,9 +18,9 @@ namespace GetIntoTeachingApiTests.Services
         private readonly ICandidateUpserter _upserter;
         private readonly Mock<ICrmService> _mockCrm;
         private readonly Mock<IBackgroundJobClient> _mockJobClient;
+        private readonly Guid _candidateId = Guid.NewGuid();
         private readonly Candidate _candidate;
         private readonly Candidate _existingCandidate;
-        private Candidate _capturedCandidate;
 
         public CandidateUpserterTests()
         {
@@ -28,11 +28,22 @@ namespace GetIntoTeachingApiTests.Services
             _mockJobClient = new Mock<IBackgroundJobClient>();
             
             _upserter = new CandidateUpserter(_mockCrm.Object, _mockJobClient.Object);
-            _candidate = new Candidate() { Id = Guid.NewGuid(), Email = "test@test.com" };
-            _existingCandidate = new Candidate() { Id = _candidate.Id, Email = "existing@email.com" };
+            _candidate = new Candidate()
+            {
+                Id = _candidateId, 
+                Email = "test@test.com"
+            };
+            _existingCandidate = new Candidate()
+            {
+                Id = _candidateId, 
+                Email = "existing@email.com",
+                VisaStatus = 1,
+                Location = 1,
+                Situation = 1,
+                Citizenship = 1
+            };
 
             _mockCrm.Setup(m => m.GetCandidate((Guid)_candidate.Id)).Returns(_existingCandidate);
-            _mockCrm.Setup(_ => _.Save(It.IsAny<Candidate>())).Callback<BaseModel>(c => _capturedCandidate = (Candidate)c);
         }
 
 
@@ -52,31 +63,58 @@ namespace GetIntoTeachingApiTests.Services
             _mockCrm.Verify(mock => mock.Save(It.Is<Candidate>(c => c.Email == _existingCandidate.Email)), Times.Once);
         }
         
-        public static IEnumerable<object[]> ProtectedFieldData =>
-            new List<object[]>
-            { 
-                new object[] { "VisaStatus", 1 },
-                new object[] { "Citizenship", 1 },
-                new object[] { "Location", 1 },
-                new object[] { "Situation", 1 }
+        [Fact]
+        public void Upsert_WhenExistingCandidateFound_RetainsExistingCandidateProtectedFields_WhenFieldIsNull()
+        { 
+            Candidate capturedCandidate = null;
+            _mockCrm
+                .Setup(_ => _.Save(It.IsAny<Candidate>()))
+                .Callback<BaseModel>(c => capturedCandidate = (Candidate)c);
+
+            Candidate candidate = new Candidate()
+            {
+                Id = _candidateId, 
+                VisaStatus = null, 
+                Citizenship = null, 
+                Location = null, 
+                Situation = null
             };
-        
-        [Theory]
-        [MemberData((nameof(ProtectedFieldData)))]
-        public void Upsert_WhenExistingCandidateFound_RetainsExistingCandidateProtectedFields_WhenFieldIsNull(string fieldName, object existingValue)
-        {
-            var existingCandidate = _existingCandidate;
-            existingCandidate.GetType().GetProperty(fieldName).SetValue(existingCandidate, existingValue);
-            _candidate.GetType().GetProperty(fieldName).SetValue(_candidate, null);
             
-            _upserter.Upsert(_candidate);
+            _upserter.Upsert(candidate);
             
             _mockCrm.Verify(mock => mock.Save(It.IsAny<Candidate>()), Times.Once);
-            Assert.Equal(
-                existingCandidate.GetType().GetProperty(fieldName).GetValue(existingCandidate), 
-                _capturedCandidate.GetType().GetProperty(fieldName).GetValue(_capturedCandidate) 
-                );
+            
+            Assert.Equal(_existingCandidate.VisaStatus, capturedCandidate.VisaStatus);
+            Assert.Equal(_existingCandidate.Citizenship, capturedCandidate.Citizenship);
+            Assert.Equal(_existingCandidate.Location, capturedCandidate.Location);
+            Assert.Equal(_existingCandidate.Situation, capturedCandidate.Situation);
+        }
 
+                [Fact]
+        public void Upsert_WhenExistingCandidateFound_OverWritesExistingCandidateProtectedFields_WhenFieldIsPopulated()
+        { 
+            Candidate capturedCandidate = null;
+            _mockCrm
+                .Setup(_ => _.Save(It.IsAny<Candidate>()))
+                .Callback<BaseModel>(c => capturedCandidate = (Candidate)c);
+
+            Candidate candidate = new Candidate()
+            {
+                Id = _candidateId, 
+                VisaStatus = 2, 
+                Citizenship = 2, 
+                Location = 2, 
+                Situation = 2
+            };
+            
+            _upserter.Upsert(candidate);
+            
+            _mockCrm.Verify(mock => mock.Save(It.IsAny<Candidate>()), Times.Once);
+            
+            Assert.Equal(2, capturedCandidate.VisaStatus);
+            Assert.Equal(2, capturedCandidate.Citizenship);
+            Assert.Equal(2, capturedCandidate.Location);
+            Assert.Equal(2, capturedCandidate.Situation);
         }
 
         [Fact]
