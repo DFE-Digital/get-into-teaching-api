@@ -36,11 +36,7 @@ namespace GetIntoTeachingApiTests.Services
             _existingCandidate = new Candidate()
             {
                 Id = _candidateId, 
-                Email = "existing@email.com",
-                VisaStatus = 1,
-                Location = 1,
-                Situation = 1,
-                Citizenship = 1
+                Email = "existing@email.com"
             };
 
             _mockCrm.Setup(m => m.GetCandidate((Guid)_candidate.Id)).Returns(_existingCandidate);
@@ -64,12 +60,43 @@ namespace GetIntoTeachingApiTests.Services
         }
         
         [Fact]
-        public void Upsert_WhenExistingCandidateFound_RetainsExistingCandidateProtectedFields_WhenFieldIsNull()
+        public void Upsert_WhenExistingCandidateFound_RetainsExistingCandidateProtectedFields_WhenBothFieldsAreNull()
         { 
             Candidate capturedCandidate = null;
             _mockCrm
                 .Setup(_ => _.Save(It.IsAny<Candidate>()))
                 .Callback<BaseModel>(c => capturedCandidate = (Candidate)c);
+
+            Candidate candidate = new Candidate()
+            {
+                Id = _candidateId, 
+                VisaStatus = null, 
+                Citizenship = null, 
+                Location = null, 
+                Situation = null
+            };
+            
+            _upserter.Upsert(candidate);
+            
+            _mockCrm.Verify(mock => mock.Save(It.IsAny<Candidate>()), Times.Once);
+            
+            Assert.Null(capturedCandidate.VisaStatus);
+            Assert.Null(capturedCandidate.Citizenship);
+            Assert.Null(capturedCandidate.Location);
+            Assert.Null(capturedCandidate.Situation);
+        }
+        
+        [Fact]
+        public void Upsert_WhenExistingCandidateFound_RetainsExistingCandidateProtectedFields_WhenNewFieldsAreNull()
+        { 
+            Candidate capturedCandidate = null;
+            _mockCrm
+                .Setup(_ => _.Save(It.IsAny<Candidate>()))
+                .Callback<BaseModel>(c => capturedCandidate = (Candidate)c);
+            _existingCandidate.VisaStatus = 1;
+            _existingCandidate.Citizenship = 1;
+            _existingCandidate.Situation = 1;
+            _existingCandidate.Location = 1;
 
             Candidate candidate = new Candidate()
             {
