@@ -151,18 +151,16 @@ namespace GetIntoTeachingApi.Services
             }
             
             candidate.Email = existingCandidate.Email;
-            if (existingCandidate.VisaStatus != null) 
-                candidate.VisaStatus = UpdateFieldIfNotNull(existingCandidate.VisaStatus, candidate.VisaStatus);
-            if (existingCandidate.Citizenship is not null) 
-                candidate.Citizenship = UpdateFieldIfNotNull(existingCandidate.Citizenship, candidate.Citizenship);
-            if (existingCandidate.Location is not null) 
-                candidate.Location = UpdateFieldIfNotNull(existingCandidate.Location, candidate.Location);
-            if (existingCandidate.Situation is not null) 
-                candidate.Situation = UpdateFieldIfNotNull(existingCandidate.Situation, candidate.Situation);
+            if (existingCandidate.VisaStatus != null)
+                candidate.VisaStatus ??= existingCandidate.VisaStatus;
+            if (existingCandidate.Citizenship != null) 
+                candidate.Citizenship ??= existingCandidate.Citizenship;
+            if (existingCandidate.Location != null) 
+                candidate.Location ??= existingCandidate.Location;
+            if (existingCandidate.Situation != null) 
+                candidate.Situation  ??= existingCandidate.Situation;
         }
 
-        private static T UpdateFieldIfNotNull<T>(T oldValue, T newValue) => 
-            newValue is null ? oldValue : newValue;
 
         private void UpdateEventSubscriptionType(Candidate candidate)
         {
