@@ -1,9 +1,7 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Text;
 using FluentAssertions;
-using FluentAssertions.Json;
 using GetIntoTeachingApiTests.Helpers;
 using System.Threading.Tasks;
 using Xunit;
@@ -11,6 +9,7 @@ using Xunit;
 namespace GetIntoTeachingApiTests.Contracts
 {
     [Collection("Database")]
+    [Trait("Category", "Integration")]
     public class TeacherTrainingAdviserTests : BaseTests
     {
         public TeacherTrainingAdviserTests(DatabaseFixture databaseFixture)

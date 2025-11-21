@@ -11,6 +11,7 @@ using Xunit;
 namespace GetIntoTeachingApiTests.Integration
 {
     [Collection("Database")]
+    [Trait("Category", "Integration")]
     public class RateLimitTests : DatabaseTests
     {
         private readonly HttpClient _httpClient;
