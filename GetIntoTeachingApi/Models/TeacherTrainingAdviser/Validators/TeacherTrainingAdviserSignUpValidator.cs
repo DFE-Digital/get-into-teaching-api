@@ -15,7 +15,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser.Validators
 {
     public class TeacherTrainingAdviserSignUpValidator : AbstractValidator<TeacherTrainingAdviserSignUp>, IValidatorInterceptor
     {
-        private ImmutableList<CandidateQualification.UkDegreeGrade> ValidGrades { get; } = ImmutableList.Create( CandidateQualification.UkDegreeGrade.FirstClass, CandidateQualification.UkDegreeGrade.UpperSecond, CandidateQualification.UkDegreeGrade.LowerSecond);
+        private ImmutableList<CandidateQualification.UkDegreeGrade> ValidGrades { get; } = ImmutableList.Create( CandidateQualification.UkDegreeGrade.FirstClass, CandidateQualification.UkDegreeGrade.UpperSecond, CandidateQualification.UkDegreeGrade.LowerSecond, CandidateQualification.UkDegreeGrade.NotApplicable);
 
         public TeacherTrainingAdviserSignUpValidator(IStore store, IDateTimeProvider dateTime)
         {
