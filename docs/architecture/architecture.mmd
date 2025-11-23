@@ -1,0 +1,62 @@
+graph TD
+    %% Define the Subgraphs/Zones
+    subgraph Frontend Services
+        ATT["Apply For Teacher Training"]
+        GSE["Schools Experience"]
+        GIT["Get Into Teaching Frontend"]
+    end
+
+    subgraph Backend API
+        API(Get Into Teaching Api)
+    end
+
+    subgraph Azure 
+        
+    subgraph Data Stores
+        P1[(Postgres)]
+        P2[(Postgres)]
+        P3[(PostGres)]
+        R1[(Redis)]
+        R2[(Redis)]
+        R3[(Redis)]
+    end
+    
+    subgraph Internal Services 
+        CRM[CRM]
+        Prom[Prometheus]
+    end
+    end
+
+    subgraph External Services
+        G[GovNotify]
+        H[Google]
+    end
+
+    %% Flows from Frontend Services
+    
+    %% Apply For Teacher Training
+    ATT -->|"API Calls"| API
+    ATT -->|"Data Storage"| P2
+    ATT -->|"Cache"| R2
+    
+    %% Schools Experience
+    GSE -->|"API Calls"| API
+    
+    %% Get Into Teaching Frontend
+    GIT -->|"API Calls"| API
+    GIT -->|"Data Storage"| P1
+    GIT -->|"Cache"| R1
+
+    %% Flows into the API Core
+    POSTMAN(Postman/Curl) --> API
+    
+    %% Internal API Flows and Dependencies
+    API -->|"Notifications (NotifyService)"| G
+    API -->|"Geocoding"| H
+    API -->|"Record Update"| CRM
+    API -->|"Looging"| Prom
+
+    %% Database Flows
+    API <--> P3
+    API <--> R3
+    
