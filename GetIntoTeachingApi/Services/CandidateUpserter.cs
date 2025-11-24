@@ -38,7 +38,7 @@ namespace GetIntoTeachingApi.Services
             var schoolExperiences = ClearSchoolExperiences(candidate);
             var contactChannelCreations = ClearContactChannelCreations(candidate);
 
-            PreventCandidateEmailFromBeingOverwritten(candidate);
+            PreventCandidateDataFromBeingOverwritten(candidate);
             UpdateEventSubscriptionType(candidate);
 
             SaveCandidate(candidate);
@@ -137,7 +137,7 @@ namespace GetIntoTeachingApi.Services
             return privacyPolicy;
         }
 
-        private void PreventCandidateEmailFromBeingOverwritten(Candidate candidate)
+        private void PreventCandidateDataFromBeingOverwritten(Candidate candidate)
         {
             if (candidate.Id == null)
             {
@@ -145,12 +145,22 @@ namespace GetIntoTeachingApi.Services
             }
 
             var existingCandidate = _crm.GetCandidate((Guid)candidate.Id);
-
-            if (existingCandidate != null)
+            if (existingCandidate is null)
             {
-                candidate.Email = existingCandidate.Email;
+                return;
             }
+            
+            candidate.Email = existingCandidate.Email;
+            if (existingCandidate.VisaStatus != null)
+                candidate.VisaStatus ??= existingCandidate.VisaStatus;
+            if (existingCandidate.Citizenship != null) 
+                candidate.Citizenship ??= existingCandidate.Citizenship;
+            if (existingCandidate.Location != null) 
+                candidate.Location ??= existingCandidate.Location;
+            if (existingCandidate.Situation != null) 
+                candidate.Situation  ??= existingCandidate.Situation;
         }
+
 
         private void UpdateEventSubscriptionType(Candidate candidate)
         {
