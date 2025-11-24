@@ -1,5 +1,4 @@
-﻿using Bogus;
-using FluentAssertions;
+﻿using FluentAssertions;
 using GetIntoTeachingApi.Adapters;
 using GetIntoTeachingApi.Database;
 using GetIntoTeachingApi.Models;
@@ -9,14 +8,11 @@ using GetIntoTeachingApi.Services;
 using GetIntoTeachingApi.Utils;
 using GetIntoTeachingApiTests.Helpers;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.PowerPlatform.Dataverse.Client.Extensions;
-using Microsoft.Xrm.Sdk;
 using Moq;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -28,6 +24,7 @@ using PickListItem = GetIntoTeachingApi.Models.PickListItem;
 namespace GetIntoTeachingApiTests.Services
 {
     [Collection("Database")]
+    [Trait("Category", "Integration")]
     public class StoreTests : DatabaseTests
     {
         private static readonly Guid FindEventGuid = new Guid("ff927e43-5650-44aa-859a-8297139b8eee");

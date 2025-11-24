@@ -19,6 +19,7 @@ using Xunit;
 namespace GetIntoTeachingApiTests.Jobs
 {
     [Collection("Database")]
+    [Trait("Category", "Integration")]
     public class LocationSyncJobTests : DatabaseTests
     {
         private readonly LocationSyncJob _job;
