@@ -1,0 +1,41 @@
+sequenceDiagram
+    autonumber
+
+    participant Dev as Developer
+    participant GH as GitHub
+    participant WF as GitHub Actions Workflow
+    participant CI as Build & Test Job
+    participant CD as Deploy Job
+
+    Dev->>GH: Push commit / open pull request
+    GH->>WF: Trigger workflow (on: push / pull_request)
+
+
+
+    WF->>CI: Start Build & Test Job
+    CI->>CI: SonarQubeCode code analysis
+    CI->>CI: Pull Request Labler
+    CI->>CI: Build and Push to Github Container Registry (GHCR)
+    CI->>CI: Deploy to Review Environment
+    CI->>CI: Run Tests
+    
+    alt New Automtion Tests
+      participant AT as Automation Tests
+      CI->>AT: Start Automation Suite
+      AT->>AT: Run Postman Tests
+      participant  CRM
+      AT->>CRM: Remove created data
+      AT->>CI: Test Pass or Fail
+    end
+    CI->>CI: Run Sonar Scanner
+    CI-->CI: Destroy Review App
+    CI-->>WF: Report success or failure
+
+    alt Tests Passed
+        WF->>CD: Start Deploy App
+        CD->>CD: Build artifacts
+        CD->>CD: Deploy to environment
+        CD-->>WF: Deployment complete
+    else Tests Failed
+        WF-->>Dev: Send failure notification
+    end
