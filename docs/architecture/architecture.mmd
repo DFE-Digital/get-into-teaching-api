@@ -1,33 +1,38 @@
 graph TD
     %% Define the Subgraphs/Zones
-    subgraph Frontend Services
-        ATT["Apply For Teacher Training"]
-        GSE["Schools Experience"]
-        GIT["Get Into Teaching Frontend"]
-    end
-
-    subgraph Backend API
-        API(Get Into Teaching Api)
-    end
-
-    subgraph Azure 
-        
-    subgraph Data Stores
-        P1[(Postgres)]
-        P2[(Postgres)]
-        P3[(PostGres)]
-        R1[(Redis)]
-        R2[(Redis)]
-        R3[(Redis)]
-    end
     
-    subgraph Internal Services 
-        CRM[CRM]
-        Prom[Prometheus]
-    end
+    subgraph AKS ["AKS"]
+        subgraph FrontendServices ["Frontend Service"]
+            ATT["Apply For Teacher Training"]
+            GSE["Schools Experience"]
+            GIT["Get Into Teaching Frontend"]
+        end
+
+        subgraph BackendApi ["Backend Api's"]
+            API(Get Into Teaching Api)
+        end
     end
 
-    subgraph External Services
+    subgraph Azure ["Azure"]
+        %% ICON ADDED DIRECTLY TO NODE TEXT
+        AZURE_ICON[fa:fa-cloud] 
+        
+        subgraph DataStores ["Data Stores"]
+            P1[(Postgres)]
+            P2[(Postgres)]
+            P3[(PostGres)]
+            R1[(Redis)]
+            R2[(Redis)]
+            R3[(Redis)]
+        end
+        
+        subgraph InternalServices ["Internal Services"]
+            CRM[CRM]
+            Prom[Prometheus]
+        end
+    end
+
+    subgraph ExternalServices ["External Services"]
         G[GovNotify]
         H[Google]
     end
@@ -60,3 +65,45 @@ graph TD
     API <--> P3
     API <--> R3
     
+    %% ------------------------------------------------------------------
+    %% APPLY STYLING DIRECTLY TO NODES & TITLES (Most reliable method)
+    %% ------------------------------------------------------------------
+
+    %% Styles
+    %% Azure Blue: fill:#0078D4,stroke:#005691
+    %% Frontend Green: fill:#E8F5E9,stroke:#66BB6A
+    %% API Light Blue: fill:#B3E5FC,stroke:#0288D1
+    %% External Red: fill:#B22222,stroke:#8B0000
+    %% Data Stores Gray: fill:#CFD8DC,stroke:#607D8B
+
+    %% Style the Nodes within the Subgraphs
+    style ATT fill:#E8F5E9,stroke:#66BB6A
+    style GSE fill:#E8F5E9,stroke:#66BB6A
+    style GIT fill:#E8F5E9,stroke:#66BB6A
+    
+    style API fill:#B3E5FC,stroke:#0288D1
+    
+    style CRM fill:#CFD8DC,stroke:#607D8B
+    style Prom fill:#CFD8DC,stroke:#607D8B
+    
+    style P1 fill:#CFD8DC,stroke:#607D8B
+    style P2 fill:#CFD8DC,stroke:#607D8B
+    style P3 fill:#CFD8DC,stroke:#607D8B
+    style R1 fill:#CFD8DC,stroke:#607D8B
+    style R2 fill:#CFD8DC,stroke:#607D8B
+    style R3 fill:#CFD8DC,stroke:#607D8B
+
+    style G fill:#FFFDE7,stroke:#FFCC80
+    style H fill:#FFFDE7,stroke:#FFCC80
+    
+    %% Style the Subgraph Containers
+    style FrontendServices fill:#E8F5E9
+    style BackendApi fill:#B3E5FC
+    style AKS fill:#BF40BF	
+    style Azure fill:#0078D4
+    style DataStores fill:#CFD8DC
+    style InternalServices fill:#CFD8DC
+    style ExternalServices fill:#EE4B2B
+    
+    %% Style the AZURE ICON (Make it look like a nice label)
+    style AZURE_ICON fill:transparent,stroke:transparent,color:#FFFFFF,font-size:24px
