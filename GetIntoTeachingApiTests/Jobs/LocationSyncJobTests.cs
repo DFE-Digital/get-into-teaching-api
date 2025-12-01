@@ -72,7 +72,7 @@ namespace GetIntoTeachingApiTests.Jobs
             _mockLogger.VerifyInformationWasCalled("LocationSyncJob - CSV Deleted");
             _mockLogger.VerifyInformationWasCalled("LocationSyncJob - Succeeded");
 
-            _metrics.LocationSyncDuration.Count.Should().BeGreaterOrEqualTo(1);
+            _metrics.LocationSyncDuration.Count.Should().BeGreaterThanOrEqualTo(1);
         }
 
         [Fact]
