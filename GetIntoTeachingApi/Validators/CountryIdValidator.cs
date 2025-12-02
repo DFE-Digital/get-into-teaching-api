@@ -25,7 +25,7 @@ namespace GetIntoTeachingApi.Validators
                 return true;
             }
 
-            context.MessageFormatter.AppendArgument("PropertyName", context.PropertyName);
+            context.MessageFormatter.AppendArgument("PropertyName", context.PropertyPath);
 
             return false;
         }

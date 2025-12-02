@@ -191,7 +191,7 @@ namespace GetIntoTeachingApiTests.Contracts
             {
                 await Task.Delay(waitInterval);
 
-                (DateTime.UtcNow - startWaitTime).TotalSeconds.Should().BeLessOrEqualTo(maxWaitDurationInSeconds);
+                (DateTime.UtcNow - startWaitTime).TotalSeconds.Should().BeLessThanOrEqualTo(maxWaitDurationInSeconds);
             }
         }
 
