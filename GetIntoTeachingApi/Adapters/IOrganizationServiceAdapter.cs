@@ -33,5 +33,6 @@ namespace GetIntoTeachingApi.Adapters
         void SaveChanges(OrganizationServiceContext context);
         void AddLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);
         void DeleteLink(Entity source, Relationship relationship, Entity target, OrganizationServiceContext context);
+        OrganizationResponse Execute(OrganizationRequest request);
     }
 }

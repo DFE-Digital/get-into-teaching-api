@@ -53,5 +53,6 @@ namespace GetIntoTeachingApi.Services
         Entity BlankExistingEntity(string entityName, Guid id, OrganizationServiceContext context);
         Entity NewEntity(string entityName, Guid? id, OrganizationServiceContext context);
         IEnumerable<TeachingEventBuilding> GetTeachingEventBuildings();
+        void Execute(OrganizationRequest request);
     }
 }

@@ -16,12 +16,6 @@
         "Value": "1987-03-22T00:00:00"
       },
       {
-        "Key": "dfe_candidatereregisterstatus",
-        "Value": {
-          "Value": 222750000
-        }
-      },
-      {
         "Key": "dfe_candidatestatus",
         "Value": {
           "Value": 222750001

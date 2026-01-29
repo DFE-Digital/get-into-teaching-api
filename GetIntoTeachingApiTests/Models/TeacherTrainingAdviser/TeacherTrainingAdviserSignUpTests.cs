@@ -518,7 +518,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             var request = new TeacherTrainingAdviserSignUp() { AdviserStatusId = (int)TeacherTrainingAdviserSignUp.ResubscribableAdviserStatus.AlreadyHasQts };
 
             request.Candidate.AssignmentStatusId.Should().Be((int)Candidate.AssignmentStatus.WaitingToBeAssigned);
-            request.Candidate.RegistrationStatusId.Should().Be((int)Candidate.RegistrationStatus.ReRegistered);
+            request.Candidate.HasReRegistered = true;
             request.Candidate.StatusIsWaitingToBeAssignedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(30));
         }
 

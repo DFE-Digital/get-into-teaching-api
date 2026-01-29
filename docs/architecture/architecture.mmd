@@ -1,0 +1,48 @@
+C4Container
+title Container diagram for Get Into Teaching
+    Enterprise_Boundary(ext, "External") {
+        System_Ext(googleMaps, "Google Maps")
+    }
+    
+    Enterprise_Boundary(aks, "AKS") {
+      System_Boundary(gse_b, "School Experience") {
+        ContainerDb(gse_pg, "Postgres")
+        ContainerDb(gse_red, "Redis")
+        System(gse_app, "Ruby on Rails", "Ruby", "Web app / API")
+
+%%        Container_Boundary(gse_app_b, "Rails - Components") {
+%%            Component(gse_gbq, "Google BigQuery API")
+%%              Component(gse_dj, "Deployed Job")
+%%          Component(gse_ar, "Active Record")
+%%          Component(gse_api, "API Client")
+%%      }
+
+      BiRel(gse_pg, gse_app, "Jobs")
+      BiRel(gse_pg, gse_app, "School Experience")
+      Rel(gse_red, gse_app, "Cache")
+  }
+
+  System_Boundary(gitff_b, "Git Website") {
+      ContainerDb(gitff_pg, "Postgres")
+      ContainerDb(gitff_red, "Redis")
+      System(gitff_app, "Ruby on Rails", "Ruby", "Web app / API")
+
+%%      Container_Boundary(gitff_app_b, "Rails - Components") {
+%%          Component(gitff_gbq, "Google BigQuery API")
+%%          Component(gitff_dj, "Deployed Job")
+%%          Component(gitff_ar, "Active Record")
+%%          Component(gitff_api, "API Client")
+%%      }
+
+      BiRel(gitff_pg, gitff_app, "Jobs")
+      BiRel(gitff_pg, gitff_app, "School Experience")
+      Rel(gitff_red, gitff_app, "Cache")
+  }
+  
+  System_Boundary(att, "Apply for teacher training"){
+      System(att_app, "Apply for Teacher Training FE")
+  }
+
+  Rel(gse_app, googleMaps, "Uses", "Maps API")
+}
+

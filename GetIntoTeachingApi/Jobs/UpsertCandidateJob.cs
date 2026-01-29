@@ -75,7 +75,14 @@ namespace GetIntoTeachingApi.Jobs
             {
                 _upserter.Upsert(candidate);
 
-                _logger.LogInformation("UpsertCandidateJob - Succeeded - {Id} {CorrelationId}", candidate.Id, correlationId);
+                if (string.IsNullOrWhiteSpace(correlationId))
+                {
+                    _logger.LogInformation("UpsertCandidateJob - Succeeded - {Id}", candidate.Id);
+                }
+                else
+                {
+                    _logger.LogInformation("UpsertCandidateJob - Succeeded - {Id} {CorrelationId}", candidate.Id, correlationId);
+                }
             }
 
             var duration = (DateTime.UtcNow - _contextAdapter.GetJobCreatedAt(context)).TotalSeconds;
