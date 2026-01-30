@@ -329,6 +329,7 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                 return;
             }
 
+            candidate.HasReRegistered = true;
         }
 
         private void ConfigureGcseStatus(Candidate candidate)
