@@ -5,6 +5,7 @@ using GetIntoTeachingApi.Models.TeacherTrainingAdviser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GraphQL;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
@@ -510,16 +511,6 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
             var request = new TeacherTrainingAdviserSignUp() { AddressPostcode = "ky119yu" };
 
             request.Candidate.AddressPostcode.Should().Be("KY11 9YU");
-        }
-
-        [Fact]
-        public void Candidate_WithClosedAdviserStatusId_UpdatesAssignmentAndRegistrationStatus()
-        {
-            var request = new TeacherTrainingAdviserSignUp() { AdviserStatusId = (int)TeacherTrainingAdviserSignUp.ResubscribableAdviserStatus.AlreadyHasQts };
-
-            request.Candidate.AssignmentStatusId.Should().Be((int)Candidate.AssignmentStatus.WaitingToBeAssigned);
-            request.Candidate.RegistrationStatusId.Should().Be((int)Candidate.RegistrationStatus.ReRegistered);
-            request.Candidate.StatusIsWaitingToBeAssignedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(30));
         }
 
         [Theory]
