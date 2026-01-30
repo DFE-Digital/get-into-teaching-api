@@ -926,6 +926,16 @@ namespace GetIntoTeachingApiTests.Services
             query.Criteria.Conditions.First().Values.Should().BeEquivalentTo([JaneDoeGuid, JohnDoeGuid]);
         }
 
+        [Fact]
+        public void Execute_ProxiesToService()
+        {
+            var request = new OrganizationRequest("test_request");
+
+            _crm.Execute(request);
+
+            _mockService.Verify(mock => mock.Execute(request), Times.Once);
+        }
+
         private static bool VerifyMatchEventWithReadableIdQueryExpression(QueryExpression query, string readableId)
         {
             var hasEntityName = query.EntityName == "msevtmgt_event";

@@ -6,9 +6,9 @@ using GetIntoTeachingApi.Utils;
 using Hangfire;
 using Hangfire.Common;
 using Hangfire.States;
+using Microsoft.Xrm.Sdk;
 using Moq;
 using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace GetIntoTeachingApiTests.Services
@@ -49,6 +49,20 @@ namespace GetIntoTeachingApiTests.Services
             _upserter.Upsert(_candidate);
 
             _mockCrm.Verify(mock => mock.Save(It.Is<Candidate>(c => IsMatch(_candidate, c))), Times.Once);
+        }
+
+        [Fact]
+        public void Upsert_WhenCandidateHasReRegistered_ExecutesReRegisterCandidateRequest()
+        {
+            _candidate.HasReRegistered = true;
+
+            _upserter.Upsert(_candidate);
+
+            _mockCrm.Verify(mock => mock.Execute(It.Is<OrganizationRequest>(r =>
+                r.RequestName == "dfe_ReRegisterCandidate" &&
+                ((EntityReference)r["Target"]).Id == _candidateId &&
+                ((EntityReference)r["Target"]).LogicalName == "contact"
+            )), Times.Once);
         }
 
         [Fact]
