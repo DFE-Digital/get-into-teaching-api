@@ -329,9 +329,6 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                 return;
             }
 
-            candidate.AssignmentStatusId = (int)Candidate.AssignmentStatus.WaitingToBeAssigned;
-            candidate.RegistrationStatusId = (int)Candidate.RegistrationStatus.ReRegistered;
-            candidate.StatusIsWaitingToBeAssignedAt = DateTimeProvider.UtcNow;
         }
 
         private void ConfigureGcseStatus(Candidate candidate)
