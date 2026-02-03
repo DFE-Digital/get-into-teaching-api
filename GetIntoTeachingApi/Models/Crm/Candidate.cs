@@ -319,8 +319,6 @@ namespace GetIntoTeachingApi.Models.Crm
         public Candidate() : base(){
         }
 
-        [System.Text.Json.Serialization.JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
         public bool HasReRegistered { get; set; }
 
         public Candidate(Entity entity, ICrmService crm, IServiceProvider serviceProvider)
