@@ -20,7 +20,6 @@ namespace GetIntoTeachingApi.Models.Crm
     {
         private readonly string[] _propertyNamesExcludedFromChangeTracking = new string[]
         {
-            nameof(ChangedPropertyNames), nameof(HasUpfrontId),
             nameof(ChangedPropertyNames), nameof(HasUpfrontId), "HasReRegistered"
         };
         
