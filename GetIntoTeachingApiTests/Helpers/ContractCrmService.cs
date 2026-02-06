@@ -196,6 +196,11 @@ namespace GetIntoTeachingApiTests.Helpers
             return _crmService.GetTeachingEventBuildings();
         }
 
+        public void Execute(OrganizationRequest request)
+        {
+            _crmService.Execute(request);
+        }
+
         public IEnumerable<TeachingEvent> GetTeachingEvents(DateTime? startAfter = null)
         {
             return _crmService.GetTeachingEvents(startAfter);

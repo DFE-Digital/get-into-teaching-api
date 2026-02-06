@@ -86,5 +86,10 @@ namespace GetIntoTeachingApiTests.Helpers
         {
             throw new NotImplementedException();
         }
+
+        public void Execute(OrganizationRequest request)
+        {
+            return;
+        }
     }
 }

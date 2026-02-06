@@ -319,6 +319,8 @@ namespace GetIntoTeachingApi.Models.Crm
         public Candidate() : base(){
         }
 
+        public bool HasReRegistered { get; set; }
+
         public Candidate(Entity entity, ICrmService crm, IServiceProvider serviceProvider)
             : base(entity, crm, serviceProvider){
         }

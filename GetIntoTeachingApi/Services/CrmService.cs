@@ -472,6 +472,12 @@ namespace GetIntoTeachingApi.Services
                 .Select((entity) => new TeachingEventBuilding(entity, this, _serviceProvider)).ToList();
         }
 
+        public void Execute(OrganizationRequest request)
+        {
+            _service.Execute(request);
+
+        }
+
         private static QueryExpression MatchBackQuery(string email, string applyId = null)
         {
             // The ToList() is important or Dynamics throws an error.

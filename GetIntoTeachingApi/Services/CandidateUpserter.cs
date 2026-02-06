@@ -8,6 +8,7 @@ using GetIntoTeachingApi.Jobs;
 using GetIntoTeachingApi.Models.Crm;
 using GetIntoTeachingApi.Utils;
 using Hangfire;
+using Microsoft.Xrm.Sdk;
 using static GetIntoTeachingApi.Models.Crm.Candidate;
 
 namespace GetIntoTeachingApi.Services
@@ -177,6 +178,16 @@ namespace GetIntoTeachingApi.Services
         private void SaveCandidate(Candidate candidate)
         {
             candidate.IsNewRegistrant = candidate.Id == null;
+            
+            if (candidate.HasReRegistered && candidate.Id != null)
+             {
+                 var req = new OrganizationRequest("dfe_ReRegisterCandidate")
+                 {
+                     ["Target"] = new EntityReference("contact", (Guid)candidate.Id)
+                 };
+                 _crm.Execute(req);
+             }
+            
             _crm.Save(candidate);
         }
         

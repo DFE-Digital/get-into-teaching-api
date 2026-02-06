@@ -18,7 +18,11 @@ namespace GetIntoTeachingApi.Models.Crm
 {
     public abstract class BaseModel : INotifyPropertyChanged
     {
-        private readonly string[] _propertyNamesExcludedFromChangeTracking = new string[] { nameof(ChangedPropertyNames), nameof(HasUpfrontId) };
+        private readonly string[] _propertyNamesExcludedFromChangeTracking = new string[]
+        {
+            nameof(ChangedPropertyNames), nameof(HasUpfrontId), "HasReRegistered"
+        };
+        
         private bool _changeTrackingEnabled = true;
 
         [NotMapped]
@@ -50,6 +54,7 @@ namespace GetIntoTeachingApi.Models.Crm
         public event PropertyChangedEventHandler PropertyChanged;
 #pragma warning restore 67
 
+        
         public static string[] EntityFieldAttributeNames(Type type)
         {
             EntityAttribute entityAttribute = (EntityAttribute)Attribute.GetCustomAttribute(type, typeof(EntityAttribute));

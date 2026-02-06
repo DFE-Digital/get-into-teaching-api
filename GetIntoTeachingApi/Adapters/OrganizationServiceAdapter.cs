@@ -165,5 +165,10 @@ namespace GetIntoTeachingApi.Adapters
         {
             context.DeleteLink(source, relationship, target);
         }
+
+        public void Execute(OrganizationRequest request)
+        {
+            _client.Execute(request);
+        }
     }
 }
