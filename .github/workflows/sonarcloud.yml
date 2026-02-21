@@ -75,3 +75,13 @@ jobs:
            SLACK_MESSAGE: Pipeline Failure carrying out job ${{github.job}}
            SLACK_TITLE:   'Failure: ${{ github.workflow }}'
            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK  }}
+
+      - name: Notify teams channel on job failure
+        if: failure() && github.ref == 'refs/heads/master'
+        uses: DFE-Digital/github-actions/send-to-teams-channel@master
+        with:
+          teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          title: Sonarcloud
+          service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
+          message: |
+            Workflow failure
