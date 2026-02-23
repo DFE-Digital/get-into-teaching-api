@@ -97,6 +97,16 @@ jobs:
           SLACK_TITLE: "Failure to Build API"
           SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
 
+      - name: Notify teams channel on job failure
+        if: failure() && github.ref == 'refs/heads/master'
+        uses: DFE-Digital/github-actions/send-to-teams-channel@master
+        with:
+          teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          title: Build and Deploy
+          service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
+          message: |
+            There has been a failure building the application
+
   deploy_review_app:
     name: Deploy to review environment
     needs: build
@@ -259,6 +269,16 @@ jobs:
           SLACK_TITLE: "Deployment to the ${{ matrix.environment }} environment has failed"
           SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
 
+      - name: Notify teams channel on job failure
+        if: failure() && github.ref == 'refs/heads/master'
+        uses: DFE-Digital/github-actions/send-to-teams-channel@master
+        with:
+          teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          title: Build and Deploy
+          service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
+          message: |
+            "Deployment to the ${{ matrix.environment }} environment has failed"
+
   deploy_production:
     name: Deploy to production environment
     runs-on: ubuntu-latest
@@ -319,6 +339,17 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_RELEASE_NOTE_WEBHOOK }}
           MSG_MINIMAL: true
 
+      - name: Teams Release Notification
+        uses: DFE-Digital/github-actions/send-to-teams-channel@master
+        with:
+          teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          title: "Release Published to production: ${{steps.tag_id.outputs.release_name}}"
+          service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
+          minimal: true
+          status: good
+          message: |
+            ${{ fromJson( steps.tag_id.outputs.release_body) }}
+
       - name: Slack Notification
         if: failure()
         uses: rtCamp/action-slack-notify@master
@@ -327,3 +358,13 @@ jobs:
           SLACK_TITLE: "Manual Release Failed: ${{steps.tag_id.outputs.release_name}}"
           SLACK_MESSAGE: Failure deploying production release
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Notify teams channel on job failure
+        if: failure()
+        uses: DFE-Digital/github-actions/send-to-teams-channel@master
+        with:
+          teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          title: Build and Deploy
+          service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
+          message: |
+            Failure deploying production release
