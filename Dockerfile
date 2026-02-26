@@ -15,7 +15,7 @@ WORKDIR /source/GetIntoTeachingApi
 RUN dotnet publish -c release -o /app
 
 # final stage/image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
 
 # Create a non-root user
 RUN addgroup -S appgroup -g 20001 && adduser -S appuser -G appgroup -u 10001
