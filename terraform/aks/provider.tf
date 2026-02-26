@@ -1,5 +1,5 @@
 terraform {
-  required_version = "=1.4.6"
+  required_version = "=1.14.5"
 
   backend "azurerm" {
     container_name = "gitapi-tfstate"
@@ -8,7 +8,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.116.0"
+      version = "4.61.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
@@ -24,7 +24,7 @@ terraform {
 provider "azurerm" {
   features {}
 
-  skip_provider_registration = true
+  resource_provider_registrations = "none"
 }
 
 provider "kubernetes" {
