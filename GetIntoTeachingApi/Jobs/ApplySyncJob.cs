@@ -46,8 +46,9 @@ namespace GetIntoTeachingApi.Jobs
             using (_metrics.ApplySyncDuration.NewTimer())
             {
                 _logger.LogInformation("ApplySyncJob - Started");
+                DateTime syncStart = _dateTime.UtcNow;
                 await QueueCandidateSyncJobs();
-                _appSettings.ApplyLastSyncAt = _dateTime.UtcNow;
+                _appSettings.ApplyLastSyncAt = syncStart;
                 _logger.LogInformation("ApplySyncJob - Succeeded");
             }
         }

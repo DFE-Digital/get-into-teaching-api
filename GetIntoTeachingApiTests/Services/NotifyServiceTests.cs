@@ -51,7 +51,8 @@ namespace GetIntoTeachingApiTests.Services
         [InlineData(NotifyService.NewPinCodeEmailTemplateId, "NewPinCodeEmail")]
         [InlineData(NotifyService.CandidateRegistrationFailedEmailTemplateId, "CandidateRegistrationFailedEmail")]
         [InlineData(NotifyService.TeachingEventRegistrationFailedEmailTemplateId, "TeachingEventRegistrationFailedEmail")]
-        [InlineData("UnknownTemplateId", "UnknownTemplate")]
+        [InlineData(NotifyService.SignUpPartiallyFailedTemplateId, "SignUpPartiallyFailedEmail")]
+        [InlineData("UnknownTemplateId", "UnknownTemplate (UnknownTemplateId)")]
         public void SendEmail_SendsAnEmail(string templateId, string templateDescription)
         {
             _service.SendEmailAsync("email@address.com", templateId, _personalisation);

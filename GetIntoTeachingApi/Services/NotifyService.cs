@@ -8,11 +8,11 @@ namespace GetIntoTeachingApi.Services
 {
     public class NotifyService : INotifyService
     {
-        public const string NewPinCodeEmailTemplateId = "44327bdb-0d65-4ba7-85d5-facd9d51fa4a";
-        public const string CandidateRegistrationFailedEmailTemplateId = "00ea3516-17b0-4e09-8a92-ddec606310fd";
-        public const string TeachingEventRegistrationFailedEmailTemplateId = "b4084e28-60a6-417d-bd66-42112bd7ad09";
-        public const string MailingListAddMemberFailedEmailTemplateId = "4b3653b4-e524-42b8-bfed-201cb6bb8a25";
-        public const string SignUpPartiallyFailedTemplateId = "26402650-942d-4d6a-84dc-fe5cfdfb501c";
+        public const string NewPinCodeEmailTemplateId = "44327bdb-0d65-4ba7-85d5-facd9d51fa4a"; //New Pin code
+        public const string CandidateRegistrationFailedEmailTemplateId = "00ea3516-17b0-4e09-8a92-ddec606310fd"; //Get an Adviser Service – Sign Up Failed
+        public const string TeachingEventRegistrationFailedEmailTemplateId = "b4084e28-60a6-417d-bd66-42112bd7ad09"; //Teaching Event – Sign Up Failed
+        public const string MailingListAddMemberFailedEmailTemplateId = "4b3653b4-e524-42b8-bfed-201cb6bb8a25"; //Mailing List – Sign Up Failed
+        public const string SignUpPartiallyFailedTemplateId = "26402650-942d-4d6a-84dc-fe5cfdfb501c"; //Please get in touch
         private readonly ILogger<NotifyService> _logger;
         private readonly INotificationClientAdapter _client;
         private readonly IEnv _env;
@@ -24,10 +24,9 @@ namespace GetIntoTeachingApi.Services
             _env = env;
         }
 
-        public async Task<string> CheckStatusAsync()
-        {
-            return await _client.CheckStatusAsync(ApiKey());
-        }
+        public async Task<string> CheckStatusAsync() =>
+            await _client.CheckStatusAsync(ApiKey());
+        
 
         public Task SendEmailAsync(string email, string templateId, Dictionary<string, dynamic> personalisation)
         {
@@ -43,18 +42,19 @@ namespace GetIntoTeachingApi.Services
                 TaskContinuationOptions.OnlyOnFaulted);
         }
 
-        private static string TemplateDescription(string templateId)
-        {
-            return templateId switch
+        private static string TemplateDescription(string templateId) =>
+            templateId switch
             {
                 NewPinCodeEmailTemplateId => "NewPinCodeEmail",
                 CandidateRegistrationFailedEmailTemplateId => "CandidateRegistrationFailedEmail",
                 TeachingEventRegistrationFailedEmailTemplateId => "TeachingEventRegistrationFailedEmail",
                 MailingListAddMemberFailedEmailTemplateId => "MailingListAddMemberFailedEmail",
-                _ => "UnknownTemplate",
+                SignUpPartiallyFailedTemplateId => "SignUpPartiallyFailedEmail",
+                _ => $"UnknownTemplate ({templateId})",
             };
-        }
+        
 
-        private string ApiKey() => _env.NotifyApiKey;
+        private string ApiKey() => 
+            _env.NotifyApiKey;
     }
 }
