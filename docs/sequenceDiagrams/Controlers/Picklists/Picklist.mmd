@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant Get
+    participant PicklistController
+    
+    note right of PicklistController: Picklists have several endpoints that do the same thing.
+    
+    Get ->> PicklistController: Get {EndPoint}
+    PicklistController ->> IStore: Get {EnitityName} {Attribute}
+    IStore ->> DB: Get Picklist {EnitityName} {Attribute}
+    DB ->> IStore: Returns Results
+    IStore ->> PicklistController: Returns Results
+    

@@ -1,0 +1,8 @@
+sequenceDiagram
+    TeachingEventsController ->> IStore: banana
+    IStore ->> Database: GetTeachingEvents
+    Database ->> IStore: Return TeachingEvents
+    IStore ->> TeachingEventsController: Return TeachingEvents
+    TeachingEventsController ->> Metrics: Log TeachingEventSearchResults
+    TeachingEventsController ->> Metrics: Log InPersonTeachingEventResults
+    

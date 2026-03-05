@@ -1,0 +1,5 @@
+sequenceDiagram
+    LookupController ->> IStore: GetCountries
+    IStore ->> DB: GetCountries
+    DB ->> IStore: Return Countries
+    IStore ->> LookupController: : Return Countries

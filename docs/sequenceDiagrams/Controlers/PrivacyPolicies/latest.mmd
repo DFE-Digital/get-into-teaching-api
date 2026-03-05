@@ -1,0 +1,8 @@
+sequenceDiagram
+    Get ->> PrivacyPoliciesController: Get
+    PrivacyPoliciesController ->> IStore: Get Latest
+    IStore ->> DB: Get Latest
+    DB ->> IStore: Return Policy
+    IStore ->> PrivacyPoliciesController: Return Policy
+    PrivacyPoliciesController ->> Get: Return Policy
+    

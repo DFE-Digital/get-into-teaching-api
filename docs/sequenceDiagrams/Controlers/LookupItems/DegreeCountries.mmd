@@ -1,0 +1,5 @@
+sequenceDiagram
+    LookupController ->> IStore: Get Degree Filtered Countries
+    IStore ->> DB: Get Degree Filters Countries
+    DB ->> IStore: Return Countries
+    IStore ->> LookupController: : Return Countries

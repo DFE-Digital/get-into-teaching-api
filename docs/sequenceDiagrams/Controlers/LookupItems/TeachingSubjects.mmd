@@ -1,0 +1,5 @@
+sequenceDiagram
+    LookupController ->> IStore: Get Teaching Subjects
+    IStore ->> DB: Get Teaching Subjects
+    DB ->> IStore: Return Subjects
+    IStore ->> LookupController: : Return Subjects

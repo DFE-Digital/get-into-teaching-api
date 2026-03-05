@@ -1,0 +1,30 @@
+C4Container
+title GIT Platform – Container Diagram (Message Bus)
+
+Person(user, "User", "Applicant")
+
+System_Ext(crm, "Dynamics CRM", "Case management system")
+
+System_Boundary(gitPlatform, "Get Into Teaching Platform / AKS") {
+
+    System_Boundary(frontends, "Frontends") {
+        Container(gse, "GSE Frontend", "Web App", "Find training events")
+        Container(apply, "Apply Frontend", "Web App", "Submit applications")
+        Container(git, "GIT Frontend", "Web App", "General site")
+    }
+
+    System_Boundary(apis, "APIs") {
+        Container(api, "GIT API", ".NET Web API", "Handles business logic")
+        Container(dataverse, "Dataverse Component", ".NET Service", "Prepares CRM data")
+    }
+
+    Container(bus, "Message Bus", "Azure Service Bus", "Async integration events")
+    Container(worker, "CRM Worker Service", ".NET Worker", "Consumes events and calls CRM")
+}
+
+Rel(user, gse, "Uses")
+Rel(gse, api, "Calls REST endpoints")
+Rel(api, dataverse, "Sends domain data")
+Rel(dataverse, bus, "Publishes CRM events")
+Rel(bus, worker, "Delivers messages")
+Rel(worker, crm, "Creates / updates records")

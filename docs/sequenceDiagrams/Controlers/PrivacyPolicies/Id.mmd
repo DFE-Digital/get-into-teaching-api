@@ -1,0 +1,11 @@
+sequenceDiagram
+    Get ->> PrivacyPoliciesController: Get {id}
+    PrivacyPoliciesController ->> IStore: Get {id}
+    IStore ->> DB: Get {id}
+    DB ->> IStore: Return Result
+    IStore ->> PrivacyPoliciesController: Return Result
+    alt null
+         PrivacyPoliciesController ->> Get: Return 404
+    else Policy    
+        PrivacyPoliciesController --> Get: Return Policy
+    end

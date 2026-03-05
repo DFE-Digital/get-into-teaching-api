@@ -1,0 +1,8 @@
+sequenceDiagram
+    loop Every hour
+        GitApi->>Apply: Get records updated since {lastRan}
+        Apply-->>GitApi: {count} records returned
+        loop Every record {c}
+            GitApi->>CRM: Update Record {c}
+        end
+    end    
