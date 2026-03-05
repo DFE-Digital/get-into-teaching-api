@@ -2,8 +2,17 @@ name: Run Sonar scanner
 on:
   pull_request:
     types: [assigned, opened, synchronize, reopened]
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - 'docs/**'
+      - 'GetIntoTeachingApiTests/**'
   push:
     branches: [ master ]
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - 'docs/**'
 
 permissions:
   contents: write

@@ -2,6 +2,11 @@ name: Run .NET tests and Lint Dockerfile
 on:
   pull_request:
     types: [assigned, opened, synchronize, reopened]
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - 'docs/**'
+      - 'GetIntoTeachingApiTests/**'
 
 permissions:
   contents: write
