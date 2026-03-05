@@ -57,7 +57,7 @@ namespace GetIntoTeachingApi.Controllers.TeacherTrainingAdviser
             Description = "Queue a candidate upsert job.",
             OperationId = "SignUpTeacherTrainingAdviserCandidate",
             Tags = new[] { "Teacher Training Adviser" })]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(DegreeStatusResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status400BadRequest)]
         public IActionResult SignUp(
             [FromBody, SwaggerRequestBody("Candidate to sign up for the Teacher Training Adviser service.", Required = true)] TeacherTrainingAdviserSignUp request)
