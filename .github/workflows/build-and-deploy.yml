@@ -88,15 +88,6 @@ jobs:
           docker-repository: ${{ env.DOCKER_REPOSITORY }}
           snyk-token: ${{ secrets.SNYK_TOKEN }}
 
-      - name: Slack Notification
-        if: failure() && github.ref == 'refs/heads/master'
-        uses: rtCamp/action-slack-notify@master
-        env:
-          SLACK_COLOR: ${{env.SLACK_FAILURE}}
-          SLACK_MESSAGE: "The pipeline has failed to build the API image"
-          SLACK_TITLE: "Failure to Build API"
-          SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
-
       - name: Notify teams channel on job failure
         if: failure() && github.ref == 'refs/heads/master'
         uses: DFE-Digital/github-actions/send-to-teams-channel@master
@@ -260,15 +251,6 @@ jobs:
           RELEASE_ID: ${{ steps.release.outputs.id }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Slack Notification
-        if: failure() && github.ref == 'refs/heads/master'
-        uses: rtCamp/action-slack-notify@master
-        env:
-          SLACK_COLOR: ${{env.SLACK_FAILURE}}
-          SLACK_MESSAGE: "Deployment to the ${{ matrix.environment }} environment has failed"
-          SLACK_TITLE: "Deployment to the ${{ matrix.environment }} environment has failed"
-          SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
-
       - name: Notify teams channel on job failure
         if: failure() && github.ref == 'refs/heads/master'
         uses: DFE-Digital/github-actions/send-to-teams-channel@master
@@ -330,15 +312,6 @@ jobs:
           echo "::error ::Tag ${{ steps.tag_version.outputs.pr_number }} cannot be found in releases"
           exit 1
 
-      - name: Slack Release Notification
-        uses: rtCamp/action-slack-notify@master
-        env:
-          SLACK_COLOR: ${{env.SLACK_SUCCESS}}
-          SLACK_TITLE: "Release Published to production: ${{steps.tag_id.outputs.release_name}}"
-          SLACK_MESSAGE: ${{ fromJson( steps.tag_id.outputs.release_body) }}
-          SLACK_WEBHOOK: ${{ secrets.SLACK_RELEASE_NOTE_WEBHOOK }}
-          MSG_MINIMAL: true
-
       - name: Teams Release Notification
         uses: DFE-Digital/github-actions/send-to-teams-channel@master
         with:
@@ -349,15 +322,6 @@ jobs:
           status: good
           message: |
             ${{ fromJson( steps.tag_id.outputs.release_body) }}
-
-      - name: Slack Notification
-        if: failure()
-        uses: rtCamp/action-slack-notify@master
-        env:
-          SLACK_COLOR: ${{env.SLACK_FAILURE}}
-          SLACK_TITLE: "Manual Release Failed: ${{steps.tag_id.outputs.release_name}}"
-          SLACK_MESSAGE: Failure deploying production release
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
       - name: Notify teams channel on job failure
         if: failure()

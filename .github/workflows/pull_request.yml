@@ -40,12 +40,3 @@ jobs:
       uses: brpaz/hadolint-action@master
       with:
         dockerfile: "Dockerfile"
-
-    - name: Slack Notification
-      if: failure() && github.ref == 'refs/heads/master'
-      uses: rtCamp/action-slack-notify@master
-      env:
-           SLACK_COLOR:   ${{env.SLACK_FAILURE }}
-           SLACK_MESSAGE: Pipeline Failure carrying out job ${{github.job}}
-           SLACK_TITLE:   'Failure: ${{ github.workflow }}'
-           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}

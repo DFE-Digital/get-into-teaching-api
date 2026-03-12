@@ -67,15 +67,6 @@ jobs:
           dotnet test --no-build --logger:trx -e:CollectCoverage=true -e:CoverletOutputFormat=opencover
           dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
-      - name: Slack Notification
-        if: failure() && github.ref == 'refs/heads/master'
-        uses: rtCamp/action-slack-notify@master
-        env:
-           SLACK_COLOR:   ${{env.SLACK_FAILURE }}
-           SLACK_MESSAGE: Pipeline Failure carrying out job ${{github.job}}
-           SLACK_TITLE:   'Failure: ${{ github.workflow }}'
-           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK  }}
-
       - name: Notify teams channel on job failure
         if: failure() && github.ref == 'refs/heads/master'
         uses: DFE-Digital/github-actions/send-to-teams-channel@master
