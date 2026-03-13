@@ -175,7 +175,7 @@ jobs:
           echo "app_hostname=${REVIEW_APP_URL}" >> $GITHUB_OUTPUT
 
       - name: Update PR with Review App URL
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v3
         with:
           header: review-app
           number: ${{ steps.pr.outputs.number }}
