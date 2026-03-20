@@ -48,13 +48,13 @@ namespace GetIntoTeachingApi.Models.Crm
         public string CourseId { get; set; }
         [EntityField("dfe_applicationchoiceprovider")]
         public string Provider { get; set; }
+        [EntityField("dfe_senttoproviderat")]
+        #nullable enable
+        public string? SentToProviderAt { get; set; }
         [EntityField("dfe_name")]
         public string Name
         {
-            get
-            {
-                return $"Application Choice {ApplyId}";
-            }
+            get => $"Application Choice {ApplyId}";
             set
             {
                 // BaseModel requires a setter for all mapped
