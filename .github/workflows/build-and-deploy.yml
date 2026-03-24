@@ -269,7 +269,7 @@ jobs:
           title: Build and Deploy
           service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
           message: |
-            "Deployment to the ${{ matrix.environment }} environment has failed"
+            Deployment to the ${{ matrix.environment }} environment has failed
 
   deploy_production:
     name: Deploy to production environment
