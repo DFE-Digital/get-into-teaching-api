@@ -7,7 +7,7 @@ namespace GetIntoTeachingApi.Auth
     public class HangfireDashboardEnvironmentAuthorizationFilter : IDashboardAuthorizationFilter
     {
         private readonly IEnv _env;
-        private static readonly string[] sourceArray = [ "Development", "Staging" ];
+        private static readonly string[] sourceArray = [ "Development", "Staging", "Production" ];
 
         public HangfireDashboardEnvironmentAuthorizationFilter(IEnv env)
         {

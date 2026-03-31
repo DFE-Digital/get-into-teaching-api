@@ -22,6 +22,7 @@ namespace GetIntoTeachingApi.Utils
         public string HangfireInstanceName => Environment.GetEnvironmentVariable("HANGFIRE_INSTANCE_NAME");
         public string HangfireUsername => Environment.GetEnvironmentVariable("HANGFIRE_USERNAME");
         public string HangfirePassword => Environment.GetEnvironmentVariable("HANGFIRE_PASSWORD");
+        public string HangfireUrl => $"/{Environment.GetEnvironmentVariable("HANGFIRE_URL")}";
         public string TotpSecretKey => Environment.GetEnvironmentVariable("TOTP_SECRET_KEY");
         public string VcapServices => Environment.GetEnvironmentVariable("VCAP_SERVICES");
         public string CrmServiceUrl => Environment.GetEnvironmentVariable("CRM_SERVICE_URL");
