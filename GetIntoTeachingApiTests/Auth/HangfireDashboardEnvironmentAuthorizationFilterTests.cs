@@ -34,11 +34,11 @@ namespace GetIntoTeachingApiTests.Auth
         }
 
         [Fact]
-        public void Authorize_Production_IsFalse()
+        public void Authorize_Production_IsTrue()
         {
             _mockEnv.Setup(m => m.EnvironmentName).Returns("Production");
 
-            _filter.Authorize(null).Should().BeFalse();
+            _filter.Authorize(null).Should().BeTrue();
         }
 
         [Theory]

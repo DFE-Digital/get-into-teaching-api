@@ -15,6 +15,7 @@
         string AksEnvName { get; }
         bool EnableMetrics { get; }
         string HangfireInstanceName { get; }
+        string HangfireUrl { get; }
         string HangfireUsername { get; }
         string HangfirePassword { get; }
         string EnvironmentName { get; }

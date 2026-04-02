@@ -27,7 +27,7 @@ namespace GetIntoTeachingApi.AppStart
                 filters.Add(basicAuthFilter);
             }
 
-            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            app.UseHangfireDashboard(env.HangfireUrl, new DashboardOptions
             {
                 Authorization = filters,
             });
