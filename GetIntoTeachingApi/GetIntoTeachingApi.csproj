@@ -48,7 +48,7 @@
 		<PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
-		<PackageReference Include="dotenv.net" Version="3.2.1" />
+		<PackageReference Include="dotenv.net" Version="4.0.2" />
 		<PackageReference Include="YamlDotNet" Version="15.3.0" />
 		<PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="3.0.1" />
 		<PackageReference Include="GovukNotify" Version="7.2.0" />
