@@ -23,7 +23,6 @@ on:
       - 'README.md'
       - 'LICENSE'
       - 'docs/**'
-      - 'GetIntoTeachingApiTests/**'
   push:
     branches:
       - master
