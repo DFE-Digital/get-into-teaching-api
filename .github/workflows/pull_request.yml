@@ -6,7 +6,6 @@ on:
       - 'README.md'
       - 'LICENSE'
       - 'docs/**'
-      - 'GetIntoTeachingApiTests/**'
 
 permissions:
   contents: write
