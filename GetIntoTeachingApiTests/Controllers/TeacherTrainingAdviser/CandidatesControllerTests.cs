@@ -184,6 +184,8 @@ namespace GetIntoTeachingApiTests.Controllers.TeacherTrainingAdviser
             // assert
             Assert.IsType<OkObjectResult>(response);
             Assert.Equal(222750000, responseObject.GetType().GetProperty("DegreeStatusId").GetValue(responseObject, null));
+            Assert.Equal(2024, request.GraduationYear);
+            Assert.Equal(new DateTime(2024, 08, 31), request.InferredGraduationDate);
 
             _mockJobClient.Verify(job =>
                 job.Create(

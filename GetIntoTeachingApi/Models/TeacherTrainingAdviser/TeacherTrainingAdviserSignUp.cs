@@ -396,7 +396,8 @@ namespace GetIntoTeachingApi.Models.TeacherTrainingAdviser
                     DegreeStatusId = DegreeStatusId,
                     DegreeSubject = DegreeSubject,
                     TypeId = DegreeTypeId,
-                    DegreeCountry = (Guid?)DegreeCountry
+                    DegreeCountry = (Guid?)DegreeCountry,
+                    GraduationYear = InferredGraduationDate
                 });
             }
         }
