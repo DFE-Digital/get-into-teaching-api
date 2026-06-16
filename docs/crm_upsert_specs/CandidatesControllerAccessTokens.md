@@ -44,7 +44,7 @@ Finds an existing candidate in CRM by email, generates a 6-digit TOTP PIN from t
 
 PIN was generated and emailed. No body.
 
-### `400 Bad Request` — invalid email
+### `400 Bad Request` — invalid email. New proposed error format
 
 ```json
 {
@@ -57,7 +57,8 @@ PIN was generated and emailed. No body.
 }
 ```
 
-### `404 Not Found` — candidate not found or CRM paused
+### `404 Not Found` — candidate not found or CRM paused. New proposed error format
+
 
 ```json
 {

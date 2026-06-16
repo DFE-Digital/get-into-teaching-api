@@ -81,7 +81,7 @@ Returns a full `TeacherTrainingAdviserSignUp` JSON with the candidate's existing
 }
 ```
 
-### `401 Unauthorized` — candidate not found or PIN invalid
+### `401 Unauthorized` — candidate not found or PIN invalid. New proposed error format
 
 ```json
 {
