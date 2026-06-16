@@ -130,9 +130,18 @@ flowchart TD
     M -->|null| 404
     M -->|found| S --> R
 ```
+## Proposed changes
+### Require dateOfBirth param
+
+This endpoint has been flagged as a potential security risk because the only required param is `email`. This makes it easy to get information on candidates.
+
+We propose to make `dateOfBirth` param required along side the `email`.
+
 
 ## Notes
 
 - CRM exceptions are **not** masked (unlike `access_tokens` endpoint) — they log and re-throw as 500
 - The returned `TeacherTrainingAdviserSignUp` is the same model used by the `exchange_access_token` and `sign_up` endpoints
 - Intended for returning users who already have a CRM record, so the frontend can pre-populate their form
+
+
