@@ -82,7 +82,7 @@ Returns a pre-populated `TeacherTrainingAdviserSignUp`. Key fields populated fro
 }
 ```
 
-### `400 Bad Request` — invalid email
+### `400 Bad Request` — invalid email. This is a new proposed error format
 
 ```json
 {
@@ -95,7 +95,7 @@ Returns a pre-populated `TeacherTrainingAdviserSignUp`. Key fields populated fro
 }
 ```
 
-### `404 Not Found` — candidate not found or CRM paused
+### `404 Not Found` — candidate not found or CRM paused. This is a new proposed error format
 
 ```json
 {
@@ -133,7 +133,6 @@ flowchart TD
 
 ## Notes
 
-- No PIN / TOTP is involved — the matchback is purely CRM-driven
 - CRM exceptions are **not** masked (unlike `access_tokens` endpoint) — they log and re-throw as 500
 - The returned `TeacherTrainingAdviserSignUp` is the same model used by the `exchange_access_token` and `sign_up` endpoints
 - Intended for returning users who already have a CRM record, so the frontend can pre-populate their form
