@@ -1,6 +1,6 @@
 ## POST `/api/candidates/access_tokens`
 
-Please check existing code and swagger doc for reference
+Please check existing code and swagger doc for reference. I might have made mistakes or missed something here.
 https://getintoteachingapi-test.test.teacherservices.cloud/swagger/index.html
 
 **File:** `Controllers/CandidatesController.cs:52`
