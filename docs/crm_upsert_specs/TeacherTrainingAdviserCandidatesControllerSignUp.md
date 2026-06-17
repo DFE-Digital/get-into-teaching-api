@@ -1,6 +1,6 @@
 ## POST `/api/teacher_training_adviser/candidates`
 
-Please check existing code and swagger doc for reference. This is a complicated endpoint and I have missed or made mistakes.
+Please check existing code and swagger doc for reference. This is a complicated endpoint and I might have made mistakes or missed something here.
 https://getintoteachingapi-test.test.teacherservices.cloud/swagger/index.html
 
 **File:** `Controllers/TeacherTrainingAdviser/CandidatesController.cs:54`
