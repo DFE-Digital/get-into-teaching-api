@@ -15,7 +15,7 @@ Signs up a candidate for the Teacher Training Adviser service. Validates the req
 3. Constructs a full `Candidate` via `request.Candidate` (calls `CreateCandidate()`) with the following business logic:
    - **Maps scalar fields**: candidate ID, preferred teaching subject, country, email, name, DOB, postcode (formatted via `AsFormattedPostcode`), phone (formatted via `AsFormattedTelephone` based on UK/overseas), teacher ID, type, ITT year, preferred education phase, GCSE flags, situation, citizenship, visa status, location
    - **Sets scalar defaults**: `EligibilityRulesPassed = "false"`, `PreferredPhoneNumberTypeId = Home`, `PreferredContactMethodId = Any`, `GdprConsentId = Consent`, `OptOutOfGdpr = false`; clears `AdviserRequirementId`, `AdviserEligibilityId`, `AssignmentStatusId` to null
-   - **Configures channel** via `ConfigureChannel()`: sets `ChannelId` (TTA channel), `CreationChannelSourceId` (GIT Website), `CreationChannelServiceId` (Teacher Training Adviser Service)
+   - **Configures channel** via `ConfigureChannel()`: sets `ChannelId` (TTA channel), `CreationChannelSourceId` (GIT Website), `CreationChannelServiceId` (Teacher Training Adviser Service) and `CreationChannelActivityId` to default values if they are not already set in the request.
    - **Configures GCSE status**: any null GCSE/retake fields default to `NotAnswered`
    - **Accepts privacy policy**: if `AcceptedPolicyId` is set, creates a `CandidatePrivacyPolicy` with the accepted policy ID and current timestamp
    - **Schedules phone call** (if `PhoneCallScheduledAt` is set):
