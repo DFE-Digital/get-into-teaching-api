@@ -88,7 +88,7 @@ terraform-init: vendor-modules set-azure-account
 	$(eval export TF_VAR_service_name=$(SERVICE_NAME))
 
 terraform-plan: terraform-init
-	terraform -chdir=terraform/aks plan -var-file "config/${CONFIG}.tfvars.json"
+	terraform -chdir=terraform/aks plan ${DETAILED_EXITCODE} -var-file "config/${CONFIG}.tfvars.json"
 
 terraform-apply: terraform-init
 	terraform -chdir=terraform/aks apply -var-file "config/${CONFIG}.tfvars.json" $(AUTO_APPROVE)
