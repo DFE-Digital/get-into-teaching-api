@@ -53,7 +53,7 @@ jobs:
             /k:"DFE-Digital_get-into-teaching-api" \
             /o:"dfe-digital" \
             /n:"get-into-teaching-api" \
-            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.cpd.exclusions="GetIntoTeachingApi/Migrations/*.cs" \
             /d:sonar.cs.opencover.reportsPaths="GetIntoTeachingApiTests/coverage.opencover.xml" \
@@ -71,7 +71,7 @@ jobs:
             /d:sonar.log.level="DEBUG"
           dotnet build
           dotnet test --no-build --logger:trx -e:CollectCoverage=true -e:CoverletOutputFormat=opencover
-          dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
       - name: Notify teams channel on job failure
         if: failure() && github.ref == 'refs/heads/master'
