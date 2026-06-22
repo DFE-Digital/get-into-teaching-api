@@ -22,14 +22,12 @@ on:
     paths-ignore:
       - 'README.md'
       - 'LICENSE'
-      - 'docs/**'
   push:
     branches:
       - master
     paths-ignore:
       - 'README.md'
       - 'LICENSE'
-      - 'docs/**'
       - 'GetIntoTeachingApiTests/**'
 
 permissions:
