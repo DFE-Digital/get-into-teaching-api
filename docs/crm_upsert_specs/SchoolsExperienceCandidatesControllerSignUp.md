@@ -240,8 +240,3 @@ flowchart TD
     E -->|no| R
     E -->|yes| UQ
 ```
-
-## Proposed changes
-
-- We want this endpoint to be async. It should accept the same params and return 204 status code without a body.
-- The upsert to the CRM should happen in a background job.
