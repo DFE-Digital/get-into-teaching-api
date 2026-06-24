@@ -21,12 +21,6 @@ jobs:
             validation_plan: aks-infra
             terraform_base: terraform/aks
             terraform_version_file: provider.tf
-          - display: Domains infrastructure
-            validation_plan: domains-infra
-            terraform_base: terraform/domains/infrastructure
-          - display: Domains environment
-            validation_plan: domains-env
-            terraform_base: terraform/domains/environment_domains
 
     steps:
       - name: Validate ${{ matrix.display }}
@@ -38,6 +32,7 @@ jobs:
           environment: production
           terraform-base: ${{ matrix.terraform_base }}
           validation-plan: ${{ matrix.validation_plan }}
+          terraform-version-file: ${{ matrix.terraform_version_file }}
           service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
           teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL_INFRA }}
           target-branch: master
