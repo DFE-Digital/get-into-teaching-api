@@ -164,20 +164,17 @@ Upserts a candidate for the Schools Experience service. Validates the request, b
 **Headers:**
 - `Location`: `/api/schools_experience/candidates/{candidateId}`
 
-### `400 Bad Request` — validation failed
-
+### `400 Bad Request` — validation failed. New proposed error format
 ```json
 {
-    "PreferredTeachingSubjectId": [
-        "'Preferred Teaching Subject Id' must not be null."
-    ],
-    "Email": [
-        "'Email' must not be empty."
+    "errors": [
+        {
+            "error": "BadRequest",
+            "message": "Email must not be empty"
+        }
     ]
 }
 ```
-
-Errors are serialized via ASP.NET Core `SerializableError` — a dictionary of property names to string arrays.
 
 ## Channel configuration details
 
@@ -244,9 +241,7 @@ flowchart TD
     E -->|yes| UQ
 ```
 
-## Rate limiting
+## Proposed changes
 
-| Scope | Endpoint | Period | Limit |
-|-------|----------|--------|-------|
-| Global | `POST:/api/schools_experience/candidates` | 1m | 60 |
-| Schools Experience client | `POST:/api/schools_experience/candidates` | 1m | 250 |
+- We want this endpoint to be async. It should accept the same params and return 204 status code without a body.
+- The upsert to the CRM should happen in a background job.

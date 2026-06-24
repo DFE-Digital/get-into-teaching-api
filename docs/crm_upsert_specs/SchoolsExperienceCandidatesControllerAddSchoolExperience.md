@@ -150,3 +150,6 @@ flowchart TD
     V -->|invalid| 400
     V -->|valid| S --> J --> R
 ```
+
+## Proposed changes
+- Make the schoolUrn a required param.
