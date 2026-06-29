@@ -161,3 +161,10 @@ flowchart TD
 | **No side effects** | This endpoint is read-only with respect to CRM — it does not create, update, or enqueue anything |
 | **No event registration** | Unlike the main `POST /api/teaching_events/attendees`, this endpoint does not enqueue `UpsertCandidateJob`. It only returns a pre-populated request object |
 | **Reference assignment** | `Reference` defaults to the authenticated user's identity name if not provided by the client |
+
+## Proposed changes
+### Require dateOfBirth param
+
+This endpoint has been flagged as a potential security risk because the only required param is `email`. This makes it easy to get information on candidates.
+
+We propose to make `dateOfBirth` param required along side the `email`.
