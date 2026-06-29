@@ -93,7 +93,8 @@ Unlike the `exchange_unverified_request` endpoint:
     "errors": [
         {
             "error": "BadRequest",
-            "message": "Email must not be empty"
+            "message": "Email must not be empty",
+            "attribute": "Email"
         }
     ]
 }
@@ -110,7 +111,8 @@ Possible validation failures:
     "errors": [
         {
             "error": "Unauthorized",
-            "message": "Candidate could not be matched or access token is invalid."
+            "message": "Candidate could not be matched or access token is invalid.",
+            "attribute": "Candidate"
         }
     ]
 }

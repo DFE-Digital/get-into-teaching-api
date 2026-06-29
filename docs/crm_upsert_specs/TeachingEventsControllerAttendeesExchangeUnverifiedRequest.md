@@ -86,7 +86,8 @@ Body: an `ExistingCandidateRequest` JSON object.
     "errors": [
         {
             "error": "BadRequest",
-            "message": "Email must not be empty"
+            "message": "Email must not be empty",
+            "attribute": "Email",
         }
     ]
 }

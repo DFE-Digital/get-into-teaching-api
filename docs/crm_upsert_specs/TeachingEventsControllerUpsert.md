@@ -139,7 +139,8 @@ The response body contains the `TeachingEvent` (including the building if one wa
     "errors": [
         {
             "error": "BadRequest",
-            "message": "ReadableId does not match the required pattern"
+            "message": "ReadableId does not match the required pattern",
+            "attribute": "ReadableId"
         }
     ]
 }

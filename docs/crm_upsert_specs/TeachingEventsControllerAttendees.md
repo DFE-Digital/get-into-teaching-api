@@ -101,7 +101,8 @@ No response body. The candidate and registration are persisted asynchronously vi
     "errors": [
         {
             "error": "BadRequest",
-            "message": "EventId must not be empty"
+            "message": "EventId must not be empty",
+            "attribute": "EventId"
         }
     ]
 }
@@ -131,6 +132,7 @@ Possible validation failures:
         {
             "error": "NotFound",
             "message": "Candidate could not be matched."
+            "attribute": "Candidate"
         }
     ]
 }
