@@ -229,3 +229,4 @@ flowchart TD
 
 ## Proposed changes
 - Can we return 403 status code when the backfill is already taking please? Rather than 400.
+- Please use the v1.4 version of the Apply api. I think this is using v1.2 right now. The v1.4 spec is here https://www.apply-for-teacher-training.service.gov.uk/candidate-api
