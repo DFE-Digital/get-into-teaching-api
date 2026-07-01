@@ -198,7 +198,7 @@ the `contact` entity's `dfe_channelcreation` field in Dynamics.
 
 - This is a simple pass-through — no business logic, filtering, or computed fields.
 
-## **Endpoint:** `GET /api/pick_list_items/candidate/gcse_status`
+## **Endpoint:** `GET /api/pick_list_items/candidate/gcse_statuses`
 
 **Description:** Returns the list of GCSE status options from the `contact` entity's `dfe_websitehasgcseenglish` field
 in Dynamics. Used to indicate whether a candidate has (or is planning to retake) their GCSE English/Maths.
@@ -234,7 +234,7 @@ in Dynamics. Used to indicate whether a candidate has (or is planning to retake)
   `dfe_websitehasgcsemaths`, `dfe_websitehasgcsescience`). Only the English field's metadata is queried here; the CRM
   team should confirm all three attributes share the same option set.
 
-## **Endpoint:** `GET /api/pick_list_items/candidate/retake_gcse_status`
+## **Endpoint:** `GET /api/pick_list_items/candidate/retake_gcse_statuses`
 
 **Description:** Returns the list of retake GCSE status options from the `contact` entity's
 `dfe_websiteplanningretakeenglishgcse` field in Dynamics. Used to indicate whether a candidate is planning to retake
@@ -404,7 +404,7 @@ Dynamics. Indicates whether a candidate is interested in teaching for the first 
 
 - This is a simple pass-through — no business logic, filtering, or computed fields.
 
-## **Endpoint:** `GET /api/pick_list_items/candidate/assignment_status`
+## **Endpoint:** `GET /api/pick_list_items/candidate/assignment_statuses`
 
 **Description:** Returns the list of candidate assignment status options from the `contact` entity's
 `dfe_candidatestatus` field in Dynamics. Indicates the current adviser assignment state of a candidate.
@@ -601,7 +601,7 @@ field in Dynamics.
 
 - This is a simple pass-through — no business logic, filtering, or computed fields.
 
-## **Endpoint:** `GET /api/pick_list_items/qualification/degree_status`
+## **Endpoint:** `GET /api/pick_list_items/qualification/degree_statuses`
 
 **Description:** Returns the list of degree status options from the `dfe_candidatequalification` entity's
 `dfe_degreestatus` field in Dynamics. Indicates the candidate's current stage of degree study.
@@ -618,12 +618,16 @@ field in Dynamics.
 ```json
 [
   {
-    "id": 1,
-    "value": "Final year"
+    "id": 222750000,
+    "value": "Graduate or postgraduate"
   },
   {
-    "id": 2,
-    "value": "Has a degree"
+    "id": 222750004,
+    "value": "I don't have a degree and am not studying for one"
+  },
+  {
+    "id": 222750005,
+    "value": "Other"
   }
 ]
 ```
@@ -632,7 +636,10 @@ field in Dynamics.
 
 **Notes:**
 
-- This is a simple pass-through — no business logic, filtering, or computed fields.
+-- This is a simple pass-through — no business logic, filtering, or computed fields.
+
+**Proposed changes:**
+- The degree statuses `222750001` (Final year), `222750002` (Second year), and `222750003` (First year) will been retired in favour of `222750006` (Not yet, I'm studying for one) + `graduationYear` (see proposed changes in the sign-up TTA POST endpoint). These retired statuses are filtered out of the response.
 
 ## **Endpoint:** `GET /api/pick_list_items/qualification/types`
 
@@ -802,10 +809,11 @@ field in Dynamics.
 
 - This is a simple pass-through — no business logic, filtering, or computed fields.
 
-## **Endpoint:** `GET /api/pick_list_items/teaching_event/status`
+## **Endpoint:** `GET /api/pick_list_items/teaching_event/statuses`
 
 **Description:** Returns the list of teaching event status options from the `msevtmgt_event` entity's `dfe_eventstatus`
 field in Dynamics.
+
 
 **CRM-side mapping:**
 
