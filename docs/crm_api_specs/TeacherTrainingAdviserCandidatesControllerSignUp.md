@@ -23,6 +23,65 @@ The `degreeStatusId` field has historically been set directly by clients (includ
 
 4. **Validation stays in C# API**: rather than duplicating validation logic across Ruby and C# APIs, the C# API is the enforcement point for these rules. The behaviour should be clearly documented so the CRM's contract is well-defined.
 
+5. **Handle re-registering candidates in C# API**: 
+
+   1. For candidates who are re-registering for the TTA service (i.e. have previously registered and have an existing `CandidateID` and an `AdviserStatusId` / `dfe_candidateAdviserStatusReason` with a _re-subscribable_ closed status), the re-registration should be handled within the C# API and by calling a CRM action.
+   
+   2. A re-subscribable `AdviserStatusId` / `dfe_candidateAdviserStatusReason` is any of the following:
+   
+       ```
+       AcceptedIttOffer = 222750000
+       AcceptedTeachingPositionOutOfRemitRtt = 222750031
+       AcceptedTeachingPositionRtt = 222750004
+       AlreadyHasQts = 222750005
+       CandidateAskedToBeLeftAlone = 222750006
+       CandidateWasIncorrectlyAllocated = 222750007
+       DegreeNotEligible = 222750058
+       DidntRespondToEnableSupportEmailOnly = 222750062
+       DidntRespondToEnableSupportPhoneAndEmail = 222750057
+       DoesNotWantToTrainInEngland = 222750010
+       DuplicateRecordDuplicateCandidate = 222750028
+       EnicForeignQualificationsNotEquivalent = 222750050
+       FirstConversationWantsToApplyInAFutureIttYear = 222750061
+       GainedIttPlaceBeforeAdviserAllocation = 222750034
+       GcseOrEquivalentUnattainable = 222750064
+       IncompleteContactDetailsUnableToTraceFurther = 222750012
+       InterestedInTeachingPrimaryOnly = 222750065
+       NoLongerPursuingIttEyRouteInstead = 222750063
+       NoLongerPursuingIttFeRouteInstead = 222750048
+       NoLongerPursuingIttFinanceReasons = 222750052
+       NoLongerPursuingIttFollowingSchoolExperience = 222750055
+       NoLongerPursuingIttFoundOtherEmploymentTraining = 222750053
+       NoLongerPursuingIttInternationalFinanceReasons = 222750051
+       NoLongerPursuingIttOtherTeachingRelatedReasons = 222750056
+       NoLongerPursuingIttPersonalReasons = 222750054
+       NoQtsRtt = 222750019
+       ReferredToTeachingOutsideOfEnglandRtt = 222750024
+       SeekingQtsConversionFromInternationalQualifications = 222750040
+       StoppedRespondingToContactFromAdviser = 222750060
+       Unsuccessful = 222750029
+       VisaNoRightToStudyInTheUk = 222750059
+       VisaNoRightToStudyInTheUkAndReceiveFunding = 222750025
+       WantsToApplyInAFutureIttYear = 222750026
+       ```
+      
+   3. Re-register the candidate by setting the following fields and values via the GIT API:
+   
+       ```ruby 
+       AdviserEligibilityId / dfe_IsCandidateEligibleForAdviser = No (222750001)
+       AdviserRequirementId / dfe_IsAdvisorRequiredOS = Yes (222750001)
+       ```
+      
+   4. Trigger the CRM Re-register Action (`dfe_ReRegisterCandidate`) which will in turn set the folllowing fields and values directly within the CRM:
+   
+       ```
+       dfe_CandidateStatus = Waiting to be Assigned (222750001) 
+       dfe_CandidateAdviserStatus = Open (222750000)
+       dfe_CandidateReregisterStatus = Re-registered (222750000) 
+       dfe_CandidateAdviserStatusReason = null
+       dfe_GITISTTAServiceStartDate = DateTime.Now
+       ```      
+
 ### Validation changes needed
 
 | Change | Detail |
