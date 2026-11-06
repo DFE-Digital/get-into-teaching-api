@@ -25,7 +25,13 @@ The `degreeStatusId` field has historically been set directly by clients (includ
 
 5. **Handle re-registering candidates in C# API**: 
 
-   1. For candidates who are re-registering for the TTA service (i.e. have previously registered and have an existing `CandidateID` and an `AdviserStatusId` / `dfe_candidateAdviserStatusReason` with a _re-subscribable_ closed status), the re-registration should be handled within the C# API and by calling a CRM action.
+   1. The re-registration process should be handled within the C# API (and related CRM Actions) for candidates who are re-registering for the TTA service, i.e. candidates who have the following attributes:
+      ```
+      an existing CandidateID 
+      HasTeacherTrainingAdviserSubscription / dfe_gitisttaserviceissubscriber = Yes
+      dfe_candidateadviserstatus = Closed
+      AdviserStatusId / dfe_candidateAdviserStatusReason with a _re-subscribable_ closed status 
+      ```
    
    2. A re-subscribable `AdviserStatusId` / `dfe_candidateAdviserStatusReason` is any of the following:
    
