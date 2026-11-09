@@ -24,6 +24,7 @@ namespace GetIntoTeachingApi.Models.Crm
         public enum AdviserEligibility
         {
             Yes = 222750000,
+            No = 222750001,
         }
 
         public enum AdviserRequirement
