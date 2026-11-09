@@ -193,12 +193,12 @@ namespace GetIntoTeachingApi.Services
                 candidate.AdviserEligibilityId = (int)Candidate.AdviserEligibility.No;
                 candidate.AdviserRequirementId = (int)Candidate.AdviserRequirement.Yes;
 
-                // Trigger the ReRegisterCandidate action in the CRM which sets the following directly:
-                // * Candidate.AssignmentStatusId / dfe_CandidateStatus = 222750001 (Waiting to be Assigned)
+                // Trigger the ReRegisterCandidate action in the CRM which sets the following fields directly:
+                // * dfe_CandidateStatus = 222750001 (Candidate.AssignmentStatusId = Waiting to be Assigned)
                 // * dfe_CandidateAdviserStatus = 222750000 (Open)
-                // * Candidate.RegistrationStatusId / dfe_CandidateReregisterStatus = 222750000 (Re-registered)
-                // * Candidate.AdviserStatusId / dfe_CandidateAdviserStatusReason = null
-                // * Candidate.TeacherTrainingAdviserSubscriptionStartAt / dfe_GitisTTAServiceStartDate = DateTime.Now
+                // * dfe_CandidateReregisterStatus = 222750000 (Candidate.RegistrationStatusId = Re-registered)
+                // * dfe_CandidateAdviserStatusReason = null (Candidate.AdviserStatusId = null)
+                // * dfe_GitisTTAServiceStartDate = DateTime.Now (Candidate.TeacherTrainingAdviserSubscriptionStartAt = DateTime.Now)
                 var req = new OrganizationRequest("dfe_ReRegisterCandidate")
                 {
                     ["Target"] = new EntityReference("contact", (Guid)candidate.Id)
