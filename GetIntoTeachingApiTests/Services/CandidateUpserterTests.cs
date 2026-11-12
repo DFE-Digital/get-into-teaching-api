@@ -55,6 +55,7 @@ namespace GetIntoTeachingApiTests.Services
         public void Upsert_WhenCandidateHasReRegistered_ExecutesReRegisterCandidateRequest()
         {
             _candidate.HasReRegistered = true;
+            _candidate.HasTeacherTrainingAdviserSubscription = true;
 
             _upserter.Upsert(_candidate);
 

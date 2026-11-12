@@ -179,15 +179,33 @@ namespace GetIntoTeachingApi.Services
         {
             candidate.IsNewRegistrant = candidate.Id == null;
             
-            if (candidate.HasReRegistered && candidate.Id != null)
-             {
-                 var req = new OrganizationRequest("dfe_ReRegisterCandidate")
-                 {
-                     ["Target"] = new EntityReference("contact", (Guid)candidate.Id)
-                 };
-                 _crm.Execute(req);
-             }
-            
+            // a candidate is Re-registering if they have:
+            // * an existing CandidateID 
+            // * HasTeacherTrainingAdviserSubscription / dfe_gitisttaserviceissubscriber = Yes
+            // * dfe_candidateadviserstatus = Closed
+            // * AdviserStatusId / dfe_candidateAdviserStatusReason with a _re-subscribable_ closed status 
+
+            if (candidate.Id != null &&
+                candidate.HasTeacherTrainingAdviserSubscription.HasValue &&
+                candidate.HasTeacherTrainingAdviserSubscription.Value &&
+                candidate.HasReRegistered)
+            {
+                candidate.AdviserEligibilityId = (int)Candidate.AdviserEligibility.No;
+                candidate.AdviserRequirementId = (int)Candidate.AdviserRequirement.Yes;
+
+                // Trigger the ReRegisterCandidate action in the CRM which sets the following fields directly:
+                // * dfe_CandidateStatus = 222750001 (AssignmentStatusId = Waiting to be Assigned)
+                // * dfe_CandidateAdviserStatus = 222750000 (Open)
+                // * dfe_CandidateReregisterStatus = 222750000 (RegistrationStatusId = Re-registered)
+                // * dfe_CandidateAdviserStatusReason = null (AdviserStatusId = null)
+                // * dfe_GitisTTAServiceStartDate = DateTime.Now (TeacherTrainingAdviserSubscriptionStartAt = DateTime.Now)
+                var req = new OrganizationRequest("dfe_ReRegisterCandidate")
+                {
+                    ["Target"] = new EntityReference("contact", (Guid)candidate.Id)
+                };
+                _crm.Execute(req);
+            }
+
             _crm.Save(candidate);
         }
         

@@ -532,7 +532,7 @@ namespace GetIntoTeachingApiTests.Models.TeacherTrainingAdviser
         }
 
         [Theory]
-        [InlineData(true, (int)TeacherTrainingAdviserSignUp.ResubscribableAdviserStatus.NoLongerPursuingTeaching, true)]
+        [InlineData(true, (int)TeacherTrainingAdviserSignUp.ResubscribableAdviserStatus.NoLongerPursuingIttFoundOtherEmploymentTraining, true)]
         [InlineData(false, -12345, true)]
         [InlineData(true, null, false)]
         [InlineData(false, null, true)]
