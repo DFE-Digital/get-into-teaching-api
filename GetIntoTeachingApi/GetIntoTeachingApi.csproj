@@ -16,7 +16,7 @@
 		<PackageReference Include="Flurl.Http.Newtonsoft" Version="0.9.1" />
 		<PackageReference Include="GeocodeSharp" Version="2.1.0" />
 		<PackageReference Include="Hangfire.AspNetCore" Version="1.8.20" />
-		<PackageReference Include="Hangfire.Core" Version="1.8.20" />
+		<PackageReference Include="Hangfire.Core" Version="1.8.23" />
 		<PackageReference Include="Hangfire.MemoryStorage" Version="1.8.0" />
 		<PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="6.1.1" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.11.0" />
